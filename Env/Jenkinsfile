@@ -1,0 +1,45 @@
+pipeline {
+    environment {
+    registry = "mumair01/gailbot_dev_machine"
+    registryCredential = 'dockerhub_id'
+    dockerImage = ''
+    }
+    agent any
+    stages {
+        stage('Clone') {
+            steps{
+                checkout scm
+            }
+        }   
+        stage('Build') {
+            steps{
+                script {
+                    dockerImage = docker.build registry + ":$BUILD_NUMBER"
+                }
+            }
+        }
+        stage("Test"){
+            steps{
+                script{
+                    dockerImage.inside(){
+                        sh 'python3 --version'
+                    }
+                }
+            }
+        }
+        stage('Docker deploy') {
+            steps{
+                script {
+                    docker.withRegistry( '', registryCredential ) {
+                        dockerImage.push("latest")
+                    }
+                }
+            }
+        }
+        stage('Clean') {
+            steps{
+                sh "docker rmi $registry:$BUILD_NUMBER"
+            }
+        }
+    }
+}
