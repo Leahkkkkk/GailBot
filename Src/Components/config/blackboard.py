@@ -1,14 +1,8 @@
 # Standard imports 
 from typing import Any 
-# Third party imports 
-from enum import Enum
+# Local imports 
+from .attributes import BlackBoardAttributes
 
-class BlackBoardAttributes(Enum):
-    """
-    Defines all the attributes that can exist within the blackboard
-    """
-    #TODO: Define the blackboard attributes
-    Test_key = "Test_key"
 
 class BlackBoard:
 

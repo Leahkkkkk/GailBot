@@ -3,7 +3,8 @@ import os
 from typing import Dict, Tuple
 from copy import deepcopy
 # Local imports 
-from .blackboard import BlackBoard, BlackBoardAttributes
+from .blackboard import BlackBoard 
+from .attributes import BlackBoardAttributes
 # Third party imports 
 import json 
 
