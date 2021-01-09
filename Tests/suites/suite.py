@@ -60,9 +60,9 @@ class TestSuite:
             start = time.time()
             result = function_ptr(*args)
             total_time = time.time() - start
-            
             self.tests[name].set_data(TestAttributes.time_taken,total_time)
             self.tests[name].set_data(TestAttributes.result,result)
+             
         except KeyError:
             pass
     

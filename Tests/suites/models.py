@@ -101,6 +101,7 @@ class TestModel(IModels):
             index (Any): Index identifying the data
             item (Any): data to be stored at the index.
         """
+        self.items[index] = item
 
     def row_count(self) -> None:
         """
@@ -111,8 +112,6 @@ class TestModel(IModels):
         """
         return len(self.items)
     
-
-
 class TestSuiteModel(IModels):
     """
     Defines a model to store a suite of tests
