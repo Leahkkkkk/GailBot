@@ -7,6 +7,8 @@ from typing import List, Dict
 from Tests import TestSuite
 from Tests import define_config_test_suite
 
+#### Helper functions for using test suite.
+
 def print_summary(test_suite : TestSuite, name : str) -> None:
     """
     Print a summary of a single test from a given test suite.
@@ -82,6 +84,6 @@ if __name__ == "__main__":
     suites = {
         "config_test_suite" : define_config_test_suite()
     }
-    # Execute all test suites 
+    # Executing all test suites 
     run_all_test_suites(suites)
     

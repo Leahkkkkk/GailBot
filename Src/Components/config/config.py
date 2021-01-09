@@ -39,7 +39,8 @@ class Config:
             (bool): True if environment is loaded successfully. False otherwise.
         """
         if format in self.config_file_formats:
-            env, is_successful = self._parse_config_file(config_filename)
+            env, is_successful = self._parse_config_file(
+                config_filename, format)
             if is_successful:
                 self._set_blackboard(env)
                 return True 
@@ -50,7 +51,7 @@ class Config:
 
     def get_blackboard(self) -> BlackBoard:
         """
-        Returns an instance of the blackboard object containing the environment
+        Returns an instance of the blackboard object containing the environment.
         
         Returns:
             (BlackBoard)
@@ -103,9 +104,10 @@ class Config:
             data = loaders[format](filename)
             ### Reading data into local environment to ensure syntax/naming 
             # consistency b/w Blackboard and filename
-            # TODO: Load the environment here
+            # TODO: Load the environment here and use the data variable
+            env[BlackBoardAttributes.Test_key] = data["Test_key"]
             return (env,True)
-        except KeyError:
+        except (KeyError, TypeError):
             return (env,False)
 
     def _load_json(self, filename : str) ->Dict:
@@ -120,6 +122,6 @@ class Config:
         """
         try:
             with open(filename) as f:
-                return json.load(filename)
+                return json.load(f)
         except:
             pass 
