@@ -5,7 +5,7 @@ Script responsible for running all tests
 from typing import List, Dict
 # Local imports 
 from Tests import TestSuite
-from Tests import define_config_test_suite
+from Tests import define_config_test_suite, define_network_test_suite
 
 #### Helper functions for using test suite.
 
@@ -43,17 +43,6 @@ def print_all_summary(test_suite: TestSuite) -> None:
         if test_suite.get_test_status(name):
             print_summary(test_suite, name)
 
-def run_single_test_from_suite(suite : TestSuite, name : str) -> None:
-    """
-    Run a single test from a test suite
-
-    Args:
-        suite (TestSuite)
-        name (str): Name of the test to run in the suite.
-    """
-    suite.run_single_test(name)
-    print_summary(suite,name)
-
 def run_single_test_suite(suites : Dict[str,TestSuite], name : str) -> None:
     """
     Run a single test suite from a dictionary of test suites 
@@ -65,8 +54,8 @@ def run_single_test_suite(suites : Dict[str,TestSuite], name : str) -> None:
     try:
         suites[name].run_all_tests()
         print_all_summary(suites[name])
-    except:
-        pass 
+    except (Exception ) as e:
+        print("Exception thrown in '{}' test suite:\n {}".format(name,e))
         
 def run_all_test_suites(suites : Dict[str,TestSuite]) -> None:
     """
@@ -82,8 +71,11 @@ def run_all_test_suites(suites : Dict[str,TestSuite]) -> None:
 if __name__ == "__main__":
     # Defining all test suites 
     suites = {
-        "config_test_suite" : define_config_test_suite()
+        "config_test_suite" : define_config_test_suite(),
+        "network_test_suite" : define_network_test_suite()
+        
     }
+    run_single_test_suite(suites,"network_test_suite")
     # Executing all test suites 
-    run_all_test_suites(suites)
+   # run_all_test_suites(suites)
     
