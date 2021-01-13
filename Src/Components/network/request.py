@@ -8,10 +8,20 @@ from copy import deepcopy
 class Request:
     """
     Wrapper that allows HTTP requests to be made.
+
+    Params:
+        REQUEST_TYPES (Tuple[str]): Types of http requests that are accepted.
     """
     REQUEST_TYPES = ("GET","OPTIONS","HEAD","POST","PUT","PATCH","DELETE")
 
-    def __init__(self) -> None:
+    def __init__(self, timeout : int = 60, allow_redirects : bool = True,
+            verify : bool = True ) -> None:
+        """
+        Args:
+            timeout (int): Time after which request times out. 60 seconds default.
+            allow_redirects (bool): True to be redirected by server. False otherwise.
+            verify (bool): True to verify server contact. False otherwise.
+        """
         # Function mappings for requests 
         self.methods = {
             "GET" : self._get,
@@ -23,9 +33,9 @@ class Request:
             "DELETE" : self._delete}
         # Parameters to configure a request.
         self.request_params = {
-            "timeout" : 60,
-            "allow_redirects" : True,
-            "verify" : True}
+            "timeout" : timeout,
+            "allow_redirects" : allow_redirects,
+            "verify" : verify}
         # Tuple defining the keys required to be in data dictionary for a request.
         self.data_keys = ("params", "data", "json", "auth", "headers")
         # Defines the keys that will be in a response from a Request object
