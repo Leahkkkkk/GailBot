@@ -4,7 +4,7 @@ from queue import Queue
 # Local imports 
 from .WS_interface import WSInterface 
 from .request import Request
-from .WS_protocol import WebsocketProtocolModel
+from .WS_models import WebsocketProtocolModel
 
 # Third party imports
 

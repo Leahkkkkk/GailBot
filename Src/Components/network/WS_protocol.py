@@ -1,41 +1,11 @@
 # Standard library imports 
-from Src.Components.network.WS_factory import WSInterfaceFactory
 from typing import Any, Dict, Tuple
 from queue import Queue, Empty
 # Local imports 
-
+from .WS_models import WebsocketProtocolModel,WSProtocolAttributes
 # Third party imports
-from enum import Enum
 from typing import Callable
 from autobahn.twisted.websocket import WebSocketClientProtocol
-
-
-class WSProtocolAttributes(Enum):
-    send_close_callback = "send_close_callback"
-    send_message_callback = "send_message_callback"
-    callback_return_data = "return_data"
-    data_parameter = "data_parameter"
-
-class WebsocketProtocolModel:
-    def __init__(self):
-        self.items = {
-            "send_close_callback" : None,
-            "send_message_callback" : None,
-            "return_data" : None, 
-            "data_parameter" : None
-        }
-    
-    def get(self, attr : str) -> Any:
-        return self.items[attr]
-
-    def set(self, attr : str, data : Any) -> bool:
-        if attr in self.items:
-            self.items[attr] = data  
-            return True 
-        return False  
-
-    def count(self) -> int:
-        return len(self.items.keys())
 
 
 class WSInterfaceProtocol(WebSocketClientProtocol):
@@ -46,10 +16,25 @@ class WSInterfaceProtocol(WebSocketClientProtocol):
     Inherits:
         (WebSockerClientProtocol)
     """
-
+    # Codes that can be sent with a send_close function call.
     CLOSE_CODES = ("1000", "1001","1002","1003","1007","1008","1009","1010")
 
     def __init__(self):
+        """
+        Params:
+            factory (WSInterfaceFactory): Factory that this protocol is being 
+                                        used by.
+            data_queue (Queue): Queue containing data associated with each task.
+            task_data (Any): The data associated with this particular task.
+            callbacks (Dict): Mapping of str to callbacks for the protocol.
+                        Must contain the keys:
+                            1. on_connect
+                            2. on_connecting
+                            3. on_open
+                            4. on_message
+                            5. on_close
+        """
+        super().__init__()
         # Params 
         self.factory = None
         self.data_queue = None 
@@ -64,7 +49,22 @@ class WSInterfaceProtocol(WebSocketClientProtocol):
     ########################### PUBLIC METHODS ################################
 
     def set_callback(self, callback_type : str, 
-            callback : Callable[[WebsocketProtocolModel]]) -> bool:
+            callback : Callable[[WebsocketProtocolModel], None]) -> bool:
+        """
+        Set a callback required by this protocol.
+
+        Args:
+            callback_type (str): Name of the callback. Must be one of:
+                            1. on_connect
+                            2. on_connecting
+                            3. on_open
+                            4. on_message
+                            5. on_close
+            callback (Callable[[WebsocketProtocolModel], None])
+
+        Returns:
+            (bool): True if set successfully. False otherwise.
+        """
         # Must be a type of callback
         if not callback_type in self.callbacks.keys():
             return False 
@@ -72,37 +72,111 @@ class WSInterfaceProtocol(WebSocketClientProtocol):
         return True 
 
     def set_data_queue(self, data_queue : Queue) -> bool:
+        """
+        Set the data queue associated with the task for this protocol.
+        This is mainly used to mark the task as completed.
+
+        Args:
+            data_queue (Queue): Queue this task is a part of.
+        
+        Returns:   
+             (bool): True if set successfully. False otherwise.
+        """
         self.data_queue = data_queue  
+        return True 
 
     def set_task_data(self, task_data : Any) -> bool:
-        self.task_data = task_data
+        """
+        Set the task associated with this task.
 
-    def set_factory_reference(self, factory : WSInterfaceFactory) -> bool:
+        Args:
+            task_data (Any): Data associated with this task.
+
+        Returns:   
+             (bool): True if set successfully. False otherwise.
+        """
+        self.task_data = task_data
+        return True 
+
+    def set_factory_reference(self, factory : Any) -> bool:
+        """
+        Set a reference to the factory that this protocol is being used by.
+
+        Args:
+            factory (Any): Pointer to factory this protocol is being used by.
+        
+        Returns:   
+             (bool): True if set successfully. False otherwise.
+        """
         self.factory = factory 
-    
+        return True
 
     ########################### PRIVATE METHODS ################################
 
     #### Callbacks 
     def onConnect(self, response : Any) -> None:
-        self._execute_callback(self.callbacks["on_connect"],
-            self._create_protocol_model({"response" : response}))
+        """
+        Called when first connected to the server.
 
+        Args:
+            response (Any): Response returned by the server.
+        """
+        success, _ = self._execute_callback(self.callbacks["on_connect"],
+            self._create_protocol_model({"response" : response}))
+        # Close the connection if unsuccessful.
+        if not success:
+            self._send_close("1000")
 
     def onConnecting(self, response : Any) -> None:
-        self._execute_callback(self.callbacks["on_connecting"],
+        """
+        Called when first connecting to the server.
+
+        Args:
+            response (Any): Response returned by the server.
+        """
+        success, _ = self._execute_callback(self.callbacks["on_connecting"],
             self._create_protocol_model({"response" : response}))
+        # Close the connection if unsuccessful.
+        if not success:
+            self._send_close("1000")
 
     def onOpen(self) -> None:
-        self._execute_callback(self.callbacks["on_open"],
+        """
+        Called when the connection is first opened with the server.
+        """
+        success, _ = self._execute_callback(self.callbacks["on_open"],
             self._create_protocol_model({}))
+        # Close the connection if unsuccessful.
+        if not success:
+            self._send_close("1000")
 
     def onMessage(self,  payload : Any ,is_binary : bool) -> None:
-        self._execute_callback(self.callbacks["on_message"],
+        """
+        Called when a message is received by the server.
+
+        Args:
+            payload (Any): Data returned by the server.
+            is_binary (bool) : True if the data returned is in binary form.
+                                False otherwise.
+        """
+        success, _ = self._execute_callback(self.callbacks["on_message"],
             self._create_protocol_model({
                 "payload" : payload, "is_binary" : is_binary}))
+        # Close the connection if unsuccessful.
+        if not success:
+            self._send_close("1000")
 
-    def onClose(self, was_clean : bool, code : int, reason : Any) -> None:
+    def onClose(self, was_clean : bool, code : int, reason : str) -> None:
+        """
+        Called when the connection with the server is closed.
+        Marks the task as completed.
+
+        Args:
+            was_clean (bool): True if the connection was cleanly closed. 
+                            False otherwise.
+            code (int): Closing code returned by the server.
+            reason (str): Reason the server was closes
+        """
         self._execute_callback( self.callbacks["on_close"],
             self._create_protocol_model({
                 "was_clean" : was_clean, "code" : code, "reason" : reason}))
@@ -116,12 +190,35 @@ class WSInterfaceProtocol(WebSocketClientProtocol):
 
     #### Protocol Model methods 
     def _send_close(self, code : str) -> bool:
+        """
+        Method provided with callbacks as part of WebsocketProtocolModel.
+        Allows the connection with the server to close with the given code.
+
+        Args:
+            code (str): Code with which the connection with the server is closed.
+                    Available codes are: 
+                    ("1000", "1001","1002","1003","1007","1008","1009","1010")
+
+        Returns:
+            (bool): True if successfully sent. False otherwise.
+        """
         if code not in self.CLOSE_CODES:
             return False 
         self.sendClose(int(code))
         return True 
 
     def _send_message(self, payload : Any, is_binary : bool) -> bool:
+        """
+        Method provided with callbacks as part of WebsocketProtocolModel.
+        Allows a message to be sent to the server.
+
+        Args:
+            payload (Any): Data being sent as part of the message.
+            is_binary (bool): True if the data is in binary form. False otherwise.
+        
+        Returns:
+            (bool): True if successfully sent. False otherwise.
+        """
         # Encode the payload appropriately
         try:
             if type(payload) == str:
@@ -135,6 +232,17 @@ class WSInterfaceProtocol(WebSocketClientProtocol):
 
     def _execute_callback(self, callback : Callable, data : Dict)\
              -> Tuple[bool,Any]:
+        """
+        Executes the given callback safely.
+
+        Args:
+            callback (Callable): Method to execute.
+            data (Dict): Data to be passed as part of the method.
+
+        Returns:
+            (Tuple[bool,Any]): True + data returned by callback. if successful. 
+                                False + None if unsuccessful.
+        """
         try:
             return (True,callback(data))
         except:
@@ -142,6 +250,16 @@ class WSInterfaceProtocol(WebSocketClientProtocol):
    
     def _create_protocol_model(self, callback_data : Dict) \
             -> WebsocketProtocolModel:
+        """
+        Uses the data returned by the callback to create an instance of 
+        WebsocketProtocolModel
+
+        Args:
+            callback_data (Dict): Data returned by a callback.
+        
+        Returns:
+            (WebsocketProtocolModel)
+        """
         protocol_model = WebsocketProtocolModel()
         protocol_model.set(
             WSProtocolAttributes.send_close_callback,self._send_close)

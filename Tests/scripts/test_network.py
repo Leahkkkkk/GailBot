@@ -2,8 +2,10 @@
 testing script for the network component
 """
 # Standard library imports 
+from queue import Queue
 # Local imports 
-from Src.Components.network import Request
+from Src.Components.network import Request, WSInterface, WSProtocolAttributes, \
+                                WebsocketProtocolModel
 from ..suites import TestSuite, TestSuiteAttributes
 
 ############################### GLOBALS #####################################
@@ -61,7 +63,157 @@ def request_send_request() -> bool:
         not request.send_request("GET",invalid_url, empty_data_dict)[0] and \
         not request.send_request("GET", get_url,{"invalid key" : None })[0] and \
         not request.send_request("GET",invalid_url,{"invalid key" : None })[0]
-        
+
+#### WebsocketProtocolModel test
+def websocket_protocol_model_set() -> bool:
+    """
+    Tests the WebsocketProtocolModel class's set function.
+
+    Tests:
+        1. Set an attribute that exists.
+        2. Set an attribute that does not exist.
+    
+    Returns:
+        (bool): True if all the tests pass. False otherwise.
+    """
+    model = WebsocketProtocolModel()
+    return model.set(WSProtocolAttributes.send_close_callback, {}) and \
+        model.set(WSProtocolAttributes.send_message_callback, {}) and \
+        model.set(WSProtocolAttributes.callback_return_data, {}) and \
+        model.set(WSProtocolAttributes.data_parameter, {}) and \
+        not model.set("Not real", {})
+
+def websocket_protocol_model_get() -> bool:
+    """
+    Tests the WebsocketProtocolModel get function.
+
+    Tests:
+        1. Tests that we can get a valid attribute data.
+        2. Test that we cannot get invalid attribute data.
+
+    Returns:
+        (bool): True if all the tests pass. False otherwise.
+    """
+    model = WebsocketProtocolModel()
+    return model.get(WSProtocolAttributes.send_close_callback)[0] and \
+        model.get(WSProtocolAttributes.send_message_callback)[0] and \
+        model.get(WSProtocolAttributes.callback_return_data)[0] and \
+        model.get(WSProtocolAttributes.data_parameter)[0] and \
+        not model.get("Not real")[0]
+
+
+#### WEBSOCKETS TEST
+
+def on_connect_callback(model : WebsocketProtocolModel) -> None:
+    # response =  model.get(WSProtocolAttributes.callback_return_data)[
+    #         "response"]
+    # print("OnConnect\nServer connected: {}".format(response.peer))
+    # print("Websocket Protocol : {}".format(response.protocol))
+    # print("Protocol Version : {}\n".format(response.version))
+    try:
+        response =  model.get(WSProtocolAttributes.callback_return_data)[
+            "response"]
+        print("OnConnect\nServer connected: {}".format(response.peer))
+        print("Websocket Protocol : {}".format(response.protocol))
+        print("Protocol Version : {}\n".format(response.version))
+    except: 
+        print("On connect failed")
+    
+
+def on_connecting_callback(model : WebsocketProtocolModel) -> None:
+    # response = model.get(WSProtocolAttributes.callback_return_data)["response"]
+    # print("On connecting")
+    # print(response) 
+    try:
+        response = model.get(WSProtocolAttributes.callback_return_data)["response"]
+        print("On connecting")
+        print(response) 
+    except:
+        print("On connecting failed")
+
+def on_open_callback(model : WebsocketProtocolModel) -> None:
+    # print("Opening API connection")
+    # task_data = model.get(WSProtocolAttributes.data_parameter)
+    # print("Task data: {}".format(task_data))
+    # msg = 'WebSocket rocks!'.encode('utf-8')
+    # model.get(WSProtocolAttributes.send_message_callback)(
+    #     payload = msg, is_binary = False )
+    try:
+        print("Opening API connection")
+        task_data = model.get(WSProtocolAttributes.data_parameter)
+        print("Task data: {}".format(task_data))
+        msg = 'WebSocket rocks!'.encode('utf-8')
+        model.get(WSProtocolAttributes.send_message_callback)(
+            payload = msg, is_binary = False )
+    except:
+        print("On open failed.")
+
+def on_message_callback(model : WebsocketProtocolModel) -> None:
+    # print("On message")
+    # data = model.get(WSProtocolAttributes.callback_return_data)
+    # payload = data["payload"].decode("utf-8")
+    # is_binary = data["is_binary"]
+    # print("Getting message: {}".format(payload))
+    # print("Is binary: {}".format(is_binary))
+    # model.get(WSProtocolAttributes.send_close_callback)("1000")
+    try:
+        print("On message")
+        data = model.get(WSProtocolAttributes.callback_return_data)
+        payload = data["payload"].decode("utf-8")
+        is_binary = data["is_binary"]
+        print("Getting message: {}".format(payload))
+        print("Is binary: {}".format(is_binary))
+        model.get(WSProtocolAttributes.send_close_callback)("1000")
+    except:
+        print("On message failed.")
+
+def on_close_callback(model : WebsocketProtocolModel) -> None:
+    # data = model.get(WSProtocolAttributes.callback_return_data)
+    # print("\nClosing API WebSocket connection")
+    # print('Websocket Connection closed:\n\tCode: {0}\n\tReason: {1}\n'
+    #     '\twasClean: {2}'.format(data["code"], data["reason"], 
+    #                             data["was_clean"]))
+    try:
+        data = model.get(WSProtocolAttributes.callback_return_data)
+        print("\nClosing API WebSocket connection")
+        print('Websocket Connection closed:\n\tCode: {0}\n\tReason: {1}\n'
+            '\twasClean: {2}'.format(data["code"], data["reason"], 
+                                    data["was_clean"]))
+    except:
+        print("On close failed")
+
+def websocket_interface() -> bool:
+    """
+    Tests the WSInterface class that uses the WSInterfaceProtocol and 
+    WSInterfaceFactory. 
+
+    Tests:
+        1. 
+
+    Returns:
+        (bool): True if all the tests pass. False otherwise.
+    """
+    thread_count = 1
+    ws_test_url =  "wss://echo.websocket.org"
+    ws_test_headers = {}
+    callbacks = {
+        "on_connect" : on_connect_callback,
+        "on_connecting" : on_connecting_callback,
+        "on_message" : on_message_callback,
+        "on_open" : on_open_callback,
+        "on_close" : on_close_callback}
+    test_queue = Queue()
+    test_queue.put(("Test string 1"))
+    test_queue.put(("Test string 2"))
+    # Create websocket interface interface instance 
+    ws_interface = WSInterface(ws_test_url, ws_test_headers)
+    ws_interface.set_num_threads(thread_count)
+    ws_interface.set_data_queue(test_queue)
+    ws_interface.set_callbacks(callbacks)
+    # Starting connection (Daemon not available right now)
+    return ws_interface.open_connection_until_complete(False)
+    
+
 ####################### TEST SUITE DEFINITION ################################
 
 def define_network_test_suite() -> TestSuite:
@@ -74,342 +226,11 @@ def define_network_test_suite() -> TestSuite:
     suite = TestSuite()
     # Request tests 
     suite.add_test("request_send_request", (), True, True, request_send_request)
+    suite.add_test("websocket_protocol_model_set", (), True, True, 
+        websocket_protocol_model_set)
+    suite.add_test("websocket_protocol_model_get", (), True, True, 
+        websocket_protocol_model_get)
+    suite.add_test("websocket_interface", (), True, True, websocket_interface)
     return suite
 
 
-
-class NetworkInterface:
-    """ Responsible for providing the main interface that allows different 
-        types of communication over a network """
-    
-    def __init__(self):
-        # Requests variables 
-        self.requests = RequestsInterface()
-        self.request_url = None 
-        self.request_json = None 
-        self.request_params = None 
-        self.request_data = None 
-        self.request_auth = None 
-        self.request_headers = None 
-        # Websocket variables 
-        self.websockets = None 
-        self.websockets_url = None 
-        self.websockets_queue = None 
-        self.websockets_headers = None 
-        self.websockets_callbacks = {
-            "on_connect" : None,
-            "on_connecting" : None,
-            "on_open" : None,
-            "on_message" : None,
-            "on_close" : None}
-    
-    ################################## SETTERS ##############################
-    
-    #### Request setters 
-    
-    def set_request_url(self, request_url : str) -> None:
-        """
-        Set the url for an http request that is to be made.
-
-        Args:
-            request_url (str): url for an http request
-
-        Returns:
-            None
-
-        """
-        self.request_url = request_url
-    
-    
-    def set_requests_url_params(self,params : Dict) -> None:
-        """
-        Set the parameters that will be sent with an http request url
-
-        Args:
-            params (Dict): Parameters to be sent with url
-
-        Returns:
-            None
-
-        """
-        self.request_params = params 
-    
-    
-    def set_request_data(self,data : Dict) -> None:
-        """
-        Set the data dictionary that will be sent with an http request
-
-        Args:
-            data (Dict): Data to be sent with http request
-
-        Returns:
-            None
-
-        """
-        self.request_data = data
-        
-    
-    def set_request_authentication(self, auth : Dict) -> None:
-        """
-        Set the authentication values that will be sent with an http request
-
-        Args:
-            auth (Dict): Authentication values to be sent with request
-
-        Returns:
-            None
-
-        """
-        self.request_auth = auth 
-    
-    
-    def set_request_headers(self, headers : Dict) -> None:
-        """
-        Set the headers that will be sent with an http request
-
-        Args:
-            headers (Dict): Headers to be sent with request
-
-        Returns:
-            None
-
-        """
-        self.request_headers = headers
-    
-    #### Websocket setters 
-     
-    def set_websocket_url(self, url: str) -> None:
-        """
-        Set the server url to be used to establish a WebSocket connection with
-
-        Args:
-            url (str): url for websocket connection
-
-        Returns:
-            None
-
-        """
-        self.websockets_url = url
-    
-    def set_websocket_data_queue(self, queue: Queue) -> None:
-        """
-        Set the data queue contiaining data items that are to be processed 
-        by the websocket server.
-        Items in this queue will be processed by sending them to callbacks
-        on websocket events.
-
-        Args:
-            queue (Queue): Queue containing data items that will be sent to 
-                            callbacks on an event.
-
-        Returns:
-            None
-
-        """
-        self.websockets_queue = queue
-        
-        
-    def set_websocket_headers(self, headers: Dict) -> None:
-        """
-        Headers that will be sent to server when trying to open an initial
-        websocket connection
-
-        Args:
-            headers (Dict): Headers to be sent to websocket server
-
-        Returns:
-            None
-        """
-        self.websockets_headers = headers
-    
-    def set_websocket_on_connect_callback(
-            self, func: Callable[[WebsocketProtocolModel], None]) -> None:
-        """
-        Set callback that will be called when websocket connection opens
-
-        Args:
-            func (Callable[[WebsocketProtocolModel],None]):
-
-        Returns:
-            None
-
-        """
-        self.websockets_callbacks["on_connect"] = func 
-    
-    
-    def set_websocket_on_connecting_callback(
-            self, func: Callable[[WebsocketProtocolModel], None]) -> None:
-        """
-        Set callback that will be called when the websocket is connecting
-
-        Args:
-            func (Callable[[WebsocketProtocolModel],None]):
-
-        Returns:
-            None
-        """
-        self.websockets_callbacks["on_connecting"] = func 
-    
-    def set_websocket_on_open_callback(
-            self, func: Callable[[WebsocketProtocolModel], None]) -> None:
-        """
-        Set callback that will be called when the websocket is opened
-
-        Args:
-            func (Callable[[WebsocketProtocolModel],None]):
-
-        Returns:
-            None
-        """
-        self.websockets_callbacks["on_open"] = func
-    
-    def set_websocket_on_message_callback(
-            self, func: Callable[[WebsocketProtocolModel], None]) -> None:
-        """
-        Set callback that will be called when a message is received from the 
-        websocket server.
-
-        Args:
-            func (Callable[[WebsocketProtocolModel],None]):
-
-        Returns:
-            None
-        """
-        self.websockets_callbacks["on_message"] = func
-    
-    def set_websocket_on_close_callback(
-            self, func: Callable[[WebsocketProtocolModel], None]) -> None:
-        """
-        Set callback that is called when the websocket connection is closed.
-
-        Args:
-            func (Callable[[WebsocketProtocolModel],None]):
-
-        Returns:
-            None
-        """
-        self.websockets_callbacks["on_close"] = func
-    
-    ############################## PUBLIC METHODS ###########################
-    
-    #### HTTP requests 
-    def get_request(self) -> RequestModel:
-        """
-        Send GET HTTP request
-
-        Args:
-
-        Returns:
-            RequestModel
-        """
-        return self._send_http_request("GET") 
-    
-    def options_request(self) -> RequestModel:
-        """
-        Send OPTIONS HTTP request
-
-        Args:
-
-        Returns:
-            RequestModel
-        """
-        return self._send_http_request("OPTIONS")
-    
-    def head_request(self) -> RequestModel:
-        """
-        Send HEAD HTTP request
-
-        Args:
-
-        Returns:
-            RequestModel
-        """
-        return self._send_http_request("HEAD")
-    
-    def post_request(self) -> RequestModel:
-        """
-        Send POST HTTP request
-
-        Args:
-
-        Returns:
-            RequestModel
-        """
-        return self._send_http_request("POST")
-    
-    def put_request(self) -> RequestModel:
-        """
-        Send PUT HTTP request
-
-        Args:
-
-        Returns:
-            RequestModel
-        """
-        return self._send_http_request("PUT")
-    
-    def patch_request(self) -> RequestModel:
-        """
-        Send PATCH HTTP request
-
-        Args:
-
-        Returns:
-            RequestModel
-        """
-        return self._send_http_request("PATCH")
-    
-    def delete_request(self) -> RequestModel:
-        """
-        Send DELETE HTTP request
-
-        Args:
-        
-        Returns:
-            RequestModel
-        """
-        return self._send_http_request("DELETE")
-    
-    #### Websockets 
-    def websocket_connect(self) -> None:
-        """
-        Open a websocket connection and process all items in the data queue
-
-        Args:
-
-        Returns:
-            None
-        """
-        self.websockets = WebSocketInterface(
-            self.websockets_url,self.websockets_headers) 
-        self.websockets.set_data_queue(self.websockets_queue)
-        self.websockets.set_thread_count(self.websockets_queue.qsize())
-        self.websockets.set_on_connect_callback(
-            self.websockets_callbacks["on_connect"])
-        self.websockets.set_on_connecting_callback(
-            self.websockets_callbacks["on_connecting"])
-        self.websockets.set_on_open_callback(
-            self.websockets_callbacks["on_open"])
-        self.websockets.set_on_message_callback(
-            self.websockets_callbacks["on_message"])
-        self.websockets.set_on_close_callback(
-            self.websockets_callbacks["on_close"])
-        self.websockets.open_connection_until_complete()
-    
-    ############################## PRIVATE METHODS ##########################
-    def _send_http_request(self, request_type : str) -> RequestModel:
-        """
-        Wrapper for sending an HTTP request 
-        
-        Args:
-            request_type (str): Type of HTTP request
-            
-        Returns:
-            None
-        """
-        return self.requests.send_request(
-            request_type, self.request_url, self.request_params, 
-            self.request_data, self.request_json, self.request_auth, 
-            self.request_headers)
-    
-    

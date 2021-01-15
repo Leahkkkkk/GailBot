@@ -51,11 +51,13 @@ def run_single_test_suite(suites : Dict[str,TestSuite], name : str) -> None:
         suites (Dict[str,TestSuite]): Mapping of suite name to TestSuite object 
         name (str): Name of the test suite.
     """
-    try:
-        suites[name].run_all_tests()
-        print_all_summary(suites[name])
-    except (Exception ) as e:
-        print("Exception thrown in '{}' test suite:\n {}".format(name,e))
+    suites[name].run_all_tests()
+    print_all_summary(suites[name])
+    # try:
+    #     suites[name].run_all_tests()
+    #     print_all_summary(suites[name])
+    # except (Exception ) as e:
+    #     print("Exception thrown in '{}' test suite:\n {}".format(name,e))
         
 def run_all_test_suites(suites : Dict[str,TestSuite]) -> None:
     """
