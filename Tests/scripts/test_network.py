@@ -12,7 +12,7 @@ from ..suites import TestSuite, TestSuiteAttributes
 
 ########################## TEST DEFINITIONS ##################################
 
-#### REQUESTS TESTS
+############################ REQUESTS TESTS
 
 def request_send_request() -> bool:
     """
@@ -64,7 +64,7 @@ def request_send_request() -> bool:
         not request.send_request("GET", get_url,{"invalid key" : None })[0] and \
         not request.send_request("GET",invalid_url,{"invalid key" : None })[0]
 
-#### WebsocketProtocolModel test
+####################### WebsocketProtocolModel test
 def websocket_protocol_model_set() -> bool:
     """
     Tests the WebsocketProtocolModel class's set function.
@@ -80,7 +80,7 @@ def websocket_protocol_model_set() -> bool:
     return model.set(WSProtocolAttributes.send_close_callback, {}) and \
         model.set(WSProtocolAttributes.send_message_callback, {}) and \
         model.set(WSProtocolAttributes.callback_return_data, {}) and \
-        model.set(WSProtocolAttributes.data_parameter, {}) and \
+        model.set(WSProtocolAttributes.callback_data_parameter, {}) and \
         not model.set("Not real", {})
 
 def websocket_protocol_model_get() -> bool:
@@ -98,101 +98,136 @@ def websocket_protocol_model_get() -> bool:
     return model.get(WSProtocolAttributes.send_close_callback)[0] and \
         model.get(WSProtocolAttributes.send_message_callback)[0] and \
         model.get(WSProtocolAttributes.callback_return_data)[0] and \
-        model.get(WSProtocolAttributes.data_parameter)[0] and \
+        model.get(WSProtocolAttributes.callback_data_parameter)[0] and \
         not model.get("Not real")[0]
 
+############################# WSInterface Tests
 
-#### WEBSOCKETS TEST
+
+#### WSInterface callback definitions
 
 def on_connect_callback(model : WebsocketProtocolModel) -> None:
-    # response =  model.get(WSProtocolAttributes.callback_return_data)[
-    #         "response"]
-    # print("OnConnect\nServer connected: {}".format(response.peer))
-    # print("Websocket Protocol : {}".format(response.protocol))
-    # print("Protocol Version : {}\n".format(response.version))
     try:
-        response =  model.get(WSProtocolAttributes.callback_return_data)[
-            "response"]
+        print("On connect...")
+        status, return_data =  model.get(
+            WSProtocolAttributes.callback_return_data)
+        response = return_data["response"]
         print("OnConnect\nServer connected: {}".format(response.peer))
+        print("OnConnect status: {}".format(status))
         print("Websocket Protocol : {}".format(response.protocol))
         print("Protocol Version : {}\n".format(response.version))
     except: 
-        print("On connect failed")
+        print("On connect failed...")
     
 
 def on_connecting_callback(model : WebsocketProtocolModel) -> None:
-    # response = model.get(WSProtocolAttributes.callback_return_data)["response"]
-    # print("On connecting")
-    # print(response) 
     try:
-        response = model.get(WSProtocolAttributes.callback_return_data)["response"]
-        print("On connecting")
-        print(response) 
+        print("On connecting...")
+        status, return_data  = model.get(WSProtocolAttributes.callback_return_data)
+        print("On connecting status: {}".format(status)) 
+
     except:
         print("On connecting failed")
 
 def on_open_callback(model : WebsocketProtocolModel) -> None:
-    # print("Opening API connection")
-    # task_data = model.get(WSProtocolAttributes.data_parameter)
-    # print("Task data: {}".format(task_data))
-    # msg = 'WebSocket rocks!'.encode('utf-8')
-    # model.get(WSProtocolAttributes.send_message_callback)(
-    #     payload = msg, is_binary = False )
+
     try:
         print("Opening API connection")
-        task_data = model.get(WSProtocolAttributes.data_parameter)
+        status, return_data  = model.get(WSProtocolAttributes.callback_return_data)
+        task_data = model.get(WSProtocolAttributes.callback_data_parameter)
+        print("On open status: {}".format(status))
         print("Task data: {}".format(task_data))
         msg = 'WebSocket rocks!'.encode('utf-8')
-        model.get(WSProtocolAttributes.send_message_callback)(
-            payload = msg, is_binary = False )
+        model.get(WSProtocolAttributes.send_message_callback)[1](
+            payload = msg, is_binary = True )
     except:
         print("On open failed.")
 
 def on_message_callback(model : WebsocketProtocolModel) -> None:
-    # print("On message")
-    # data = model.get(WSProtocolAttributes.callback_return_data)
-    # payload = data["payload"].decode("utf-8")
-    # is_binary = data["is_binary"]
-    # print("Getting message: {}".format(payload))
-    # print("Is binary: {}".format(is_binary))
-    # model.get(WSProtocolAttributes.send_close_callback)("1000")
     try:
         print("On message")
-        data = model.get(WSProtocolAttributes.callback_return_data)
-        payload = data["payload"].decode("utf-8")
-        is_binary = data["is_binary"]
+        status, return_data  = model.get(WSProtocolAttributes.callback_return_data)
+        payload = return_data["payload"].decode("utf-8")
+        is_binary = return_data["is_binary"]
         print("Getting message: {}".format(payload))
         print("Is binary: {}".format(is_binary))
-        model.get(WSProtocolAttributes.send_close_callback)("1000")
+        model.get(WSProtocolAttributes.send_close_callback)[1]("1000")
     except:
         print("On message failed.")
 
 def on_close_callback(model : WebsocketProtocolModel) -> None:
-    # data = model.get(WSProtocolAttributes.callback_return_data)
-    # print("\nClosing API WebSocket connection")
-    # print('Websocket Connection closed:\n\tCode: {0}\n\tReason: {1}\n'
-    #     '\twasClean: {2}'.format(data["code"], data["reason"], 
-    #                             data["was_clean"]))
     try:
-        data = model.get(WSProtocolAttributes.callback_return_data)
+        status, return_data = model.get(WSProtocolAttributes.callback_return_data)
         print("\nClosing API WebSocket connection")
         print('Websocket Connection closed:\n\tCode: {0}\n\tReason: {1}\n'
-            '\twasClean: {2}'.format(data["code"], data["reason"], 
-                                    data["was_clean"]))
+            '\twasClean: {2}'.format(return_data["code"], return_data["reason"], 
+                                    return_data["was_clean"]))
     except:
         print("On close failed")
 
-def websocket_interface() -> bool:
+#### WSInterface test definitions.
+
+def WSInterface_set() -> bool:
     """
-    Tests the WSInterface class that uses the WSInterfaceProtocol and 
-    WSInterfaceFactory. 
+    Tests all setters for WSInterface.
 
     Tests:
-        1. 
+        1. Provide valid values for all setters.
+        2. Provide invalid values for all setters. 
 
     Returns:
         (bool): True if all the tests pass. False otherwise.
     """
+    ws_test_url =  "wss://echo.websocket.org"
+    ws_test_headers = {}
+    data_queue = Queue()
+    data_queue.put(("Test"))
+    callbacks = {
+        "on_connect" : on_connect_callback,
+        "on_connecting" : on_connecting_callback,
+        "on_message" : on_message_callback,
+        "on_open" : on_open_callback,
+        "on_close" : on_close_callback}
+    ws_interface = WSInterface(ws_test_url, ws_test_headers)
+    return ws_interface.set_num_threads(5) and \
+            ws_interface.set_callbacks(callbacks) and \
+            ws_interface.set_data_queue(data_queue) and \
+            not ws_interface.set_num_threads(2000) and \
+            not ws_interface.set_callbacks({})
+
+def WSInterface_get() -> bool:
+    """
+    Tests all getters in WSInterface.
+
+    Tests:
+        1. Ensure that get_configurations returns a valid dictionary.
+        2. Ensure that the expected keys are returned only.
+    
+    Returns:
+        (bool): True if all the tests pass. False otherwise.
+    """
+    expected_keys = [
+        "factory_threads" ,
+        "max_allowed_threads",
+        "factory_configurations" ]
+    ws_test_url =  "wss://echo.websocket.org"
+    ws_test_headers = {} 
+    ws_interface = WSInterface(ws_test_url, ws_test_headers)
+    configs = ws_interface.get_configurations()
+    return type(configs) == dict and \
+        len(configs.keys()) == len(expected_keys) and \
+        all([ k for k in configs.keys() if k in expected_keys ])
+    
+# TODO: Add a test with daemon once the daemon option has been implemented.
+def WSInterface_open_connection() -> bool:
+    """
+    Tests the open_connection_until_complete WSInterface class that uses 
+    the WSInterfaceProtocol and WSInterfaceFactory. 
+
+    Tests:
+        1. Set up a valid connection with callbacks that handle exceptions.
+    """
+    # Test 1.
     thread_count = 1
     ws_test_url =  "wss://echo.websocket.org"
     ws_test_headers = {}
@@ -203,15 +238,17 @@ def websocket_interface() -> bool:
         "on_open" : on_open_callback,
         "on_close" : on_close_callback}
     test_queue = Queue()
-    test_queue.put(("Test string 1"))
-    test_queue.put(("Test string 2"))
+    data_list = [("Test string 1") ]
+    for data in data_list:
+        test_queue.put(data)
     # Create websocket interface interface instance 
     ws_interface = WSInterface(ws_test_url, ws_test_headers)
     ws_interface.set_num_threads(thread_count)
     ws_interface.set_data_queue(test_queue)
     ws_interface.set_callbacks(callbacks)
-    # Starting connection (Daemon not available right now)
+    # Starting connection
     return ws_interface.open_connection_until_complete(False)
+
     
 
 ####################### TEST SUITE DEFINITION ################################
@@ -225,12 +262,17 @@ def define_network_test_suite() -> TestSuite:
     """
     suite = TestSuite()
     # Request tests 
-    suite.add_test("request_send_request", (), True, True, request_send_request)
-    suite.add_test("websocket_protocol_model_set", (), True, True, 
-        websocket_protocol_model_set)
-    suite.add_test("websocket_protocol_model_get", (), True, True, 
-        websocket_protocol_model_get)
-    suite.add_test("websocket_interface", (), True, True, websocket_interface)
+    # suite.add_test("request_send_request", (), True, True, request_send_request)
+    # # WebsocketProtocolModel tests 
+    # suite.add_test("websocket_protocol_model_set", (), True, True, 
+    #     websocket_protocol_model_set)
+    # suite.add_test("websocket_protocol_model_get", (), True, True, 
+    #     websocket_protocol_model_get)
+    # WSInterface tests
+    # suite.add_test("WSInterface_set",(),True,True,WSInterface_set)
+    # suite.add_test("WSInterface_get", (), True, True, WSInterface_get)
+    suite.add_test("WSInterface_open_connection",
+                        (), True, True, WSInterface_open_connection)
     return suite
 
 

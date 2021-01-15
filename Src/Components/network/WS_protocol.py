@@ -1,6 +1,9 @@
 # Standard library imports 
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, Tuple, Union
 from queue import Queue, Empty
+
+from autobahn import websocket
+
 # Local imports 
 from .WS_models import WebsocketProtocolModel,WSProtocolAttributes
 # Third party imports
@@ -114,12 +117,15 @@ class WSInterfaceProtocol(WebSocketClientProtocol):
     ########################### PRIVATE METHODS ################################
 
     #### Callbacks 
-    def onConnect(self, response : Any) -> None:
+    def onConnect(self, response : Union[websocket.ConnectionRequest,
+                                        websocket.ConnectionResponse]) -> None:
         """
         Called when first connected to the server.
+        Sends close if the callback throws an uncaught exception.
 
         Args:
-            response (Any): Response returned by the server.
+            response (Union[websocket.ConnectionRequest, websocket.ConnectionResponse]): 
+                    Response returned by the server.
         """
         success, _ = self._execute_callback(self.callbacks["on_connect"],
             self._create_protocol_model({"response" : response}))
@@ -127,9 +133,10 @@ class WSInterfaceProtocol(WebSocketClientProtocol):
         if not success:
             self._send_close("1000")
 
-    def onConnecting(self, response : Any) -> None:
+    def onConnecting(self, response : websocket.types.TransportDetails) -> None:
         """
         Called when first connecting to the server.
+        Sends close if the callback throws an uncaught exception.
 
         Args:
             response (Any): Response returned by the server.
@@ -150,12 +157,13 @@ class WSInterfaceProtocol(WebSocketClientProtocol):
         if not success:
             self._send_close("1000")
 
-    def onMessage(self,  payload : Any ,is_binary : bool) -> None:
+    def onMessage(self,  payload : bytes ,is_binary : bool) -> None:
         """
         Called when a message is received by the server.
+        Sends close if the callback throws an uncaught exception.
 
         Args:
-            payload (Any): Data returned by the server.
+            payload (bytes): Data returned by the server.
             is_binary (bool) : True if the data returned is in binary form.
                                 False otherwise.
         """
@@ -189,7 +197,7 @@ class WSInterfaceProtocol(WebSocketClientProtocol):
     #### Wrappers for sending messages 
 
     #### Protocol Model methods 
-    def _send_close(self, code : str) -> bool:
+    def _send_close(self, code : str, reason : str = None) -> bool:
         """
         Method provided with callbacks as part of WebsocketProtocolModel.
         Allows the connection with the server to close with the given code.
@@ -198,22 +206,23 @@ class WSInterfaceProtocol(WebSocketClientProtocol):
             code (str): Code with which the connection with the server is closed.
                     Available codes are: 
                     ("1000", "1001","1002","1003","1007","1008","1009","1010")
+            reason (str): Reason for sending close.
 
         Returns:
             (bool): True if successfully sent. False otherwise.
         """
         if code not in self.CLOSE_CODES:
             return False 
-        self.sendClose(int(code))
+        self.sendClose(int(code), reason)
         return True 
 
-    def _send_message(self, payload : Any, is_binary : bool) -> bool:
+    def _send_message(self, payload : bytes, is_binary : bool) -> bool:
         """
         Method provided with callbacks as part of WebsocketProtocolModel.
         Allows a message to be sent to the server.
 
         Args:
-            payload (Any): Data being sent as part of the message.
+            payload (bytes): Data being sent as part of the message.
             is_binary (bool): True if the data is in binary form. False otherwise.
         
         Returns:
@@ -224,6 +233,45 @@ class WSInterfaceProtocol(WebSocketClientProtocol):
             if type(payload) == str:
                 payload = payload.encode("utf-8")
             self.sendMessage(payload) 
+            return True
+        except:
+            return False 
+
+    def _send_ping(self, payload : bytes) -> bool:
+        """
+        Method provided with callbacks as part of WebsocketProtocolModel.
+        Send a websocket ping to the peer.
+
+        Args:
+            payload (bytes): Data to be sent with the ping.
+        
+        Returns:
+            (bool): True if successfully sent. False otherwise.
+        """
+        try:
+            if type(payload) == str:
+                payload = payload.encode("utf-8")
+            self.sendPing(payload)
+            return True
+        except:
+            return False 
+            
+
+    def _send_pong(self, payload :  bytes) -> bool:
+        """
+        Method provided with callbacks as part of WebsocketProtocolModel.
+        Send a websocket pong to the peer.
+
+        Args:
+            payload (bytes): Data to be sent with the pong.
+        
+        Returns:
+            (bool): True if successfully sent. False otherwise.
+        """
+        try:
+            if type(payload) == str:
+                payload = payload.encode("utf-8")
+            self.sendPong(payload)
             return True
         except:
             return False 
@@ -266,8 +314,12 @@ class WSInterfaceProtocol(WebSocketClientProtocol):
         protocol_model.set(
             WSProtocolAttributes.send_message_callback,self._send_message)
         protocol_model.set(
+            WSProtocolAttributes.send_ping_callback, self._send_ping)
+        protocol_model.set(
+            WSProtocolAttributes.send_pong_callback,self._send_pong)
+        protocol_model.set(
             WSProtocolAttributes.callback_return_data, callback_data)
         protocol_model.set(
-            WSProtocolAttributes.data_parameter, self.task_data)
+            WSProtocolAttributes.callback_data_parameter, self.task_data)
         return protocol_model
 

@@ -6,11 +6,21 @@ from enum import Enum
 class WSProtocolAttributes(Enum):
     """
     Defines the attributes of the WebsockerProtocolModel
+
+    Params:
+        send_close_callback (Callable[[str,str],None])
+        send_message_callback (Callable[[bytes,bool], None])
+        send_ping_callback (Callable[[bytes],None])
+        send_pong_callback (Callable[[bytes],None])
+        callback_data_paramer (Any)
+        callback_return_data (Tuple[bool,Dict])
     """
-    send_close_callback = "send_close_callback"
+    send_close_callback = "send_close_callback" 
     send_message_callback = "send_message_callback"
+    send_ping_callback = "send_ping_callback"
+    send_pong_callback = "send_pong_callback"
+    callback_data_parameter = "data_parameter"
     callback_return_data = "return_data"
-    data_parameter = "data_parameter"
 
 class WebsocketProtocolModel:
     """
@@ -26,8 +36,10 @@ class WebsocketProtocolModel:
         self.items = {
             WSProtocolAttributes.send_close_callback : None,
             WSProtocolAttributes.send_message_callback : None,
+            WSProtocolAttributes.send_ping_callback : None, 
+            WSProtocolAttributes.send_pong_callback : None,
             WSProtocolAttributes.callback_return_data : None, 
-            WSProtocolAttributes.data_parameter : None
+            WSProtocolAttributes.callback_data_parameter : None
         }
     
     def get(self, attr : str) -> Tuple[bool,Any]:
@@ -65,7 +77,4 @@ class WebsocketProtocolModel:
 
     def count(self) -> int:
         return len(self.items.keys())
-
-
-
 

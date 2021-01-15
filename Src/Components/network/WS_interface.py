@@ -71,6 +71,9 @@ class WSInterface:
         Returns:
             (bool): True if set successfully. False otherwise.
         """
+        # Ensure that dictionary is non-empty
+        if len(callbacks) == 0:
+            return False 
         for callback_type, callback in callbacks.items():
             is_set = self.factory.set_protocol_callback(callback_type, callback)
             if not is_set:
@@ -89,6 +92,24 @@ class WSInterface:
             (bool): True if set successfully. False otherwise.
         """
         return self.factory.set_data_queue(data_queue)
+    
+
+    ############################ GETTERS ######################################
+
+    def get_configurations(self) -> Dict:
+        """
+        Returns configurations associated with the WSInterface instance. 
+        Contains useful information regarding the callbacks, Websocket factory, 
+        and Websocket protocol being used.
+
+        Returns:
+            (Dict): WSInterface instance configurations.
+        """
+        return {
+            "factory_threads" : self.factory_num_threads,
+            "max_allowed_threads" : self.max_factory_threads,
+            "factory_configurations" : self.factory.get_factory_configurations()
+        } 
 
     ########################### PUBLIC METHODS ################################
 

@@ -11,7 +11,7 @@ import validators
 
 class WSInterfaceFactory(WebSocketClientFactory):
     """
-    Factory responsible for spawning instances of a websocket client protocol
+    Factory responsible for spawning instancedata_parameters of a websocket client protocol
     to connect to the specified url using a Websocket connection, and processing 
     all items in the data queue through the connection.
 
@@ -176,8 +176,8 @@ class WSInterfaceFactory(WebSocketClientFactory):
     
     ######################### PRIVATE METHODS ###############################
     
-    # TODO: Research and fix input and return types.
-    def buildProtocol(self, addr) -> Any:
+
+    def buildProtocol(self, addr : Any) -> Any:
         try: 
             data = self.data_queue.get_nowait()
             protocol = self.protocol()
@@ -213,6 +213,7 @@ class WSInterfaceFactory(WebSocketClientFactory):
             (bool): True if the url is in the correct format. False otherwise.
         """
         # TODO: Validation function is not working for certain urls (wss:)
+        # Need to change this later. Validators does not check for wss url's.
         #return validators.url(url) 
         return url != ""
 
