@@ -54,7 +54,6 @@ class WSInterface:
             return True 
         return False 
 
-    # TODO: Fix type for callbacks
     def set_callbacks(self, 
             callbacks : Dict[str, Callable[[WebsocketProtocolModel], None]] ) \
                 -> bool:
