@@ -225,10 +225,14 @@ def WSInterface_open_connection() -> bool:
     the WSInterfaceProtocol and WSInterfaceFactory. 
 
     Tests:
-        1. Set up a valid connection with callbacks that handle exceptions.
+        1. Set up a valid connection with callbacks that handle exceptions as 
+            not a daemon.
+        2. Set up a valid connection with callbacks that handle exceptions as 
+            a daemon.
     """
     # Test 1.
-    thread_count = 1
+    num_queue_items = 50
+    thread_count = 50
     ws_test_url =  "wss://echo.websocket.org"
     ws_test_headers = {}
     callbacks = {
@@ -238,9 +242,8 @@ def WSInterface_open_connection() -> bool:
         "on_open" : on_open_callback,
         "on_close" : on_close_callback}
     test_queue = Queue()
-    data_list = [("Test string 1") ]
-    for data in data_list:
-        test_queue.put(data)
+    for i in range(num_queue_items):
+        test_queue.put(("Test string {}".format(i)))
     # Create websocket interface interface instance 
     ws_interface = WSInterface(ws_test_url, ws_test_headers)
     ws_interface.set_num_threads(thread_count)

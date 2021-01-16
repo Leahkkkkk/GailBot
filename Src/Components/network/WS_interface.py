@@ -1,9 +1,11 @@
 # Standard library imports 
+from threading import Thread
 from typing import Callable, Dict, List
 # Local imports 
 from .WS_protocol import  WSInterfaceProtocol
 from .WS_models import WebsocketProtocolModel
 from .WS_factory import WSInterfaceFactory
+from ...utils.threads import ThreadPool
 # Third party imports 
 from queue import Queue
 from autobahn.twisted.websocket import connectWS
@@ -131,14 +133,10 @@ class WSInterface:
                 factory_configurations["is_secure"])
             self.factory.set_context_factory(context_factory)
             connectWS(self.factory,context_factory)
-        # TODO: ADD CONDITIONS FOR DAEMON.
-        # TODO: NEED TO IMPLEMENT THREAD CLASS FIRST.
         if daemon:
-            tasks = [self._start_reactor,self._end_reactor]
-            self._reactor_thread_pool(tasks)
+            self._reactor_thread_pool([self._start_reactor,self._end_reactor])
         else:
-            tasks = [self._end_reactor]
-            self._reactor_thread_pool(tasks)
+            self._reactor_thread_pool([self._end_reactor])
             self._start_reactor()
         return True
          
@@ -157,7 +155,6 @@ class WSInterface:
         if is_secure:
             return ssl.ClientContextFactory()
 
-    # TODO: Implement this after implementing the thread class.
     def _reactor_thread_pool(self, tasks : List[Callable]) -> None:
         """
         Starts a thread pool to processes the given tasks as separate threads.
@@ -165,7 +162,10 @@ class WSInterface:
         Args:
             tasks (List[Callable]): Methods called in individual threads.
         """
-        pass 
+        reactor_thread_pool = ThreadPool(1)
+        reactor_thread_pool.spawn_threads()
+        for task in tasks:
+            reactor_thread_pool.add_task(task, [], {})
 
     def _start_reactor(self) -> None:
         """
@@ -177,5 +177,6 @@ class WSInterface:
         """
         Stop the reactor, which closes the websocket connection.
         """
+        self.factory.get_factory_configurations()["data_queue"].join()
         reactor.stop()
 
