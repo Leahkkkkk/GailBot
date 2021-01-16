@@ -5,7 +5,8 @@ Script responsible for running all tests
 from typing import List, Dict
 # Local imports 
 from Tests import TestSuite
-from Tests import define_config_test_suite, define_network_test_suite
+from Tests import define_config_test_suite, define_network_test_suite, \
+    define_util_thread_test_suite
 
 #### Helper functions for using test suite.
 
@@ -74,10 +75,11 @@ if __name__ == "__main__":
     # Defining all test suites 
     suites = {
         "config_test_suite" : define_config_test_suite(),
-        "network_test_suite" : define_network_test_suite()
+        "network_test_suite" : define_network_test_suite(),
+        "util_thread_test_suite" : define_util_thread_test_suite()
         
     }
-    run_single_test_suite(suites,"network_test_suite")
+    run_single_test_suite(suites,"util_thread_test_suite")
     # Executing all test suites 
     # run_all_test_suites(suites)
     

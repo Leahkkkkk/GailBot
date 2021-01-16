@@ -1,7 +1,7 @@
 # Standard library imports 
 from threading import Thread
 from queue import Queue 
-from typing import Callable, List, Dict, Any
+from typing import Callable, List, Dict, Any, Tuple
 
 
 class ThreadWorker(Thread):
@@ -13,12 +13,13 @@ class ThreadWorker(Thread):
         Thread:
     """
     
-    def __init__(self, task_queue : Queue, 
+    def __init__(self, task_queue : "Queue[Tuple[Callable,List,Dict]]", 
             except_callback : Callable[[None],None], is_daemon : bool = True) \
                 -> None:
         """
         Args:
-            task_queue (Queue) : Queue containing callbacks for all tasks.
+            task_queue (Queue[Tuple[Callable,List,Dict]]) : 
+                    Queue containing callbacks, args, and kwargs for all tasks.
             except_callback (Callable): Function to be executed in case of 
                                     an exception
             is_daemon (bool): True to run as separate process. False otherwise.
@@ -36,16 +37,19 @@ class ThreadWorker(Thread):
         Start threads and process while there are still tasks remaining.
         """
         while True:
-            callback,args,kwargs = self.task_queue.get()
             try:
-                callback(*args, **kwargs)
-            except:
+                callback,args,kwargs = self.task_queue.get()
                 try:
-                    self.on_except()
+                    callback(*args, **kwargs)
                 except:
-                    pass 
-            finally:
-                self.task_queue.task_done()
+                    try:
+                        self.on_except(*args,**kwargs)
+                    except:
+                        pass 
+                finally:
+                    self.task_queue.task_done()
+            except:
+                pass 
 
 class ThreadPool:
     """ 
@@ -80,8 +84,10 @@ class ThreadPool:
         Returns:
             (bool): True if successful. False otherwise.
         """
-        self.on_pool_end = on_end_callback 
-        return True 
+        if callable(on_end_callback):
+            self.on_pool_end = on_end_callback 
+            return True 
+        return False
 
     def set_on_thread_except(self, on_thread_except_callback : Callable) -> bool:
         """
@@ -94,22 +100,38 @@ class ThreadPool:
         Returns:
             (bool): True if successful. False otherwise.
         """
-        self.on_thread_except = on_thread_except_callback
-        return True 
+        if callable(on_thread_except_callback):
+            self.on_thread_except = on_thread_except_callback
+            return True 
+        return False 
 
-    def add_task(self, callback : Callable, args : List, kwargs : Dict) -> bool:
+    def get_num_threads(self) -> int:
+        """
+        Returns the no. of threads that are being used by the pool.
+
+        Returns:
+            (int): No. of threads being used.
+        """
+        return self.num_threads
+
+    def add_task(self, callback : Callable, args : List = [], 
+            kwargs : Dict = {}) -> bool:
         """
         Add a callable task that will be processed by the thread pool.
 
         Args:
             callback (Callable): Callable that will be executed via a thread.
-            args (List): Arguments to be passed to the Callable on execution
+            args (List): Arguments to be passed to the Callable on execution.
+                        Defaults to empty list.
             kwargs (Dict): Keywork arguments to be passed to the Callable on 
                             execution.
+                            Defaults to empty dictionary.
 
         Returns:
             (bool): True if successfully added. False otherwise.
         """
+        if not callable(callback) or type(args) != list or type(kwargs) != dict:
+            return False
         self.task_queue.put((callback,args,kwargs))
         return True 
 
