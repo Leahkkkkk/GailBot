@@ -5,7 +5,7 @@ testing script for the network component
 from queue import Queue
 # Local imports 
 from Src.Components.network import Request, WSInterface, WSProtocolAttributes, \
-                                WebsocketProtocolModel
+                                WebsocketProtocolModel,Network
 from ..suites import TestSuite, TestSuiteAttributes
 
 ############################### GLOBALS #####################################
@@ -218,7 +218,6 @@ def WSInterface_get() -> bool:
         len(configs.keys()) == len(expected_keys) and \
         all([ k for k in configs.keys() if k in expected_keys ])
     
-# TODO: Add a test with daemon once the daemon option has been implemented.
 def WSInterface_open_connection() -> bool:
     """
     Tests the open_connection_until_complete WSInterface class that uses 
@@ -226,9 +225,12 @@ def WSInterface_open_connection() -> bool:
 
     Tests:
         1. Set up a valid connection with callbacks that handle exceptions as 
-            not a daemon.
+            not a daemon (multi-threaded).
         2. Set up a valid connection with callbacks that handle exceptions as 
-            a daemon.
+            a daemon (multi-threaded).
+
+    Returns:
+        (bool): True if all the tests pass. False otherwise.
     """
     # Test 1.
     num_queue_items = 50
@@ -241,18 +243,52 @@ def WSInterface_open_connection() -> bool:
         "on_message" : on_message_callback,
         "on_open" : on_open_callback,
         "on_close" : on_close_callback}
+    daemon_test_queue = Queue()
     test_queue = Queue()
     for i in range(num_queue_items):
+        daemon_test_queue.put(("Test string {}".format(i)))
         test_queue.put(("Test string {}".format(i)))
+        
     # Create websocket interface interface instance 
     ws_interface = WSInterface(ws_test_url, ws_test_headers)
     ws_interface.set_num_threads(thread_count)
     ws_interface.set_data_queue(test_queue)
     ws_interface.set_callbacks(callbacks)
     # Starting connection
-    return ws_interface.open_connection_until_complete(False)
+    success_1 = ws_interface.open_connection_until_complete(False)
+    # Re-adding daemon tasks and restarting WSInterface as a daemon
+    ws_interface.set_data_queue(daemon_test_queue)
+    success_2 = ws_interface.open_connection_until_complete(True)
+    return success_1 and success_2
 
-    
+########################### Network tests
+
+def network_websocket_connection() -> bool:
+    """
+    Tests the websocket_connect method of the network class.
+
+    Tests:
+        1. Use valid params to connect to the websocket server.
+        2. Use invalid params to try and connect with the server.
+    """
+    network = Network()
+    num_tasks = 50
+    thread_count = 50
+    tasks = list()
+    ws_test_url =  "wss://echo.websocket.org"
+    ws_test_headers = {}
+    callbacks = {
+        "on_connect" : on_connect_callback,
+        "on_connecting" : on_connecting_callback,
+        "on_message" : on_message_callback,
+        "on_open" : on_open_callback,
+        "on_close" : on_close_callback}
+    for i in range(num_tasks):
+        tasks.append("Task {}".format(i))
+    # Running request both as daemon and not daemon.
+    return network.websocket_connect(
+        url=ws_test_url, headers=ws_test_headers, num_threads= thread_count,
+        tasks_data=tasks,is_daemon=True,callbacks=callbacks)
 
 ####################### TEST SUITE DEFINITION ################################
 
@@ -265,17 +301,20 @@ def define_network_test_suite() -> TestSuite:
     """
     suite = TestSuite()
     # Request tests 
-    # suite.add_test("request_send_request", (), True, True, request_send_request)
-    # # WebsocketProtocolModel tests 
-    # suite.add_test("websocket_protocol_model_set", (), True, True, 
-    #     websocket_protocol_model_set)
-    # suite.add_test("websocket_protocol_model_get", (), True, True, 
-    #     websocket_protocol_model_get)
+    suite.add_test("request_send_request", (), True, True, request_send_request)
+    # WebsocketProtocolModel tests 
+    suite.add_test("websocket_protocol_model_set", (), True, True, 
+        websocket_protocol_model_set)
+    suite.add_test("websocket_protocol_model_get", (), True, True, 
+        websocket_protocol_model_get)
     # WSInterface tests
-    # suite.add_test("WSInterface_set",(),True,True,WSInterface_set)
-    # suite.add_test("WSInterface_get", (), True, True, WSInterface_get)
+    suite.add_test("WSInterface_set",(),True,True,WSInterface_set)
+    suite.add_test("WSInterface_get", (), True, True, WSInterface_get)
     suite.add_test("WSInterface_open_connection",
                         (), True, True, WSInterface_open_connection)
+    # Network tests
+    suite.add_test("network_websocket_connection", (), True, True,
+        network_websocket_connection)
     return suite
 
 
