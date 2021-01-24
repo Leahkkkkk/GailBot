@@ -7,7 +7,7 @@ Testing script for the IO component.
 
 # Third party imports 
 from re import A
-from Src.Components.io import Media, AudioIO
+from Src.Components.io import Media, AudioIO, VideoIO, VideoWriteTypes
 from ..suites import TestSuite, TestSuiteAttributes
 
 ############################### GLOBALS #####################################
@@ -16,7 +16,11 @@ WAV_FILE_1_PATH = "/Users/muhammadumair/Documents/Repositories/mumair01-Repos/Ga
 WAV_FILE_2_PATH = "/Users/muhammadumair/Documents/Repositories/mumair01-Repos/GailBot-0.3/Test_files/Media/test2b.wav"
 WAV_FILE_3_PATH = "/Users/muhammadumair/Documents/Repositories/mumair01-Repos/GailBot-0.3/Test_files/Media/test.wav"
 STEREO_FILE_1_PATH = "/Users/muhammadumair/Documents/Repositories/mumair01-Repos/GailBot-0.3/Test_files/Media/SineWaveMinus16.wav"
-VIDEO_FILE_1_PATH = "/Users/muhammadumair/Documents/Repositories/mumair01-Repos/GailBot-0.3/Test_files/Media/vid.mp4"
+VIDEO_FILE_MP4_PATH = "/Users/muhammadumair/Documents/Repositories/mumair01-Repos/GailBot-0.3/Test_files/Media/sample-mp4-file.mp4"
+VIDEO_FILE_MXF_PATH = "/Users/muhammadumair/Documents/Repositories/mumair01-Repos/GailBot-0.3/Test_files/Media/vid2.MXF"
+VIDEO_FILE_AVI_PATH = "/Users/muhammadumair/Documents/Repositories/mumair01-Repos/GailBot-0.3/Test_files/Media/sample-avi-file.avi"
+VIDEO_FILE_MOV_PATH = "/Users/muhammadumair/Documents/Repositories/mumair01-Repos/GailBot-0.3/Test_files/Media/sample-mov-file.mov"
+VIDEO_FILE_MPG_PATH = "/Users/muhammadumair/Documents/Repositories/mumair01-Repos/GailBot-0.3/Test_files/Media/sample-mpg-file.mpg"
 DESKTOP_OUT_PATH = "/Users/muhammadumair/Desktop"
 
 ########################## TEST DEFINITIONS ##################################
@@ -42,7 +46,7 @@ def test_audio_io_read_streams() -> bool:
         {"file_1" : WAV_FILE_1_PATH, "file_2" : WAV_FILE_2_PATH}) and \
         audio.read_streams({}) and \
         not audio.read_streams({"file_1" : DESKTOP_OUT_PATH}) and \
-        not audio.read_streams({"file_1" : VIDEO_FILE_1_PATH})
+        not audio.read_streams({"file_1" : VIDEO_FILE_MP4_PATH})
 
 def test_audio_io_get_stream_configurations() -> bool:
     """
@@ -298,6 +302,56 @@ def test_audio_io_chunk() -> bool:
     return s1 and s2 and not s3
 
 
+######################### VideoIO tests
+
+def test_video_io_read_streams() -> bool:
+    """
+    Tests the read streams method in audioIO.
+
+    Tests:
+        1. Provide correct input and valid file paths.
+        2. Provide empty file_paths dictionary.
+        3. Provide invalid file paths
+        4. Provide valid file paths with invalid audio formats.
+
+    Returns:
+        (bool): True if successful. False otherwise.
+    """
+    video = VideoIO()
+    return video.read_streams({
+        "file_1_mp4" : VIDEO_FILE_MP4_PATH, "file_2_mxf" : VIDEO_FILE_MXF_PATH}) and \
+        video.read_streams({}) and \
+        not video.read_streams({"file_1" : DESKTOP_OUT_PATH}) and \
+        not video.read_streams({"file_1" : WAV_FILE_1_PATH})
+
+def test_video_io_write() -> bool:
+    """
+    Tests the write method in videoIO
+
+    Tests:
+        1. Writing to a valid directory path.
+        2. Write but only provide output mappings for some files. 
+        3. Write to an invalid directory path.
+        4. Try and write a file with a unique identifier that was not read.
+        5. Write multiple different file formats.
+    """
+    video = VideoIO()
+    return video.read_streams({
+            "mp4_file" : VIDEO_FILE_MP4_PATH,
+            "mov_file" : VIDEO_FILE_MOV_PATH,
+            "avi_file" : VIDEO_FILE_AVI_PATH }) and \
+        video.write({
+            "mp4_file" : {
+                "path" : DESKTOP_OUT_PATH, 
+                "type" : VideoWriteTypes.audio},
+            "mov_file" : {
+                "path" : DESKTOP_OUT_PATH, 
+                "type" : VideoWriteTypes.video},
+            "avi_file" : {
+                "path" : DESKTOP_OUT_PATH, 
+                "type" : VideoWriteTypes.video_audio}})
+
+
 ####################### TEST SUITE DEFINITION ################################
 
 def define_io_test_suite() -> TestSuite:
@@ -308,25 +362,32 @@ def define_io_test_suite() -> TestSuite:
         (TestSuite): Suite containing network tests
     """
     suite = TestSuite()
-    suite.add_test("test_audio_io_read_streams",(),True,True,
-                test_audio_io_read_streams)
-    suite.add_test("test_audio_io_get_stream_configurations",
-        (),True,True,test_audio_io_get_stream_configurations)
-    suite.add_test("test_audio_io_get_stream_names", (), True, True,
-        test_audio_io_get_stream_names)
-    suite.add_test("test_audio_io_get_supported_formats", (), True, True, 
-        test_audio_io_get_supported_formats)
-    suite.add_test("test_audio_io_write", (), True, True, test_audio_io_write)
-    suite.add_test("test_audio_io_mono_to_stereo", (), True, True, 
-        test_audio_io_mono_to_stereo)
-    suite.add_test("test_audio_io_stereo_to_mono", (), True, True, 
-        test_audio_io_stereo_to_mono)
-    suite.add_test("test_audio_io_concat", (), True, True, test_audio_io_concat)
-    suite.add_test("test_audio_io_overlay", (), True, True, 
-        test_audio_io_overlay)
-    suite.add_test("test_audio_io_change_volume", (), True, True, 
-        test_audio_io_change_volume)
-    suite.add_test("test_audio_io_reverse", (), True, True, 
-        test_audio_io_reverse)
-    suite.add_test("test_audio_io_chunk", (), True, True, test_audio_io_chunk)
+    # AudioIO tests
+    # suite.add_test("test_audio_io_read_streams",(),True,True,
+    #             test_audio_io_read_streams)
+    # suite.add_test("test_audio_io_get_stream_configurations",
+    #     (),True,True,test_audio_io_get_stream_configurations)
+    # suite.add_test("test_audio_io_get_stream_names", (), True, True,
+    #     test_audio_io_get_stream_names)
+    # suite.add_test("test_audio_io_get_supported_formats", (), True, True, 
+    #     test_audio_io_get_supported_formats)
+    # suite.add_test("test_audio_io_write", (), True, True, test_audio_io_write)
+    # suite.add_test("test_audio_io_mono_to_stereo", (), True, True, 
+    #     test_audio_io_mono_to_stereo)
+    # suite.add_test("test_audio_io_stereo_to_mono", (), True, True, 
+    #     test_audio_io_stereo_to_mono)
+    # suite.add_test("test_audio_io_concat", (), True, True, test_audio_io_concat)
+    # suite.add_test("test_audio_io_overlay", (), True, True, 
+    #     test_audio_io_overlay)
+    # suite.add_test("test_audio_io_change_volume", (), True, True, 
+    #     test_audio_io_change_volume)
+    # suite.add_test("test_audio_io_reverse", (), True, True, 
+    #     test_audio_io_reverse)
+    # suite.add_test("test_audio_io_chunk", (), True, True, test_audio_io_chunk)
+    # VideoIO tests
+    # suite.add_test("test_video_io_read_streams", (), True, True, 
+    #     test_video_io_read_streams)
+    suite.add_test("test_video_io_write", (), True, True, 
+        test_video_io_write)
+
     return suite 

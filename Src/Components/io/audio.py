@@ -427,9 +427,18 @@ class AudioIO:
             (bool): True if file exists and is audio file. False otherwise.
         """
         return self._does_file_exist(file_path) and \
-            self._get_file_extension(file_path) in self.AUDIO_FORMATS
+            self._get_file_extension(file_path).lower() in self.AUDIO_FORMATS
 
     def _is_directory(self, dir_path : str) -> bool:
+        """
+        Determine if path is a directory.
+
+        Args:
+            (str): Path 
+        
+        Returns:
+            (bool): True if path is a directory. False otherwise.
+        """
         return os.path.isdir(dir_path)
     
     def _get_file_extension(self, file_path : str) -> str:
