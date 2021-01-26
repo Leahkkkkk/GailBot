@@ -1,7 +1,8 @@
 # Standard library imports 
 
 # Local imports 
-
+from .audio import AudioIO
+from .video import VideoIO
 # Third party imports
 
 class IO:

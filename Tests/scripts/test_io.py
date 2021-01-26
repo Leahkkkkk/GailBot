@@ -7,7 +7,7 @@ Testing script for the IO component.
 
 # Third party imports 
 from re import A
-from Src.Components.io import Media, AudioIO, VideoIO, VideoWriteTypes
+from Src.Components.io import Media, AudioIO, VideoIO, VideoWriteTypes, GeneralIO, general
 from ..suites import TestSuite, TestSuiteAttributes
 
 ############################### GLOBALS #####################################
@@ -22,6 +22,10 @@ VIDEO_FILE_AVI_PATH = "/Users/muhammadumair/Documents/Repositories/mumair01-Repo
 VIDEO_FILE_MOV_PATH = "/Users/muhammadumair/Documents/Repositories/mumair01-Repos/GailBot-0.3/Test_files/Media/sample-mov-file.mov"
 VIDEO_FILE_MPG_PATH = "/Users/muhammadumair/Documents/Repositories/mumair01-Repos/GailBot-0.3/Test_files/Media/sample-mpg-file.mpg"
 DESKTOP_OUT_PATH = "/Users/muhammadumair/Desktop"
+VALID_SAMPLE_JSON_FILE = "/Users/muhammadumair/Documents/Repositories/mumair01-Repos/GailBot-0.3/Test_files/Others/sample_config.json"
+VALID_SAMPLE_TXT_FILE = "/Users/muhammadumair/Documents/Repositories/mumair01-Repos/GailBot-0.3/Test_files/Others/sample_text.txt"
+VALID_SAMPLE_YAML_FILE = "/Users/muhammadumair/Documents/Repositories/mumair01-Repos/GailBot-0.3/Test_files/Others/sample_yaml.yaml"
+VALID_TEST_DIR_PATH = "/Users/muhammadumair/Documents/Repositories/mumair01-Repos/GailBot-0.3/Test_files/Others/Test-directory"
 
 ########################## TEST DEFINITIONS ##################################
 
@@ -324,6 +328,45 @@ def test_video_io_read_streams() -> bool:
         not video.read_streams({"file_1" : DESKTOP_OUT_PATH}) and \
         not video.read_streams({"file_1" : WAV_FILE_1_PATH})
 
+
+def test_video_io_get_stream_names() -> bool:
+    """
+    Tests the get_stream_name method in VideoIO.
+
+    Tests:
+        1. Read one valid file and check names.
+        2. Read one valid and one invalid file ane check names.
+        3. Read no files and check names.
+
+    Returns:
+        (bool): True if successful. False otherwise.
+    """
+    video = VideoIO()
+    video.read_streams({"file_1_mp4" : VIDEO_FILE_MP4_PATH})
+    names_1 = video.get_stream_names()
+    video.read_streams({
+        "file_1_mp4" : VIDEO_FILE_MP4_PATH,
+        "invalid" : WAV_FILE_1_PATH})
+    names_2 = video.get_stream_names()
+    video.read_streams({})
+    names_3 = video.get_stream_names()
+    return names_1 == ["file_1_mp4"] and names_2 == [] and names_3 == []
+
+
+def test_video_io_get_supported_formats() -> bool:
+    """
+    Tests get_supported_formats method in VideoIO.
+
+    Tests:
+        1. Get formats and check against expected formats.
+
+    Returns:
+        (bool): True if successful. False otherwise.
+    """
+    video = VideoIO()
+    return video.get_supported_formats() == \
+         ("mxf","mov","mp4","wmv","flv","avi","swf","m4v")
+
 def test_video_io_write() -> bool:
     """
     Tests the write method in videoIO
@@ -334,6 +377,9 @@ def test_video_io_write() -> bool:
         3. Write to an invalid directory path.
         4. Try and write a file with a unique identifier that was not read.
         5. Write multiple different file formats.
+
+    Returns:
+        (bool): True if successful. False otherwise.
     """
     video = VideoIO()
     return video.read_streams({
@@ -349,9 +395,238 @@ def test_video_io_write() -> bool:
                 "type" : VideoWriteTypes.video},
             "avi_file" : {
                 "path" : DESKTOP_OUT_PATH, 
-                "type" : VideoWriteTypes.video_audio}})
+                "type" : VideoWriteTypes.video_audio}}) and \
+        video.write({
+            "mp4_file" : {
+                "path" : DESKTOP_OUT_PATH, 
+                "type" : VideoWriteTypes.audio}}) and \
+        not video.write({
+            "mp4_file" : {
+                "path" : WAV_FILE_1_PATH, 
+                "type" : VideoWriteTypes.audio}}) and \
+        not video.write({
+            "invalid" : {
+                "path" : WAV_FILE_1_PATH, 
+                "type" : VideoWriteTypes.audio}})
+
+######################### GeneralIO tests
+# TODO: Need to add more in-depth tests for GeneralIO
+
+def test_general_io_is_directory() -> bool:
+    """
+    Tests the is_directory method in GeneralIO
+
+    Tests:
+        1. Use on a valid directory.
+        2. Use on an invalid directory
+
+    Returns:
+        (bool): True if successful. False otherwise.
+    """
+    general = GeneralIO() 
+    return general.is_directory(DESKTOP_OUT_PATH) and \
+        not general.is_directory(WAV_FILE_1_PATH)
 
 
+def test_general_io_is_file() -> bool:
+    """
+    Tests the is_file method in GeneralIO
+
+    Tests:
+        1. Use on a valid file.
+        2. Use on an invalid file 
+
+    Returns:
+        (bool): True if successful. False otherwise.
+    """
+    general = GeneralIO() 
+    return not general.is_file(DESKTOP_OUT_PATH) and \
+        general.is_file(WAV_FILE_1_PATH)
+
+def test_general_io_num_files_in_directory() -> bool:
+    """
+    Tests the number_of_files_in_directory method in GeneralIO
+
+    Tests:
+        1. Use on a valid directory path
+        2. Use on an invalid directory path.
+        3. Use valid extensions.
+        4. Use the wildcard extension.
+        5. Use invalid file extensions. 
+        6. Check subdirectories 
+
+    Returns:
+        (bool): True if successful. False otherwise.
+    """
+    general = GeneralIO()
+    return general.number_of_files_in_directory(DESKTOP_OUT_PATH)[1] == 15 and \
+        not general.number_of_files_in_directory(WAV_FILE_1_PATH)[0] and \
+        general.number_of_files_in_directory(DESKTOP_OUT_PATH,["pdf"])[1] == 4 and \
+        general.number_of_files_in_directory(DESKTOP_OUT_PATH,[".asjkd.j"])[1] == 0 and \
+        general.number_of_files_in_directory(DESKTOP_OUT_PATH,["pdf"],True)[1] == 7
+
+def test_general_io_names_of_file_in_directory() -> bool:
+    """
+    Tests the names_of_files_in_directory method in GeneralIO
+
+    Tests:
+        1. Use on a valid directory path
+        2. Use on an invalid directory path.
+        3. Use valid extensions.
+        4. Use the wildcard extension.
+        5. Use invalid file extensions. 
+        6. Check subdirectories 
+
+    Returns:
+        (bool): True if successful. False otherwise.
+    """
+    general = GeneralIO()
+    return general.names_of_file_in_directory(DESKTOP_OUT_PATH)[0] and \
+        not general.names_of_file_in_directory(WAV_FILE_1_PATH)[0] and \
+        general.names_of_file_in_directory(DESKTOP_OUT_PATH,["pdf"])[0] and \
+        general.number_of_files_in_directory(DESKTOP_OUT_PATH,[".asjkd.j"])[1] == 0 and \
+        general.number_of_files_in_directory(DESKTOP_OUT_PATH,["pdf"],True)[0]
+
+def test_general_io_read_files() -> bool:
+    """
+    Tests the read_file method in GeneralIO
+
+    Tests:
+        1. Read a valid json file.
+        2. Read a text file.
+        3. Read a yaml file.
+        4. Read a file with a format that is valid but inconsistent with the 
+            file. Ex: yaml file but format is json.
+        5. Read an invalid format. 
+        6. Read from an invalid file path.
+
+    Returns:
+        (bool): True if successful. False otherwise.
+    """
+    general = GeneralIO()
+    return general.read_file(VALID_SAMPLE_JSON_FILE,"json")[0] and \
+        general.read_file(VALID_SAMPLE_TXT_FILE,"txt")[0] and \
+        general.read_file(VALID_SAMPLE_YAML_FILE,"yaml")[0] and \
+        not general.read_file(VALID_SAMPLE_JSON_FILE,"yaml")[0] and \
+        not general.read_file(VIDEO_FILE_AVI_PATH,"txt")[0]
+
+def test_general_io_write_to_file() -> bool:
+    """
+    Tests the write_to_file method in GeneralIO
+
+    Tests:
+        1. Write a valid file in all types of supported formats.
+        2. Write a file where data is inconsistent / not in the expected format 
+            for the file type.
+        3. Append to an existing file.
+        4. Use an invalid output path. (THIS IS UNSOLVED)
+        5. Use an invalid output file extension.
+
+    Returns:
+        (bool): True if successful. False otherwise.
+    """
+    general = GeneralIO() 
+    return general.write_to_file(DESKTOP_OUT_PATH+"/json_test.json", "json",
+        general.read_file(VALID_SAMPLE_JSON_FILE,"json")[1], True)[0] and \
+        general.write_to_file(DESKTOP_OUT_PATH+"/yaml_test.yaml", "yaml",
+        general.read_file(VALID_SAMPLE_YAML_FILE,"yaml",)[1], True)[0] and \
+        general.write_to_file(DESKTOP_OUT_PATH+"/test_test.txt", "txt",
+        general.read_file(VALID_SAMPLE_TXT_FILE,"txt")[1], True)[0] and \
+        general.write_to_file(DESKTOP_OUT_PATH+"/test_test.txt", "txt",
+        general.read_file(VALID_SAMPLE_TXT_FILE,"txt")[1], False)[0] and \
+        not general.write_to_file(DESKTOP_OUT_PATH+"/test_test.apple", "txt",
+        general.read_file(VALID_SAMPLE_TXT_FILE,"txt")[1], False)[0] 
+
+def test_general_io_create_directory() -> bool:
+    """
+    Tests the create_directory method in GeneralIO
+
+    Tests:
+        1. Use a valid path.
+        2. Use an invalid path.
+
+    Returns:
+        (bool): True if successful. False otherwise.
+    """
+    general = GeneralIO()
+    return general.create_directory(DESKTOP_OUT_PATH+"/test") and \
+        not general.create_directory(WAV_FILE_1_PATH) 
+
+
+def test_general_io_copy() -> bool:
+    """
+    Tests the copy method in GeneralIO
+
+    Tests:
+        1. Use a file as source / directory destination.
+        2. Use a directory as source / directory destination.
+        3. Use a file as destination.
+        4. Use an input file / directory that does not exist. 
+        5. Use directory format for a file and vice versa.
+
+    Returns:
+        (bool): True if successful. False otherwise.
+    """
+    general = GeneralIO()
+    return general.copy(WAV_FILE_1_PATH,DESKTOP_OUT_PATH,"file") and \
+        general.copy(VALID_TEST_DIR_PATH,DESKTOP_OUT_PATH+"/copied",
+            "directory") and \
+        not general.copy(VALID_TEST_DIR_PATH,WAV_FILE_1_PATH,"directory") and \
+        not general.copy(DESKTOP_OUT_PATH+"invalid",
+            DESKTOP_OUT_PATH+"/copied-2","directory") and \
+        not general.copy(WAV_FILE_1_PATH,DESKTOP_OUT_PATH,"directory") and \
+        not general.copy(VALID_TEST_DIR_PATH,DESKTOP_OUT_PATH+"/copied",
+            "file")
+
+
+def test_general_io_move_file() -> bool:
+    """
+    Tests the move_file method in GeneralIO
+
+    Tests:
+        1. Use a file as source / directory destination.
+        2. Use a directory as source / directory destination.
+        3. Use a file as destination.
+        4. Use an input file / directory that does not exist.
+
+    Returns:
+        (bool): True if successful. False otherwise.
+    """
+    general = GeneralIO()
+    # Copy some files to the test directory 
+    general.copy(WAV_FILE_1_PATH,VALID_TEST_DIR_PATH,"file")
+    # Get the names of all files in that directory and move them
+    success, names = general.names_of_file_in_directory(VALID_TEST_DIR_PATH)
+    # Move all the files in the test directory.
+    for name in names:
+        if not general.move_file(name,DESKTOP_OUT_PATH):
+            return False 
+    return True 
+
+def test_general_io_delete() -> bool:
+    """
+    Tests the delete method in GeneralIO
+
+    Tests:
+        1. Delete a file 
+        2. Delete a directory with sub-directories 
+        3. Delete an invalid path.
+        4. Use the wrong format for the file / directory.
+
+    Returns:
+        (bool): True if successful. False otherwise.
+    """
+    general = GeneralIO()
+    # Copy some files to the test directory
+    general.copy(WAV_FILE_1_PATH,VALID_TEST_DIR_PATH,"file")
+    # Create a directory 
+    general.create_directory(VALID_TEST_DIR_PATH+"/sub")
+    # Delete
+    success, names = general.names_of_file_in_directory(
+        VALID_TEST_DIR_PATH,["wav"])
+    return all([general.delete(name,"file") for name in names]) and \
+        general.delete(VALID_TEST_DIR_PATH+"/sub","directory")
+      
 ####################### TEST SUITE DEFINITION ################################
 
 def define_io_test_suite() -> TestSuite:
@@ -384,10 +659,34 @@ def define_io_test_suite() -> TestSuite:
     # suite.add_test("test_audio_io_reverse", (), True, True, 
     #     test_audio_io_reverse)
     # suite.add_test("test_audio_io_chunk", (), True, True, test_audio_io_chunk)
-    # VideoIO tests
+    # # VideoIO tests
     # suite.add_test("test_video_io_read_streams", (), True, True, 
     #     test_video_io_read_streams)
-    suite.add_test("test_video_io_write", (), True, True, 
-        test_video_io_write)
-
+    # suite.add_test("test_video_io_get_stream_names", (), True, True, 
+    #     test_video_io_get_stream_names)
+    # suite.add_test("test_video_io_get_supported_formats", (), True, True, 
+    #     test_video_io_get_supported_formats)
+    # suite.add_test("test_video_io_write", (), True, True, 
+    #     test_video_io_write)
+    # GeneralIO tests
+    # suite.add_test("test_general_io_is_directory",(), True, True, 
+    #     test_general_io_is_directory)
+    # suite.add_test("test_general_io_is_file",(), True, True, 
+    #     test_general_io_is_file)
+    # suite.add_test("test_general_io_num_files_in_directory",(), True, True, 
+    #     test_general_io_num_files_in_directory)
+    # suite.add_test("test_general_io_names_of_file_in_directory",(), True, True, 
+    #     test_general_io_names_of_file_in_directory)
+    # suite.add_test("test_general_io_read_files",(), True, True, 
+    #     test_general_io_read_files)
+    # suite.add_test("test_general_io_write_to_file",(), True, True, 
+    #     test_general_io_write_to_file)    
+    # suite.add_test("test_general_io_create_directory",(), True, True, 
+    #     test_general_io_create_directory)   
+    # suite.add_test("test_general_io_copy",(), True, True, 
+    #     test_general_io_copy)   
+    # suite.add_test("test_general_io_move_file",(), True, True, 
+    #     test_general_io_move_file)   
+    # suite.add_test("test_general_io_delete",(), True, True, 
+    #     test_general_io_delete)  
     return suite 
