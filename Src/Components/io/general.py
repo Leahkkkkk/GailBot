@@ -1,22 +1,26 @@
 # Standard library imports 
-from typing import Dict, Any, Tuple, List
+from typing import Any, Tuple, List
 import os 
 import glob
 import json
 import yaml
 import shutil
-
 # Local imports 
-
 # Third party imports
 from copy import deepcopy
 
-# TODO: Add is_video_file in VideoIO / is_audio_file in AudioIO
-# TODO: Add functions to record microphone in time. 
-
 class GeneralIO:
+    """
+    Provides methods that deal with reading and writing non-media files and 
+    interacting with the file system.
+    """
 
     def __init__(self) -> None:
+        """
+        Params:
+            readers (Dict): Mapping from file extensions to read functions.
+            writers (Dict): Mapping from file extensions to write functions.
+        """
         self.readers = {
             "JSON" : self._read_json,
             "TXT" : self._read_text,
@@ -64,12 +68,12 @@ class GeneralIO:
             dir_path (str): Path to directory.
             extensions (List[str]): Specific file extensions to look for. 
                         Ex: ["pdf"]. '*' is a wildcard and considers all 
-                        extensions.
+                        extensions. default = ["*"]
             check_subdirectories (bool): True to check subdirectories. 
-                                        False otherwise.
+                                False otherwise. default = False 
         
         Returns:   
-            (Tuple[bool,int]): True + No. of files if successful.
+            (Tuple[bool,int]): True + number of files if successful.
                                 False + None if unsuccessful.
         """
         success, paths = self.names_of_file_in_directory(
@@ -89,9 +93,9 @@ class GeneralIO:
             dir_path (str): Path to directory.
             extensions (List[str]): Specific file extensions to look for. 
                         Ex: ["pdf"]. '*' is a wildcard and considers all 
-                        extensions.
+                        extensions. default = ["*"]
             check_subdirectories (bool): True to check subdirectories. 
-                                        False otherwise.
+                                        False otherwise. default = False 
         
         Returns:   
             (Tuple[bool,List[str]]): True + names of files if successful.
@@ -99,7 +103,7 @@ class GeneralIO:
         """
         # Check if it is directory
         if not self.is_directory(dir_path):
-            return (False, None)
+            return (False, [])
         paths = list()
         for extension in extensions:
             # Determining the type of file.
@@ -115,47 +119,63 @@ class GeneralIO:
             paths.extend(glob.glob(query,recursive=True))
         return (True,paths)   
 
+    def is_readable(self, file_path : str) -> bool:
+        """
+        Determine if the file at the given path is readable by GeneralIO.
+
+        Args:
+            file_path (str)
+        
+        Returns:
+            (bool): True if the file is readable. False otherwise.
+        """
+        return self.is_file(file_path) and \
+            self.get_file_extension(file_path) in self.readers.keys()
+
+    def get_file_extension(self, file_path : str) -> str:
+        """
+        Obtain file extension /format, which is the substring after the right-
+        most "." character.
+
+        Args:
+            file_path (str)
+        
+        Returns:
+            (str): File extension / format.
+        """
+        return os.path.splitext(file_path.strip())[1][1:]
+
     ############################## ACTIONS #################################
 
-    def read_file(self, file_path : str, file_format : str) -> Tuple[bool,Any]:
+    def read_file(self, file_path : str) -> Tuple[bool,Any]:
         """
-        Read the file at the given path. 
-        The file extension must match the file_format
+        Read the file at the given path. The file must be readable.
         
         Args:
             file_path (str): Path to file
-            file_format (str): 
-                Format of the file. Must be supported and be one of:
-                    1. json
-                    2. yaml
-                    3. txt 
-    
+
         Returns:
            (Tuple[bool,Any]): 
-                True + file data if successful. False + None otherwise  
+                True + file data if successful. 
+                False + None otherwise. 
         """
+        # Determine the file format using extension 
+        file_format = self.get_file_extension(file_path)
         if not self.is_file(file_path) or \
                 not file_format.upper() in self.readers.keys() or \
-                file_format != self._get_file_extension(file_path):
+                file_format != self.get_file_extension(file_path):
             return (False, None)
-        try:
-            return (True, self.readers[file_format.upper()](file_path))
-        except:
-            return (False, None)
-
-    # TODO: Add ability to check if the potential new path is writeable.
-    def write_to_file(self, file_path : str, file_format : str, data : Any, 
-            overwrite : bool) -> bool:
+        # Readers handle exceptions 
+        return self.readers[file_format.upper()](file_path)
+    
+    def write_to_file(self, file_path : str, data : Any, overwrite : bool) \
+            -> bool:
         """
         Write the data in a file of the specified format at the given path.
         
         Args:
-            file_path (str): Path to file
-            file_format (str): 
-                Format of the file. Must be supported and be one of:
-                    1. json
-                    2. yaml
-                    3. txt 
+            file_path (str): Complete path to file, including filename and 
+                            extension.
             data (Any): Data to write in the file.
             overwrite (bool): True to overrite the file if it exists. 
                             False to append to the file
@@ -163,14 +183,14 @@ class GeneralIO:
         Returns:
            (bool): True if successful. False otherwise  
         """
+        # Determine the file format using extension 
+        file_format = self.get_file_extension(file_path)
         if not file_format.upper() in self.writers.keys() or \
-                file_format != self._get_file_extension(file_path):
-            return (False, None) 
-        try:
-            return (True,self.writers[file_format.upper()](
-                file_path, data, overwrite))
-        except:
-            return (False, None) 
+                file_format != self.get_file_extension(file_path):
+            return False
+        # The writers should handle exceptions 
+        return self.writers[file_format.upper()](
+                file_path, data, overwrite)
 
     def create_directory(self, dir_path : str) -> bool:
         """
@@ -183,7 +203,6 @@ class GeneralIO:
             (bool): True if successful. False otherwise.
         """
         try:
-            print(dir_path)
             os.makedirs(dir_path)
             return True
         except:
@@ -210,26 +229,23 @@ class GeneralIO:
         except:
             return False 
 
-    def copy(self, src_path : str, dst_path : str, type : str) -> bool:
+    def copy(self, src_path : str, dst_path : str) -> bool:
         """
-        Copy the source file or directory to the destination file or directory
+        Copy the source file or directory to the destination file or directory.
 
         Args:
             src_path (str): Path of source file / directory 
             dst_path (str): Path of destination file / directory 
-            type (str): Must be one of:
-                        1. file
-                        2. directory
             
         Returns:
             (bool): True if successful. False otherwise.
         """
-        if type == "file" and self.is_file(src_path):
+        if self.is_file(src_path):
             try:
                 shutil.copy(src_path,dst_path)
             except:
                 return False 
-        elif type == "directory" and self.is_directory(src_path) \
+        elif self.is_directory(src_path) \
                 and not self.is_directory(dst_path):
             try:
                 shutil.copytree(src_path,dst_path)
@@ -258,26 +274,23 @@ class GeneralIO:
         except:
             return False  
     
-    def delete(self, path : str, type : str) -> bool:
+    def delete(self, path : str) -> bool:
         """
         Delete the given file or directory. For a directory, deletes all 
         sub-directories as well.
 
         Args:
             path (str): Path of file / directory to delete .
-            type (str): Must be one of:
-                        1. file
-                        2. directory
         
         Returns:
            (bool): True if successful. False otherwise  
         """
-        if type == "file" and self.is_file(path):
+        if self.is_file(path):
             try:
                 os.remove(path)
             except:
                 return False  
-        elif type == "directory" and self.is_directory(path):
+        elif self.is_directory(path):
             try:
                 shutil.rmtree(path)
             except: 
@@ -288,7 +301,7 @@ class GeneralIO:
 
     ################################### PRIVATE METHODS ######################
 
-    def _read_json(self, file_path : str) -> Any:
+    def _read_json(self, file_path : str) -> Tuple[bool,Any]:
         """
         Read a json file at the given path.
 
@@ -296,12 +309,17 @@ class GeneralIO:
             file_path (str)
         
         Returns:
-            (Any): Data read from file.
+            (Tuple[bool,Any]): True + Data read from file is successful.
+                            False + None if unsuccessful.
         """
-        with open(file_path,"r") as f:
-            return json.load(f) 
+        try:
+            with open(file_path,"r") as f:
+                return (True,json.load(f))
+        except:
+            return (False, None)
 
-    def _write_json(self, file_path : str, data : Any, overwrite : bool) -> bool:
+    def _write_json(self, file_path : str, data : Any, overwrite : bool) \
+            -> bool:
         """
         Write the given data to a json file.
 
@@ -325,7 +343,7 @@ class GeneralIO:
         except:
             return False 
 
-    def _read_text(self, file_path : str) -> Any:
+    def _read_text(self, file_path : str) -> Tuple[bool,Any]:
         """
         Read a text file at the given path.
 
@@ -333,11 +351,16 @@ class GeneralIO:
             file_path (str)
         
         Returns:
-            (Any): Data read from file.
+            (Tuple[bool,Any]): True + data read from file if successful.
+                                False + None if unsuccessful.
         """
-        return open(file_path,"r").read()
+        try:
+            return (True,open(file_path,"r").read())
+        except:
+            return (False, None )
 
-    def _write_text(self, file_path : str, data : Any, overwrite : bool) -> bool:
+    def _write_text(self, file_path : str, data : Any, overwrite : bool) \
+            -> bool:
         """
         Write the given data to a text file.
 
@@ -352,14 +375,13 @@ class GeneralIO:
         """
         try:
             mode = 'w' if overwrite else "a"
-            print(file_path)
             with open(file_path,mode) as f:
                 f.write(data)
             return True 
         except:
             return False 
 
-    def _read_yaml(self, file_path : str) -> Any:
+    def _read_yaml(self, file_path : str) -> Tuple[bool,Any]:
         """
         Read a yaml file at the given path.
 
@@ -367,13 +389,17 @@ class GeneralIO:
             file_path (str)
         
         Returns:
-            (Any): Data read from file.
+            (Tuple[bool,Any]): True + data read from file if successful.
+                                False + None if unsuccessful.
         """
-        with open(file_path,'r') as f:
-            data = yaml.load(f)
-        return data
+        try:
+            with open(file_path,'r') as f:
+                return (True ,yaml.load(f))
+        except:
+            return (False, None )
 
-    def _write_yaml(self, file_path : str, data : Any, overwrite : bool) -> bool:
+    def _write_yaml(self, file_path : str, data : Any, overwrite : bool) \
+            -> bool:
         """
         Write the given data to a yaml file.
 
@@ -397,18 +423,6 @@ class GeneralIO:
         except:
             return False 
 
-    def _get_file_extension(self, file_path : str) -> str:
-        """
-        Obtain file extension /format, which is the substring after the right-
-        most "." character.
-
-        Args:
-            file_path (str)
-        
-        Returns:
-            (str): File extension / format.
-        """
-        return os.path.splitext(file_path.strip())[1][1:]
      
 
 

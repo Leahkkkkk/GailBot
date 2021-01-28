@@ -1,48 +1,90 @@
 # Standard library imports 
 from Src.utils import threads
 from typing import Dict, List, Any, Tuple
-from enum import IntEnum
+from enum import IntEnum, Enum
 # Local imports 
 from ...utils.threads import ThreadPool
+from ...utils.models import IDictModel
 # Third party imports
 from moviepy.editor import *
 
-
 class VideoWriteTypes(IntEnum):
+    """
+    Defines the different types of write operations that can be performed on
+    a VideoStream.
+    """
     video_audio = 0
     video = 1 
     audio = 2 
 
+class VideoStreamAttr(Enum):
+    """
+    Defines the attributes of a VideoStream
+
+    Attributes:
+        input_file_path (str): Path of the input file, including name and 
+                            extension.
+        input_format (str): Extension of the input file/
+        video_clip (VideoFileClip)
+        output_dir_path (str): Path to the output directory.
+    """
+    input_file_path = "input_path"
+    input_format = "input_format"
+    video_clip = "video_clip" 
+    output_dir_path = "output_dir_path"
+    
+
+class VideoStream(IDictModel):
+
+    def __init__(self, input_file_path : str, input_format : str,
+            video_clip : VideoFileClip, output_dir_path : str = None) -> None:
+        """
+        Params:
+            input_file_path (str): Path of the input file, including name and 
+                            extension.
+            input_format (str): Extension of the input file/
+            video_clip (VideoFileClip)
+            output_dir_path (str): Path to the output directory.
+        """
+        super().__init__()
+        # The output path defaults to the input path directory if not specified
+        if len(input_file_path) > 0 and output_dir_path == None:
+            output_dir_path = input_file_path[:input_file_path.rfind("/")]
+        # Storing items
+        self.items = {
+            VideoStreamAttr.input_file_path : input_file_path,
+            VideoStreamAttr.input_format : input_format,
+            VideoStreamAttr.video_clip : video_clip,
+            VideoStreamAttr.output_dir_path : output_dir_path}
+
+# TODO: Add functionality to write in different video formats.
 class VideoIO:
 
     # Video formats that are currently supported.
-    VIDEO_FORMATS = ("mxf","mov","mp4","wmv","flv","avi","swf","m4v")
+    INPUT_VIDEO_FORMATS = ("mxf","mov","mp4","wmv","flv","avi","swf","m4v")
+    OUTPUT_VIDEO_FORMATS = ("mp4")
+    OUTPUT_AUDIO_FORMATS = ("wav")
 
     def __init__(self) -> None:
         """
         Params:
-            streams (Dict[str, Dict]]):
-                Mapping of a unique identifier / name of the video stream 
-                to a dictionary containing:
-                    1. "path" --> Path of the file.
-                    2. "video_clip" --> Video clip associated with that file.
-            default_video_format (str): 
-                Format video files are written in.
-            default_audio_format (str):
-                Format audio file are written in.
+            streams (Dict[str,VideoStream]): Mapping from identifier to stream.
+            default_video_format (str):  Format video files are written in.
+            default_audio_format (str):Format audio file are written in.
             num_threads (int): No. of threads used by the thread pool.
             thread_pool (ThreadPool)
         """
         # Params
         self.streams = dict() 
-        self.default_video_format = "mp4"
-        self.default_audio_format = "wav"
+        self.default_video_input_format = "mp4"
+        self.default_audio_output_format = "wav"
         self.num_threads = 10
         # Starting thread pool
         self.thread_pool = ThreadPool(self.num_threads)
         self.thread_pool.spawn_threads()
     
     ################################# SETTERS ###############################
+
     def read_streams(self, file_paths : Dict[str,str]) -> bool:
         """
         Read the audio files at the given paths for future operations. 
@@ -59,17 +101,75 @@ class VideoIO:
         """
         # Clears all the previous streams when reading new ones.
         self.streams.clear()
-        # If all files exist, they are read as VideoClip objects. 
+        # Determine whether all files are valid 
+        if not all([self._is_video_file(path) for path in file_paths.values()]):
+            return False 
+        # If all files exist, they are read as VideoClip objects.
         for name, file_path in file_paths.items():
-            if not self._is_video_file(file_path):
+            success, stream = self._initialize_video_stream(
+                file_path,self.default_video_input_format,None,None)
+            if not success:
                 self.streams.clear()
-                return False
-            self.streams[name] = {
-                "file_path" : file_path,
-                "video_clip" : VideoFileClip(file_path)}
+                return False  
+            self.streams[name] = stream
         return True
+            
+    def set_output_paths(self, output_dir_paths : Dict) -> bool:
+        """
+        Set the output direcotry path for the video streams associated with 
+        the identifiers
+
+        Args:
+            output_dir_paths (Dict): Mapping from identifier to output directory
+                                path. The path must be a valid directory path.
+        
+        Returns:
+            (bool): True if path successfully set. False otherwise.
+        """
+        # Setting the output paths for each AudioStream
+        for name, output_dir_path in output_dir_paths.items():
+            # Verify identifiers and path 
+            if not name in self.streams or \
+                    not self._is_directory(output_dir_path):
+                return False 
+            self.streams[name].set(
+                VideoStreamAttr.output_dir_path,output_dir_path)
+        return True 
+
+    def set_output_formats(self, output_formats : Dict) -> bool:
+        """
+        Set the output formats for the video streams associated with the 
+        identifiers.
+
+        Args:
+            output_formats (Dict): Mapping from identifier to output format
+                            The format must be a supported output audio format.
+        
+        Returns:
+            (bool): True if format successfully set. False otherwise.
+       """
+        # Setting the output paths for each AudioStream
+        for name, output_format in output_formats.items():
+            if not name in self.streams or \
+                    not output_format in self.OUTPUT_VIDEO_FORMATS:
+                return False 
+            self.streams[name].set(
+                VideoStreamAttr.output_format,output_format)
+        return True 
 
     ################################# GETTERS #############################
+
+    def is_readable(self, file_path : str) -> bool:
+        """
+        Determine if the file at the given path is readable by VideoIO.
+
+        Args:
+            file_path (str)
+        
+        Returns:
+            (bool): True if the file is readable. False otherwise.
+        """
+        return self._is_video_file(file_path)
 
     def get_stream_names(self) -> List[str]:
         """
@@ -88,41 +188,42 @@ class VideoIO:
         Returns:
             (Tuple): Supported video file formats
         """
-        return tuple(self.VIDEO_FORMATS) 
+        return tuple(self.INPUT_VIDEO_FORMATS) 
 
     ############################### PUBLIC METHODS ########################
 
-    def write(self, output_paths : Dict[str,Dict]) -> bool:
+    def write(self, identifiers : Dict) -> bool:
         """
         Write the video streams that were previously read as either a file 
         containing both audio and video, only video, and only audio.
 
         Args:
             output_paths (Dict[str,Dict]):
-                Mapping from stream identifier to a dictionary containing:
-                    1. "path" --> Output file path. Must be a directory path.
-                    2. "type" --> Type of the output. Must be in VideoWriteTypes
+                Mapping from stream identifier to:
+                    1. type (str) --> VideoWriteTypes
 
         Returns:
-            (bool): True if all files were successfully written. False otherwise.
+            (bool): True if all files were successfully written. 
+                    False otherwise.
         """
-        # Create a closure to determine thread success
+         # Create a closure to determine thread success
         closure = dict()
-        for name in output_paths.keys():
+        for name in identifiers.keys():
             closure[name] = False 
-        for name in output_paths.keys():
-            # Verify that all the given output paths have streams associated.
-            # and that the output paths are directories.
-            if not name in self.streams.keys() or \
-                not self._is_directory(output_paths[name]["path"]):
-                    return False 
+        # Verify all identifiers 
+        if not all([identifier in self.streams.keys() \
+                for identifier in identifiers.keys() ]):
+            return False  
+        # Write all the output files
+        for name in identifiers:
             # Determine output type and file name 
-            output_dir_path = output_paths[name]["path"] 
-            output_type = output_paths[name]["type"]
+            _, output_dir_path = self.streams[name].get(
+                VideoStreamAttr.output_dir_path)
             # Write correct type by creating thread.
+            output_type = identifiers[name]
             if output_type == VideoWriteTypes.video_audio:
                 output_file_name = "{}/{}.{}".format(
-                output_dir_path,name,self.default_video_format)
+                    output_dir_path,name,self.default_video_input_format)
                 self.thread_pool.add_task(
                     self._write_video_audio,[name,output_file_name,closure]) 
             elif output_type == VideoWriteTypes.audio:
@@ -141,6 +242,27 @@ class VideoIO:
 
     ############################# PRIVATE METHODS ###########################
 
+    def _initialize_video_stream(self, input_file_path, input_format, 
+            output_dir_path, output_format) -> Tuple[bool,VideoStream]:
+        """
+        Initializes and returns an VideoStream object by reading from input path.
+
+        Args:
+            input_path (str): Path to input audio file
+            input_format (str): Format the input file is to be read in.
+            output_path (str): Output path for the file.
+            output_format (str): Format the output file should be in.
+        """
+        try:
+            video_clip = VideoFileClip(input_file_path)
+            video_stream = VideoStream(input_file_path,input_format,video_clip,
+                output_format,output_dir_path)
+            return (True, video_stream)
+        except:
+            return (False, None)
+
+    ### Write methods 
+
     def _write_video_audio(self, name : str, output_file_name : str,
             closure : Dict[str,bool]):
         """
@@ -154,7 +276,8 @@ class VideoIO:
                     if successfully written. False otherwise 
         """
         try:
-            video_clip = self.streams[name]["video_clip"]
+            _, video_clip = self.streams[name].get(
+                VideoStreamAttr.video_clip)
             video_clip.write_videofile(output_file_name)
             closure[name] = True  
         except:
@@ -173,7 +296,8 @@ class VideoIO:
                     if successfully written. False otherwise 
         """
         try:
-            video_clip = self.streams[name]["video_clip"]
+            _, video_clip = self.streams[name].get(
+                VideoStreamAttr.video_clip)
             audio = video_clip.audio
             audio.write_audiofile(output_file_name)
             closure[name] = True 
@@ -193,7 +317,8 @@ class VideoIO:
                     if successfully written. False otherwise 
         """
         try:
-            video_clip = self.streams[name]["video_clip"]
+            _, video_clip = self.streams[name].get(
+                VideoStreamAttr.video_clip)
             video_clip.write_videofile(output_file_name,audio=False)
             closure[name] = True 
         except:
