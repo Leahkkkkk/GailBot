@@ -1,7 +1,7 @@
 # Third party imports 
 from enum import Enum
 
-class BlackBoardAttributes(Enum):
+class SystemBBAttributes(Enum):
     """
     Defines all the attributes that can exist within the blackboard
     """

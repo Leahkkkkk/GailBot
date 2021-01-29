@@ -1,7 +1,3 @@
-"""
-Testing script for the config component.
-"""
-# Standard library imports
 
 # Local imports 
 from Src.Components.config import BlackBoard, BlackBoardAttributes, Config
