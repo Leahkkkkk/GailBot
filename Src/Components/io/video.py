@@ -69,8 +69,8 @@ class VideoIO:
         """
         Params:
             streams (Dict[str,VideoStream]): Mapping from identifier to stream.
-            default_video_format (str):  Format video files are written in.
-            default_audio_format (str):Format audio file are written in.
+            default_video_input_format (str):  Format video files are written in.
+            default_audio_output_format (str):Format audio file are written in.
             num_threads (int): No. of threads used by the thread pool.
             thread_pool (ThreadPool)
         """
@@ -107,7 +107,7 @@ class VideoIO:
         # If all files exist, they are read as VideoClip objects.
         for name, file_path in file_paths.items():
             success, stream = self._initialize_video_stream(
-                file_path,self.default_video_input_format,None,None)
+                file_path,self.default_video_input_format,None)
             if not success:
                 self.streams.clear()
                 return False  
@@ -228,12 +228,12 @@ class VideoIO:
                     self._write_video_audio,[name,output_file_name,closure]) 
             elif output_type == VideoWriteTypes.audio:
                 output_file_name = "{}/{}.{}".format(
-                output_dir_path,name,self.default_audio_format)
+                output_dir_path,name,self.default_audio_output_format)
                 self.thread_pool.add_task(
                     self._write_audio,[name,output_file_name,closure])  
             else:
                 output_file_name = "{}/{}.{}".format(
-                output_dir_path,name,self.default_video_format)
+                output_dir_path,name,self.default_video_input_format)
                 self.thread_pool.add_task(
                     self._write_video,[name,output_file_name,closure])   
         # Run and wait for all tasks in the pool to finish 
@@ -243,7 +243,7 @@ class VideoIO:
     ############################# PRIVATE METHODS ###########################
 
     def _initialize_video_stream(self, input_file_path, input_format, 
-            output_dir_path, output_format) -> Tuple[bool,VideoStream]:
+            output_dir_path) -> Tuple[bool,VideoStream]:
         """
         Initializes and returns an VideoStream object by reading from input path.
 
@@ -253,13 +253,12 @@ class VideoIO:
             output_path (str): Output path for the file.
             output_format (str): Format the output file should be in.
         """
-        try:
-            video_clip = VideoFileClip(input_file_path)
-            video_stream = VideoStream(input_file_path,input_format,video_clip,
-                output_format,output_dir_path)
-            return (True, video_stream)
-        except:
-            return (False, None)
+    
+        video_clip = VideoFileClip(input_file_path)
+        video_stream = VideoStream(input_file_path,input_format,video_clip,
+                                output_dir_path)
+        return (True, video_stream)
+    
 
     ### Write methods 
 
@@ -339,7 +338,7 @@ class VideoIO:
 
     def _is_video_file(self, file_path : str) -> bool:
          return self._does_file_exist(file_path) and \
-            self._get_file_extension(file_path).lower() in self.VIDEO_FORMATS
+            self._get_file_extension(file_path).lower() in self.INPUT_VIDEO_FORMATS
 
     def _get_file_extension(self, file_path : str) -> str:
         """

@@ -160,12 +160,12 @@ class GeneralIO:
                 False + None otherwise. 
         """
         # Determine the file format using extension 
-        file_format = self.get_file_extension(file_path)
         if not self.is_file(file_path) or \
-                not file_format.upper() in self.readers.keys() or \
-                file_format != self.get_file_extension(file_path):
+                not self.get_file_extension(file_path).upper() \
+                    in self.readers.keys():
             return (False, None)
         # Readers handle exceptions 
+        file_format = self.get_file_extension(file_path)
         return self.readers[file_format.upper()](file_path)
     
     def write_to_file(self, file_path : str, data : Any, overwrite : bool) \

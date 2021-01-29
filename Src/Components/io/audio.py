@@ -26,7 +26,7 @@ class AudioStreamAttr(Enum):
     input_format = "input_format"
     audio_segment = "audio_segment"
     output_dir_path = "output_path"
-    output_foramt = "output_format"
+    output_format = "output_format"
 
 class AudioStream(IDictModel):
     """
@@ -36,7 +36,7 @@ class AudioStream(IDictModel):
 
     def __init__(self, input_file_path : str, input_format : str, 
             audio_segment : AudioSegment, output_dir_path : str = None,
-            output_format = None) -> None:
+            output_format : str  = None) -> None:
         """
         Params:
             input_file_path (str): Complete input file path, including filename 
@@ -57,7 +57,7 @@ class AudioStream(IDictModel):
             output_dir_path = input_file_path[:input_file_path.rfind("/")]
         # Storing the items
         self.items = {
-            AudioStreamAttr.input_path : input_file_path, 
+            AudioStreamAttr.input_file_path : input_file_path, 
             AudioStreamAttr.input_format : input_format,
             AudioStreamAttr.audio_segment : audio_segment,
             AudioStreamAttr.output_dir_path : output_dir_path,
@@ -153,7 +153,7 @@ class AudioIO:
     def set_output_paths(self, output_dir_paths : Dict) -> bool:
         """
         Set the output direcotry path for the audio streams associated with 
-        the identifiers
+        the identifiers.
 
         Args:
             output_dir_paths (Dict): Mapping from identifier to output directory
@@ -384,8 +384,8 @@ class AudioIO:
             return (False, (None,None))
         # Generating names for channels
         name, = self.streams.keys()
-        left_channel_name = name + "left_channel_mono"
-        right_channel_name = name + "right_channel_mono"
+        left_channel_name = name + "_left_channel_mono"
+        right_channel_name = name + "_right_channel_mono"
         # Gathering data for new potential streams 
         _ , audio_segment = self.streams[name].get(
                 AudioStreamAttr.audio_segment)
@@ -404,6 +404,8 @@ class AudioIO:
             right_stream = AudioStream(
                 "",self.default_input_audio_format,right_segment,
                 output_dir_path,output_format)
+            self.streams[left_channel_name] = left_stream
+            self.streams[right_channel_name] = right_stream
             return (True, (left_channel_name,right_channel_name))
         except:
             return (False, (None,None)) 
@@ -427,7 +429,7 @@ class AudioIO:
         # Concat all existing segments 
         combined_segment = AudioSegment.empty()
         for stream in self.streams.values():
-            segment = stream.get(AudioStreamAttr.audio_segment)
+            _, segment = stream.get(AudioStreamAttr.audio_segment)
             combined_segment += segment 
         # Generate name 
         combined_name = "_".join([name for name in self.streams.keys()])
@@ -574,7 +576,7 @@ class AudioIO:
             # Chunk based on the duration given.
             if audio_segment.duration_seconds <= chunk_duration_seconds:
                 name_mappings[name] = [name]
-                new_streams = deepcopy(self.streams[name])
+                new_streams[name] = deepcopy(self.streams[name])
             else:
                 chunk_names = list()
                 duration_ms = chunk_duration_seconds * 1000
@@ -662,7 +664,7 @@ class AudioIO:
             (bool): True if file exists and is audio file. False otherwise.
         """
         return self._does_file_exist(file_path) and \
-            self._get_file_extension(file_path).lower() in self.AUDIO_FORMATS
+            self._get_file_extension(file_path).lower() in self.INPUT_AUDIO_FORMATS
 
     def _is_directory(self, dir_path : str) -> bool:
         """
