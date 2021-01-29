@@ -2,109 +2,141 @@
 Testing script for the config component.
 """
 # Standard library imports
-
+from typing import Dict
 # Local imports 
-from Src.Components.config import BlackBoard, BlackBoardAttributes, Config
+from Src.Components.config import BlackBoard, SystemBBAttributes, Config
 from ..suites import TestSuite, TestSuiteAttributes
+# Third party imports 
+import json
 
 ############################### GLOBALS #####################################
 VALID_CONFIG_FILE_PATH = "/Users/muhammadumair/Documents/Repositories/mumair01-Repos/GailBot-0.3/Test_files/Others/sample_config.json"
 INVALID_CONFIG_FILE_PATH = "/Users/muhammadumair/Documents/Repositories/mumair01-Repos/GailBot-0.3/Test_files/Others/invalid_sample_config.json"
 
+############################## HELPER FUNCTIONS ############################
+
+def load_json_file(file_path : str) -> Dict:
+    """
+    Load a json file.
+
+    Args:
+        file_path (str): Path to the json file.
+    
+    Returns:
+        (Dict): Data loaded from the json file.
+    """
+    with open(file_path) as f:
+        return json.load(f)
+
 ########################## TEST DEFINITIONS ##################################
+
+
+#### CONFIG TESTS 
+
+def config_load_blackboard() -> bool:
+    """
+    Tests the load_blackboard method in Config.
+    
+    Tests:
+        1. Load blackboard of defined type from valid data
+        2. Load blackboard of defined type with invalid data.
+        3. Load blackboard of undefined type.
+
+    Returns:
+        (bool): True if all the tests pass. False otherwise.
+    """
+    config = Config()
+    data = load_json_file(VALID_CONFIG_FILE_PATH)
+    return config.load_blackboard("system_blackboard", data)  and \
+        not config.load_blackboard("system_blackboard",{}) and \
+        not config.load_blackboard("invalid",data)
+
+def config_get_blackboard() -> bool:
+    """
+    Tests the get_blackboard method in config
+
+    Tests:
+        1. Obtain the blackboard after loading correctly.
+        2. Obtain a blackboard that has not been loaded 
+        3. Obtain blackboard of undefined type.
+
+    Returns:
+        (bool): True if all the tests pass. False otherwise.
+    """
+    config = Config()
+    data = load_json_file(VALID_CONFIG_FILE_PATH)
+    return not config.get_blackboard("system_blackboard")[0] and \
+        config.load_blackboard("system_blackboard", data) and \
+        config.get_blackboard("system_blackboard")[0] and \
+        not config.get_blackboard("invalid")[0]
+ 
+
+def config_get_blackboard_types() -> bool:
+    """
+    Tests the get_blackboard_types method in config
+
+    Tests:
+        1. Obtain the list and verify that it is correct.
+
+    Returns:
+        (bool): True if all the tests pass. False otherwise.
+    """
+    config = Config()
+    return config.get_blackboard_types() == ("system_blackboard",)
 
 
 #### BLACKBOARD TESTS
 
-def blackboard_set() -> bool:
-    """
-    Tests the set function in blackboard. 
-
-    Tests:
-        1. Add a key-value pair where key is not in BlackBoardAttributes.
-        2. Add a key-value pair where key is in BlackBoardAttributes.
-
-    Result:
-        (bool): True if all the tests pass. False otherwise.
-    """
-    blackboard = BlackBoard()
-    return not blackboard.set("Dummy key", None) and \
-            blackboard.set(BlackBoardAttributes.Test_key, "Test String")
-
 def blackboard_get() -> bool:
     """
-    Tests get function in BlackBoard 
+    Tests the get method of a blackboard.
 
     Tests:
-        1. Retrieve a key that does not exist in the blackboard but is in 
-            BlackBoardAttributes.
-        2. Retrieve a key that does exist in the blackboard and is in 
-            BlackBoardAttributes.  
-        3. Retrieve using a key that does not exist in BlackBoardAttributes.
-    
-    Result:
-        (bool): True if all the tests pass. False otherwise.
-    """
-    blackboard = BlackBoard()
-    return blackboard.get(BlackBoardAttributes.Test_key) == None and \
-        (blackboard.set(BlackBoardAttributes.Test_key,"Test") and \
-        blackboard.get(BlackBoardAttributes.Test_key) == "Test") and \
-        not blackboard.get("Dummy key")
+        1. Get an attribute that exists.
+        2. Get an attribute that does not exist
 
-#### CONFIG TESTS
-
-def config_load_from_file() -> bool:
-    """
-    Tests the load from file function in config.
-
-    Tests:
-        1. Load a file that does not exist and the format is valid.
-        2. Load a file that does not exist and the format is not valid.
-        3. Load a file that does exist and the format is valid and the 
-            config file keys are also valid.
-        4. Load a file that does exist and the format is not valid. 
-        5. Load a file that does exist and the format is valid but the config 
-            keys are invalid.
-    
-    Result:
+    Returns:
         (bool): True if all the tests pass. False otherwise.
     """
     config = Config()
-    return not config.load_from_file("Dummy", "JSON") and \
-        not config.load_from_file("Dummy", "YAML") and \
-        config.load_from_file(VALID_CONFIG_FILE_PATH,"JSON") and \
-        not config.load_from_file(VALID_CONFIG_FILE_PATH,"YAML") and \
-        not config.load_from_file(INVALID_CONFIG_FILE_PATH, "JSON")
+    data = load_json_file(VALID_CONFIG_FILE_PATH)
+    config.load_blackboard("system_blackboard", data)
+    _, blackboard = config.get_blackboard("system_blackboard")
+    return blackboard.get(SystemBBAttributes.Test_key)[1] == "I am a test string" and \
+        not blackboard.get("invalid")[0]
 
-def config_get_blackboard() -> bool:
+def blackboard_set() -> bool:
     """
-    Tests the get_blackboard function in config 
+    Test the set method of of a blackboard
 
     Tests:
-        1. Get blackboard without loading file.
-        2. Get blackboard after loading file.
-        3. Check to make sure that the same attribute from both blackboard is 
-            not the same.
-    """
-    config = Config()  
-    uninitialized_blackboard =  config.get_blackboard()
-    config.load_from_file(VALID_CONFIG_FILE_PATH,"JSON")
-    initialized_blackboard = config.get_blackboard()
-    return uninitialized_blackboard.get(BlackBoardAttributes.Test_key) != \
-            initialized_blackboard.get(BlackBoardAttributes.Test_key)
+        1. Set an attribute that exists.
+        2. Set an attribute that does not exist
 
-####################### TEST SUITE DEFINITION ################################
+    Returns:
+        (bool): True if all the tests pass. False otherwise.
+    """
+    config = Config()
+    data = load_json_file(VALID_CONFIG_FILE_PATH)
+    config.load_blackboard("system_blackboard", data)
+    _, blackboard = config.get_blackboard("system_blackboard")
+    return blackboard.get(SystemBBAttributes.Test_key)[1] == "I am a test string" and \
+        blackboard.set(SystemBBAttributes.Test_key,"Test_key") and \
+        blackboard.get(SystemBBAttributes.Test_key)[1] == "Test_key" and \
+        not blackboard.set("invalid","apple")
+    
+# ####################### TEST SUITE DEFINITION ################################
 
 def define_config_test_suite() -> TestSuite:
     config_test_suite = TestSuite()
-    # Blackboard tests 
     config_test_suite.add_test(
-        "blackboard_set", (),True,True,blackboard_set)
-    config_test_suite.add_test(
-        "blackboard_get", (), True, True, blackboard_get)
-    # Config tests 
-    config_test_suite.add_test(
-        "config_load_from_file",(), True, True, config_load_from_file)
+        "config_load_blackboard",(), True, True, config_load_blackboard)
     config_test_suite.add_test(
         "config_get_blackboard",(), True, True, config_get_blackboard)
+    config_test_suite.add_test("config_get_blackboard_types",(), True, True, 
+        config_get_blackboard_types)
+    config_test_suite.add_test("blackboard_get",(), True, True, 
+        blackboard_get)
+    config_test_suite.add_test("blackboard_set",(), True, True, 
+        blackboard_set)
     return config_test_suite
