@@ -34,6 +34,34 @@ def blackboard_set() -> bool:
     return not blackboard.set("Dummy key", None) and \
             blackboard.set(BlackBoardAttributes.Test_key, "Test String")
 
+def blackboard_set_invalid_key() -> bool:
+    """
+    Tests set function of invalid key in blackboard.
+
+    Tests:
+        1. Add a key-value pair where key is not in BlackBoardAttributes.
+
+    Result:
+        (bool): True if all the tests pass. False otherwise.
+    """
+
+    blackboard = BlackBoard()
+    return not blackboard.set("Dummy key", None)
+
+def blackboard_set_valid_key() -> bool:
+    """
+    Tests set function of valid key in blackboard
+
+    Tests:
+        1. Add a key-value pair where key is in BlackBoardAttributes
+
+    Results:
+        (bool): True if all the tests pass. False otherwise.
+    """
+
+    blackboard = BlackBoard()
+    return blackboard.set(BlackBoardAttributes.Test_key, "Test String")
+
 def blackboard_get() -> bool:
     """
     Tests get function in BlackBoard 
@@ -53,6 +81,19 @@ def blackboard_get() -> bool:
         (blackboard.set(BlackBoardAttributes.Test_key,"Test") and \
         blackboard.get(BlackBoardAttributes.Test_key) == "Test") and \
         not blackboard.get("Dummy key")
+
+def blackboard_get_valid_unset_key() -> bool:
+    blackboard = BlackBoard()
+    return blackboard.get(BlackBoardAttributes.Test_key) == None
+
+def blackboard_get_valid_set_key() -> bool:
+    blackboard = BlackBoard()
+    return (blackboard.set(BlackBoardAttributes.Test_key,"Test") and \
+        blackboard.get(BlackBoardAttributes.Test_key) == "Test")
+
+def blackboard_get_invalid_key() -> bool:
+    blackboard = BlackBoard()
+    return not blackboard.get("Dummy key")
 
 #### CONFIG TESTS
 
@@ -90,6 +131,42 @@ def config_load_from_file() -> bool:
         not config.load_from_file(TEXTFILE_FILE_PATH, "JSON") and \
         config.load_from_file(EXTRA_KEYS_JSON_FILE_PATH, "JSON") and \
         not config.load_from_file(INVALID_DUPLICATE_FILE_PATH, "JSON")
+
+def config_load_from_valid_nonexisting_file() -> bool:
+    config = Config()
+    return not config.load_from_file("Dummy", "JSON")
+
+def config_load_from_invalid_nonexisting_file() -> bool:
+    config = Config()
+    return not config.load_from_file("Dummy", "YAML")
+
+def config_load_from_valid_existing_file() -> bool:
+    config = Config()
+    return config.load_from_file(VALID_CONFIG_FILE_PATH,"JSON")
+
+def config_load_from_invalid_existing_file() -> bool:
+    config = Config()
+    return not config.load_from_file(VALID_CONFIG_FILE_PATH,"YAML")
+
+def config_load_from_invalid_key_file() -> bool:
+    config = Config()
+    return not config.load_from_file(INVALID_CONFIG_FILE_PATH, "JSON")
+
+def config_load_from_invalid_JSON() -> bool:
+    config = Config()
+    return not config.load_from_file(INVALID_JSON_FILE_PATH, "JSON")
+
+def config_load_from_incorrect_format_file() -> bool:
+    config = Config()
+    return not config.load_from_file(TEXTFILE_FILE_PATH, "JSON")
+
+def config_load_from_JSON_with_extra_keys() -> bool:
+    config = Config()
+    return config.load_from_file(EXTRA_KEYS_JSON_FILE_PATH, "JSON")
+
+def config_load_from_JSON_with_duplicates() -> bool:
+    config = Config()
+    return not config.load_from_file(INVALID_DUPLICATE_FILE_PATH, "JSON")
 
 def config_get_blackboard() -> bool:
     """
@@ -141,10 +218,50 @@ def define_config_test_suite() -> TestSuite:
     config_test_suite.add_test(
         "blackboard_set", (),True,True,blackboard_set)
     config_test_suite.add_test(
+        "blackboard_set_invalid_key", (),True,True,blackboard_set_invalid_key)
+    config_test_suite.add_test(
+        "blackboard_set_valid_key", (),True,True,blackboard_set_valid_key)
+    config_test_suite.add_test(
         "blackboard_get", (), True, True, blackboard_get)
+    config_test_suite.add_test(
+        "blackboard_get_valid_unset_key", (), True, True, 
+         blackboard_get_valid_unset_key)
+    config_test_suite.add_test(
+        "blackboard_get_valid_set_key", (), True, True, 
+         blackboard_get_valid_set_key)
+    config_test_suite.add_test(
+        "blackboard_get_invalid_key", (), True, True, 
+         blackboard_get_invalid_key)
     # Config tests 
     config_test_suite.add_test(
         "config_load_from_file",(), True, True, config_load_from_file)
+    config_test_suite.add_test(
+        "config_load_from_valid_nonexisting_file",(), True, True, 
+         config_load_from_valid_nonexisting_file)
+    config_test_suite.add_test(
+        "config_load_from_invalid_nonexisting_file",(), True, True, 
+         config_load_from_invalid_nonexisting_file)
+    config_test_suite.add_test(
+        "config_load_from_valid_existing_file",(), True, True, 
+         config_load_from_valid_existing_file)
+    config_test_suite.add_test(
+        "config_load_from_invalid_existing_file",(), True, True, 
+         config_load_from_invalid_existing_file)
+    config_test_suite.add_test(
+        "config_load_from_invalid_key_file",(), True, True, 
+         config_load_from_invalid_key_file)
+    config_test_suite.add_test(
+        "config_load_from_invalid_JSON",(), True, True, 
+         config_load_from_invalid_JSON)
+    config_test_suite.add_test(
+        "config_load_from_incorrect_format_file",(), True, True, 
+         config_load_from_incorrect_format_file)
+    config_test_suite.add_test(
+        "config_load_from_JSON_with_extra_keys",(), True, True, 
+         config_load_from_JSON_with_extra_keys)
+    config_test_suite.add_test(
+        "config_load_from_JSON_with_duplicates",(), True, True, 
+         config_load_from_JSON_with_duplicates)
     config_test_suite.add_test(
         "config_get_blackboard",(), True, True, config_get_blackboard)
     config_test_suite.add_test(
