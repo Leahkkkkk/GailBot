@@ -1,3 +1,4 @@
 # Config init file 
-from .blackboard import BlackBoard, BlackBoardAttributes
+from .blackboard import BlackBoard
+from .attributes import SystemBBAttributes
 from .config import Config

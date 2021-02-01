@@ -1,61 +1,75 @@
 # Standard imports 
-from typing import Any 
+from typing import Any, Dict
+# Local imports 
+from .attributes import SystemBBAttributes
+from ...utils.models import IDictModel
 # Third party imports 
-from enum import Enum
 
-class BlackBoardAttributes(Enum):
+class BlackBoard(IDictModel):
     """
-    Defines all the attributes that can exist within the blackboard
+    Generic BlackBoard class that must be inherited by all specific blackboard
+    classes 
     """
-    #TODO: Define the blackboard attributes
-    Test_key = "Test_key"
-
-class BlackBoard:
-
-    def __init__(self) -> None:
-        # Dictionary of the key-value pairs of items stored 
-        # Keys are only defined by BlackBoardAttributes 
-        self.items = {}
-        all_attrs = [v for v in BlackBoardAttributes]
-        for attr in all_attrs:
-            self.items[attr] = None 
-    
-    def set(self, key : BlackBoardAttributes, data : Any) -> bool:
+    def __init__(self, blackboard_data : Any) -> None:
         """
-        Sets the key with the provided data. The key must be a 
-        BlackBoardAttribute 
-        
+        Loads the given data into the blackboard if it can be correctly parsed.
+        Every specific blackboard must have its function to parse the data 
+
         Args:
-            key (BlackBoardAttributes): Must be present in BlackBoardAttributes. 
-            data (Any): Data to be associated with the key
-            
-        Returns:
-            (bool): True if successful. False otherwise.
+            blackboard_data (Any): Data to be loaded into the blackboard 
+                        Must be in the format expected by the blackboard.
         """
-        # The key must be present in BlackBoardAttributes 
-        all_attrs = [v for v in BlackBoardAttributes]
-        if key in all_attrs:
-            self.items[key] = data
-            return True 
-        else:
-            return False 
+        super().__init__()
+        self.configured = False 
 
-    def get(self, key : BlackBoardAttributes) -> Any:
+    def is_configured(self) -> bool:
         """
-        Get the value associated with the BlackBoardAttribute 
-        
+        Determine if the blackboard is configured and ready for use.
+
+        Returns:
+            (bool): True if the blackboard is configured. False otherwise.
+        """
+        return self.configured 
+
+class SystemBB(BlackBoard):    
+    """
+    The system blackboard is responsible for storing core system attributes.
+    """
+
+    def __init__(self, blackboard_data : Dict) -> None:
+        """
         Args:
-            key (BlackBoardAttributes)
+            blackboard_data (Dict): 
+                Data to be loaded into the blackboard. Must be a dictionary 
+                in the following format:
+                {
+                    "Test_key" : [Value for test key]
+                }
+        """
+        super().__init__(blackboard_data)
+        # Define the item dictionary.
+        self.items = dict()
+        for attribute in SystemBBAttributes:
+            self.items[attribute] = None
+        # Parse the blackboard data 
+        self.configured = self._parse_data(blackboard_data)
+
+    ################################## PRIVATE METHODS #####################
+
+    def _parse_data(self, blackboard_data : Dict) -> bool:
+        """
+        Parses the given data into the blackboard.
+
+        Args:
+            blackboard_data (Dict): Data to be parsed must be a dictionary
         
         Returns:
-            data (Any): Data to be associated with the key
+            (bool): True if successfully parsed. False otherwise.
         """
         try:
-            return self.items[key]
+            self.items[SystemBBAttributes.Test_key] = \
+                 blackboard_data["Test_key"]
+            return True 
         except:
-            pass 
-
-    
-
-
+            return False  
 

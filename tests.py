@@ -79,7 +79,7 @@ if __name__ == "__main__":
         "util_thread_test_suite" : define_util_thread_test_suite(),
         "io_test_suite" : define_io_test_suite()
     }
-    run_single_test_suite(suites,"io_test_suite")
+    run_single_test_suite(suites,"config_test_suite")
     # Executing all test suites 
     # run_all_test_suites(suites)
     
