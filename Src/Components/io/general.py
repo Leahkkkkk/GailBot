@@ -130,7 +130,7 @@ class GeneralIO:
             (bool): True if the file is readable. False otherwise.
         """
         return self.is_file(file_path) and \
-            self.get_file_extension(file_path) in self.readers.keys()
+            self.get_file_extension(file_path).upper() in self.readers.keys()
 
     def get_file_extension(self, file_path : str) -> str:
         """
