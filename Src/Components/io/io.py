@@ -174,12 +174,44 @@ class IO:
     #### General only methods
 
     def get_size(self, path : str) -> Tuple[bool,bytes]:
+        """
+        Gets size of file with given path. If a directory, the total size is 
+        the size of all items in the directory, including any sub-directories.
+
+        Args: 
+            path (str): Path of the file/directory to get size.
+        
+        Returns:
+            (Tuple[bool, bytes]): 
+                True + Size of the file or directory in bytes if successful.
+                False + None if unsuccesful.
+        """
         return self.general.get_size(path) 
 
     def get_name(self, path : str) -> str:
+        """
+        Obtains name of file/directory of given path.
+
+        Args:
+            path (str): Path of the file/directory to get name.
+
+        Returns:
+            (str): Name of the file or directory, without extension
+        """
         return self.general.get_name(path)
 
     def get_file_extension(self, file_path : str) -> Tuple[bool,str]:
+        """
+        Obtains file extension of file of given path.
+
+        Args:
+            file_path (str): File path of the file to get extension.
+        
+        Returns:
+            (Tuple[bool,str])
+                True + file extension if successful.
+                False + None if unsuccessful (i.e. not valid path to file).
+        """
         if not self.general.is_file(file_path):
             return (False, None)
         return (True, self.general.get_file_extension(file_path))
@@ -326,10 +358,10 @@ class IO:
         Returns:
             (Tuple[bool,Tuple[str,str]]):
                 True + [name of file 1, name of file 2]
-                False + None otherwise.
+                False + (None, None) otherwise.
         """
         if not self.audio.is_readable(file_path):
-            return (False,None)  
+            return (False,(None, None))  
         # Getting the file name 
         file_name = file_path[file_path.rfind("/")+1:file_path.rfind(".")]
         self.audio.read_streams({file_name : file_path})
@@ -368,7 +400,11 @@ class IO:
         self.audio.read_streams(name_to_path)
         _, combined_identifier = self.audio.concat()
         self.audio.set_output_paths({combined_identifier : output_dir_path})
-        return (self.audio.write([combined_identifier]),combined_identifier)
+        did_write = self.audio.write([combined_identifier])
+        if did_write:
+            return (True, combined_identifier)
+        else:
+            return (False, None)
 
     def overlay(self, file_paths : List[str], output_dir_path : str) \
             -> Tuple[bool,str]:

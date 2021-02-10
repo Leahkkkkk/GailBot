@@ -178,7 +178,9 @@ class GeneralIO:
             path (str): Path to a file or directory.
         
         Returns:
-            (bytes): Size of the file or directory in bytes. 
+            (Tuple[bool, bytes]): 
+                True + Size of the file or directory in bytes if successful.
+                False + None if unsuccesful.
         """
         if self.is_file(path):
             return (True, os.path.getsize(path)) 

@@ -348,7 +348,7 @@ class AudioIO:
         """
         # Ensure that we only have two streams to combine into stereo. 
         if len(self.streams.keys()) != 2:
-            return (False, "")
+            return (False, None)
         # Obtain the audio segments 
         name_1,name_2 = self.streams.keys()
         _, audio_segment_1 = self.streams[name_1].get(
@@ -373,7 +373,7 @@ class AudioIO:
             self.streams[stereo_name] = stream
             return (True,stereo_name)
         except:
-            return (False, "")
+            return (False, None)
 
     def stereo_to_mono(self) -> Tuple[bool, Tuple[str,str]]:
         """
