@@ -1,44 +1,71 @@
 # Standard library imports 
-from typing import Any
+from typing import Any, Dict
 from enum import Enum
 # Local imports 
 from ...utils.models import IDictModel
 # Third party imports 
 
 class MetaAttributes(Enum):
-    size = "size"
-    number_of_files = "number_of_files"
-    transcription_date = "transcription_date"
-    transcriber_name = "transcriber_name"
-    source_type = "source_type"
-    previously_transcribed = "previously_transcribed"
+    """
+    Inherits:
+        (Enum)
     
-class Meta(IDictModel):
+    Attributes:
+        conversation_name (str): Name of the conversation.
+        total_size_bytes (bytes): Total size of all source files.
+        num_data_files (int): Number of source files.
+        source_type (str): Must be one of 'file' or 'directory'.
+        transcription_date (datetime): Date the transcription process started.
+        transcription_status (str): Status of the transcription. 
+        transcription_time (datetime): Time transcription process started.
+        total_speakers (int): Total number of speakers in the conversation.
     """
-    Stores meta-data information about a whole conversation based on its 
-    individual data files. 
-    This is dependant on the data files. 
-    """
+    # General 
+    conversation_name = "conversation_name"
+    total_size_bytes = "total_size_bytes"
+    num_data_files = "num_data_files"
+    source_type = "source_type"
+    transcription_date = "transcription_date"
+    transcription_status = "transcription_status"
+    transcription_time = "transcription_time"
+    total_speakers = "total_speakers"
 
-    def __init__(self, data : Any) -> None:
-        super().__init__(data)
-        self.items = dict()
-        for attribute in MetaAttributes:
-            self.items[attribute] = None
+class Meta(IDictModel):
+    
+    def __init__(self, data : Dict[str,str]) -> None:
+        """
+        Args:
+            data (Dict[str,Any]):
+                Mapping from MetaAttributes as strings to their value.
+        """
+        super().__init__()
         self.configured = self._parse_data(data)
 
-    def _parse_data(self, data) -> bool:
+    def is_configured(self) -> bool:
+        """
+        Determine if the Paths object has successfully read data. 
+
+        Returns:
+            (bool): True if data has been successfully read. False otherwise.
+        """
+        return self.configured  
+
+    def _parse_data(self, data : Dict[str,str]) -> bool:
+        """
+        Parse the given data into the model. 
+
+        Args:
+            data (Dict[str,Any]):
+                Mapping from DataFileAttributes as strings to their values. 
+        
+        Returns:
+            (bool): True if data has been successfully read. False otherwise.
+        """
         try:
-            self.items[MetaAttributes.size] = data["size"]
-            self.items[MetaAttributes.number_of_files] = data["number_of_files"]
-            self.items[MetaAttributes.transcription_date] = \
-                data["transcription_date"]
-            self.items[MetaAttributes.transcriber_name] = \
-                data["transcriber_name"]
-            self.items[MetaAttributes.source_type] = data["source_type"]
-            self.items[MetaAttributes.previously_transcribed] = \
-                data["previously_transcribed"]
+            if len(data.keys()) != len(MetaAttributes):
+                return False 
+            for attr in MetaAttributes:
+                self.items[attr] = data[attr.value]
             return True 
         except:
             return False  
-         

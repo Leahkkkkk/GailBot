@@ -1,40 +1,97 @@
 # Standard library imports 
-from typing import Any
+from typing import Any, Dict
 from enum import Enum
 # Local imports 
 from ...utils.models import IDictModel
 # Third party imports 
 
+class DataFileTypes(Enum):
+    """
+    Defines the types of files that can be stored in DataFile objects.
+
+    Inherits:
+        (Enum)
+    """
+    audio = "audio"
+    video = "video"
+
 class DataFileAttributes(Enum):
-    path = "path" 
-    extension = "extension"
+    """
+    Inherits:
+        (Enum)
+    
+    Attributes:
+        name (str): Name of the file
+        extension (str): File extension
+        path (str): Original path to the file.
+        size_bytes (bytes): Size of the file.
+    """
     name = "name"
-    size = "size"
-    speaker_labels = "speaker_labels"
+    extension = "extension"
+    file_type = "file_type" 
+    path = "path"
+    size_bytes = "size_bytes"
 
 class DataFile(IDictModel):
     """
-    The data file can only be a supported type of file. 
-    """
+    Responsible for storing DataFileAttributes and their values. 
 
-    def __init__(self, data : Any) -> None:
-        super().__init__(data)
-        self.items = dict()
-        for attribute in DataFileAttributes:
-            self.items[attribute] = None
+    Inherits:
+        (IDictModel)
+    """
+    def __init__(self, data : Dict[str,Any]) -> None:
+        """
+        Args:
+            data (Dict[str,Any]):
+                Mapping from DataFileAtrributes as strings to their value.
+        """
+        super().__init__()
         self.configured = self._parse_data(data)
 
-    def _parse_data(self, data) -> bool:
+    def is_configured(self) -> bool:
+        """
+        Determine if the Paths object has successfully read data. 
+
+        Returns:
+            (bool): True if data has been successfully read. False otherwise.
+        """
+        return self.configured 
+
+    def set(self, attr : str, data : Dict[str,Any]) -> bool:
+        """
+        Sets the given attribute to the data if it exists in the models attributes.
+
+        Args:
+            attr (Any)
+            data (Any): Data associated with the attribute.
+        
+        Returns:
+            (bool): true if successful. False otherwise.
+        """
+        # Explicit check for file_type attribute
+        if attr == DataFileAttributes.file_type and \
+                not data in DataFileTypes:
+            return False 
+        return super().set(attr,data)
+
+    def _parse_data(self, data : Dict[str,Any]) -> bool:
+        """
+        Parse the given data into the model. 
+
+        Args:
+            data (Dict[str,Any]):
+                Mapping from DataFileAttributes as strings to their values. 
+        
+        Returns:
+            (bool): True if data has been successfully read. False otherwise.
+        """
         try:
-            self.items[DataFileAttributes.path] = data["path"]
-            self.items[DataFileAttributes.extension] = data["extension"]
-            self.items[DataFileAttributes.name] = data["name"]
-            self.items[DataFileAttributes.size] = data["size"]
-            self.items[DataFileAttributes.speaker_labels] = \
-                 data["speaker_labels"]
+            for attr in DataFileAttributes:
+                # Explicit check for file_type attribute
+                if attr == DataFileAttributes.file_type and \
+                        not data[attr.value] in DataFileTypes:
+                    raise Exception
+                self.items[attr] = data[attr.value]
             return True 
         except:
-            return False  
-
-
-
+            return False
