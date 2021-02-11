@@ -1,5 +1,4 @@
 # Standard library imports 
-from os import stat
 from typing import List, Tuple, Any
 # Local imports 
 from .audio import AudioIO
@@ -35,7 +34,7 @@ class IO:
         Determine if path is a directory.
 
         Args:
-            (str): Path 
+            path (str)
         
         Returns:
             (bool): True if path is a directory. False otherwise.
@@ -47,7 +46,7 @@ class IO:
         Determine if the given path is a file.
 
         Args:
-            path (str): Path to file.
+            path (str)
         
         Returns:
             (bool): True if path is a file. False otherwise.
@@ -63,7 +62,8 @@ class IO:
             dir_path (str): Path to directory.
             extensions (List[str]): Specific file extensions to look for. 
                         Ex: ["pdf"]. '*' is a wildcard and considers all 
-                        extensions. default = ["*"]
+                        extensions. Does not consider sub-directories.
+                        default = ["*"]
             check_subdirectories (bool): True to check subdirectories. 
                                 False otherwise. default = False 
         
@@ -74,24 +74,27 @@ class IO:
         return self.general.number_of_files_in_directory(
             path, extensions,check_subdirectories) 
 
-    def names_of_file_in_directory(self, path : str, extensions : List[str],
+    def path_of_files_in_directory(self, path : str, extensions : List[str],
             check_subdirectories : bool) -> Tuple[bool,List[str]]:
         """
-        Determine the names of files in the directory.
+        Determine the paths, relative to dir_path, of all files in the 
+        directory.
 
         Args:
             dir_path (str): Path to directory.
             extensions (List[str]): Specific file extensions to look for. 
                         Ex: ["pdf"]. '*' is a wildcard and considers all 
-                        extensions. default = ["*"]
+                        extensions. Does not consider sub-directories.
+                        default = ["*"]
             check_subdirectories (bool): True to check subdirectories. 
                                         False otherwise. default = False 
         
         Returns:   
-            (Tuple[bool,List[str]]): True + names of files if successful.
-                                False + None if unsuccessful.
+            (Tuple[bool,List[str]]): 
+                True + names of files if successful.
+                False + None if unsuccessful.
         """
-        return self.general.names_of_file_in_directory(
+        return self.general.path_of_files_in_directory(
             path,extensions,check_subdirectories) 
 
     #### Audio, video, and general manipulation methods 
@@ -118,15 +121,12 @@ class IO:
                 data = self.audio.get_streams()["audio_file"]
         return (success,data)
 
-    def write(self, file_path : str, format : str, data : Any ,
-            overwrite : bool) -> bool:
+    def write(self, file_path : str, data : Any , overwrite : bool) -> bool:
         """
-        Write the given data to a file.
-        NOTE: Only json, yaml, txt formats supported.
+        Write the given data to a file. The file extension must be supported. 
 
         Args:
             file_path (str): Path to output file, including name and extension.
-            format (str): Format the file should be written in.
             data (Any)
             overwrite (bool): True to overwrite any existing file. 
                             False to append to existing file.
@@ -134,7 +134,7 @@ class IO:
         Returns:
             (bool): True if successful. False otherwise.
         """
-        return self.general.write_to_file(file_path,format,data,overwrite)
+        return self.general.write_to_file(file_path,data,overwrite)
 
     def convert_format(self, file_path : str, output_format : str,
             output_dir_path : str) -> bool:
@@ -173,12 +173,56 @@ class IO:
 
     #### General only methods
 
+    def get_size(self, path : str) -> Tuple[bool,bytes]:
+        """
+        Gets size of file with given path. If a directory, the total size is 
+        the size of all items in the directory, including any sub-directories.
+
+        Args: 
+            path (str): Path of the file/directory to get size.
+        
+        Returns:
+            (Tuple[bool, bytes]): 
+                True + Size of the file or directory in bytes if successful.
+                False + None if unsuccesful.
+        """
+        return self.general.get_size(path) 
+
+    def get_name(self, path : str) -> str:
+        """
+        Obtains name of file/directory of given path.
+
+        Args:
+            path (str): Path of the file/directory to get name.
+
+        Returns:
+            (str): Name of the file or directory, without extension
+        """
+        return self.general.get_name(path)
+
+    def get_file_extension(self, file_path : str) -> Tuple[bool,str]:
+        """
+        Obtains file extension of file of given path.
+
+        Args:
+            file_path (str): File path of the file to get extension.
+        
+        Returns:
+            (Tuple[bool,str])
+                True + file extension if successful.
+                False + None if unsuccessful (i.e. not valid path to file).
+        """
+        if not self.general.is_file(file_path):
+            return (False, None)
+        return (True, self.general.get_file_extension(file_path))
+
+
     def create_directory(self, dir_path : str) -> bool:
         """
         Create a new directory with the given path.
 
         Args:
-            dir_path (str): Path of the new directory.
+            dir_path (str): Path of the directory to create.
 
         Returns:
             (bool): True if successful. False otherwise.
@@ -218,7 +262,9 @@ class IO:
 
         Args:
             src_path (str): Path to the source file / directory.
-            new_name (str): New names 
+            new_name (str): name of the new file or directpry only, NOT 
+                            the complete path. Should not contain extension or 
+                            backslashes.
         
         Returns:
             (bool): True if successful. False otherwise.
@@ -247,28 +293,35 @@ class IO:
         Always returns the raw recorded data.
 
         Args:
-            duration_seconds (float): Duration of the recording.
+            duration_seconds (float): Duration of the recording in seconds.
             output_file_name (str): Name of the output file, without extension
             output_dir_path (str): 
                 Path of the output directory. If this is None, the file is not 
-                written.
+                written but simply stored internally.
             
         Returns:
             (Tuple[bool,Any]): True + raw data if successful.
                                 False + None if unsuccessful.
         """
         # Recording and getting raw data 
-        self.audio.record_stream(output_file_name,duration_seconds)
-        raw_data = self.audio.get_streams()[output_file_name]
-        if output_dir_path != None:
-            return (self.write({output_file_name : output_dir_path}),raw_data)
-        return (True, raw_data)
+        is_recorded = self.audio.record_stream(
+            output_file_name,duration_seconds)
+        if is_recorded:
+            raw_data = self.audio.get_streams()[output_file_name]
+            if output_dir_path != None:
+                self.audio.set_output_paths({output_file_name : output_dir_path})
+                return (self.audio.write([output_file_name]), raw_data)
+            return (True, raw_data)
+        else:
+            return (False, None)
+                
 
     def mono_to_stereo(self, file_1_path : str, file_2_path : str, 
-            output_dir_path : str) -> bool:
+            output_dir_path : str) -> Tuple[bool,str]:
         """
         Convert two mono streams into a single stereo stream. 
-        The files must have the same numbfer of frames.
+        The files must have the same number of frames and the same extension.
+        The output file has the same extension as both the input files. 
      
         Args:
             file_1_path (str): Path to first mono file.
@@ -276,11 +329,13 @@ class IO:
             output_dir_path (str): Path to the output directory.
 
         Returns:
-            (bool): True if successful. False otherwise  
+            (Tuple[bool,str]): 
+                True + output file name, without extension if successful.
+                False + None otherwise.
         """
         if not self.audio.is_readable(file_1_path) or \
                 not self.audio.is_readable(file_2_path):
-            return False 
+            return (False,None) 
         # Getting the file names 
         name_1 = self._get_file_name_from_path(file_1_path)
         name_2 =  self._get_file_name_from_path(file_2_path)
@@ -288,22 +343,25 @@ class IO:
             {name_1 : file_1_path, name_2 : file_2_path})
         _ , identifier = self.audio.mono_to_stereo()
         self.audio.set_output_paths({identifier : output_dir_path})
-        return self.audio.write([identifier])
+        return (self.audio.write([identifier]),identifier)
 
-    def stereo_to_mono(self, file_path : str, output_dir_path : str) -> bool:
+    def stereo_to_mono(self, file_path : str, output_dir_path : str) \
+            -> Tuple[bool,Tuple[str,str]]:
         """
         Convert a stereo stream to two mono streams i.e. left stream and right 
-        stream. 
+        stream, with the same extension as the input file. 
 
         Args:
             file_path (str): Path to stereo file.
             output_dir_path (str): Path to the output directory.
 
         Returns:
-            (bool): True if successful. False otherwise  
+            (Tuple[bool,Tuple[str,str]]):
+                True + [name of file 1, name of file 2]
+                False + (None, None) otherwise.
         """
         if not self.audio.is_readable(file_path):
-            return False  
+            return (False,(None, None))  
         # Getting the file name 
         file_name = file_path[file_path.rfind("/")+1:file_path.rfind(".")]
         self.audio.read_streams({file_name : file_path})
@@ -311,66 +369,83 @@ class IO:
         self.audio.set_output_paths({
             identifiers[0] : output_dir_path,
             identifiers[1] : output_dir_path})
-        return self.audio.write(identifiers)
+        return (self.audio.write(identifiers),identifiers)
 
-    def concat(self, file_paths : List[str], output_dir_path : str) -> bool:
+    def concat(self, file_paths : List[str], output_dir_path : str) \
+            -> Tuple[bool,str]:
         """
         Combine all the streams into a single stream, one after another, in the 
-        specific order in which they are provided.
-        At least one file must be provided.
+        specific order in which they are provided. 
+        At least one file must be provided and the files must have the same 
+        extension.
 
         Args:
             file_paths (List[str]): Path to files to concat in a specific order
             output_dir_path (str): Path to the output directory.
         
         Returns:
-            (bool): True if successful. False otherwise 
+            (Tuple[bool,str]): 
+                True + name of the output file, without extension, if successful.
+                False + None otherwise.
         """
         if len(file_paths) < 1:
-            return False 
+            return (False,None) 
         name_to_path = dict()
         for path in file_paths:
             if not self.audio.is_readable(path):
-                return False 
+                return (False,None) 
             file_name = self._get_file_name_from_path(path)
             name_to_path[file_name] = path 
         # Reading and concatenating.
         self.audio.read_streams(name_to_path)
         _, combined_identifier = self.audio.concat()
-        return self.audio.write({combined_identifier : output_dir_path})
+        self.audio.set_output_paths({combined_identifier : output_dir_path})
+        did_write = self.audio.write([combined_identifier])
+        if did_write:
+            return (True, combined_identifier)
+        else:
+            return (False, None)
 
-    def overlay(self, file_paths : List[str], output_dir_path : str) -> bool:
+    def overlay(self, file_paths : List[str], output_dir_path : str) \
+            -> Tuple[bool,str]:
         """
         Overlays two audio streams on top of each other.
+        The two files must have the same extensions.
+        The overlaid file has the same extension as the input files.
 
         Args:
             file_paths (List[str]): Path to files to overlay. Must be two only.
             output_dir_path (str): Path to the output directory.
 
         Returns:
-            (bool): True if successful. False otherwise
+            (Tuple[bool,str]):
+                True + name of the output file, without extension, if successful
+                False + None otherwise.
         """
         if len(file_paths) != 2 or \
                 not self.audio.is_readable(file_paths[0]) or \
                 not self.audio.is_readable(file_paths[1]):
-            return False
+            return (False, None)
         # Getting names 
         name_1 = self._get_file_name_from_path(file_paths[0])
         name_2 = self._get_file_name_from_path(file_paths[1])
         # Overlaying 
         self.audio.read_streams({name_1: file_paths[0], name_2 : file_paths[1]}) 
         _, identifier = self.audio.overlay()
-        return self.audio.write({identifier : output_dir_path})
+        self.audio.set_output_paths({identifier : output_dir_path})
+        return (self.audio.write([identifier]), identifier)
 
     def change_volume(self, file_path : str, change_in_decibels : float, 
             output_dir_path : str) -> bool:
         """
-        Change the volume of the given file .
+        Change the volume, in decibels, of the given file. The output file has 
+        the same name and extension as the input file.
 
         Args:
             file_path (str): Path to the input file.
-            change_in_decibels (float): Can be a positive or negative value 
-                                representing the volume change in decibels.
+            change_in_decibels (float): 
+                Can be a positive or negative value representing the volume 
+                change in decibels.
             output_dir_path (str): Path to the output directory.
         
         Returns:
@@ -382,11 +457,14 @@ class IO:
         name = self._get_file_name_from_path(file_path)
         self.audio.read_streams({name : file_path})
         return self.audio.change_volume({name : change_in_decibels}) and \
-            self.write({name : output_dir_path})
-    
+            self.audio.set_output_paths({name : output_dir_path}) and \
+            self.audio.write([name])
+ 
     def reverse_audio(self, file_path : str, output_dir_path : str) -> bool:
         """
         Reverse the audio stream for the file at the given path.
+        The name and extension of the reversed file is the same as the 
+        original file.
 
         Args:
             file_path (str): Path to the audio file.
@@ -399,8 +477,9 @@ class IO:
             return False
         name = self._get_file_name_from_path(file_path)
         return self.audio.read_streams({name : file_path}) and \
-            self.audio.reverse() and \
-            self.audio.write({name : output_dir_path})
+            self.audio.reverse([name]) and \
+            self.audio.set_output_paths({name : output_dir_path}) and \
+            self.audio.write([name])
 
     def chunk(self, file_path : str, output_dir_path : str,
             chunk_duration_seconds : float) -> bool:
@@ -425,10 +504,11 @@ class IO:
         if not did_chunk:
             return False
         paths = dict()
-        for chunk_name in chunk_names:
-            paths [chunk_name] = output_dir_path
+        all_chunk_names = list(chunk_names.values())[0]
+        for chunk_name in all_chunk_names:
+            paths[chunk_name] = output_dir_path
         self.audio.set_output_paths(paths)
-        return self.audio.write(chunk_names)
+        return self.audio.write(all_chunk_names)
 
     #### Video only manipulation methods
 
@@ -436,7 +516,8 @@ class IO:
             -> bool:
         """
         Extract the video only, without audio, from the video file at the 
-        given path.
+        given path. The name of the output file, without extension, is the 
+        same as the name for the input file.
 
         Args:
             file_path (str): Path to the audio file.
@@ -446,7 +527,8 @@ class IO:
             (bool): True if successful. False otherwise.
         """
         # Ensure readability
-        if not self.video.is_readable(file_path):
+        if not self.video.is_readable(file_path) or \
+            not self.general.is_directory(output_dir_path):
             return False 
         # Extract video 
         name = self._get_file_name_from_path(file_path)
@@ -467,7 +549,8 @@ class IO:
             (bool): True if successful. False otherwise.
         """
         # Ensure readability
-        if not self.video.is_readable(file_path):
+        if not self.video.is_readable(file_path) or \
+                not self.general.is_directory(output_dir_path):
             return False 
         # Extract audio
         name = self._get_file_name_from_path(file_path)
@@ -494,8 +577,9 @@ class IO:
                 True + the identifier associated with this command. False + None
                 otherwise.
         """
-        self.shell.add_command("cmd", shell_command,stdout,stdin)
-        return self.shell.run_command("cmd")
+        cmd_name = str(shell_command)
+        self.shell.add_command(cmd_name ,shell_command,stdout,stdin)
+        return (self.shell.run_command(cmd_name),cmd_name)
     
     def get_shell_process_status(self, identifier : str) -> str:
         """
@@ -538,4 +622,4 @@ class IO:
         Returns:
             (str): Extracted file name, without extension
         """ 
-        return path[path.rfind("/")+1:path.rfind(".")]
+        return self.general.get_name(path)

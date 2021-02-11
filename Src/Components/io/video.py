@@ -12,6 +12,11 @@ class VideoWriteTypes(IntEnum):
     """
     Defines the different types of write operations that can be performed on
     a VideoStream.
+
+    Attributes:
+        video_audio: Includes both video and audio.
+        video: Only includes video and not audio.
+        audio: Only includes audio and not video. 
     """
     video_audio = 0
     video = 1 
@@ -70,9 +75,9 @@ class VideoIO:
         Params:
             streams (Dict[str,VideoStream]): Mapping from identifier to stream.
             default_video_input_format (str):  Format video files are written in.
-            default_audio_output_format (str):Format audio file are written in.
+            default_audio_output_format (str): Format audio file are written in.
             num_threads (int): No. of threads used by the thread pool.
-            thread_pool (ThreadPool)
+            thread_pool (ThreadPool): pool that manages all threads.
         """
         # Params
         self.streams = dict() 
@@ -114,14 +119,15 @@ class VideoIO:
             self.streams[name] = stream
         return True
             
-    def set_output_paths(self, output_dir_paths : Dict) -> bool:
+    def set_output_paths(self, output_dir_paths : Dict[str,str]) -> bool:
         """
         Set the output direcotry path for the video streams associated with 
         the identifiers
 
         Args:
-            output_dir_paths (Dict): Mapping from identifier to output directory
-                                path. The path must be a valid directory path.
+            output_dir_paths (Dict[str,str]): 
+                Mapping from identifier to output directory path. 
+                The path must be a valid directory path.
         
         Returns:
             (bool): True if path successfully set. False otherwise.
@@ -134,27 +140,6 @@ class VideoIO:
                 return False 
             self.streams[name].set(
                 VideoStreamAttr.output_dir_path,output_dir_path)
-        return True 
-
-    def set_output_formats(self, output_formats : Dict) -> bool:
-        """
-        Set the output formats for the video streams associated with the 
-        identifiers.
-
-        Args:
-            output_formats (Dict): Mapping from identifier to output format
-                            The format must be a supported output audio format.
-        
-        Returns:
-            (bool): True if format successfully set. False otherwise.
-       """
-        # Setting the output paths for each AudioStream
-        for name, output_format in output_formats.items():
-            if not name in self.streams or \
-                    not output_format in self.OUTPUT_VIDEO_FORMATS:
-                return False 
-            self.streams[name].set(
-                VideoStreamAttr.output_format,output_format)
         return True 
 
     ################################# GETTERS #############################
@@ -181,7 +166,7 @@ class VideoIO:
         """
         return  list(self.streams.keys())
 
-    def get_supported_formats(self) -> Tuple:
+    def get_supported_formats(self) -> Tuple[str]:
         """
         Get the video file formats that are supported.
 
@@ -192,15 +177,15 @@ class VideoIO:
 
     ############################### PUBLIC METHODS ########################
 
-    def write(self, identifiers : Dict) -> bool:
+    def write(self, identifiers : Dict[str, VideoWriteTypes]) -> bool:
         """
         Write the video streams that were previously read as either a file 
         containing both audio and video, only video, and only audio.
 
         Args:
-            output_paths (Dict[str,Dict]):
-                Mapping from stream identifier to:
-                    1. type (str) --> VideoWriteTypes
+            identifiers (Dict[str, VideoWriteTypes]):
+                Mapping from the unique identifier to the type of file to write,
+                defined by VideoWriteTypes.
 
         Returns:
             (bool): True if all files were successfully written. 
@@ -215,7 +200,7 @@ class VideoIO:
                 for identifier in identifiers.keys() ]):
             return False  
         # Write all the output files
-        for name in identifiers:
+        for name in identifiers.keys():
             # Determine output type and file name 
             _, output_dir_path = self.streams[name].get(
                 VideoStreamAttr.output_dir_path)
@@ -245,20 +230,26 @@ class VideoIO:
     def _initialize_video_stream(self, input_file_path, input_format, 
             output_dir_path) -> Tuple[bool,VideoStream]:
         """
-        Initializes and returns an VideoStream object by reading from input path.
+        Initializes and returns an VideoStream object by reading from input 
+        path.
 
         Args:
-            input_path (str): Path to input audio file
-            input_format (str): Format the input file is to be read in.
-            output_path (str): Output path for the file.
-            output_format (str): Format the output file should be in.
+            input_file_path (str): Path to the input video file. 
+            input_format (input_format): Format to read the input file in. 
+            output_dir_path (str): Path of the output directory. 
+
+        Returns:
+            (Tuple[bool,VideoStream]):
+                True + VideoStream object if successful. 
+                False + None otherwise. 
         """
-    
-        video_clip = VideoFileClip(input_file_path)
-        video_stream = VideoStream(input_file_path,input_format,video_clip,
-                                output_dir_path)
-        return (True, video_stream)
-    
+        try:
+            video_clip = VideoFileClip(input_file_path)
+            video_stream = VideoStream(input_file_path,input_format,video_clip,
+                                    output_dir_path)
+            return (True, video_stream)
+        except:
+            return (False, None)
 
     ### Write methods 
 
@@ -337,8 +328,18 @@ class VideoIO:
         return os.path.exists(file_path) and os.path.isfile(file_path)
 
     def _is_video_file(self, file_path : str) -> bool:
-         return self._does_file_exist(file_path) and \
-            self._get_file_extension(file_path).lower() in self.INPUT_VIDEO_FORMATS
+        """
+        Determines if the is video file
+
+        Args:
+            file_path (str)
+        
+        Returns:
+            (bool): True if video file. False otherwise.
+        """
+        return self._does_file_exist(file_path) and \
+            self._get_file_extension(file_path).lower() in \
+                self.INPUT_VIDEO_FORMATS
 
     def _get_file_extension(self, file_path : str) -> str:
         """
