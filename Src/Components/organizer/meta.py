@@ -1,5 +1,5 @@
 # Standard library imports 
-from typing import Any, Dict
+from typing import Dict
 from enum import Enum
 # Local imports 
 from ...utils.models import IDictModel

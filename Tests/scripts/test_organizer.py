@@ -2,11 +2,13 @@
 Testing for the organizer component
 """
 # Standard library imports 
-
+from datetime import date, datetime
 # Local imports 
+from Src.Components.io import IO
 from Src.Components.organizer import Paths, PathsAttributes, Settings, \
         SettingsAttributes, SettingsBuilder, DataFile ,DataFileAttributes, \
-        DataFileTypes, Meta, MetaAttributes
+        DataFileTypes, Meta, MetaAttributes, ConversationBuilder, Conversation,\
+        Organizer
 from ..suites import TestSuite
 # Third party imports 
 
@@ -14,6 +16,7 @@ from ..suites import TestSuite
 WAV_FILE_PATH = "Test_files/Media/test2a.wav"
 RESULT_DIR_PATH = "Test_files"
 TMP_DIR_PATH = "Test_files/Others/Test-directory"
+CONVERSATION_DIR_PATH = "Test_files/Media/Conversation"
 
 ########################## TEST DEFINITIONS ##################################
 
@@ -611,10 +614,600 @@ def meta_set_invalid() -> bool:
 
 #########################  Conversation builder tests
 
+def builder_set_conversation_source_path_valid() -> bool:
+    """
+    Tests the set_conversation_source_path method in ConversationBuilder
+
+    Tests:
+        1. Set a valid file path.
+        2. Set a valid directory path.
+
+    Returns:   
+        (bool): True if all tests pass. False otherwise.
+    """
+    builder = ConversationBuilder(IO())
+    return builder.set_conversation_source_path(WAV_FILE_PATH) and \
+        builder.set_conversation_source_path(CONVERSATION_DIR_PATH)
+
+def builder_set_conversation_source_path_invalid() -> bool:
+    """
+    Tests the set_conversation_source_path method in ConversationBuilder
+
+    Tests:
+        1. Set an invalid path.
+
+    Returns:   
+        (bool): True if all tests pass. False otherwise.
+    """
+    builder = ConversationBuilder(IO())
+    return not builder.set_conversation_source_path("Not a path")
+
+def builder_set_conversation_name() -> bool:
+    """
+    Tests the set_conversation_name method in ConversationBuilder
+
+    Tests:
+        1. Set any random name. 
+
+    Returns:   
+        (bool): True if all tests pass. False otherwise.
+    """
+    builder = ConversationBuilder(IO())
+    return builder.set_conversation_name("conversation_1")
+ 
+def builder_set_result_directory_path_valid() -> bool:
+    """
+    Tests the set_result_directory_path method in ConversationBuilder
+
+    Tests:
+        1. Set a valid directory path.
+
+    Returns:   
+        (bool): True if all tests pass. False otherwise.
+    """
+    builder = ConversationBuilder(IO())  
+    return builder.set_result_directory_path(TMP_DIR_PATH)
+
+def builder_set_result_directory_path_invalid() -> bool:
+    """
+    Tests the set_result_directory_path method in ConversationBuilder
+
+    Tests:
+        1. Set a file path as directory.
+        2. Set an invalid path. 
+
+    Returns:   
+        (bool): True if all tests pass. False otherwise.
+    """
+    builder = ConversationBuilder(IO())  
+    return not builder.set_result_directory_path(WAV_FILE_PATH) and \
+        not builder.set_result_directory_path("invalid/")
+
+def builder_set_temporary_directory_path_valid() -> bool:
+    """
+    Tests the set_temporary_directory_path method in ConversationBuilder
+
+    Tests:
+        1. Set a valid directory path.
+
+    Returns:   
+        (bool): True if all tests pass. False otherwise.
+    """
+    builder = ConversationBuilder(IO())  
+    return builder.set_temporary_directory_path(TMP_DIR_PATH)
+
+def builder_set_temporary_directory_path_invalid() -> bool:
+    """
+    Tests the set_temporary_directory_path method in ConversationBuilder
+
+    Tests:
+        1. Set a file path as directory.
+        2. Set an invalid path. 
+
+    Returns:   
+        (bool): True if all tests pass. False otherwise.
+    """
+    builder = ConversationBuilder(IO())  
+    return not builder.set_temporary_directory_path(WAV_FILE_PATH) and \
+        not builder.set_temporary_directory_path("invalid/")
+
+def builder_set_number_of_speakers_valid() -> bool:
+    """
+    Tests the set_number_of_speakers method in ConversationBuilder
+
+    Tests:
+        1. Set a positive number of speakers.
+
+    Returns:   
+        (bool): True if all tests pass. False otherwise.
+    """
+    builder = ConversationBuilder(IO())  
+    return builder.set_number_of_speakers(10)
+
+
+def builder_set_number_of_speakers_invalid() -> bool:
+    """
+    Tests the set_number_of_speakers method in ConversationBuilder
+
+    Tests:
+        1. Set 0 as number of speakers.
+        2. Set a negative number of speakers.
+
+    Returns:   
+        (bool): True if all tests pass. False otherwise.
+    """
+    builder = ConversationBuilder(IO())  
+    return not builder.set_number_of_speakers(0) and \
+        not builder.set_number_of_speakers(-10) 
+
+def builder_set_conversation_settings_valid() -> bool:
+    """
+    Tests the set_conversation_settings method in ConversationBuilder
+
+    Tests:
+        1. Set a settings object that has all attributes set.
+
+    Returns:   
+        (bool): True if all tests pass. False otherwise.
+    """
+    data = {
+        "sample_attribute_1" : None,
+        "sample_attribute_2" : None} 
+    settings = Settings(data)
+    builder = ConversationBuilder(IO())  
+    return builder.set_conversation_settings(settings)
+
+def builder_set_conversation_settings_invalid() -> bool:
+    """
+    Tests the set_conversation_settings method in ConversationBuilder
+
+    Tests:
+        1. Set a settings object that is not configured.
+
+    Returns:   
+        (bool): True if all tests pass. False otherwise.
+    """
+    data = {
+        "sample_attribute_1" : None} 
+    settings = Settings(data)
+    builder = ConversationBuilder(IO())  
+    return not builder.set_conversation_settings(settings)
+
+def builder_build_conversation_valid() -> bool:
+    """
+    Tests the build_conversation method in ConversationBuilder
+
+    Tests:
+        1. Call method after setting all attributes with valid data.
+
+    Returns:   
+        (bool): True if all tests pass. False otherwise.
+    """
+    settings_builder = SettingsBuilder()
+    data = {
+        "sample_attribute_1" : None,
+        "sample_attribute_2" : None} 
+    _,settings = settings_builder.create_settings(data)
+    builder = ConversationBuilder(IO())  
+    builder.set_conversation_source_path(CONVERSATION_DIR_PATH)
+    builder.set_conversation_name("conversation_1")
+    builder.set_result_directory_path(TMP_DIR_PATH)
+    builder.set_temporary_directory_path(TMP_DIR_PATH)
+    builder.set_number_of_speakers(2)
+    builder.set_conversation_settings(settings)
+    return builder.build_conversation()
+    
+def builder_build_conversation_invalid() -> bool:
+    """
+    Tests the build_conversation method of ConversationBuilder.
+
+    Tests:
+        1. Build a conversation without setting any attributes.
+        2. Build a conversation after setting only some attributes. 
+        3. Build a conversation after clearing configurations.
+        4. Build a conversation after building a valid conversation.
+
+    Returns:   
+        (bool): True if all tests pass. False otherwise.   
+    """
+    settings_builder = SettingsBuilder()
+    data = {
+        "sample_attribute_1" : None,
+        "sample_attribute_2" : None} 
+    _,settings = settings_builder.create_settings(data)
+    builder = ConversationBuilder(IO())  
+
+    return not builder.build_conversation() and \
+        builder.get_conversation() == None and \
+        builder.set_conversation_source_path(CONVERSATION_DIR_PATH) and \
+        builder.set_conversation_name("only some attributes set") and \
+        not builder.build_conversation() and \
+        builder.get_conversation() == None and \
+        builder.clear_conversation_configurations() and \
+        builder.set_conversation_source_path(CONVERSATION_DIR_PATH) and \
+        builder.set_conversation_name("conversation_1") and \
+        builder.set_result_directory_path(TMP_DIR_PATH) and \
+        builder.set_temporary_directory_path(TMP_DIR_PATH) and \
+        builder.set_number_of_speakers(2) and \
+        builder.set_conversation_settings(settings) and \
+        builder.build_conversation() and \
+        builder.get_conversation() != None and \
+        builder.clear_conversation_configurations() and \
+        not builder.build_conversation() and \
+        builder.get_conversation() == None
+ 
 #########################  Conversation tests
 
+def build_valid_conversation_from_directory() -> Conversation:
+    settings_builder = SettingsBuilder()
+    data = {
+        "sample_attribute_1" : None,
+        "sample_attribute_2" : None} 
+    _,settings = settings_builder.create_settings(data)
+    builder = ConversationBuilder(IO())  
+    builder.set_conversation_source_path(CONVERSATION_DIR_PATH)
+    builder.set_conversation_name("conversation_dir")
+    builder.set_result_directory_path(TMP_DIR_PATH)
+    builder.set_temporary_directory_path(TMP_DIR_PATH)
+    builder.set_number_of_speakers(2)
+    builder.set_conversation_settings(settings)
+    builder.build_conversation()
+    return builder.get_conversation()
+
+def build_valid_conversation_from_file():
+    settings_builder = SettingsBuilder()
+    data = {
+        "sample_attribute_1" : None,
+        "sample_attribute_2" : None} 
+    _,settings = settings_builder.create_settings(data)
+    builder = ConversationBuilder(IO())  
+    builder.set_conversation_source_path(WAV_FILE_PATH)
+    builder.set_conversation_name("conversation_file")
+    builder.set_result_directory_path(TMP_DIR_PATH)
+    builder.set_temporary_directory_path(TMP_DIR_PATH)
+    builder.set_number_of_speakers(2)
+    builder.set_conversation_settings(settings)
+    builder.build_conversation()
+    return builder.get_conversation() 
+
+def conversation_get_conversation_name() -> bool:
+    """
+    Tests the get_conversation_name method of Conversation object returned by 
+    ConversationBuilder.
+
+    Tests:
+        1. Check value of the returned name.
+
+     Returns:   
+        (bool): True if all tests pass. False otherwise.   
+    """
+    conversation_dir = build_valid_conversation_from_directory()
+    conversation_file = build_valid_conversation_from_file()
+    return conversation_dir.get_conversation_name() == "conversation_dir" and \
+        conversation_file.get_conversation_name() == "conversation_file"
+
+def conversation_get_conversation_size() -> bool:
+    """
+    Tests the get_conversation_size method of Conversation object returned by 
+    ConversationBuilder.
+
+    Tests:
+        1. Check value of the returned size.
+
+     Returns:   
+        (bool): True if all tests pass. False otherwise.   
+    """
+    io = IO()
+    conversation_dir = build_valid_conversation_from_directory()
+    conversation_file = build_valid_conversation_from_file()
+    return conversation_dir.get_conversation_size() == \
+            io.get_size(CONVERSATION_DIR_PATH)[1] and \
+        conversation_file.get_conversation_size() == io.get_size(WAV_FILE_PATH)[1]
+     
+def conversation_get_source_type() -> bool:
+    """
+    Tests the get_source_type method of Conversation object returned by 
+    ConversationBuilder.
+
+    Tests:
+        1. Check value of the returned types.
+
+     Returns:   
+        (bool): True if all tests pass. False otherwise.   
+    """
+    conversation_dir = build_valid_conversation_from_directory()
+    conversation_file = build_valid_conversation_from_file()
+    return conversation_dir.get_source_type() == "directory" and \
+        conversation_file.get_source_type() == "file"
+
+def conversation_get_transcription_date() -> bool:
+    """
+    Tests the get_transcription_date method of Conversation object returned by 
+    ConversationBuilder.
+
+    Tests:
+        1. Make sure the date is a valid date object. 
+
+     Returns:   
+        (bool): True if all tests pass. False otherwise.   
+    """
+    conversation_dir = build_valid_conversation_from_directory()
+    conversation_file = build_valid_conversation_from_file()
+    return conversation_dir.get_transcription_date() == date.today() and \
+        conversation_file.get_transcription_date() == date.today()
+
+def conversation_get_transcription_status() -> bool:
+    """
+    Tests the get_transcription_status method of Conversation object returned by 
+    ConversationBuilder.
+
+    Tests:
+        1. Make sure the status is ready in both cases.
+
+     Returns:   
+        (bool): True if all tests pass. False otherwise.  
+    """
+    conversation_dir = build_valid_conversation_from_directory()
+    conversation_file = build_valid_conversation_from_file()
+    return conversation_dir.get_transcription_status() == "ready" and \
+        conversation_file.get_transcription_status() == "ready"
+
+def conversation_get_transcription_time() -> bool:
+    """
+    Tests the get_transcription_times method of Conversation object returned by 
+    ConversationBuilder.
+
+    Tests:
+        1. Make sure the time is valid.
+
+     Returns:   
+        (bool): True if all tests pass. False otherwise.  
+    """
+    conversation_dir = build_valid_conversation_from_directory()
+    conversation_file = build_valid_conversation_from_file()
+    return type(conversation_dir.get_transcription_time()) == str and \
+        type(conversation_dir.get_transcription_time()) == str
+
+def conversation_number_of_source_files() -> bool:
+    """
+    Tests the number_of_source_files method of Conversation object returned by 
+    ConversationBuilder.
+
+    Tests:
+        1. Make sure the numbder of files is valid.
+
+     Returns:   
+        (bool): True if all tests pass. False otherwise.  
+    """ 
+    io = IO()
+    conversation_dir = build_valid_conversation_from_directory()
+    conversation_file = build_valid_conversation_from_file()
+    return conversation_dir.number_of_source_files() == \
+            io.number_of_files_in_directory(CONVERSATION_DIR_PATH,["*"],False)[1] and \
+        conversation_file.number_of_source_files() == 1
+
+def conversation_number_of_speakers() -> bool:
+    """
+    Tests the number_of_speakers method of Conversation object returned by 
+    ConversationBuilder.
+
+    Tests:
+        1. Make sure the numbder of speakers is valid.
+
+     Returns:   
+        (bool): True if all tests pass. False otherwise.  
+    """
+    conversation_dir = build_valid_conversation_from_directory()
+    conversation_file = build_valid_conversation_from_file()
+    return conversation_dir.number_of_speakers() == 2 and \
+        conversation_file.number_of_speakers() == 2  
+
+def conversation_get_source_file_names() -> bool:
+    """
+    Tests the get_source_file_names of Conversation object returned by 
+    ConversationBuilder.
+
+    Tests:
+        1. Make sure the names are valid. 
+
+     Returns:   
+        (bool): True if all tests pass. False otherwise.  
+    """
+    io = IO()
+    dir_paths = io.path_of_files_in_directory(CONVERSATION_DIR_PATH,["*"],False)[1]
+    dir_names = [io.get_name(path) for path in dir_paths]
+    conversation_dir = build_valid_conversation_from_directory()
+    conversation_file = build_valid_conversation_from_file()
+    return conversation_dir.get_source_file_names() == dir_names and \
+        conversation_file.get_source_file_names() == [io.get_name(WAV_FILE_PATH)]
+    
+def conversation_get_source_file_paths() -> bool:
+    """
+    Tests the get_source_file_paths of Conversation object returned by 
+    ConversationBuilder.
+
+    Tests:
+        1. Make sure the paths are valid.
+
+     Returns:   
+        (bool): True if all tests pass. False otherwise.  
+    """
+    io = IO()
+    dir_paths = io.path_of_files_in_directory(CONVERSATION_DIR_PATH,["*"],False)[1]
+    dir_names = [io.get_name(path) for path in dir_paths]
+    conversation_dir = build_valid_conversation_from_directory()
+    conversation_file = build_valid_conversation_from_file() 
+    return list(conversation_dir.get_source_file_paths().values()) == dir_paths and \
+        list(conversation_dir.get_source_file_paths().keys()) == dir_names and \
+        list(conversation_file.get_source_file_paths().values()) == [WAV_FILE_PATH] and \
+        list(conversation_file.get_source_file_paths().keys()) == [io.get_name(WAV_FILE_PATH)]
+
+def conversation_get_source_file_types() -> bool:
+    """
+    Tests the get_source_file_types of Conversation object returned by 
+    ConversationBuilder.
+
+    Tests:
+        1. Make sure the types are valid.
+
+    Returns:   
+        (bool): True if all tests pass. False otherwise.  
+    """
+    conversation_dir = build_valid_conversation_from_directory()
+    conversation_file = build_valid_conversation_from_file() 
+    return list(conversation_dir.get_source_file_types().values()) == ["audio","audio"] and \
+        list(conversation_file.get_source_file_types().values()) == ["audio"]
+     
 ######################### Organizer tests 
 
+def organizer_create_settings_valid() -> bool:
+    """
+    Tests the create_settings method of Organizer.
+
+    Tests:
+        1. Create a settings object from valid data.
+
+    Returns:   
+        (bool): True if all tests pass. False otherwise.  
+    """
+    organizer = Organizer(IO())
+    data = {
+        "sample_attribute_1" : "1",
+        "sample_attribute_2" : "2"} 
+    success , settings = organizer.create_settings(data)
+    return success and \
+        settings.get(SettingsAttributes.sample_attribute_1)[1] == "1" and \
+        settings.get(SettingsAttributes.sample_attribute_2)[1] == "2"  
+
+def organizer_create_settings_invalid() -> bool:
+    """
+    Tests the create_settings method of Organizer.
+
+    Tests:
+        1. Attempt to make settings from data with invalid settings data.
+
+    Returns:   
+        (bool): True if all tests pass. False otherwise.  
+    """
+    organizer = Organizer(IO())
+    data_1 = {
+        "sample_attribute_1" : "1"}
+    data_2 = {
+        "sample_attribute_1" : "1",
+        "invalid" : 2 }
+    return not organizer.create_settings(data_1)[0] and \
+        not organizer.create_settings(data_2)[0]
+
+def organizer_copy_settings() -> bool:
+    """
+    Tests the copy_settings method of Organizer.
+
+    Tests:
+        1. Copy a valid settings object.
+
+    Returns:   
+        (bool): True if all tests pass. False otherwise. 
+    """
+    organizer = Organizer(IO())
+    data = {
+        "sample_attribute_1" : "1",
+        "sample_attribute_2" : "2"} 
+    _ , settings = organizer.create_settings(data)
+    copied_settings = organizer.copy_settings(settings)
+    return copied_settings.get(SettingsAttributes.sample_attribute_1)[1] == "1" and \
+        copied_settings.get(SettingsAttributes.sample_attribute_2)[1] == "2" and \
+        settings != copied_settings
+
+def organizer_change_settings_valid() -> bool:
+    """
+    Tests the change_settings method of Organizer.
+
+    Tests:
+        1. Change a valid settings object and check values.
+
+    Returns:   
+        (bool): True if all tests pass. False otherwise. 
+    """
+    organizer = Organizer(IO())
+    data = {
+        "sample_attribute_1" : "1",
+        "sample_attribute_2" : "2"} 
+    changed_data = {
+        "sample_attribute_1" : "3",
+        "sample_attribute_2" : "4"} 
+    _ , settings = organizer.create_settings(data)
+    return organizer.change_settings(settings,changed_data) and \
+        settings.get(SettingsAttributes.sample_attribute_1)[1] == "3" and \
+        settings.get(SettingsAttributes.sample_attribute_2)[1] == "4"  
+
+def organizer_change_settings_invalid() -> bool:
+    """
+    Tests the change_settings method of Organizer.
+
+    Tests:
+        1. Attempt to change settings with invalid data.
+
+    Returns:   
+        (bool): True if all tests pass. False otherwise. 
+    """
+    organizer = Organizer(IO())
+    data = {
+        "sample_attribute_1" : "1",
+        "sample_attribute_2" : "2"} 
+    changed_data = {
+        "sample_attribute_1" : "3",
+        "sample_attribute_2" : "4",
+        "invalid_key" : "5"} 
+    _ , settings = organizer.create_settings(data)
+    return not organizer.change_settings(settings,changed_data) and \
+        settings.get(SettingsAttributes.sample_attribute_1)[1] == "1" and \
+        settings.get(SettingsAttributes.sample_attribute_2)[1] == "2"  
+
+def organizer_create_conversation_valid() -> bool:
+    """
+    Tests the create_conversation method of Organizer.
+
+    Tests:
+        1. Create a conversation with valid data.
+
+    Returns:   
+        (bool): True if all tests pass. False otherwise. 
+    """
+    organizer = Organizer(IO())
+    data = {
+        "sample_attribute_1" : "1",
+        "sample_attribute_2" : "2"} 
+    _ , settings = organizer.create_settings(data)
+    success_1,_ = organizer.create_conversation(
+        CONVERSATION_DIR_PATH, "conversation_dir",2,TMP_DIR_PATH,TMP_DIR_PATH,
+        settings)
+    return success_1
+
+def organizer_apply_settings_to_conversation_valid() -> bool:
+    """
+    Tests the apply_settings_to_conversation method of Organizer.
+
+    Tests:
+        1. Create a conversation with valid data.
+
+    Returns:   
+        (bool): True if all tests pass. False otherwise. 
+    """
+    organizer = Organizer(IO())
+    data = {
+        "sample_attribute_1" : "1",
+        "sample_attribute_2" : "2"} 
+    _ , settings = organizer.create_settings(data)
+    _, conversation = organizer.create_conversation(
+        CONVERSATION_DIR_PATH, "conversation_dir",2,TMP_DIR_PATH,TMP_DIR_PATH,
+        settings)
+    data_new = {
+        "sample_attribute_1" : "3",
+        "sample_attribute_2" : "4"} 
+    _ , settings_new = organizer.create_settings(data_new)
+    conversation_new = organizer.apply_settings_to_conversation(
+        conversation,settings_new)
+    return conversation_new != conversation
 
 ####################### TEST SUITE DEFINITION ################################
 
@@ -687,7 +1280,73 @@ def define_organizer_test_suite() -> TestSuite:
     # suite.add_test("meta_set_invalid", (), True, True, 
     #     meta_set_invalid)
 
+    #### ConversationBuilder tests 
+    # suite.add_test("builder_set_conversation_source_path_valid", (), True, 
+    #     True, builder_set_conversation_source_path_valid)
+    # suite.add_test("builder_set_conversation_source_path_invalid", (), True, 
+    #     True, builder_set_conversation_source_path_invalid)
+    # suite.add_test("builder_set_conversation_name", (), True, True, 
+    #     builder_set_conversation_name)
+    # suite.add_test("builder_set_result_directory_path_valid", (), True, True, 
+    #     builder_set_result_directory_path_valid)
+    # suite.add_test("builder_set_result_directory_path_invalid", (), True, True, 
+    #     builder_set_result_directory_path_invalid)
+    # suite.add_test("builder_set_temporary_directory_path_valid", (), True, True, 
+    #     builder_set_temporary_directory_path_valid)
+    # suite.add_test("builder_set_temporary_directory_path_invalid", (), True, True, 
+    #     builder_set_temporary_directory_path_invalid)
+    # suite.add_test("builder_set_number_of_speakers_valid", (), True, True, 
+    #     builder_set_number_of_speakers_valid)
+    # suite.add_test("builder_set_number_of_speakers_invalid", (), True, True, 
+    #     builder_set_number_of_speakers_invalid)
+    # suite.add_test("builder_set_conversation_settings_valid", (), True, True, 
+    #     builder_set_conversation_settings_valid)
+    # suite.add_test("builder_set_conversation_settings_invalid", (), True, True, 
+    #     builder_set_conversation_settings_invalid)
+    # suite.add_test("builder_build_conversation_valid", (), True, True, 
+    #     builder_build_conversation_valid)
+    # suite.add_test("builder_build_conversation_invalid", (), True, True, 
+    #     builder_build_conversation_invalid)
 
-    
+    #### Conversation tests
+    # suite.add_test("conversation_get_conversation_name", (), True, True, 
+    #     conversation_get_conversation_name)
+    # suite.add_test("conversation_get_conversation_size", (), True, True, 
+    #     conversation_get_conversation_size)
+    # suite.add_test("conversation_get_source_type", (), True, True, 
+    #     conversation_get_source_type)
+    # suite.add_test("conversation_get_transcription_date", (), True, True, 
+    #     conversation_get_transcription_date)
+    # suite.add_test("conversation_get_transcription_status", (), True, True, 
+    #     conversation_get_transcription_status)
+    # suite.add_test("conversation_get_transcription_time", (), True, True, 
+    #     conversation_get_transcription_time)
+    # suite.add_test("conversation_number_of_source_files", (), True, True, 
+    #     conversation_number_of_source_files)
+    # suite.add_test("conversation_number_of_speakers", (), True, True, 
+    #     conversation_number_of_speakers)
+    # suite.add_test("conversation_get_source_file_names", (), True, True, 
+    #     conversation_get_source_file_names)
+    # suite.add_test("conversation_get_source_file_paths", (), True, True, 
+    #     conversation_get_source_file_paths)
+    # suite.add_test("conversation_get_source_file_types", (), True, True, 
+    #     conversation_get_source_file_types)
+
+    #### Organizer tests
+    suite.add_test("organizer_create_settings_valid", (), True, True, 
+        organizer_create_settings_valid)
+    suite.add_test("organizer_create_settings_invalid", (), True, True, 
+        organizer_create_settings_invalid)
+    suite.add_test("organizer_copy_settings", (), True, True, 
+        organizer_copy_settings)
+    suite.add_test("organizer_change_settings_valid", (), True, True, 
+        organizer_change_settings_valid)
+    suite.add_test("organizer_change_settings_invalid", (), True, True, 
+        organizer_change_settings_invalid)
+    suite.add_test("organizer_create_conversation_valid", (), True, True, 
+        organizer_create_conversation_valid)
+    suite.add_test("organizer_apply_settings_to_conversation_valid", (), True, 
+        True, organizer_apply_settings_to_conversation_valid)
+
     return suite
 

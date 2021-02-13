@@ -1,7 +1,5 @@
 # Standard library imports 
-from enum import Enum
 from typing import List, Dict
-from datetime import datetime 
 # Local imports 
 from .meta import Meta, MetaAttributes 
 from .data import DataFile, DataFileAttributes, DataFileTypes
@@ -9,10 +7,6 @@ from .settings import Settings, SettingsAttributes
 from .paths import Paths, PathsAttributes
 # Third party imports
 
-
-class SourceType(Enum):
-    file = "file"
-    directory = "directory"
 
 class Conversation:
     """
@@ -66,9 +60,9 @@ class Conversation:
         Returns:
             (str): Type of the source for conversation.
         """
-        self.meta.get(MetaAttributes.source_type)[1]
+        return self.meta.get(MetaAttributes.source_type)[1]
 
-    def get_transcription_date(self) -> datetime:
+    def get_transcription_date(self) -> str:
         """
         Obtain the date the transcription process was started on this 
         conversation. 
@@ -76,7 +70,7 @@ class Conversation:
         process was completed.
 
         Returns:
-            (datetime): 
+            (str): 
                 Date the transcription process was started on the conversation.
         """
         return self.meta.get(MetaAttributes.transcription_date)[1]
@@ -88,13 +82,14 @@ class Conversation:
         """
         return self.meta.get(MetaAttributes.transcription_status)[1]
 
-    def get_transcription_time(self) -> datetime:
+    def get_transcription_time(self) -> str:
         """
         Obtain the time at which the transcription process was started. 
         Note that this does not mean that the entire transcription
         process was completed.
+        The time format is: HH:MM:SS
 
-        Results (datetime): Time the transcription process was started.  
+        Results (str): Time the transcription process was started.  
         """
         return self.meta.get(MetaAttributes.transcription_time)[1]
 
