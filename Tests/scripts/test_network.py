@@ -66,6 +66,15 @@ def request_send_request() -> bool:
         not request.send_request("GET",invalid_url,{"invalid key" : None })[0]
 
 def request_send_request_get() -> bool:
+    """
+    Tests send request method in Request.
+
+    Tests:
+        1. Send GET request with no data and valid url
+
+    Result:
+        (bool): True if all the tests pass. False otherwise.
+    """
     request = Request()
     empty_data_dict = {
         "params" : {},
@@ -79,6 +88,15 @@ def request_send_request_get() -> bool:
     return success and req_dict["status_code"] == 200
 
 def request_send_request_post() -> bool:
+    """
+    Tests send request method in Request.
+
+    Tests:
+        1. Send POST request with no data and valid url
+
+    Result:
+        (bool): True if all the tests pass. False otherwise.
+    """
     request = Request()
     empty_data_dict = {
         "params" : {},
@@ -92,6 +110,15 @@ def request_send_request_post() -> bool:
     return success and req_dict["status_code"] == 200
 
 def request_send_request_options() -> bool:
+    """
+    Tests send request method in Request.
+
+    Tests:
+        1. Send OPTIONS request with no data and valid url
+
+    Result:
+        (bool): True if all the tests pass. False otherwise.
+    """
     request = Request()
     empty_data_dict = {
         "params" : {},
@@ -105,6 +132,15 @@ def request_send_request_options() -> bool:
     return success and req_dict["status_code"] == 200
 
 def request_send_request_put() -> bool:
+    """
+    Tests send request method in Request.
+
+    Tests:
+        1. Send PUT request with no data and valid url
+
+    Result:
+        (bool): True if all the tests pass. False otherwise.
+    """
     request = Request()
     empty_data_dict = {
         "params" : {},
@@ -118,6 +154,15 @@ def request_send_request_put() -> bool:
     return success and req_dict["status_code"] == 200
 
 def request_send_request_patch() -> bool:
+    """
+    Tests send request method in Request.
+
+    Tests:
+        1. Send PATCH request with no data and valid url
+
+    Result:
+        (bool): True if all the tests pass. False otherwise.
+    """
     request = Request()
     empty_data_dict = {
         "params" : {},
@@ -131,6 +176,15 @@ def request_send_request_patch() -> bool:
     return success and req_dict["status_code"] == 200
 
 def request_send_request_delete() -> bool:
+    """
+    Tests send request method in Request.
+
+    Tests:
+        1. Send DELETE request with no data and valid url
+
+    Result:
+        (bool): True if all the tests pass. False otherwise.
+    """
     request = Request()
     empty_data_dict = {
         "params" : {},
@@ -144,6 +198,16 @@ def request_send_request_delete() -> bool:
     return success and req_dict["status_code"] == 200
 
 def request_send_bad_request_invalid_url() -> bool:
+    """
+    Tests send request method in Request.
+
+    Tests:
+        1. Send request with invalid url
+        2. Confirm request was unsuccessful
+
+    Result:
+        (bool): True if all the tests pass. False otherwise.
+    """
     request = Request()
     empty_data_dict = {
         "params" : {},
@@ -157,6 +221,16 @@ def request_send_bad_request_invalid_url() -> bool:
     return not success
 
 def request_send_bad_request_invalid_keys() -> bool:
+    """
+    Tests send request method in Request.
+
+    Tests:
+        1. Send request with invalid data keys
+        2. Confirm request was unsuccessful
+
+    Result:
+        (bool): True if all the tests pass. False otherwise.
+    """
     request = Request()
     invalid = {
         "bad" : {},
@@ -170,6 +244,16 @@ def request_send_bad_request_invalid_keys() -> bool:
     return not success
 
 def request_send_bad_request_invalid_url_keys() -> bool:
+    """
+    Tests send request method in Request.
+
+    Tests:
+        1. Send request with invalid data keys and invalid url
+        2. Confirm request was unsuccessful
+
+    Result:
+        (bool): True if all the tests pass. False otherwise.
+    """
     request = Request()
     invalid = {
         "bad" : {},
@@ -183,6 +267,16 @@ def request_send_bad_request_invalid_url_keys() -> bool:
     return not success
 
 def request_send_bad_request_invalid_request_type() -> bool:
+    """
+    Tests send request method in Request.
+
+    Tests:
+        1. Send request with invalid request type
+        2. Confirm request was unsuccessful
+
+    Result:
+        (bool): True if all the tests pass. False otherwise.
+    """
     request = Request()
     invalid = {
         "params" : {},
@@ -327,6 +421,16 @@ def WSInterface_set() -> bool:
             not ws_interface.set_callbacks({})
     
 def WSInterface_set_bad_callbacks() -> bool:
+    """
+    Tests all callback setter for WSInterface
+
+    Tests:
+        1. Pass calback data that has invalid keys
+        2. Confirm set is unsuccesful
+
+    Returns:
+        (bool): True if all the tests pass. False otherwise.
+    """
     ws_test_url =  "wss://echo.websocket.org"
     ws_test_headers = {}
     callbacks = {
@@ -406,6 +510,17 @@ def WSInterface_open_connection() -> bool:
     return success_1 and success_2
 
 def WSInterface_open_connection_valid_no_daemon() -> bool:
+    """
+    Tests the open_connection_until_complete WSInterface class that uses 
+    the WSInterfaceProtocol and WSInterfaceFactory. 
+
+    Tests:
+        1. Set up a valid connection with callbacks that handle exceptions as 
+            not a daemon (multi-threaded).
+
+    Returns:
+        (bool): True if all the tests pass. False otherwise.
+    """
     num_queue_items = 50
     thread_count = 50
     ws_test_url =  "wss://echo.websocket.org"
@@ -432,6 +547,17 @@ def WSInterface_open_connection_valid_no_daemon() -> bool:
     return success
 
 def WSInterface_open_connection_valid_daemon() -> bool:
+    """
+    Tests the open_connection_until_complete WSInterface class that uses 
+    the WSInterfaceProtocol and WSInterfaceFactory. 
+
+    Tests:
+        1. Set up a valid connection with callbacks that handle exceptions as 
+            a daemon (multi-threaded).
+
+    Returns:
+        (bool): True if all the tests pass. False otherwise.
+    """
     num_queue_items = 50
     thread_count = 50
     ws_test_url =  "wss://echo.websocket.org"
@@ -467,6 +593,9 @@ def network_websocket_connection() -> bool:
     Tests:
         1. Use valid params to connect to the websocket server.
         2. Use invalid params to try and connect with the server.
+    
+    Returns:
+        (bool): True if all the tests pass. False otherwise.
     """
     network = Network()
     num_tasks = 50
@@ -488,6 +617,15 @@ def network_websocket_connection() -> bool:
         tasks_data=tasks,is_daemon=True,callbacks=callbacks)
 
 def network_websocket_connection_bad_threads() -> bool:
+    """
+    Tests the websocket_connect method of the network class.
+
+    Tests:
+        1. Use invalid thread param to try and connect with the server.
+    
+    Returns:
+        (bool): True if all the tests pass. False otherwise.
+    """
     network = Network()
     num_tasks = 50
     thread_count = 0
@@ -507,25 +645,15 @@ def network_websocket_connection_bad_threads() -> bool:
         tasks_data=tasks,is_daemon=True,callbacks=callbacks)
 
 def network_websocket_connection_bad_callback() -> bool:
-    network = Network()
-    num_tasks = 50
-    thread_count = 50
-    tasks = list()
-    ws_test_url =  "wss://echo.websocket.org"
-    ws_test_headers = {}
-    callbacks = {
-        "on_connect" : on_connect_callback,
-        "on_connecting" : on_connecting_callback,
-        "on_message" : on_message_callback,
-        "on_open" : on_open_callback,
-        "on_close" : on_close_callback}
-    for i in range(num_tasks):
-        tasks.append("Task {}".format(i))
-    return not network.websocket_connect(
-        url=ws_test_url, headers=ws_test_headers, num_threads= thread_count,
-        tasks_data=tasks,is_daemon=True,callbacks=callbacks)
+    """
+    Tests the websocket_connect method of the network class.
 
-def network_websocket_connection_bad_callback() -> bool:
+    Tests:
+        1. Use invalid callback param to try and connect with the server.
+    
+    Returns:
+        (bool): True if all the tests pass. False otherwise.
+    """
     network = Network()
     num_tasks = 50
     thread_count = 50
@@ -545,6 +673,15 @@ def network_websocket_connection_bad_callback() -> bool:
         tasks_data=tasks,is_daemon=True,callbacks=callbacks)
 
 def network_websocket_connection_bad_url() -> bool:
+    """
+    Tests the websocket_connect method of the network class.
+
+    Tests:
+        1. Use invalid url param to try and connect with the server.
+    
+    Returns:
+        (bool): True if all the tests pass. False otherwise.
+    """
     network = Network()
     num_tasks = 50
     thread_count = 50
