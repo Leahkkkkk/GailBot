@@ -136,6 +136,39 @@ def settings_create_invalid_data() -> bool:
     settings = Settings(data)
     return settings.is_configured()
 
+def settings_create_invalid_data_missing_keys() -> bool:
+    """
+    Tests the settings object.
+
+    Test:
+        1. Create a settings object with invalid missing keys data and 
+           confirm it is not configured
+
+    Returns:
+        (bool): True if all tests pass. False otherwise
+    """
+    data = {
+        "sample_attribute_1" : None}
+    settings = Settings(data)
+    return not settings.is_configured()
+
+def settings_create_invalid_data_misnamed_keys() -> bool:
+    """
+    Tests the settings object.
+
+    Test:
+        1. Create a settings object with misnamed keys data and 
+           confirm it is not configured
+
+    Returns:
+        (bool): True if all tests pass. False otherwise
+    """
+    data = {
+        "sample_attribute_1" : None,
+        "sample_attribute" : None}
+    settings = Settings(data)
+    return not settings.is_configured()
+
 def settings_set_attribute_manually() -> bool:
     """
     Tests the set method for settings. 
@@ -151,7 +184,7 @@ def settings_set_attribute_manually() -> bool:
         "sample_attribute_2" : None} 
     settings = Settings(data)
     return not settings.set(SettingsAttributes,None) and \
-        not settings.set("invalid", "1")    
+          not settings.set("invalid", "1")    
 
 def settings_get_valid() -> bool:
     """
@@ -169,7 +202,9 @@ def settings_get_valid() -> bool:
     settings = Settings(data)
     return settings.is_configured() and \
         settings.get(SettingsAttributes.sample_attribute_1)[0] and \
-        settings.get(SettingsAttributes.sample_attribute_1)[1] == "1"
+        settings.get(SettingsAttributes.sample_attribute_1)[1] == "1" and \
+        settings.get(SettingsAttributes.sample_attribute_2)[0] and \
+        settings.get(SettingsAttributes.sample_attribute_2)[1] == "2"
 
 def settings_get_invalid() -> bool:
     """
@@ -237,6 +272,72 @@ def settings_builder_create_settings_invalid() -> bool:
         settings_1 == None and \
         settings_2 == None
 
+def settings_builder_create_settings_invalid_missing_keys() -> bool:
+    """
+    Tests the create_settings method in SettingsBuilder
+
+    Tests:
+        1. Passes invalid missing keys data to the builder
+    
+    Returns:
+        (bool): True if all tests pass. False otherwise.
+    """
+    data = {
+        "sample_attribute_1" : "1"} 
+    builder = SettingsBuilder()
+    success, settings = builder.create_settings(data)
+    return not success and settings == None
+
+def settings_builder_create_settings_invalid_extra_keys() -> bool:
+    """
+    Tests the create_settings method in SettingsBuilder
+
+    Tests:
+        1. Passes invalid extra keys data to the builder
+    
+    Returns:
+        (bool): True if all tests pass. False otherwise.
+    """
+    data = {
+        "sample_attribute_1" : "1",
+        "sample_attribute_2" : "2",
+        "additional" : "3"} 
+    builder = SettingsBuilder()
+    success, settings = builder.create_settings(data)
+    return not success and settings == None
+
+def settings_builder_create_settings_invalid_misnamed_keys() -> bool:
+    """
+    Tests the create_settings method in SettingsBuilder
+
+    Tests:
+        1. Passes invalid misnamed keys data to the builder
+    
+    Returns:
+        (bool): True if all tests pass. False otherwise.
+    """
+    data = {
+        "sample_attribute_1" : "1",
+        "sample_attribute" : "2"}
+    builder = SettingsBuilder()
+    success, settings = builder.create_settings(data)
+    return not success and settings == None
+
+def settings_builder_create_settings_invalid_empty() -> bool:
+    """
+    Tests the create_settings method in SettingsBuilder
+
+    Tests:
+        1. Passes invalid empty data to the builder
+    
+    Returns:
+        (bool): True if all tests pass. False otherwise.
+    """
+    data = {}
+    builder = SettingsBuilder()
+    success, settings = builder.create_settings(data)
+    return not success and settings == None
+
 def settings_builder_copy_settings() -> bool:
     """
     Tests the copy_settings method in SettingsBuilder
@@ -259,6 +360,26 @@ def settings_builder_copy_settings() -> bool:
             copied_settings.get(SettingsAttributes.sample_attribute_1) and \
         settings.get(SettingsAttributes.sample_attribute_2) == \
             copied_settings.get(SettingsAttributes.sample_attribute_2)
+
+def settings_builder_copy_settings_not_configured() -> bool:
+    """
+    Tests the copy_settings method in SettingsBuilder
+
+    Tests:
+        1. Copy the settings object after settings is not configured, confirms
+           the create does no succeed and the copied settings does not throw
+           error
+
+    Returns:
+        (bool): True if all tests pass. False otherwise.
+    """
+    data = {
+        "sample_attribute_1" : "1"}
+    builder = SettingsBuilder()
+    success, settings = builder.create_settings(data)
+    copied_settings = builder.copy_settings(settings)
+    return not success and \
+        copied_settings == None 
 
 def settings_builder_change_settings_valid() -> bool:
     """
@@ -314,6 +435,27 @@ def settings_builder_change_settings_invalid() -> bool:
     _, settings = builder.create_settings(data)
     return not builder.change_settings(settings, invalid_data_1) and \
         not builder.change_settings(settings,invalid_data_2) and \
+        settings.get(SettingsAttributes.sample_attribute_1)[1] == "1" and \
+        settings.get(SettingsAttributes.sample_attribute_2)[1] == "2"
+
+def settings_builder_change_settings_empty() -> bool:
+    """
+    Tests the change_settings method in SettingsBuilder
+
+    Tests:
+        1. Pass empty data to change settings
+        2. Confirm no data is changed
+    
+    Returns:
+        (bool): True if all tests pass. False otherwise.
+    """ 
+    data = {
+        "sample_attribute_1" : "1",
+        "sample_attribute_2" : "2"} 
+    invalid_data = {}
+    builder = SettingsBuilder()
+    _, settings = builder.create_settings(data)
+    return builder.change_settings(settings, invalid_data) and \
         settings.get(SettingsAttributes.sample_attribute_1)[1] == "1" and \
         settings.get(SettingsAttributes.sample_attribute_2)[1] == "2"
 
@@ -373,6 +515,78 @@ def create_data_file_invalid() -> bool:
         not data_file_2.is_configured() and \
         not data_file_3.is_configured()
 
+def create_data_file_invalid_bad_file_type() -> bool:
+    """
+    Tests the DataFile object. 
+
+    Tests:
+        1. Create a paths object with invalid bad file type data and 
+           determine if it is configured.
+    
+    Returns:
+        (bool): True if all tests pass. False otherwise    
+    """
+    data = {
+        "name" : "test_name", 
+        "extension" : "wav", 
+        "file_type" : "blah",
+        "path" : "test_path",
+        "size_bytes": 0}
+    data_file = DataFile(data)
+    return not data_file.is_configured()
+
+def create_data_file_invalid_missing_keys() -> bool:
+    """
+    Tests the DataFile object. 
+
+    Tests:
+        1. Create a paths object with invalid missing keys data and determine 
+           if it is configured.
+    
+    Returns:
+        (bool): True if all tests pass. False otherwise    
+    """
+    data = {
+        "name" : "test_name"}
+    data_file = DataFile(data)
+    return not data_file.is_configured()
+
+def create_data_file_invalid_extra_keys() -> bool:
+    """
+    Tests the DataFile object. 
+
+    Tests:
+        1. Create a paths object with invalid extra keys data and 
+           determine if it is configured.
+    
+    Returns:
+        (bool): True if all tests pass. False otherwise    
+    """
+    data = {
+        "name" : "test_name", 
+        "extension" : "wav", 
+        "file_type" : "blach", 
+        "path" : "test_path",
+        "size_bytes": 0,
+        "extra" : None}
+    data_file = DataFile(data)
+    return not data_file.is_configured()
+
+def create_data_file_invalid_empty() -> bool:
+    """
+    Tests the DataFile object. 
+
+    Tests:
+        1. Create a paths object with invalid empty data and determine if it is 
+            configured.
+    
+    Returns:
+        (bool): True if all tests pass. False otherwise    
+    """
+    data = {}
+    data_file = DataFile(data)
+    return not data_file.is_configured()
+
 def data_file_get_valid() -> bool:
     """
     Tests the get method in DataFile. 
@@ -393,6 +607,7 @@ def data_file_get_valid() -> bool:
     return data_file.get(DataFileAttributes.name)[1] == "test_name" and \
         data_file.get(DataFileAttributes.extension)[1] == "wav" and \
         data_file.get(DataFileAttributes.file_type)[1] == DataFileTypes.audio and \
+        data_file.get(DataFileAttributes.path)[1] == "test_path" and \
         data_file.get(DataFileAttributes.size_bytes)[1] == 0
 
 def data_file_get_invalid() -> bool:
@@ -454,6 +669,45 @@ def data_file_set_invalid() -> bool:
     data_file = DataFile(data)
     return  not data_file.set("invalid", None) and \
         not data_file.set(DataFileAttributes.file_type,"audio")
+
+def data_file_set_invalid_bad_key() -> bool:
+    """
+    Test the set method in DataFile.
+
+    Tests:
+        1. Set an invalid attribute and check results. 
+
+    Returns:   
+        (bool): True if all tests pass. False otherwise.
+    """
+    data = {
+        "name" : "test_name", 
+        "extension" : "wav", 
+        "file_type" : DataFileTypes.audio, 
+        "path" : "test_path",
+        "size_bytes": 0}
+    data_file = DataFile(data)
+    return not data_file.set("invalid", None)
+
+def data_file_set_invalid_file_type() -> bool:
+    """
+    Test the set method in DataFile.
+
+    Tests:
+        1. Set an invalid type for file_type. 
+
+    Returns:   
+        (bool): True if all tests pass. False otherwise.
+    """
+    data = {
+        "name" : "test_name", 
+        "extension" : "wav", 
+        "file_type" : DataFileTypes.audio, 
+        "path" : "test_path",
+        "size_bytes": 0}
+    data_file = DataFile(data)
+    return not data_file.set(DataFileAttributes.file_type,"audio") and \
+        data_file.get(DataFileAttributes.file_type)[1] == DataFileTypes.audio
 
 ######################### Meta tests
 
@@ -519,6 +773,60 @@ def create_meta_invalid() -> bool:
         not meta_2.is_configured() and \
         not meta_3.is_configured()
 
+def create_meta_invalid_missing_keys():
+    """
+    Tests the Meta object. 
+
+    Tests:
+        1. Create a meta object with invalid missing data and determine if it is 
+            configured.
+    
+    Returns:
+        (bool): True if all tests pass. False otherwise.
+    """
+    data = {
+        "conversation_name" : "test_conversation"}
+    meta = Meta(data)
+    return not meta.is_configured()
+
+def create_meta_invalid_extra_keys():
+    """
+    Tests the Meta object. 
+
+    Tests:
+        1. Create a meta object with invalid extra data and determine if it is 
+            configured.
+    
+    Returns:
+        (bool): True if all tests pass. False otherwise.
+    """
+    data = {
+        "conversation_name" : "test_conversation",
+        "total_size_bytes" : 0,
+        "num_data_files" : 0,
+        "source_type" : "file", 
+        "transcription_date" : None,
+        "transcription_status" : "not_transcribed",
+        "transcription_time" : None,
+        "total_speakers" : 1,
+        "extra" : None}
+    meta = Meta(data)
+    return not meta.is_configured()
+
+def create_meta_invalid_empty():
+    """
+    Tests the Meta object. 
+
+    Tests:
+        1. Create a meta object with invalid empty data and determine if it is 
+            configured.
+    
+    Returns:
+        (bool): True if all tests pass. False otherwise.
+    """
+    data = {}
+    meta = Meta(data)
+    return not meta.is_configured()
 
 def meta_get_valid() -> bool:
     """
@@ -542,7 +850,11 @@ def meta_get_valid() -> bool:
     meta = Meta(data)
     return meta.get(MetaAttributes.conversation_name)[1] == "test_conversation" and \
         meta.get(MetaAttributes.total_size_bytes)[1] == 0 and \
-        meta.get(MetaAttributes.total_speakers)[1] == 1  
+        meta.get(MetaAttributes.total_speakers)[1] == 1 and \
+        meta.get(MetaAttributes.source_type)[1] == "file" and \
+        meta.get(MetaAttributes.transcription_status)[1] =="not_transcribed" and \
+        meta.get(MetaAttributes.transcription_date)[1] == None and \
+        meta.get(MetaAttributes.transcription_time)[1] == None
 
 def meta_get_invalid() -> bool:
     """
@@ -835,6 +1147,33 @@ def builder_build_conversation_invalid() -> bool:
         builder.clear_conversation_configurations() and \
         not builder.build_conversation() and \
         builder.get_conversation() == None
+
+def builder_clear_conversation() -> bool:
+    """
+    Tests the builder clear conversation method
+
+    Tests:
+        1. Builds conversation
+        2. Clear conversation
+        3. Confirms conversation is cleared with a get
+    
+    Returns:
+        (bool): True if all tests pass. False otherwise.
+    """
+    settings_builder = SettingsBuilder()
+    data = {
+        "sample_attribute_1" : None,
+        "sample_attribute_2" : None} 
+    _,settings = settings_builder.create_settings(data)
+    builder = ConversationBuilder(IO())  
+    builder.set_conversation_source_path(CONVERSATION_DIR_PATH)
+    builder.set_conversation_name("conversation_1")
+    builder.set_result_directory_path(TMP_DIR_PATH)
+    builder.set_temporary_directory_path(TMP_DIR_PATH)
+    builder.set_number_of_speakers(2)
+    builder.set_conversation_settings(settings)
+    builder.build_conversation()
+    return builder.clear_conversation_configurations() and builder.get_conversation() == None
  
 #########################  Conversation tests
 
@@ -1221,116 +1560,154 @@ def define_organizer_test_suite() -> TestSuite:
     suite = TestSuite()
 
     #### Paths tests 
-    # suite.add_test("paths_create_valid_data", (), True, True, 
-    #     paths_create_valid_data)
-    # suite.add_test("paths_create_invalid_data", (), True, True, 
-    #     paths_create_invalid_data)
-    # suite.add_test("paths_get_valid", (), True, True, 
-    #     paths_get_valid)
-    # suite.add_test("paths_get_invalid", (), True, True, 
-    #     paths_get_invalid)
+    suite.add_test("paths_create_valid_data", (), True, True, 
+        paths_create_valid_data)
+    suite.add_test("paths_create_invalid_data", (), True, True, 
+        paths_create_invalid_data)
+    suite.add_test("paths_get_valid", (), True, True, 
+        paths_get_valid)
+    suite.add_test("paths_get_invalid", (), True, True, 
+        paths_get_invalid)
 
     # ### Settings tests
-    # suite.add_test("settings_create_valid_data", (), True, True, 
-    #     settings_create_valid_data)
-    # suite.add_test("settings_create_invalid_data", (), True, True, 
-    #     settings_create_invalid_data)
-    # suite.add_test("settings_set_attribute_manually", (), True, True, 
-    #     settings_set_attribute_manually)
-    # suite.add_test("settings_get_valid", (), True, True, 
-    #     settings_get_valid)
-    # suite.add_test("settings_get_invalid", (), True, True, 
-    #     settings_get_invalid)
-    # suite.add_test("settings_builder_create_settings_valid", (), True, True, 
-    #     settings_builder_create_settings_valid)
-    # suite.add_test("settings_builder_create_settings_invalid", (), True, True, 
-    #     settings_builder_create_settings_invalid)
-    # suite.add_test("settings_builder_copy_settings", (), True, True, 
-    #     settings_builder_copy_settings)
-    # suite.add_test("settings_builder_change_settings_valid", (), True, True, 
-    #     settings_builder_change_settings_valid)
-    # suite.add_test("settings_builder_change_settings_invalid", (), True, True, 
-    #     settings_builder_change_settings_invalid)
+    suite.add_test("settings_create_valid_data", (), True, True, 
+        settings_create_valid_data)
+    suite.add_test("settings_create_invalid_data", (), True, True, 
+        settings_create_invalid_data)
+    suite.add_test("settings_create_invalid_data_missing_keys", (), True, True, 
+        settings_create_invalid_data_missing_keys)
+    suite.add_test("settings_create_invalid_data_misnamed_keys", (), True, True, 
+        settings_create_invalid_data_misnamed_keys)
+    suite.add_test("settings_set_attribute_manually", (), True, True, 
+        settings_set_attribute_manually)
+    suite.add_test("settings_get_valid", (), True, True, 
+        settings_get_valid)
+    suite.add_test("settings_get_invalid", (), True, True, 
+        settings_get_invalid)
+
+    #### Settings Builder tests
+    suite.add_test("settings_builder_create_settings_valid", (), True, True, 
+        settings_builder_create_settings_valid)
+    suite.add_test("settings_builder_create_settings_invalid", (), True, True, 
+        settings_builder_create_settings_invalid)
+    suite.add_test("settings_builder_create_settings_invalid_missing_keys", (), True, True, 
+        settings_builder_create_settings_invalid_missing_keys)
+    suite.add_test("settings_builder_create_settings_invalid_extra_keys", (), True, True, 
+        settings_builder_create_settings_invalid_extra_keys)
+    suite.add_test("settings_builder_create_settings_invalid_misnamed_keys", (), True, True, 
+        settings_builder_create_settings_invalid_misnamed_keys)
+    suite.add_test("settings_builder_create_settings_invalid_empty", (), True, True, 
+        settings_builder_create_settings_invalid_empty)
+    suite.add_test("settings_builder_copy_settings", (), True, True, 
+        settings_builder_copy_settings)
+    suite.add_test("settings_builder_copy_settings_not_configured", (), True, True, 
+        settings_builder_copy_settings_not_configured)
+    suite.add_test("settings_builder_change_settings_valid", (), True, True, 
+        settings_builder_change_settings_valid)
+    suite.add_test("settings_builder_change_settings_invalid", (), True, True, 
+        settings_builder_change_settings_invalid)
+    suite.add_test("settings_builder_change_settings_empty", (), True, True, 
+        settings_builder_change_settings_empty)
 
     #### Data file tests.
-    # suite.add_test("create_data_file_valid", (), True, True, 
-    #     create_data_file_valid)
-    # suite.add_test("create_data_file_invalid", (), True, True, 
-    #     create_data_file_invalid)
-    # suite.add_test("data_file_get_valid", (), True, True, 
-    #     data_file_get_valid)
-    # suite.add_test("data_file_get_invalid", (), True, True, 
-    #     data_file_get_invalid)
-    # suite.add_test("data_file_set_valid", (), True, True, 
-    #     data_file_set_valid)
-    # suite.add_test("data_file_set_invalid", (), True, True, 
-    #     data_file_set_invalid)
+    suite.add_test("create_data_file_valid", (), True, True, 
+        create_data_file_valid)
+    suite.add_test("create_data_file_invalid", (), True, True, 
+        create_data_file_invalid)
+    suite.add_test("create_data_file_invalid_bad_file_type", (), True, True, 
+        create_data_file_invalid_bad_file_type)
+    suite.add_test("create_data_file_invalid_missing_keys", (), True, True, 
+        create_data_file_invalid_missing_keys)
+    suite.add_test("create_data_file_invalid_extra_keys", (), True, True, 
+        create_data_file_invalid_extra_keys)
+    suite.add_test("create_data_file_invalid_empty", (), True, True, 
+        create_data_file_invalid_empty)
+    suite.add_test("data_file_get_valid", (), True, True, 
+        data_file_get_valid)
+    suite.add_test("data_file_get_invalid", (), True, True, 
+        data_file_get_invalid)
+    suite.add_test("data_file_set_valid", (), True, True, 
+        data_file_set_valid)
+    suite.add_test("data_file_set_invalid", (), True, True, 
+        data_file_set_invalid)
+    suite.add_test("data_file_set_invalid_bad_key", (), True, True, 
+        data_file_set_invalid_bad_key)
+    suite.add_test("data_file_set_invalid_file_type", (), True, True, 
+        data_file_set_invalid_file_type)
 
     #### Meta tests
-    # suite.add_test("create_meta_valid", (), True, True, 
-    #     create_meta_valid)
-    # suite.add_test("create_meta_invalid", (), True, True, 
-    #     create_meta_invalid)
-    # suite.add_test("meta_get_valid", (), True, True, 
-    #     meta_get_valid)
-    # suite.add_test("meta_get_invalid", (), True, True, 
-    #     meta_get_invalid)
-    # suite.add_test("meta_set_valid", (), True, True, 
-    #     meta_set_valid)
-    # suite.add_test("meta_set_invalid", (), True, True, 
-    #     meta_set_invalid)
+    suite.add_test("create_meta_valid", (), True, True, 
+        create_meta_valid)
+    suite.add_test("create_meta_invalid", (), True, True, 
+        create_meta_invalid)
+    suite.add_test("create_meta_invalid_missing_keys", (), True, True, 
+        create_meta_invalid_missing_keys)
+    suite.add_test("create_meta_invalid_extra_keys", (), True, True, 
+        create_meta_invalid_extra_keys)
+    suite.add_test("create_meta_invalid_empty", (), True, True, 
+        create_meta_invalid_empty)
+    suite.add_test("meta_get_valid", (), True, True, 
+        meta_get_valid)
+    suite.add_test("meta_get_invalid", (), True, True, 
+        meta_get_invalid)
+    suite.add_test("meta_set_valid", (), True, True, 
+        meta_set_valid)
+    suite.add_test("meta_set_invalid", (), True, True, 
+        meta_set_invalid)
 
     #### ConversationBuilder tests 
-    # suite.add_test("builder_set_conversation_source_path_valid", (), True, 
-    #     True, builder_set_conversation_source_path_valid)
-    # suite.add_test("builder_set_conversation_source_path_invalid", (), True, 
-    #     True, builder_set_conversation_source_path_invalid)
-    # suite.add_test("builder_set_conversation_name", (), True, True, 
-    #     builder_set_conversation_name)
-    # suite.add_test("builder_set_result_directory_path_valid", (), True, True, 
-    #     builder_set_result_directory_path_valid)
-    # suite.add_test("builder_set_result_directory_path_invalid", (), True, True, 
-    #     builder_set_result_directory_path_invalid)
-    # suite.add_test("builder_set_temporary_directory_path_valid", (), True, True, 
-    #     builder_set_temporary_directory_path_valid)
-    # suite.add_test("builder_set_temporary_directory_path_invalid", (), True, True, 
-    #     builder_set_temporary_directory_path_invalid)
-    # suite.add_test("builder_set_number_of_speakers_valid", (), True, True, 
-    #     builder_set_number_of_speakers_valid)
-    # suite.add_test("builder_set_number_of_speakers_invalid", (), True, True, 
-    #     builder_set_number_of_speakers_invalid)
-    # suite.add_test("builder_set_conversation_settings_valid", (), True, True, 
-    #     builder_set_conversation_settings_valid)
-    # suite.add_test("builder_set_conversation_settings_invalid", (), True, True, 
-    #     builder_set_conversation_settings_invalid)
-    # suite.add_test("builder_build_conversation_valid", (), True, True, 
-    #     builder_build_conversation_valid)
-    # suite.add_test("builder_build_conversation_invalid", (), True, True, 
-    #     builder_build_conversation_invalid)
+    suite.add_test("builder_set_conversation_source_path_valid", (), True, 
+        True, builder_set_conversation_source_path_valid)
+    suite.add_test("builder_set_conversation_source_path_invalid", (), True, 
+        True, builder_set_conversation_source_path_invalid)
+    suite.add_test("builder_set_conversation_name", (), True, True, 
+        builder_set_conversation_name)
+    suite.add_test("builder_set_result_directory_path_valid", (), True, True, 
+        builder_set_result_directory_path_valid)
+    suite.add_test("builder_set_result_directory_path_invalid", (), True, True, 
+        builder_set_result_directory_path_invalid)
+    suite.add_test("builder_set_temporary_directory_path_valid", (), True, True, 
+        builder_set_temporary_directory_path_valid)
+    suite.add_test("builder_set_temporary_directory_path_invalid", (), True, True, 
+        builder_set_temporary_directory_path_invalid)
+    suite.add_test("builder_set_number_of_speakers_valid", (), True, True, 
+        builder_set_number_of_speakers_valid)
+    suite.add_test("builder_set_number_of_speakers_invalid", (), True, True, 
+        builder_set_number_of_speakers_invalid)
+    suite.add_test("builder_set_conversation_settings_valid", (), True, True, 
+        builder_set_conversation_settings_valid)
+    suite.add_test("builder_set_conversation_settings_invalid", (), True, True, 
+        builder_set_conversation_settings_invalid)
+    suite.add_test("builder_build_conversation_valid", (), True, True, 
+        builder_build_conversation_valid)
+    suite.add_test("builder_build_conversation_invalid", (), True, True, 
+        builder_build_conversation_invalid)
+    suite.add_test("builder_clear_conversation", (), True, True, 
+        builder_clear_conversation)
 
     #### Conversation tests
-    # suite.add_test("conversation_get_conversation_name", (), True, True, 
-    #     conversation_get_conversation_name)
-    # suite.add_test("conversation_get_conversation_size", (), True, True, 
-    #     conversation_get_conversation_size)
-    # suite.add_test("conversation_get_source_type", (), True, True, 
-    #     conversation_get_source_type)
-    # suite.add_test("conversation_get_transcription_date", (), True, True, 
-    #     conversation_get_transcription_date)
-    # suite.add_test("conversation_get_transcription_status", (), True, True, 
-    #     conversation_get_transcription_status)
-    # suite.add_test("conversation_get_transcription_time", (), True, True, 
-    #     conversation_get_transcription_time)
-    # suite.add_test("conversation_number_of_source_files", (), True, True, 
-    #     conversation_number_of_source_files)
-    # suite.add_test("conversation_number_of_speakers", (), True, True, 
-    #     conversation_number_of_speakers)
-    # suite.add_test("conversation_get_source_file_names", (), True, True, 
-    #     conversation_get_source_file_names)
-    # suite.add_test("conversation_get_source_file_paths", (), True, True, 
-    #     conversation_get_source_file_paths)
-    # suite.add_test("conversation_get_source_file_types", (), True, True, 
-    #     conversation_get_source_file_types)
+    suite.add_test("conversation_get_conversation_name", (), True, True, 
+        conversation_get_conversation_name)
+    suite.add_test("conversation_get_conversation_size", (), True, True, 
+        conversation_get_conversation_size)
+    suite.add_test("conversation_get_source_type", (), True, True, 
+        conversation_get_source_type)
+    suite.add_test("conversation_get_transcription_date", (), True, True, 
+        conversation_get_transcription_date)
+    suite.add_test("conversation_get_transcription_status", (), True, True, 
+        conversation_get_transcription_status)
+    suite.add_test("conversation_get_transcription_time", (), True, True, 
+        conversation_get_transcription_time)
+    suite.add_test("conversation_number_of_source_files", (), True, True, 
+        conversation_number_of_source_files)
+    suite.add_test("conversation_number_of_speakers", (), True, True, 
+        conversation_number_of_speakers)
+    suite.add_test("conversation_get_source_file_names", (), True, True, 
+        conversation_get_source_file_names)
+    suite.add_test("conversation_get_source_file_paths", (), True, True, 
+        conversation_get_source_file_paths)
+    suite.add_test("conversation_get_source_file_types", (), True, True, 
+        conversation_get_source_file_types)
 
     #### Organizer tests
     suite.add_test("organizer_create_settings_valid", (), True, True, 
