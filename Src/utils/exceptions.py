@@ -14,3 +14,8 @@ class ExceptionNotFound(Exception):
     
     def __init__(self) -> None :
         pass 
+
+class ExceptionUnexpected(Exception):
+
+    def __init__(self) -> None :
+        pass 
