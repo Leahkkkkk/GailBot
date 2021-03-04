@@ -1,12 +1,13 @@
 # Standard library imports 
-from typing import List, Any, Tuple
+from typing import List, Any, Dict
 # Local imports 
 from ...network import Network
+from ...io import IO
 # Third party imports 
-from ibm_watson import SpeechToTextV1 , ApiException, DetailedResponse
-from ibm_cloud_sdk_core.authenticators import IAMAuthenticator 
+from ibm_watson import SpeechToTextV1 
+from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from ibm_watson.websocket import RecognizeCallback, AudioSource
-
+ 
 class WatsonCore:
     """
     Responsible for knowing how to interact with the IBM Watson STT service
@@ -23,49 +24,66 @@ class WatsonCore:
         "london" : "https://api.eu-gb.speech-to-text.watson.cloud.ibm.com",
         "seoul" : "https://api.kr-seo.speech-to-text.watson.cloud.ibm.com"}
 
-    content_types = (
-        "application/octet-stream", "audio/alaw", "audio/basic", "audio/flac", 
-        "audio/g729", "audio/l16", "audio/mp3", "audio/mpeg", "audio/mulaw",
-        "audio/ogg", "audio/ogg;codecs=opus", "audio/ogg;codecs=vorbis",
-        "audio/wav, audio/webm", "audio/webm;codecs=opus", 
-        "audio/webm;codecs=vorbis")
+    # Mappings from audio format to the watson content types for that format.
+    format_to_content_types = {
+        #"alaw" : "audio/alaw", 
+        #"basic" : "audio/basic",
+        "flac" : "audio/flac",
+        "ogg" : "audio/ogg",
+        #"l16" : "audio/l16",
+        "mp3" : "audio/mp3",
+        "mpeg" : "audio/mpeg",
+        #"mulaw" : "audio/mulaw",
+        "wav" : "audio/wav",
+        "webm" : "audio/webm",
+        "ogg" : "audio/ogg;codecs=opus"}
     
-    def __init__(self, network : Network) -> None:
-        # Default parameters 
+    def __init__(self, io : IO) -> None:
+        """
+        Args:
+            network (Network): Instantiated network object.
+            io (IO): Instantiated IO object.
+        """
+        # Default parameters for watson
         self.watson_defaults = {
             "ssl_verification" : True,
             "headers" : {
                 "x-watson-learning-opt-out" : True },
             "customization_weight" : 0.3,
+            "base_model_version" : None,
             "inactivity_timeout" : 30, 
-            "interim_results" : False, 
+            "interim_results" : True, 
+            "keywords" : None,
             "keyword_threshold" : 0.8,
             "max_alternatives" : 1,
+            "word_alternatives_threshold" : None, 
             "word_confidence" : True,
             "timestamps" : True, 
-            "profanity_filer" : False, 
-            "smart_formatting" : True, 
-            "speaker_labels" : True, 
+            "profanity_filter" : False, 
+            "smart_formatting" : False, 
+            "speaker_labels" : False, 
+            "http_proxy_host" : None, 
+            "http_proxy_port" : None, 
+            "grammar_name" : None, 
             "redaction" : False, 
             "processing_metrics" : False, 
+            "processing_metrics_interval" : 1.0, 
             "audio_metrics" : False, 
             "end_of_phrase_silence_time" : 0.8,
-            "split_transcript_at_phrase_end" : True, 
-            "speech_detector_sensitivity" : 0.7, 
-            "background_audio_supression" : 0.3}
+            "split_transcript_at_phrase_end" : False, 
+            "speech_detector_sensitivity" : 0.5, 
+            "background_audio_supression" : 0.0}
+        # User inputs.
         self.inputs = {
             "api_key" : None,
             "region" : None,
-            "audio_source" : None,
-            "audio" : None,
-            "content_type" : None,
+            "audio_path" : None,
             "recognize_callback" : None,
-            "model" : None,
+            "base_model_name" : None,
             "language_customization_id" : None,
             "acoustic_customization_id" : None}
-        # State parameters 
-        self.network = network
-        self.authenticator = None
+        # Objects
+        self.io = io
 
     ### SETTERS
 
@@ -79,10 +97,9 @@ class WatsonCore:
         Returns:
             (bool): True if successfully set. False otherwise.
         """
-        success, authenticator = self._initialize_authenticator(api_key)
+        success = self._is_api_key_valid(api_key)
         if not success:
             return False
-        self.authenticator = authenticator 
         self.inputs["api_key"] = api_key
         return True  
 
@@ -94,97 +111,317 @@ class WatsonCore:
             region (str): 
                 Region for the STT service. Must be a supported regions.
         """
+        region = region.lower()
         if not region in self.regions.keys():
             return False 
         self.inputs["region"] = region
         return True
 
-    def set_ssl_verification(self, verify : bool) -> bool:
-        pass 
-
-    def set_content_type(self, content_type : str) -> bool:
-        pass 
-
     def set_recognize_callback(self, recognize_callback : RecognizeCallback)\
              -> bool:
-        pass 
+        """
+        Initialized object that handles callbacks during the websocket lifecycle.
+        Inherits from and implements ibm_watson.websocket.RecognizeCallback.
 
-    def set_audio_source(self, audio_source : str) -> bool:
-        pass 
+        Args:
+            recognize_callback (RecognizeCallback)
+        
+        Returns:
+            (bool): True if set successfully. False otherwise.
+        """
+        self.inputs["recognize_callback"] = recognize_callback 
+        return True 
+
+    def set_audio_source_path(self, audio_source_path : str) -> bool:
+        """
+        Set the path to the audio file that is to be transcribed. This 
+        audio file format MUST be supported and the path MUST be a valid path.
+
+        Args:
+            audio_source_path (str): Validated path to the audio file. 
+
+        Returns:
+            (bool): True if set successfully. False otherwise.
+        """
+        if not self.io.is_file(audio_source_path) and \
+                not self._is_supported_audio_file(audio_source_path):
+            return False 
+        self.inputs["audio_path"] = audio_source_path 
+        return True
     
     def set_base_language_model(self, base_model_name : str) -> bool:
-        pass 
+        """
+        Set the base language model to use for transcription. 
+        MUST be a supported model name.
+
+        Args:
+            base_model_name (str): Name of the base audio model.
+
+        Returns:
+            (bool): True if set successfully. False otherwise.
+        """
+        self.inputs["base_model_name"] = base_model_name
+        return True 
 
     def set_language_customization_id(self, customization_id : str) -> bool:
-        pass 
+        """
+        Set the language customization id for a custom language model.
+        The base model should be the same as the base model used for the 
+        custom ID. 
+        The ID should be validated beforehand. 
+
+        Args:
+            customization_id (str): ID of the custom language model to use. 
+        
+        Returns:
+            (bool): True if set successfully. False otherwise.
+        """
+        self.inputs["language_customization_id"] = customization_id
+        return True 
 
     def set_acoustic_customization_id(self, customization_id : str) -> bool:
-        pass 
+        """
+        Set the acoustic customization id for a custom acoustic model.
+        The ID should be validated beforehand. 
 
-    def set_customization_weight(self, weight : float) -> bool:
-        pass 
+        Args:
+            customization_id (str): ID of the custom acoustic model to use. 
+        
+        Returns:
+            (bool): True if set successfully. False otherwise.
+        """        
+        self.inputs["acoustic_customization_id"] = customization_id
+        return True 
 
     ### GETTERS
 
     def get_api_key(self) -> str:
-        pass 
+        """
+        Obtain the API key. 
+
+        Returns:
+            (str): Api key is it has been set. None otherwise.
+        """
+        return self.inputs["api_key"] 
 
     def get_service_region(self) -> str:
-        pass 
+        """
+        Obtain the region associated with the api key 
 
-    def is_ssl_verified(self) -> bool:
-        pass 
+        Returns:
+            (str): Region if it has been set. None otherwise.
+        """ 
+        return self.inputs["region"]
 
-    def get_audio_source(self) -> str:
-        pass 
+    def get_audio_source_path(self) -> str:
+        """
+        Obtain the path to the audio source.
+
+        Returns:
+            (str): Path if it has been set. None otherwise.
+        """ 
+        return self.inputs["audio_path"]
 
     def get_selected_base_model(self) -> str:
-        pass 
+        """
+        Obtain the name of the base model being used for transcription.
+
+        Returns:
+            (str): Base model name if set. None otherwise.
+        """
+        return self.inputs["base_model_name"]
 
     def get_language_customization_id(self) -> str:
-        pass 
+        """
+        Obtain the ID of the custom language model being used.
 
-    def get_customization_weight(self) -> float:
-        pass 
+        Returns:
+            (str): Custom model ID if it has been set. None otherwise.
+        """
+        return self.inputs["language_customization_id"]
+
+    def get_acoustic_customization_id(self) -> str:
+        """
+        Obtain the ID of the custom acoustic model being used.
+
+        Returns:
+            (str): Custom model ID if it has been set. None otherwise.
+        """
+        return self.inputs["acoustic_customization_id"]
+
 
     def get_supported_regions(self) -> List[str]:
-        pass
+        """
+        Obtain a list of the transcription regions available in the service. 
+
+        Returns:
+            (List[str]): List of regions.
+        """
+        return list(self.regions.keys())
+
+    def get_supported_audio_formats(self) -> List[str]:
+        """
+        Get the audio formats that are supported by the transcription service.
+
+        Returns:
+            (str): Supported audio formats.
+        """
+        return list(self.format_to_content_types.keys())
 
     ### Others 
 
+    def reset_configurations(self) -> bool:
+        """
+        Reset all the configurations/inputs.
+
+        Returns:
+            (bool): True if set successfully. False otherwise.
+        """
+        for k in self.inputs.keys():
+            self.inputs[k] = None 
+        return True 
+
+    def recognize_using_websockets(self) -> bool:
+        """
+        Transcribes the provided audio stream using a websocket connections.
+        All attributes MUST be set before using this method. 
+
+        Returns:
+            (bool): True if successfully transcribed. False otherwise.
+        """
+        if not self._is_ready_to_connect():
+            return False 
+        # Creating STT object.
+        stt = self._initialize_stt_service(self.inputs["api_key"])
+        stt.set_service_url(self.regions[self.inputs["region"]])
+        with open(self.inputs["audio_path"],"rb") as audio_file:
+            stt.recognize_using_websocket(
+                **self._prepare_websocket_args(audio_file))
+            return True 
+
     ############################ PRIVATE METHODS ###########################
 
-    def _determine_audio_type(self) -> str:
-        pass 
-
-    def _determine_content_type(self) -> str:
-        pass 
-
-    def _is_service_ready(self) -> bool:
-        pass 
-
-    def _initialize_authenticator(self, apikey : str) \
-            -> Tuple[bool, IAMAuthenticator]:
+    def _determine_content_type(self, file_path : str) -> str:
         """
-        Initialize an authenticator object after ensuring that the api key is 
-        valid.
+        Given the path to an audio file, determines the watson content type.
+
+        Args:
+            file_path (str): Path to the audio file.
+        
+        Returns:
+            (str): Watson content type for that file. 
+        """
+        _, extension = self.io.get_file_extension(file_path) 
+        if extension in self.format_to_content_types.keys(): 
+            return self.format_to_content_types[extension]
+
+    def _is_supported_audio_file(self, file_path : str) -> bool:
+        """
+        Determine if the audio file at the given path is supported.
+
+        Args:
+            file_path (str): Path to the audio file.
+
+        Returns:
+            (bool): True if the file is supported. False otherwise.
+        """
+        _, extension = self.io.get_file_extension(file_path) 
+        return extension in self.format_to_content_types.keys()
+
+    def _is_ready_to_connect(self) -> bool:
+        """
+        Determine if all the parameters required to send a request to the 
+        service have been set.
+
+        Returns:
+            (bool): True if ready to connect to service. False otherwise.
+        """
+        return self.inputs["api_key"] != None and \
+            self.inputs["audio_path"] != None and \
+            self.inputs["recognize_callback"] != None and \
+            self.inputs["region"] != None 
+
+    def _is_api_key_valid(self, apikey : str) -> bool:
+        """
+        Determine if the given apikey is valid.
 
         Args:
             apikey (str): API key for the watson STT service. 
 
         Returns:
-            (Tuple[bool, IAMAuthenticator]):
-                True + authenticator object if valid.
-                False + None otherwise.
+            (bool): True if the key is valid. False otherwise.
         """
         try:
-            authenticator = IAMAuthenticator(apikey)
-            stt = SpeechToTextV1(authenticator=authenticator)
+            stt = self._initialize_stt_service(apikey)
             stt.list_models()
-            return (True, authenticator)
+            return True
         except:
-            return (False, None)
-        
+            return False
 
+    def _initialize_stt_service(self, apikey : str) -> SpeechToTextV1:
+        """
+        Initialize a SpeechToTextV1 object given an apikey.
 
-    
+        Args:
+            apikey (str): Valid API key for the watson STT service.
+
+        Returns:
+            (SpeechToTextV1)
+        """
+        authenticator = IAMAuthenticator(apikey)
+        stt = SpeechToTextV1(authenticator=authenticator)
+        return stt 
+
+    def _prepare_websocket_args(self, audio_file : Any) \
+            -> Dict[str,Any]:
+        """
+        Prepare the final parameter dictionary for 
+        SpeechToTextV1.recognize_using_websocket.
+
+        Args:
+            audio_file (Any): Opened file stream for the audio file to be sent.
+
+        Returns:
+            (Dict[str,Any]): Mapping from watson parameter to its value.
+        """
+        return {
+            "audio" : AudioSource(audio_file), 
+            "content_type" : self._determine_content_type(
+                self.inputs["audio_path"]),
+            "recognize_callback" : self.inputs["recognize_callback"],
+            "model" : self.inputs["base_model_name"],
+            "language_customization_id" : self.inputs["language_customization_id"],
+            "acoustic_customization_id" : self.inputs["acoustic_customization_id"], 
+            "customization_weight" : \
+                self.watson_defaults["customization_weight"] if \
+                    self.inputs["language_customization_id"] else None, 
+            "base_model_version" : None, 
+            "inactivity_timeout" : self.watson_defaults["inactivity_timeout"], 
+            "interim_results" : self.watson_defaults["interim_results"],
+            "keywords" : self.watson_defaults["keywords"],
+            "keywords_threshold" : self.watson_defaults["keyword_threshold"] if \
+                self.watson_defaults["keywords"] else None, 
+            "max_alternatives" : self.watson_defaults["max_alternatives"], 
+            "word_alternatives_threshold" : \
+                self.watson_defaults["word_alternatives_threshold"], 
+            "word_confidence" : self.watson_defaults["word_confidence"], 
+            "timestamps" : self.watson_defaults["timestamps"], 
+            "profanity_filter" : self.watson_defaults["profanity_filter"], 
+            "smart_formatting" : self.watson_defaults["smart_formatting"], 
+            "speaker_labels" : self.watson_defaults["speaker_labels"], 
+            "http_proxy_host" : self.watson_defaults["http_proxy_host"], 
+            "http_proxy_port" : self.watson_defaults["http_proxy_port"], 
+            "grammar_name" : self.watson_defaults["grammar_name"], 
+            "redaction" : self.watson_defaults["redaction"],
+            "processing_metrics" : self.watson_defaults["processing_metrics"], 
+            "processing_metrics_interval" : None, 
+            "audio_metrics" : self.watson_defaults["audio_metrics"], 
+            "end_of_phrase_silence_time" : \
+                self.watson_defaults["end_of_phrase_silence_time"], 
+            "split_transcript_at_phrase_end" : \
+                self.watson_defaults["split_transcript_at_phrase_end"],
+            "speech_detector_sensitivity" : \
+                self.watson_defaults["speech_detector_sensitivity"], 
+            "background_audio_suppression" : \
+                self.watson_defaults["background_audio_supression"]}
+
