@@ -2,6 +2,7 @@
 from abc import ABC,abstractmethod
 from typing import Any, Dict, List
 # Local imports 
+from .utterance import Utterance
 from ..io import IO 
 from ..network import Network
 # Third party imports 
@@ -71,7 +72,7 @@ class Engine(ABC):
         pass 
 
     @abstractmethod
-    def transcribe(self) -> Any:
+    def transcribe(self) -> List[Utterance]:
         """
         Transcribe the audio file that can be added through the configure method
         """

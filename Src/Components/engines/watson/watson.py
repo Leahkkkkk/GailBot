@@ -1,15 +1,16 @@
 # Standard library imports 
-from typing import BinaryIO, Dict, List, Any, Callable, TextIO, Union
-
-from ibm_watson.websocket.recognize_abstract_callback import RecognizeCallback
+from typing import Dict, List, Any, Union
 # Local imports 
 from ...io import IO 
 from ...network import Network
 from ..engine import Engine
+from ..utterance import Utterance
 from .core import WatsonCore
+from .recognition_results import RecognitionResult
 from .language_model import WatsonLanguageModel
 from .acoustic_model import WatsonAcousticModel
 from .recognize_callback import customWatsonCallbacks
+from ..utterance import Utterance
 # Third party imports 
 
 class WatsonEngine(Engine):
@@ -30,20 +31,29 @@ class WatsonEngine(Engine):
         self.core = WatsonCore(io) 
         self.lm = WatsonLanguageModel()
         self.am = WatsonAcousticModel() 
+        self.callback_closure = {
+            "callback_status" : {
+                "on_transcription" : False, 
+                "on_connected" : False, 
+                "on_error" : False, 
+                "on_inactivity_timeout" : False, 
+                "on_listening" : False, 
+                "on_hypothesis" : False, 
+                "on_data" : False, 
+                "on_close" : False},
+            "results" : {
+                "error" : None,
+                "transcript" : list(),
+                "hypothesis" : list(),
+                "data" : list()}}
+        # State parameters 
+        self.is_ready_for_transcription = False 
+        
 
     ### Core 
     def configure(self, api_key : str, region : str, audio_path : str, 
-            base_model_name : str, language_customization_id : str, 
-            acoustic_customization_id : str, 
-            on_transcription_callback : Callable[[List[Any], List],None],
-            on_connected_callback : Callable[[List[Any]],None],
-            on_error_callback : Callable[[List[Any],str], None],
-            on_inactivity_timeout_callback : Callable[[List[Any],str], None],
-            on_listening_callback : Callable[[List[Any]], None],
-            on_hypothesis_callback : Callable[[List[Any], str], None], 
-            on_data_callback : Callable[[List[Any], Dict], None], 
-            on_close_callback : Callable[[List[Any]], None],
-            callback_closure : List[Any]) -> bool:
+            base_model_name : str, language_customization_id : str = "", 
+            acoustic_customization_id : str = "") -> bool:
         """
         Configure core attributes for the engine.
 
@@ -54,46 +64,57 @@ class WatsonEngine(Engine):
             base_model_name (str): Name of the base language model to use. 
             language_customization_id (str): ID of the custom language model.
             acoustic_customization_id (str): ID of the custom acoustic model.
-            on_transcription_callback (Callable[[List[Any], List],None])
-            on_connected_callback (Callable[[List[Any]],None])
-            on_error_callback (Callable[[List[Any],str], None])
-            on_inactivity_timeout_callback (Callable[[List[Any],str], None])
-            on_listening_callback (Callable[[List[Any]], None])
-            on_hypothesis_callback (Callable[[List[Any], str], None])
-            on_data_callback (Callable[[List[Any], Dict], None])
-            on_close_callback (Callable[[List[Any]], None])
-            callback_closure (List[Any]):
-                Closure that is passed to all callbacks by reference. 
 
         Returns:
             (bool): True if successfully configured. False otherwise.
         """
-        if not self.is_file_supported(audio_path) or \
-                not base_model_name in self.lm.get_base_models() or \
-                self.lm.get_custom_model(language_customization_id) == None or \
-                self.am.get_custom_model(acoustic_customization_id) == None:
+        # Connecting to internal components
+
+        if not self.lm.connect_to_service(api_key, region) or \
+                not self.am.connect_to_service(api_key, region) or \
+                not self.is_file_supported(audio_path) or \
+                not base_model_name in self.lm.get_base_models():
             return False 
-        recognize_cb = customWatsonCallbacks(callback_closure)
-        recognize_cb.set_on_transcription_callback(on_transcription_callback)
-        recognize_cb.set_on_connected_callback(on_connected_callback)
-        recognize_cb.set_on_error_callback(on_error_callback)
-        recognize_cb.set_on_inactivity_timeout(on_inactivity_timeout_callback)
-        recognize_cb.set_on_listening_callback(on_listening_callback)
-        recognize_cb.set_on_hypothesis_callback(on_hypothesis_callback)
-        recognize_cb.set_on_data_callback(on_data_callback)
-        recognize_cb.set_on_close_callback(on_close_callback)
-        return self.core.reset_configurations() and \
+
+        if self.lm.get_custom_model(language_customization_id) != None:
+            self.core.set_language_customization_id(
+                language_customization_id)
+        elif len(language_customization_id) > 0:
+            return False 
+        if self.am.get_custom_model(acoustic_customization_id) != None:
+            self.core.set_acoustic_customization_id(
+                acoustic_customization_id)
+        elif len(acoustic_customization_id) > 0:
+            return False 
+            
+        self._reset_callback_closure()
+        recognize_cb = customWatsonCallbacks([self.callback_closure])
+        recognize_cb.set_on_transcription_callback(
+            self._on_transcription_callback)
+        recognize_cb.set_on_connected_callback(
+            self._on_connected_callback)
+        recognize_cb.set_on_error_callback(
+            self._on_error_callback)
+        recognize_cb.set_on_inactivity_timeout(
+            self._on_inactivity_timeout_callback)
+        recognize_cb.set_on_listening_callback(
+            self._on_listening_callback)
+        recognize_cb.set_on_hypothesis_callback(
+            self._on_hypothesis_callback)
+        recognize_cb.set_on_data_callback(
+            self._on_data_callback)
+        recognize_cb.set_on_close_callback(
+            self._on_close_callback)
+
+        self.is_ready_for_transcription = \
+            self.core.reset_configurations() and \
             self.core.set_api_key(api_key) and \
             self.core.set_service_region(region) and \
             self.core.set_audio_source_path(audio_path) and \
             self.core.set_recognize_callback(recognize_cb) and \
-            self.core.set_base_language_model(base_model_name) and \
-            self.core.set_language_customization_id(
-                language_customization_id) and \
-            self.core.set_acoustic_customization_id(
-                acoustic_customization_id) and \
-            self.lm.connect_to_service(api_key, region) and \
-            self.am.connect_to_service(api_key, region)
+            self.core.set_base_language_model(base_model_name)
+        return self.is_ready_for_transcription
+
 
     def get_configurations(self) -> Dict[str,Any]:
         """
@@ -137,18 +158,24 @@ class WatsonEngine(Engine):
         Returns:
             (bool): True if file is supported. False otherwise.
         """
-        return self.io.is_file(file_path) and \
-            self.io.get_file_extension(file_path) \
-            in self.core.get_supported_audio_formats()
 
-    def transcribe(self) -> bool:
+        return self.io.is_file(file_path) and \
+            self.io.get_file_extension(file_path)[1] \
+                in self.core.get_supported_audio_formats()
+
+    def transcribe(self) -> List[Utterance]:
         """
         Transcribe the audio file that can be added through the configure method
 
         Returns:
             (bool): True if transcribed successfully. False otherwise.
         """
-        return self.core.recognize_using_websockets()
+        if not self.is_ready_for_transcription:
+            return []
+        self.core.recognize_using_websockets()
+        utterances = self._prepare_utterance(self.callback_closure)
+        self.is_ready_for_transcription = False 
+        return utterances
 
     def get_supported_regions(self) -> List[str]:
         """
@@ -556,4 +583,121 @@ class WatsonEngine(Engine):
         """
         return self.am.delete_custom_audio_resource(
             customization_id, audio_name)
+
+    ############################### PRIVATE METHODS ###########################
+
+    def _on_transcription_callback(self,
+            closure : List[Dict], transcript : List) -> None:
+        closure[0]["callback_status"]["on_transcription"] = True 
+        #closure[0]["results"]["transcript"].append(transcript)
+
+    def _on_connected_callback(self, closure : List[Dict]) -> None:
+        closure[0]["callback_status"]["on_connected"] = True 
+
+    def _on_error_callback(self, closure : List[Dict], error : str) -> None:
+        closure[0]["callback_status"]["on_error"] = True 
+        closure[0]["results"]["error"] = error
+
+    def _on_inactivity_timeout_callback(
+                self, closure : List[Dict], error : str) -> None:
+        closure[0]["callback_status"]["on_inactivity_timeout"] = True  
+        closure[0]["results"]["error"] = error
+
+    def _on_listening_callback(self, closure : List[Dict]) -> None:
+        closure[0]["callback_status"]["on_listening"] = True 
+
+    def _on_hypothesis_callback(self, 
+            closure : List[Dict], hypothesis : str) -> None:
+        closure[0]["callback_status"]["on_hypothesis"] = True 
+        #closure[0]["results"]["hypothesis"].append(hypothesis)
+
+    def _on_data_callback(self, closure : List[Dict], data : Dict) -> None:
+        closure[0]["callback_status"]["on_data"] = True  
+        closure[0]["results"]["data"].append(data) 
+
+    def _on_close_callback(self, closure : List[Dict]) -> None:
+        closure[0]["callback_status"]["on_close"] = True 
+
+    def _prepare_utterance(self, closure : Dict[str, Any]) -> List[Utterance]:
+        try:
+            # Creating RecognitionResults objects
+            recognition_results = list()
+            for item in closure["results"]["data"]:
+                recognition_result = RecognitionResult(item)
+                print("Index")
+                print(recognition_result.get_result_index())
+                print("Num labels")
+                print(recognition_result.num_speaker_labels())
+                print("Num results")
+                print(recognition_result.num_results())
+                print("Labels")
+                print(recognition_result.get_speaker_labels())
+                print("keyword results")
+                print(recognition_result.get_keywords_results())
+                print("word alternatives")
+                print(recognition_result.get_word_alternatives())
+                print("transcript")
+                print(recognition_result.get_transcript_from_alternatives())
+                print("transcript_confidences")
+                print(recognition_result.get_transcript_confidences_from_alternatives())
+                print("timestamps")
+                print(recognition_result.get_timestamps_from_alternatives())
+                print("word_confidences")
+                print(recognition_result.get_word_confidences_from_alternatives())
+                recognition_results.append(RecognitionResult(item))
+
+
+            
+     
+
+
+            # results = list()
+            # additional_info = list()
+            # utterances = list()
+            # # Extracting relevant information.
+            # for item in closure["results"]["data"]:
+            #     if "results" in item and item["results"][0]["final"]:
+            #         results.append(item["results"])
+            #     if "speaker_labels" in item:
+            #         additional_info .append(item["speaker_labels"])
+            # # Creating standard mappings for timestamps and speaker labels.
+
+
+
+            # # for i, result in enumerate(timestamps):
+            # #     # Search to find an appropriate label for this specific start 
+            # #     # and end time
+
+
+            # # Preparing utterance objects 
+            # for result , label_information in zip(
+            #         timestamps, labels_information):
+            #     data = {
+            #         "speaker_label" : label_information["speaker"],
+            #         "start_time" : result[1],
+            #         "end_time" : result[2],
+            #         "transcript" : result[0]}
+            #     utt = Utterance(data)
+            #     if utt.is_configured():
+            #         utterances.append(utt)
+            # return utterances
+        except:
+            return []
+
+    def _reset_callback_closure(self) -> None:
+        self.callback_closure = {
+            "callback_status" : {
+                "on_transcription" : False, 
+                "on_connected" : False, 
+                "on_error" : False, 
+                "on_inactivity_timeout" : False, 
+                "on_listening" : False, 
+                "on_hypothesis" : False, 
+                "on_data" : False, 
+                "on_close" : False},
+            "results" : {
+                "error" : None,
+                "transcript" : list(),
+                "hypothesis" : list(),
+                "data" : list()}}
 
