@@ -1,2 +1,5 @@
 # Engines config file
-from .watson import WatsonCore, customWatsonCallbacks, WatsonLanguageModel
+from .watson import WatsonCore, customWatsonCallbacks, WatsonLanguageModel, WatsonAcousticModel
+from .engines import Engines
+from .utterance import Utterance, UtteranceAttributes
+from .google import GoogleCore

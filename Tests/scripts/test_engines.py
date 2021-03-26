@@ -6,9 +6,12 @@ from typing import Any, Tuple, Dict, List
 # Local imports 
 from ..suites import TestSuite
 from Src.Components.engines import WatsonCore, customWatsonCallbacks,\
-                                WatsonLanguageModel
+        WatsonLanguageModel, WatsonAcousticModel, Engines,Utterance,\
+        UtteranceAttributes
+from Src.Components.engines import GoogleCore
 from Src.Components.io import IO 
 from Src.Components.network import Network
+from Src.Components.engines.google import GoogleEngine
 # Third party imports 
 
 ############################### GLOBALS #####################################
@@ -17,6 +20,10 @@ LANG_CUSTOM_ID =  "41e54a38-2175-45f4-ac6a-1c11e42a2d54"
 ACOUSTIC_CUSTOM_ID = "some_valid_id "
 WAV_FILE_PATH = "Test_files/Media/test2b.wav"
 MP3_FILE_PATH = "Test_files/Media/sample1.mp3"
+BASE_LANG_MODEL = "en-US_BroadbandModel"
+REGION = "dallas"
+AUDIO1 = "Test_files/Media/gettysburg.wav"
+AUDIO2 = "Test_files/Media/excerpt-8-whats-your-favorite-show.mp3"
 
 ########################## TEST DEFINITIONS ##################################
 
@@ -351,7 +358,175 @@ def watson_lm_get_custom_model_corpora() -> bool:
         all([k in resp[0].keys() for k in resp_keys]) and \
         lm.get_custom_model_corpora("invalid") == None
 
+#### WatsonAcousticModel tests
 
+def watson_am_get_custom_models() -> bool:
+    pass 
+
+def watson_am_get_custom_model() -> bool:
+    pass 
+
+def watson_am_create_custom_model() -> bool:
+    pass 
+
+def watson_am_delete_custom_model() -> bool:
+    pass 
+
+def watson_am_train_custom_model() -> bool:
+    pass 
+
+def watson_am_reset_custom_model() -> bool:
+    pass 
+
+def watson_am_upgrade_custom_model() -> bool:
+    pass 
+
+def watson_am_get_custom_audio_resources() -> bool:
+    pass 
+
+def watson_am_get_custom_audio_resource() -> bool:
+    pass 
+
+def watson_am_add_custom_audio_resource() -> bool:
+    pass 
+
+def watson_am_delete_custom_audio_resource() -> bool:
+    pass 
+
+
+#### WatsonEngine tests
+
+def watson_engine_configure_valid() -> bool:
+    """
+    Tests:
+        1. Configure WatsonEngine with valid attributes.
+    """
+    engine = WatsonEngine(IO(), Network())
+    return engine.configure(
+            api_key = API_KEY, region = REGION, audio_path = MP3_FILE_PATH, 
+            base_model_name=BASE_LANG_MODEL) and \
+        engine.configure(
+            api_key = API_KEY, region = REGION, audio_path = MP3_FILE_PATH, 
+            base_model_name=BASE_LANG_MODEL, 
+            language_customization_id=LANG_CUSTOM_ID)
+
+def watson_engine_configure_invalid() -> bool:
+    """
+    Tests:
+        1. Configure WatsonEngine with invalid attributes. 
+    """
+    engine = WatsonEngine(IO(), Network())
+    s1 = engine.configure(
+        api_key = "invalid", region = REGION, audio_path = MP3_FILE_PATH, 
+        base_model_name=BASE_LANG_MODEL)
+    s2 = engine.configure(
+        api_key = API_KEY, region = "invalid", audio_path = MP3_FILE_PATH, 
+        base_model_name=BASE_LANG_MODEL)
+    s3 = engine.configure(
+        api_key = API_KEY, region = REGION, audio_path = MP3_FILE_PATH, 
+        base_model_name="invalid")
+    s4 = engine.configure(
+        api_key = API_KEY, region = REGION, audio_path = MP3_FILE_PATH, 
+        base_model_name=BASE_LANG_MODEL, 
+        language_customization_id="invalid")
+    s5 = engine.configure(
+        api_key = API_KEY, region = REGION, audio_path = "invalid", 
+        base_model_name=BASE_LANG_MODEL)
+    return not s1 and not s2 and not s3 and not s4 and not s5 
+
+def watson_engine_get_configurations() -> bool:
+    """
+    Compare the configurations agains the inputs 
+    """
+    engine = WatsonEngine(IO(), Network())
+    resp_keys = ["api_key","region","audio_path","base_model_name",
+        "language_customization_id","acoustic_customization_id"]
+    engine.configure(
+        api_key = API_KEY, region = REGION, audio_path = MP3_FILE_PATH, 
+        base_model_name=BASE_LANG_MODEL) 
+    configs = engine.get_configurations()
+    return all([k in configs.keys() for k in resp_keys]) and \
+        configs["api_key"] == API_KEY and \
+        configs["region"] == REGION and \
+        configs["base_model_name"] == BASE_LANG_MODEL
+    
+def watson_engine_get_engine_name() -> bool:
+    """
+    Tests:
+        1. Obtain the name and compare it.
+    """
+    engine = WatsonEngine(IO(), Network())
+    return engine.get_engine_name() == "watson"
+
+def watson_engine_get_supported_formats() -> bool:
+    """
+    Tests:
+        1. Ensure the correct return type
+    """
+    engine = WatsonEngine(IO(), Network())
+    formats = engine.get_supported_audio_formats()
+    return len(formats) > 0
+
+def watson_engine_is_file_supported() -> bool:
+    """
+    Tests:
+        1. Ensure mp3 file is supported.
+        2. Ensure wav file is supported.
+        3. Ensure does not work with invalid file name.
+    """
+    engine = WatsonEngine(IO(), Network())
+    return engine.is_file_supported(MP3_FILE_PATH) and  \
+        not engine.is_file_supported("invalid")
+
+def watson_engine_transcribe_valid() -> bool:
+    """
+    Tests:
+        1. Transcribe a file with valid configurations
+    """
+    engine = WatsonEngine(IO(), Network())
+    # s1 = engine.configure(
+    #     api_key = API_KEY, region = REGION, audio_path = MP3_FILE_PATH, 
+    #     base_model_name=BASE_LANG_MODEL)
+    # print(s1)
+    #utterances = engine.transcribe()
+    s2 = engine.configure(
+        api_key = API_KEY, region = REGION, audio_path = MP3_FILE_PATH, 
+        base_model_name=BASE_LANG_MODEL)
+    print(s2)
+    utterances = engine.transcribe()
+    # for utterance in utterances:
+    #     label = utterance.get(UtteranceAttributes.speaker_label)[1]
+    #     start_time = utterance.get(UtteranceAttributes.start_time)[1]
+    #     end_time = utterance.get(UtteranceAttributes.end_time)[1]
+    #     transcript = utterance.get(UtteranceAttributes.transcript)[1]
+    #     print("{}: {} {}_{}".format(label,transcript,start_time,end_time))  
+    # print(len(utterances))      
+    
+def watson_engine_transcribe_invalid() -> bool:
+    """
+    Tests:
+        1. Attempt to transcribe with invalid configurations.
+        2. Attempt to transcribe without configuring first. 
+    """
+    engine = WatsonEngine(IO(), Network())
+
+# Google Core     
+
+# Google Engine
+def google_transcribe() -> bool:
+    engine = GoogleEngine(IO())
+    engine.configure(AUDIO1, 22050, 1)
+    response = engine.transcribe()
+
+    # for utterance in response:
+    #     label = utterance.get(UtteranceAttributes.speaker_label)[1]
+    #     start_time = utterance.get(UtteranceAttributes.start_time)[1]
+    #     end_time = utterance.get(UtteranceAttributes.end_time)[1]
+    #     transcript = utterance.get(UtteranceAttributes.transcript)[1]
+    #     print("{}: {} {}_{}".format(label,transcript,start_time,end_time))  
+    # print(len(response))  
+
+    return True
 
 ####################### TEST SUITE DEFINITION ################################
 
@@ -401,18 +576,103 @@ def define_engines_test_suite() -> TestSuite:
 
     ### WatsonLanguageModel tests
 
-    # suite.add_test("watson_language_model_get_language_model_valid", (), True, 
-    #     True,watson_lm_get_language_model_valid)
-    # suite.add_test("watson_language_model_get_language_model_invalid", (), True, 
-    #     True,watson_lm_get_language_model_invalid)
-    # suite.add_test("watson_lm_get_custom_language_model_valid", (), True, True,
-    #     watson_lm_get_custom_language_model_valid)
-    # suite.add_test("watson_lm_get_custom_language_model_invalid", (), True, True,
-    #     watson_lm_get_custom_language_model_invalid)
-    suite.add_test("watson_lm_get_custom_model_corpora",(),True, True,
-        watson_lm_get_custom_model_corpora)
+    # suite.add_test("watson_lm_get_base_model",(), True, True, 
+    #     watson_lm_get_base_model)
+    # suite.add_test("watson_lm_get_base_models", (), True, True, 
+    #     watson_lm_get_base_models)
+    # suite.add_test("watson_lm_get_custom_model",(), True, True, 
+    #     watson_lm_get_custom_model)
+    # suite.add_test("watson_lm_get_custom_models",(), True, True, 
+    #     watson_lm_get_custom_models)
+    # suite.add_test("watson_lm_delete_custom_model", (), True, True, 
+    #     watson_lm_delete_custom_model)
+    # suite.add_test("watson_lm_create_custom_model", (), True, True, 
+    #     watson_lm_create_custom_model)
+    # suite.add_test("watson_lm_train_custom_model", (), True, True,
+    #     watson_lm_train_custom_model)
+    # suite.add_test("watson_lm_reset_custom_model", (), True, True, 
+    #     watson_lm_reset_custom_model)
 
 
+    # suite.add_test("watson_lm_upgrade_custom_model", (), True, True, 
+    #     watson_lm_upgrade_custom_model)
+    # suite.add_test("watson_lm_get_corpora", (), True, True, 
+    #     watson_lm_get_corpora)
+    # suite.add_test("watson_lm_add_corpus", (), True, True, 
+    #     watson_lm_add_corpus)
+    # suite.add_test("watson_lm_delete_corpus", (), True, True, 
+    #     watson_lm_delete_corpus)
+    # suite.add_test("watson_lm_get_corpus", (), True, True, 
+    #     watson_lm_get_corpus)
+    # suite.add_test("watson_lm_get_custom_words", (), True, True, 
+    #     watson_lm_get_custom_words)
+    # suite.add_test("watson_lm_add_custom_words", (), True, True,
+    #     watson_lm_add_custom_words)
+    # suite.add_test("watson_lm_delete_custom_word", (), True, True, 
+    #     watson_lm_delete_custom_word)
+    # suite.add_test("watson_lm_get_custom_grammars", (), True, True, 
+    #     watson_lm_get_custom_grammars)
+    # suite.add_test("watson_lm_get_custom_grammar", (), True, True, 
+    #     watson_lm_get_custom_grammar)
+    # suite.add_test("watson_lm_add_custom_grammar", (), True, True, 
+    #     watson_lm_add_custom_grammar)
+    # suite.add_test("watson_lm_delete_custom_grammar",(), True, True, 
+    #     watson_lm_delete_custom_grammar)
+
+    # ### WatsonAcousticeModel tests
+
+    # suite.add_test("watson_am_get_custom_models", (), True, True, 
+    #     watson_am_get_custom_models)
+    # suite.add_test("watson_am_get_custom_model", (), True, True, 
+    #     watson_am_get_custom_model)
+    # suite.add_test("watson_am_create_custom_model", (), True, True, 
+    #     watson_am_create_custom_model)
+    # suite.add_test("watson_am_delete_custom_model", (), True, True, 
+    #     watson_am_delete_custom_model)
+    # suite.add_test("watson_am_delete_custom_model", (), True, True, 
+    #     watson_am_delete_custom_model)
+    # suite.add_test("watson_am_reset_custom_model", (), True, True, 
+    #     watson_am_reset_custom_model)
+    # suite.add_test("watson_am_upgrade_custom_model", (), True, True, 
+    #     watson_am_upgrade_custom_model)
+    # suite.add_test("watson_am_get_custom_audio_resources", (), True, True, 
+    #     watson_am_get_custom_audio_resources)
+    # suite.add_test("watson_am_get_custom_audio_resource", (), True, True, 
+    #     watson_am_get_custom_audio_resource)
+    # suite.add_test("watson_am_add_custom_audio_resource", (), True, True, 
+    #     watson_am_add_custom_audio_resource)
+    # suite.add_test("watson_am_delete_custom_audio_resource", (), True, True, 
+    #     watson_am_delete_custom_audio_resource)
+
+    #### WatsonEngine tests 
+    # suite.add_test("watson_engine_configure_valid", (), True, True, 
+    #     watson_engine_configure_valid)
+    # suite.add_test("watson_engine_configure_invalid", (), True, True, 
+    #     watson_engine_configure_invalid)
+    # suite.add_test("watson_engine_get_configurations", (), True, True, 
+    #     watson_engine_get_configurations)
+    # suite.add_test("watson_engine_get_engine_name", (), True, True, 
+    #     watson_engine_get_engine_name)
+    # suite.add_test("watson_engine_get_supported_formats", (), True, True, 
+    #     watson_engine_get_supported_formats)
+    # suite.add_test("watson_engine_is_file_supported", (), True, True, 
+    #     watson_engine_is_file_supported)
+    # suite.add_test("watson_engine_transcribe_valid", (), True, True, 
+    #     watson_engine_transcribe_valid)
+    # suite.add_test("watson_engine_transcribe_invalid", (), True, True, 
+    #     watson_engine_transcribe_invalid)
+
+    # suite.add_test("watson_core_set_api_key_valid", (), True, True, 
+    #     watson_core_set_api_key_valid)
+    # suite.add_test("watson_core_set_api_key_invalid", (), True, True, 
+    #     watson_core_set_api_key_invalid)
+
+    ### GoogleCore tests
+    
+
+    ### GoogleEngine tests
+    suite.add_test("google_transcribe", (), True, True, 
+        google_transcribe)
     return suite 
 
 
