@@ -71,7 +71,7 @@ class GoogleEngine(Engine):
             (bool): True if file is supported. False otherwise.
         """
         return self.io.is_file(file_path) and \
-            self.io.get_file_extension(file_path) \
+            self.io.get_file_extension(file_path)[1] \
             in self.core.get_supported_audio_formats()
 
     def transcribe(self) -> List[Utterance]:
@@ -87,5 +87,6 @@ class GoogleEngine(Engine):
             return []
         utterances = self.core.transcribe_audio()
         self.is_ready_for_transcription = False
+        self.core.reset_configurations()
 
         return utterances

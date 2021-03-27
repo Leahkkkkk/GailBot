@@ -46,13 +46,13 @@ class GoogleCore:
         Returns:
             (bool): True if audio_path successfully set, false otherwise.
         """
-        if not self.io.is_file(audio_source_path) and \
+        if not self.io.is_file(audio_source_path) or \
                 not self._is_supported_audio_file(audio_source_path):
             return False 
         self.inputs["audio_path"] = audio_source_path 
         return True
 
-    # # TODO: define invalid rates
+    # # TODO: define invalid rates -- some ranges are not suggested, or don't make sense inbetween a certain range
     def set_sample_rate_hertz(self, sample_rate_hertz : int) -> bool:
         """
         Set the sample_rate_herts of audio file. Validate that sample_rate_hertz
@@ -65,6 +65,8 @@ class GoogleCore:
         Returns:
             (bool): True if sample_rate_hertz successfully set, false otherwise.
         """
+        if sample_rate_hertz <= 0:
+            return False
         self.inputs["sample_rate_hertz"] = sample_rate_hertz
         return True
     
