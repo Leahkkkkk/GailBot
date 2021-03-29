@@ -4,7 +4,7 @@ from typing import List, Any, Dict
 from ...network import Network
 from ...io import IO
 # Third party imports 
-from ibm_watson import SpeechToTextV1 
+from ibm_watson import SpeechToTextV1
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from ibm_watson.websocket import RecognizeCallback, AudioSource
  
@@ -52,16 +52,16 @@ class WatsonCore:
             "customization_weight" : 0.3,
             "base_model_version" : None,
             "inactivity_timeout" : 30, 
-            "interim_results" : True, 
+            "interim_results" : False, 
             "keywords" : None,
             "keyword_threshold" : 0.8,
             "max_alternatives" : 1,
             "word_alternatives_threshold" : None, 
             "word_confidence" : True,
-            "timestamps" : True, 
+            "timestamps" : False, 
             "profanity_filter" : False, 
             "smart_formatting" : False, 
-            "speaker_labels" : False, 
+            "speaker_labels" : True, 
             "http_proxy_host" : None, 
             "http_proxy_port" : None, 
             "grammar_name" : None, 
@@ -424,4 +424,3 @@ class WatsonCore:
                 self.watson_defaults["speech_detector_sensitivity"], 
             "background_audio_suppression" : \
                 self.watson_defaults["background_audio_supression"]}
-

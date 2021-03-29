@@ -13,6 +13,7 @@ class WatsonReturnCodes(IntEnum):
     Return codes from Watson.
     """
     ok = 200
+    created = 201 
     notFound = 404
     notAcceptable = 406
     unsupported = 415
@@ -48,10 +49,13 @@ class WatsonLanguageModel:
         Returns:
             (Union[Dict[str,Any],None]):
                 Dictionary with keys: name, language, rate, url,
-                supported_features if successful.
+                supported_features, description if successful.
                 None if unsuccessful.
         """
-        _, resp = self._execute_watson_method(self.stt.get_model,[model_name]) 
+        if not self.connected_to_service:
+            return
+        _, resp = self._execute_watson_method(
+            self.stt.get_model,[WatsonReturnCodes.ok],[model_name], {}) 
         return resp
 
     def get_base_models(self) -> List[str]:
@@ -61,8 +65,11 @@ class WatsonLanguageModel:
         Returns:
             (List[str]): Names of the base language models.
         """
+        if not self.connected_to_service:
+            return []
         names = list()
-        success, resp = self._execute_watson_method(self.stt.list_models)
+        success, resp = self._execute_watson_method(
+            self.stt.list_models, [WatsonReturnCodes.ok])
         if success:
             for model in resp["models"]:
                 names.append(model["name"])
@@ -86,9 +93,12 @@ class WatsonLanguageModel:
                 progress
                 None if unsuccessful.
         """
-        _, resp = self._execute_watson_method(
-            self.stt.get_language_model,[customization_id])
-        return resp
+        if not self.connected_to_service:
+            return
+        success, resp = self._execute_watson_method(
+            self.stt.get_language_model,[WatsonReturnCodes.ok],
+            [customization_id])
+        return resp if success else None 
     
     def get_custom_models(self) -> Dict[str,str]:
         """
@@ -98,9 +108,11 @@ class WatsonLanguageModel:
             (Dict[str,str]):
                  Mapping from custom model name to the customization id.
         """
+        if not self.connected_to_service:
+            return {}
         custom_models = dict()
         success, resp = self._execute_watson_method(
-            self.stt.list_language_models)
+            self.stt.list_language_models,[WatsonReturnCodes.ok])
         if success:
             for model in resp["customizations"]:
                 custom_models[model["name"]] = model["customization_id"]
@@ -110,6 +122,7 @@ class WatsonLanguageModel:
             description : str) -> bool:
         """
         Create a new custom language model.
+        Does NOT create a new model if one with the same name already exists.
 
         Args:
             name (str): Name of the model.
@@ -120,9 +133,12 @@ class WatsonLanguageModel:
         Returns:
             (bool): True if successful. False otherwise.
         """
+        if not self.connected_to_service or \
+                name in self.get_custom_models().keys():
+            return False 
         success, _ = self._execute_watson_method(
-            self.stt.create_language_model,
-            [name,base_model_name,None,description])
+            self.stt.create_language_model, [WatsonReturnCodes.created],
+            [name,base_model_name], {"description" : description})
         return success
     
     def delete_custom_model(self, customization_id : str) -> bool:
@@ -136,7 +152,8 @@ class WatsonLanguageModel:
             (bool): True if successful. False otherwise.
         """
         success, _ = self._execute_watson_method(
-            self.stt.delete_language_model,[customization_id])
+            self.stt.delete_language_model,[WatsonReturnCodes.ok],
+            [customization_id])
         return success
 
     def train_custom_model(self, customization_id : str) -> bool:
@@ -149,8 +166,9 @@ class WatsonLanguageModel:
         Returns:
             (bool): True if successful. False otherwise.
         """
-        success, _ = self._execute_watson_method(
-            self.stt.train_language_model,[customization_id])
+        success, resp = self._execute_watson_method(
+            self.stt.train_language_model,[WatsonReturnCodes.ok],
+            [customization_id])
         return success
 
     def reset_custom_model(self, customization_id : str) -> bool:
@@ -164,7 +182,8 @@ class WatsonLanguageModel:
             (bool): True if successful. False otherwise.
         """
         success, _ = self._execute_watson_method(
-            self.stt.reset_language_model, [customization_id])
+            self.stt.reset_language_model,[WatsonReturnCodes.ok],
+            [customization_id])
         return success
 
     def upgrade_custom_model(self, customization_id : str) -> bool:
@@ -176,7 +195,8 @@ class WatsonLanguageModel:
             (bool): True if successful. False otherwise.
         """
         success, _ = self._execute_watson_method(
-            self.stt.upgrade_language_model,[customization_id])
+            self.stt.upgrade_language_model,[WatsonReturnCodes.ok],
+            [customization_id])
         return success
 
     ### Custom corpora methods 
@@ -195,7 +215,7 @@ class WatsonLanguageModel:
                 None if unsuccessful.
         """
         success, resp = self._execute_watson_method(
-                self.stt.list_corpora,[customization_id])
+                self.stt.list_corpora,[WatsonReturnCodes.ok],[customization_id])
         if success:
             return resp["corpora"]
 
@@ -210,7 +230,8 @@ class WatsonLanguageModel:
             corpus_file (BinaryIO): utf-8 encoded plain text file.
         """
         success, _ = self._execute_watson_method(
-            self.stt.add_corpus,[customization_id,corpus_name,corpus_file,True])
+            self.stt.add_corpus,[WatsonReturnCodes.created],
+            [customization_id,corpus_name,corpus_file,True])
         return success
 
     def delete_corpus(
@@ -226,7 +247,8 @@ class WatsonLanguageModel:
             (bool): True if successful. False otherwise.
         """
         success, _ = self._execute_watson_method(
-            self.stt.delete_corpus,[customization_id,corpus_name])
+            self.stt.delete_corpus,[WatsonReturnCodes.ok]
+            [customization_id,corpus_name])
         return success
 
     def get_corpus(
@@ -246,7 +268,8 @@ class WatsonLanguageModel:
             None if unsuccessful.
         """
         _, resp =  self._execute_watson_method(
-            self.stt.get_corpus,[customization_id,corpus_name]) 
+            self.stt.get_corpus,[WatsonReturnCodes.ok],
+            [customization_id,corpus_name]) 
         return resp
 
     ### Custom words methods 
@@ -266,7 +289,8 @@ class WatsonLanguageModel:
                 None if unsuccessful.
         """
         success, resp = self._execute_watson_method(
-                self.stt.list_words, [customization_id])
+                self.stt.list_words, [WatsonReturnCodes.ok],
+                [customization_id])
         if success:
             return resp["words"]
 
@@ -284,9 +308,10 @@ class WatsonLanguageModel:
         """
         custom_words = list()
         for word in words:
-            custom_words.append(CustomWord(word)) 
+            custom_words.append(CustomWord(word = word)) 
         success, _ = self._execute_watson_method(
-            self.stt.add_words,[customization_id,custom_words])
+            self.stt.add_words,[WatsonReturnCodes.created],
+            [customization_id,custom_words])
         return success
         
     def delete_custom_word(
@@ -302,7 +327,8 @@ class WatsonLanguageModel:
             (bool): True if successful. False otherwise.
         """
         success, _ = self._execute_watson_method(
-            self.stt.delete_word,[customization_id,word])
+            self.stt.delete_word,[WatsonReturnCodes.ok],
+            [customization_id,word])
         return success
 
     ### Custom grammars methods 
@@ -342,7 +368,8 @@ class WatsonLanguageModel:
                 None of unsuccessful.
         """
         _, resp = self._execute_watson_method(
-            self.stt.get_grammar,[customization_id,grammar_name])
+            self.stt.get_grammar, [WatsonReturnCodes.ok],
+            [customization_id,grammar_name])
         return resp
 
     def add_custom_grammar(self, customization_id : str, 
@@ -363,7 +390,7 @@ class WatsonLanguageModel:
             (bool): True if successfully added. False otherwise.
         """
         success, _ = self._execute_watson_method(
-            self.stt.add_grammar,
+            self.stt.add_grammar, [WatsonReturnCodes.created],
             [customization_id,grammar_name,grammar_file,content_type, True])
         return success
         
@@ -380,7 +407,8 @@ class WatsonLanguageModel:
             (bool): True if successfully added. False otherwise.
         """
         success, _ = self._execute_watson_method(
-            self.stt.delete_grammar,[customization_id,grammar_name])
+            self.stt.delete_grammar,[WatsonReturnCodes.ok],
+            [customization_id,grammar_name])
         return success
 
     ### Others 
@@ -438,14 +466,18 @@ class WatsonLanguageModel:
         stt = SpeechToTextV1(authenticator=authenticator)
         return stt 
 
-    def _execute_watson_method(self, method : Callable, args : List) \
-            -> Tuple[bool,Any]:
+    def _execute_watson_method(self, method : Callable,
+            expected_response_codes : List[WatsonReturnCodes],args : List = [], 
+            kwargs : Dict = {}) -> Tuple[bool,Any]:
         """
         Execute a watson method only if connected to watson.
 
         Args:
             method (Callable): Method to execute.
+            expected_response_codes (List[WatsonReturnCodes]):
+                Watson codes that are expected for a successful response.
             args (List): Arguments to pass to the method.
+            kwargs (Dict): Keyword arguments to method
         
         Returns:
             (Tuple[bool,Any]): 
@@ -454,11 +486,12 @@ class WatsonLanguageModel:
         if not self.connected_to_service:
             return (False, None)
         try:
-            resp =  method(*args)
-            if resp.get_status_code() != WatsonReturnCodes.ok:
-                return (False, None)
-            return (True, resp.get_result())
-        except ApiException:
+            resp =  method(*args, **kwargs)
+            if any([resp.get_status_code() == expected \
+                    for expected in expected_response_codes]):
+                return (True, resp.get_result())
             return (False, None)
+        except ApiException as e:
+            return (False, e)
 
 
