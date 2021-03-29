@@ -1,33 +1,33 @@
 # Standard library imports
 from typing import BinaryIO, List, Any, Callable, Tuple, Dict, Union
 from enum import IntEnum
-# Local imports 
+# Local imports
 from ibm_watson import SpeechToTextV1, ApiException
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
-# Third party imports 
+# Third party imports
 
 class WatsonReturnCodes(IntEnum):
     """
     Return codes from Watson.
     """
     ok = 200
-    created = 201 
+    created = 201
     notFound = 404
     notAcceptable = 406
     unsupported = 415
 
 class WatsonAcousticModel:
     """
-    Responsible for interacting with the IBM Watson STT service and providing 
+    Responsible for interacting with the IBM Watson STT service and providing
     methods for interacting with acoustic models.
     """
-    # Mappings from region to the region url. 
+    # Mappings from region to the region url.
     regions = {
         "dallas" : "https://api.us-south.speech-to-text.watson.cloud.ibm.com",
-        "washington" : "https://api.us-east.speech-to-text.watson.cloud.ibm.com", 
+        "washington" : "https://api.us-east.speech-to-text.watson.cloud.ibm.com",
         "frankfurt" : "https://api.eu-de.speech-to-text.watson.cloud.ibm.com",
         "sydney" : "https://api.au-syd.speech-to-text.watson.cloud.ibm.com",
-        "tokyo" : "https://api.jp-tok.speech-to-text.watson.cloud.ibm.com", 
+        "tokyo" : "https://api.jp-tok.speech-to-text.watson.cloud.ibm.com",
         "london" : "https://api.eu-gb.speech-to-text.watson.cloud.ibm.com",
         "seoul" : "https://api.kr-seo.speech-to-text.watson.cloud.ibm.com"}
 
@@ -56,15 +56,15 @@ class WatsonAcousticModel:
     def get_custom_model(self, customization_id : str) \
             -> Union[Dict[str,Any],None]:
         """
-        Obtain information regarding a specific custom acoustic model. 
+        Obtain information regarding a specific custom acoustic model.
 
         Args:
             customization_id (str): Unique ID of the custom acoustic model.
-        
+
         Returns:
             (Union[Dict[str,Any],None]):
                 Mapping from the following keys to their values:
-                customization_id, created, updated,language, dialect, 
+                customization_id, created, updated,language, dialect,
                 versions, owner, name, description, base_model_name, status,
                 progress
                 None if unsuccessful.
@@ -72,7 +72,7 @@ class WatsonAcousticModel:
         _, resp = self._execute_watson_method(
             self.stt.get_acoustic_model,[WatsonReturnCodes.ok],
             [customization_id])
-        return resp 
+        return resp
 
     def create_custom_model(self, name : str, base_model_name : str,
             description : str) -> bool:
@@ -81,10 +81,10 @@ class WatsonAcousticModel:
 
         Args:
             name (str): Name of the model.
-            base_model_name (str): 
+            base_model_name (str):
                 Name of the base model. Must be a supported base model.
             description (str): Description of the model.
-        
+
         Returns:
             (bool): True if successful. False otherwise.
         """
@@ -99,7 +99,7 @@ class WatsonAcousticModel:
 
         Args:
             customization_id (str): Unique ID of the custom acoustic model.
-        
+
         Returns:
             (bool): True if successful. False otherwise.
         """
@@ -114,7 +114,7 @@ class WatsonAcousticModel:
 
         Args:
             customization_id (str): Unique ID of the custom acoustic model.
-        
+
         Returns:
             (bool): True if successful. False otherwise.
         """
@@ -129,7 +129,7 @@ class WatsonAcousticModel:
 
         Args:
             customization_id (str): Unique ID of the custom acoustic model.
-        
+
         Returns:
             (bool): True if successful. False otherwise.
         """
@@ -138,7 +138,7 @@ class WatsonAcousticModel:
             [customization_id])
         return success
 
-    def upgrade_custom_model(self, customization_id : str, 
+    def upgrade_custom_model(self, customization_id : str,
             custom_language_model_id : str = None) -> bool:
         """
         Upgrade the base model of the custom acoustic model to its latest
@@ -147,9 +147,9 @@ class WatsonAcousticModel:
         Args:
             customization_id (str): Unique ID of the custom acoustic model.
             custom_language_model_id (str):
-                ID of the custom language model (if any) that this acoustic 
+                ID of the custom language model (if any) that this acoustic
                 model was trained with a custom language model.
-        
+
         Returns:
             (bool): True if successful. False otherwise.
         """
@@ -158,19 +158,19 @@ class WatsonAcousticModel:
             [customization_id,custom_language_model_id])
         return success
 
-    ### Custom Audio resources 
+    ### Custom Audio resources
 
     def get_custom_audio_resources(self, customization_id : str) \
             -> Union[List[Dict],None]:
         """
-        List information about all audio resources of the specified custom 
+        List information about all audio resources of the specified custom
         acoustic model.
 
         Args:
             customization_id (str): Unique ID of the custom acoustic model.
-        
+
         Returns:
-            (Union[List[Dict],None]): 
+            (Union[List[Dict],None]):
                 Each internal list contains the following keys:
                 "duration","name","details","status"
                 None if unsuccessful.
@@ -180,7 +180,7 @@ class WatsonAcousticModel:
         if success:
             return resp["audio"]
 
-    def get_custom_audio_resource(self, customization_id : str, 
+    def get_custom_audio_resource(self, customization_id : str,
             audio_name : str) -> Union[Dict,None]:
         """
         Obtain information about a specific custom acoustic model.
@@ -198,7 +198,7 @@ class WatsonAcousticModel:
             self.stt.get_audio,[WatsonReturnCodes.ok],
             [customization_id,audio_name])
         if success:
-            return resp 
+            return resp
 
     def add_custom_audio_resource(self, customization_id : str,
             audio_name : str, audio_resource : BinaryIO, content_type : str)\
@@ -211,14 +211,14 @@ class WatsonAcousticModel:
             audio_name (str): Name of the specific audio resource.
             audio_resource (BinaryIO):
                 Audio resources to be added to the custom model.
-            content_type (str): 
+            content_type (str):
                 Type of the audio resource. One of:
                 [application/zip,application/gzip,audio/alaw,audio/basic,
                 audio/flac,audio/g729,audio/l16,audio/mp3,audio/mpeg,
                 audio/mulaw,audio/ogg,audio/ogg;codecs=opus,
                 audio/ogg;codecs=vorbis,audio/wav,audio/webm,
                 audio/webm;codecs=opus,audio/webm;codecs=vorbis]
-            
+
         Returns:
             (bool): True if successful. False otherwise.
         """
@@ -227,7 +227,7 @@ class WatsonAcousticModel:
             [customization_id,audio_name, audio_resource,content_type])
         return success
 
-    def delete_custom_audio_resource(self, customization_id : str, 
+    def delete_custom_audio_resource(self, customization_id : str,
             audio_name : str) -> bool:
         """
         Delete the specified resource from the custom audio model.
@@ -235,7 +235,7 @@ class WatsonAcousticModel:
         Args:
             customization_id (str): Unique ID of the custom acoustic model.
             audio_name (str): Name of the specific audio resource.
-        
+
         Returns:
             (bool): True if successful. False otherwise.
         """
@@ -243,23 +243,23 @@ class WatsonAcousticModel:
             self.stt.delete_audio,[WatsonReturnCodes.ok],
             [customization_id,audio_name])
         return success
-     ### Others 
+     ### Others
 
     def connect_to_service(self, api_key : str, region : str) -> bool:
         """
         Connect to the stt service using the given api key.
-        Must be called before other methods can be used. 
+        Must be called before other methods can be used.
 
         Args:
             apikey (str): Valid API key for the watson STT service.
-        
+
         Returns:
             (bool): True if connected successfully. False otherwise.
         """
         if not self._is_api_key_valid(api_key) or \
-                not region in self.regions.keys(): 
+                not region in self.regions.keys():
             self.connected_to_service = False
-            return False 
+            return False
         self.stt = self._initialize_stt_service(api_key)
         self.stt.set_service_url(self.regions[region])
         self.connected_to_service = True
@@ -272,7 +272,7 @@ class WatsonAcousticModel:
         Determine if the given apikey is valid.
 
         Args:
-            apikey (str): API key for the watson STT service. 
+            apikey (str): API key for the watson STT service.
 
         Returns:
             (bool): True if the key is valid. False otherwise.
@@ -296,10 +296,10 @@ class WatsonAcousticModel:
         """
         authenticator = IAMAuthenticator(apikey)
         stt = SpeechToTextV1(authenticator=authenticator)
-        return stt 
+        return stt
 
     def _execute_watson_method(self, method : Callable,
-            expected_response_codes : List[WatsonReturnCodes],args : List = [], 
+            expected_response_codes : List[WatsonReturnCodes],args : List = [],
             kwargs : Dict = {}) -> Tuple[bool,Any]:
         """
         Execute a watson method only if connected to watson.
@@ -310,9 +310,9 @@ class WatsonAcousticModel:
                 Watson codes that are expected for a successful response.
             args (List): Arguments to pass to the method.
             kwargs (Dict): Keyword arguments to method
-        
+
         Returns:
-            (Tuple[bool,Any]): 
+            (Tuple[bool,Any]):
                 True + result if successful. False + None otherwise.
         """
         if not self.connected_to_service:

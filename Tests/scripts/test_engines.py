@@ -1,10 +1,10 @@
 """
 Testing script for the engines component.
 """
-# Standard library imports 
+# Standard library imports
 from Src.Components.engines.watson.watson import WatsonEngine
 from typing import Any, Tuple, Dict, List
-# Local imports 
+# Local imports
 from ..suites import TestSuite
 from Src.Components.engines import WatsonCore, customWatsonCallbacks,\
         WatsonLanguageModel, WatsonAcousticModel, Engines,Utterance,\
@@ -13,7 +13,7 @@ from Src.Components.engines import WatsonCore, customWatsonCallbacks,\
 from Src.Components.engines.google import GoogleCore, GoogleEngine
 from Src.Components.io import IO 
 from Src.Components.network import Network
-# Third party imports 
+# Third party imports
 
 ############################### GLOBALS #####################################
 API_KEY = "MSgOPTS9CvbADe49nEg4wm8_gxeRuf4FGUmlHS9QqAw3"
@@ -32,14 +32,14 @@ NON_AUDIO = "Test_files/Media/cat.gif"
 
 ########################## TEST DEFINITIONS ##################################
 
-#### Custom callbacks for the websocket connection 
+#### Custom callbacks for the websocket connection
 
 def on_transcription(closure : List, transcript : Any) -> None:
     """
     Called after the service returns the final result for the transcription.
     """
-    closure[0]["transcript"] = transcript 
-    closure[0]["on_transcription"] = True 
+    closure[0]["transcript"] = transcript
+    closure[0]["on_transcription"] = True
 
 def on_connected(closure : List) -> None:
     """
@@ -52,7 +52,7 @@ def on_error(closure : List, error : Any) -> None:
     Called when there is an error in the Websocket connection.
     """
     closure[0]["on_error_error"] = error
-    closure[0]["on_error"] = True 
+    closure[0]["on_error"] = True
 
 def on_inactivity_timeout(closure : List, error : Any) -> None:
     """
@@ -65,7 +65,7 @@ def on_listening(closure : List) -> None:
     """
     Called when the service is listening for audio.
     """
-    closure[0]["on_listening"] = True 
+    closure[0]["on_listening"] = True
 
 def on_hypothesis(closure : List, hypothesis : Any) -> None:
     """
@@ -85,11 +85,11 @@ def on_close(closure : List) -> None:
     """
     Called when the Websocket connection is closed
     """
-    closure[0]["on_close"] = True 
+    closure[0]["on_close"] = True
 
 def create_custom_recognize_callbacks() -> Tuple[customWatsonCallbacks, List]:
     """
-    Create a customRecognizeCallback object with the callbacks specified as 
+    Create a customRecognizeCallback object with the callbacks specified as
     well as the closure, which is a dictionary wrapped in a list.
     """
     closure = [{}]
@@ -140,12 +140,12 @@ def watson_core_set_service_region_invalid() -> bool:
     """
     watson_core = WatsonCore(Network(), IO())
     return not watson_core.set_service_region("dalls") and \
-        not watson_core.set_service_region("invalid") 
+        not watson_core.set_service_region("invalid")
 
 def watson_core_set_recognize_callback() -> bool:
     """
     Tests:
-        1. Set a recognize callback object. 
+        1. Set a recognize callback object.
     """
     watson_core = WatsonCore(Network(), IO())
     return watson_core.set_recognize_callback(customWatsonCallbacks([{}]))
@@ -155,23 +155,23 @@ def watson_core_set_audio_source_path_valid() -> bool:
     Tests:
         1. Set a valid path to the source audio file.
     """
-    watson_core = WatsonCore(Network(), IO())   
-    return watson_core.set_audio_source_path(WAV_FILE_PATH) 
+    watson_core = WatsonCore(Network(), IO())
+    return watson_core.set_audio_source_path(WAV_FILE_PATH)
 
 def watson_core_set_audio_source_path_invalid() -> bool:
     """
-    Tests:  
+    Tests:
         1. Set an invalid path for the source audio file.
     """
-    watson_core = WatsonCore(Network(), IO())   
-    return not watson_core.set_audio_source_path("invalid/") 
+    watson_core = WatsonCore(Network(), IO())
+    return not watson_core.set_audio_source_path("invalid/")
 
 def watson_core_set_base_language_model() -> bool:
     """
     Tests:
         1. Set a supported base language model.
     """
-    watson_core = WatsonCore(Network(), IO())  
+    watson_core = WatsonCore(Network(), IO())
     return watson_core.set_base_language_model("en-US_BroadbandModel")
 
 def watson_core_set_language_customization_id() -> bool:
@@ -179,7 +179,7 @@ def watson_core_set_language_customization_id() -> bool:
     Tests:
         1. Set a language customization id.
     """
-    watson_core = WatsonCore(Network(), IO())  
+    watson_core = WatsonCore(Network(), IO())
     return watson_core.set_language_customization_id(LANG_CUSTOM_ID)
 
 def watson_core_set_acoustic_customization_id() -> bool:
@@ -187,7 +187,7 @@ def watson_core_set_acoustic_customization_id() -> bool:
     Tests:
         1. Set an acoustic customization id.
     """
-    watson_core = WatsonCore(Network(), IO())  
+    watson_core = WatsonCore(Network(), IO())
     return watson_core.set_acoustic_customization_id(ACOUSTIC_CUSTOM_ID)
 
 def watson_core_get_api_key() -> bool:
@@ -195,7 +195,7 @@ def watson_core_get_api_key() -> bool:
     Tests:
         1. Obtain a valid api key that was set.
     """
-    watson_core = WatsonCore(Network(), IO())  
+    watson_core = WatsonCore(Network(), IO())
     watson_core.set_api_key(API_KEY)
     return watson_core.get_api_key() == API_KEY
 
@@ -213,8 +213,8 @@ def watson_core_get_audio_source_path() -> bool:
     Tests:
         1. Obtain the valid audio source that was set.
     """
-    watson_core = WatsonCore(Network(), IO())   
-    watson_core.set_audio_source_path(WAV_FILE_PATH)  
+    watson_core = WatsonCore(Network(), IO())
+    watson_core.set_audio_source_path(WAV_FILE_PATH)
     return watson_core.get_audio_source_path() == WAV_FILE_PATH
 
 def watson_core_get_selected_base_model() -> bool:
@@ -222,7 +222,7 @@ def watson_core_get_selected_base_model() -> bool:
     Tests:
         1. Obtain the previously set base language model.
     """
-    watson_core = WatsonCore(Network(), IO())  
+    watson_core = WatsonCore(Network(), IO())
     watson_core.set_base_language_model("en-US_BroadbandModel")
     return watson_core.get_selected_base_model() == "en-US_BroadbandModel"
 
@@ -231,16 +231,16 @@ def watson_core_get_language_customization_id() -> bool:
     Tests:
         1. Obtain the previously set language customization id.
     """
-    watson_core = WatsonCore(Network(), IO())  
+    watson_core = WatsonCore(Network(), IO())
     watson_core.set_language_customization_id(LANG_CUSTOM_ID)
-    return watson_core.get_language_customization_id() == LANG_CUSTOM_ID 
-     
+    return watson_core.get_language_customization_id() == LANG_CUSTOM_ID
+
 def watson_core_get_acoustic_customization_id() -> bool:
     """
     Tests:
         1. Obtain the previously set acoustic customization id.
     """
-    watson_core = WatsonCore(Network(), IO())  
+    watson_core = WatsonCore(Network(), IO())
     watson_core.set_acoustic_customization_id(ACOUSTIC_CUSTOM_ID)
     return watson_core.get_acoustic_customization_id() == ACOUSTIC_CUSTOM_ID
 
@@ -249,9 +249,9 @@ def watson_core_get_supported_regions() -> bool:
     Tests:
         1. Obtain the list of supported regions.
     """
-    watson_core = WatsonCore(Network(), IO())   
+    watson_core = WatsonCore(Network(), IO())
     return watson_core.get_supported_regions() == [
-        "dallas", "washington", "frankfurt", "sydney", "tokyo", "london", 
+        "dallas", "washington", "frankfurt", "sydney", "tokyo", "london",
         "seoul"]
 
 def watson_core_get_supported_audio_formats() -> bool:
@@ -259,7 +259,7 @@ def watson_core_get_supported_audio_formats() -> bool:
     Tests:
         1. Obtain the list of supported audio formats.
     """
-    watson_core = WatsonCore(Network(), IO())   
+    watson_core = WatsonCore(Network(), IO())
     return len(watson_core.get_supported_audio_formats()) > 0
 
 def watson_core_reset_configurations() -> bool:
@@ -268,7 +268,7 @@ def watson_core_reset_configurations() -> bool:
         1. Reset the configurations of a  WatsonCore object that was previously
         configured and check to make sure that all attributes have been reset.
     """
-    watson_core = WatsonCore(Network(), IO())  
+    watson_core = WatsonCore(Network(), IO())
     watson_core.set_api_key(API_KEY)
     watson_core.set_service_region("dallas")
     watson_core.set_recognize_callback(customWatsonCallbacks([{}]))
@@ -282,14 +282,14 @@ def watson_core_reset_configurations() -> bool:
         watson_core.get_audio_source_path() == None and \
         watson_core.get_selected_base_model() == None and \
         watson_core.get_language_customization_id() == None and \
-        watson_core.get_acoustic_customization_id() == None 
+        watson_core.get_acoustic_customization_id() == None
 
 def watson_core_recognize_using_websockets() -> bool:
     """
     Tests:
         1. Transcribe a valid file using the websocket connection.
     """
-    watson_core = WatsonCore(IO()) 
+    watson_core = WatsonCore(IO())
     watson_core.set_api_key(API_KEY)
     watson_core.set_service_region("dallas")
     rc, closure = create_custom_recognize_callbacks()
@@ -316,7 +316,7 @@ def watson_lm_get_base_model() -> bool:
     return resp != None and \
         all([key in resp_keys for key in resp.keys()]) and \
         lm.get_base_model("invalid") == None
- 
+
 def watson_lm_get_base_models() -> bool:
     """
     Tests:
@@ -334,7 +334,7 @@ def watson_lm_get_custom_model() -> bool:
         2. Ensure invalid key returns None.
     """
     resp_keys = [
-        "customization_id", "created", "updated","language", "dialect", 
+        "customization_id", "created", "updated","language", "dialect",
         "versions", "owner", "name", "description", "base_model_name", "status",
         "progress"]
     lm = WatsonLanguageModel()
@@ -351,20 +351,20 @@ def watson_lm_get_custom_models() -> bool:
         1. Ensure that all the ids for the custom model returned and valid ids.
     """
     resp_keys = [
-        "customization_id", "created", "updated","language", "dialect", 
+        "customization_id", "created", "updated","language", "dialect",
         "versions", "owner", "name", "description", "base_model_name", "status",
         "progress"]
     lm = WatsonLanguageModel()
     lm.connect_to_service(API_KEY,REGION)
     models = lm.get_custom_models()
     if models == None:
-        return False 
+        return False
     for custom_id in models.values():
         resp = lm.get_custom_model(custom_id)
         if resp == None or \
                 not all([key in resp_keys for key in resp.keys()]):
-            return False 
-    return True 
+            return False
+    return True
 
 def watson_lm_delete_custom_model() -> bool:
     """
@@ -406,10 +406,10 @@ def watson_lm_train_custom_model() -> bool:
     lm.create_custom_model(model_name,BASE_LANG_MODEL,"test model 1")
     models = lm.get_custom_models()
     s1 = lm.add_custom_words(models[model_name],["pie"])
-    s2 = lm.train_custom_model(models[model_name]) 
+    s2 = lm.train_custom_model(models[model_name])
     s3 = lm.delete_custom_model(models[model_name])
     print(s1,s2,s3)
-    return s1 and s2 and s3 
+    return s1 and s2 and s3
 
 def watson_lm_reset_custom_model() -> bool:
     """
@@ -417,7 +417,7 @@ def watson_lm_reset_custom_model() -> bool:
         1. Reset a model that has already been trained.
     """
     lm = WatsonLanguageModel()
-    lm.connect_to_service(API_KEY,REGION) 
+    lm.connect_to_service(API_KEY,REGION)
     model_name = "test_1"
     lm.create_custom_model(model_name,BASE_LANG_MODEL,"test model 1")
     models = lm.get_custom_models()
@@ -427,24 +427,24 @@ def watson_lm_reset_custom_model() -> bool:
 def watson_lm_upgrade_custom_model() -> bool:
     """
     Tests:
-        1. Upgrade the base model of a custom model that has been created. 
+        1. Upgrade the base model of a custom model that has been created.
     """
     lm = WatsonLanguageModel()
-    lm.connect_to_service(API_KEY,REGION) 
+    lm.connect_to_service(API_KEY,REGION)
     model_name = "test_1"
     lm.create_custom_model(model_name,BASE_LANG_MODEL,"test model 1")
     models = lm.get_custom_models()
     return lm.upgrade_custom_model(models[model_name]) and \
-        lm.delete_custom_model(models[model_name]) 
+        lm.delete_custom_model(models[model_name])
 
 def watson_lm_get_corpora() -> bool:
     """
     Tests:
         1. Obtain the corpora of a model that has already been trained.
-        2. Obtain the corpora of a model that has not been trained. 
+        2. Obtain the corpora of a model that has not been trained.
     """
     lm = WatsonLanguageModel()
-    lm.connect_to_service(API_KEY,REGION) 
+    lm.connect_to_service(API_KEY,REGION)
     model_name = "test_1"
     lm.create_custom_model(model_name,BASE_LANG_MODEL,"test model 1")
     models = lm.get_custom_models()
@@ -455,71 +455,71 @@ def watson_lm_get_corpora() -> bool:
 def watson_lm_add_corpus() -> bool:
     """
     Tests:
-        1. 
+        1.
     """
-    pass 
+    pass
 
 def watson_lm_delete_corpus() -> bool:
-    pass 
+    pass
 
 def watson_lm_get_corpus() -> bool:
-    pass 
+    pass
 
 def watson_lm_get_custom_words() -> bool:
-    pass 
+    pass
 
 def watson_lm_add_custom_words() -> bool:
-    pass 
+    pass
 
 def watson_lm_delete_custom_word() -> bool:
-    pass 
+    pass
 
 def watson_lm_get_custom_grammars() -> bool:
-    pass 
+    pass
 
 def watson_lm_get_custom_grammar() -> bool:
-    pass 
+    pass
 
 def watson_lm_add_custom_grammar() -> bool:
-    pass 
+    pass
 
 def watson_lm_delete_custom_grammar() -> bool:
-    pass 
+    pass
 
 #### WatsonAcousticModel tests
 
 def watson_am_get_custom_models() -> bool:
-    pass 
+    pass
 
 def watson_am_get_custom_model() -> bool:
-    pass 
+    pass
 
 def watson_am_create_custom_model() -> bool:
-    pass 
+    pass
 
 def watson_am_delete_custom_model() -> bool:
-    pass 
+    pass
 
 def watson_am_train_custom_model() -> bool:
-    pass 
+    pass
 
 def watson_am_reset_custom_model() -> bool:
-    pass 
+    pass
 
 def watson_am_upgrade_custom_model() -> bool:
-    pass 
+    pass
 
 def watson_am_get_custom_audio_resources() -> bool:
-    pass 
+    pass
 
 def watson_am_get_custom_audio_resource() -> bool:
-    pass 
+    pass
 
 def watson_am_add_custom_audio_resource() -> bool:
-    pass 
+    pass
 
 def watson_am_delete_custom_audio_resource() -> bool:
-    pass 
+    pass
 
 
 #### WatsonEngine tests
@@ -531,53 +531,53 @@ def watson_engine_configure_valid() -> bool:
     """
     engine = WatsonEngine(IO(), Network())
     return engine.configure(
-            api_key = API_KEY, region = REGION, audio_path = MP3_FILE_PATH, 
+            api_key = API_KEY, region = REGION, audio_path = MP3_FILE_PATH,
             base_model_name=BASE_LANG_MODEL) and \
         engine.configure(
-            api_key = API_KEY, region = REGION, audio_path = MP3_FILE_PATH, 
-            base_model_name=BASE_LANG_MODEL, 
+            api_key = API_KEY, region = REGION, audio_path = MP3_FILE_PATH,
+            base_model_name=BASE_LANG_MODEL,
             language_customization_id=LANG_CUSTOM_ID)
 
 def watson_engine_configure_invalid() -> bool:
     """
     Tests:
-        1. Configure WatsonEngine with invalid attributes. 
+        1. Configure WatsonEngine with invalid attributes.
     """
     engine = WatsonEngine(IO(), Network())
     s1 = engine.configure(
-        api_key = "invalid", region = REGION, audio_path = MP3_FILE_PATH, 
+        api_key = "invalid", region = REGION, audio_path = MP3_FILE_PATH,
         base_model_name=BASE_LANG_MODEL)
     s2 = engine.configure(
-        api_key = API_KEY, region = "invalid", audio_path = MP3_FILE_PATH, 
+        api_key = API_KEY, region = "invalid", audio_path = MP3_FILE_PATH,
         base_model_name=BASE_LANG_MODEL)
     s3 = engine.configure(
-        api_key = API_KEY, region = REGION, audio_path = MP3_FILE_PATH, 
+        api_key = API_KEY, region = REGION, audio_path = MP3_FILE_PATH,
         base_model_name="invalid")
     s4 = engine.configure(
-        api_key = API_KEY, region = REGION, audio_path = MP3_FILE_PATH, 
-        base_model_name=BASE_LANG_MODEL, 
+        api_key = API_KEY, region = REGION, audio_path = MP3_FILE_PATH,
+        base_model_name=BASE_LANG_MODEL,
         language_customization_id="invalid")
     s5 = engine.configure(
-        api_key = API_KEY, region = REGION, audio_path = "invalid", 
+        api_key = API_KEY, region = REGION, audio_path = "invalid",
         base_model_name=BASE_LANG_MODEL)
-    return not s1 and not s2 and not s3 and not s4 and not s5 
+    return not s1 and not s2 and not s3 and not s4 and not s5
 
 def watson_engine_get_configurations() -> bool:
     """
-    Compare the configurations agains the inputs 
+    Compare the configurations agains the inputs
     """
     engine = WatsonEngine(IO(), Network())
     resp_keys = ["api_key","region","audio_path","base_model_name",
         "language_customization_id","acoustic_customization_id"]
     engine.configure(
-        api_key = API_KEY, region = REGION, audio_path = MP3_FILE_PATH, 
-        base_model_name=BASE_LANG_MODEL) 
+        api_key = API_KEY, region = REGION, audio_path = MP3_FILE_PATH,
+        base_model_name=BASE_LANG_MODEL)
     configs = engine.get_configurations()
     return all([k in configs.keys() for k in resp_keys]) and \
         configs["api_key"] == API_KEY and \
         configs["region"] == REGION and \
         configs["base_model_name"] == BASE_LANG_MODEL
-    
+
 def watson_engine_get_engine_name() -> bool:
     """
     Tests:
@@ -612,29 +612,29 @@ def watson_engine_transcribe_valid() -> bool:
         1. Transcribe a file with valid configurations
     """
     engine = WatsonEngine(IO(), Network())
-    # s1 = engine.configure(
-    #     api_key = API_KEY, region = REGION, audio_path = MP3_FILE_PATH, 
-    #     base_model_name=BASE_LANG_MODEL)
-    # print(s1)
-    #utterances = engine.transcribe()
-    s2 = engine.configure(
-        api_key = API_KEY, region = REGION, audio_path = MP3_FILE_PATH, 
+    s1 = engine.configure(
+        api_key = API_KEY, region = REGION, audio_path = MP3_FILE_PATH,
         base_model_name=BASE_LANG_MODEL)
-    print(s2)
+    print(s1)
     utterances = engine.transcribe()
-    # for utterance in utterances:
-    #     label = utterance.get(UtteranceAttributes.speaker_label)[1]
-    #     start_time = utterance.get(UtteranceAttributes.start_time)[1]
-    #     end_time = utterance.get(UtteranceAttributes.end_time)[1]
-    #     transcript = utterance.get(UtteranceAttributes.transcript)[1]
-    #     print("{}: {} {}_{}".format(label,transcript,start_time,end_time))  
-    # print(len(utterances))      
-    
+    # s2 = engine.configure(
+    #     api_key = API_KEY, region = REGION, audio_path = MP3_FILE_PATH,
+    #     base_model_name=BASE_LANG_MODEL)
+    # print(s2)
+    utterances = engine.transcribe()
+    for utterance in utterances:
+        label = utterance.get(UtteranceAttributes.speaker_label)[1]
+        start_time = utterance.get(UtteranceAttributes.start_time)[1]
+        end_time = utterance.get(UtteranceAttributes.end_time)[1]
+        transcript = utterance.get(UtteranceAttributes.transcript)[1]
+        print("{}: {} {}_{}".format(label,transcript,start_time,end_time))
+    print(len(utterances))
+
 def watson_engine_transcribe_invalid() -> bool:
     """
     Tests:
         1. Attempt to transcribe with invalid configurations.
-        2. Attempt to transcribe without configuring first. 
+        2. Attempt to transcribe without configuring first.
     """
     engine = WatsonEngine(IO(), Network())
 
@@ -874,33 +874,33 @@ def google_engine_transcribe() -> bool:
 def define_engines_test_suite() -> TestSuite:
     suite = TestSuite()
     ### WatsonCore tests
-    # suite.add_test("watson_core_set_api_key_valid", (), True, True, 
+    # suite.add_test("watson_core_set_api_key_valid", (), True, True,
     #     watson_core_set_api_key_valid)
-    # suite.add_test("watson_core_set_api_key_invalid", (), True, True, 
+    # suite.add_test("watson_core_set_api_key_invalid", (), True, True,
     #     watson_core_set_api_key_invalid)
-    # suite.add_test("watson_core_set_service_region_valid", (), True, True, 
+    # suite.add_test("watson_core_set_service_region_valid", (), True, True,
     #     watson_core_set_service_region_valid)
-    # suite.add_test("watson_core_set_service_region_invalid", (), True, True, 
+    # suite.add_test("watson_core_set_service_region_invalid", (), True, True,
     #     watson_core_set_service_region_invalid)
-    # suite.add_test("watson_core_set_recognize_callback", (), True, True, 
+    # suite.add_test("watson_core_set_recognize_callback", (), True, True,
     #     watson_core_set_recognize_callback)
-    # suite.add_test("watson_core_set_audio_source_path_valid", (), True, True, 
+    # suite.add_test("watson_core_set_audio_source_path_valid", (), True, True,
     #     watson_core_set_audio_source_path_valid)
-    # suite.add_test("watson_core_set_audio_source_path_invalid", (), True, True, 
+    # suite.add_test("watson_core_set_audio_source_path_invalid", (), True, True,
     #     watson_core_set_audio_source_path_invalid)
-    # suite.add_test("watson_core_set_base_language_model", (), True, True, 
+    # suite.add_test("watson_core_set_base_language_model", (), True, True,
     #     watson_core_set_base_language_model)
-    # suite.add_test("watson_core_set_language_customization_id", (), True, True, 
+    # suite.add_test("watson_core_set_language_customization_id", (), True, True,
     #     watson_core_set_language_customization_id)
-    # suite.add_test("watson_core_set_acoustic_customization_id", (), True, True, 
+    # suite.add_test("watson_core_set_acoustic_customization_id", (), True, True,
     #     watson_core_set_acoustic_customization_id)
-    # suite.add_test("watson_core_get_api_key", (), True, True, 
+    # suite.add_test("watson_core_get_api_key", (), True, True,
     #     watson_core_get_api_key)
-    # suite.add_test("watson_core_get_service_region", (), True, True, 
+    # suite.add_test("watson_core_get_service_region", (), True, True,
     #     watson_core_get_service_region)
-    # suite.add_test("watson_core_get_audio_source_path", (), True, True, 
+    # suite.add_test("watson_core_get_audio_source_path", (), True, True,
     #     watson_core_get_audio_source_path)
-    # suite.add_test("watson_core_get_selected_base_model", (), True, True, 
+    # suite.add_test("watson_core_get_selected_base_model", (), True, True,
     #     watson_core_get_selected_base_model)
     # suite.add_test("watson_core_get_language_customization_id", (), True, True,
     #     watson_core_get_language_customization_id)
@@ -908,95 +908,95 @@ def define_engines_test_suite() -> TestSuite:
     #     watson_core_get_acoustic_customization_id)
     # suite.add_test("watson_core_get_supported_regions", (), True, True,
     #     watson_core_get_supported_regions)
-    # suite.add_test("watson_core_get_supported_audio_formats", (), True, True, 
+    # suite.add_test("watson_core_get_supported_audio_formats", (), True, True,
     #     watson_core_get_supported_audio_formats)
-    # suite.add_test("watson_core_reset_configurations", (), True, True, 
+    # suite.add_test("watson_core_reset_configurations", (), True, True,
     #     watson_core_reset_configurations)
-    # suite.add_test("watson_core_recognize_using_websockets", (), True, True, 
+    # suite.add_test("watson_core_recognize_using_websockets", (), True, True,
     #     watson_core_recognize_using_websockets)
 
     ### WatsonLanguageModel tests
 
-    # suite.add_test("watson_lm_get_base_model",(), True, True, 
+    # suite.add_test("watson_lm_get_base_model",(), True, True,
     #     watson_lm_get_base_model)
-    # suite.add_test("watson_lm_get_base_models", (), True, True, 
+    # suite.add_test("watson_lm_get_base_models", (), True, True,
     #     watson_lm_get_base_models)
-    # suite.add_test("watson_lm_get_custom_model",(), True, True, 
+    # suite.add_test("watson_lm_get_custom_model",(), True, True,
     #     watson_lm_get_custom_model)
-    # suite.add_test("watson_lm_get_custom_models",(), True, True, 
+    # suite.add_test("watson_lm_get_custom_models",(), True, True,
     #     watson_lm_get_custom_models)
-    # suite.add_test("watson_lm_delete_custom_model", (), True, True, 
+    # suite.add_test("watson_lm_delete_custom_model", (), True, True,
     #     watson_lm_delete_custom_model)
-    # suite.add_test("watson_lm_create_custom_model", (), True, True, 
+    # suite.add_test("watson_lm_create_custom_model", (), True, True,
     #     watson_lm_create_custom_model)
     # suite.add_test("watson_lm_train_custom_model", (), True, True,
     #     watson_lm_train_custom_model)
-    # suite.add_test("watson_lm_reset_custom_model", (), True, True, 
+    # suite.add_test("watson_lm_reset_custom_model", (), True, True,
     #     watson_lm_reset_custom_model)
 
 
-    # suite.add_test("watson_lm_upgrade_custom_model", (), True, True, 
+    # suite.add_test("watson_lm_upgrade_custom_model", (), True, True,
     #     watson_lm_upgrade_custom_model)
-    # suite.add_test("watson_lm_get_corpora", (), True, True, 
+    # suite.add_test("watson_lm_get_corpora", (), True, True,
     #     watson_lm_get_corpora)
-    # suite.add_test("watson_lm_add_corpus", (), True, True, 
+    # suite.add_test("watson_lm_add_corpus", (), True, True,
     #     watson_lm_add_corpus)
-    # suite.add_test("watson_lm_delete_corpus", (), True, True, 
+    # suite.add_test("watson_lm_delete_corpus", (), True, True,
     #     watson_lm_delete_corpus)
-    # suite.add_test("watson_lm_get_corpus", (), True, True, 
+    # suite.add_test("watson_lm_get_corpus", (), True, True,
     #     watson_lm_get_corpus)
-    # suite.add_test("watson_lm_get_custom_words", (), True, True, 
+    # suite.add_test("watson_lm_get_custom_words", (), True, True,
     #     watson_lm_get_custom_words)
     # suite.add_test("watson_lm_add_custom_words", (), True, True,
     #     watson_lm_add_custom_words)
-    # suite.add_test("watson_lm_delete_custom_word", (), True, True, 
+    # suite.add_test("watson_lm_delete_custom_word", (), True, True,
     #     watson_lm_delete_custom_word)
-    # suite.add_test("watson_lm_get_custom_grammars", (), True, True, 
+    # suite.add_test("watson_lm_get_custom_grammars", (), True, True,
     #     watson_lm_get_custom_grammars)
-    # suite.add_test("watson_lm_get_custom_grammar", (), True, True, 
+    # suite.add_test("watson_lm_get_custom_grammar", (), True, True,
     #     watson_lm_get_custom_grammar)
-    # suite.add_test("watson_lm_add_custom_grammar", (), True, True, 
+    # suite.add_test("watson_lm_add_custom_grammar", (), True, True,
     #     watson_lm_add_custom_grammar)
-    # suite.add_test("watson_lm_delete_custom_grammar",(), True, True, 
+    # suite.add_test("watson_lm_delete_custom_grammar",(), True, True,
     #     watson_lm_delete_custom_grammar)
 
     # ### WatsonAcousticeModel tests
 
-    # suite.add_test("watson_am_get_custom_models", (), True, True, 
+    # suite.add_test("watson_am_get_custom_models", (), True, True,
     #     watson_am_get_custom_models)
-    # suite.add_test("watson_am_get_custom_model", (), True, True, 
+    # suite.add_test("watson_am_get_custom_model", (), True, True,
     #     watson_am_get_custom_model)
-    # suite.add_test("watson_am_create_custom_model", (), True, True, 
+    # suite.add_test("watson_am_create_custom_model", (), True, True,
     #     watson_am_create_custom_model)
-    # suite.add_test("watson_am_delete_custom_model", (), True, True, 
+    # suite.add_test("watson_am_delete_custom_model", (), True, True,
     #     watson_am_delete_custom_model)
-    # suite.add_test("watson_am_delete_custom_model", (), True, True, 
+    # suite.add_test("watson_am_delete_custom_model", (), True, True,
     #     watson_am_delete_custom_model)
-    # suite.add_test("watson_am_reset_custom_model", (), True, True, 
+    # suite.add_test("watson_am_reset_custom_model", (), True, True,
     #     watson_am_reset_custom_model)
-    # suite.add_test("watson_am_upgrade_custom_model", (), True, True, 
+    # suite.add_test("watson_am_upgrade_custom_model", (), True, True,
     #     watson_am_upgrade_custom_model)
-    # suite.add_test("watson_am_get_custom_audio_resources", (), True, True, 
+    # suite.add_test("watson_am_get_custom_audio_resources", (), True, True,
     #     watson_am_get_custom_audio_resources)
-    # suite.add_test("watson_am_get_custom_audio_resource", (), True, True, 
+    # suite.add_test("watson_am_get_custom_audio_resource", (), True, True,
     #     watson_am_get_custom_audio_resource)
-    # suite.add_test("watson_am_add_custom_audio_resource", (), True, True, 
+    # suite.add_test("watson_am_add_custom_audio_resource", (), True, True,
     #     watson_am_add_custom_audio_resource)
-    # suite.add_test("watson_am_delete_custom_audio_resource", (), True, True, 
+    # suite.add_test("watson_am_delete_custom_audio_resource", (), True, True,
     #     watson_am_delete_custom_audio_resource)
 
-    #### WatsonEngine tests 
-    # suite.add_test("watson_engine_configure_valid", (), True, True, 
+    #### WatsonEngine tests
+    # suite.add_test("watson_engine_configure_valid", (), True, True,
     #     watson_engine_configure_valid)
-    # suite.add_test("watson_engine_configure_invalid", (), True, True, 
+    # suite.add_test("watson_engine_configure_invalid", (), True, True,
     #     watson_engine_configure_invalid)
-    # suite.add_test("watson_engine_get_configurations", (), True, True, 
+    # suite.add_test("watson_engine_get_configurations", (), True, True,
     #     watson_engine_get_configurations)
-    # suite.add_test("watson_engine_get_engine_name", (), True, True, 
+    # suite.add_test("watson_engine_get_engine_name", (), True, True,
     #     watson_engine_get_engine_name)
-    # suite.add_test("watson_engine_get_supported_formats", (), True, True, 
+    # suite.add_test("watson_engine_get_supported_formats", (), True, True,
     #     watson_engine_get_supported_formats)
-    # suite.add_test("watson_engine_is_file_supported", (), True, True, 
+    # suite.add_test("watson_engine_is_file_supported", (), True, True,
     #     watson_engine_is_file_supported)
 
     # suite.add_test("watson_engine_transcribe_valid", (), True, True, 
@@ -1011,7 +1011,7 @@ def define_engines_test_suite() -> TestSuite:
 
     suite.add_test("watson_engine_transcribe_valid", (), True, True, 
         watson_engine_transcribe_valid)
-    # suite.add_test("watson_engine_transcribe_invalid", (), True, True, 
+    # suite.add_test("watson_engine_transcribe_invalid", (), True, True,
     #     watson_engine_transcribe_invalid)
 
 

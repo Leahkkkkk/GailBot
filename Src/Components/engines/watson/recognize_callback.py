@@ -1,14 +1,14 @@
-# Standard imports 
+# Standard imports
 from typing import Callable, Any, List, Dict
 import json
-# Local imports 
-# Third party imports 
+# Local imports
+# Third party imports
 from ibm_watson.websocket import RecognizeCallback
 
 class customWatsonCallbacks(RecognizeCallback):
     """
-    Extends the watson callback class to allow custom callbacks to be executed 
-    when an event occurs through the lifecycle of the websocket connection. 
+    Extends the watson callback class to allow custom callbacks to be executed
+    when an event occurs through the lifecycle of the websocket connection.
 
     Inherits:
         (RecognizeCallback)
@@ -16,7 +16,7 @@ class customWatsonCallbacks(RecognizeCallback):
     def __init__(self, closure : List) -> None:
         """
         Args:
-            closure (List): 
+            closure (List):
                 User object that is passed as the first parameter of every
                 callback during the lifecycle of the websocket connection.
         """
@@ -24,25 +24,25 @@ class customWatsonCallbacks(RecognizeCallback):
         self.on_transcription_callback = lambda *args: None
         self.on_connected_callback = lambda *args: None
         self.on_error_callback = lambda *args: None
-        self.on_inactivity_timeout_callback = lambda *args: None 
+        self.on_inactivity_timeout_callback = lambda *args: None
         self.on_listening_callback = lambda *args: None
         self.on_hypothesis_callback = lambda *args: None
         self.on_data_callback = lambda *args: None
         self.on_close_callback = lambda *args: None
 
-    ### SETTERS 
+    ### SETTERS
 
-    def set_on_transcription_callback(self, 
+    def set_on_transcription_callback(self,
             callback : Callable[[List[Any], List],None]) -> None:
         """
         Called after the service returns the final result for the transcription.
 
         Args:
             (Callable[[List[Any], List],None]):
-                The first argument is the closure while the second is the 
+                The first argument is the closure while the second is the
                 transcript returned by the service.
         """
-        self.on_transcription_callback = callback 
+        self.on_transcription_callback = callback
 
     def set_on_connected_callback(self,
             callback : Callable[[List[Any]],None]) -> None:
@@ -52,20 +52,20 @@ class customWatsonCallbacks(RecognizeCallback):
         Args:
             (Callable[[List[Any]],None]): The first argument is the closure.
         """
-        self.on_connected_callback = callback 
+        self.on_connected_callback = callback
 
-    def set_on_error_callback(self, 
+    def set_on_error_callback(self,
             callback : Callable[[List[Any],str], None]) -> None:
         """
         Called when there is an error in the Websocket connection.
 
         Args:
-            (Callable[[List[Any],str], None]): 
+            (Callable[[List[Any],str], None]):
                 The first argument is the closure while the second is the error.
         """
-        self.on_error_callback = callback 
-    
-    def set_on_inactivity_timeout(self, 
+        self.on_error_callback = callback
+
+    def set_on_inactivity_timeout(self,
             callback : Callable[[List[Any],str], None]) -> None:
         """
         Called when there is an inactivity timeout.
@@ -74,9 +74,9 @@ class customWatsonCallbacks(RecognizeCallback):
             (Callable[[List[Any],str], None]):
                 The first argument is the closure while the second is the error.
         """
-        self.on_inactivity_timeout_callback = callback 
-    
-    def set_on_listening_callback(self, 
+        self.on_inactivity_timeout_callback = callback
+
+    def set_on_listening_callback(self,
             callback : Callable[[List[Any]], None]) -> None:
         """
         Called when the service is listening for audio.
@@ -84,33 +84,33 @@ class customWatsonCallbacks(RecognizeCallback):
         Args:
             (Callable[[List[Any]], None]): The first argument is the closure.
         """
-        self.on_listening_callback = callback 
-    
-    def set_on_hypothesis_callback(self, 
+        self.on_listening_callback = callback
+
+    def set_on_hypothesis_callback(self,
             callback : Callable[[List[Any], str], None]) -> None:
         """
         Called when an interim result is received.
 
         Args:
             (Callable[[List[Any], str], None]):
-                The first argument is the closure while the second is the 
+                The first argument is the closure while the second is the
                 hypothesis.
         """
-        self.on_hypothesis_callback = callback 
-    
-    def set_on_data_callback(self, 
+        self.on_hypothesis_callback = callback
+
+    def set_on_data_callback(self,
             callback : Callable[[List[Any], Dict], None]) -> None:
         """
         Called when the service returns results. The data is returned unparsed.
 
         Args:
             (Callable[[List[Any], Dict], None]):
-                The first argument is the closure while the second is the 
+                The first argument is the closure while the second is the
                 data dictionary.
         """
-        self.on_data_callback = callback 
-    
-    def set_on_close_callback(self, 
+        self.on_data_callback = callback
+
+    def set_on_close_callback(self,
             callback : Callable[[List[Any]], None]) -> None:
         """
         Called when the Websocket connection is closed
@@ -118,16 +118,16 @@ class customWatsonCallbacks(RecognizeCallback):
         Args:
             (Callable[[List[Any]], None]): The first argument is the closure.
         """
-        self.on_close_callback = callback 
+        self.on_close_callback = callback
 
-    ### Others 
+    ### Others
 
     def on_transcription(self, transcript : List) -> None:
         """
         Called after the service returns the final result for the transcription.
         """
         try:
-            self.on_transcription_callback(self.closure, transcript) 
+            self.on_transcription_callback(self.closure, transcript)
         except:
             pass
 
@@ -145,9 +145,9 @@ class customWatsonCallbacks(RecognizeCallback):
         Called when there is an error in the Websocket connection.
         """
         try:
-            self.on_error_callback(self.closure, error) 
+            self.on_error_callback(self.closure, error)
         except:
-            pass 
+            pass
 
     def on_inactivity_timeout(self, error : str) -> None:
         """
@@ -156,7 +156,7 @@ class customWatsonCallbacks(RecognizeCallback):
         try:
             self.on_inactivity_timeout_callback(self.closure, error)
         except:
-            pass 
+            pass
 
     def on_listening(self) -> None:
         """
@@ -165,7 +165,7 @@ class customWatsonCallbacks(RecognizeCallback):
         try:
             self.on_listening_callback()
         except:
-            pass 
+            pass
 
     def on_hypothesis(self, hypothesis : str) -> None:
         """
