@@ -7,7 +7,7 @@ from typing import List, Dict
 from Tests import TestSuite
 from Tests import define_network_test_suite, \
     define_util_thread_test_suite, define_io_test_suite, \
-    define_organizer_test_suite
+    define_organizer_test_suite, define_engines_test_suite
 
 #### Helper functions for using test suite.
 
@@ -79,9 +79,10 @@ if __name__ == "__main__":
         "network_test_suite" : define_network_test_suite(),
         "util_thread_test_suite" : define_util_thread_test_suite(),
         "io_test_suite" : define_io_test_suite(),
-        "organizer_test_suite" : define_organizer_test_suite() 
+        "organizer_test_suite" : define_organizer_test_suite(),
+        "engines_test_suite" : define_engines_test_suite()
     }
-    run_single_test_suite(suites,"organizer_test_suite")
+    run_single_test_suite(suites,"engines_test_suite")
     # Executing all test suites 
     # run_all_test_suites(suites)
     
