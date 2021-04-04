@@ -621,7 +621,7 @@ def watson_engine_transcribe_valid() -> bool:
     #     api_key = API_KEY, region = REGION, audio_path = MP3_FILE_PATH,
     #     base_model_name=BASE_LANG_MODEL)
     # print(s2)
-    utterances = engine.transcribe()
+    #utterances = engine.transcribe()
     for utterance in utterances:
         label = utterance.get(UtteranceAttributes.speaker_label)[1]
         start_time = utterance.get(UtteranceAttributes.start_time)[1]
