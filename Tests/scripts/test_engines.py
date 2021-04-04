@@ -11,7 +11,7 @@ from Src.Components.engines import WatsonCore, customWatsonCallbacks,\
         UtteranceAttributes
 
 from Src.Components.engines.google import GoogleCore, GoogleEngine
-from Src.Components.io import IO 
+from Src.Components.io import IO
 from Src.Components.network import Network
 # Third party imports
 
@@ -613,7 +613,7 @@ def watson_engine_transcribe_valid() -> bool:
     """
     engine = WatsonEngine(IO(), Network())
     s1 = engine.configure(
-        api_key = API_KEY, region = REGION, audio_path = MP3_FILE_PATH,
+        api_key = API_KEY, region = REGION, audio_path = WAV_FILE_PATH,
         base_model_name=BASE_LANG_MODEL)
     print(s1)
     utterances = engine.transcribe()
@@ -672,7 +672,7 @@ def google_core_set_get_audio_path_unsupported() -> bool:
     Tests:
         1. Sets and gets invalid unsupported audio file
     """
-    pass 
+    pass
 
 def google_core_set_get_sample_rate_hertz_valid() -> bool:
     """
@@ -765,8 +765,8 @@ def google_core_transcribe() -> bool:
     #     start_time = utterance.get(UtteranceAttributes.start_time)[1]
     #     end_time = utterance.get(UtteranceAttributes.end_time)[1]
     #     transcript = utterance.get(UtteranceAttributes.transcript)[1]
-    #     print("{}: {} {}_{}".format(label,transcript,start_time,end_time))  
-    # print(len(utterances))  
+    #     print("{}: {} {}_{}".format(label,transcript,start_time,end_time))
+    # print(len(utterances))
 
     return True
 
@@ -864,8 +864,8 @@ def google_engine_transcribe() -> bool:
     #     start_time = utterance.get(UtteranceAttributes.start_time)[1]
     #     end_time = utterance.get(UtteranceAttributes.end_time)[1]
     #     transcript = utterance.get(UtteranceAttributes.transcript)[1]
-    #     print("{}: {} {}_{}".format(label,transcript,start_time,end_time))  
-    # print(len(utterances))  
+    #     print("{}: {} {}_{}".format(label,transcript,start_time,end_time))
+    # print(len(utterances))
 
     return True
 
@@ -999,68 +999,68 @@ def define_engines_test_suite() -> TestSuite:
     # suite.add_test("watson_engine_is_file_supported", (), True, True,
     #     watson_engine_is_file_supported)
 
-    # suite.add_test("watson_engine_transcribe_valid", (), True, True, 
+    # suite.add_test("watson_engine_transcribe_valid", (), True, True,
     #     watson_engine_transcribe_valid)
-    # suite.add_test("watson_engine_transcribe_invalid", (), True, True, 
+    # suite.add_test("watson_engine_transcribe_invalid", (), True, True,
     #     watson_engine_transcribe_invalid)
 
-    # suite.add_test("watson_core_set_api_key_valid", (), True, True, 
+    # suite.add_test("watson_core_set_api_key_valid", (), True, True,
     #     watson_core_set_api_key_valid)
-    # suite.add_test("watson_core_set_api_key_invalid", (), True, True, 
+    # suite.add_test("watson_core_set_api_key_invalid", (), True, True,
     #     watson_core_set_api_key_invalid)
 
-    suite.add_test("watson_engine_transcribe_valid", (), True, True, 
+    suite.add_test("watson_engine_transcribe_valid", (), True, True,
         watson_engine_transcribe_valid)
     # suite.add_test("watson_engine_transcribe_invalid", (), True, True,
     #     watson_engine_transcribe_invalid)
 
 
     ### GoogleCore tests
-    suite.add_test("set_get_mp3_audio_path", (), True, True, 
-        google_core_set_get_audio_path_valid_mp3)
-    suite.add_test("set_get_wav_audio_path", (), True, True, 
-        google_core_set_get_audio_path_valid_wav)
-    suite.add_test("set_get_non_audio_path", (), True, True, 
-        google_core_set_get_audio_path_non_audio)
-    suite.add_test("set_get_sample_rate_hertz_valid", (), True, True, 
-        google_core_set_get_sample_rate_hertz_valid)
-    suite.add_test("set_get_sample_rate_hertz_invalid", (), True, True, 
-        google_core_set_get_sample_rate_hertz_invalid)
-    suite.add_test("set_get_speaker_count_valid", (), True, True, 
-        google_core_set_get_speaker_count_valid)
-    suite.add_test("set_get_speaker_count_invalid", (), True, True, 
-        google_core_set_get_speaker_count_invalid)
-    suite.add_test("get_supported_audio_formats", (), True, True, 
-        google_core_get_supported_audio_formats)
-    suite.add_test("get_supported_language_codes", (), True, True, 
-        google_core_get_supported_language_codes)
-    suite.add_test("reset_configurations", (), True, True, 
-        google_core_reset_configurations)
+    # suite.add_test("set_get_mp3_audio_path", (), True, True,
+    #     google_core_set_get_audio_path_valid_mp3)
+    # suite.add_test("set_get_wav_audio_path", (), True, True,
+    #     google_core_set_get_audio_path_valid_wav)
+    # suite.add_test("set_get_non_audio_path", (), True, True,
+    #     google_core_set_get_audio_path_non_audio)
+    # suite.add_test("set_get_sample_rate_hertz_valid", (), True, True,
+    #     google_core_set_get_sample_rate_hertz_valid)
+    # suite.add_test("set_get_sample_rate_hertz_invalid", (), True, True,
+    #     google_core_set_get_sample_rate_hertz_invalid)
+    # suite.add_test("set_get_speaker_count_valid", (), True, True,
+    #     google_core_set_get_speaker_count_valid)
+    # suite.add_test("set_get_speaker_count_invalid", (), True, True,
+    #     google_core_set_get_speaker_count_invalid)
+    # suite.add_test("get_supported_audio_formats", (), True, True,
+    #     google_core_get_supported_audio_formats)
+    # suite.add_test("get_supported_language_codes", (), True, True,
+    #     google_core_get_supported_language_codes)
+    # suite.add_test("reset_configurations", (), True, True,
+    #     google_core_reset_configurations)
 
-    # suite.add_test("core_transcribe_audio", (), True, True, 
+    # suite.add_test("core_transcribe_audio", (), True, True,
     #   google_core_transcribe)
 
 
     ### GoogleEngine tests
-    suite.add_test("is_configured_valid", (), True, True, 
-        google_engine_configure_valid)
-    suite.add_test("is_configured_invalid", (), True, True, 
-        google_engine_configure_invalid)
-    suite.add_test("get_configurations_unset", (), True, True, 
-        google_engine_get_configurations_unset)
-    suite.add_test("get_configurations_set", (), True, True, 
-        google_engine_get_configurations_set)
-    suite.add_test("get_engine", (), True, True, 
-        google_engine_get_name)
-    suite.add_test("get_audio_formats", (), True, True, 
-        google_engine_get_supported_audio_formats)
-    suite.add_test("file_supported_wav", (), True, True, 
-        google_engine_is_file_supported_wav)
-    suite.add_test("file_supported_non_audio", (), True, True, 
-        google_engine_is_file_supported_non_audio)
-    # suite.add_test("engine_transcribe", (), True, True, 
+    # suite.add_test("is_configured_valid", (), True, True,
+    #     google_engine_configure_valid)
+    # suite.add_test("is_configured_invalid", (), True, True,
+    #     google_engine_configure_invalid)
+    # suite.add_test("get_configurations_unset", (), True, True,
+    #     google_engine_get_configurations_unset)
+    # suite.add_test("get_configurations_set", (), True, True,
+    #     google_engine_get_configurations_set)
+    # suite.add_test("get_engine", (), True, True,
+    #     google_engine_get_name)
+    # suite.add_test("get_audio_formats", (), True, True,
+    #     google_engine_get_supported_audio_formats)
+    # suite.add_test("file_supported_wav", (), True, True,
+    #     google_engine_is_file_supported_wav)
+    # suite.add_test("file_supported_non_audio", (), True, True,
+    #     google_engine_is_file_supported_non_audio)
+    # suite.add_test("engine_transcribe", (), True, True,
     #     google_engine_transcribe)
-    return suite 
+    return suite
 
 
 
