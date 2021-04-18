@@ -252,6 +252,15 @@ class Pipeline:
             self.thread_pool.wait_completion()
             self._cut_completed_vertices(execution_graph)
 
+    #TODO
+    def reset_pipeline(self) -> bool:
+        self.dependency_graph = nx.DiGraph()
+        self.executed_graph_view = nx.DiGraph()
+        self.name_to_dependency_node = dict()
+        self.logic = None
+        self.base_input = None
+        return True
+
     ########################### PRIVATE METHODS #############################
 
     def _create_component(self, name : str, instantiated_object  : object) \
