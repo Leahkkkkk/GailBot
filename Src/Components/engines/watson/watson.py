@@ -633,8 +633,6 @@ class WatsonEngine(Engine):
                     timestamps.extend(
                         recognition_result.get_timestamps_from_alternatives(
                             only_final = False))
-            print(labels)
-            print(timestamps)
             timestamps = list(chain(*timestamps))
             # Creating the mappings
             for label in labels: # Label should be a dictionary

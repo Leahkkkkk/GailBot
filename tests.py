@@ -1,13 +1,15 @@
 """
-Script responsible for running all tests 
+Script responsible for running all tests
 """
-# Standard library imports 
+# Standard library imports
 from typing import List, Dict
-# Local imports 
+# Local imports
 from Tests import TestSuite
 from Tests import define_network_test_suite, \
     define_util_thread_test_suite, define_io_test_suite, \
-    define_organizer_test_suite, define_engines_test_suite
+    define_organizer_test_suite, define_engines_test_suite, \
+    define_pipeline_test_suite
+
 
 #### Helper functions for using test suite.
 
@@ -21,7 +23,7 @@ def print_summary(test_suite : TestSuite, name : str) -> None:
     """
     is_expected = test_suite.get_test_expected_result(
         name) == test_suite.get_test_result(name)
-    print("*" * 10, end = " ") 
+    print("*" * 10, end = " ")
     print("{}".format(name), end=" ")
     print("*" * 10, end="\n\n")
     print("Function arguments: {}".format(test_suite.get_test_args(name)))
@@ -41,16 +43,16 @@ def print_all_summary(test_suite: TestSuite) -> None:
     """
     test_names = test_suite.get_test_names()
     for name in test_names:
-        # Only print summary if the test was run 
+        # Only print summary if the test was run
         if test_suite.get_test_status(name):
             print_summary(test_suite, name)
 
 def run_single_test_suite(suites : Dict[str,TestSuite], name : str) -> None:
     """
-    Run a single test suite from a dictionary of test suites 
+    Run a single test suite from a dictionary of test suites
 
     Args:
-        suites (Dict[str,TestSuite]): Mapping of suite name to TestSuite object 
+        suites (Dict[str,TestSuite]): Mapping of suite name to TestSuite object
         name (str): Name of the test suite.
     """
     suites[name].run_all_tests()
@@ -60,29 +62,30 @@ def run_single_test_suite(suites : Dict[str,TestSuite], name : str) -> None:
     #     print_all_summary(suites[name])
     # except (Exception ) as e:
     #     print("Exception thrown in '{}' test suite:\n {}".format(name,e))
-        
+
 def run_all_test_suites(suites : Dict[str,TestSuite]) -> None:
     """
-    Run all test suites and print their summary 
+    Run all test suites and print their summary
 
     Args:
-        suites (Dict[str,TestSuite]): Mapping of suite name to TestSuite object 
+        suites (Dict[str,TestSuite]): Mapping of suite name to TestSuite object
     """
     for suite in suites.values():
         suite.run_all_tests()
         print_all_summary(suite)
 
 if __name__ == "__main__":
-    # Defining all test suites 
+    # Defining all test suites
     suites = {
         #"config_test_suite" : define_config_test_suite(),
         "network_test_suite" : define_network_test_suite(),
         "util_thread_test_suite" : define_util_thread_test_suite(),
         "io_test_suite" : define_io_test_suite(),
         "organizer_test_suite" : define_organizer_test_suite(),
-        "engines_test_suite" : define_engines_test_suite()
+        "engines_test_suite" : define_engines_test_suite(),
+        "pipeline_test_suite" : define_pipeline_test_suite()
     }
-    run_single_test_suite(suites,"engines_test_suite")
-    # Executing all test suites 
+    run_single_test_suite(suites,"pipeline_test_suite")
+    # Executing all test suites
     # run_all_test_suites(suites)
-    
+
