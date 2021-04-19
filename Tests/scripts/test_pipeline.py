@@ -3,19 +3,32 @@ Testing script for the pipeline component.
 """
 
 # Standard library imports
+from Src.Components.network.network import Network
 from typing import Callable, Any, List, Dict
 import time
 # Local imports
 from ..suites import TestSuite
 from Src.Components.pipeline import Pipeline, Logic, Stream, Component, ComponentState
 from Src.Components.engines.google import GoogleCore, GoogleEngine
+from Src.Components.engines.watson import WatsonEngine
+
 from Src.Components.io import IO
 # Third party imports
 
 
 ############################### GLOBALS #####################################
+API_KEY = "MSgOPTS9CvbADe49nEg4wm8_gxeRuf4FGUmlHS9QqAw3"
+LANG_CUSTOM_ID =  "41e54a38-2175-45f4-ac6a-1c11e42a2d54"
+ACOUSTIC_CUSTOM_ID = "some_valid_id"
+WAV_FILE_PATH = "Test_files/Media/test2b.wav"
+MP3_FILE_PATH = "Test_files/Media/sample1.mp3"
+BASE_LANG_MODEL = "en-US_BroadbandModel"
+REGION = "dallas"
+
 
 ########################## TEST DEFINITIONS ##################################
+
+
 
 ### Logic class definition
 
@@ -77,7 +90,7 @@ class TestPipelineLogic2(Logic):
             "c4",self._preprocessor,self._processor_c4,self._post_processor)
         self._add_component_logic(
             "c5",self._preprocessor,self._processor_c5,self._post_processor)
-    
+
     def _preprocessor(self, streams : Dict[str,Stream]) -> Dict:
         return streams
 
@@ -93,7 +106,7 @@ class TestPipelineLogic2(Logic):
         if preprocessed_data["c1"] == "hello!":
             print("c1 sucessfully changed base data and sent to to c2")
         return preprocessed_data
-    
+
     def _processor_c3(self, instantiated_obj : object, preprocessed_data : Dict) \
             -> Dict:
         print("Processing c3".format(instantiated_obj), preprocessed_data)
@@ -106,12 +119,12 @@ class TestPipelineLogic2(Logic):
         if preprocessed_data["c1"] == "hello!" and preprocessed_data["c3"] == "world!":
             print("c1 sucessfully changed base data and sent to to c4, and c3 did the same")
         return preprocessed_data
-    
+
     def _processor_c5(self, instantiated_obj : object, preprocessed_data : Dict) \
             -> Dict:
         print("Processing c5".format(instantiated_obj), preprocessed_data)
         raise Exception("c5 failed")
-    
+
     def _post_processor(self, processed_data : Dict) -> Stream:
         return processed_data["base"]
 
@@ -124,22 +137,31 @@ class TestPipelineLogic3(Logic):
             "c1",self._preprocessor,self._processor_c1,self._post_processor)
         self._add_component_logic(
             "c2",self._preprocessor,self._processor_c2,self._post_processor)
-    
+
+
     def _preprocessor(self, streams : Dict[str,Stream]) -> Dict:
         return streams
 
     def _processor_c1(self, instantiated_obj : object, preprocessed_data : Dict) \
             -> Dict:
+        preprocessed_data["base"] = instantiated_obj.is_file(MP3_FILE_PATH)
         print("Processing c1", preprocessed_data)
-        preprocessed_data["base"] = instantiated_obj.is_file("Tests/Test_files/gettysburg.wav")
         return preprocessed_data
 
     def _processor_c2(self, instantiated_obj : object, preprocessed_data : Dict) \
             -> Dict:
         print("Processing c2", preprocessed_data)
         if preprocessed_data["c1"] == True:
-            engine.configure("Tests/Test_files/gettysburg.wav", 22050, 1)
-            utterances = engine.transcribe()
+            try:
+                # instantiated_obj.configure("Test_files/Media/test2a.wav", 22050, 1)
+                # utterances = instantiated_obj.transcribe()
+                s1 = instantiated_obj.configure(
+                    api_key = API_KEY, region = REGION,
+                    audio_path = MP3_FILE_PATH,
+                    base_model_name=BASE_LANG_MODEL)
+                utterances = instantiated_obj.transcribe()
+            except Exception as e:
+                print(e)
             print("engine output:", utterances)
         return preprocessed_data
 
@@ -187,7 +209,7 @@ def pipeline_add_component() -> bool:
 def pipeline_add_component_without_logic() -> bool:
     """
     Tests:
-        1. Verifies that exception thrown when adding a component without a 
+        1. Verifies that exception thrown when adding a component without a
            logic set
     """
     logic = TestPipelineLogic()
@@ -241,9 +263,14 @@ def pipeline_add_duplicate_component() -> bool:
     p.add_component("c1",None)
     p.add_component("c3",None)
     p.add_component("c2",None, ['c1'])
-    p.add_component("c2",None, ['c3'])
+    try:
+        p.add_component("c2",None, ['c3'])
+        return False
+    except:
+        pass
     print("check:", p.get_component_dependencies("c2"))
-    return p.get_component_names() == ['c1', 'c3', 'c2'] and p.get_component_dependencies("c2") == ["c1"]
+    return p.get_component_names() == ['c1', 'c3', 'c2'] \
+        and p.get_component_dependencies("c2") == ["c1"]
 
 # TODO: Bug, can add c1 twice, and c1 can be dependent on itself
 def pipeline_add_invalid_component() -> bool:
@@ -255,9 +282,13 @@ def pipeline_add_invalid_component() -> bool:
     p = Pipeline("Test_pipeline")
     p.set_logic(logic)
     p.add_component("c1",None)
-    succ = p.add_component("c1",None, ['c1'])
+    try:
+        p.add_component("c1",None, ['c1'])
+        return False
+    except:
+        pass
     print("invalid:", p.get_component_dependencies("c1"))
-    return not succ
+    return True
 
 def pipeline_add_multiple_component() -> bool:
     """
@@ -435,7 +466,7 @@ def pipeline_execute_two_dependencies_one_failure() -> bool:
     """
     Tests:
         1. Execution of pipeline with a failure that affects other components,
-           ensures affected parts of pipeline do not run 
+           ensures affected parts of pipeline do not run
     """
     logic = TestPipelineLogic2()
     p = Pipeline("Test_pipeline")
@@ -451,7 +482,7 @@ def pipeline_execute_simple_failure_dependency() -> bool:
     """
     Tests:
         1. Execution of pipeline with a failure that affects other components,
-           ensures affected parts of pipeline do not run 
+           ensures affected parts of pipeline do not run
     """
     logic = TestPipelineLogic2()
     p = Pipeline("Test_pipeline")
@@ -466,7 +497,7 @@ def pipeline_execute_failure_in_chain() -> bool:
     """
     Tests:
         1. Execution of pipeline with a failure that affects other components,
-           ensures affected parts of pipeline do not run 
+           ensures affected parts of pipeline do not run
     """
     logic = TestPipelineLogic2()
     p = Pipeline("Test_pipeline")
@@ -521,8 +552,18 @@ def pipeline_execute_with_objects() -> bool:
     p = Pipeline("Test_pipeline")
     p.set_logic(logic)
     p.add_component("c1", IO())
-    p.add_component("c2",GoogleEngine(IO()),["c1"])
+    p.print_dependency_graph()
+    p.add_component("c2",WatsonEngine(IO(),Network()),["c1"])
+    p.print_dependency_graph()
     p.execute()
+    p.print_dependency_graph()
+    print(p.get_execution_summary())
+    print("Executing again ")
+    p.execute()
+    p.print_dependency_graph()
+    print(p.get_execution_summary())
+
+
     return p.get_successful_components() == ["c1", "c2"] and p.get_failed_components() == [] and\
         p.get_unexecuted_components() == []
 
@@ -577,7 +618,7 @@ def component_get_res() -> bool:
     """
     component = Component("c1", None)
     result_start = component.get_result()
-    return result_start == None 
+    return result_start == None
 
 def component_get_set_runtime() -> bool:
     """
@@ -632,13 +673,14 @@ def define_pipeline_test_suite() -> TestSuite:
     suite = TestSuite()
 
     ## Component Tests ##
-    suite.add_test("component_get_set_state",(), True, True, component_get_set_state)
-    suite.add_test("component_get_name",(), True, True, component_get_name)
-    suite.add_test("component_get_inst_obj",(), True, True, component_get_inst_obj)
-    suite.add_test("component_get_res",(), True, True, component_get_res)
-    suite.add_test("component_get_set_runtime",(), True, True, component_get_set_runtime)
-    suite.add_test("component_set_invalid_runtime",(), True, True, component_set_invalid_runtime)
+    # suite.add_test("component_get_set_state",(), True, True, component_get_set_state)
+    # suite.add_test("component_get_name",(), True, True, component_get_name)
+    # suite.add_test("component_get_inst_obj",(), True, True, component_get_inst_obj)
+    # suite.add_test("component_get_res",(), True, True, component_get_res)
+    # suite.add_test("component_get_set_runtime",(), True, True, component_get_set_runtime)
+    # suite.add_test("component_set_invalid_runtime",(), True, True, component_set_invalid_runtime)
 
+    ## Pipeline Tests ##
     suite.add_test("pipeline_set_logic", (), True, True, pipeline_set_logic)
     suite.add_test(
         "pipeline_set_base_input", (), True, True, pipeline_set_base_input)
@@ -679,7 +721,7 @@ def define_pipeline_test_suite() -> TestSuite:
     suite.add_test("pipeline_execute_simple_failure_dependency",(), True, True, pipeline_execute_simple_failure_dependency)
     suite.add_test("pipeline_execute_failure_in_chain",(), True, True, pipeline_execute_failure_in_chain)
     suite.add_test("pipeline_two_executions",(), True, True, pipeline_two_executions)
-    #suite.add_test("pipeline_execute_with_objects",(), True, True, pipeline_execute_with_objects)
+    suite.add_test("pipeline_execute_with_objects",(), True, True, pipeline_execute_with_objects)
     suite.add_test("pipeline_reset",(), True, True, pipeline_reset)
     return suite
 

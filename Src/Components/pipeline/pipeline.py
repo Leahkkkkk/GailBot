@@ -97,6 +97,13 @@ class Pipeline:
             raise Exception("Source component is invalid")
         if not self.logic.is_component_supported(name):
             raise Exception("Component not supported in logic")
+        # Component cannot be re-added
+        if name in self.name_to_dependency_node:
+            raise Exception("Component {} already exists and cannot be "\
+                "re-added".format(name))
+        # Component cannot have a circular dependency
+        if name in source_components:
+            raise Exception("Cannot have circular dependency on component")
         component = self._create_component(name, instantiated_object)
         self.dependency_graph.add_node(component)
         for source in source_components:
@@ -234,6 +241,7 @@ class Pipeline:
         Raises:
             (Exception): If the Logic is not set.
         """
+        self._reset_dependency_graph_after_execution()
         if self.logic == None:
             raise Exception("Logic for pipeline undefined")
         execution_graph, name_to_dependency_mapping = \
@@ -241,8 +249,8 @@ class Pipeline:
         while True:
             executable_components = self._get_executables(execution_graph)
             if len(executable_components) == 0:
-                self.executed_graph_view = deepcopy(self.dependency_graph)
-                self._reset_dependency_graph_after_execution()
+                self.executed_graph_view = self.dependency_graph.copy()
+                #self.executed_graph_view = deepcopy(self.dependency_graph)
                 return
             for component in executable_components:
                 self.thread_pool.add_task(
@@ -252,8 +260,14 @@ class Pipeline:
             self.thread_pool.wait_completion()
             self._cut_completed_vertices(execution_graph)
 
-    #TODO
     def reset_pipeline(self) -> bool:
+        """
+        Reset the pipeline, removing any components, Logic, and base input
+        that were added.
+
+        Returns:
+            (bool): True if successfully reset. False otherwise.
+        """
         self.dependency_graph = nx.DiGraph()
         self.executed_graph_view = nx.DiGraph()
         self.name_to_dependency_node = dict()
@@ -347,9 +361,9 @@ class Pipeline:
         except Exception:
             component.set_state(ComponentState.failed)
         finally:
-            self.sync_execution_with_dependency_graph(component)
+            self._sync_execution_with_dependency_graph(component)
 
-    def sync_execution_with_dependency_graph(self, component : Component) \
+    def _sync_execution_with_dependency_graph(self, component : Component) \
             -> None:
         """
         Given a component, syncs all its results to the component with
@@ -396,7 +410,8 @@ class Pipeline:
                 execution graph.
         """
         name_to_node_mapping = dict()
-        execution_graph = deepcopy(graph)
+        execution_graph = graph.copy(as_view=False)
+        #execution_graph = deepcopy(graph)
         for node in execution_graph.nodes:
             name_to_node_mapping[node.get_name()] = node
         return (execution_graph,name_to_node_mapping)
