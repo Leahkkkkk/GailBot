@@ -1,14 +1,15 @@
-# Env files 
+# Env files
 
-# OSX 
+# OSX
 .DS_Store
 .bash_history
 .python_history
-# Compiled 
+.pytest_cache
+# Compiled
 __pycache__/
 *.pyc
 # editor / frameworks
 .devcontainer
 .vscode
-# Test files 
-Test_files
+# Test files
+TestData
