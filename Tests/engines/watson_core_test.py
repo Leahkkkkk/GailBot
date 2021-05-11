@@ -9,8 +9,8 @@ from Src.Components.engines import WatsonCore, customWatsonCallbacks
 API_KEY = "MSgOPTS9CvbADe49nEg4wm8_gxeRuf4FGUmlHS9QqAw3"
 LANG_CUSTOM_ID =  "41e54a38-2175-45f4-ac6a-1c11e42a2d54"
 ACOUSTIC_CUSTOM_ID = "some_valid_id"
-WAV_FILE_PATH = "Test_files/Media/test2b.wav"
-MP3_FILE_PATH = "Test_files/Media/sample1.mp3"
+WAV_FILE_PATH = "TestData/media/test2b.wav"
+MP3_FILE_PATH = "TestData/media/sample1.mp3"
 
 ################################# SETUP ######################################
 

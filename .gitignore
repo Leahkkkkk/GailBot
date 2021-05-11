@@ -12,4 +12,4 @@ __pycache__/
 .devcontainer
 .vscode
 # Test files
-Test_files
+TestData

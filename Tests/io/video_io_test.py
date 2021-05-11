@@ -6,13 +6,13 @@ from Src.Components.io import GeneralIO, VideoIO, VideoWriteTypes
 ############################### GLOBALS #####################################
 
 DESKTOP_OUT_PATH = os.path.join(os.path.join(os.path.expanduser('~')),'Desktop')
-WAV_FILE_1_PATH = "Test_files/Media/test2a.wav"
-VIDEO_FILE_MP4_PATH = "Test_files/Media/sample-mp4-file.mp4"
-VIDEO_FILE_MXF_PATH = "Test_files/Media/vid2.MXF"
-VIDEO_FILE_AVI_PATH = "Test_files/Media/sample-avi-file.avi"
-VIDEO_FILE_MOV_PATH = "Test_files/Media/sample-mov-file.mov"
-VIDEO_FILE_MPG_PATH = "Test_files/Media/sample-mpg-file.mpg"
-TEST_DIR_PATH = "Test_files"
+WAV_FILE_1_PATH = "TestData/media/test2a.wav"
+VIDEO_FILE_MP4_PATH = "TestData/media/sample-mp4-file.mp4"
+VIDEO_FILE_MXF_PATH = "TestData/media/vid2.MXF"
+VIDEO_FILE_AVI_PATH = "TestData/media/sample-avi-file.avi"
+VIDEO_FILE_MOV_PATH = "TestData/media/sample-mov-file.mov"
+VIDEO_FILE_MPG_PATH = "TestData/media/sample-mpg-file.mpg"
+TEST_DIR_PATH = "TestData"
 
 ########################## TEST DEFINITIONS ##################################
 

@@ -4,8 +4,8 @@ from Src.Components.io import IO
 
 ############################### GLOBALS #####################################
 
-AUDIO1 = "Test_files/Media/test2b.wav"
-AUDIO2 = "Test_files/Media/sample1.mp3"
+AUDIO1 = "TestData/media/test2b.wav"
+AUDIO2 = "TestData/media/sample1.mp3"
 NON_AUDIO = "non_audio"
 
 ########################## TEST DEFINITIONS ##################################

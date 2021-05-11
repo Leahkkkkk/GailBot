@@ -5,20 +5,20 @@ from Src.Components.io import AudioIO, IO, GeneralIO
 
 ############################### GLOBALS #####################################
 
-TEST_DIR_PATH = "Test_files"
-TEST_EMPTY_DIR_PATH = "Test_files/Others/Test-directory"
-WAV_FILE_1_PATH = "Test_files/Media/test2a.wav"
-WAV_FILE_2_PATH = "Test_files/Media/test2b.wav"
-WAV_FILE_3_PATH = "Test_files/Media/test.wav"
-STEREO_FILE_1_PATH = "Test_files/Media/SineWaveMinus16.wav"
-MEDIA_TEST_DIR_PATH = "Test_files/Media"
-VALID_SAMPLE_JSON_FILE = "Test_files/Others/sample_config.json"
-VALID_SAMPLE_TXT_FILE = "Test_files/Others/sample_text.txt"
-VALID_SMALL_TXT_FILE = "Test_files/Others/textfile.txt"
-VALID_SAMPLE_YAML_FILE = "Test_files/Others/sample_yaml.yaml"
-VALID_FRUITS_YAML_FILE = "Test_files/Others/fruits.yaml"
-VIDEO_FILE_AVI_PATH = "Test_files/Media/sample-avi-file.avi"
-VIDEO_FILE_MP4_PATH = "Test_files/Media/sample-mp4-file.mp4"
+TEST_DIR_PATH = "TestData"
+TEST_EMPTY_DIR_PATH = "TestData/workspace"
+WAV_FILE_1_PATH = "TestData/media/test2a.wav"
+WAV_FILE_2_PATH = "TestData/media/test2b.wav"
+WAV_FILE_3_PATH = "TestData/media/test.wav"
+STEREO_FILE_1_PATH = "TestData/media/SineWaveMinus16.wav"
+MEDIA_TEST_DIR_PATH = "TestData/media"
+VALID_SAMPLE_JSON_FILE = "TestData/configs/sample_config.json"
+VALID_SAMPLE_TXT_FILE = "TestData/configs/sample_text.txt"
+VALID_SMALL_TXT_FILE = "TestData/configs/textfile.txt"
+VALID_SAMPLE_YAML_FILE = "TestData/configs/sample_yaml.yaml"
+VALID_FRUITS_YAML_FILE = "TestData/configs/fruits.yaml"
+VIDEO_FILE_AVI_PATH = "TestData/media/sample-avi-file.avi"
+VIDEO_FILE_MP4_PATH = "TestData/media/sample-mp4-file.mp4"
 DESKTOP_OUT_PATH = os.path.join(os.path.join(os.path.expanduser('~')),'Desktop')
 
 ########################## TEST DEFINITIONS ##################################
@@ -132,7 +132,7 @@ def test_audio_io_get_streams() -> None:
         {"file_1" : WAV_FILE_1_PATH, "file_2" : WAV_FILE_2_PATH})
     streams = audio.get_streams()
     for stream in streams.values():
-        assert not type(stream) == bytes
+        assert type(stream) == bytes
 
 
 def test_audio_io_get_supported_input_formats() -> None:

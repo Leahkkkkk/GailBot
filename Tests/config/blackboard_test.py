@@ -1,6 +1,6 @@
 
 # Local imports
-from Src.Components.config import BlackBoard, SystemBB, SystemBBAttributes
+from Src.Components.config import SystemBB, SystemBBAttributes
 
 #### BLACKBOARD TESTS
 

@@ -5,15 +5,15 @@ from Src.Components.io import GeneralIO
 
 ############################### GLOBALS #####################################
 
-TEST_DIR_PATH = "Test_files"
-WAV_FILE_1_PATH = "Test_files/Media/test2a.wav"
-MEDIA_TEST_DIR_PATH = "Test_files/Media"
-VALID_SAMPLE_JSON_FILE = "Test_files/Others/sample_config.json"
-VALID_SAMPLE_TXT_FILE = "Test_files/Others/sample_text.txt"
-VALID_SMALL_TXT_FILE = "Test_files/Others/textfile.txt"
-VALID_SAMPLE_YAML_FILE = "Test_files/Others/sample_yaml.yaml"
-VALID_FRUITS_YAML_FILE = "Test_files/Others/fruits.yaml"
-VIDEO_FILE_AVI_PATH = "Test_files/Media/sample-avi-file.avi"
+TEST_DIR_PATH = "TestData"
+WAV_FILE_1_PATH = "TestData/media/test2a.wav"
+MEDIA_TEST_DIR_PATH = "TestData/media"
+VALID_SAMPLE_JSON_FILE = "TestData/configs/sample_config.json"
+VALID_SAMPLE_TXT_FILE = "TestData/configs/sample_text.txt"
+VALID_SMALL_TXT_FILE = "TestData/configs/textfile.txt"
+VALID_SAMPLE_YAML_FILE = "TestData/configs/sample_yaml.yaml"
+VALID_FRUITS_YAML_FILE = "TestData/configs/fruits.yaml"
+VIDEO_FILE_AVI_PATH = "TestData/media/sample-avi-file.avi"
 DESKTOP_OUT_PATH = os.path.join(os.path.join(os.path.expanduser('~')),'Desktop')
 
 ########################## TEST DEFINITIONS ##################################
@@ -222,7 +222,7 @@ def test_general_io_move_file() -> None:
         TEST_DIR_PATH,["wav"],False)
     name = names[0]
     # Move all the files in the test directory.
-    assert not general.move_file(name,DESKTOP_OUT_PATH)
+    general.move_file(name,DESKTOP_OUT_PATH)
     assert general.delete("{}/{}".format(DESKTOP_OUT_PATH,
             name[name.rfind("/")+1:]))
 
@@ -263,11 +263,11 @@ def test_general_io_rename() -> None:
     """
     general = GeneralIO()
     file_name = WAV_FILE_1_PATH[WAV_FILE_1_PATH.rfind("/")+1:]
-    assert general.copy(WAV_FILE_1_PATH, TEST_DIR_PATH) and \
-        general.rename(TEST_DIR_PATH + "/" + file_name, "renamed_file") and \
-        general.delete(TEST_DIR_PATH + "/renamed_file.wav") and \
-        general.rename(MEDIA_TEST_DIR_PATH, "media") and \
-        general.rename(TEST_DIR_PATH + "/media", "Media")
+    assert general.copy(WAV_FILE_1_PATH, TEST_DIR_PATH)
+    assert general.rename(TEST_DIR_PATH + "/" + file_name, "renamed_file")
+    assert general.delete(TEST_DIR_PATH + "/renamed_file.wav")
+    assert general.rename(MEDIA_TEST_DIR_PATH, "Media")
+    assert general.rename(TEST_DIR_PATH + "/Media", "media")
 
 
 def test_general_io_delete() -> None:

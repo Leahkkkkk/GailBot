@@ -1,7 +1,8 @@
 # Standard library import
 from typing import Dict
 # Local imports
-from Src.Components.pipeline import Pipeline, Logic, Stream, IO
+from Src.Components.io import IO
+from Src.Components.pipeline import Pipeline, Logic, Stream
 from Src.Components.network.network import Network
 from Src.Components.engines.watson import WatsonEngine
 
@@ -9,8 +10,8 @@ from Src.Components.engines.watson import WatsonEngine
 API_KEY = "MSgOPTS9CvbADe49nEg4wm8_gxeRuf4FGUmlHS9QqAw3"
 LANG_CUSTOM_ID =  "41e54a38-2175-45f4-ac6a-1c11e42a2d54"
 ACOUSTIC_CUSTOM_ID = "some_valid_id"
-WAV_FILE_PATH = "Test_files/Media/test2b.wav"
-MP3_FILE_PATH = "Test_files/Media/sample1.mp3"
+WAV_FILE_PATH = "TestData/media/test2b.wav"
+MP3_FILE_PATH = "TestData/media/sample1.mp3"
 BASE_LANG_MODEL = "en-US_BroadbandModel"
 REGION = "dallas"
 ############################### SETUP #####################################

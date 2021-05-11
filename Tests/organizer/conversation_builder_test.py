@@ -4,10 +4,10 @@ from Src.Components.io import IO
 from Src.Components.organizer import ConversationBuilder, Settings, SettingsBuilder
 
 ############################### GLOBALS #####################################
-WAV_FILE_PATH = "Test_files/Media/test2a.wav"
-RESULT_DIR_PATH = "Test_files"
-TMP_DIR_PATH = "Test_files/Others/Test-directory"
-CONVERSATION_DIR_PATH = "Test_files/Media/Conversation"
+WAV_FILE_PATH = "TestData/media/test2a.wav"
+RESULT_DIR_PATH = "TestData"
+TMP_DIR_PATH = "TestData/workspace"
+CONVERSATION_DIR_PATH = "TestData/media/conversation"
 ########################## TEST DEFINITIONS #################################
 
 def test_builder_set_conversation_source_path_valid() -> None:

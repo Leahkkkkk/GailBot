@@ -2,10 +2,9 @@
 from Src.Components.organizer import Paths, PathsAttributes
 
 ############################### GLOBALS #####################################
-WAV_FILE_PATH = "Test_files/Media/test2a.wav"
-RESULT_DIR_PATH = "Test_files"
-TMP_DIR_PATH = "Test_files/Others/Test-directory"
-
+WAV_FILE_PATH = "TestData/media/test2a.wav"
+RESULT_DIR_PATH = "TestData"
+TMP_DIR_PATH = "TestData/workspace"
 
 ########################## TEST DEFINITIONS #################################
 
