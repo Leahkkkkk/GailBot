@@ -1110,3 +1110,15 @@ def test_io_get_file_extension() -> None:
     io = IO()
     assert io.get_file_extension(WAV_FILE_1_PATH)[1] == "wav" and \
         not io.get_file_extension(TEST_EMPTY_DIR_PATH)[0]
+
+def test_io_get_parent_path() -> None:
+    """
+    Tests:
+        1. Obtain the parent path of a file.
+        2. Obtain the parent path of a directory.
+        3. Obtain parent path of a random string.
+    """
+    io = IO()
+    assert io.is_directory(io.get_parent_path(WAV_FILE_1_PATH))
+    assert io.is_directory(io.get_parent_path(TEST_DIR_PATH))
+    assert io.get_parent_path("random") == ""

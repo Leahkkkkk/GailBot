@@ -5,6 +5,7 @@ import glob
 import json
 import yaml
 import shutil
+from pathlib import Path
 # Local imports
 # Third party imports
 from copy import deepcopy
@@ -168,6 +169,23 @@ class GeneralIO:
             return path[path.rfind("/")+1:]
         return ""
 
+    def get_parent_directory(self, path : str) -> str:
+        """
+        Obtain the absolute path of the parent directory given a path to a file or
+        directory.
+
+        Args:
+            path (str): Path to file or directory.
+
+        Returns:
+            (str): Absolute parent directory path for the given file or directory.
+                    Empty string if parent directory cannot be determined.
+        """
+        if not self.is_directory(path) and not self.is_file(path):
+            return ""
+        path = Path(path)
+        return path.parent.absolute()
+
     def get_size(self, path : str) -> Tuple[bool, bytes]:
         """
         Obtain the size of the file or directory in bytes.
@@ -180,7 +198,7 @@ class GeneralIO:
         Returns:
             (Tuple[bool, bytes]):
                 True + Size of the file or directory in bytes if successful.
-                False + None if unsuccesful.
+                False + None if unsuccessful.
         """
         if self.is_file(path):
             return (True, os.path.getsize(path))

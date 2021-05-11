@@ -294,3 +294,13 @@ def test_general_io_delete() -> None:
     assert all([general.delete(name,) for name in names]) and \
         general.delete(TEST_DIR_PATH+"/sub")
 
+def test_general_io_get_parent_directory() -> None:
+    """
+    Tests:
+        1. Get parent path of a file.
+        2. Get parent path of a directory
+    """
+    general = GeneralIO()
+    assert general.is_directory(general.get_parent_directory(WAV_FILE_1_PATH))
+    assert general.is_directory(general.get_parent_directory(MEDIA_TEST_DIR_PATH))
+
