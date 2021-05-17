@@ -1,9 +1,10 @@
 # Standard library imports
 from datetime import date
+from typing import Dict, Any
 # Local imports
 from Src.Components.io import IO
 from Src.Components.organizer import ConversationBuilder, SettingsBuilder,\
-                                    Conversation
+                                    Conversation, Settings
 
 ############################### GLOBALS #####################################
 WAV_FILE_PATH = "TestData/media/test2a.wav"
@@ -11,36 +12,64 @@ RESULT_DIR_PATH = "TestData"
 TMP_DIR_PATH = "TestData/workspace"
 CONVERSATION_DIR_PATH = "TestData/media/conversation"
 
-############################### SETUP #####################################
+
+############################### SETUP #######################################
+
+class CustomSettings(Settings):
+
+    ATTRS = ("attr_1","attr_2")
+
+    def __init__(self, data : Dict[str,Any]) -> None:
+        super().__init__(attrs=self.ATTRS)
+        self._parse_data(data)
+
+    def get_attr_1(self) -> Any:
+        return self.get("attr_1")[1]
+
+    def get_attr_2(self) -> Any:
+        return self.get("attr_2")[1]
+
+    def _parse_data(self, data : Dict[str,Any]) -> bool:
+        if not all([k in data.keys() for k in self.ATTRS]):
+            return False
+        for k,v in data.items():
+            self._set_value(k,v)
+        return True
+
+def build_settings(data : Dict[str,Any]) -> Settings:
+    builder = SettingsBuilder()
+    builder.register_setting_type("custom", lambda data : CustomSettings(data))
+    _, settings = builder.create_settings("custom",data)
+    return settings
 
 def build_valid_conversation_from_directory() -> Conversation:
-    settings_builder = SettingsBuilder()
     data = {
-        "sample_attribute_1" : None,
-        "sample_attribute_2" : None}
-    _,settings = settings_builder.create_settings(data)
+        "attr_1" : 1,
+        "attr_2" : 2}
+    settings = build_settings(data)
     builder = ConversationBuilder(IO())
     builder.set_conversation_source_path(CONVERSATION_DIR_PATH)
     builder.set_conversation_name("conversation_dir")
     builder.set_result_directory_path(TMP_DIR_PATH)
     builder.set_temporary_directory_path(TMP_DIR_PATH)
     builder.set_number_of_speakers(2)
+    builder.set_transcriber_name("NAME")
     builder.set_conversation_settings(settings)
     builder.build_conversation()
     return builder.get_conversation()
 
 def build_valid_conversation_from_file() -> Conversation:
-    settings_builder = SettingsBuilder()
     data = {
-        "sample_attribute_1" : None,
-        "sample_attribute_2" : None}
-    _,settings = settings_builder.create_settings(data)
+        "attr_1" : 1,
+        "attr_2" : 2}
+    settings = build_settings(data)
     builder = ConversationBuilder(IO())
     builder.set_conversation_source_path(WAV_FILE_PATH)
     builder.set_conversation_name("conversation_file")
     builder.set_result_directory_path(TMP_DIR_PATH)
     builder.set_temporary_directory_path(TMP_DIR_PATH)
     builder.set_number_of_speakers(2)
+    builder.set_transcriber_name("NAME")
     builder.set_conversation_settings(settings)
     builder.build_conversation()
     return builder.get_conversation()
@@ -146,6 +175,16 @@ def test_conversation_get_transcription_time() -> None:
     conversation_file = build_valid_conversation_from_file()
     assert type(conversation_dir.get_transcription_time()) == str and \
         type(conversation_dir.get_transcription_time()) == str
+
+def test_conversation_get_transcriber_name() -> None:
+    """
+    Tests:
+        1. Ensure that the transcriber name is valid.
+    """
+    conversation_dir = build_valid_conversation_from_directory()
+    conversation_file = build_valid_conversation_from_file()
+    assert conversation_dir.get_transcriber_name() == "NAME"
+    assert conversation_file.get_transcriber_name() == "NAME"
 
 def test_conversation_number_of_source_files() -> None:
     """

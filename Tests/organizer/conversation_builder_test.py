@@ -1,13 +1,45 @@
-
+# Standard library imports
+from typing import Dict, Any
 # Local imports
 from Src.Components.io import IO
-from Src.Components.organizer import ConversationBuilder, Settings, SettingsBuilder
+from Src.Components.organizer import ConversationBuilder, Settings, \
+                        SettingsBuilder, Conversation
 
 ############################### GLOBALS #####################################
 WAV_FILE_PATH = "TestData/media/test2a.wav"
 RESULT_DIR_PATH = "TestData"
 TMP_DIR_PATH = "TestData/workspace"
 CONVERSATION_DIR_PATH = "TestData/media/conversation"
+
+############################### SETUP #######################################
+
+class CustomSettings(Settings):
+
+    ATTRS = ("attr_1","attr_2")
+
+    def __init__(self, data : Dict[str,Any]) -> None:
+        super().__init__(attrs=self.ATTRS)
+        self._parse_data(data)
+
+    def get_attr_1(self) -> Any:
+        return self.get("attr_1")[1]
+
+    def get_attr_2(self) -> Any:
+        return self.get("attr_2")[1]
+
+    def _parse_data(self, data : Dict[str,Any]) -> bool:
+        if not all([k in data.keys() for k in self.ATTRS]):
+            return False
+        for k,v in data.items():
+            self._set_value(k,v)
+        return True
+
+def build_settings(data : Dict[str,Any]) -> Settings:
+    builder = SettingsBuilder()
+    builder.register_setting_type("custom", lambda data : CustomSettings(data))
+    _, settings = builder.create_settings("custom",data)
+    return settings
+
 ########################## TEST DEFINITIONS #################################
 
 def test_builder_set_conversation_source_path_valid() -> None:
@@ -107,6 +139,26 @@ def test_builder_set_temporary_directory_path_invalid() -> None:
     assert not builder.set_temporary_directory_path(WAV_FILE_PATH) and \
         not builder.set_temporary_directory_path("invalid/")
 
+def test_builder_set_conversation_name() -> None:
+    """
+    Tests the set_conversation_name method in ConversationBuilder
+
+    Tests:
+        1. Set a name and check if it can be obtained in the conversation.
+    """
+    builder = ConversationBuilder(IO())
+    assert builder.set_conversation_name("conversation_name")
+
+def test_builder_set_transcriber_name() -> None:
+    """
+    Tests the set_transcriber_name method in ConversationBuilder
+
+    Tests:
+        1. Set a name and check if it can be obtained in the conversation.
+    """
+    builder = ConversationBuilder(IO())
+    assert builder.set_transcriber_name("conversation_name")
+
 def test_builder_set_number_of_speakers_valid() -> None:
     """
     Tests the set_number_of_speakers method in ConversationBuilder
@@ -147,9 +199,10 @@ def test_builder_set_conversation_settings_valid() -> None:
         (bool): True if all tests pass. False otherwise.
     """
     data = {
-        "sample_attribute_1" : None,
-        "sample_attribute_2" : None}
-    settings = Settings(data)
+        "attr_1" : 1,
+        "attr_2" : 2
+    }
+    settings = build_settings(data)
     builder = ConversationBuilder(IO())
     assert builder.set_conversation_settings(settings)
 
@@ -164,8 +217,8 @@ def test_builder_set_conversation_settings_invalid() -> None:
         (bool): True if all tests pass. False otherwise.
     """
     data = {
-        "sample_attribute_1" : None}
-    settings = Settings(data)
+        "attr_1" : None}
+    settings = Settings(data.keys())
     builder = ConversationBuilder(IO())
     assert not builder.set_conversation_settings(settings)
 
@@ -179,17 +232,17 @@ def test_builder_build_conversation_valid() -> None:
     Returns:
         (bool): True if all tests pass. False otherwise.
     """
-    settings_builder = SettingsBuilder()
     data = {
-        "sample_attribute_1" : None,
-        "sample_attribute_2" : None}
-    _,settings = settings_builder.create_settings(data)
+        "attr_1" : 1,
+        "attr_2" : 2}
+    settings = build_settings(data)
     builder = ConversationBuilder(IO())
     builder.set_conversation_source_path(CONVERSATION_DIR_PATH)
     builder.set_conversation_name("conversation_1")
     builder.set_result_directory_path(TMP_DIR_PATH)
     builder.set_temporary_directory_path(TMP_DIR_PATH)
     builder.set_number_of_speakers(2)
+    builder.set_transcriber_name("NAME")
     builder.set_conversation_settings(settings)
     assert builder.build_conversation()
 
@@ -206,30 +259,30 @@ def test_builder_build_conversation_invalid() -> None:
     Returns:
         (bool): True if all tests pass. False otherwise.
     """
-    settings_builder = SettingsBuilder()
     data = {
-        "sample_attribute_1" : None,
-        "sample_attribute_2" : None}
-    _,settings = settings_builder.create_settings(data)
+        "attr_1" : 1,
+        "attr_2" : 2}
+    settings = build_settings(data)
     builder = ConversationBuilder(IO())
-    assert not builder.build_conversation() and \
-        builder.get_conversation() == None and \
-        builder.set_conversation_source_path(CONVERSATION_DIR_PATH) and \
-        builder.set_conversation_name("only some attributes set") and \
-        not builder.build_conversation() and \
-        builder.get_conversation() == None and \
-        builder.clear_conversation_configurations() and \
-        builder.set_conversation_source_path(CONVERSATION_DIR_PATH) and \
-        builder.set_conversation_name("conversation_1") and \
-        builder.set_result_directory_path(TMP_DIR_PATH) and \
-        builder.set_temporary_directory_path(TMP_DIR_PATH) and \
-        builder.set_number_of_speakers(2) and \
-        builder.set_conversation_settings(settings) and \
-        builder.build_conversation() and \
-        builder.get_conversation() != None and \
-        builder.clear_conversation_configurations() and \
-        not builder.build_conversation() and \
-        builder.get_conversation() == None
+    assert not builder.build_conversation()
+    assert builder.get_conversation() == None
+    assert builder.set_conversation_source_path(CONVERSATION_DIR_PATH)
+    assert builder.set_conversation_name("only some attributes set")
+    assert not builder.build_conversation()
+    assert builder.get_conversation() == None
+    assert builder.clear_conversation_configurations()
+    assert builder.set_conversation_source_path(CONVERSATION_DIR_PATH)
+    assert builder.set_conversation_name("conversation_1")
+    assert builder.set_result_directory_path(TMP_DIR_PATH)
+    assert builder.set_temporary_directory_path(TMP_DIR_PATH)
+    assert builder.set_number_of_speakers(2)
+    assert builder.set_transcriber_name("NAME")
+    assert builder.set_conversation_settings(settings)
+    assert builder.build_conversation()
+    assert builder.get_conversation() != None
+    assert builder.clear_conversation_configurations()
+    assert not builder.build_conversation()
+    assert builder.get_conversation() == None
 
 def test_builder_clear_conversation() -> None:
     """
@@ -243,11 +296,10 @@ def test_builder_clear_conversation() -> None:
     Returns:
         (bool): True if all tests pass. False otherwise.
     """
-    settings_builder = SettingsBuilder()
     data = {
-        "sample_attribute_1" : None,
-        "sample_attribute_2" : None}
-    _,settings = settings_builder.create_settings(data)
+        "attr_1" : 1,
+        "attr_2" : 2}
+    settings = build_settings(data)
     builder = ConversationBuilder(IO())
     builder.set_conversation_source_path(CONVERSATION_DIR_PATH)
     builder.set_conversation_name("conversation_1")

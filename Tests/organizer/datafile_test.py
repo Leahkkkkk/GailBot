@@ -22,7 +22,8 @@ def test_create_data_file_valid() -> None:
         "extension" : "wav",
         "file_type" : DataFileTypes.audio,
         "path" : "test_path",
-        "size_bytes": 0}
+        "size_bytes": 0,
+        "utterances" : list()}
     data_file = DataFile(data)
     assert data_file.is_configured()
 
@@ -76,7 +77,8 @@ def test_create_data_file_invalid_bad_file_type() -> None:
         "extension" : "wav",
         "file_type" : "blah",
         "path" : "test_path",
-        "size_bytes": 0}
+        "size_bytes": 0,
+        "utterances" : list()}
     data_file = DataFile(data)
     assert not data_file.is_configured()
 
@@ -147,7 +149,8 @@ def test_data_file_get_valid() -> None:
         "extension" : "wav",
         "file_type" : DataFileTypes.audio,
         "path" : "test_path",
-        "size_bytes": 0}
+        "size_bytes": 0,
+        "utterances" : list()}
     data_file = DataFile(data)
     assert data_file.get(DataFileAttributes.name)[1] == "test_name" and \
         data_file.get(DataFileAttributes.extension)[1] == "wav" and \
@@ -170,7 +173,8 @@ def test_data_file_get_invalid() -> None:
         "extension" : "wav",
         "file_type" : DataFileTypes.audio,
         "path" : "test_path",
-        "size_bytes": 0}
+        "size_bytes": 0,
+        "utterances" : list()}
     data_file = DataFile(data)
     assert not data_file.get("invalid")[0]
 
@@ -189,7 +193,8 @@ def test_data_file_set_valid() -> None:
         "extension" : "wav",
         "file_type" : DataFileTypes.audio,
         "path" : "test_path",
-        "size_bytes": 0}
+        "size_bytes": 0,
+        "utterances" : list()}
     data_file = DataFile(data)
     assert data_file.set(DataFileAttributes.name,"new_name") and \
         data_file.get(DataFileAttributes.name)[1] == "new_name"
@@ -210,7 +215,8 @@ def test_data_file_set_invalid() -> None:
         "extension" : "wav",
         "file_type" : DataFileTypes.audio,
         "path" : "test_path",
-        "size_bytes": 0}
+        "size_bytes": 0,
+        "utterances" : list()}
     data_file = DataFile(data)
     assert not data_file.set("invalid", None) and \
         not data_file.set(DataFileAttributes.file_type,"audio")
@@ -230,7 +236,8 @@ def test_data_file_set_invalid_bad_key() -> None:
         "extension" : "wav",
         "file_type" : DataFileTypes.audio,
         "path" : "test_path",
-        "size_bytes": 0}
+        "size_bytes": 0,
+        "utterances" : list()}
     data_file = DataFile(data)
     assert not data_file.set("invalid", None)
 
@@ -249,7 +256,8 @@ def test_data_file_set_invalid_file_type() -> None:
         "extension" : "wav",
         "file_type" : DataFileTypes.audio,
         "path" : "test_path",
-        "size_bytes": 0}
+        "size_bytes": 0,
+        "utterances" : list()}
     data_file = DataFile(data)
     assert not data_file.set(DataFileAttributes.file_type,"audio") and \
         data_file.get(DataFileAttributes.file_type)[1] == DataFileTypes.audio

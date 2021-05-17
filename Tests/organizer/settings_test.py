@@ -1,5 +1,5 @@
 # Local imports
-from Src.Components.organizer import Settings, SettingsAttributes
+from Src.Components.organizer import Settings
 
 ############################### GLOBALS #####################################
 
@@ -17,9 +17,12 @@ def test_settings_create_valid_data() -> None:
         (bool): True if all tests pass. False otherwise
     """
     data = {
-        "sample_attribute_1" : None,
-        "sample_attribute_2" : None}
-    settings = Settings(data)
+        "sample_attribute_1" : 1,
+        "sample_attribute_2" : 2
+    }
+    settings = Settings(data.keys())
+    for k,v in data.items():
+        settings._set_value(k,v)
     assert settings.is_configured()
 
 def test_settings_create_invalid_data() -> None:
@@ -37,8 +40,9 @@ def test_settings_create_invalid_data() -> None:
         "sample_attribute_1" : None,
         "sample_attribute_2" : None,
         "bad_attribute_1" : None}
-    settings = Settings(data)
-    assert settings.is_configured()
+    settings = Settings(data.keys())
+    assert settings._set_value("sample_attribute_1",1)
+    assert not settings.is_configured()
 
 def test_settings_create_invalid_data_missing_keys() -> None:
     """
@@ -53,7 +57,7 @@ def test_settings_create_invalid_data_missing_keys() -> None:
     """
     data = {
         "sample_attribute_1" : None}
-    settings = Settings(data)
+    settings = Settings(data.keys())
     assert not settings.is_configured()
 
 def test_settings_create_invalid_data_misnamed_keys() -> None:
@@ -70,25 +74,26 @@ def test_settings_create_invalid_data_misnamed_keys() -> None:
     data = {
         "sample_attribute_1" : None,
         "sample_attribute" : None}
-    settings = Settings(data)
+    settings = Settings(data.keys())
+    assert not settings._set_value("sample_attribute_2", 2)
     assert not settings.is_configured()
 
-def test_settings_set_attribute_manually() -> None:
-    """
-    Tests the set method for settings.
+# def test_settings_set_attribute_manually() -> None:
+#     """
+#     Tests the set method for settings.
 
-    Tests:
-        1. Attempt to set a settings attribute, which should not be possible.
+#     Tests:
+#         1. Attempt to set a settings attribute, which should not be possible.
 
-    Returns:
-        (bool): True if all tests pass. False otherwise.
-    """
-    data = {
-        "sample_attribute_1" : None,
-        "sample_attribute_2" : None}
-    settings = Settings(data)
-    assert not settings.set(SettingsAttributes,None) and \
-          not settings.set("invalid", "1")
+#     Returns:
+#         (bool): True if all tests pass. False otherwise.
+#     """
+#     data = {
+#         "sample_attribute_1" : None,
+#         "sample_attribute_2" : None}
+#     settings = Settings(data)
+#     assert not settings.set(SettingsAttributes,None) and \
+#           not settings.set("invalid", "1")
 
 def test_settings_get_valid() -> None:
     """
@@ -103,12 +108,14 @@ def test_settings_get_valid() -> None:
     data = {
         "sample_attribute_1" : "1",
         "sample_attribute_2" : "2"}
-    settings = Settings(data)
-    assert settings.is_configured() and \
-        settings.get(SettingsAttributes.sample_attribute_1)[0] and \
-        settings.get(SettingsAttributes.sample_attribute_1)[1] == "1" and \
-        settings.get(SettingsAttributes.sample_attribute_2)[0] and \
-        settings.get(SettingsAttributes.sample_attribute_2)[1] == "2"
+    settings = Settings(data.keys())
+    for k,v in data.items():
+        settings._set_value(k,v)
+    assert settings.is_configured()
+    assert settings.get("sample_attribute_1")[0]
+    assert settings.get("sample_attribute_1")[1] == "1"
+    assert settings.get("sample_attribute_2")[0]
+    assert settings.get("sample_attribute_2")[1] == "2"
 
 def test_settings_get_invalid() -> None:
     """
@@ -123,6 +130,8 @@ def test_settings_get_invalid() -> None:
     data = {
         "sample_attribute_1" : "1",
         "sample_attribute_2" : "2"}
-    settings = Settings(data)
-    assert settings.is_configured() and \
-        not settings.get("invalid")[0]
+    settings = Settings(data.keys())
+    for k,v in data.items():
+        settings._set_value(k,v)
+    assert settings.is_configured()
+    assert not settings.get("invalid")[0]
