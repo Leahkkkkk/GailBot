@@ -279,6 +279,23 @@ def test_io_names_of_files_bad_input() -> None:
     success2, names2 = io.path_of_files_in_directory(TEST_DIR_PATH, ["weird_extension"], False)
     assert not success1 and names1 == [] and success2 and names2 == []
 
+def test_io_get_supported_audio_formats() -> None:
+    """
+    Tests:
+        1. Check the correct formats are returned.
+    """
+    io = IO()
+    assert io.get_supported_audio_formats() == ("mp3", "mpeg","opus", "wav")
+
+def test_io_get_supported_video_formats() -> None:
+    """
+    Tests:
+        1. Check the correct formats are returned.
+    """
+    io = IO()
+    assert io.get_supported_video_formats() == \
+            ("mxf","mov","mp4","wmv","flv","avi","swf","m4v")
+
 def test_io_read_valid_json() -> None:
     """
     Tests IO class read of json file.

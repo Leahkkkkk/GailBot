@@ -121,6 +121,24 @@ class IO:
         return self.general.path_of_files_in_directory(
             path,extensions,check_subdirectories)
 
+    def get_supported_audio_formats(self) -> List[str]:
+        """
+        Obtain a list of supported audio formats.
+
+        Returns:
+            (List[str])
+        """
+        return self.audio.get_supported_input_formats()
+
+    def get_supported_video_formats(self) -> List[str]:
+        """
+        Obtain a list of suppoorted video formats.
+
+        Returns:
+            (List[str])
+        """
+        return self.video.get_supported_formats()
+
     #### Audio, video, and general manipulation methods
 
     def read(self, path : str) -> Tuple[bool,Any]:
