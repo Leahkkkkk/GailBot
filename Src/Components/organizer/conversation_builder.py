@@ -236,10 +236,9 @@ class ConversationBuilder:
                 self._initialize_data_file(source_path))
         # Get all the file paths in the directory and convert to data files.
         elif self.io.is_directory(source_path):
-            # TODO: Change this to look at all supported file formats.
-            # TODO: IO might need a function to expose supported formats.
+            supported_formats = self.io.get_supported_audio_formats()
             _, file_paths = self.io.path_of_files_in_directory(
-                source_path,["wav"],False)
+                source_path,supported_formats,False)
             for path in file_paths:
                 data_files.append(
                     self._initialize_data_file(path))
@@ -259,10 +258,13 @@ class ConversationBuilder:
             (DataFile): object representing the file at the given path.
         """
         if not self.io.is_file(source_file_path):
-            raise ExceptionInvalid
-        # TODO: IO needs is_audio_file or is_video_file methods
-        # TODO: Change this such that file_type is NOT hard-coded
-        file_type = DataFileTypes.audio
+            raise ExceptionInvalid()
+        if self.io.is_supported_audio_file(source_file_path):
+            file_type = DataFileTypes.audio
+        elif self.io.is_supported_video_file(source_file_path):
+            file_type = DataFileTypes.video
+        else:
+            raise ExceptionInvalid()
         data = {
             "name" : self.io.get_name(source_file_path),
             "extension" : self.io.get_file_extension(source_file_path)[1],
