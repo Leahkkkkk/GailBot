@@ -76,6 +76,30 @@ def test_io_is_file() -> None:
     io = IO()
     assert io.is_file(VALID_SAMPLE_TXT_FILE)
 
+def test_io_is_supported_audio_file() -> None:
+    """
+    Tests:
+        1. Check a valid audio file.
+        2. Check an invalid path.
+        3. Check a non-path
+    """
+    io = IO()
+    assert io.is_supported_audio_file(WAV_FILE_1_PATH)
+    assert not io.is_supported_audio_file(VIDEO_FILE_AVI_PATH)
+    assert not io.is_supported_audio_file("random")
+
+def test_io_is_supported_video_file() -> None:
+    """
+    Tests:
+        1. Check a valid audio file.
+        2. Check an invalid path.
+        3. Check a non-path
+    """
+    io = IO()
+    assert io.is_supported_video_file(VIDEO_FILE_AVI_PATH)
+    assert not io.is_supported_video_file(WAV_FILE_1_COPY_PATH)
+    assert not io.is_supported_video_file("random")
+
 def test_io_is_not_file() -> None:
     """
     Tests IO class is_file function

@@ -53,6 +53,30 @@ class IO:
         """
         return self.general.is_file(path)
 
+    def is_supported_audio_file(self, path : str) -> bool:
+        """
+        Determine if the given file is a supported audio file.
+
+        Args:
+            path (str)
+
+        Returns:
+            (bool): True if path is a supported audio file. False otherwise.
+        """
+        return self.audio.is_readable(path)
+
+    def is_supported_video_file(self, path : str) -> bool:
+        """
+        Determine if the given file is a supported video file.
+
+        Args:
+            path (str)
+
+        Returns:
+            (bool): True if path is a supported video file. False otherwise.
+        """
+        return self.video.is_readable(path)
+
     def number_of_files_in_directory(self, path : str, extensions : List[str],
             check_subdirectories : bool) -> Tuple[bool,int]:
         """
