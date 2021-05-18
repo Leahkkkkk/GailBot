@@ -1,4 +1,4 @@
-# Third party imports 
+# Third party imports
 from enum import Enum
 
 class SystemBBAttributes(Enum):

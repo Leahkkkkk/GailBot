@@ -1,11 +1,11 @@
-# Standard library imports 
-import subprocess 
+# Standard library imports
+import subprocess
 from copy import deepcopy
 from enum import Enum
 from typing import Tuple, Any, Dict, List
-# Local imports 
+# Local imports
 from ...utils.threads import ThreadPool
-# Third party imports 
+# Third party imports
 
 class ShellStatus(Enum):
     """
@@ -18,24 +18,24 @@ class ShellStatus(Enum):
 
 class Command:
     """
-    Stores all data associated with a command that can be run as a shell 
+    Stores all data associated with a command that can be run as a shell
     command.
     """
-    
+
     def __init__(self,command : str) -> None:
         """
         Args:
             command (str): Command to run on a shell.
-        
+
         Params:
             command (str): Command to run on a shell.
             status (ShellStatus): Current status of the command.
-            Params (Dict): Stores the params associated with the command and 
+            Params (Dict): Stores the params associated with the command and
                             can be passed to subprocess.call
         """
-        self.command = command 
+        self.command = command
         self.status = ShellStatus.ready
-        # Command flags 
+        # Command flags
         self.params = {
             "shell" : True,
             "stdout" : None,
@@ -47,11 +47,11 @@ class Command:
 
         Args:
             status (ShellStatus)
-        
+
         Returns:
             (bool): True if successfully set. False otherwise.
         """
-        self.status = status 
+        self.status = status
         return True
 
     def set_flags(self, stdout : Any, stdin : Any) -> bool:
@@ -61,15 +61,15 @@ class Command:
         Args:
             stdout (Any): Stream for command output
             stdin (Any): Stream for command input.
-        
-        Returns:    
+
+        Returns:
             (bool): True if successfully set. False otherwise.
         """
         self.params.update({
             "stdout" : stdout,
             "stdin" : stdin})
         return True
-    
+
     def get_status(self) -> ShellStatus:
         """
         Obtain the status the command
@@ -77,18 +77,18 @@ class Command:
         Returns:
             (ShellStatus)
         """
-        return self.status 
+        return self.status
 
     def get_flags(self) -> Dict:
         """
-        Returns the flags associated with this command. Can be passed to a 
-        subprocess.call 
+        Returns the flags associated with this command. Can be passed to a
+        subprocess.call
 
         Returns:
             (Dict)
         """
         return deepcopy(self.params)
-    
+
     def get_command(self) -> str:
         """
         Get the shell command associated with this Command
@@ -97,7 +97,7 @@ class Command:
             (str): shell command associated with this Command
         """
         return self.command
-        
+
 class ShellIO:
     """
     Responsible for running shell commands as sub-processes.
@@ -112,7 +112,7 @@ class ShellIO:
         """
         # Needs to maintain reference to running processes.
         self.commands = dict()
-        # Threads 
+        # Threads
         self.num_threads = 10
         self.thread_pool = ThreadPool(self.num_threads)
         self.thread_pool.spawn_threads()
@@ -126,13 +126,13 @@ class ShellIO:
 
         Args:
             identifier (str): Identifier for this command.
-            command (str): Shell command 
+            command (str): Shell command
             stdout (Any): Stream for command output
-            stdin (Any): Stream for command input 
+            stdin (Any): Stream for command input
         """
-        cmd = Command(command) 
+        cmd = Command(command)
         cmd.set_flags(stdout,stdin)
-        self.commands[identifier] = cmd 
+        self.commands[identifier] = cmd
         return True
 
     ################################ GETTERS ###############################
@@ -143,9 +143,9 @@ class ShellIO:
 
         Args:
             identifier (str)
-        
+
         Returns:
-            (Tuple[bool, ShellStatus]): True + status if identifier valid.      
+            (Tuple[bool, ShellStatus]): True + status if identifier valid.
                                         False + None if identifier invalid.
         """
         if not identifier in self.commands:
@@ -160,18 +160,18 @@ class ShellIO:
 
         Args:
             identifier (str)
-        
+
         Returns:
             (bool): True if command successfully starts running. False otherwise.
         """
         if not identifier in self.commands:
-            return False 
+            return False
         flags = self.commands[identifier].get_flags()
         command = self.commands[identifier].get_command()
         cmd = self.commands[identifier]
         self.thread_pool.add_task(
             self._run_command_check_call, [command,flags,[cmd]])
-        return True 
+        return True
 
     ############################### PRIVATE METHODS ########################
 
@@ -179,14 +179,14 @@ class ShellIO:
             closure : List[Command]) -> None:
         """
         Run the shell command while checking for exceptions.
-        Changes the state of Command object to running, runs the process, and 
-        changes the state to finished if successfull or error if an 
+        Changes the state of Command object to running, runs the process, and
+        changes the state to finished if successfull or error if an
         exception occurs.
 
         Args:
-            command (str): Shell command 
-            kwargs (Dict): Key-word args for subprocess.check_call 
-            closure (List[Command]): Contains the Command object associated 
+            command (str): Shell command
+            kwargs (Dict): Key-word args for subprocess.check_call
+            closure (List[Command]): Contains the Command object associated
                                     with this shell command.
         """
         try:

@@ -50,7 +50,7 @@ class WatsonEngine(Engine):
         # State parameters
         self.is_ready_for_transcription = False
 
-    ### Core
+    ################################### Core ##################################
     def configure(self, api_key : str, region : str, audio_path : str,
             base_model_name : str, language_customization_id : str = "",
             acoustic_customization_id : str = "") -> bool:
@@ -194,7 +194,18 @@ class WatsonEngine(Engine):
         """
         return self.core.get_supported_audio_formats()
 
-    ## Language model methods
+    def was_transcription_successful(self) -> bool:
+        """
+        Determine whether the transcription was successful.
+
+        Returns:
+            (bool): True if transcription was successful. False otherwise.
+        """
+        return self.callback_closure["callback_status"]["on_connected"] and \
+            self.callback_closure["callback_status"]["on_data"] and \
+            self.callback_closure["callback_status"]["on_close"]
+
+    ####################### Language model methods ###########################
     def get_base_model(self, model_name : str) -> Union[Dict[str,Any],None]:
         """
         Obtain information about the given base model.
@@ -456,7 +467,7 @@ class WatsonEngine(Engine):
         """
         return self.lm.delete_custom_grammar(customization_id, grammar_name)
 
-    ## Acoustic model methods
+    ########################## Acoustic model methods #########################
     def get_acoustic_models(self) -> Dict[str,str]:
         """
         Obtain a list of available acoustic models.

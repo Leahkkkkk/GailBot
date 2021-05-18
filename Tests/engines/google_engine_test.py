@@ -105,3 +105,15 @@ def test_google_engine_transcribe() -> None:
     #     transcript = utterance.get(UtteranceAttributes.transcript)[1]
     #     print("{}: {} {}_{}".format(label,transcript,start_time,end_time))
     # print(len(utterances))
+
+def test_google_engine_was_transcription_successful() -> None:
+    """
+    Tests:
+        1. Ensure that the transcription raises exception for now.
+    """
+    try:
+        engine = GoogleEngine(IO())
+        engine.was_transcription_successful()
+        assert False
+    except:
+        assert True

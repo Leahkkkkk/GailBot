@@ -76,6 +76,30 @@ def test_io_is_file() -> None:
     io = IO()
     assert io.is_file(VALID_SAMPLE_TXT_FILE)
 
+def test_io_is_supported_audio_file() -> None:
+    """
+    Tests:
+        1. Check a valid audio file.
+        2. Check an invalid path.
+        3. Check a non-path
+    """
+    io = IO()
+    assert io.is_supported_audio_file(WAV_FILE_1_PATH)
+    assert not io.is_supported_audio_file(VIDEO_FILE_AVI_PATH)
+    assert not io.is_supported_audio_file("random")
+
+def test_io_is_supported_video_file() -> None:
+    """
+    Tests:
+        1. Check a valid audio file.
+        2. Check an invalid path.
+        3. Check a non-path
+    """
+    io = IO()
+    assert io.is_supported_video_file(VIDEO_FILE_AVI_PATH)
+    assert not io.is_supported_video_file(WAV_FILE_1_COPY_PATH)
+    assert not io.is_supported_video_file("random")
+
 def test_io_is_not_file() -> None:
     """
     Tests IO class is_file function
@@ -254,6 +278,23 @@ def test_io_names_of_files_bad_input() -> None:
     success1, names1 = io.path_of_files_in_directory(KITTEN_JPG, ["*"], False)
     success2, names2 = io.path_of_files_in_directory(TEST_DIR_PATH, ["weird_extension"], False)
     assert not success1 and names1 == [] and success2 and names2 == []
+
+def test_io_get_supported_audio_formats() -> None:
+    """
+    Tests:
+        1. Check the correct formats are returned.
+    """
+    io = IO()
+    assert io.get_supported_audio_formats() == ("mp3", "mpeg","opus", "wav")
+
+def test_io_get_supported_video_formats() -> None:
+    """
+    Tests:
+        1. Check the correct formats are returned.
+    """
+    io = IO()
+    assert io.get_supported_video_formats() == \
+            ("mxf","mov","mp4","wmv","flv","avi","swf","m4v")
 
 def test_io_read_valid_json() -> None:
     """
@@ -1110,3 +1151,15 @@ def test_io_get_file_extension() -> None:
     io = IO()
     assert io.get_file_extension(WAV_FILE_1_PATH)[1] == "wav" and \
         not io.get_file_extension(TEST_EMPTY_DIR_PATH)[0]
+
+def test_io_get_parent_path() -> None:
+    """
+    Tests:
+        1. Obtain the parent path of a file.
+        2. Obtain the parent path of a directory.
+        3. Obtain parent path of a random string.
+    """
+    io = IO()
+    assert io.is_directory(io.get_parent_path(WAV_FILE_1_PATH))
+    assert io.is_directory(io.get_parent_path(TEST_DIR_PATH))
+    assert io.get_parent_path("random") == ""
