@@ -275,3 +275,78 @@ def test_conversation_get_source_file_types() -> None:
     conversation_file = build_valid_conversation_from_file()
     assert list(conversation_dir.get_source_file_types().values()) == ["audio","audio"] and \
         list(conversation_file.get_source_file_types().values()) == ["audio"]
+
+
+def test_conversation_set_utterances_valid() -> None:
+    """
+    Tests:
+        1. Set the utterances based on data file names.
+    """
+    conversation_dir = build_valid_conversation_from_directory()
+    utterance_map = dict()
+    for name in conversation_dir.get_source_file_names():
+        utterance_map[name] = [1]
+    assert conversation_dir.set_utterances(utterance_map)
+
+def test_conversation_set_utterances_invalid() -> None:
+    """
+    Tests:
+        1. Set the utterances based on non-data file names.
+    """
+    utterance_map = dict()
+    conversation_dir = build_valid_conversation_from_directory()
+    utterance_map["random"] = [1]
+    assert not conversation_dir.set_utterances(utterance_map)
+
+def test_conversation_get_utterances() -> None:
+    """
+    Tests:
+        1. Get utterances after they have been set and verify.
+    """
+    conversation_dir = build_valid_conversation_from_directory()
+    utterance_map = dict()
+    for name in conversation_dir.get_source_file_names():
+        utterance_map[name] = [1]
+    conversation_dir.set_utterances(utterance_map)
+    result_map = conversation_dir.get_utterances()
+    for utt in result_map.values():
+        assert utt == [1]
+
+def test_get_settings() -> None:
+    """
+    Tests:
+        1. Verify that the settings object set can be retrieved.
+    """
+    data = {
+        "attr_1" : 1,
+        "attr_2" : 2}
+    settings = build_settings(data)
+    builder = ConversationBuilder(IO())
+    builder.set_conversation_source_path(WAV_FILE_PATH)
+    builder.set_conversation_name("conversation_file")
+    builder.set_result_directory_path(TMP_DIR_PATH)
+    builder.set_temporary_directory_path(TMP_DIR_PATH)
+    builder.set_number_of_speakers(2)
+    builder.set_transcriber_name("NAME")
+    builder.set_conversation_settings(settings)
+    builder.build_conversation()
+    conv : Conversation = builder.get_conversation()
+    assert type(conv.get_settings()) == CustomSettings
+
+def test_conversation_set_transcription_status() -> None:
+    """
+    Tests:
+        1. Set the transcription.
+    """
+    conversation_dir = build_valid_conversation_from_directory()
+    assert conversation_dir.set_transcription_status("completed")
+
+def test_conversation_set_number_of_speakers() -> None:
+    """
+    Tests:
+        1. Set a valid number of speakers.
+        2 Set an invalid number of speakers.
+    """
+    conversation_dir = build_valid_conversation_from_directory()
+    assert conversation_dir.set_number_of_speakers(2)
+    assert not conversation_dir.set_number_of_speakers(0)

@@ -166,6 +166,20 @@ class Conversation:
                 data[name] = 'video'
         return data
 
+    def get_utterances(self) -> Dict[str,List[Utterance]]:
+        """
+        Get a mapping from the name of the data file to a list of utterances.
+
+        Returns:
+            utterance_map (Dict[str,List[Utterance]]):
+                Map from name of data file to a list of its utterances.
+        """
+        utterance_map = dict()
+        for data_file in self.data_files:
+            utterance_map[data_file.get(DataFileAttributes.name)[1]] = \
+                data_file.get(DataFileAttributes.utterances)[1]
+        return utterance_map
+
     ### Settings
 
     def get_settings(self) -> Settings:
@@ -212,16 +226,46 @@ class Conversation:
     ################################ SETTERS ################################
 
     def set_transcription_status(self, status : str) -> bool:
+        """
+        Set the status of the transcription
+
+        Args:
+            status (str)
+
+        Returns:
+            (bool): True if successfully set. False otherwise.
+        """
         return self.meta.set(MetaAttributes.transcription_status,status)
 
     def set_number_of_speakers(self, num_speakers : int) -> bool:
+        """
+        Set the number of speakers in the conversation.
+
+        Args:
+            num_speakers (int): Cannot be less than 1.
+
+        Returns:
+            (bool): True if successfully set. False otherwise.
+        """
+        if num_speakers < 1:
+            return False
         return self.meta.set(MetaAttributes.num_speakers,num_speakers)
 
     def set_utterances(self, utterance_map : Dict[str,List[Utterance]]) -> bool:
+        """
+        Set the utterances for every data file.
+
+        Args:
+            utterance_map (Dict[str,List[Utterance]]):
+                Map from name of data file to a list of its utterances.
+
+        Returns:
+            (bool): True if successfully set. False otherwise.
+        """
         file_names = self.get_source_file_names()
         if not all([name in file_names for name in utterance_map.keys()]):
             return False
         for data_file in self.data_files:
             data_file.set(DataFileAttributes.utterances,
-                utterance_map[data_file.get(DataFileAttributes.name)])
+                utterance_map[data_file.get(DataFileAttributes.name)[1]])
         return True
