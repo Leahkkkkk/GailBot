@@ -87,6 +87,32 @@ def test_watson_engine_get_supported_formats() -> None:
     formats = engine.get_supported_audio_formats()
     assert len(formats) > 0
 
+def test_watson_engine_was_transcription_successful_valid() -> None:
+    """
+    Tests:
+        1. Determine if the transcription was successful after transcribing.
+    """
+    engine = WatsonEngine(IO(), Network())
+    assert engine.configure(
+        api_key = API_KEY, region = REGION, audio_path = MP3_FILE_PATH,
+        base_model_name=BASE_LANG_MODEL)
+    engine.transcribe()
+    assert engine.was_transcription_successful()
+
+def test_watson_engine_was_transcription_successful_invalid() -> None:
+    """
+    Tests:
+        1. Check if transcription successful before configuration.
+        2. Check if successful after clearing configurations.
+    """
+    engine = WatsonEngine(IO(), Network())
+    assert not engine.was_transcription_successful()
+    assert engine.configure(
+        api_key = API_KEY, region = REGION, audio_path = MP3_FILE_PATH,
+        base_model_name=BASE_LANG_MODEL)
+    assert not engine.was_transcription_successful()
+
+
 def test_watson_engine_is_file_supported() -> None:
     """
     Tests:

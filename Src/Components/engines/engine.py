@@ -1,19 +1,19 @@
-# Standard library imports 
+# Standard library imports
 from abc import ABC,abstractmethod
 from typing import Any, Dict, List
-# Local imports 
+# Local imports
 from .utterance import Utterance
-from ..io import IO 
+from ..io import IO
 from ..network import Network
-# Third party imports 
+# Third party imports
 
 class Engine(ABC):
     """
-    Template for all speech to text engines. 
+    Template for all speech to text engines.
 
     Inherits:
         (ABC)
-    """ 
+    """
     @abstractmethod
     def __init__(self, io : IO, network : Network ) -> None:
         pass
@@ -21,14 +21,14 @@ class Engine(ABC):
     @abstractmethod
     def configure(self, *args, **kwargs) -> bool:
         """
-        Configure core attributes of the engine. 
+        Configure core attributes of the engine.
 
         Returns:
             (bool): True if successfully configured. False otherwise.
         """
-        pass 
+        pass
 
-    @abstractmethod 
+    @abstractmethod
     def get_configurations(self) -> Dict[str,Any]:
         """
         Obtain all core configurations of the engine/
@@ -36,7 +36,7 @@ class Engine(ABC):
         Returns:
             (Dict[str,Any]): Mapping from core configuration to the values.
         """
-        pass 
+        pass
 
     @abstractmethod
     def get_engine_name(self) -> str:
@@ -51,30 +51,40 @@ class Engine(ABC):
     @abstractmethod
     def get_supported_formats(self) -> List[str]:
         """
-        Obtain a list of audio file formats that are supported. 
+        Obtain a list of audio file formats that are supported.
 
         Returns:
             (List[str]): Supported audio file formats.
         """
-        pass 
+        pass
 
-    @abstractmethod 
+    @abstractmethod
     def is_file_supported(self, file_path : str) -> bool:
         """
         Determine if the given file is supported by the engine.
 
         Args:
             file_path (str)
-        
+
         Returns:
             (bool): True if file is supported. False otherwise.
         """
-        pass 
+        pass
 
     @abstractmethod
     def transcribe(self) -> List[Utterance]:
         """
         Transcribe the audio file that can be added through the configure method
+        """
+        pass
+
+    @abstractmethod
+    def was_transcription_successful(self) -> bool:
+        """
+        Determine whether the transcription was successful.
+
+        Returns:
+            (bool): True if transcription was successful. False otherwise.
         """
         pass
 
