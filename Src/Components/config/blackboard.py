@@ -1,26 +1,26 @@
-# Standard imports 
+# Standard imports
 from typing import Any, Dict
-# Local imports 
+# Local imports
 from .attributes import SystemBBAttributes
 from ...utils.models import IDictModel
-# Third party imports 
+# Third party imports
 
 class BlackBoard(IDictModel):
     """
     Generic BlackBoard class that must be inherited by all specific blackboard
-    classes 
+    classes
     """
     def __init__(self, blackboard_data : Any) -> None:
         """
         Loads the given data into the blackboard if it can be correctly parsed.
-        Every specific blackboard must have its function to parse the data 
+        Every specific blackboard must have its function to parse the data
 
         Args:
-            blackboard_data (Any): Data to be loaded into the blackboard 
+            blackboard_data (Any): Data to be loaded into the blackboard
                         Must be in the format expected by the blackboard.
         """
         super().__init__()
-        self.configured = False 
+        self.configured = False
 
     def is_configured(self) -> bool:
         """
@@ -29,9 +29,9 @@ class BlackBoard(IDictModel):
         Returns:
             (bool): True if the blackboard is configured. False otherwise.
         """
-        return self.configured 
+        return self.configured
 
-class SystemBB(BlackBoard):    
+class SystemBB(BlackBoard):
     """
     The system blackboard is responsible for storing core system attributes.
     """
@@ -39,8 +39,8 @@ class SystemBB(BlackBoard):
     def __init__(self, blackboard_data : Dict) -> None:
         """
         Args:
-            blackboard_data (Dict): 
-                Data to be loaded into the blackboard. Must be a dictionary 
+            blackboard_data (Dict):
+                Data to be loaded into the blackboard. Must be a dictionary
                 in the following format:
                 {
                     "Test_key" : [Value for test key]
@@ -51,7 +51,7 @@ class SystemBB(BlackBoard):
         self.items = dict()
         for attribute in SystemBBAttributes:
             self.items[attribute] = None
-        # Parse the blackboard data 
+        # Parse the blackboard data
         self.configured = self._parse_data(blackboard_data)
 
     ################################## PRIVATE METHODS #####################
@@ -62,14 +62,14 @@ class SystemBB(BlackBoard):
 
         Args:
             blackboard_data (Dict): Data to be parsed must be a dictionary
-        
+
         Returns:
             (bool): True if successfully parsed. False otherwise.
         """
         try:
             self.items[SystemBBAttributes.Test_key] = \
                  blackboard_data["Test_key"]
-            return True 
+            return True
         except:
-            return False  
+            return False
 
