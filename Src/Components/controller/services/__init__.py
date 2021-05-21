@@ -1,3 +1,3 @@
 from .config_service import ConfigService
-from .organizer_service import OrganizerService
-from .pipeline_service import TranscriptionPipelineService
+from .organizer_service import OrganizerService,SourceDetails, SettingDetails
+from .pipeline_service import TranscriptionPipelineService,TranscriptionSummary

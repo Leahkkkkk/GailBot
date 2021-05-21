@@ -2,8 +2,8 @@
 from typing import Dict, List
 from copy import deepcopy
 # Local imports
-from ...io import IO
-from ...config import Config, SystemBB
+from ....io import IO
+from ....config import Config, SystemBB
 # Third party imports
 
 class ConfigService:

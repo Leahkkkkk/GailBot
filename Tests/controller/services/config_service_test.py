@@ -1,6 +1,5 @@
 # Standard library imports
 # Local imports
-from os import sysconf
 from Src.Components.controller.services import ConfigService
 from Src.Components.config import SystemBB
 

@@ -2,6 +2,6 @@
 from dataclasses import dataclass
 
 @dataclass
-class Source:
+class SettingDetails:
     pass
 

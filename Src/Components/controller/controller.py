@@ -1,12 +1,9 @@
 # Standard library imports
 from typing import List, Dict, Any
 # Local imports
-from .source import Source
-from .summary import TranscriptionSummary
-from .source_details import SourceDetails
-from .services import ConfigService, OrganizerService, TranscriptionPipelineService
+from .services import ConfigService, OrganizerService, SourceDetails, \
+                TranscriptionPipelineService, TranscriptionSummary
 from ..organizer import Settings
-from ..config import SystemBB, SystemBBAttributes
 # Third party imports
 
 class GailBotController:
@@ -81,9 +78,6 @@ class GailBotController:
     ## Settings
 
     def get_supported_setting_types(self) -> List[str]:
-        pass
-
-    def is_setting_type_supported(self, settings_name : str) -> bool:
         pass
 
     ############################ PRIVATE METHODS #############################
