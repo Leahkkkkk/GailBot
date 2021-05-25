@@ -6,4 +6,5 @@ from ....organizer import Conversation
 @dataclass
 class Source:
     conversation : Conversation
+    settings_name : str
 

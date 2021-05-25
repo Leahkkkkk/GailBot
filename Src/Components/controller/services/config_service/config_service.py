@@ -53,7 +53,6 @@ class ConfigService:
     def get_supported_blackboard_types(self) -> List[str]:
         return list(self.config.get_blackboard_types())
 
-
     def get_system_blackboard(self) -> SystemBB:
         if self.is_fully_configured():
             return deepcopy(self.blackboards["system_blackboard"])

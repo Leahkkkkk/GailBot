@@ -1,7 +1,5 @@
 # Standard library imports
-from Src.Components.organizer import conversation
-from typing import List, Dict, Any, Tuple
-from copy import deepcopy
+from typing import List, Dict
 # Local imports
 from ....io import IO
 from ....organizer import Organizer,Conversation, Settings, Conversation
@@ -9,12 +7,14 @@ from .source import Source
 from .source_details import SourceDetails
 from .setting_details import SettingDetails
 from .settings import GailBotSettings
+from ..status import TranscriptionStatus
 # Third party imports
 
+# TODO: Make sure each method only works if configured!!!!
 class OrganizerService:
 
-    # TODO: Determine how to pass in the default settings blackboard.
     def __init__(self) -> None:
+        # Variables.
         self.workspace_dir_path = None
         self.conversation_workspace_dir_path = None
         # TODO: Change IO to be able to read custom extensions (gailbot) by specifying reader
@@ -54,6 +54,7 @@ class OrganizerService:
         is_created, conversation = self.organizer.create_conversation(
             source_path,source_name,1,transcriber_name,result_dir_path,
             self.conversation_workspace_dir_path,settings)
+        conversation.set_transcription_status(TranscriptionStatus.ready)
         if not is_created:
             return False
         self.sources[source_name] = Source(conversation)
@@ -101,6 +102,9 @@ class OrganizerService:
 
     ################################## GETTERS #############################
 
+    def is_fully_configured(self) -> bool:
+        return self._can_add_source()
+
     def is_setting(self, setting_name : str) -> bool:
         return setting_name in self.settings
 
@@ -110,11 +114,11 @@ class OrganizerService:
     def get_source_names(self) -> List[str]:
         return list(self.sources.keys())
 
-    def get_source_paths(self) -> List[str]:
-        paths = list()
-        for source in self.sources.values():
+    def get_source_paths(self) -> Dict[str,str]:
+        paths = dict()
+        for name, source in self.sources.items():
             conversation : Conversation = source.conversation
-            paths.append(conversation.get_source_path())
+            paths[name] = conversation.get_source_path()
         return paths
 
     def get_source_settings(self, source_name : str) -> Settings:
@@ -124,13 +128,19 @@ class OrganizerService:
         conversation : Conversation = source.conversation
         return conversation.get_settings()
 
-    def get_available_setting_details(self) -> SettingDetails:
+    def get_source_settings_name(self, source_name : str) -> str:
+        if not self.is_source(source_name):
+            return
+        source : Source = self.sources[source_name]
+        return source.settings_name
+
+    def get_available_setting_details(self) -> List[SettingDetails]:
         pass
 
     def get_available_setting_names(self) -> List[str]:
         return list(self.settings.keys())
 
-    def get_source_details(self) -> SourceDetails:
+    def get_source_details(self, source_name : str) -> SourceDetails:
         pass
 
     def get_all_sources_conversations(self) -> List[Conversation]:
@@ -161,6 +171,7 @@ class OrganizerService:
         self.workspace_dir_path = path
         return True
 
+    # TODO: Change to make sure directory is created if it does not exist.
     def set_conversation_workspace_path(self, path : str) -> bool:
         if not self.io.is_directory(path):
             return False
@@ -205,3 +216,5 @@ class OrganizerService:
     def _can_create_conversation(self) -> bool:
         return self.conversation_workspace_dir_path != None and \
             self.io.is_directory(self.conversation_workspace_dir_path)
+
+
