@@ -1,220 +1,298 @@
 # Standard library imports
+from Src.Components.organizer import settings
 from typing import List, Dict
+from copy import deepcopy
 # Local imports
 from ....io import IO
 from ....organizer import Organizer,Conversation, Settings, Conversation
+from ..status import TranscriptionStatus
+from ..fs_service import FileSystemService
 from .source import Source
 from .source_details import SourceDetails
 from .setting_details import SettingDetails
-from .settings import GailBotSettings
-from ..status import TranscriptionStatus
+from .settings import GailBotSettings, GBSettingAttrs
+from .manager import ObjectManager
+from .decorators import OrganizerDecorators
+
 # Third party imports
 
-# TODO: Make sure each method only works if configured!!!!
 class OrganizerService:
 
-    def __init__(self) -> None:
-        # Variables.
-        self.workspace_dir_path = None
-        self.conversation_workspace_dir_path = None
-        # TODO: Change IO to be able to read custom extensions (gailbot) by specifying reader
-        self.settings_file_extension = "json"
+    def __init__(self, fs_service : FileSystemService) -> None:
+        ## Variables
+        self.default_num_speakers = 1
         self.default_settings_type = "GailBotSettings"
-        self.default_settings_name = "default"
         self.default_settings_creator = lambda data : GailBotSettings(data)
-        self.is_default_setting_loaded = False
-        self.sources = dict() # source_name (str) to source (Source)
-        self.settings = dict() # settings_name (str) to settings (Settings)
+        ## Objects
+        self.fs_service = fs_service
         self.io = IO()
         self.organizer = Organizer(IO())
         self.organizer.register_settings_type(
             self.default_settings_type, self.default_settings_creator)
+        self.sources = ObjectManager()
+        self.settings_profiles = ObjectManager()
+        ## Initialize settings profiles
+        profiles = self.fs_service.load_all_settings_profiles_data_from_disk()
+        for name,profile in profiles.items():
+            self.settings_profiles.add_object(name,profile)
 
-    ################################## MODIFIERS #############################
 
-    # TODO: Work on organizer buildConversation to ensure invalid source is checked.
+    ############################## MODIFIERS #################################
+
+    ### Source
+
+    @OrganizerDecorators.check_configured
     def add_source(self, source_name : str, source_path : str,
             result_dir_path : str, transcriber_name : str,
-            settings_name : str = "default") -> bool:
-        # Check if the source can be added
-        if not self._can_add_source() or \
-                self.is_source(source_name) or \
-                not self.is_setting(settings_name):
+            settings_profile_name : str = "default") -> bool:
+        if not self._can_add_source(
+                source_name, source_path,result_dir_path,settings_profile_name):
             return False
-        # Check if the conversation information is valid
-        if not (self.io.is_directory(source_path) or \
-                    self.io.is_file(source_path)) or \
-                not (self.io.is_directory(result_dir_path) or
-                    self.io.create_directory(result_dir_path)):
-            return False
-        # Create settings
-        settings = self.settings[settings_name]
-        # Create conversation
-        # TODO: Change hard-coding of the number of speakers
+
+        settings = self.settings_profiles.get_object(settings_profile_name,True)
+        ws_location = self.fs_service.get_source_workspace_location_on_disk(
+            source_name)
         is_created, conversation = self.organizer.create_conversation(
-            source_path,source_name,1,transcriber_name,result_dir_path,
-            self.conversation_workspace_dir_path,settings)
+            source_path,source_name,self.default_num_speakers,
+            transcriber_name,result_dir_path,ws_location,settings)
         conversation.set_transcription_status(TranscriptionStatus.ready)
+
+        source = self._create_source(source_name, conversation,
+                        settings_profile_name)
         if not is_created:
+            self._cleanup_source(source_name)
             return False
-        self.sources[source_name] = Source(conversation)
         return True
 
+
+    @OrganizerDecorators.check_configured
     def remove_source(self, source_name : str) -> bool:
-        if self.is_source(source_name):
-            del self.sources[source_name]
-            return True
-        return False
+        return self.sources.remove_object(source_name)
 
+
+    @OrganizerDecorators.check_configured
     def clear_sources(self) -> bool:
-        self.sources.clear()
+        return self.sources.clear_objects()
+
+
+    ### Settings profiles.
+
+    @OrganizerDecorators.check_configured
+    def apply_settings_profile_to_source(self, source_name : str,
+            settings_profile_name : str) -> bool:
+        if not self.sources.is_object(source_name) or \
+                not self.settings_profiles.is_object(settings_profile_name):
+            return False
+
+        settings = self.settings_profiles.get(settings_profile_name,True)
+        source = self.settings_profiles.get(source_name)
+        source.settings_profile_name = settings_profile_name
+        source.conversation = self.organizer.apply_settings_to_conversation(
+            source.conversation,settings)
         return True
 
-    def save_source_settings(self, source_name : str, setting_name : str) \
-            -> bool:
-        if not self.is_source(source_name):
+    @OrganizerDecorators.check_configured
+    def save_custom_settings_profile(self, settings_profile_name : str) -> bool:
+        if not self.settings_profiles.is_object(settings_profile_name):
             return False
-        # Cannot resave a loaded setting.
-        if self.is_setting(setting_name):
-            return False
-        save_path = "{}/{}.{}".format(
-            self.workspace_dir_path,setting_name,self.settings_file_extension)
-        # Cannot save if already saved
-        if self.io.is_file(save_path):
-            return False
-        # Save the settings to the given file
-        # Get the settings of the specified source.
-        settings = self.get_source_settings(source_name)
-        settings.save_to_file(lambda data : self.io.write(save_path,data,True))
-        return self.load_setting_from_path(setting_name,save_path)
+        settings = self.settings_profiles.get(settings_profile_name,True)
+        return self.fs_service.save_settings_profile_to_disk(
+                settings_profile_name,settings)
 
-    def delete_setting(self, setting_name : str) -> bool:
-        if not self.is_setting(setting_name):
+    @OrganizerDecorators.check_configured
+    def delete_custom_settings_profile(self, settings_profile_name : str) -> bool:
+        if not self.settings_profiles.is_object(settings_profile_name):
             return False
-        save_path = "{}/{}.{}".format(
-            self.workspace_dir_path,setting_name,self.settings_file_extension)
-        if not self.io.is_file(save_path):
+        return self.settings_profiles.remove_object(settings_profile_name) and \
+            self.fs_service.remove_settings_profile_from_disk(
+                settings_profile_name)
+
+    @OrganizerDecorators.check_configured
+    def save_source_settings_profile(self, source_name : str,
+           new_settings_profile_name : str) -> bool:
+        if not self.sources.is_object(source_name) or \
+                self.settings_profiles.is_object(new_settings_profile_name) or \
+                self.fs_service.is_saved_settings_profile(
+                    new_settings_profile_name):
             return False
-        if not self.io.delete(save_path):
-            return False
-        del self.settings[setting_name]
-        return True
+        source = self.sources.get_object(source_name)
+        conversation = source.conversation
+        settings : GailBotSettings = conversation.get_settings()
+        return self.settings_profiles.add_object(
+                new_settings_profile_name,settings) and \
+            self.save_custom_settings_profile(new_settings_profile_name) and \
+            self.apply_settings_profile_to_source(
+                source_name, new_settings_profile_name)
 
-    ################################## GETTERS #############################
+    ############################## GETTERS ###################################
 
-    def is_fully_configured(self) -> bool:
-        return self._can_add_source()
+    def is_configured(self) -> bool:
+        return self.fs_service.is_configured()
 
-    def is_setting(self, setting_name : str) -> bool:
-        return setting_name in self.settings
+    ## Source
 
+    @OrganizerDecorators.check_configured
     def is_source(self, source_name : str) -> bool:
-        return source_name in self.sources
+        return self.sources.is_object(source_name)
 
+    @OrganizerDecorators.check_configured
     def get_source_names(self) -> List[str]:
-        return list(self.sources.keys())
+        return self.sources.get_object_names()
 
+    @OrganizerDecorators.check_configured
     def get_source_paths(self) -> Dict[str,str]:
         paths = dict()
-        for name, source in self.sources.items():
-            conversation : Conversation = source.conversation
-            paths[name] = conversation.get_source_path()
+        source_names = self.get_source_names()
+        for source_name in source_names:
+            paths[source_name] = self.sources.get_object(
+                source_name).conversation.get_source_type()
         return paths
 
-    def get_source_settings(self, source_name : str) -> Settings:
-        if not self.is_source(source_name):
-            return
-        source = self.sources[source_name]
-        conversation : Conversation = source.conversation
-        return conversation.get_settings()
-
-    def get_source_settings_name(self, source_name : str) -> str:
-        if not self.is_source(source_name):
-            return
-        source : Source = self.sources[source_name]
-        return source.settings_name
-
-    def get_available_setting_details(self) -> List[SettingDetails]:
-        pass
-
-    def get_available_setting_names(self) -> List[str]:
-        return list(self.settings.keys())
-
-    def get_source_details(self, source_name : str) -> SourceDetails:
-        pass
-
-    def get_all_sources_conversations(self) -> List[Conversation]:
-        conversations = list()
-        for source in self.sources.values():
-            conversations.append(source.conversation)
-        return conversations
-
+    @OrganizerDecorators.check_configured
     def get_source_conversation(self, source_name : str) -> Conversation:
-        if not self.is_source(source_name):
+        if not self.sources.is_object(source_name):
             return
-        source = self.sources[source_name]
-        return source.conversation
+        return self.sources.get_object(source_name).conversation
 
-    ################################## SETTERS #############################
+    @OrganizerDecorators.check_configured
+    def get_filtered_source_conversations(self, source_names : List[str]) \
+            -> Dict[str,Conversation]:
+        return self.sources.get_filtered_objects(
+            lambda name, obj : name in source_names)
 
-    def set_workspace_path(self, path : str) -> bool:
-        if not self.io.is_directory(path):
-            return False
-        self.settings.clear()
-        # Load all settings from the workspace path
-        if not self._load_all_settings_from_path(path):
-            return False
-        if not self.is_setting(self.default_settings_name):
-            self.settings.clear()
-            return False
-        self.is_default_setting_loaded = True
-        self.workspace_dir_path = path
-        return True
+    @OrganizerDecorators.check_configured
+    def get_all_source_conversations(self) -> Dict[str,Conversation]:
+        return self.sources.get_all_objects()
 
-    # TODO: Change to make sure directory is created if it does not exist.
-    def set_conversation_workspace_path(self, path : str) -> bool:
-        if not self.io.is_directory(path):
-            return False
-        self.conversation_workspace_dir_path = path
-        return True
+    @OrganizerDecorators.check_configured
+    def get_source_details(self, source_name : str) -> SourceDetails:
+        return self._initialize_source_details(source_name)
 
-    # TODO: Eventually change to have multiple types of settings
-    def load_setting_from_path(self, setting_name : str, path : str) -> bool:
-        # Cannot reload settings
-        if self.is_setting(setting_name):
-            return False
-        if not self.io.is_file(path) or \
-                self.io.get_file_extension(path)[1] !=\
-                     self.settings_file_extension:
-            return False
-        data = self.io.read(path)[1]
-        created, settings = self.organizer.create_settings(
-            self.default_settings_type,data)
-        if not created or not settings.is_configured():
-            return False
-        self.settings[setting_name] = settings
-        return True
+    @OrganizerDecorators.check_configured
+    def get_filtered_source_details(self, source_names : List[str])\
+            -> Dict[str,SourceDetails]:
+        details = dict()
+        for name in source_names:
+            details[name] = self.get_source_details(name)
+        return details
 
-    ################################ PRIVATE METHODS ########################
+    @OrganizerDecorators.check_configured
+    def get_all_source_details(self) -> Dict[str,SourceDetails]:
+        return self.get_filtered_source_details(self.sources.get_object_names())
 
-    def _load_all_settings_from_path(self, path : str) -> bool:
-        if not self.io.is_directory(path):
-            return False
-        settings_paths = self.io.path_of_files_in_directory(
-            path,[self.settings_file_extension],False)[1]
-        for setting_path in settings_paths:
-            self.load_setting_from_path(
-                self.io.get_name(setting_path),setting_path)
-        return True
+    ### Settings profiles
 
-    def _can_add_source(self) -> bool:
-        return self.workspace_dir_path != None and \
-            self.io.is_directory(self.workspace_dir_path) and \
-            self._can_create_conversation() and \
-            self.is_default_setting_loaded
+    @OrganizerDecorators.check_configured
+    def is_settings_profile(self, settings_profile_name : str) -> bool:
+        return self.settings_profiles.is_object(settings_profile_name)
 
-    def _can_create_conversation(self) -> bool:
-        return self.conversation_workspace_dir_path != None and \
-            self.io.is_directory(self.conversation_workspace_dir_path)
+    @OrganizerDecorators.check_configured
+    def get_source_settings_profile(self, source_name : str) -> Settings:
+        if not self.sources.is_object(source_name):
+             return
+        return self.sources.get_object(source_name).conversation.get_settings()
 
+    @OrganizerDecorators.check_configured
+    def get_source_settings_profile_name(self, source_name : str) -> str:
+        if not self.sources.is_object(source_name):
+             return
+        return self.sources.get_object(source_name).settings_profile_name
+
+    @OrganizerDecorators.check_configured
+    def get_settings_profile_names(self) -> List[str]:
+        return self.settings_profiles.get_object_names()
+
+    @OrganizerDecorators.check_configured
+    def get_source_settings_profile_details(self, source_name : str) \
+            -> SettingDetails:
+        if not self.sources.is_object(source_name):
+             return
+        settings_profile_name = self.get_source_settings_profile_name(
+            source_name)
+        return self.get_source_settings_profile_details(settings_profile_name)
+
+    @OrganizerDecorators.check_configured
+    def get_settings_profile_details(self, settings_profile_name : str) \
+            -> SettingDetails:
+        if not self.settings_profiles.is_object(settings_profile_name):
+            return
+        if not self.is_configured() or \
+                not self.is_settings_profile(settings_profile_name):
+            return
+        return self._initialize_settings_details(
+            settings_profile_name,
+            self.fs_service.is_saved_settings_profile(settings_profile_name),
+            self.fs_service.get_saved_settings_profile_location_on_disk(
+                settings_profile_name),
+             self.get_source_names_using_settings_profile(
+            settings_profile_name))
+
+    @OrganizerDecorators.check_configured
+    def get_source_names_using_settings_profile(self,
+            settings_profile_name : str) -> List[str]:
+        return list(self.sources.get_filtered_objects(
+            lambda name , obj : obj.settings_profile_name \
+                == settings_profile_name).keys())
+
+    @OrganizerDecorators.check_configured
+    def get_all_settings_profiles_details(self) -> Dict[str,SettingDetails]:
+        details = dict()
+        names = self.settings_profiles.get_object_names()
+        for name in names:
+            details[name] = self.get_settings_profile_details(name)
+        return details
+
+    ########################### PRIVATE METHODS ##############################
+
+    def _can_add_source(self, source_name : str, source_path : str,
+            result_dir_path : str, settings_profile_name : str) -> bool:
+        return not self.is_source(source_name) and \
+            (self.io.is_directory(source_path) or\
+                 self.io.is_file(source_path)) and \
+            (self.io.is_directory(result_dir_path) or \
+                self.io.create_directory(result_dir_path)) and \
+            self.is_settings_profile(settings_profile_name)
+
+    ### Source
+
+    def _create_source(self,source_name : str, conversation : Conversation,
+            settings_profile_name : str) -> Source:
+        source = Source(conversation,source_name,settings_profile_name)
+        self.sources.add_object(source_name,source,False)
+        self.fs_service.create_source_workspace_on_disk(source_name)
+
+    def _cleanup_source(self, source_name : str) -> None:
+        self.sources.remove_object(source_name)
+        self.fs_service.cleanup_source_workspace_from_disk(source_name)
+
+    ### SettingsDetails
+
+    def _initialize_settings_details(self, settings_profile_name : str,
+            is_saved : bool, save_location : str, used_by_sources : List[str])\
+                 -> SettingDetails:
+        attrs = [e.value for e in GBSettingAttrs]
+        settings : GailBotSettings = self.settings_profiles.get_object(
+            settings_profile_name,True)
+        return SettingDetails(
+            settings_profile_name,is_saved,save_location,used_by_sources,
+            self.default_settings_type,attrs,settings.get_all_values())
+
+    ### SourceDetails
+
+    def _initialize_source_details(self, source_name : str ) -> SourceDetails:
+        source = self.sources.get_object(source_name)
+        conversation : Conversation = source.conversation
+        return SourceDetails(
+            source_name,source.settings_profile_name,
+            conversation.get_conversation_size(), conversation.get_source_type(),
+            conversation.get_transcription_date(),
+            conversation.get_transcription_status(),
+            conversation.get_transcription_time(),
+            conversation.get_transcriber_name(),
+            conversation.number_of_source_files(),
+            conversation.number_of_speakers(),
+            conversation.get_source_file_names(),
+            conversation.get_source_file_types(),
+            conversation.get_result_directory_path(),
+            conversation.get_source_path())
 

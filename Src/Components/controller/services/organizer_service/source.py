@@ -6,5 +6,7 @@ from ....organizer import Conversation
 @dataclass
 class Source:
     conversation : Conversation
-    settings_name : str
+    source_name : str
+    settings_profile_name : str
+    source_ws_path : str
 

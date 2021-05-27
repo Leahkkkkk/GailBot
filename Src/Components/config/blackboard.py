@@ -67,8 +67,8 @@ class SystemBB(BlackBoard):
             (bool): True if successfully parsed. False otherwise.
         """
         try:
-            self.items[SystemBBAttributes.Test_key] = \
-                 blackboard_data["Test_key"]
+            for attr in SystemBBAttributes:
+                self.items[attr] = blackboard_data[attr.value]
             return True
         except:
             return False

@@ -3,7 +3,6 @@ from typing import Callable, Dict, Any
 from enum import Enum
 # Local imports
 from ....organizer import Settings
-from ....io import IO
 
 
 class GBSettingAttrs(Enum):
@@ -47,6 +46,12 @@ class GailBotSettings(Settings):
         return self.set("watson_region",region)
 
     ############################ GETTERS ####################################
+
+    def get_all_values(self) -> Dict[str,Any]:
+        values = dict()
+        for attr in self.attrs:
+            values[attr] = self.get(attr)[1]
+        return values
 
     def get_engine_type(self) -> str:
         return self.get("engine_type")[1]

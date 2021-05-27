@@ -4,57 +4,45 @@ from copy import deepcopy
 # Local imports
 from ....io import IO
 from ....config import Config, SystemBB
+from ..fs_service import FileSystemService
 # Third party imports
 
 class ConfigService:
+    """
+    """
 
-    def __init__(self) -> None:
+    def __init__(self, fs_service : FileSystemService) -> None:
+        self.fs_service = fs_service
         self.io = IO()
         self.config = Config()
         self.blackboards = {
             "system_blackboard" : None
         }
-        self.config_file_path = ""
-        self.is_configured = False
 
     ################################ MODIFIERS ################################
+
     def configure_from_path(self) -> bool:
-        if not self.io.is_file(self.config_file_path):
+        try:
+            return self._parse_config_data(
+                self.fs_service.get_config_service_data_from_disk())
+        except:
             return False
-        # Read the file and parse it
-        success, data = self.io.read(self.config_file_path)
-        if not success:
-            return False
-        return self._parse_config_data(data)
-
-    def reset(self) -> None:
-        self.config_file_path = ""
-        for bb_type in self.blackboards:
-            self.blackboards[bb_type] = None
-
-    ################################ SETTERS ##################################
-
-    def set_configuration_file_path(self, path : str) -> bool:
-        if not self.io.is_file(path):
-            return False
-        self.config_file_path = path
-        return True
 
     ############################## GETTERS ####################################
-    def is_fully_configured(self) -> bool:
+    def is_configured(self) -> bool:
         for bb_type in self.config.get_blackboard_types():
             if not self.config.get_blackboard(bb_type)[0]:
                 return False
         return True
 
     def get_configuration_file_path(self) -> str:
-        return self.config_file_path
+        return self.fs_service.get_config_service_configuration_source()
 
     def get_supported_blackboard_types(self) -> List[str]:
         return list(self.config.get_blackboard_types())
 
     def get_system_blackboard(self) -> SystemBB:
-        if self.is_fully_configured():
+        if self.is_configured():
             return deepcopy(self.blackboards["system_blackboard"])
 
     ############################# PRIVATE METHODS #############################

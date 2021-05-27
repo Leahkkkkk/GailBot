@@ -1,5 +1,4 @@
 # Standard imports
-from os import pipe
 from typing import List
 import itertools
 # Local imports
@@ -40,14 +39,21 @@ class TranscriptionPipelineService:
 
     ################################# GETTERS ###############################
 
-    def is_fully_configured(self) -> bool:
-        pass
+    def is_configured(self) -> bool:
+        return True
 
     def is_ready_to_transcribe(self) -> bool:
         return self.get_number_ready_for_transcription() > 0
 
     def get_transcription_summary(self) -> TranscriptionSummary:
-        return TranscriptionSummary()
+        return TranscriptionSummary(
+            self.get_names_successful_transcription(),
+            self.get_names_unsuccessful_transcription(),
+            self.get_names_ready_for_transcription(),
+            self.get_number_successful_transcription(),
+            self.get_number_unsuccessful_transcription(),
+            self.get_number_ready_for_transcription(),
+            self._get_transcription_runtime_seconds())
 
     def get_names_successful_transcription(self) -> List[str]:
         return self._get_names_from_conversations(
@@ -133,4 +139,13 @@ class TranscriptionPipelineService:
                 self.unsuccessful_transcriptions.append(conversation)
             else:
                 raise Exception("Invalid conversation status")
+
+    def _get_transcription_runtime_seconds(self) -> int:
+        time_seconds = 0
+        execution_summary = self.pipeline.get_execution_summary()
+        for component_summary in execution_summary.values():
+            time_seconds += component_summary["runtime_seconds"]
+        return time_seconds
+
+
 
