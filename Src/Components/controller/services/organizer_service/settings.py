@@ -30,6 +30,9 @@ class GailBotSettings(Settings):
 
     ############################ SETTERS ####################################
 
+    def set_using_attribute(self, attr : GBSettingAttrs, value : Any) -> bool:
+        return self.set(attr.value,value)
+
     def set_engine_type(self, engine_type : str) -> bool:
         return self.set(GBSettingAttrs.engine_type,engine_type)
 
