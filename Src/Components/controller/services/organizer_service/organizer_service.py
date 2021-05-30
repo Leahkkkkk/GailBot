@@ -3,13 +3,13 @@ from typing import List, Dict, Any
 # Local imports
 from ....io import IO
 from ....organizer import Organizer,Conversation
+from .....utils.manager import ObjectManager
 from ..status import TranscriptionStatus
 from ..fs_service import FileSystemService
 from .source import Source
 from .source_details import SourceDetails
 from .setting_details import SettingDetails
 from .settings import GailBotSettings, GBSettingAttrs
-from .manager import ObjectManager
 # Third party imports
 
 class OrganizerService:

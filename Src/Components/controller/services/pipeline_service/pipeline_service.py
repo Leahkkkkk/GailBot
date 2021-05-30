@@ -1,7 +1,7 @@
 # Standard imports
-from typing import List
-import itertools
+from typing import List, Dict
 # Local imports
+from .....utils.manager import ObjectManager
 from ....engines import Engines
 from ....network import Network
 from ....organizer import Conversation
@@ -16,136 +16,107 @@ from ..status import TranscriptionStatus
 class TranscriptionPipelineService:
 
     def __init__(self) -> None:
-        self.pipeline = Pipeline("transcription_pipeline")
+        self.pipeline_name = "Transcription_pipeline"
+        self.pipeline_num_threads = 10
+        self.pipeline = Pipeline(self.pipeline_name)
         self.pipeline.set_logic(TranscriptionLogic())
-        self._initialize_transcription_pipeline_components(self.pipeline)
-        self.successful_transcriptions = list()
-        self.unsuccessful_transcriptions = list()
-        self.ready_conversations = list()
+        self._initialize_pipeline_components(self.pipeline)
+        self.manager = ObjectManager()
 
     ################################# MODIFIERS #############################
 
-    def start_transcription_process(self) -> None:
-        if not self.is_ready_to_transcribe():
-            return
-        self.pipeline.set_base_input(self.ready_conversations)
-        self.pipeline.execute()
-        self._sort_conversations(self.get_all_conversations())
+    def add_conversation(self, conversation : Conversation) -> bool:
+        if self.manager.is_object(conversation.get_conversation_name()):
+            return False
+        return self.manager.add_object(
+            conversation.get_conversation_name(),conversation)
 
-    def clear_conversations(self) -> None:
-        self.successful_transcriptions.clear()
-        self.unsuccessful_transcriptions.clear()
-        self.ready_conversations.clear()
+    def add_conversations(self, conversations : List[Conversation]) -> bool:
+        return all([self.add_conversation(conversation) \
+            for conversation in conversations])
+
+    def start_transcription_pipeline(self) -> TranscriptionSummary:
+        conversations = list(self._get_conversations_with_status(
+            TranscriptionStatus.ready).values())
+        print(conversations)
+        self.pipeline.set_base_input(conversations)
+        self.pipeline.execute()
+        return self.get_transcription_summary()
+
+    def remove_conversation(self, conversation_name : str) -> bool:
+        return self.manager.remove_object(conversation_name)
+
+    def remove_conversations(self, conversation_names : List[str]) -> bool:
+        return all([self.remove_conversation(name) \
+            for name in conversation_names])
+
+    def clear_conversations(self) -> bool:
+        return self.remove_conversations(self.manager.get_object_names())
 
     ################################# GETTERS ###############################
 
-    def is_configured(self) -> bool:
-        return True
-
-    def is_ready_to_transcribe(self) -> bool:
-        return self.get_number_ready_for_transcription() > 0
-
     def get_transcription_summary(self) -> TranscriptionSummary:
+        successful_names = list(
+            self.get_successfully_transcribed_conversations().keys())
+        unsuccessful_names = list(
+            self.get_unsuccessfully_transcribed_conversations().keys())
+        ready_names = list(self.get_ready_to_transcribe_conversations().keys())
         return TranscriptionSummary(
-            self.get_names_successful_transcription(),
-            self.get_names_unsuccessful_transcription(),
-            self.get_names_ready_for_transcription(),
-            self.get_number_successful_transcription(),
-            self.get_number_unsuccessful_transcription(),
-            self.get_number_ready_for_transcription(),
-            self._get_transcription_runtime_seconds())
+            successful_names, unsuccessful_names, ready_names,
+            len(successful_names),len(unsuccessful_names),len(ready_names),
+            self._get_total_runtime_seconds())
 
-    def get_names_successful_transcription(self) -> List[str]:
-        return self._get_names_from_conversations(
-            self.successful_transcriptions)
+    def is_added_conversation(self, conversation_name : str) -> bool:
+        return self.manager.is_object(conversation_name)
 
-    def get_names_unsuccessful_transcription(self) -> List[str]:
-        return self._get_names_from_conversations(
-            self.unsuccessful_transcriptions)
+    def get_successfully_transcribed_conversations(self) \
+            -> Dict[str,Conversation]:
+        return self._get_conversations_with_status(
+            TranscriptionStatus.successful)
 
-    def get_names_ready_for_transcription(self) -> List[str]:
-        return self._get_names_from_conversations(
-            self.ready_conversations)
+    def get_unsuccessfully_transcribed_conversations(self) \
+            -> Dict[str,Conversation]:
+        return self._get_conversations_with_status(
+            TranscriptionStatus.unsuccessful)
 
-    def get_number_successful_transcription(self) -> int:
-        return len(self.successful_transcriptions)
+    def get_ready_to_transcribe_conversations(self) \
+            -> Dict[str,Conversation]:
+        return self._get_conversations_with_status(TranscriptionStatus.ready)
 
-    def get_number_unsuccessful_transcription(self) -> int:
-        return len(self.unsuccessful_transcriptions)
-
-    def get_number_ready_for_transcription(self) -> int:
-        return len(self.ready_conversations)
-
-    def get_number_all_conversations(self) -> int:
-        return self.get_number_successful_transcription() + \
-            self.get_number_unsuccessful_transcription() + \
-            self.get_number_ready_for_transcription()
-
-    def get_successful_transcriptions(self) -> List[Conversation]:
-        return self.successful_transcriptions
-
-    def get_unsuccessful_transcriptions(self) -> List[Conversation]:
-        return self.unsuccessful_transcriptions
-
-    def get_ready_transcriptions(self) -> List[Conversation]:
-        return self.ready_conversations
-
-    def get_all_conversations(self) -> List[Conversation]:
-        return list(itertools.chain(
-            self.get_successful_transcriptions(),
-            self.get_unsuccessful_transcriptions(),
-            self.get_ready_transcriptions()))
+    def get_all_conversations(self) -> Dict[str,Conversation]:
+        return self.manager.get_all_objects()
 
     ################################# SETTERS ###############################
 
-    def add_conversations_to_transcribe(self,
-            conversations : List[Conversation]) -> None:
-        for conversation in conversations:
-            conversation : Conversation
-            if conversation.get_transcription_status() == \
-                    TranscriptionStatus.ready:
-                self.ready_conversations.append(conversation)
+    ############################ PRIVATE METHODS  ##########################
 
-     ############################ PRIVATE METHODS  ##########################
-
-    def _initialize_transcription_pipeline_components(
-            self, pipeline : Pipeline) -> None:
-        ts =  TranscriptionStage(
-            engines =Engines(IO(),Network()), io=IO(),num_threads=10)
+    def _initialize_pipeline_components(self, pipeline : Pipeline) -> None:
+        ## Objects
+        transcription_stage = TranscriptionStage(
+            engines = Engines(IO(),Network()),io=IO(),
+            num_threads=self.pipeline_num_threads)
+        ## Adding components
         pipeline.add_component(
-            "transcription_stage",{"transcription_stage" :ts})
+            "transcription_stage",{"transcription_stage" : transcription_stage})
         pipeline.add_component("analyzer_stage", {"analyzer_stage" : None})
         pipeline.add_component("formatter_stage", {"formatter_stage" : None})
 
-    def _get_names_from_conversations(self, conversations : List[Conversation])\
-            -> List[str]:
-        names = list()
-        for conversation in conversations:
-            conversation : Conversation
-            names.append(conversation.get_conversation_name())
-        return names
+    def _get_conversations_with_status(self,
+            status : TranscriptionStatus) -> Dict[str,Conversation]:
+        return self.manager.get_filtered_objects(
+            lambda name, obj : obj.get_transcription_status() \
+                == status)
 
-    def _sort_conversations(self, conversations : List[Conversation]) -> None:
-        self.ready_conversations.clear()
-        self.successful_transcriptions.clear()
-        self.unsuccessful_transcriptions.clear()
-        for conversation in conversations:
-            status = conversation.get_transcription_status()
-            if status == TranscriptionStatus.ready:
-                self.ready_conversations.append(conversation)
-            elif status == TranscriptionStatus.successful:
-                self.successful_transcriptions.append(conversation)
-            elif status == TranscriptionStatus.unsuccessful:
-                self.unsuccessful_transcriptions.append(conversation)
-            else:
-                raise Exception("Invalid conversation status")
-
-    def _get_transcription_runtime_seconds(self) -> int:
+    def _get_total_runtime_seconds(self) -> int:
         time_seconds = 0
         execution_summary = self.pipeline.get_execution_summary()
         for component_summary in execution_summary.values():
             time_seconds += component_summary["runtime_seconds"]
         return time_seconds
+
+
+
+
 
 
 
