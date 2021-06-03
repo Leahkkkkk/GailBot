@@ -45,6 +45,7 @@ class OrganizerService:
 
     ### Sources
 
+    # TODO: Add checks on adding invalid sources.
     def add_source(self, source_name : str, source_path : str,
             result_dir_path : str, transcriber_name : str = "GailBot") -> bool:
         """
@@ -162,6 +163,9 @@ class OrganizerService:
         settings = self.settings_profiles.get_object(settings_profile_name,True)
         # Create the new settings object.
         self.settings_profiles.add_object(new_name,settings)
+        # Save the new settings object to file if the previous one was saved.
+        if self.fs_service.is_saved_settings_profile(settings_profile_name):
+            self.fs_service.save_settings_profile_to_disk(new_name,settings)
         # Change settings of all objects using previous settings.
         source_names = self.get_source_names_using_settings_profile(
             settings_profile_name)
@@ -487,7 +491,6 @@ class OrganizerService:
 
     ### Sources and settings profiles.
 
-    # TODO: Make sure settings are changed for all sources using this profile.
     def set_settings_profile_attribute(self,settings_profile_name : str,
             attr : GBSettingAttrs, value : Any) -> bool:
         """
