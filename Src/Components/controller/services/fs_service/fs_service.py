@@ -159,7 +159,6 @@ class FileSystemService:
         # TODO: Need to add a method in IO to get directory names.
         file_paths = self.io.path_of_files_in_directory(
             source_ws_path,["*"],False)[1]
-        print(file_paths)
         for path in file_paths:
             if self.io.is_directory(path):
                 names.append(self.io.get_name(path))

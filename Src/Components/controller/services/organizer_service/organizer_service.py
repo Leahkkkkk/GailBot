@@ -89,6 +89,42 @@ class OrganizerService:
         return all([self.remove_source(name) for\
              name in self.sources.get_object_names()])
 
+    def reset_source(self, source_name : str) -> bool:
+        """
+        Reload the given source.
+        """
+        # Has to be configured
+        if not self.is_configured():
+            raise Exception("Service not configured")
+        # Must be a source.
+        if not self.is_source(source_name):
+            return False
+        source : Source = self.sources.get_object(source_name)
+        # Remove source
+        if not self.remove_source(source_name):
+            return False
+        # Re-add source
+        if not self.add_source(
+                source_name, source.source_path,source.result_dir_path,
+                source.transcriber_name):
+            return False
+        if self.is_settings_profile(source.settings_profile_name):
+            return self.apply_settings_profile_to_source(
+                source_name, source.settings_profile_name)
+        return True
+
+    def reset_sources(self, source_names : List[str]) -> bool:
+        """
+        Reload the given sources.
+        """
+        return all([self.reset_source(source_name) \
+            for source_name in source_names])
+
+    def reset_all_sources(self) -> bool:
+        """
+        Reload all sources.
+        """
+        return self.reset_sources(self.sources.get_object_names())
 
     ### Settings profiles
 
@@ -105,10 +141,13 @@ class OrganizerService:
         if self.is_settings_profile(new_settings_profile_name):
             return False
         # Attempt to create and save settings object.
-        created, settings = self.organizer.create_settings(
-            self.default_settings_type,self._parse_settings_profile_data(data))
-        return False if not created else self.settings_profiles.add_object(
-            new_settings_profile_name,settings)
+        try:
+            created, settings = self.organizer.create_settings(
+                self.default_settings_type,self._parse_settings_profile_data(data))
+            return False if not created else self.settings_profiles.add_object(
+                new_settings_profile_name,settings)
+        except:
+            return False
 
     def save_settings_profile(self, settings_profile_name : str) -> bool:
         """

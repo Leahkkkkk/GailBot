@@ -1,11 +1,11 @@
 
 # Standard library imports
-from Src.Components.controller.services.organizer_service import settings
 from typing import List, Any, Dict
 # Local imports
 from .services import FileSystemService,ConfigService,OrganizerService,\
                 TranscriptionPipelineService, GBSettingAttrs, TranscriptionSummary,\
                 SettingDetails, SourceDetails
+from ..organizer import Conversation
 # Third party imports
 
 
@@ -56,6 +56,24 @@ class GailBotController:
         """
         return self.organizer_service.clear_sources()
 
+    def reset_source(self, source_name : str) -> bool:
+        """
+        Reload the specified source.
+        """
+        return self.organizer_service.reset_source(source_name)
+
+    def reset_sources(self, source_names : List[str]) -> bool:
+        """
+        Reload the specified sources.
+        """
+        return self.organizer_service.reset_sources(source_names)
+
+    def reset_all_sources(self) -> bool:
+        """
+        Reload all sources.
+        """
+        return self.organizer_service.reset_all_sources()
+
     def create_new_settings_profile(self, new_settings_profile_name : str,
             data : Dict[GBSettingAttrs,Any]) -> bool:
         """
@@ -97,7 +115,7 @@ class GailBotController:
         """
         Apply the specified settings profile to the specified source.
         """
-        return self.apply_settings_profile_to_source(
+        return self.organizer_service.apply_settings_profile_to_source(
             source_name, settings_profile_name)
 
     def save_source_settings_profile(self, source_name : str,
@@ -117,8 +135,7 @@ class GailBotController:
         """
         conversations = list(self.organizer_service.\
             get_all_configured_source_conversations().values())
-        self.pipeline_service.add_conversations(conversations)
-        return self.pipeline_service.start_transcription_pipeline()
+        return self._start_transcription_pipeline(conversations)
 
     def transcribe_sources(self, source_names : List[str]) \
             -> TranscriptionSummary:
@@ -127,16 +144,18 @@ class GailBotController:
         """
         conversations = list(self.organizer_service.\
             get_configured_sources_conversations(source_names).values())
-        self.pipeline_service.add_conversations(conversations)
+        return self._start_transcription_pipeline(conversations)
 
     def transcribe_source(self, source_name : str) -> TranscriptionSummary:
         """
         Transcribe the given source.
         """
-        return self.pipeline_service.start_transcription_pipeline(
+        if not self.is_source_ready_to_transcribe(source_name):
+            return
+        conversation =\
             self.organizer_service.get_configured_source_conversation(
-                source_name))
-
+                source_name)
+        return self._start_transcription_pipeline([conversation])
     ############################### GETTERS ##################################
 
     ## OrganizerService
@@ -295,3 +314,9 @@ class GailBotController:
     def _initialize_pipeline_service(self,
             service : TranscriptionPipelineService) -> None:
         pass
+
+    def _start_transcription_pipeline(self, conversations : List[Conversation])\
+            -> TranscriptionSummary:
+        self.pipeline_service.add_conversations(conversations)
+        return self.pipeline_service.start_transcription_pipeline()
+

@@ -33,7 +33,6 @@ class TranscriptionStage:
                 self._transcribe_conversation_thread,[conversation],{})
         self.thread_pool.wait_completion()
 
-
     ############################# PRIVATE METHODS #############################
 
     def _transcribe_conversation_thread(self, conversation : Conversation) \

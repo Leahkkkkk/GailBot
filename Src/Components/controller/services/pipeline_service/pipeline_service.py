@@ -13,11 +13,13 @@ from .transcription_logic import TranscriptionLogic
 from ..status import TranscriptionStatus
 # Third party imports
 
+# TODO: Create a maximum limit on the number of threads.
 class TranscriptionPipelineService:
 
     def __init__(self) -> None:
         self.pipeline_name = "Transcription_pipeline"
-        self.pipeline_num_threads = 10
+        # TODO: Make the num threads a configurable parameter.
+        self.pipeline_num_threads = 4
         self.pipeline = Pipeline(self.pipeline_name)
         self.pipeline.set_logic(TranscriptionLogic())
         self._initialize_pipeline_components(self.pipeline)
@@ -38,7 +40,6 @@ class TranscriptionPipelineService:
     def start_transcription_pipeline(self) -> TranscriptionSummary:
         conversations = list(self._get_conversations_with_status(
             TranscriptionStatus.ready).values())
-        print(conversations)
         self.pipeline.set_base_input(conversations)
         self.pipeline.execute()
         return self.get_transcription_summary()
