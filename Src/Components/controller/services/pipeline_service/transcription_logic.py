@@ -10,6 +10,7 @@ class TranscriptionLogic(Logic):
 
     def __init__(self) -> None:
         super().__init__()
+        # Adding all components to the pipeline Logic.
         self._add_component_logic(
             "transcription_stage",self._transcription_stage_preprocessor,
             self._transcription_stage_processor,
@@ -39,6 +40,8 @@ class TranscriptionLogic(Logic):
             conversations : List[Conversation])  -> Stream:
         return Stream(conversations)
 
+    #### Analyzer stage methods
+
     def _analyzer_stage_preprocessor(self, streams : Dict[str,Stream]) \
             -> List[Conversation]:
         return streams["transcription_stage"].get_stream_data()
@@ -50,6 +53,8 @@ class TranscriptionLogic(Logic):
     def _analyzer_stage_post_processor(self,conversations : List[Conversation]) \
             -> Stream:
         return Stream(conversations)
+
+    #### Formatter stage methods
 
     def _formatter_stage_preprocessor(self, streams : Dict[str,Stream]) \
             -> List[Conversation]:

@@ -4,7 +4,6 @@ from typing import List
 
 @dataclass
 class TranscriptionSummary:
-
     successfully_transcribed_conversation_names : List[str]
     unsuccessfully_transcribed_conversation_names : List[str]
     ready_to_transcribe_conversation_names : List[str]

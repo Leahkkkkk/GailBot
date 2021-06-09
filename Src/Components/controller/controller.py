@@ -8,7 +8,15 @@ from .services import FileSystemService,ConfigService,OrganizerService,\
 from ..organizer import Conversation
 # Third party imports
 
-
+# TODO: Make sure that not too many threads created, which leads to an exception.
+# TODO: Make sure the ability to re-transcribe only exists.
+# TODO: Make sure bulk transcriptions are possible.
+# TODO: Implement methods to determine which formats are supported.
+# TODO: Add tests that transcribe video files.
+# TODO: Add analyzer + formatter stages in transcription pipeline.
+# TODO: Add documentation for controller + services.
+# TODO: Add methods that extact audio from video files if needed when a source
+# is added.
 class GailBotController:
 
     def __init__(self, workspace_dir_path : str) -> None:
@@ -26,6 +34,14 @@ class GailBotController:
         self._initialize_pipeline_service(self.pipeline_service)
 
     ############################### MODIFIERS ################################
+
+    ## FsService
+
+    def shutdown(self) -> bool:
+        """
+        Safely shutdown the controller.
+        """
+        return self.fs_service.shutdown()
 
     ## OrganizerService
 
@@ -272,12 +288,17 @@ class GailBotController:
 
     # TODO: This needs to be implemented in a service.
     def get_supported_audio_formats(self) -> List[str]:
-        pass
+        """
+        Get the supported audio formats
+        """
+        return self.organizer_service.get_supported_audio_formats()
 
     # TODO: This needs to be implemented in a service.
     def get_supported_video_formats(self) -> List[str]:
-        pass
-
+        """
+        Get the supported video formats
+        """
+        return self.organizer_service.get_supported_video_formats()
 
     ################################ SETTERS #################################
 

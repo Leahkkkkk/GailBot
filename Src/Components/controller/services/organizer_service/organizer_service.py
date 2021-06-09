@@ -14,7 +14,6 @@ from .settings import GailBotSettings, GBSettingAttrs
 
 class OrganizerService:
 
-
     def __init__(self, fs_service : FileSystemService) -> None:
         ## Variables
         self.default_num_speakers = 1
@@ -49,7 +48,7 @@ class OrganizerService:
     def add_source(self, source_name : str, source_path : str,
             result_dir_path : str, transcriber_name : str = "GailBot") -> bool:
         """
-        Add a new source.
+        Add a new source that can be either an audio or video file.
         """
         # Ensure that the source can be added.
         if self.is_source(source_name) and \
@@ -281,6 +280,18 @@ class OrganizerService:
         Determine if the service is configured.
         """
         return self.fs_service.is_configured()
+
+    def get_supported_audio_formats(self) -> List[str]:
+        """
+        Get the supported audio formats
+        """
+        return self.io.get_supported_audio_formats()
+
+    def get_supported_video_formats(self) -> List[str]:
+        """
+        Get the supported video formats
+        """
+        return self.io.get_supported_video_formats()
 
     ### Sources
 
