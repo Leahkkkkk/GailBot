@@ -8,6 +8,7 @@ from ....organizer import Conversation
 from ....pipeline import Pipeline
 from ....io import IO
 from .transcription_stage import TranscriptionStage
+from .formatter_stage import FormatterStage
 from .summary import TranscriptionSummary
 from .transcription_logic import TranscriptionLogic
 from ..status import TranscriptionStatus
@@ -141,7 +142,8 @@ class TranscriptionPipelineService:
         pipeline.add_component(
             "transcription_stage",{"transcription_stage" : transcription_stage})
         pipeline.add_component("analyzer_stage", {"analyzer_stage" : None})
-        pipeline.add_component("formatter_stage", {"formatter_stage" : None})
+        pipeline.add_component("formatter_stage",
+            {"formatter_stage" : FormatterStage})
 
     def _get_conversations_with_status(self,
             status : TranscriptionStatus) -> Dict[str,Conversation]:

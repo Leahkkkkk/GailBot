@@ -11,12 +11,13 @@ from ..organizer import Conversation
 # TODO: Make sure that not too many threads created, which leads to an exception.
 # TODO: Make sure the ability to re-transcribe only exists.
 # TODO: Make sure bulk transcriptions are possible.
-# TODO: Implement methods to determine which formats are supported.
 # TODO: Add tests that transcribe video files.
 # TODO: Add analyzer + formatter stages in transcription pipeline.
 # TODO: Add documentation for controller + services.
 # TODO: Add methods that extact audio from video files if needed when a source
 # is added.
+# TODO: Config blackboard are not being used right now. Make sure they are
+# used in the future.
 class GailBotController:
 
     def __init__(self, workspace_dir_path : str) -> None:

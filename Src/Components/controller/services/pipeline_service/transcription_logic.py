@@ -4,6 +4,7 @@ from typing import Dict, List, Any
 from ....pipeline import Logic, Stream, Pipeline
 from ....organizer import Conversation
 from .transcription_stage import TranscriptionStage
+from .formatter_stage import FormatterStage
 # Third party imports
 
 class TranscriptionLogic(Logic):
@@ -62,6 +63,9 @@ class TranscriptionLogic(Logic):
 
     def _formatter_stage_processor(self, objects : Dict[str,Any],
             conversations : List[Conversation])  -> List[Conversation]:
+        formatter_stage : FormatterStage = objects["formatter_stage"]
+        formatter_stage.set_conversations(conversations)
+        formatter_stage.format_and_save_conversations()
         return conversations
 
     def _formatter_stage_postprocessor(self, conversations : List[Conversation]) \
