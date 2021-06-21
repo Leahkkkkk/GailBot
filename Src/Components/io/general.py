@@ -127,6 +127,39 @@ class GeneralIO:
             paths.extend(glob.glob(query,recursive=True))
         return (True,paths)
 
+    def number_of_subdirectories(self, dir_path : str) -> Tuple[bool,int]:
+        """
+        Obtain the number of subdirectories in a ditrectory
+
+        Args:
+            dir_path (str): path to the directory.
+
+        Returns:
+            (Tuple[bool,int]):
+                True + number of subdirectories if successful.
+                False + None if unsuccessful.
+        """
+        success, paths = self.paths_of_subdirectories(dir_path)
+        if success:
+            return (True, len(paths))
+        return (False, None)
+
+    def paths_of_subdirectories(self, dir_path : str) -> Tuple[bool,List[str]]:
+        """
+        Obtain the paths of all subdirectories in a directory.
+
+        Args:
+            dir_path (str): path to the directory.
+
+        Returns:
+            (Tuple[bool,List[str]]):
+                True + paths of subdirectories if successful.
+                False + None if unsuccessful.
+        """
+        if not self.is_directory(dir_path):
+            return (False, None)
+        return (True, os.listdir(dir_path))
+
     def is_readable(self, file_path : str) -> bool:
         """
         Determine if the file at the given path is readable.
