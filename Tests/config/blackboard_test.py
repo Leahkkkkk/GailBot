@@ -1,6 +1,13 @@
-
+from typing import Dict, Any
 # Local imports
 from Src.Components.config import SystemBB, SystemBBAttributes
+
+
+#################################### SETUP ##################################
+
+def initialize_data() -> Dict[str,Any]:
+    return { "default_workspace_path" : "I am a test string"}
+
 
 #### BLACKBOARD TESTS
 
@@ -15,7 +22,7 @@ def test_blackboard_is_configured_true() -> None:
     Result:
         (bool): True if all the tests pass. False otherwise.
     """
-    blackboard_data = { "Test_key" : "I am a test string"}
+    blackboard_data = initialize_data()
     blackboard = SystemBB(blackboard_data)
     assert blackboard.is_configured()
 
@@ -62,7 +69,7 @@ def test_blackboard_set_invalid_key() -> None:
         (bool): True if all the tests pass. False otherwise.
     """
 
-    blackboard_data = { "Test_key" : "I am a test string"}
+    blackboard_data = initialize_data()
     blackboard = SystemBB(blackboard_data)
     assert not blackboard.set("Dummy key", None)
 
@@ -77,9 +84,9 @@ def test_blackboard_set_valid_key() -> None:
     Results:
         (bool): True if all the tests pass. False otherwise.
     """
-    blackboard_data = { "Test_key" : "I am a test string"}
+    blackboard_data = initialize_data()
     blackboard = SystemBB(blackboard_data)
-    assert blackboard.set(SystemBBAttributes.Test_key, "Test")
+    assert blackboard.set(SystemBBAttributes.default_workspace_path, "Test")
 
 def test_blackboard_get_configured_key() -> None:
     """
@@ -92,9 +99,9 @@ def test_blackboard_get_configured_key() -> None:
     Result:
         (bool): True if all the tests pass. False otherwise.
     """
-    blackboard_data = {"Test_key" : "I am a test string"}
+    blackboard_data = initialize_data()
     blackboard = SystemBB(blackboard_data)
-    assert blackboard.get(SystemBBAttributes.Test_key) ==\
+    assert blackboard.get(SystemBBAttributes.default_workspace_path) ==\
         (True, "I am a test string")
 
 def test_blackboard_get_set_key() -> None:
@@ -110,10 +117,10 @@ def test_blackboard_get_set_key() -> None:
     Result:
         (bool): True if all the tests pass. False otherwise.
     """
-    blackboard_data = {"Test_key" : "I am a test string"}
+    blackboard_data = initialize_data()
     blackboard = SystemBB(blackboard_data)
-    assert (blackboard.set(SystemBBAttributes.Test_key,"Test") and \
-        blackboard.get(SystemBBAttributes.Test_key) == (True, "Test"))
+    assert (blackboard.set(SystemBBAttributes.default_workspace_path,"Test") and \
+        blackboard.get(SystemBBAttributes.default_workspace_path) == (True, "Test"))
 
 def test_blackboard_get_invalid_key() -> None:
     """
@@ -127,6 +134,6 @@ def test_blackboard_get_invalid_key() -> None:
     Result:
         (bool): True if all the tests pass. False otherwise.
     """
-    blackboard_data = {"Test_key" : "I am a test string"}
+    blackboard_data = initialize_data()
     blackboard = SystemBB(blackboard_data)
     assert blackboard.get("Dummy key") == (False, None)

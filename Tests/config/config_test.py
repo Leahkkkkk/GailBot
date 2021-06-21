@@ -1,6 +1,11 @@
-
+from typing import Dict, Any
 # Local imports
 from Src.Components.config import SystemBBAttributes, Config
+
+#################################### SETUP ##################################
+
+def initialize_data() -> Dict[str,Any]:
+    return { "default_workspace_path" : "I am a test string"}
 
 ########################## TEST DEFINITIONS ##################################
 
@@ -31,7 +36,7 @@ def test_config_load_into_existent_board() -> None:
         (bool): True if all the tests pass. False otherwise.
     """
     config = Config()
-    assert config.load_blackboard("system_blackboard", {"Test_key" : "key"})
+    assert config.load_blackboard("system_blackboard", initialize_data())
 
 def test_config_load_with_bad_data() -> None:
     """
@@ -104,7 +109,7 @@ def test_config_get_loaded_board() -> None:
         (bool): True if all the tests pass. False otherwise.
     """
     config = Config()
-    config.load_blackboard("system_blackboard", {"Test_key" : "key"})
+    config.load_blackboard("system_blackboard", initialize_data())
     success, system_bb = config.get_blackboard("system_blackboard")
     assert success and \
-           system_bb.get(SystemBBAttributes.Test_key) == (True, "key")
+           system_bb.get(SystemBBAttributes.default_workspace_path) == (True, "I am a test string")
