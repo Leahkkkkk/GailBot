@@ -93,6 +93,31 @@ def test_general_io_path_of_files_in_directory() -> None:
         general.number_of_files_in_directory(TEST_DIR_PATH,[".asjkd.j"])[1] == 0 and \
         general.number_of_files_in_directory(TEST_DIR_PATH,["pdf"],True)[0]
 
+def test_general_io_number_of_subdirectories() -> None:
+    """
+    Tests:
+        1. Provide a valid directory.
+        2. Provide a file path.
+        3. Provide an invalid path.
+    """
+    general = GeneralIO()
+    assert general.number_of_subdirectories(TEST_DIR_PATH)[1] > 0
+    assert not general.number_of_subdirectories(WAV_FILE_1_PATH)[0]
+    assert not general.number_of_subdirectories("invalid")[0]
+
+def test_general_io_paths_of_subdirectories() -> None:
+    """
+    Tests:
+        1. Provide a valid directory.
+        2. Provide a file path.
+        3. Provide an invalid path.
+    """
+    general = GeneralIO()
+    assert [general.is_directory(path) for path \
+        in general.paths_of_subdirectories(TEST_DIR_PATH)[1]]
+    assert not general.paths_of_subdirectories(WAV_FILE_1_PATH)[0]
+    assert not general.paths_of_subdirectories("invalid")[0]
+
 def test_general_io_is_readable() -> None:
     """
     Tests the is_readbale method in general.
