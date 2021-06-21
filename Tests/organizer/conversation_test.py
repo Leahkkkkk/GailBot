@@ -91,6 +91,7 @@ def test_conversation_get_conversation_name() -> None:
     """
     conversation_dir = build_valid_conversation_from_directory()
     conversation_file = build_valid_conversation_from_file()
+    assert type(conversation_dir.get_conversation_name()) == str
     assert conversation_dir.get_conversation_name() == "conversation_dir" and \
         conversation_file.get_conversation_name() == "conversation_file"
 
@@ -108,6 +109,7 @@ def test_conversation_get_conversation_size() -> None:
     io = IO()
     conversation_dir = build_valid_conversation_from_directory()
     conversation_file = build_valid_conversation_from_file()
+    assert type(conversation_dir.get_conversation_size()) == int
     assert conversation_dir.get_conversation_size() == \
             io.get_size(CONVERSATION_DIR_PATH)[1] and \
         conversation_file.get_conversation_size() == io.get_size(WAV_FILE_PATH)[1]
@@ -125,6 +127,7 @@ def test_conversation_get_source_type() -> None:
     """
     conversation_dir = build_valid_conversation_from_directory()
     conversation_file = build_valid_conversation_from_file()
+    assert type(conversation_dir.get_source_type()) == str
     assert conversation_dir.get_source_type() == "directory" and \
         conversation_file.get_source_type() == "file"
 
@@ -141,8 +144,9 @@ def test_conversation_get_transcription_date() -> None:
     """
     conversation_dir = build_valid_conversation_from_directory()
     conversation_file = build_valid_conversation_from_file()
-    assert conversation_dir.get_transcription_date() == date.today() and \
-        conversation_file.get_transcription_date() == date.today()
+    assert type(conversation_dir.get_transcription_date()) == str
+    assert conversation_dir.get_transcription_date() == date.today().strftime("%m/%d/%Y") and \
+        conversation_file.get_transcription_date() == date.today().strftime("%m/%d/%Y")
 
 def test_conversation_get_transcription_status() -> None:
     """
@@ -157,6 +161,7 @@ def test_conversation_get_transcription_status() -> None:
     """
     conversation_dir = build_valid_conversation_from_directory()
     conversation_file = build_valid_conversation_from_file()
+    assert type(conversation_dir.get_transcription_status()) == str
     assert conversation_dir.get_transcription_status() == "ready" and \
         conversation_file.get_transcription_status() == "ready"
 
@@ -174,7 +179,7 @@ def test_conversation_get_transcription_time() -> None:
     conversation_dir = build_valid_conversation_from_directory()
     conversation_file = build_valid_conversation_from_file()
     assert type(conversation_dir.get_transcription_time()) == str and \
-        type(conversation_dir.get_transcription_time()) == str
+        type(conversation_file.get_transcription_time()) == str
 
 def test_conversation_get_transcriber_name() -> None:
     """
@@ -183,6 +188,7 @@ def test_conversation_get_transcriber_name() -> None:
     """
     conversation_dir = build_valid_conversation_from_directory()
     conversation_file = build_valid_conversation_from_file()
+    assert type(conversation_file.get_transcriber_name()) == str
     assert conversation_dir.get_transcriber_name() == "NAME"
     assert conversation_file.get_transcriber_name() == "NAME"
 
@@ -200,6 +206,7 @@ def test_conversation_number_of_source_files() -> None:
     io = IO()
     conversation_dir = build_valid_conversation_from_directory()
     conversation_file = build_valid_conversation_from_file()
+    assert type(conversation_dir.number_of_source_files()) == int
     assert conversation_dir.number_of_source_files() == \
             io.number_of_files_in_directory(CONVERSATION_DIR_PATH,["*"],False)[1] and \
         conversation_file.number_of_source_files() == 1
@@ -217,6 +224,7 @@ def test_conversation_number_of_speakers() -> None:
     """
     conversation_dir = build_valid_conversation_from_directory()
     conversation_file = build_valid_conversation_from_file()
+    assert type(conversation_dir.number_of_speakers()) == int
     assert conversation_dir.number_of_speakers() == 2 and \
         conversation_file.number_of_speakers() == 2
 
@@ -273,30 +281,10 @@ def test_conversation_get_source_file_types() -> None:
     """
     conversation_dir = build_valid_conversation_from_directory()
     conversation_file = build_valid_conversation_from_file()
+    assert [type(v) == str for v \
+        in conversation_dir.get_source_file_types().values()]
     assert list(conversation_dir.get_source_file_types().values()) == ["audio","audio"] and \
         list(conversation_file.get_source_file_types().values()) == ["audio"]
-
-
-def test_conversation_set_utterances_valid() -> None:
-    """
-    Tests:
-        1. Set the utterances based on data file names.
-    """
-    conversation_dir = build_valid_conversation_from_directory()
-    utterance_map = dict()
-    for name in conversation_dir.get_source_file_names():
-        utterance_map[name] = [1]
-    assert conversation_dir.set_utterances(utterance_map)
-
-def test_conversation_set_utterances_invalid() -> None:
-    """
-    Tests:
-        1. Set the utterances based on non-data file names.
-    """
-    utterance_map = dict()
-    conversation_dir = build_valid_conversation_from_directory()
-    utterance_map["random"] = [1]
-    assert not conversation_dir.set_utterances(utterance_map)
 
 def test_conversation_get_utterances() -> None:
     """
@@ -332,6 +320,27 @@ def test_get_settings() -> None:
     builder.build_conversation()
     conv : Conversation = builder.get_conversation()
     assert type(conv.get_settings()) == CustomSettings
+
+def test_conversation_set_utterances_valid() -> None:
+    """
+    Tests:
+        1. Set the utterances based on data file names.
+    """
+    conversation_dir = build_valid_conversation_from_directory()
+    utterance_map = dict()
+    for name in conversation_dir.get_source_file_names():
+        utterance_map[name] = [1]
+    assert conversation_dir.set_utterances(utterance_map)
+
+def test_conversation_set_utterances_invalid() -> None:
+    """
+    Tests:
+        1. Set the utterances based on non-data file names.
+    """
+    utterance_map = dict()
+    conversation_dir = build_valid_conversation_from_directory()
+    utterance_map["random"] = [1]
+    assert not conversation_dir.set_utterances(utterance_map)
 
 def test_conversation_set_transcription_status() -> None:
     """

@@ -28,12 +28,14 @@ class GeneralIO:
             "JSON" : self._read_json,
             "TXT" : self._read_text,
             "YML" : self._read_yaml,
-            "YAML" : self._read_yaml}
+            "YAML" : self._read_yaml,
+            "*" : self._read_text}
         self.writers = {
             "JSON" : self._write_json,
             "TXT" : self._write_text,
             "YML" : self._write_yaml,
-            "YAML" : self._write_yaml}
+            "YAML" : self._write_yaml,
+            "*" : self._write_text}
 
     ############################## INSPECTORS ###############################
 
@@ -226,10 +228,11 @@ class GeneralIO:
                 False + None otherwise.
         """
         # Determine the file format using extension
-        if not self.is_file(file_path) or \
-                not self.get_file_extension(file_path).upper() \
+        if not self.is_file(file_path):
+             return (False, None)
+        if not self.get_file_extension(file_path).upper() \
                     in self.readers.keys():
-            return (False, None)
+            return self.readers["*"](file_path)
         # Readers handle exceptions
         file_format = self.get_file_extension(file_path)
         return self.readers[file_format.upper()](file_path)
@@ -251,12 +254,14 @@ class GeneralIO:
         """
         # Determine the file format using extension
         file_format = self.get_file_extension(file_path)
-        if not file_format.upper() in self.writers.keys() or \
-                file_format != self.get_file_extension(file_path):
-            return False
-        # The writers should handle exceptions
-        return self.writers[file_format.upper()](
-                file_path, data, overwrite)
+        if file_format.upper() in self.writers.keys():
+            # The writers should handle exceptions
+            return self.writers[file_format.upper()](
+                    file_path, data, overwrite)
+        else:
+            return self.writers["*"](
+                    file_path, data, overwrite)
+
 
     def create_directory(self, dir_path : str) -> bool:
         """

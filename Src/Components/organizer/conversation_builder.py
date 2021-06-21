@@ -303,12 +303,13 @@ class ConversationBuilder:
         source_type = "file" if self.io.is_file(source_path) else "directory"
         now = datetime.now()
         current_time = now.strftime("%H:%M:%S")
+        current_date = now.strftime("%m/%d/%Y")
         data = {
             "conversation_name" :conversation_name,
             "total_size_bytes": total_size_bytes,
             "num_data_files" : len(data_files),
             "source_type" : source_type,
-            "transcription_date" : date.today(),
+            "transcription_date" : current_date,
             "transcription_status" : transcription_status,
             "transcription_time" : current_time,
             "transcriber_name" : transcriber_name,
