@@ -152,6 +152,20 @@ def test_general_io_read_files() -> None:
         not general.read_file(VIDEO_FILE_AVI_PATH)[0] and \
         not general.read_file(TEST_DIR_PATH)[0]
 
+def test_general_io_read_files_custom_extension() -> None:
+    """
+    Tests:
+        1. Read a file with a custom extension / format.
+    """
+    general = GeneralIO()
+    # Make a unique extension file and read it.
+    path = TEST_DIR_PATH +"/test_test.apple"
+    general.write_to_file(path,
+        general.read_file(VALID_SAMPLE_TXT_FILE)[1], False)
+    success, data = general.read_file(path)
+    assert success
+    assert data == general.read_file(VALID_SAMPLE_TXT_FILE)[1]
+
 def test_general_io_write_to_file() -> None:
     """
     Tests the write_to_file method in GeneralIO
@@ -162,7 +176,6 @@ def test_general_io_write_to_file() -> None:
             for the file type.
         3. Append to an existing file.
         4. Use an invalid output path.
-        5. Use an invalid output file extension.
 
     Returns:
         (bool): True if successful. False otherwise.
@@ -182,8 +195,9 @@ def test_general_io_write_to_file() -> None:
         general.delete(TEST_DIR_PATH +"/test_test.txt") and \
         not general.write_to_file(TEST_DIR_PATH +"/Test/json_test.json",
         general.read_file(VALID_SAMPLE_JSON_FILE)[1], True) and \
-        not general.write_to_file(TEST_DIR_PATH +"/test_test.apple",
-        general.read_file(VALID_SAMPLE_TXT_FILE)[1], False)
+        general.write_to_file(TEST_DIR_PATH +"/test_test.apple",
+        general.read_file(VALID_SAMPLE_TXT_FILE)[1], False) and \
+        general.delete(TEST_DIR_PATH +"/test_test.apple")
 
 def test_general_io_create_directory() -> None:
     """
