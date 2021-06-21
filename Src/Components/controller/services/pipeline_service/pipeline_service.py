@@ -141,9 +141,10 @@ class TranscriptionPipelineService:
         ## Adding components
         pipeline.add_component(
             "transcription_stage",{"transcription_stage" : transcription_stage})
-        pipeline.add_component("analyzer_stage", {"analyzer_stage" : None})
+        pipeline.add_component("analyzer_stage", {"analyzer_stage" : None},
+            ["transcription_stage"])
         pipeline.add_component("formatter_stage",
-            {"formatter_stage" : FormatterStage})
+            {"formatter_stage" : FormatterStage},["analyzer_stage"])
 
     def _get_conversations_with_status(self,
             status : TranscriptionStatus) -> Dict[str,Conversation]:

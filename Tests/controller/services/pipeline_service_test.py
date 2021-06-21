@@ -103,7 +103,7 @@ def test_pipeline_service_start_transcription_pipeline() -> None:
     c2 = create_conversation(SMALL_CONV_DIR_PATH)
     assert service.add_conversation(c2)
     service.start_transcription_pipeline()
-    assert c2.get_transcription_status() == TranscriptionStatus.successful
+    assert c2.get_transcription_status() != TranscriptionStatus.ready
     num_successful = service.get_transcription_summary().\
         number_successfully_transcribed_conversations
     service.start_transcription_pipeline()
