@@ -256,7 +256,7 @@ class Pipeline:
                 self.thread_pool.add_task(
                     self._execute_component,
                     [component,name_to_dependency_mapping,
-                    deepcopy(self.base_input)],{})
+                    self.base_input],{})
             self.thread_pool.wait_completion()
             self._cut_completed_vertices(execution_graph)
 
