@@ -113,8 +113,8 @@ def test_general_io_paths_of_subdirectories() -> None:
         3. Provide an invalid path.
     """
     general = GeneralIO()
-    assert [general.is_directory(path) for path \
-        in general.paths_of_subdirectories(TEST_DIR_PATH)[1]]
+    assert all([general.is_directory(path) for path \
+        in general.paths_of_subdirectories(TEST_DIR_PATH)[1]])
     assert not general.paths_of_subdirectories(WAV_FILE_1_PATH)[0]
     assert not general.paths_of_subdirectories("invalid")[0]
 
