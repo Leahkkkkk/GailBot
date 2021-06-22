@@ -236,7 +236,9 @@ class ConversationBuilder:
                 self._initialize_data_file(source_path))
         # Get all the file paths in the directory and convert to data files.
         elif self.io.is_directory(source_path):
-            supported_formats = self.io.get_supported_audio_formats()
+            # Supported formats include both audio and video.
+            supported_formats = list(self.io.get_supported_audio_formats())
+            supported_formats.extend(list(self.io.get_supported_video_formats()))
             _, file_paths = self.io.path_of_files_in_directory(
                 source_path,supported_formats,False)
             for path in file_paths:

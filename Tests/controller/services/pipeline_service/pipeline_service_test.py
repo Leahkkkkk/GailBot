@@ -1,25 +1,24 @@
 # Standard library imports
-from Src.Components.controller import services
-from Src.Components.pipeline.pipeline import Pipeline
 from typing import List, Dict, Any
 # Local imports
 from Src.Components.controller.services import TranscriptionPipelineService, \
     OrganizerService, TranscriptionSummary,TranscriptionStatus, FileSystemService, \
     GBSettingAttrs
-from Src.Components.organizer import Conversation
+from Src.Components.organizer import Conversation, conversation
 from Src.Components.engines import Utterance, UtteranceAttributes
+from Src.Components.io import IO
 ############################### GLOBALS #####################################
 
 WS_DIR_PATH = "TestData/workspace/fs_workspace"
-WAV_FILE_PATH = "TestData/media/test2a.wav"
+WAV_FILE_PATH = "TestData/media/test.wav"
 MP3_FILE_PATH = "TestData/media/sample1.mp3"
 CONV_DIR_PATH = "TestData/media/conversation"
 SMALL_CONV_DIR_PATH = "TestData/media/small_conversation"
 RESULT_DIR_PATH = "TestData/workspace/dir_2"
+MOV_FILE_PATH = "TestData/media/sample_video_conversation.mov"
 
 
 ############################### SETUP #######################################
-
 
 def obtain_settings_profile_data() -> Dict[str,Any]:
     return {
@@ -31,7 +30,8 @@ def obtain_settings_profile_data() -> Dict[str,Any]:
     }
 
 def create_conversation(source_path : str) -> Conversation:
-    source_name = source_path
+    io = IO()
+    source_name = io.get_name(source_path)
     fs_service = FileSystemService()
     fs_service.configure_from_workspace_path(WS_DIR_PATH)
     service = OrganizerService(fs_service)
@@ -40,6 +40,12 @@ def create_conversation(source_path : str) -> Conversation:
     service.add_source(source_name,source_path,RESULT_DIR_PATH)
     service.apply_settings_profile_to_source(source_name,"s1")
     return service.get_configured_source_conversation(source_name)
+
+def cleanup_sources() -> None:
+    io = IO()
+    dir_paths = io.paths_of_subdirectories(WS_DIR_PATH + "/source_ws")[1]
+    for path in dir_paths:
+        io.delete(path)
 
 def create_conversations(source_paths : List[str]) -> Dict[str,Conversation]:
     fs_service = FileSystemService()
@@ -52,6 +58,11 @@ def create_conversations(source_paths : List[str]) -> Dict[str,Conversation]:
         service.add_source(source_name,path,RESULT_DIR_PATH)
         service.apply_settings_profile_to_source(source_name,"s1")
     return service.get_all_configured_source_conversations()
+
+def print_utterance_map(utterance_map : Dict[str,List[Utterance]]) -> None:
+    for name, utterances in utterance_map.items():
+        print("source name: {}".format(name))
+        print_utterances(utterances)
 
 def print_utterances(utterances : List[Utterance]) -> None:
     for utterance in utterances:
@@ -66,6 +77,8 @@ def print_utterance(utterance : Utterance) -> None:
 
 ########################## TEST DEFINITIONS ##################################
 
+#TODO: Need to add tests for video files.
+
 def test_pipeline_service_add_conversation() -> None:
     """
     Tests:
@@ -77,6 +90,7 @@ def test_pipeline_service_add_conversation() -> None:
     assert not service.add_conversation(create_conversation(SMALL_CONV_DIR_PATH))
     summary = service.get_transcription_summary()
     assert summary.number_ready_to_transcribe_conversations == 1
+    cleanup_sources()
 
 def test_pipeline_service_add_conversations() -> None:
     """
@@ -86,6 +100,7 @@ def test_pipeline_service_add_conversations() -> None:
     service = TranscriptionPipelineService()
     assert service.add_conversations(list(create_conversations(
         [SMALL_CONV_DIR_PATH,WAV_FILE_PATH]).values()))
+    cleanup_sources()
 
 def test_pipeline_service_start_transcription_pipeline() -> None:
     """
@@ -100,6 +115,7 @@ def test_pipeline_service_start_transcription_pipeline() -> None:
     service.start_transcription_pipeline()
     assert service.get_transcription_summary().\
         number_successfully_transcribed_conversations == 1
+    print_utterance_map(conversation.get_utterances())
     c2 = create_conversation(SMALL_CONV_DIR_PATH)
     assert service.add_conversation(c2)
     service.start_transcription_pipeline()
@@ -109,6 +125,20 @@ def test_pipeline_service_start_transcription_pipeline() -> None:
     service.start_transcription_pipeline()
     assert service.get_transcription_summary().\
         number_successfully_transcribed_conversations == num_successful
+    cleanup_sources()
+
+def test_pipeline_service_start_transcription_pipeline_video() -> None:
+    """
+    Tests:
+        1. Transcribe converstions whose data files are video files.
+    """
+    service = TranscriptionPipelineService()
+    conversation = create_conversation(MOV_FILE_PATH)
+    service.add_conversation(conversation)
+    service.start_transcription_pipeline()
+    assert service.get_transcription_summary().\
+        number_successfully_transcribed_conversations == 1
+    print_utterance_map(conversation.get_utterances())
 
 def test_pipeline_service_remove_conversation() -> None:
     """
@@ -121,6 +151,7 @@ def test_pipeline_service_remove_conversation() -> None:
     service.add_conversation(conversation)
     assert service.remove_conversation(conversation.get_conversation_name())
     assert not service.remove_conversation("invalid")
+    cleanup_sources()
 
 def test_pipeline_service_remove_conversations() -> None:
     """
@@ -134,6 +165,7 @@ def test_pipeline_service_remove_conversations() -> None:
     service.add_conversation(c2)
     assert service.remove_conversations(
         [c1.get_conversation_name(),c2.get_conversation_name()])
+    cleanup_sources()
 
 def test_pipeline_service_clear_conversations() -> None:
     """
@@ -148,6 +180,7 @@ def test_pipeline_service_clear_conversations() -> None:
     service.clear_conversations()
     service.get_transcription_summary().\
         number_ready_to_transcribe_conversations == 0
+    cleanup_sources()
 
 def test_pipeline_service_get_transcription_summary() -> None:
     """
@@ -169,6 +202,7 @@ def test_pipeline_service_is_added_conversation() -> None:
     assert service.is_added_conversation(c1.get_conversation_name())
     service.remove_conversation(c1.get_conversation_name())
     assert not service.is_added_conversation(c1.get_conversation_name())
+    cleanup_sources()
 
 def test_pipeline_service_get_successfully_transcribed_conversations() -> None:
     """
@@ -181,6 +215,7 @@ def test_pipeline_service_get_successfully_transcribed_conversations() -> None:
     service.add_conversation(c1)
     service.start_transcription_pipeline()
     assert len(service.get_successfully_transcribed_conversations().values()) == 1
+    cleanup_sources()
 
 def test_pipeline_service_get_unsuccessfully_transcribed_conversations() -> None:
     """
@@ -192,7 +227,8 @@ def test_pipeline_service_get_unsuccessfully_transcribed_conversations() -> None
     c1 = create_conversation(WAV_FILE_PATH)
     service.add_conversation(c1)
     service.start_transcription_pipeline()
-    assert len(service.get_unsuccessfully_transcribed_conversations().values()) == 1
+    assert len(service.get_unsuccessfully_transcribed_conversations().values()) == 0
+    cleanup_sources()
 
 def test_pipeline_service_get_ready_to_transcribe_conversations() -> None:
     """
@@ -206,3 +242,4 @@ def test_pipeline_service_get_ready_to_transcribe_conversations() -> None:
     service.start_transcription_pipeline()
     service.add_conversation(create_conversation(SMALL_CONV_DIR_PATH))
     assert len(service.get_ready_to_transcribe_conversations().values()) == 1
+    cleanup_sources()

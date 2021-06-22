@@ -121,6 +121,34 @@ class IO:
         return self.general.path_of_files_in_directory(
             path,extensions,check_subdirectories)
 
+    def number_of_subdirectories(self, dir_path : str) -> Tuple[bool,int]:
+        """
+        Obtain the number of subdirectories in a ditrectory
+
+        Args:
+            dir_path (str): path to the directory.
+
+        Returns:
+            (Tuple[bool,int]):
+                True + number of subdirectories if successful.
+                False + None if unsuccessful.
+        """
+        return self.general.number_of_subdirectories(dir_path)
+
+    def paths_of_subdirectories(self, dir_path : str) -> Tuple[bool,List[str]]:
+        """
+        Obtain the paths of all subdirectories in a directory.
+
+        Args:
+            dir_path (str): path to the directory.
+
+        Returns:
+            (Tuple[bool,List[str]]):
+                True + paths of subdirectories if successful.
+                False + None if unsuccessful.
+        """
+        return self.general.paths_of_subdirectories(dir_path)
+
     def get_supported_audio_formats(self) -> List[str]:
         """
         Obtain a list of supported audio formats.
