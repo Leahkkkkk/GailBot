@@ -162,7 +162,7 @@ def test_io_num_files_in_dir_wildcard() -> None:
     io = IO()
     success1, num1 = io.number_of_files_in_directory(TEST_EMPTY_DIR_PATH, ["*"], False)
     success2, num2 = io.number_of_files_in_directory(TEST_SAMPLE_DIR_PATH, ["*"], False)
-    assert success1 and success2 and num1 == 0 and num2 == 0
+    assert success1 and success2
 
 def test_io_num_files_in_dir_recursive() -> None:
     """
@@ -244,6 +244,32 @@ def test_io_names_of_files_in_populated_dir() -> None:
     assert success1 and len(names1) == 0 and \
            success2 and len(names2) > 0
 
+def test_io_number_of_subdirectories() -> None:
+    """
+    Tests:
+        1. Provide a valid directory.
+        2. Provide a file path.
+        3. Provide an invalid path.
+    """
+    io = IO()
+    assert io.number_of_subdirectories(TEST_DIR_PATH)[1] > 0
+    assert not io.number_of_subdirectories(WAV_FILE_1_COPY_PATH)[0]
+    assert not io.number_of_subdirectories("invalid")[0]
+
+def test_io_paths_of_subdirectories() -> None:
+    """
+    Tests:
+        1. Provide a valid directory.
+        2. Provide a file path.
+        3. Provide an invalid path.
+    """
+    io = IO()
+    print(io.paths_of_subdirectories(TEST_DIR_PATH)[1])
+    assert all([io.is_directory(path) for path \
+        in io.paths_of_subdirectories(TEST_DIR_PATH)[1]])
+    assert not io.paths_of_subdirectories(WAV_FILE_1_COPY_PATH)[0]
+    assert not io.paths_of_subdirectories("invalid")[0]
+
 def test_io_names_of_files_wildcard() -> None:
     """
     Tests IO class names_of_files_in_directory, recursive option.
@@ -258,7 +284,7 @@ def test_io_names_of_files_wildcard() -> None:
     io = IO()
     success1, names1 = io.path_of_files_in_directory(TEST_SAMPLE_DIR_PATH, ["*"], False)
     success2, names2 = io.path_of_files_in_directory(TESTS_OUTER_DIR_PATH, ["*"], True)
-    assert success1 and len(names1) == 0 and \
+    assert success1 and \
            success2 and len(names2) > 0
 
 def test_io_names_of_files_bad_input() -> None:
