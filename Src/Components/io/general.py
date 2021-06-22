@@ -158,7 +158,11 @@ class GeneralIO:
         """
         if not self.is_directory(dir_path):
             return (False, None)
-        return (True, os.listdir(dir_path))
+        paths = list()
+        for it in os.scandir(dir_path):
+            if it.is_dir():
+                paths.append(it.path)
+        return (True, paths)
 
     def is_readable(self, file_path : str) -> bool:
         """
