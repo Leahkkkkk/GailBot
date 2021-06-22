@@ -28,25 +28,34 @@ class TranscriptionStage:
         # Objects
         self.engines = engines
         self.io = io
+        self.transcribables_manager = ObjectManager()
         # Vars.
         self.num_threads_transcription_thread_pool = 3 # TODO: Determine if this should be  hard-coded or not.
         # ThreadPools
         self.thread_pool = ThreadPool(num_threads)
+        self.thread_pool.spawn_threads()
         self.transcription_thread_pool = ThreadPool(
             self.num_threads_transcription_thread_pool)
-        self.transcribables_manager = ObjectManager()
+        self.transcription_thread_pool.spawn_threads()
 
     ################################## MODIFIERS ##########################
 
-    def transcribe(self) -> None:
+    def transcribe(self) -> Dict[str,TranscriptionStatus]:
         """
         Transcribe all the conversations that have been set.
         """
-        pass
-        # for transcribable in self.transcribables.values():
-        #     self.thread_pool.add_task(
-        #         self._transcribe_conversation_thread,[transcribable],{})
-        # self.thread_pool.wait_completion()
+        status = dict()
+        transcribables = self.transcribables_manager.get_all_objects()
+        # Transcribe all items
+        for transcribable in transcribables.values():
+            self.thread_pool.add_task(
+                self._transcribe_thread, [transcribable],{})
+        self.thread_pool.wait_completion()
+        # Generate a status mapping
+        for name, transcribable in transcribables.items():
+            transcribable : Transcribable
+            status[name] = transcribable.conversation.get_transcription_status()
+        return status
 
     ################################## SETTERS #############################
 
@@ -112,4 +121,59 @@ class TranscriptionStage:
             return (True, "")
         else:
             raise Exception("Source type not supported")
+
+    ## Transcription threads
+
+    def _transcribe_thread(self, transcribable : Transcribable) -> None:
+        transcribable_sources = transcribable.transcribable_sources
+        print("Transcribable sources", transcribable_sources)
+        settings : GailBotSettings = transcribable.conversation.get_settings()
+        for source_name in transcribable_sources.keys():
+            print("Source name ", source_name)
+            if settings.get_engine_type() == "watson":
+                self.transcription_thread_pool.add_task(
+                    self._transcribe_watson_thread,[source_name, transcribable],{})
+            elif settings.get_engine_type() == "google":
+                self.transcription_thread_pool.add_task(
+                    self._transcribe_google_thread, [source_name,transcribable],{})
+            else:
+                raise Exception("Engine type not supported")
+        self.transcription_thread_pool.wait_completion()
+        # Set the results
+        transcribable.conversation.set_utterances(
+            deepcopy(transcribable.utterances))
+        # Set the data for the conversation object
+        is_successful = all(transcribable.status.values())
+        if is_successful:
+            transcribable.conversation.set_transcription_status(
+                TranscriptionStatus.successful)
+        else:
+            transcribable.conversation.set_transcription_status(
+                TranscriptionStatus.unsuccessful)
+
+
+    def _transcribe_watson_thread(self,transcribable_source : str,
+            transcribable  : Transcribable) -> None:
+        engine = self.engines.engine("watson")
+        settings : GailBotSettings = transcribable.conversation.get_settings()
+        source_path = transcribable.transcribable_sources[transcribable_source]
+        print("Source path", source_path)
+        engine.configure(
+            settings.get_watson_api_key(),settings.get_watson_region(),
+            source_path,settings.get_watson_base_language_model(),
+            settings.get_watson_language_customization_id())
+        utterances = engine.transcribe()
+        # Setting utterances
+        transcribable.utterances[transcribable_source] = utterances
+        # Set the status
+        transcribable.status[transcribable_source] = \
+            engine.was_transcription_successful()
+
+    def _transcribe_google_thread(self, transcribable_source : str,
+            transcribable : Transcribable) -> None:
+        engine = self.engines.engine("google")
+        raise Exception("Google engine not currently supported")
+
+
+
 
