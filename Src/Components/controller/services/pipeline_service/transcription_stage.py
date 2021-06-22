@@ -19,6 +19,8 @@ class Transcribable:
     utterances : Dict[str,Utterance] = field(default_factory=dict)
     transcribable_sources : Dict[str,str] = field(default_factory=dict) # Source name to its transcribable path
 
+# TODO: Only MOV Video files are being supported by IO for some reason.
+# Need to fix this later on.
 class TranscriptionStage:
 
     def __init__(self, engines : Engines, io : IO, num_threads : int) -> None:
@@ -118,7 +120,15 @@ class TranscriptionStage:
         elif source_type == "video":
             if not self.io.extract_audio_from_file(source_path, temp_dir_path):
                 return (False, None)
-            return (True, "")
+            ####### REMOVE ########
+            # TODO: This path should eventually be obtained from IO directly
+            # and should not be hard-coded.
+            hard_coded_path = "{}/{}.{}".format(
+                temp_dir_path, self.io.get_name(source_path),"wav")
+            if not self.io.is_file(hard_coded_path):
+                raise Exception("Extracted audio not found")
+            ########################
+            return (True, hard_coded_path)
         else:
             raise Exception("Source type not supported")
 
@@ -126,10 +136,8 @@ class TranscriptionStage:
 
     def _transcribe_thread(self, transcribable : Transcribable) -> None:
         transcribable_sources = transcribable.transcribable_sources
-        print("Transcribable sources", transcribable_sources)
         settings : GailBotSettings = transcribable.conversation.get_settings()
         for source_name in transcribable_sources.keys():
-            print("Source name ", source_name)
             if settings.get_engine_type() == "watson":
                 self.transcription_thread_pool.add_task(
                     self._transcribe_watson_thread,[source_name, transcribable],{})
@@ -157,7 +165,6 @@ class TranscriptionStage:
         engine = self.engines.engine("watson")
         settings : GailBotSettings = transcribable.conversation.get_settings()
         source_path = transcribable.transcribable_sources[transcribable_source]
-        print("Source path", source_path)
         engine.configure(
             settings.get_watson_api_key(),settings.get_watson_region(),
             source_path,settings.get_watson_base_language_model(),
