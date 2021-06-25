@@ -1,4 +1,4 @@
 {
     "plugin_name" : "plugin_two",
-    "dependencies" : []
+    "plugin_dependencies" : []
 }

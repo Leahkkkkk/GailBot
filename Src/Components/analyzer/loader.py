@@ -43,10 +43,12 @@ class PluginLoader:
     def load_plugin_subdirectories(self, parent_dir_path : str) -> bool:
         if not self.io.is_directory(parent_dir_path):
             return False
+        num_loaded = 0
         _, subdirectory_paths = self.io.paths_of_subdirectories(parent_dir_path)
         for dir_path in subdirectory_paths:
-            self.load_plugin_from_directory(dir_path)
-        return True
+            if self.load_plugin_from_directory(dir_path):
+                num_loaded += 1
+        return num_loaded > 0
 
     ################################# GETTERS ###############################
 
@@ -89,10 +91,10 @@ class PluginLoader:
         if not self.io.is_directory(plugin_dir_path):
             return False
         # Ensure that the correct files are present
-        plugin_file_paths = self.io.path_of_files_in_directory(
-            plugin_dir_path,"py")
-        config_file_paths = self.io.path_of_files_in_directory(
-            plugin_dir_path,"json")
+        _, plugin_file_paths = self.io.path_of_files_in_directory(
+            plugin_dir_path,["py"],False)
+        _, config_file_paths = self.io.path_of_files_in_directory(
+            plugin_dir_path,["json"],False)
         if len(plugin_file_paths) != 1 or len(config_file_paths) != 1:
             return False
         # Loading the config object
@@ -110,7 +112,7 @@ class PluginLoader:
             clazz = getattr(module_type,self.plugin_class_name)
             instance = clazz()
             return (True, instance)
-        except:
+        except Exception as e:
             return (False, None)
 
     def _initialize_config_from_file(self, config_file_path : str) \
@@ -119,7 +121,7 @@ class PluginLoader:
             _, data = self.io.read(config_file_path)
             config = PluginConfig(data["plugin_name"], data["plugin_dependencies"])
             return (True, config)
-        except:
+        except Exception as e:
             return (False, None)
 
     def _initialize_plugin_data(self, plugin_config : PluginConfig,
