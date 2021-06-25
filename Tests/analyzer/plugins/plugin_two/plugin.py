@@ -1,7 +1,7 @@
 # Standard library imports
 from typing import Any
 # Local imports
-from Src.Components.analyzer import Plugin
+from Src.Components.analyzer import Plugin, ApplyConfig, Plugin, PluginExecutionSummary
 # Third party imports
 
 class Plugin(Plugin):
@@ -11,8 +11,8 @@ class Plugin(Plugin):
 
     ############################ MODIFIERS ##################################
 
-    def apply_plugin(self, source_path : str, workspace_path : str) \
-            -> Any:
+    def apply_plugin(self, apply_config : ApplyConfig) \
+            -> PluginExecutionSummary:
         print("Applying plugin two")
     ############################# GETTERS ###################################
 

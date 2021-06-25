@@ -1,4 +1,5 @@
 # Standard library imports
+from Src.Components.analyzer.models.apply_config import ApplyConfig
 from typing import Callable, Dict, Any
 # Local imports
 from ..pipeline import Logic, Stream
@@ -30,11 +31,13 @@ class PluginPipelineLogic(Logic):
     def _preprocessor_plugin(self, streams : Dict[str,Stream]) -> Dict:
         return streams["base"].get_stream_data()
 
-    def _processor_plugin(self, instantiated_obj : object, preprocessed_data : Dict) \
+    def _processor_plugin(self, objects : Dict[str,Any],
+            preprocessed_data : Dict[str,ApplyConfig]) \
             -> PluginExecutionSummary:
-        plugin : Plugin = instantiated_obj["plugin"]
+        plugin : Plugin = objects["plugin_object"]
+        apply_config = objects["apply_config"]
         # TODO: Need to get input to this method somehow.
-        return plugin.apply_plugin("","")
+        return plugin.apply_plugin(apply_config)
 
     def _post_processor_plugin(self, summary : PluginExecutionSummary) -> Stream:
         return Stream(summary)

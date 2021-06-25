@@ -3,7 +3,6 @@ from typing import List
 # Local imports
 from Src.Components.analyzer import PluginLoader, PluginConfig, PluginData,\
                                     PluginDetails
-
 # Third party imports
 
 ############################### GLOBALS #####################################
@@ -129,7 +128,7 @@ def test_get_plugin_details() -> None:
 def test_get_all_plugin_details() -> None:
     """
     Tests:
-        1. Get all plugin details
+        1. Get all plugin details.
     """
     loader = PluginLoader()
     loader = PluginLoader()
