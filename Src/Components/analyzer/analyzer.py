@@ -8,6 +8,7 @@ from .plugin_source import PluginSource
 from .apply_config import ApplyConfig
 from .analysis_summary import AnalysisSummary
 from .plugin_execution_summary import PluginExecutionSummary
+from .plugin_details import PluginDetails
 from ..io import IO
 from ..pipeline import Pipeline, Stream
 # Third party imports
@@ -63,6 +64,23 @@ class Analyzer:
     def get_plugin_names(self) -> List[str]:
         return self.loader.get_loaded_plugin_names()
 
+    def get_plugin_details(self, plugin_name : str) -> PluginDetails:
+        if not self.is_plugin(plugin_name):
+            return
+        source : PluginSource = self.loader.get_plugin(plugin_name)
+        return PluginDetails(
+            source.plugin_name,source.plugin_dependencies,
+            source.number_of_dependencies, source.plugin_file_path,
+            source.plugin_author)
+
+    def get_all_plugin_details(self) -> Dict[str,PluginDetails]:
+        details = dict()
+        plugin_names = self.loader.get_loaded_plugin_names()
+        for plugin_name in plugin_names:
+            details[plugin_name] = self.get_plugin_details(plugin_name)
+        print(details)
+        return details
+
     ########################### PRIVATE METHODS #############################
 
     def _generate_execution_pipeline(self,
@@ -87,7 +105,7 @@ class Analyzer:
         # Load the dependencies
         plugin_source : PluginSource = self.loader.get_plugin(plugin_name)
         for dependency in plugin_source.plugin_dependencies:
-            if not self._add_plugin_and_dependencies(
+            if not self._add_plugin_with_dependencies(
                     pipeline,dependency,apply_configs):
                 return False
         # Add actual plugin

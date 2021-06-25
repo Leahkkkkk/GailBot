@@ -1,4 +1,5 @@
 # Standard library imports
+from Src.Components.analyzer.plugin_details import PluginDetails
 from typing import List, Dict
 # Local imports
 from Src.Components.analyzer import Analyzer, ApplyConfig
@@ -55,6 +56,7 @@ def test_apply_plugins_valid() -> None:
         "plugin_one" : ApplyConfig("plugin_one",[],WORKSPACE_DIR_PATH,RESULT_DIR_PATH),
         "plugin_two" : ApplyConfig("plugin_two",[],WORKSPACE_DIR_PATH,RESULT_DIR_PATH),
     })
+    print(summary)
     assert len(summary.successful_plugins) == 2
 
 def test_is_plugin() -> None:
@@ -76,5 +78,26 @@ def test_get_plugin_names() -> None:
     analyzer = Analyzer()
     analyzer.register_plugins_from_directory(PLUGINS_DIR)
     assert analyzer.get_plugin_names() == ["plugin_one","plugin_two"]
+
+def test_get_plugin_details() -> None:
+    """
+    Tests:
+        1. Get details of valid plugin.
+        2. Get details of invalid plugins
+    """
+    analyzer = Analyzer()
+    analyzer.register_plugins_from_directory(PLUGINS_DIR)
+    assert type(analyzer.get_plugin_details("plugin_one")) == PluginDetails
+    assert analyzer.get_plugin_details("invalid") == None
+
+def test_get_all_plugin_details() -> None:
+    """
+    Tests:
+        1. Get all plugin details.
+    """
+    analyzer = Analyzer()
+    analyzer.register_plugins_from_directory(PLUGINS_DIR)
+    assert list(analyzer.get_all_plugin_details().keys()) \
+         == ["plugin_one","plugin_two"]
 
 
