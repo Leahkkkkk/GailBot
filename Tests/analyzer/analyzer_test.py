@@ -1,7 +1,7 @@
 # Standard library imports
 from typing import List, Dict
 # Local imports
-from Src.Components.analyzer import Analyzer, ApplyConfig, PluginConfig
+from Src.Components.analyzer import Analyzer, ApplyConfig
 # Third party imports
 
 ############################### GLOBALS #####################################
@@ -9,75 +9,72 @@ from Src.Components.analyzer import Analyzer, ApplyConfig, PluginConfig
 INVALID_DIR_PATH = "TestData/workspace/empty_dir_1"
 PLUGINS_DIR = "Tests/analyzer/plugins"
 PLUGIN_ONE_DIR = "Tests/analyzer/plugins/plugin_one"
-PLUGIN_ONE_FILE_PATH = "Tests/analyzer/plugins/plugin_one/plugin.py"
+PLUGIN_ONE_CONFIG_PATH = "Tests/analyzer/plugins/plugin_one/config.json"
 PLUGIN_TWO_DIR = "Tests/analyzer/plugins/plugin_two"
-PLUGIN_TWO_FILE_PATH = "Tests/analyzer/plugins/plugin_two/plugin.py"
+PLUGIN_TWO_CONFIG_PATH = "Tests/analyzer/plugins/plugin_two/config.json"
 WAV_FILE_PATH = "TestData/media/test.wav"
-
+WORKSPACE_DIR_PATH = "TestData/workspace"
+RESULT_DIR_PATH = "TestData/workspace"
 
 ############################### SETUP #######################################
 
-def get_plugin_config(plugin_name : str, dependencies : List[str] = []) \
-        -> PluginConfig:
-    return PluginConfig(
-        plugin_name, dependencies)
-
-
 ########################## TEST DEFINITIONS ##################################
 
-def test_register_plugin() -> None:
+def test_register_plugin_from_directory() -> None:
     """
     Tests:
         1. Register from a valid directory.
         2. Register from an invalid directory.
-        3. Register from an invalid directory structure.
     """
     analyzer = Analyzer()
-    assert analyzer.register_plugin_from_directory(PLUGIN_ONE_DIR)
-    assert not analyzer.register_plugin_from_directory("invalid")
-    assert not analyzer.register_plugin_from_directory(INVALID_DIR_PATH)\
+    assert analyzer.register_plugins_from_directory(PLUGINS_DIR) > 0
+    assert analyzer.register_plugins_from_directory(PLUGIN_ONE_DIR) == 1
+    assert analyzer.register_plugins_from_directory(INVALID_DIR_PATH) == 0
 
-def test_register_plugin_from_file() -> None:
+def test_register_plugin_using_config_file() -> None:
     """
     Tests:
-        1. Load from a valid file.
-        2. Load from an invalid file.
-        3. Load from an invalid path.
+        1. Use a valid config file.
+        2. use an invalid config file path.
+        3. Use an invalid config file structure.
     """
     analyzer = Analyzer()
-    assert analyzer.register_plugin_from_file(
-        get_plugin_config("one",[]),PLUGIN_ONE_FILE_PATH)
-    assert not analyzer.register_plugin_from_file(
-        get_plugin_config("one",[]),WAV_FILE_PATH)
-    assert not analyzer.register_plugin_from_file(
-        get_plugin_config("one",[]),"invalid")
-
-def test_register_plugins_in_subdirectories() -> None:
-    """
-    Tests:
-        1. Load from a valid directory.
-        2. Load from an invalid directory structure.
-        3. Load from an invalid directory path.
-    """
-    analyzer = Analyzer()
-    assert analyzer.register_plugins_in_subdirectories(PLUGINS_DIR)
-    assert not analyzer.register_plugins_in_subdirectories(PLUGIN_ONE_DIR)
-    assert not analyzer.register_plugin_from_directory(WAV_FILE_PATH)
+    assert analyzer.register_plugin_using_config_file(PLUGIN_ONE_CONFIG_PATH)
+    assert not analyzer.register_plugin_using_config_file(WAV_FILE_PATH)
+    assert not analyzer.register_plugin_using_config_file("invalid")
 
 def test_apply_plugins_valid() -> None:
     """
     Tests:
-        1. Apply valid plugins.
+        1. Apply all plugins.
+        2. Apply some plugins
     """
     analyzer = Analyzer()
-    # Loading plugins
-    analyzer.register_plugin_from_file(
-        get_plugin_config("one",[]),PLUGIN_ONE_FILE_PATH)
-    analyzer.register_plugin_from_file(
-        get_plugin_config("two",[]),PLUGIN_TWO_FILE_PATH)
-    apply_configs = {
-        "two" : ApplyConfig("two",["None"],"None"),
-        "one" : ApplyConfig("one",["None"],"None")
-        }
-    assert analyzer.apply_plugins(apply_configs)
+    analyzer.register_plugins_from_directory(PLUGINS_DIR)
+    summary = analyzer.apply_plugins({
+        "plugin_one" : ApplyConfig("plugin_one",[],WORKSPACE_DIR_PATH,RESULT_DIR_PATH),
+        "plugin_two" : ApplyConfig("plugin_two",[],WORKSPACE_DIR_PATH,RESULT_DIR_PATH),
+    })
+    assert len(summary.successful_plugins) == 2
+
+def test_is_plugin() -> None:
+    """
+    Tests:
+        1. Check valid plugin.
+        2. Check invalid plugin
+    """
+    analyzer = Analyzer()
+    analyzer.register_plugins_from_directory(PLUGINS_DIR)
+    assert analyzer.is_plugin("plugin_one")
+    assert not analyzer.is_plugin("invalid")
+
+def test_get_plugin_names() -> None:
+    """
+    Tests:
+        1. Get the names of all the plugins that are loaded.
+    """
+    analyzer = Analyzer()
+    analyzer.register_plugins_from_directory(PLUGINS_DIR)
+    assert analyzer.get_plugin_names() == ["plugin_one","plugin_two"]
+
 

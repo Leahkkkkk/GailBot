@@ -2,11 +2,11 @@
 from dataclasses import dataclass
 from typing import List
 # Local imports
-from ..plugin import Plugin
+from ...utils.loader import Config
 
 @dataclass
-class PluginData:
-    plugin_object : Plugin
+class PluginConfig(Config):
     plugin_name : str
     plugin_dependencies : List[str]
-    number_of_dependencies : int
+    plugin_file_path : str
+    plugin_author : str

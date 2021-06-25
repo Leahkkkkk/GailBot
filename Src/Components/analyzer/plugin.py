@@ -1,8 +1,10 @@
 # Standard library imports
+from typing import Any
 from abc import ABC, abstractmethod
 # Local imports
-from .models.plugin_execution_summary import PluginExecutionSummary
-from .models.apply_config import ApplyConfig
+from .apply_config import ApplyConfig
+from .plugin_execution_summary import PluginExecutionSummary
+
 
 
 class Plugin(ABC):
@@ -13,8 +15,7 @@ class Plugin(ABC):
     ############################ MODIFIERS ##################################
 
     @abstractmethod
-    def apply_plugin(self, apply_config : ApplyConfig) \
-            -> PluginExecutionSummary:
+    def apply_plugin(self, apply_config : ApplyConfig)-> PluginExecutionSummary:
         pass
     ############################# GETTERS ###################################
 
