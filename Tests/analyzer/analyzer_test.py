@@ -1,6 +1,5 @@
 # Standard library imports
 from Src.Components.analyzer.plugin_details import PluginDetails
-from typing import List, Dict
 # Local imports
 from Src.Components.analyzer import Analyzer, ApplyConfig
 # Third party imports

@@ -14,6 +14,9 @@ from ..pipeline import Pipeline, Stream
 # Third party imports
 
 class Analyzer:
+    """
+    Applies analysis modules to sources.
+    """
 
     def __init__(self) -> None:
         ## Objects
@@ -28,6 +31,19 @@ class Analyzer:
 
     def register_plugins_from_directory(self, dir_path : str,
             check_subdirectories : bool = True) -> int:
+        """
+        Register a plugin from the specified directory.
+        All configuration files from the directory are used to initialize all
+        plugins.
+
+        Args:
+            dir_path (str): Path to the directory.
+            check_subdirectories (bool):
+                If True, checks all subdirectories for configuration files.
+
+        Returns:
+            (int): Number of plugins loaded from directory.
+        """
         if not self.io.is_directory(dir_path):
             return 0
         # Load all possible config files
@@ -36,6 +52,15 @@ class Analyzer:
         return len([self.register_plugin_using_config_file(path) for path in paths])
 
     def register_plugin_using_config_file(self, config_file_path : str) -> bool:
+        """
+        Register a plugin from a configuration file directly.
+
+        Args:
+            config_file_path (str): Path to the configuration file.
+
+        Returns:
+            (bool): True if successfully loaded. False otherwise.
+        """
         # Generate config object and load
         try:
             _ , data = self.io.read(config_file_path)
@@ -48,6 +73,17 @@ class Analyzer:
 
     def apply_plugins(self, apply_configs : Dict[str, ApplyConfig]) \
             -> AnalysisSummary:
+        """
+        Apply the specified plugins with the specified ApplyConfig and obtain
+        an AnalysisSummary.
+
+        Args:
+            apply_configs (Dict[str,ApplyConfig]):
+                Plugin name to ApplyConfig mapping.
+
+        Returns:
+            (AnalysisSummary)
+        """
         did_generate, pipeline = self._generate_execution_pipeline(
             apply_configs)
         if not did_generate:
@@ -59,12 +95,36 @@ class Analyzer:
     ############################# GETTERS ###################################
 
     def is_plugin(self, plugin_name : str) -> bool:
+        """
+        Determine if the plugin is available.
+
+        Args:
+            plugin_name (str)
+
+        Returns:
+            (bool): True if the plugin is available. False otherwise.
+        """
         return self.loader.is_plugin_loaded(plugin_name)
 
     def get_plugin_names(self) -> List[str]:
+        """
+        Get the names of all available plugins.
+
+        Returns:
+            (List[str])
+        """
         return self.loader.get_loaded_plugin_names()
 
     def get_plugin_details(self, plugin_name : str) -> PluginDetails:
+        """
+        Get PluginDetails for the specified plugin if it is available.
+
+        Args:
+            plugin_name (str): Name of plugin.
+
+        Returns:
+            (PluginDetails)
+        """
         if not self.is_plugin(plugin_name):
             return
         source : PluginSource = self.loader.get_plugin(plugin_name)
@@ -74,17 +134,26 @@ class Analyzer:
             source.plugin_author)
 
     def get_all_plugin_details(self) -> Dict[str,PluginDetails]:
+        """
+        Get mapping from plugin name to PluginDetails for all available plugins.
+
+        Returns:
+            ( Dict[str,PluginDetails])
+        """
         details = dict()
         plugin_names = self.loader.get_loaded_plugin_names()
         for plugin_name in plugin_names:
             details[plugin_name] = self.get_plugin_details(plugin_name)
-        print(details)
         return details
 
     ########################### PRIVATE METHODS #############################
 
     def _generate_execution_pipeline(self,
             apply_configs : Dict[str,ApplyConfig]) -> Tuple[bool, Pipeline]:
+        """
+        Generate a pipeline given a mapping from plugin name to ApplyConfig.
+        All plugins must be loaded.
+        """
         pipeline = Pipeline(self.pipeline_name,self.pipeline_num_threads)
         pipeline.set_logic(PluginPipelineLogic())
         for plugin_name in apply_configs.keys():
@@ -95,6 +164,11 @@ class Analyzer:
 
     def _add_plugin_with_dependencies(self, pipeline : Pipeline,
             plugin_name : str, apply_configs : Dict[str,ApplyConfig]) -> bool:
+        """
+        Add a plugin and its required dependencies to the given pipeline using
+        the given ApplyConfig's.
+        All the plugins must be loaded.
+        """
         # Plugin must be loaded.
         if not self.loader.is_plugin_loaded(plugin_name) or \
                 not plugin_name in apply_configs:
@@ -114,6 +188,10 @@ class Analyzer:
 
     def _generate_analysis_summary(self, execution_summary : Dict[str,Any]) \
             -> AnalysisSummary:
+        """
+        Given an execution summary obtained by calling Pipeline.execute(),
+        generate an AnalysisSummary.
+        """
         # Generating the plugin summaries.
         plugin_summaries = dict()
         for component_name, summary in execution_summary.items():

@@ -8,6 +8,7 @@ from ..io import IO
 # Third party imports
 
 class PluginLoader(Loader):
+
     def __init__(self) -> None:
         super().__init__()
         ## Vars
@@ -18,6 +19,15 @@ class PluginLoader(Loader):
     ################################# MODIFIERS #############################
 
     def load_plugin_using_config(self, plugin_config : PluginConfig) -> bool:
+        """
+        Load a plugin using the specified PluginConfig.
+
+        Args:
+            plugin_config (PluginConfig)
+
+        Returns:
+            (bool): True if successfully loaded. False otherwise.
+        """
         # Verify that the plugin file exists
         if not self.io.is_file(plugin_config.plugin_file_path):
             return False
@@ -37,8 +47,23 @@ class PluginLoader(Loader):
     ################################# GETTERS ###############################
 
     def get_plugin(self, plugin_name : str) -> PluginSource:
+        """
+        Obtain the PluginSource associated with the plugin name.
+
+        Args:
+            plugin_name (str)
+
+        Returns:
+            (PluginSource)
+        """
         return super().get_plugin(plugin_name)
 
     def get_all_plugins(self) -> Dict[str,PluginSource]:
+        """
+        Obtain a mapping from plugin name to plugin source for all plugins.
+
+        Returns:
+            (Dict[str,PluginSource])
+        """
         return super().get_all_plugins()
 
