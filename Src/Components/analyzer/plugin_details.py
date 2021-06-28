@@ -10,3 +10,5 @@ class PluginDetails:
     number_of_dependencies : int
     plugin_file_path : str
     plugin_author : str
+    plugin_input_type : str
+    plugin_output_type : str

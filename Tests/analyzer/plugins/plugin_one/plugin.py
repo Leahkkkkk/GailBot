@@ -1,7 +1,7 @@
 # Standard library imports
-from typing import Any
+from typing import Any, Dict, List
 # Local imports
-from Src.Components.analyzer import Plugin,ApplyConfig,PluginExecutionSummary
+from Src.Components.analyzer import Plugin
 # Third party imports
 
 class Plugin(Plugin):
@@ -11,9 +11,13 @@ class Plugin(Plugin):
 
     ############################ MODIFIERS ##################################
 
-    def apply_plugin(self, apply_config : ApplyConfig) \
-            -> PluginExecutionSummary:
-        return PluginExecutionSummary(
-            "plugin_one", apply_config.source_paths,{},10,True)
-
+    def apply_plugin(self, paths : List[str]) \
+            -> Dict[str,str]:
+        result = dict()
+        for path in paths:
+            result[path] = path
+        return result
     ############################# GETTERS ###################################
+
+    def was_successful(self) -> bool:
+        return True

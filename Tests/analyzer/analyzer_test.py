@@ -52,8 +52,8 @@ def test_apply_plugins_valid() -> None:
     analyzer = Analyzer()
     analyzer.register_plugins_from_directory(PLUGINS_DIR)
     summary = analyzer.apply_plugins({
-        "plugin_one" : ApplyConfig("plugin_one",[],WORKSPACE_DIR_PATH,RESULT_DIR_PATH),
-        "plugin_two" : ApplyConfig("plugin_two",[],WORKSPACE_DIR_PATH,RESULT_DIR_PATH),
+        "plugin_one" : ApplyConfig("plugin_one",[["path_1"]],{}),
+        "plugin_two" : ApplyConfig("plugin_two",[["path_1"]],{}),
     })
     print(summary)
     assert len(summary.successful_plugins) == 2

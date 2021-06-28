@@ -17,7 +17,7 @@ class Plugin(ABC):
     ############################ MODIFIERS ##################################
 
     @abstractmethod
-    def apply_plugin(self, apply_config : ApplyConfig)-> PluginExecutionSummary:
+    def apply_plugin(self, *args, **kwargs)-> Any:
         """
         Apply this plugin using the given Applyconfig and return the execution
         summary.
@@ -26,10 +26,14 @@ class Plugin(ABC):
             apply_config (ApplyConfig)
 
         Returns:
-            (PluginExecutionSummary)
+            (Any)
         """
         pass
     ############################# GETTERS ###################################
+
+    @abstractmethod
+    def was_successful(self) -> bool:
+        pass
 
     ############################# SETTERS ###################################
 

@@ -22,9 +22,9 @@ def test_load_plugin_using_config() -> None:
     """
     loader = PluginLoader()
     assert loader.load_plugin_using_config(
-        PluginConfig("plugin_one",[],PLUGIN_FILE_PATH,"Umair"))
+        PluginConfig("plugin_one",[],PLUGIN_FILE_PATH,"Umair","None","None"))
     assert not loader.load_plugin_using_config(
-        PluginConfig("plugin_one",[],"invalid","Umair"))
+        PluginConfig("plugin_one",[],"invalid","Umair","None","None"))
     assert not loader.load_plugin_using_config(
-        PluginConfig("plugin_one",[],WAV_FILE_PATH,"Umair"))
+        PluginConfig("plugin_one",[],WAV_FILE_PATH,"Umair","None","None"))
 

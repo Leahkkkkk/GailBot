@@ -66,7 +66,8 @@ class Analyzer:
             _ , data = self.io.read(config_file_path)
             config = PluginConfig(
                 data["plugin_name"], data["plugin_dependencies"],
-                data["plugin_file_path"], data["plugin_author"])
+                data["plugin_file_path"], data["plugin_author"],
+                data["plugin_input_type"], data["plugin_output_type"])
             return self.loader.load_plugin_using_config(config)
         except:
             return False
@@ -131,7 +132,8 @@ class Analyzer:
         return PluginDetails(
             source.plugin_name,source.plugin_dependencies,
             source.number_of_dependencies, source.plugin_file_path,
-            source.plugin_author)
+            source.plugin_author, source.plugin_input_type,
+             source.plugin_output_type)
 
     def get_all_plugin_details(self) -> Dict[str,PluginDetails]:
         """

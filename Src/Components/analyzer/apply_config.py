@@ -1,11 +1,10 @@
 # Standard library imports
 from dataclasses import dataclass
-from typing import List
+from typing import List, Dict, Any
 # Local imports
 
 @dataclass
 class ApplyConfig:
     plugin_name : str
-    source_paths : List[str]
-    workspace_path : str
-    result_dir_path : str
+    args : List[Any]
+    kwargs : Dict[str,Any]
