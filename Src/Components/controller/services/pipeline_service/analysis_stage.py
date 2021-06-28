@@ -1,13 +1,12 @@
 # Standard library imports
 from typing import List, Dict
+from copy import deepcopy
 # Local imports
-from ....analyzer import Analyzer,AnalysisSummary,ApplyConfig,PluginConfig
-from ....organizer import Conversation
+from ....analyzer import Analyzer, AnalysisSummary, ApplyConfig
 from .....utils.manager import ObjectManager
 from .....utils.threads import ThreadPool
 from .transcribable import Transcribable
 # Third party imports
-
 
 class AnalysisStage:
 
@@ -32,7 +31,8 @@ class AnalysisStage:
         return all([self.add_transcribable(transcribable) \
             for transcribable in transcribables])
 
-    def analyze(self) -> None:
+    def analyze(self) -> Dict[str,AnalysisSummary]:
+        closure = [{}]
         plugin_names = self.analyzer.get_plugin_names()
         transcribables = self.transcribables.get_all_objects()
         for _, transcribable in transcribables.items():
@@ -41,18 +41,24 @@ class AnalysisStage:
                 apply_configs[plugin_name] = self._generate_apply_config(
                     plugin_name, transcribable)
             self.thread_pool.add_task(
-                self._analyze_thread,[apply_configs],{})
+                self._analyze_thread,[transcribable,apply_configs,closure],{})
         self.thread_pool.wait_completion()
+        return closure[0]
 
     ############################# GETTERS ###################################
 
+    def get_transcribables(self) -> Dict[str,Transcribable]:
+        return self.transcribables.get_all_objects()
+
+    def get_transcribable(self, identifier : str) -> Transcribable:
+        if self.transcribables.is_object(identifier):
+            return self.transcribables.get_object(identifier)
 
     ############################# SETTERS ###################################
 
-
     ######################## PRIVATE METHODS ################################
 
-    def _generate_apply_config( plugin_name : str,
+    def _generate_apply_config(self, plugin_name : str,
             transcribable : Transcribable) -> ApplyConfig:
         return ApplyConfig(
             plugin_name,
@@ -60,7 +66,10 @@ class AnalysisStage:
             transcribable.conversation.get_temp_directory_path(),
             transcribable.conversation.get_result_directory_path())
 
-    def _analyze_thread(self, apply_configs : Dict[str,ApplyConfig]) -> None:
-        summary = self.analyzer.apply_plugins(apply_configs)
+    def _analyze_thread(self, transcribable : Transcribable,
+            apply_configs : Dict[str,ApplyConfig],
+            closure : List[Dict[str,AnalysisSummary]]) -> None:
+        closure[0][transcribable.identifier] = \
+            self.analyzer.apply_plugins(apply_configs)
 
 

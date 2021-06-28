@@ -33,20 +33,21 @@ class TranscriptionStage:
     ################################## MODIFIERS ##########################
 
     def generate_utterances(self) -> Dict[str,TranscriptionStatus]:
-        status_map = dict()
         transcribables = self.transcribables.get_all_objects()
         for _ , transcribable in transcribables.items():
+            transcribable:Transcribable
             self.thread_pool.add_task(
-                self._transcribe_thread,[transcribable,status_map],{})
+                self._transcribe_thread,[transcribable],{})
         self.thread_pool.wait_completion()
-        return status_map
+        return self._generate_conversation_status_map()
 
     ################################## SETTERS #############################
 
     def add_transcribable(self, transcribable : Transcribable) -> bool:
         if not self._initialize_transcribable(transcribable):
             return False
-        self.transcribables.add_object(transcribable.identifier,transcribable)
+        return self.transcribables.add_object(
+            transcribable.identifier,transcribable)
 
     def add_transcribables(self, transcribables : List[Transcribable]) -> bool:
         return all([self.add_transcribable(transcribable) \
@@ -62,6 +63,15 @@ class TranscriptionStage:
             return self.transcribables.get_object(identifier)
 
     ############################# PRIVATE METHODS ############################
+
+    def _generate_conversation_status_map(self) -> Dict[str,bool]:
+        status_map = dict()
+        transcribables = self.transcribables.get_all_objects()
+        for conv_name, transcribable in transcribables.items():
+            transcribable : Transcribable
+            status_map[conv_name] = \
+                transcribable.conversation.get_transcription_status()
+        return status_map
 
     def _initialize_transcribable(self, transcribable : Transcribable) -> bool:
         conversation = transcribable.conversation
@@ -100,8 +110,7 @@ class TranscriptionStage:
 
     #### Thread methods
 
-    def _transcribe_thread(self, transcribable : Transcribable,
-            status_map : Dict[str,bool]) -> None:
+    def _transcribe_thread(self, transcribable : Transcribable) -> None:
         transcribable_sources = transcribable.source_to_transcribable_map
         settings : GailBotSettings = transcribable.conversation.get_settings()
         utterances_map = dict()
@@ -120,13 +129,14 @@ class TranscriptionStage:
         # Set results.
         transcribable.conversation.set_utterances(deepcopy(utterances_map))
         # Setting conversation status
-        is_successful = all(transcribable.status.values())
+        is_successful = all(transcribable.source_status.values())
         if is_successful:
             transcribable.conversation.set_transcription_status(
                 TranscriptionStatus.successful)
         else:
             transcribable.conversation.set_transcription_status(
                 TranscriptionStatus.unsuccessful)
+
 
     def _transcribe_watson_thread(self, source_name : str,
             transcribable : Transcribable,

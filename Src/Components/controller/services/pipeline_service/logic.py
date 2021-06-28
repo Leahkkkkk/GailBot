@@ -38,7 +38,8 @@ class PipelineServiceLogic(Logic):
             transcription_stage : TranscriptionStage,
             transcribables : List[Transcribable]) -> List[Transcribable]:
         transcription_stage.add_transcribables(transcribables)
-        transcription_stage.generate_utterances()
+        s = transcription_stage.generate_utterances()
+        print("transcription summary", s) # TODO: Remove this.
         return list(transcription_stage.get_transcribables().values())
 
     ### AnalyzerStage methods
@@ -50,7 +51,8 @@ class PipelineServiceLogic(Logic):
     def _analyzer_stage_processor(self, analysis_stage : AnalysisStage,
             transcribables : List[Transcribable]) -> List[Transcribable]:
         analysis_stage.add_transcribables(transcribables)
-        analysis_stage.analyze()
+        s = analysis_stage.analyze()
+        print("analysis_summary",s) # TODO: Remove this.
         return transcribables
 
     ### FormatterStage methods

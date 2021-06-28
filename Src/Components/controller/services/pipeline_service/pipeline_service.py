@@ -2,8 +2,6 @@
 from typing import List, Dict
 # Local imports
 from .....utils.manager import ObjectManager
-from ....engines import Engines
-from ....network import Network
 from ....organizer import Conversation
 from ....pipeline import Pipeline
 from ....io import IO
@@ -39,7 +37,15 @@ class TranscriptionPipelineService:
             "formatter_stage",self.formatter_stage,["analysis_stage"])
         ## Other objects
         self.transcribables = ObjectManager()
+
     ################################# MODIFIERS #############################
+
+    ### AnalysisStage
+
+    def register_analysis_plugins_from_directory(self, dir_path : str) -> int:
+        return self.analysis_stage.register_plugins_from_directory(dir_path)
+
+    ### General
 
     def add_conversation(self, conversation : Conversation) -> bool:
         return self.transcribables.add_object(
@@ -49,9 +55,8 @@ class TranscriptionPipelineService:
     def add_conversations(self, conversations : List[Conversation]) -> bool:
         return all([self.add_conversation(conv) for conv in conversations])
 
-    def remove_conversation(self, conversation : Conversation) -> bool:
-        return self.transcribables.remove_object(
-            conversation.get_conversation_name())
+    def remove_conversation(self, conversation_name : str) -> bool:
+        return self.transcribables.remove_object(conversation_name)
 
     def clear_conversations(self) -> bool:
         return self.transcribables.clear_objects()
@@ -60,6 +65,7 @@ class TranscriptionPipelineService:
         transcribables = list(self.transcribables.get_all_objects().values())
         self.pipeline.set_base_input(transcribables)
         self.pipeline.execute()
+        # Generate the pipeline summary.
         return PipelineServiceSummary(
             list(self.get_successfully_transcribed_conversations().keys()),
             list(self.get_unsuccessfully_transcribed_conversations().keys()),
