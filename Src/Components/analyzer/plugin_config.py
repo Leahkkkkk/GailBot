@@ -1,6 +1,6 @@
 # Standard library imports
 from dataclasses import dataclass
-from typing import List
+from typing import List, Any
 # Local imports
 from ...utils.loader import Config
 
@@ -10,3 +10,5 @@ class PluginConfig(Config):
     plugin_dependencies : List[str]
     plugin_file_path : str
     plugin_author : str
+    plugin_input_type : str
+    plugin_output_type : str

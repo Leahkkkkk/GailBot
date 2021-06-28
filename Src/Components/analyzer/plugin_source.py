@@ -1,5 +1,5 @@
 # Standard library imports
-from typing import List
+from typing import List, Any
 from dataclasses import dataclass
 from .plugin import Plugin
 
@@ -11,4 +11,6 @@ class PluginSource:
     number_of_dependencies : int
     plugin_file_path : str
     plugin_author : str
+    plugin_input_type : str
+    plugin_output_type : str
 

@@ -41,7 +41,8 @@ class PluginLoader(Loader):
         plugin_source = PluginSource(
             plugin_config.plugin_name,plugin, plugin_config.plugin_dependencies,
             len(plugin_config.plugin_dependencies),
-            plugin_config.plugin_file_path, plugin_config.plugin_author)
+            plugin_config.plugin_file_path, plugin_config.plugin_author,
+            plugin_config.plugin_input_type, plugin_config.plugin_output_type)
         return self._add_plugin(plugin_config.plugin_name,plugin_source)
 
     ################################# GETTERS ###############################
