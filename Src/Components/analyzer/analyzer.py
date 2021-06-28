@@ -49,7 +49,7 @@ class Analyzer:
         # Load all possible config files
         _, paths = self.io.path_of_files_in_directory(
             dir_path,[self.config_file_extension],check_subdirectories)
-        return len([self.register_plugin_using_config_file(path) for path in paths])
+        return sum([self.register_plugin_using_config_file(path) for path in paths])
 
     def register_plugin_using_config_file(self, config_file_path : str) -> bool:
         """

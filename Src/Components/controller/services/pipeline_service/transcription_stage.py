@@ -1,4 +1,5 @@
 ## Standard imports
+from Src.Components.network.network import Network
 from typing import List, Dict, Tuple
 from copy import deepcopy
 from dataclasses import dataclass,field
@@ -10,108 +11,83 @@ from ....organizer import Conversation
 from .....utils.threads import ThreadPool
 from ..organizer_service import GailBotSettings
 from ..status import TranscriptionStatus
+from .transcribable import Transcribable
 # Third party imports
 
-@dataclass
-class Transcribable:
-    conversation : Conversation
-    status : Dict[str,bool] = field(default_factory=dict)
-    utterances : Dict[str,Utterance] = field(default_factory=dict)
-    transcribable_sources : Dict[str,str] = field(default_factory=dict) # Source name to its transcribable path
-
-# TODO: Only MOV Video files are being supported by IO for some reason.
-# Need to fix this later on.
 class TranscriptionStage:
 
-    def __init__(self, engines : Engines, io : IO, num_threads : int) -> None:
-        pass
-        if num_threads <= 0:
-            raise Exception("Invalid number of threads")
-        # Objects
-        self.engines = engines
-        self.io = io
-        self.transcribables_manager = ObjectManager()
-        # Vars.
-        self.num_threads_transcription_thread_pool = 3 # TODO: Determine if this should be  hard-coded or not.
-        # ThreadPools
+    def __init__(self, num_threads : int) -> None:
+        ## Vars.
+        #  TODO: Determine if this should be  hard-coded or not.
+        self.num_threads_transcription_thread_pool = 3
+        ## Objects.
+        self.engines = Engines(IO(),Network())
+        self.io = IO()
+        self.transcribables = ObjectManager()
         self.thread_pool = ThreadPool(num_threads)
-        self.thread_pool.spawn_threads()
         self.transcription_thread_pool = ThreadPool(
             self.num_threads_transcription_thread_pool)
+        self.thread_pool.spawn_threads()
         self.transcription_thread_pool.spawn_threads()
 
     ################################## MODIFIERS ##########################
 
-    def transcribe(self) -> Dict[str,TranscriptionStatus]:
-        """
-        Transcribe all the conversations that have been set.
-        """
-        status = dict()
-        transcribables = self.transcribables_manager.get_all_objects()
-        # Transcribe all items
-        for transcribable in transcribables.values():
+    def generate_utterances(self) -> Dict[str,TranscriptionStatus]:
+        transcribables = self.transcribables.get_all_objects()
+        for _ , transcribable in transcribables.items():
+            transcribable:Transcribable
             self.thread_pool.add_task(
-                self._transcribe_thread, [transcribable],{})
+                self._transcribe_thread,[transcribable],{})
         self.thread_pool.wait_completion()
-        # Generate a status mapping
-        for name, transcribable in transcribables.items():
-            transcribable : Transcribable
-            status[name] = transcribable.conversation.get_transcription_status()
-        return status
+        return self._generate_conversation_status_map()
 
     ################################## SETTERS #############################
 
-    def set_conversation(self, conversation : Conversation) -> bool:
-        return self.set_conversations([conversation])
+    def add_transcribable(self, transcribable : Transcribable) -> bool:
+        if not self._initialize_transcribable(transcribable):
+            return False
+        return self.transcribables.add_object(
+            transcribable.identifier,transcribable)
 
-    def set_conversations(self, conversations : List[Conversation]) -> bool:
-        """
-        Set the conversation objects to transcribe.
-        """
-        self.transcribables_manager.clear_objects()
-        for conversation in conversations:
-            success, transcribable = self._create_transcribable(conversation)
-            if not success:
-                self.transcribables_manager.clear_objects()
-                return False
-            self.transcribables_manager.add_object(
-                conversation.get_conversation_name(),transcribable)
-        return True
+    def add_transcribables(self, transcribables : List[Transcribable]) -> bool:
+        return all([self.add_transcribable(transcribable) \
+            for transcribable in transcribables])
 
     ################################## GETTERS ################################
 
-    def get_conversations(self) -> Dict[str,Conversation]:
-        conversations = dict()
-        transcribables =  self.transcribables_manager.get_all_objects()
-        for name, transcribable in transcribables.items():
+    def get_transcribables(self) -> Dict[str,Transcribable]:
+        return self.transcribables.get_all_objects()
+
+    def get_transcribable(self, identifier : str) -> Transcribable:
+        if self.transcribables.is_object(identifier):
+            return self.transcribables.get_object(identifier)
+
+    ############################# PRIVATE METHODS ############################
+
+    def _generate_conversation_status_map(self) -> Dict[str,bool]:
+        status_map = dict()
+        transcribables = self.transcribables.get_all_objects()
+        for conv_name, transcribable in transcribables.items():
             transcribable : Transcribable
-            conversations[name] = transcribable.conversation
-        return conversations
+            status_map[conv_name] = \
+                transcribable.conversation.get_transcription_status()
+        return status_map
 
-    def get_number_of_conversations(self) -> int:
-        return len(self.transcribables_manager.get_object_names())
-
-    ############################# PRIVATE METHODS #############################
-
-    def _create_transcribable(self, conversation : Conversation) \
-            -> Tuple[bool,Transcribable]:
-        # create transcribable.
-        transcribable = Transcribable(conversation)
+    def _initialize_transcribable(self, transcribable : Transcribable) -> bool:
+        conversation = transcribable.conversation
         source_paths_map = conversation.get_source_file_paths()
         source_types_map = conversation.get_source_file_types()
         for source_name, source_path in source_paths_map.items():
-            # Initialize statuses
-            transcribable.status[source_name] = False
-            # Initialize utterances
-            transcribable.utterances[source_name] = None
-            # Initialize transcribable_sources
+            # Setting status to False
+            transcribable.source_status[source_name] = False
+            # Getting transcribable sources.
             success, path = self._determine_transcribable_source_path(
-                    source_path, source_types_map[source_name],
-                    conversation.get_temp_directory_path())
+                source_path, source_types_map[source_name],
+                conversation.get_temp_directory_path())
             if not success:
-                return (False, None)
-            transcribable.transcribable_sources[source_name] = path
-        return (True, transcribable)
+                return False
+            transcribable.source_to_transcribable_map[source_name] = path
+        return True
 
     def _determine_transcribable_source_path(self,source_path : str,
             source_type : str, temp_dir_path : str) -> Tuple[bool,str]:
@@ -132,26 +108,28 @@ class TranscriptionStage:
         else:
             raise Exception("Source type not supported")
 
-    ## Transcription threads
+    #### Thread methods
 
     def _transcribe_thread(self, transcribable : Transcribable) -> None:
-        transcribable_sources = transcribable.transcribable_sources
+        transcribable_sources = transcribable.source_to_transcribable_map
         settings : GailBotSettings = transcribable.conversation.get_settings()
+        utterances_map = dict()
         for source_name in transcribable_sources.keys():
             if settings.get_engine_type() == "watson":
                 self.transcription_thread_pool.add_task(
-                    self._transcribe_watson_thread,[source_name, transcribable],{})
+                    self._transcribe_watson_thread,
+                    [source_name, transcribable,utterances_map],{})
             elif settings.get_engine_type() == "google":
                 self.transcription_thread_pool.add_task(
-                    self._transcribe_google_thread, [source_name,transcribable],{})
+                    self._transcribe_google_thread,
+                    [source_name,transcribable,utterances_map],{})
             else:
                 raise Exception("Engine type not supported")
         self.transcription_thread_pool.wait_completion()
-        # Set the results
-        transcribable.conversation.set_utterances(
-            deepcopy(transcribable.utterances))
-        # Set the data for the conversation object
-        is_successful = all(transcribable.status.values())
+        # Set results.
+        transcribable.conversation.set_utterances(deepcopy(utterances_map))
+        # Setting conversation status
+        is_successful = all(transcribable.source_status.values())
         if is_successful:
             transcribable.conversation.set_transcription_status(
                 TranscriptionStatus.successful)
@@ -160,26 +138,26 @@ class TranscriptionStage:
                 TranscriptionStatus.unsuccessful)
 
 
-    def _transcribe_watson_thread(self,transcribable_source : str,
-            transcribable  : Transcribable) -> None:
+    def _transcribe_watson_thread(self, source_name : str,
+            transcribable : Transcribable,
+            utterances_map : Dict[str,Utterance]) -> None:
         engine = self.engines.engine("watson")
         settings : GailBotSettings = transcribable.conversation.get_settings()
-        source_path = transcribable.transcribable_sources[transcribable_source]
+        source_path = transcribable.source_to_transcribable_map[source_name]
         engine.configure(
             settings.get_watson_api_key(),settings.get_watson_region(),
             source_path,settings.get_watson_base_language_model(),
             settings.get_watson_language_customization_id())
         utterances = engine.transcribe()
-        # Setting utterances
-        transcribable.utterances[transcribable_source] = utterances
-        # Set the status
-        transcribable.status[transcribable_source] = \
+        utterances_map[source_name] = utterances
+        transcribable.source_status[source_name] = \
             engine.was_transcription_successful()
 
-    def _transcribe_google_thread(self, transcribable_source : str,
-            transcribable : Transcribable) -> None:
-        engine = self.engines.engine("google")
-        raise Exception("Google engine not currently supported")
+    def _transcribe_google_thread(self, source_name : str,
+            transcribable : Transcribable,
+            utterances_map : Dict[str,Utterance]) -> None:
+        pass
+
 
 
 
