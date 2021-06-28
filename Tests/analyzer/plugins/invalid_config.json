@@ -1,0 +1,6 @@
+{
+    "plugin_name" : "plugin_one",
+    "plugin_dependencies" : [],
+    "plugin_file_path" : "invalid",
+    "plugin_author" : "Umair"
+}
