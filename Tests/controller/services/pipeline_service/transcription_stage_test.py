@@ -2,9 +2,8 @@
 from typing import Dict, Any, List
 # Local imports
 from Src.Components.controller.services import OrganizerService, FileSystemService,\
-                                                GBSettingAttrs
-from Src.Components.controller.services.pipeline_service \
-    import TranscriptionStage, Transcribable
+            GBSettingAttrs
+from Src.Components.controller.services.pipeline_service import TranscriptionStage
 from Src.Components.organizer import Conversation
 from Src.Components.engines import Utterance, UtteranceAttributes
 from Src.Components.io import IO
@@ -21,7 +20,6 @@ MIXED_CONV_DIR_PATH = "TestData/media/audio_video_conversation"
 SMALL_CONV_DIR_PATH = "TestData/media/small_conversation"
 RESULT_DIR_PATH = "TestData/workspace/dir_2"
 MOV_FILE_PATH = "TestData/media/sample_video_conversation.mov"
-NUM_STAGE_THREADS = 4
 
 ############################### SETUP ########################################
 
@@ -54,13 +52,6 @@ def initialize_conversation(source_path : str) -> Conversation:
     assert type(conv) == Conversation
     return conv
 
-def initialize_transcribable(conversation : Conversation) -> Transcribable:
-    return Transcribable(
-        conversation.get_conversation_name(),conversation)
-
-def transcribable_from_source(source_path : str) -> Transcribable:
-    return initialize_transcribable(initialize_conversation(source_path))
-
 def print_utterance_map(mapping : Dict[str,List[Utterance]]):
     for name, utterances in mapping.items():
         print("source name: {}".format(name),
@@ -76,94 +67,20 @@ def print_utterances(utterances : List[Utterance]):
             utterance.get(UtteranceAttributes.end_time)[1])
         print(msg)
 
-
 ########################## TEST DEFINITIONS ##################################
-
-def test_add_transcribable_audio_source() -> None:
-    """
-    Tests:
-        1. Set an audio file source.
-    """
-    stage = TranscriptionStage(NUM_STAGE_THREADS)
-    transcribable = transcribable_from_source(MP3_FILE_PATH)
-    assert stage.add_transcribable(transcribable)
-    cleanup_sources()
-
-def test_add_transcribable_video_source() -> None:
-    """
-    Tests:
-        1. Set a video file source.
-    """
-    stage = TranscriptionStage(NUM_STAGE_THREADS)
-    transcribable = transcribable_from_source(MOV_FILE_PATH)
-    assert stage.add_transcribable(transcribable)
-    cleanup_sources()
-
-def test_add_transcribable_mixed_source() -> None:
-    """
-    Tests:
-        1. Set a directory source with both audio and video files.
-        2. Set an invalid directory path.
-    """
-    stage = TranscriptionStage(NUM_STAGE_THREADS)
-    transcribable = transcribable_from_source(MIXED_CONV_DIR_PATH)
-    assert stage.add_transcribable(transcribable)
-    cleanup_sources()
-
-def test_add_transcribables() -> None:
-    """
-    Tests:
-        1. Add multiple transcribables.
-    """
-    stage = TranscriptionStage(NUM_STAGE_THREADS)
-    transcribable_1 = transcribable_from_source(MP3_FILE_PATH)
-    transcribable_2 = transcribable_from_source(MOV_FILE_PATH)
-    transcribable_3 = transcribable_from_source(MIXED_CONV_DIR_PATH)
-    assert stage.add_transcribables(
-        [transcribable_1,transcribable_2,transcribable_3])
-    cleanup_sources()
-
-def get_transcribables() -> None:
-    """
-    Tests:
-        1. Obtain all transcribables.
-    """
-    stage = TranscriptionStage(NUM_STAGE_THREADS)
-    transcribable_1 = transcribable_from_source(MP3_FILE_PATH)
-    transcribable_2 = transcribable_from_source(MOV_FILE_PATH)
-    transcribable_3 = transcribable_from_source(MIXED_CONV_DIR_PATH)
-    stage.add_transcribables(
-        [transcribable_1,transcribable_2,transcribable_3])
-    assert list(stage.get_transcribables().values()) == \
-        [transcribable_1,transcribable_2,transcribable_3]
-    cleanup_sources()
-
-def get_transcribable() -> None:
-    """
-    Tests:
-        1. Get a valid transcribable.
-        2. Get an invalid transcribable.
-    """
-    stage = TranscriptionStage(NUM_STAGE_THREADS)
-    transcribable_1 = transcribable_from_source(MP3_FILE_PATH)
-    stage.add_transcribable(transcribable_1)
-    assert stage.get_transcribable(
-        transcribable_1.conversation.get_conversation_name())
-    assert not stage.get_transcribable("invalid")
-    cleanup_sources()
 
 def test_generate_utterances_audio_source() -> None:
     """
     Tests:
         1. Generate utterances from an audio only source.
     """
-    stage = TranscriptionStage(NUM_STAGE_THREADS)
-    transcribable = transcribable_from_source(MP3_FILE_PATH)
-    conversation = transcribable.conversation
-    stage.add_transcribable(transcribable)
-    results = stage.generate_utterances()
+    stage = TranscriptionStage()
+    conversation = initialize_conversation(MP3_FILE_PATH)
+    result = stage.generate_utterances({
+        conversation.get_conversation_name() : conversation
+    })
     print_utterance_map(conversation.get_utterances())
-    assert results[conversation.get_conversation_name()]
+    print(result)
     cleanup_sources()
 
 def test_generate_utterances_video_source() -> None:
@@ -171,13 +88,13 @@ def test_generate_utterances_video_source() -> None:
     Tests:
         1. Generate utterances from a video only source.
     """
-    stage = TranscriptionStage(NUM_STAGE_THREADS)
-    transcribable = transcribable_from_source(MOV_FILE_PATH)
-    conversation = transcribable.conversation
-    stage.add_transcribable(transcribable)
-    results = stage.generate_utterances()
-    assert results[conversation.get_conversation_name()]
+    stage = TranscriptionStage()
+    conversation = initialize_conversation(MOV_FILE_PATH)
+    result = stage.generate_utterances({
+        conversation.get_conversation_name() : conversation
+    })
     print_utterance_map(conversation.get_utterances())
+    print(result)
     cleanup_sources()
 
 def test_generate_utterances_mixed_source() -> None:
@@ -185,12 +102,12 @@ def test_generate_utterances_mixed_source() -> None:
     Tests:
         1. Generate utterances from a mixed source.
     """
-    stage = TranscriptionStage(NUM_STAGE_THREADS)
-    transcribable = transcribable_from_source(MIXED_CONV_DIR_PATH)
-    conversation = transcribable.conversation
-    stage.add_transcribable(transcribable)
-    results = stage.generate_utterances()
-    assert results[conversation.get_conversation_name()]
+    stage = TranscriptionStage()
+    conversation = initialize_conversation(MIXED_CONV_DIR_PATH)
+    result = stage.generate_utterances({
+        conversation.get_conversation_name() : conversation
+    })
     print_utterance_map(conversation.get_utterances())
+    print(result)
     cleanup_sources()
 

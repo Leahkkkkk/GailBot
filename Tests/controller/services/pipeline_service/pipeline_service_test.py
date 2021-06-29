@@ -1,6 +1,5 @@
 # Standard library imports
 from typing import List, Dict, Any
-from Src.Components.controller import services
 # Local imports
 from Src.Components.controller.services import TranscriptionPipelineService, \
     OrganizerService, FileSystemService, TranscriptionStatus, GBSettingAttrs, \
@@ -138,7 +137,8 @@ def test_start_pipeline_service_audio() -> None:
     service.add_conversations([c1])
     summary = service.start_pipeline_service()
     print(summary)
-    assert len(summary.successful_conversations) > 0
+    cleanup_sources()
+
 
 def test_start_pipeline_service_video() -> None:
     """
@@ -151,7 +151,7 @@ def test_start_pipeline_service_video() -> None:
     service.add_conversations([c1])
     summary = service.start_pipeline_service()
     print(summary)
-    assert len(summary.successful_conversations) > 0
+    cleanup_sources()
 
 def test_start_pipeline_service_mixed() -> None:
     """
@@ -164,7 +164,7 @@ def test_start_pipeline_service_mixed() -> None:
     service.add_conversations([c1])
     summary = service.start_pipeline_service()
     print(summary)
-    assert len(summary.successful_conversations) > 0
+    cleanup_sources()
 
 def test_start_pipeline_service_multiple() -> None:
     service = TranscriptionPipelineService()
@@ -175,7 +175,8 @@ def test_start_pipeline_service_multiple() -> None:
     service.add_conversations([c1,c2,c3])
     summary = service.start_pipeline_service()
     print(summary)
-    assert len(summary.successful_conversations) > 0
+    cleanup_sources()
+
 
 def test_is_conversation() -> None:
     """
@@ -188,8 +189,9 @@ def test_is_conversation() -> None:
     service.add_conversation(c1)
     assert service.is_conversation(c1.get_conversation_name())
     assert not service.is_conversation("invalid")
+    cleanup_sources()
 
-def test_get_all_conversations() -> None:
+def test_get_conversations() -> None:
     """
     Tests:
         1. Get all the conversations.
@@ -201,6 +203,7 @@ def test_get_all_conversations() -> None:
     service.add_conversations([c1,c2,c3])
     names = [c1.get_conversation_name(), c2.get_conversation_name(),
         c3.get_conversation_name()]
-    assert all([name in service.get_all_conversations().keys() \
+    assert all([name in service.get_conversations().keys() \
         for name in names])
+    cleanup_sources()
 
