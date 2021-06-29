@@ -1,12 +1,11 @@
 # Standard library imports
-from typing import Dict, Any, List
+from typing import Dict, Any
 # Local imports
 from Src.Components.controller.services import OrganizerService, FileSystemService,\
                                                 GBSettingAttrs
 from Src.Components.controller.services.pipeline_service \
-    import AnalysisStage, Transcribable
+    import AnalysisStage, TranscriptionStage
 from Src.Components.organizer import Conversation
-from Src.Components.engines import Utterance, UtteranceAttributes
 from Src.Components.io import IO
 # Third party imports
 
@@ -55,15 +54,7 @@ def initialize_conversation(source_path : str) -> Conversation:
     assert type(conv) == Conversation
     return conv
 
-def initialize_transcribable(conversation : Conversation) -> Transcribable:
-    return Transcribable(
-        conversation.get_conversation_name(),conversation)
-
-def transcribable_from_source(source_path : str) -> Transcribable:
-    return initialize_transcribable(initialize_conversation(source_path))
-
 ########################## TEST DEFINITIONS ##################################
-
 
 def test_register_plugins_from_directory() -> None:
     """
@@ -75,60 +66,27 @@ def test_register_plugins_from_directory() -> None:
     assert stage.register_plugins_from_directory(PLUGINS_DIR) == NUM_DIR_PLUGINS
     assert stage.register_plugins_from_directory("invalid") == 0
 
-def test_add_transcribable_audio_source() -> None:
+def test_analyze_audio_source() -> None:
     """
     Tests:
-        1. Set an audio file source.
+        1. Analyze with valid plugins.
     """
-    stage = AnalysisStage()
-    transcribable = transcribable_from_source(MP3_FILE_PATH)
-    assert stage.add_transcribable(transcribable)
-    cleanup_sources()
+    # Conversations
+    c1 = initialize_conversation(MP3_FILE_PATH)
+    # Running the transcriptionStage
+    transcription_stage = TranscriptionStage()
+    conversations = {
+        c1.get_conversation_name() : c1
+    }
+    results = transcription_stage.generate_utterances(conversations)
+    analysis_stage = AnalysisStage()
+    analysis_stage.register_plugins_from_directory(PLUGINS_DIR)
+    results = analysis_stage.analyze(
+        conversations,results)
+    print(results)
 
-def test_add_transcribable_video_source() -> None:
-    """
-    Tests:
-        1. Set a video file source.
-    """
-    stage = AnalysisStage()
-    transcribable = transcribable_from_source(MOV_FILE_PATH)
-    assert stage.add_transcribable(transcribable)
-    cleanup_sources()
+def test_analyze_video_source() -> None:
+    assert False
 
-def test_add_transcribable_mixed_source() -> None:
-    """
-    Tests:
-        1. Set a directory source with both audio and video files.
-        2. Set an invalid directory path.
-    """
-    stage = AnalysisStage()
-    transcribable = transcribable_from_source(MIXED_CONV_DIR_PATH)
-    assert stage.add_transcribable(transcribable)
-    cleanup_sources()
-
-def test_add_transcribables() -> None:
-    """
-    Tests:
-        1. Add multiple transcribables.
-    """
-    stage = AnalysisStage()
-    transcribable_1 = transcribable_from_source(MP3_FILE_PATH)
-    transcribable_2 = transcribable_from_source(MOV_FILE_PATH)
-    transcribable_3 = transcribable_from_source(MIXED_CONV_DIR_PATH)
-    assert stage.add_transcribables(
-        [transcribable_1,transcribable_2,transcribable_3])
-    cleanup_sources()
-
-def test_analyze() -> None:
-    stage = AnalysisStage()
-    stage.register_plugins_from_directory(PLUGINS_DIR)
-    transcribable_1 = transcribable_from_source(MP3_FILE_PATH)
-    transcribable_2 = transcribable_from_source(MOV_FILE_PATH)
-    transcribable_3 = transcribable_from_source(MIXED_CONV_DIR_PATH)
-    assert stage.add_transcribables(
-        [transcribable_1,transcribable_2,transcribable_3])
-    summaries = stage.analyze()
-    names = [transcribable_1.identifier, transcribable_2.identifier,
-        transcribable_3.identifier]
-    assert all([name in summaries.keys() for name in names])
-
+def test_analyze_mixed_source() -> None:
+    assert False
