@@ -58,16 +58,14 @@ class PluginManager:
             (bool): True if successfully loaded. False otherwise.
         """
         # Generate config object and load
-        try:
-            _ , data = self.io.read(config_file_path)
-            config = PluginConfig(
-                data["plugin_name"], data["plugin_dependencies"],
-                data["plugin_file_path"], data["plugin_author"],
-                data["plugin_input_type"], data["plugin_output_type"],
-                data["plugin_source_name"], data["plugin_class_name"])
-            return self.loader.load_plugin_using_config(config)
-        except Exception as e:
+        _ , data = self.io.read(config_file_path)
+        return self.register_plugin_using_config_data(data)
+
+    def register_plugin_using_config_data(self, data : Dict[str,Any]) -> bool:
+        success, config = self._generate_config(data)
+        if not success:
             return False
+        return self.loader.load_plugin_using_config(config)
 
     def apply_plugins(self, apply_configs : Dict[str, ApplyConfig]) \
             -> PluginManagerSummary:
@@ -136,6 +134,18 @@ class PluginManager:
 
 
     ########################### PRIVATE METHODS #############################
+
+    def _generate_config(self, data : Dict[str, Any]) \
+            -> Tuple[bool,PluginConfig]:
+        try:
+            config = PluginConfig(
+                data["plugin_name"], data["plugin_dependencies"],
+                data["plugin_file_path"], data["plugin_author"],
+                data["plugin_input_type"], data["plugin_output_type"],
+                data["plugin_source_name"], data["plugin_class_name"])
+            return (True, config)
+        except Exception as e:
+            return (False, None)
 
     def _generate_execution_pipeline(self,
             apply_configs : Dict[str,ApplyConfig]) -> Tuple[bool, Pipeline]:

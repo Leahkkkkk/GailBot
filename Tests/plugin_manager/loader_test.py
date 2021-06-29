@@ -6,7 +6,7 @@ from Src.Components.plugin_manager import PluginLoader, PluginSource, PluginConf
 
 ############################### GLOBALS #####################################
 
-PLUGIN_FILE_PATH = "TestData/plugins/plugin_one/plugin.py"
+PLUGIN_FILE_PATH = "TestData/plugins/random_plugins/plugin_one/plugin.py"
 WAV_FILE_PATH = "TestData/media/test2a_copy.wav"
 
 ############################### SETUP #######################################

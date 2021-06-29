@@ -6,11 +6,11 @@ from Src.Components.plugin_manager import PluginManager, PluginDetails, ApplyCon
 ############################### GLOBALS #####################################
 
 INVALID_DIR_PATH = "TestData/workspace/empty_dir_1"
-PLUGINS_DIR = "TestData/plugins"
-PLUGIN_ONE_DIR = "TestData/plugins/plugin_one"
-PLUGIN_ONE_CONFIG_PATH = "TestData/plugins/plugin_one/config.json"
-PLUGIN_TWO_DIR = "TestData/plugins/plugin_two"
-PLUGIN_TWO_CONFIG_PATH = "TestData/plugins/plugin_two/config.json"
+PLUGINS_DIR = "TestData/plugins/random_plugins"
+PLUGIN_ONE_DIR = "TestData/plugins/random_plugins/plugin_one"
+PLUGIN_ONE_CONFIG_PATH = "TestData/plugins/random_plugins/plugin_one/config.json"
+PLUGIN_TWO_DIR = "TestData/plugins/random_plugins/plugin_two"
+PLUGIN_TWO_CONFIG_PATH = "TestData/plugins/random_plugins/plugin_two/config.json"
 WAV_FILE_PATH = "TestData/media/test.wav"
 WORKSPACE_DIR_PATH = "TestData/workspace"
 RESULT_DIR_PATH = "TestData/workspace"
