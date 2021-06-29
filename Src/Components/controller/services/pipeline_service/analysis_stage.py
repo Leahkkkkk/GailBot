@@ -4,6 +4,9 @@ from typing import Any, List, Dict
 from ....analyzer import Analyzer, AnalysisSummary, ApplyConfig
 from ....organizer import Conversation
 from .....utils.threads import ThreadPool
+from .transcription_stage_results import TranscriptionStageResult
+from .analysis_plugin_input import AnalysisPluginInput
+from .analysis_stage_result import AnalysisStageResult
 
 class AnalysisStage:
 
@@ -17,30 +20,35 @@ class AnalysisStage:
         return self.analyzer.register_plugins_from_directory(dir_path)
 
     def analyze(self, conversations : Dict[str, Conversation],
-            transcription_stage_output : Any) -> Any:
+            transcription_stage_output : TranscriptionStageResult) \
+                -> AnalysisStageResult:
         ## Unpack the transcription stage output
         # TODO: This might change.
         conversations_audio_sources = \
-            transcription_stage_output["conversations_audio_sources"]
+            transcription_stage_output.conversations_audio_sources
         conversations_status_maps = \
-            transcription_stage_output["conversations_status_maps"]
+            transcription_stage_output.conversations_status_maps
         # Analyze each conversation
         summaries = dict()
         plugin_names = self.analyzer.get_plugin_names()
         for conversation_name, conversation in conversations.items():
             apply_configs = dict()
             for plugin_name in plugin_names:
-                # TODO: Determine the exact format for an AnalysisStage plugin.
-                # Potentially pass in utterances_map, source_to_audio_map,
-                # source_to_source_path_map
-                apply_configs[plugin_name] = ApplyConfig(plugin_name, [[plugin_name]],{})
+                # Generating the input to the analaysis plugin.
+                plugin_input = AnalysisPluginInput(
+                    conversation.get_utterances(),
+                    conversations_audio_sources[conversation_name],
+                    conversation.get_source_file_paths())
+                # Generating the apply_config for all plugins.
+                apply_configs[plugin_name] = ApplyConfig(
+                    plugin_name, [plugin_input],{})
             # One thread per conversation.
             self.thread_pool.add_task(
                 self._analyze_thread, [conversation_name, apply_configs,
                     summaries],{})
         self.thread_pool.wait_completion()
-        # TODO: Return something
-        return summaries
+        # Generating result.
+        return AnalysisStageResult(summaries)
 
     ######################## PRIVATE METHODS ################################
 

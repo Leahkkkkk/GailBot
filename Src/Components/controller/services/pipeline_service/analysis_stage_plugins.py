@@ -1,12 +1,14 @@
 # Standard library imports
 from abc import abstractmethod
+from typing import Dict, Any
 # Local imports
 from ....analyzer import Plugin
+from .analysis_plugin_input import AnalysisPluginInput
 
 class AnalysisPlugins(Plugin):
 
     @abstractmethod
-    def apply_plugin(self) -> None:
+    def apply_plugin(self, input : AnalysisPluginInput) -> Any:
         pass
 
     @abstractmethod
