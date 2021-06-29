@@ -9,6 +9,7 @@ from ....network import Network
 from ....io import IO
 from ..organizer_service import GailBotSettings
 from ..status import TranscriptionStatus
+from .transcription_stage_results import TranscriptionStageResult
 
 class TranscriptionStage:
 
@@ -26,7 +27,7 @@ class TranscriptionStage:
         self.transcription_thread_pool.spawn_threads()
 
     def generate_utterances(self, conversations : Dict[str,Conversation]) \
-            -> Any:
+            -> TranscriptionStageResult:
         # Extract sources for all conversations.
         conversations_audio_sources = dict()
         conversations_status_maps = dict()
@@ -41,9 +42,11 @@ class TranscriptionStage:
                  {})
         self.thread_pool.wait_completion()
         # Return the results for all conversations.
-        return {
-            "conversations_audio_sources" : conversations_audio_sources,
-            "conversations_status_maps" : conversations_status_maps}
+        return TranscriptionStageResult(
+            conversations_audio_sources, conversations_status_maps)
+        # return {
+        #     "conversations_audio_sources" : conversations_audio_sources,
+        #     "conversations_status_maps" : conversations_status_maps}
 
     ############################# PRIVATE METHODS ############################
 

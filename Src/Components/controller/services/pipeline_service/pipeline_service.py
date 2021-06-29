@@ -12,7 +12,6 @@ from .formatter_stage import FormatterStage
 
 # Third party imports
 
-
 class TranscriptionPipelineService:
 
     def __init__(self) -> None:
