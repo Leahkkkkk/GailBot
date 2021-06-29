@@ -5,7 +5,7 @@ from typing import Dict, Any
 from ....analyzer import Plugin
 from .analysis_plugin_input import AnalysisPluginInput
 
-class AnalysisPlugins(Plugin):
+class AnalysisPlugin(Plugin):
 
     @abstractmethod
     def apply_plugin(self, input : AnalysisPluginInput) -> Any:

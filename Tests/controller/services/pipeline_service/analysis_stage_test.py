@@ -21,6 +21,7 @@ RESULT_DIR_PATH = "TestData/workspace/dir_2"
 MOV_FILE_PATH = "TestData/media/sample_video_conversation.mov"
 PLUGINS_DIR = "Tests/analyzer/plugins"
 NUM_DIR_PLUGINS = 2
+ANALYSIS_PLUGINS_DIR = "Src/plugins/analysis_plugins"
 
 ############################### SETUP ########################################
 
@@ -80,13 +81,13 @@ def test_analyze_audio_source() -> None:
     }
     results = transcription_stage.generate_utterances(conversations)
     analysis_stage = AnalysisStage()
-    analysis_stage.register_plugins_from_directory(PLUGINS_DIR)
+    analysis_stage.register_plugins_from_directory(ANALYSIS_PLUGINS_DIR)
     results = analysis_stage.analyze(
         conversations,results)
     print(results)
 
-def test_analyze_video_source() -> None:
-    assert False
+# def test_analyze_video_source() -> None:
+#     assert False
 
-def test_analyze_mixed_source() -> None:
-    assert False
+# def test_analyze_mixed_source() -> None:
+#     assert False
