@@ -19,9 +19,9 @@ MIXED_CONV_DIR_PATH = "TestData/media/audio_video_conversation"
 SMALL_CONV_DIR_PATH = "TestData/media/small_conversation"
 RESULT_DIR_PATH = "TestData/workspace/dir_2"
 MOV_FILE_PATH = "TestData/media/sample_video_conversation.mov"
-PLUGINS_DIR = "Tests/analyzer/plugins"
+PLUGINS_DIR = "TestData/plugins/random_plugins"
 NUM_DIR_PLUGINS = 2
-ANALYSIS_PLUGINS_DIR = "Src/plugins/analysis_plugins"
+ANALYSIS_PLUGINS_DIR = "TestData/plugins/analysis_plugins"
 
 ############################### SETUP ########################################
 
@@ -57,15 +57,15 @@ def initialize_conversation(source_path : str) -> Conversation:
 
 ########################## TEST DEFINITIONS ##################################
 
-def test_register_plugins_from_directory() -> None:
-    """
-    Tests:
-        1. Register from valid directory.
-        2. Register from invalid directory.
-    """
-    stage = AnalysisStage()
-    assert stage.register_plugins_from_directory(PLUGINS_DIR) == NUM_DIR_PLUGINS
-    assert stage.register_plugins_from_directory("invalid") == 0
+# def test_register_plugins_from_directory() -> None:
+#     """
+#     Tests:
+#         1. Register from valid directory.
+#         2. Register from invalid directory.
+#     """
+#     stage = AnalysisStage()
+#     assert stage.register_plugins_from_directory(PLUGINS_DIR) == NUM_DIR_PLUGINS
+#     assert stage.register_plugins_from_directory("invalid") == 0
 
 def test_analyze_audio_source() -> None:
     """
@@ -79,15 +79,47 @@ def test_analyze_audio_source() -> None:
     conversations = {
         c1.get_conversation_name() : c1
     }
-    results = transcription_stage.generate_utterances(conversations)
     analysis_stage = AnalysisStage()
-    analysis_stage.register_plugins_from_directory(ANALYSIS_PLUGINS_DIR)
+    assert analysis_stage.register_plugins_from_directory(ANALYSIS_PLUGINS_DIR) > 0
+    results = transcription_stage.generate_utterances(conversations)
     results = analysis_stage.analyze(
         conversations,results)
     print(results)
 
-# def test_analyze_video_source() -> None:
-#     assert False
+def test_analyze_video_source() -> None:
+    """
+    Tests:
+        1. Analyze with valid plugins.
+    """
+    # Conversations
+    c1 = initialize_conversation(MOV_FILE_PATH)
+    # Running the transcriptionStage
+    transcription_stage = TranscriptionStage()
+    conversations = {
+        c1.get_conversation_name() : c1
+    }
+    analysis_stage = AnalysisStage()
+    assert analysis_stage.register_plugins_from_directory(ANALYSIS_PLUGINS_DIR) > 0
+    results = transcription_stage.generate_utterances(conversations)
+    results = analysis_stage.analyze(
+        conversations,results)
+    print(results)
 
-# def test_analyze_mixed_source() -> None:
-#     assert False
+def test_analyze_mixed_source() -> None:
+    """
+    Tests:
+        1. Analyze with valid plugins.
+    """
+    # Conversations
+    c1 = initialize_conversation(MIXED_CONV_DIR_PATH)
+    # Running the transcriptionStage
+    transcription_stage = TranscriptionStage()
+    conversations = {
+        c1.get_conversation_name() : c1
+    }
+    analysis_stage = AnalysisStage()
+    assert analysis_stage.register_plugins_from_directory(ANALYSIS_PLUGINS_DIR) > 0
+    results = transcription_stage.generate_utterances(conversations)
+    results = analysis_stage.analyze(
+        conversations,results)
+    print(results)

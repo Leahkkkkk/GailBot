@@ -17,7 +17,7 @@ CONV_DIR_PATH = "TestData/media/conversation"
 SMALL_CONV_DIR_PATH = "TestData/media/small_conversation"
 RESULT_DIR_PATH = "TestData/workspace/dir_2"
 MOV_FILE_PATH = "TestData/media/sample_video_conversation.mov"
-PLUGINS_DIR_PATH = "Tests/analyzer/plugins"
+PLUGINS_DIR_PATH = "TestData/plugins/random_plugins"
 MIXED_CONV_DIR_PATH = "TestData/media/audio_video_conversation"
 
 ############################### SETUP #######################################

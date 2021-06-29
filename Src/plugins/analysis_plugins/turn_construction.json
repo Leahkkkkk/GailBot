@@ -1,8 +1,0 @@
-{
-    "plugin_name" : "TCU",
-    "plugin_dependencies" : [],
-    "plugin_file_path" : "/Users/muhammadumair/Documents/Repositories/mumair01-Repos/GailBot-0.3/Src/plugins/analysis_plugins/turn_construction.py",
-    "plugin_author" : "Umair",
-    "plugin_input_type" : "AnalysisPluginInput",
-    "plugin_output_type" : "Any"
-}

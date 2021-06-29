@@ -28,22 +28,25 @@ class PluginLoader:
         Returns:
             (bool): True if successful. False otherwise.
         """
-        # Verify that the plugin file exists
-        if not self.io.is_file(plugin_config.plugin_file_path):
-            return False
-        # Read the file in this case
-        plugin = self._load_class_from_file(
-            plugin_config.plugin_file_path,plugin_config.plugin_source_name,
-            plugin_config.plugin_class_name)
-        if plugin == None:
-            return False
-        # save the plugin source.
-        plugin_source = PluginSource(
-            plugin_config.plugin_name,plugin, plugin_config.plugin_dependencies,
-            len(plugin_config.plugin_dependencies),
-            plugin_config.plugin_file_path, plugin_config.plugin_author,
-            plugin_config.plugin_input_type, plugin_config.plugin_output_type)
-        return self._add_plugin(plugin_config.plugin_name,plugin_source)
+        try:
+            # Verify that the plugin file exists
+            if not self.io.is_file(plugin_config.plugin_file_path):
+                return False
+            # Read the file in this case
+            plugin = self._load_class_from_file(
+                plugin_config.plugin_file_path,plugin_config.plugin_source_name,
+                plugin_config.plugin_class_name)
+            if plugin == None:
+                return False
+            # save the plugin source.
+            plugin_source = PluginSource(
+                plugin_config.plugin_name,plugin, plugin_config.plugin_dependencies,
+                len(plugin_config.plugin_dependencies),
+                plugin_config.plugin_file_path, plugin_config.plugin_author,
+                plugin_config.plugin_input_type, plugin_config.plugin_output_type)
+            return self._add_plugin(plugin_config.plugin_name,plugin_source)
+        except Exception as e:
+            pass
 
     ################################# GETTERS ###############################
 

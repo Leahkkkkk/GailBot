@@ -1,7 +1,7 @@
 # Standard library imports
 from typing import Any, List, Dict
 # Local imports
-from ....analyzer import Analyzer, AnalysisSummary, ApplyConfig
+from ....plugin_manager import PluginManager, PluginManagerSummary, ApplyConfig
 from ....organizer import Conversation
 from .....utils.threads import ThreadPool
 from .transcription_stage_results import TranscriptionStageResult
@@ -12,12 +12,12 @@ class AnalysisStage:
 
     def __init__(self) -> None:
         ## Objects
-        self.analyzer = Analyzer()
+        self.plugin_manager = PluginManager()
         self.thread_pool = ThreadPool(4) # TODO: Remove hard-code.
         self.thread_pool.spawn_threads()
 
     def register_plugins_from_directory(self, dir_path : str) -> int:
-        return self.analyzer.register_plugins_from_directory(dir_path)
+        return self.plugin_manager.register_plugins_from_directory(dir_path)
 
     def analyze(self, conversations : Dict[str, Conversation],
             transcription_stage_output : TranscriptionStageResult) \
@@ -30,7 +30,7 @@ class AnalysisStage:
             transcription_stage_output.conversations_status_maps
         # Analyze each conversation
         summaries = dict()
-        plugin_names = self.analyzer.get_plugin_names()
+        plugin_names = self.plugin_manager.get_plugin_names()
         for conversation_name, conversation in conversations.items():
             apply_configs = dict()
             for plugin_name in plugin_names:
@@ -54,8 +54,8 @@ class AnalysisStage:
 
     def _analyze_thread(self, conversation_name,
             apply_configs : Dict[str,ApplyConfig],
-            summaries : Dict[str,AnalysisSummary]) -> None:
+            summaries : Dict[str,PluginManagerSummary]) -> None:
         summaries[conversation_name] = \
-            self.analyzer.apply_plugins(apply_configs)
+            self.plugin_manager.apply_plugins(apply_configs)
 
 

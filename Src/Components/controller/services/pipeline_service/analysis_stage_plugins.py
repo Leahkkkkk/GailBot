@@ -2,7 +2,7 @@
 from abc import abstractmethod
 from typing import Dict, Any
 # Local imports
-from ....analyzer import Plugin
+from ....plugin_manager import Plugin
 from .analysis_plugin_input import AnalysisPluginInput
 
 class AnalysisPlugin(Plugin):
