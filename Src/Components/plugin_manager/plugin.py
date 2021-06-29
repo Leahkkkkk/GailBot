@@ -17,7 +17,7 @@ class Plugin(ABC):
     ############################ MODIFIERS ##################################
 
     @abstractmethod
-    def apply_plugin(self, *args, **kwargs)-> Any:
+    def apply_plugin(self, *args, **kwargs) -> Any:
         """
         Apply this plugin using the given Applyconfig and return the execution
         summary.

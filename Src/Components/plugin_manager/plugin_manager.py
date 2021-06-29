@@ -1,30 +1,26 @@
 # Standard library imports
 from typing import Dict, Any, List, Tuple
 # Local imports
+from .apply_config import ApplyConfig
+from .manager_summary import PluginManagerSummary
+from .plugin_details import PluginDetails
+from .config import PluginConfig
+from .plugin_source import PluginSource
 from .loader import PluginLoader
 from .logic import PluginPipelineLogic
-from .plugin_config import PluginConfig
-from .plugin_source import PluginSource
-from .apply_config import ApplyConfig
-from .analysis_summary import AnalysisSummary
 from .plugin_execution_summary import PluginExecutionSummary
-from .plugin_details import PluginDetails
-from ..io import IO
 from ..pipeline import Pipeline, Stream
-# Third party imports
+from ..io import IO
 
-class Analyzer:
-    """
-    Applies analysis modules to sources.
-    """
+class PluginManager:
 
     def __init__(self) -> None:
         ## Objects
         self.loader = PluginLoader()
         self.io = IO()
-        ## Vars
+        ## Vars.
         self.config_file_extension = "json"
-        self.pipeline_name = "analyzer_pipeline"
+        self.pipeline_name = "plugin_pipeline"
         self.pipeline_num_threads = 3
 
     ############################ MODIFIERS ##################################
@@ -67,31 +63,21 @@ class Analyzer:
             config = PluginConfig(
                 data["plugin_name"], data["plugin_dependencies"],
                 data["plugin_file_path"], data["plugin_author"],
-                data["plugin_input_type"], data["plugin_output_type"])
+                data["plugin_input_type"], data["plugin_output_type"],
+                data["plugin_source_name"], data["plugin_class_name"])
             return self.loader.load_plugin_using_config(config)
-        except:
+        except Exception as e:
             return False
 
     def apply_plugins(self, apply_configs : Dict[str, ApplyConfig]) \
-            -> AnalysisSummary:
-        """
-        Apply the specified plugins with the specified ApplyConfig and obtain
-        an AnalysisSummary.
-
-        Args:
-            apply_configs (Dict[str,ApplyConfig]):
-                Plugin name to ApplyConfig mapping.
-
-        Returns:
-            (AnalysisSummary)
-        """
+            -> PluginManagerSummary:
         did_generate, pipeline = self._generate_execution_pipeline(
             apply_configs)
         if not did_generate:
             return False
         pipeline.set_base_input(apply_configs)
         pipeline.execute()
-        return self._generate_analysis_summary(pipeline.get_execution_summary())
+        return self._generate_summary(pipeline.get_execution_summary())
 
     ############################# GETTERS ###################################
 
@@ -148,6 +134,7 @@ class Analyzer:
             details[plugin_name] = self.get_plugin_details(plugin_name)
         return details
 
+
     ########################### PRIVATE METHODS #############################
 
     def _generate_execution_pipeline(self,
@@ -188,12 +175,9 @@ class Analyzer:
         return pipeline.add_component(
             plugin_name, plugin_source,plugin_source.plugin_dependencies)
 
-    def _generate_analysis_summary(self, execution_summary : Dict[str,Any]) \
-            -> AnalysisSummary:
-        """
-        Given an execution summary obtained by calling Pipeline.execute(),
-        generate an AnalysisSummary.
-        """
+    def _generate_summary(self, execution_summary : Dict[str,Any]) \
+            -> PluginManagerSummary:
+
         # Generating the plugin summaries.
         plugin_summaries = dict()
         for component_name, summary in execution_summary.items():
@@ -210,7 +194,7 @@ class Analyzer:
                 successful_plugins.append(plugin_summary.plugin_name)
             else:
                 failed_plugins.append(plugin_summary.plugin_name)
-        return AnalysisSummary(
+        return PluginManagerSummary(
             total_time_seconds,successful_plugins,failed_plugins,
             plugin_summaries)
 

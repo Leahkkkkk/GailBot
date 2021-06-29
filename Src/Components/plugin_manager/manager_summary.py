@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from .plugin_execution_summary import PluginExecutionSummary
 
 @dataclass
-class AnalysisSummary:
+class PluginManagerSummary:
     total_runtime_seconds : int
     successful_plugins : List[str]
     failed_plugins : List[str]

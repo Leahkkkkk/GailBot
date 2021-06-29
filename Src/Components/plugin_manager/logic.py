@@ -2,11 +2,12 @@
 from typing import Callable, Dict, Any
 from time import time
 # Local imports
-from ..pipeline import Logic, Stream
+from ..pipeline import Stream, Logic
 from .plugin import Plugin
 from .plugin_source import PluginSource
 from .apply_config import ApplyConfig
 from .plugin_execution_summary import PluginExecutionSummary
+
 
 class PluginPipelineLogic(Logic):
 
@@ -63,7 +64,6 @@ class PluginPipelineLogic(Logic):
         apply_config = apply_configs[plugin_source.plugin_name]
         plugin : Plugin = plugin_source.plugin_object
         start_time = time()
-
         output = plugin.apply_plugin(*apply_config.args,**apply_config.kwargs)
         total_time = time() - start_time
         # Generating the plugin summary.
