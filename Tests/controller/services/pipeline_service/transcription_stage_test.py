@@ -3,7 +3,7 @@ from typing import Dict, Any, List
 # Local imports
 from Src.Components.controller.services import OrganizerService, FileSystemService,\
             GBSettingAttrs
-from Src.Components.controller.services.pipeline_service import TranscriptionStage
+from Src.Components.controller.services.pipeline_service.transcription_stage import TranscriptionStage
 from Src.Components.organizer import Conversation
 from Src.Components.engines import Utterance, UtteranceAttributes
 from Src.Components.io import IO

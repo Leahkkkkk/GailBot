@@ -44,13 +44,19 @@ class PipelineServiceLogic(Logic):
     def _analyzer_stage_processor(self, analysis_stage : AnalysisStage,
             payload : PipelineServicePayload) -> PipelineServicePayload:
         output = analysis_stage.analyze(
+            payload.get_conversations(),
             payload.get_transcription_stage_output())
         payload.set_analysis_stage_output(output)
         return output
 
     def _format_stage_processor(self, format_stage : FormatStage,
             payload : PipelineServicePayload) -> PipelineServicePayload:
-        pass
+        output = format_stage.format_conversations(
+            payload.get_format(), payload.get_conversations(),
+            payload.get_analysis_stage_output())
+        payload.set_format_stage_output(output)
+        return payload
+
 
 
 
