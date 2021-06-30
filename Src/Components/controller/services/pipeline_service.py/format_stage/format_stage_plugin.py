@@ -2,13 +2,12 @@
 from abc import abstractmethod
 from typing import Dict, Any
 # Local imports
-from ....plugin_manager import Plugin
-from .analysis_plugin_input import AnalysisPluginInput
-
-class AnalysisPlugin(Plugin):
+from .....plugin_manager import Plugin
+from .input import FormatPluginInput
+class FormatPlugin(Plugin):
 
     @abstractmethod
-    def apply_plugin(self, input : AnalysisPluginInput) -> Any:
+    def apply_plugin(self, plugin_input : FormatPluginInput) -> Any:
         pass
 
     @abstractmethod

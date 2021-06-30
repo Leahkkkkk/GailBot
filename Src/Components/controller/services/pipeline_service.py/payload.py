@@ -4,13 +4,17 @@ from typing import List, Dict, Any
 # Local imports
 from ....organizer import Conversation
 from .....utils.manager import ObjectManager
+from .transcription_stage import TranscriptionStageResult
+from .format_stage import FormatStageResult
+from .analysis_stage import AnalysisStageResult
 
 # Third party imports
 
+@dataclass
 class StageResults:
-    transcription_stage  : Any
-    analysis_stage : Any
-    formatter_stage : Any
+    transcription_stage  : TranscriptionStageResult
+    analysis_stage : AnalysisStageResult
+    format_stage : FormatStageResult
 
 class PipelineServicePayload:
 
@@ -45,8 +49,8 @@ class PipelineServicePayload:
     def get_analysis_stage_output(self) -> Any:
         return self.stage_results.analysis_stage
 
-    def get_formatter_stage_output(self) -> Any:
-        return self.stage_results.formatter_stage
+    def get_format_stage_output(self) -> Any:
+        return self.stage_results.format_stage
 
     def set_transcription_stage_output(self, output : Any) -> bool:
         self.stage_results.transcription_stage = output
@@ -56,6 +60,6 @@ class PipelineServicePayload:
         self.stage_results.analysis_stage = output
         return True
 
-    def set_formatter_stage_output(self, output : Any) -> bool:
-        self.stage_results.formatter_stage = output
+    def set_format_stage_output(self, output : Any) -> bool:
+        self.stage_results.format_stage = output
         return True

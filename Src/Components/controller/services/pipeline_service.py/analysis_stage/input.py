@@ -1,6 +1,8 @@
+# Standard imports
 from dataclasses import dataclass
 from typing import Dict, List
-from ....engines import Utterance
+# Local imports
+from .....engines import Utterance
 
 @dataclass
 class AnalysisPluginInput:

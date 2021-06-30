@@ -2,14 +2,14 @@
 from typing import Any, List, Dict, Tuple
 from copy import deepcopy
 # Local imports
-from .....utils.threads import ThreadPool
-from ....organizer import Conversation
-from ....engines import Engines, WatsonEngine, GoogleEngine, Utterance
-from ....network import Network
-from ....io import IO
-from ..organizer_service import GailBotSettings
-from ..status import TranscriptionStatus
-from .transcription_stage_results import TranscriptionStageResult
+from ......utils.threads import ThreadPool
+from .....organizer import Conversation
+from .....engines import Engines, WatsonEngine, GoogleEngine, Utterance
+from .....network import Network
+from .....io import IO
+from ...organizer_service import GailBotSettings
+from ...status import TranscriptionStatus
+from .result import TranscriptionStageResult
 
 class TranscriptionStage:
 
@@ -25,6 +25,8 @@ class TranscriptionStage:
             self.num_threads_transcription_thread_pool)
         self.thread_pool.spawn_threads()
         self.transcription_thread_pool.spawn_threads()
+
+    ############################# MODIFIERS ##################################
 
     def generate_utterances(self, conversations : Dict[str,Conversation]) \
             -> TranscriptionStageResult:
@@ -44,9 +46,6 @@ class TranscriptionStage:
         # Return the results for all conversations.
         return TranscriptionStageResult(
             conversations_audio_sources, conversations_status_maps)
-        # return {
-        #     "conversations_audio_sources" : conversations_audio_sources,
-        #     "conversations_status_maps" : conversations_status_maps}
 
     ############################# PRIVATE METHODS ############################
 
@@ -132,7 +131,3 @@ class TranscriptionStage:
 
     def _transcribe_google_thread(self, conversation : Conversation) -> None:
         pass
-
-
-
-
