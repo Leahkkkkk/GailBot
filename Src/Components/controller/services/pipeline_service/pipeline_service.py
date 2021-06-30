@@ -72,7 +72,9 @@ class PipelineService:
         return self.format_stage.get_format_plugins(format_name)
 
     def add_conversations(self, conversations : Dict[str,Conversation]) -> bool:
-        return self.payload.add_conversations(conversations)
+        print(conversations)
+        # TODO: Change payload method to accept dictionary instead of list.
+        return self.payload.add_conversations(list(conversations.values()))
 
     def is_conversation(self, conversation_name : str) -> bool:
         return self.payload.is_conversation(conversation_name)
@@ -84,7 +86,9 @@ class PipelineService:
 
     def _generate_pipeline_summary(self, payload : PipelineServicePayload,
             pipeline_summary : Dict) -> PipelineServiceSummary:
-        print(pipeline_summary)
+        print(payload.get_transcription_stage_output())
+        print(payload.get_analysis_stage_output())
+        print(payload.get_format_stage_output())
         return PipelineServiceSummary()
 
 

@@ -1,9 +1,10 @@
 # Standard library imports
-from typing import List, Any, Dict
+from typing import List, Any, Dict, Tuple
 # Local imports
 from ..organizer import Conversation
 from .services import FileSystemService, ConfigService, OrganizerService, \
     PipelineService, GBSettingAttrs, TranscriptionStatus, PipelineServiceSummary, \
+    SettingDetails, SourceDetails
 
 # Third party imports
 
@@ -145,33 +146,17 @@ class GailBotController:
 
     ## PipelineService
 
-    def transcribe_all_sources(self) -> TranscriptionSummary:
-        """
-        Transcribe all configured sources and obtain a transcription summary
-        """
-        conversations = list(self.organizer_service.\
-            get_all_configured_source_conversations().values())
-        return self._start_transcription_pipeline(conversations)
+    def register_analysis_plugins(self, config_path : str) -> List[str]:
+        return self.pipeline_service.register_analysis_plugins(config_path)
 
-    def transcribe_sources(self, source_names : List[str]) \
-            -> TranscriptionSummary:
-        """
-        Transcribe the given sources if they are configured.
-        """
-        conversations = list(self.organizer_service.\
-            get_configured_sources_conversations(source_names).values())
-        return self._start_transcription_pipeline(conversations)
+    def register_format(self, config_path : str) -> Tuple[str,List[str]]:
+        return self.pipeline_service.register_format(config_path)
 
-    def transcribe_source(self, source_name : str) -> TranscriptionSummary:
-        """
-        Transcribe the given source.
-        """
-        if not self.is_source_ready_to_transcribe(source_name):
-            return
-        conversation =\
-            self.organizer_service.get_configured_source_conversation(
-                source_name)
-        return self._start_transcription_pipeline([conversation])
+    def transcribe(self) -> PipelineServiceSummary:
+        self.pipeline_service.add_conversations(
+            self.organizer_service.get_all_configured_source_conversations())
+        return self.pipeline_service.start_service()
+
     ############################### GETTERS ##################################
 
     ## OrganizerService
@@ -300,6 +285,17 @@ class GailBotController:
         """
         return self.organizer_service.get_supported_video_formats()
 
+    ## PipelineService
+
+    def get_analysis_plugin_names(self) -> List[str]:
+        return self.pipeline_service.get_analysis_plugin_names()
+
+    def get_format_names(self) -> List[str]:
+        return self.pipeline_service.get_format_names()
+
+    def get_format_plugin_names(self, format_name : str) -> List[str]:
+        return self.pipeline_service.get_format_plugin_names(format_name)
+
     ################################ SETTERS #################################
 
     ## OrganizerService
@@ -333,11 +329,5 @@ class GailBotController:
             raise Exception("OrganizerService not configured")
 
     def _initialize_pipeline_service(self,
-            service : TranscriptionPipelineService) -> None:
+            service : PipelineServiceSummary) -> None:
         pass
-
-    def _start_transcription_pipeline(self, conversations : List[Conversation])\
-            -> TranscriptionSummary:
-        self.pipeline_service.add_conversations(conversations)
-        return self.pipeline_service.start_transcription_pipeline()
-

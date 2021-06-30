@@ -1,7 +1,5 @@
 
 # Standard library imports
-from Src.Components.controller.services.pipeline_service.format_stage.input import FormatPluginInput
-from Src.Components.plugin_manager import plugin
 from typing import Any, List, Dict
 # Local imports
 from .....plugin_manager import PluginManager, PluginManagerSummary, ApplyConfig
@@ -11,6 +9,7 @@ from ......utils.manager import ObjectManager
 from ......utils.threads import ThreadPool
 from ..analysis_stage import AnalysisStageResult
 from .result import FormatStageResult
+from .input import FormatPluginInput
 
 
 class FormatStage:
@@ -74,7 +73,7 @@ class FormatStage:
 
     def get_format_plugins(self, format_name : str) -> List[str]:
         if not self.is_format(format_name):
-            return False
+            return []
         plugin_manager : PluginManager = self.format_manager.get_object(
             format_name)
         return plugin_manager.get_plugin_names()
