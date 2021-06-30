@@ -47,7 +47,7 @@ class PipelineServiceLogic(Logic):
             payload.get_conversations(),
             payload.get_transcription_stage_output())
         payload.set_analysis_stage_output(output)
-        return output
+        return payload
 
     def _format_stage_processor(self, format_stage : FormatStage,
             payload : PipelineServicePayload) -> PipelineServicePayload:

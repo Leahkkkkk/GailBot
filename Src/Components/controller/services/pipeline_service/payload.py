@@ -49,29 +49,30 @@ class PipelineServicePayload:
     def get_conversations(self) -> Dict[str,Conversation]:
         return self.manager.get_all_objects()
 
-    def get_transcription_stage_output(self) -> Any:
+    def get_transcription_stage_output(self) -> TranscriptionStageResult:
         return self.stage_results.transcription_stage
 
-    def get_analysis_stage_output(self) -> Any:
+    def get_analysis_stage_output(self) -> AnalysisStageResult:
         return self.stage_results.analysis_stage
 
     def set_format(self, format_name : str) -> str:
         self.format_name = format_name
 
-    def get_format_stage_output(self) -> Any:
+    def get_format_stage_output(self) -> FormatStageResult:
         return self.stage_results.format_stage
 
     ############################ SETTERS ######################################
 
-    def set_transcription_stage_output(self, output : Any) -> bool:
+    def set_transcription_stage_output(self, output : TranscriptionStageResult)\
+             -> bool:
         self.stage_results.transcription_stage = output
         return True
 
-    def set_analysis_stage_output(self, output : Any) -> bool:
+    def set_analysis_stage_output(self, output : AnalysisStageResult) -> bool:
         self.stage_results.analysis_stage = output
         return True
 
-    def set_format_stage_output(self, output : Any) -> bool:
+    def set_format_stage_output(self, output : FormatStageResult) -> bool:
         self.stage_results.format_stage = output
         return True
 

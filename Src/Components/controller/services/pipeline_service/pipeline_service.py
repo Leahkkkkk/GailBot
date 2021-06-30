@@ -3,7 +3,9 @@ from typing import List, Dict, Tuple
 # Local imports
 from ....pipeline import Pipeline
 from ....organizer import Conversation
+from ....plugin_manager import PluginManagerSummary
 from .summary import PipelineServiceSummary
+from .conversation_summary import ConversationSummary
 from .transcription_stage import TranscriptionStage
 from .analysis_stage import AnalysisStage
 from .format_stage import FormatStage
@@ -72,7 +74,6 @@ class PipelineService:
         return self.format_stage.get_format_plugins(format_name)
 
     def add_conversations(self, conversations : Dict[str,Conversation]) -> bool:
-        print(conversations)
         # TODO: Change payload method to accept dictionary instead of list.
         return self.payload.add_conversations(list(conversations.values()))
 
@@ -86,10 +87,22 @@ class PipelineService:
 
     def _generate_pipeline_summary(self, payload : PipelineServicePayload,
             pipeline_summary : Dict) -> PipelineServiceSummary:
-        print(payload.get_transcription_stage_output())
-        print(payload.get_analysis_stage_output())
-        print(payload.get_format_stage_output())
-        return PipelineServiceSummary()
+        # Generating the conversation summary for all conversations.
+        summaries = dict()
+        conversations = payload.get_conversations()
+        transcription_results = payload.get_transcription_stage_output()
+        analysis_results = payload.get_analysis_stage_output()
+        format_results = payload.get_format_stage_output()
+        for conversation_name, conversation in conversations.items():
+            analysis_summary = analysis_results.analysis_summaries[conversation_name]
+            format_summary = format_results.format_summaries[conversation_name]
+            summaries[conversation_name] = ConversationSummary(
+                conversation_name,
+                analysis_summary.successful_plugins,
+                format_summary.successful_plugins,
+                payload.get_format(),
+                conversation.get_transcription_status())
+        return PipelineServiceSummary(summaries)
 
 
 
