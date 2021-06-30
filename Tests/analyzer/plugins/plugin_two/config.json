@@ -1,8 +1,0 @@
-{
-    "plugin_name" : "plugin_two",
-    "plugin_dependencies" : ["plugin_one"],
-    "plugin_file_path" : "/Users/muhammadumair/Documents/Repositories/mumair01-Repos/GailBot-0.3/Tests/analyzer/plugins/plugin_two/plugin.py",
-    "plugin_author" : "Umair",
-    "plugin_input_type" : "List[str]",
-    "plugin_output_type" : "Dict[str,str]"
-}

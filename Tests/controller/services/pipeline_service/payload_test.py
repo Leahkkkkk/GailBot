@@ -142,14 +142,14 @@ def test_get_analysis_stage_output() -> None:
     payload.set_analysis_stage_output('as')
     payload.get_analysis_stage_output() == "as"
 
-def test_get_formatter_stage_output() -> None:
+def test_get_format_stage_output() -> None:
     """
     Tests:
         1. Set and get a random output.
     """
     payload = PipelineServicePayload()
-    payload.set_formatter_stage_output("fs")
-    assert payload.get_formatter_stage_output() == "fs"
+    payload.set_format_stage_output("fs")
+    assert payload.get_format_stage_output() == "fs"
 
 def test_set_transcription_stage_output() -> None:
     payload = PipelineServicePayload()
@@ -161,4 +161,4 @@ def test_set_analysis_stage_output() -> None:
 
 def test_set_formatter_stage_output() -> None:
     payload = PipelineServicePayload()
-    payload.set_formatter_stage_output("fs")
+    payload.set_format_stage_output("fs")

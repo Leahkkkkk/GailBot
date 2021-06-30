@@ -5,7 +5,7 @@ from ....pipeline import Logic, Stream
 from .payload import PipelineServicePayload
 from .transcription_stage import TranscriptionStage
 from .analysis_stage import AnalysisStage
-from .formatter_stage import FormatterStage
+from .format_stage import FormatStage
 
 # Third party imports
 
@@ -21,8 +21,8 @@ class PipelineServiceLogic(Logic):
             "analysis_stage",self._unwrap_stream,
             self._analyzer_stage_processor, self._wrap_as_stream)
         self._add_component_logic(
-            "formatter_stage", self._unwrap_stream,
-            self._formatter_stage_processor,self._wrap_as_stream)
+            "format_stage", self._unwrap_stream,
+            self._format_stage_processor,self._wrap_as_stream)
 
     ## General
 
@@ -44,14 +44,19 @@ class PipelineServiceLogic(Logic):
     def _analyzer_stage_processor(self, analysis_stage : AnalysisStage,
             payload : PipelineServicePayload) -> PipelineServicePayload:
         output = analysis_stage.analyze(
+            payload.get_conversations(),
             payload.get_transcription_stage_output())
         payload.set_analysis_stage_output(output)
         return output
 
-    def _formatter_stage_processor(self, formatter_stage : FormatterStage,
+    def _format_stage_processor(self, format_stage : FormatStage,
             payload : PipelineServicePayload) -> PipelineServicePayload:
-        # TODO Add FormatterStage calls.
+        output = format_stage.format_conversations(
+            payload.get_format(), payload.get_conversations(),
+            payload.get_analysis_stage_output())
+        payload.set_format_stage_output(output)
         return payload
+
 
 
 
