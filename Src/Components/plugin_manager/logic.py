@@ -51,20 +51,26 @@ class PluginPipelineLogic(Logic):
         """
         Extract apply configs from the base input.
         """
-        return streams["base"].get_stream_data()
+        return streams
 
     def _processor_plugin(self, plugin_source :  PluginSource,
-            apply_configs : Dict[str,ApplyConfig]) \
+            streams : Dict[str,Stream]) \
             -> PluginExecutionSummary:
         """
         Applies the plugin specified by the plugin source using the given
         ApplyConfig.
         Returns PluginExecutionSummary for the specified plugin.
         """
+        # Extract the apply configs from base input.
+        apply_configs = streams["base"].get_stream_data()
+        parent_plugin_outputs = self._get_parent_plugin_outputs(
+            plugin_source,streams)
         apply_config = apply_configs[plugin_source.plugin_name]
         plugin : Plugin = plugin_source.plugin_object
+        # Get the plugin dependency outputs
         start_time = time()
-        output = plugin.apply_plugin(*apply_config.args,**apply_config.kwargs)
+        output = plugin.apply_plugin(parent_plugin_outputs,
+            *apply_config.args,**apply_config.kwargs)
         total_time = time() - start_time
         # Generating the plugin summary.
         return PluginExecutionSummary(
@@ -76,3 +82,17 @@ class PluginPipelineLogic(Logic):
         Package the PluginExecutionSummary as a Stream.
         """
         return Stream(summary)
+
+    def _get_parent_plugin_outputs(self, plugin_source : PluginSource,
+            streams : Dict[str,Stream]) -> Dict[str,Any]:
+        """
+        Obtain a mapping from the plugins dependencies to their results.
+        """
+        dependency_outputs = dict()
+        dependencies = plugin_source.plugin_dependencies
+        for dependency in dependencies:
+            if dependency in streams:
+                summary : PluginExecutionSummary = \
+                    streams[dependency].get_stream_data()
+                dependency_outputs[dependency] = summary.output
+        return dependency_outputs

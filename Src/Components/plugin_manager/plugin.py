@@ -1,5 +1,5 @@
 # Standard library imports
-from typing import Any
+from typing import Any, Dict
 from abc import ABC, abstractmethod
 # Local imports
 from .apply_config import ApplyConfig
@@ -17,7 +17,8 @@ class Plugin(ABC):
     ############################ MODIFIERS ##################################
 
     @abstractmethod
-    def apply_plugin(self, *args, **kwargs) -> Any:
+    def apply_plugin(self, dependency_outputs : Dict[str,Any],
+             *args, **kwargs) -> Any:
         """
         Apply this plugin using the given Applyconfig and return the execution
         summary.
