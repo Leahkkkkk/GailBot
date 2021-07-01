@@ -7,7 +7,8 @@ from .input import FormatPluginInput
 class FormatPlugin(Plugin):
 
     @abstractmethod
-    def apply_plugin(self, plugin_input : FormatPluginInput) -> Any:
+    def apply_plugin(self, dependency_outputs : Dict[str,Any],
+            plugin_input : FormatPluginInput) -> Any:
         pass
 
     @abstractmethod

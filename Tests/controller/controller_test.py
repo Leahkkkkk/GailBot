@@ -17,8 +17,6 @@ RESULT_DIR_PATH = "TestData/workspace/dir_2"
 FORMAT_CONFIG_PATH = "TestData/plugins/normal_format_plugins/config.json"
 ANALYSIS_CONFIG_PATH = "TestData/plugins/analysis_plugins/config.json"
 
-
-
 ############################### SETUP #######################################
 
 def initialize_controller() -> GailBotController:

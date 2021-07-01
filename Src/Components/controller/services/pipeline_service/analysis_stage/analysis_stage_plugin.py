@@ -8,7 +8,8 @@ from .input import AnalysisPluginInput
 class AnalysisPlugin(Plugin):
 
     @abstractmethod
-    def apply_plugin(self, input : AnalysisPluginInput) -> Any:
+    def apply_plugin(self, dependency_outputs : Dict[str,Any],
+            plugin_input : AnalysisPluginInput) -> Any:
         pass
 
     @abstractmethod

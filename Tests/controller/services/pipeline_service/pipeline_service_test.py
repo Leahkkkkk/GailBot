@@ -83,7 +83,10 @@ def test_start_service_valid() -> None:
     c1 = initialize_conversation(MP3_FILE_PATH)
     c2 = initialize_conversation(MOV_FILE_PATH)
     c3 = initialize_conversation(MIXED_CONV_DIR_PATH)
-    service.add_conversations([c1,c2,c3])
+    service.add_conversations({
+        c1.get_conversation_name() : c1,
+        c2.get_conversation_name() : c2,
+        c3.get_conversation_name() : c3})
     summary = service.start_service()
     print(summary)
 
@@ -124,7 +127,10 @@ def test_add_conversations() -> None:
     c1 = initialize_conversation(MP3_FILE_PATH)
     c2 = initialize_conversation(MOV_FILE_PATH)
     c3 = initialize_conversation(MIXED_CONV_DIR_PATH)
-    assert service.add_conversations([c1,c2,c3])
+    assert service.add_conversations({
+        c1.get_conversation_name() : c1,
+        c2.get_conversation_name() : c2,
+        c3.get_conversation_name() : c3})
 
 def test_is_conversation() -> None:
     """
@@ -135,6 +141,7 @@ def test_is_conversation() -> None:
     service = PipelineService()
     # Conversations
     c1 = initialize_conversation(MP3_FILE_PATH)
-    service.add_conversations([c1])
+    service.add_conversations({
+        c1.get_conversation_name() : c1})
     assert service.is_conversation(c1.get_conversation_name())
     assert not service.is_conversation("invalid")
