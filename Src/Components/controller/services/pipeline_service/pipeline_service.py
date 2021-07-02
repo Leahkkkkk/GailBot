@@ -40,6 +40,16 @@ class PipelineService:
     ################################# MODIFIERS #############################
 
     def register_analysis_plugins(self, config_path : str) -> List[str]:
+        """
+        Register analysis plugins using the configuration file.
+
+        Args:
+            config_path (str): Path to the configuration file.
+
+        Returns:
+            (List[str]):
+                Names of plugins that were loaded from the configuration file.
+        """
         names = self.analysis_stage.get_plugin_names()
         parsed_data = self.loader.parse_analysis_plugin_configuration_file(
             config_path)
@@ -49,12 +59,28 @@ class PipelineService:
                 if name not in names]
 
     def register_format(self, config_path : str) -> Tuple[str,List[str]]:
+        """
+        Register a format from the configuration file.
+
+        Args:
+            config_path (str): Path to the configuration file.
+
+        Returns:
+            (Tuple[str,List[str]]):
+                Name of the format + list of all plugins loaded.
+        """
         format_name, parsed_data = self.loader.parse_format_configuration_file(
             config_path)
         return (format_name,
             self.format_stage.register_format(format_name, parsed_data))
 
     def start_service(self) -> PipelineServiceSummary:
+        """
+        Start the pipeline service.
+
+        Returns:
+            (PipelineServiceSummary)
+        """
         # TODO: Do not hard-code format name
         self.payload.set_format("normal")
         self.pipeline.set_base_input(self.payload)
@@ -65,22 +91,69 @@ class PipelineService:
     ################################# GETTERS ###############################
 
     def get_analysis_plugin_names(self) -> List[str]:
+        """
+        Obtain a list of all analysis plugins.
+
+        Returns:
+            (List[str]): List of plugins to be used in the analysis.
+        """
         return self.analysis_stage.get_plugin_names()
 
     def get_format_names(self) -> List[str]:
+        """
+        Obtain a list of all formats that are available.
+
+        Returns:
+            (List[str]): List of format names.
+        """
         return self.format_stage.get_formats()
 
     def get_format_plugin_names(self, format_name : str) -> List[str]:
+        """
+        Obtain a list of all plugins that are available with the specified
+        format.
+
+        Args:
+            format_name (str): Name of the format.
+
+        Returns:
+            (List[str]): List of plugins associated with format.
+        """
         return self.format_stage.get_format_plugins(format_name)
 
     def add_conversations(self, conversations : Dict[str,Conversation]) -> bool:
+        """
+        Add conversations to the service.
+
+        Args:
+            conversations
+
+        Returns:
+            (bool): True if all conversations added. False otherwise.
+        """
         # TODO: Change payload method to accept dictionary instead of list.
         return self.payload.add_conversations(list(conversations.values()))
 
     def is_conversation(self, conversation_name : str) -> bool:
+        """
+        Determine if the conversation has been added.
+
+        Args:
+            conversation_name (str)
+
+        Returns:
+            (bool): True if conversation exists, False otherwise.
+        """
         return self.payload.is_conversation(conversation_name)
 
     def get_conversations(self) -> Dict[str,Conversation]:
+        """
+        Obtain all the conversations.
+
+        Returns:
+            (Dict[str,Conversation]):
+                Mapping from conversation name to conversation.
+        """
         return self.payload.get_conversations()
 
     ########################## PRIVATE METHODS ###############################

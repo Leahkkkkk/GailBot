@@ -24,6 +24,9 @@ class Plugin(ABC):
         summary.
 
         Args:
+            dependency_outputs (Dict[str,Any]):
+                Mapping from all plugins this plugin is dependant on and their
+                outputs.
             apply_config (ApplyConfig)
 
         Returns:

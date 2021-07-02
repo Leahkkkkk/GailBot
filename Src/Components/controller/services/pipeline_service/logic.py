@@ -27,9 +27,15 @@ class PipelineServiceLogic(Logic):
     ## General
 
     def _wrap_as_stream(self, payload : PipelineServicePayload) -> Stream:
+        """
+        Wrap the payload as a Stream.
+        """
         return Stream(payload)
 
     def _unwrap_stream(self, streams: Dict[str,Stream]) -> PipelineServicePayload:
+        """
+        Obtain the payload from the base input to the Pipeline.
+        """
         return streams["base"].get_stream_data()
 
     def _transcription_stage_processor(self,

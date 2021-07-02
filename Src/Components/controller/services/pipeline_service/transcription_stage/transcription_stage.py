@@ -30,6 +30,16 @@ class TranscriptionStage:
 
     def generate_utterances(self, conversations : Dict[str,Conversation]) \
             -> TranscriptionStageResult:
+        """
+        Generate utterances for each Conversation.
+
+        Args:
+            conversations (Dict[str,Conversation]):
+                Mapping from conversation name to Conversation.
+
+        Returns:
+            (TranscriptionStageResult)
+        """
         # Extract sources for all conversations.
         conversations_audio_sources = dict()
         conversations_status_maps = dict()
@@ -51,6 +61,16 @@ class TranscriptionStage:
 
     def _extract_conversation_audios(self, conversation : Conversation) \
             -> Dict[str,str]:
+        """
+        Extract audio for all source files in the conversation.
+
+        Args:
+            conversation (Conversation)
+
+        Returns:
+            (Dict[str,str]):
+                Map from source file name to audio path.
+        """
         source_to_audio_map = dict()
         source_paths_map = conversation.get_source_file_paths()
         source_types_map = conversation.get_source_file_types()
@@ -66,6 +86,10 @@ class TranscriptionStage:
 
     def _extract_audio_from_path(self, source_path : str, source_type : str,
             extract_dir_path : str) -> Tuple[bool,str]:
+        """
+        Extract audio from a source file path depending on whether the
+        source is an audio or video file.
+        """
         if source_type == "audio":
             return (True, source_path)
         elif source_type == "video":
@@ -86,7 +110,9 @@ class TranscriptionStage:
     def _transcribe_thread(self, conversation : Conversation,
             source_to_audio_map : Dict[str,str],
             conversation_status_map : Dict[str,bool]) -> None:
-
+        """
+        Transcribe the conversation using its specific engines as a thread.
+        """
         utterances_map = dict()
         source_status_map = dict()
         settings : GailBotSettings = conversation.get_settings()
@@ -120,11 +146,16 @@ class TranscriptionStage:
             settings : GailBotSettings,
             utterances_map : Dict[str,Utterance],
             conversation_status_map : Dict[str,bool]) -> None:
+        """
+        Transcribe a conversation using the Watson engine and store results
+        in the closures.
+        """
         engine = self.engines.engine("watson")
         engine.configure(
             settings.get_watson_api_key(),settings.get_watson_region(),
             source_path,settings.get_watson_base_language_model(),
             settings.get_watson_language_customization_id())
+        # Set the results.
         utterances_map[source_name] = engine.transcribe()
         conversation_status_map[source_name] = \
             engine.was_transcription_successful()

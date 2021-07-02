@@ -4,4 +4,7 @@ from .....plugin_manager import PluginManagerSummary
 
 @dataclass
 class FormatStageResult:
+    """
+    Results of the FormatStage.
+    """
     format_summaries : Dict[str, PluginManagerSummary]

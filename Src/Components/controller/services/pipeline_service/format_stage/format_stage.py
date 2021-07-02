@@ -46,10 +46,9 @@ class FormatStage:
         for conversation_name, conversation in conversations.items():
             apply_configs = dict()
             for plugin_name in plugin_names:
-                # TODO: Add args.
-                plugin_input = FormatPluginInput(
-                    self._get_analysis_stage_outputs(
-                        conversation_name, analysis_stage_output))
+                # Generating the input for the format plugins.
+                plugin_input = self._generate_format_plugin_input(
+                    conversation_name,conversation,analysis_stage_output)
                 apply_configs[plugin_name] = ApplyConfig(
                     plugin_name, [plugin_input], {})
             self.thread_pool.add_task(
@@ -89,19 +88,15 @@ class FormatStage:
         summaries[conversation_name] = \
             plugin_manager.apply_plugins(apply_configs)
 
-    def _get_analysis_stage_outputs(self, conversation_name : str,
-            analysis_stage_result : AnalysisStageResult) -> Dict[str,Any]:
-        results = dict()
-        plugin_summaries = analysis_stage_result.analysis_summaries
-        converstion_analysis_plugins_summary = plugin_summaries[conversation_name]
-        for plugin_name, summary in converstion_analysis_plugins_summary.items():
-            summary : PluginExecutionSummary
-            results[plugin_name] = summary.output
-        return results
+    def _generate_format_plugin_input(self, conversation_name : str,
+            conversation : Conversation,
+            analysis_stage_output : AnalysisStageResult) -> FormatPluginInput:
 
-
-
-
-
-
-
+        utterances_map = conversation.get_utterances()
+        analysis_plugin_outputs = dict()
+        plugin_manager_summary =\
+            analysis_stage_output.analysis_summaries[conversation_name]
+        for plugin_name, plugin_summary in plugin_manager_summary.plugin_summaries.items():
+            analysis_plugin_outputs[plugin_name] = plugin_summary.output
+        return FormatPluginInput(
+            utterances_map,analysis_plugin_outputs)

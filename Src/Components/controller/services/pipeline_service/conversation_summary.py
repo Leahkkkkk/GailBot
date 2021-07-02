@@ -4,6 +4,8 @@ from dataclasses import dataclass
 
 @dataclass
 class ConversationSummary:
+    """
+    """
     conversation_name : str
     analysis_plugins_applied : List[str]
     format_plugins_appled : List[str]

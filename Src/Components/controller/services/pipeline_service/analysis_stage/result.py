@@ -4,4 +4,7 @@ from .....plugin_manager import PluginManagerSummary
 
 @dataclass
 class AnalysisStageResult:
+    """
+    Results of the AnalysisStage.
+    """
     analysis_summaries : Dict[str, PluginManagerSummary]

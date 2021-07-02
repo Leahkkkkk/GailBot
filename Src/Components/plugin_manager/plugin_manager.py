@@ -62,6 +62,16 @@ class PluginManager:
         return self.register_plugin_using_config_data(data)
 
     def register_plugin_using_config_data(self, data : Dict[str,Any]) -> bool:
+        """
+        Register a plugin using a dictionary representation of PluginConfig.
+
+        Args:
+            data (Dict[str,Any]):
+                Mapping from all keys in PluginConfig to their values.
+
+        Returns:
+            (bool): True if successfully configured. False otherwise.
+        """
         success, config = self._generate_config(data)
         if not success:
             return False
@@ -69,6 +79,17 @@ class PluginManager:
 
     def apply_plugins(self, apply_configs : Dict[str, ApplyConfig]) \
             -> PluginManagerSummary:
+        """
+        Apply all plugins defined by the given plugin configs.
+        The plugins must be previously registered.
+
+        Args:
+            apply_configs (Dict[str,ApplyConfig]):
+                Mapping from plugin name to ApplyConfig.
+
+        Returns:
+            (PluginManagerSummary): Summary for executing all plugins.
+        """
         did_generate, pipeline = self._generate_execution_pipeline(
             apply_configs)
         if not did_generate:

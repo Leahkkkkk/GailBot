@@ -12,6 +12,9 @@ from .analysis_stage import AnalysisStageResult
 
 @dataclass
 class StageResults:
+    """
+    Results of all stages in the PipelineService.
+    """
     transcription_stage  : TranscriptionStageResult = None
     analysis_stage : AnalysisStageResult = None
     format_stage : FormatStageResult = None
