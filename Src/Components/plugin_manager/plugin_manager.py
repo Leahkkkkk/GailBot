@@ -124,7 +124,7 @@ class PluginManager:
         Get mapping from plugin name to PluginDetails for all available plugins.
 
         Returns:
-            ( Dict[str,PluginDetails])
+            (Dict[str,PluginDetails])
         """
         details = dict()
         plugin_names = self.loader.get_loaded_plugin_names()
@@ -187,7 +187,13 @@ class PluginManager:
 
     def _generate_summary(self, execution_summary : Dict[str,Any]) \
             -> PluginManagerSummary:
+        """
+        Generate the summary for executing all plugins in the pipeline.
 
+        Args:
+            execution_summary (Dict[str,Any]):
+                Summary obtained by executing a Pipeline
+        """
         # Generating the plugin summaries.
         plugin_summaries = dict()
         for component_name, summary in execution_summary.items():

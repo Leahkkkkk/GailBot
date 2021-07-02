@@ -85,24 +85,26 @@ class PipelineService:
 
     ########################## PRIVATE METHODS ###############################
 
+    # TODO: Standardize naming convention across stages.
     def _generate_pipeline_summary(self, payload : PipelineServicePayload,
             pipeline_summary : Dict) -> PipelineServiceSummary:
         # Generating the conversation summary for all conversations.
-        summaries = dict()
-        conversations = payload.get_conversations()
-        transcription_results = payload.get_transcription_stage_output()
-        analysis_results = payload.get_analysis_stage_output()
-        format_results = payload.get_format_stage_output()
-        for conversation_name, conversation in conversations.items():
-            analysis_summary = analysis_results.analysis_summaries[conversation_name]
-            format_summary = format_results.format_summaries[conversation_name]
-            summaries[conversation_name] = ConversationSummary(
-                conversation_name,
-                analysis_summary.successful_plugins,
-                format_summary.successful_plugins,
-                payload.get_format(),
-                conversation.get_transcription_status())
-        return PipelineServiceSummary(summaries)
+        # summaries = dict()
+        # conversations = payload.get_conversations()
+        # transcription_results = payload.get_transcription_stage_output()
+        # analysis_results = payload.get_analysis_stage_output()
+        # format_results = payload.get_format_stage_output()
+        # for conversation_name, conversation in conversations.items():
+        #     analysis_summary = analysis_results.analysis_summaries[conversation_name]
+        #     format_summary = format_results.format_summaries[conversation_name]
+        #     summaries[conversation_name] = ConversationSummary(
+        #         conversation_name,
+        #         analysis_summary.successful_plugins,
+        #         format_summary.successful_plugins,
+        #         payload.get_format(),
+        #         conversation.get_transcription_status())
+        # return PipelineServiceSummary(summaries)
+        return PipelineServiceSummary({})
 
 
 

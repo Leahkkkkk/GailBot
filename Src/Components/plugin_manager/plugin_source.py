@@ -5,6 +5,9 @@ from .plugin import Plugin
 
 @dataclass
 class PluginSource:
+    """
+    Internal representation of a plugin in the manager.
+    """
     plugin_name : str
     plugin_object : Plugin
     plugin_dependencies : List[str]

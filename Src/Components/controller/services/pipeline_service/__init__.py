@@ -1,5 +1,6 @@
 from .pipeline_service import PipelineService
 from .summary import PipelineServiceSummary
+from .conversation_summary import ConversationSummary
 from .analysis_stage import AnalysisPlugin
 from .analysis_stage import AnalysisPluginInput
 from .format_stage import FormatPlugin

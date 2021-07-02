@@ -8,7 +8,8 @@ from .config_service import ConfigService
 from .organizer_service import OrganizerService,SourceDetails, SettingDetails, \
                                 GBSettingAttrs
 from .pipeline_service import PipelineServiceSummary, PipelineService, \
-        AnalysisPlugin, AnalysisPluginInput, FormatPlugin , FormatPluginInput
+        AnalysisPlugin, AnalysisPluginInput, FormatPlugin , FormatPluginInput,\
+        ConversationSummary
 from .status import TranscriptionStatus
 
 

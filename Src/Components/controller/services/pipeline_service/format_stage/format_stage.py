@@ -2,7 +2,8 @@
 # Standard library imports
 from typing import Any, List, Dict
 # Local imports
-from .....plugin_manager import PluginManager, PluginManagerSummary, ApplyConfig
+from .....plugin_manager import PluginManager, PluginManagerSummary, ApplyConfig,\
+                            PluginExecutionSummary
 from .....organizer import Conversation
 from ......utils.threads import ThreadPool
 from ......utils.manager import ObjectManager
@@ -46,7 +47,9 @@ class FormatStage:
             apply_configs = dict()
             for plugin_name in plugin_names:
                 # TODO: Add args.
-                plugin_input = FormatPluginInput()
+                plugin_input = FormatPluginInput(
+                    self._get_analysis_stage_outputs(
+                        conversation_name, analysis_stage_output))
                 apply_configs[plugin_name] = ApplyConfig(
                     plugin_name, [plugin_input], {})
             self.thread_pool.add_task(
@@ -85,6 +88,18 @@ class FormatStage:
             summaries : Dict[str,PluginManagerSummary]) -> None:
         summaries[conversation_name] = \
             plugin_manager.apply_plugins(apply_configs)
+
+    def _get_analysis_stage_outputs(self, conversation_name : str,
+            analysis_stage_result : AnalysisStageResult) -> Dict[str,Any]:
+        results = dict()
+        plugin_summaries = analysis_stage_result.analysis_summaries
+        converstion_analysis_plugins_summary = plugin_summaries[conversation_name]
+        for plugin_name, summary in converstion_analysis_plugins_summary.items():
+            summary : PluginExecutionSummary
+            results[plugin_name] = summary.output
+        return results
+
+
 
 
 

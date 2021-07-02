@@ -5,6 +5,9 @@ from typing import List
 
 @dataclass
 class PluginDetails:
+    """
+    Details of the plugin that can be exposed.
+    """
     plugin_name : str
     plugin_dependencies : List[str]
     number_of_dependencies : int

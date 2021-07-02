@@ -10,6 +10,9 @@ from ...utils.manager import ObjectManager
 # Third party imports
 
 class PluginLoader:
+    """
+    Responsible for loading plugins using PluginConfigs.
+    """
 
     def __init__(self) -> None:
         ## Objects

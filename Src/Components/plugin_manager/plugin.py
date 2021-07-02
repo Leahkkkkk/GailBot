@@ -34,6 +34,12 @@ class Plugin(ABC):
 
     @abstractmethod
     def was_successful(self) -> bool:
+        """
+        Determine if the plugin executed successfully.
+
+        Returns:
+            (bool): True if the plugin was successful. False otherwise.
+        """
         pass
 
     ############################# SETTERS ###################################

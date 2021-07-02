@@ -4,4 +4,4 @@ from dataclasses import dataclass
 
 @dataclass
 class FormatPluginInput:
-    pass
+    analysis_stage_outputs: Dict[str, Any]
