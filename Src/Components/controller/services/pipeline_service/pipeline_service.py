@@ -4,6 +4,7 @@ from typing import List, Dict, Tuple
 from ....pipeline import Pipeline
 from ....organizer import Conversation
 from ....plugin_manager import PluginManagerSummary
+from ..fs_service import FileSystemService
 from .summary import PipelineServiceSummary
 from .conversation_summary import ConversationSummary
 from .transcription_stage import TranscriptionStage
@@ -38,6 +39,18 @@ class PipelineService:
             "format_stage",self.format_stage,["analysis_stage"])
 
     ################################# MODIFIERS #############################
+
+    def add_conversations(self, conversations : Dict[str,Conversation]) -> bool:
+        """
+        Add conversations to the service.
+
+        Args:
+            conversations
+
+        Returns:
+            (bool): True if all conversations added. False otherwise.
+        """
+        return self.payload.add_conversations(conversations)
 
     def register_analysis_plugins(self, config_path : str) -> List[str]:
         """
@@ -121,19 +134,6 @@ class PipelineService:
         """
         return self.format_stage.get_format_plugins(format_name)
 
-    def add_conversations(self, conversations : Dict[str,Conversation]) -> bool:
-        """
-        Add conversations to the service.
-
-        Args:
-            conversations
-
-        Returns:
-            (bool): True if all conversations added. False otherwise.
-        """
-        # TODO: Change payload method to accept dictionary instead of list.
-        return self.payload.add_conversations(list(conversations.values()))
-
     def is_conversation(self, conversation_name : str) -> bool:
         """
         Determine if the conversation has been added.
@@ -161,23 +161,22 @@ class PipelineService:
     # TODO: Standardize naming convention across stages.
     def _generate_pipeline_summary(self, payload : PipelineServicePayload,
             pipeline_summary : Dict) -> PipelineServiceSummary:
-        # Generating the conversation summary for all conversations.
-        # summaries = dict()
-        # conversations = payload.get_conversations()
-        # transcription_results = payload.get_transcription_stage_output()
-        # analysis_results = payload.get_analysis_stage_output()
-        # format_results = payload.get_format_stage_output()
-        # for conversation_name, conversation in conversations.items():
-        #     analysis_summary = analysis_results.analysis_summaries[conversation_name]
-        #     format_summary = format_results.format_summaries[conversation_name]
-        #     summaries[conversation_name] = ConversationSummary(
-        #         conversation_name,
-        #         analysis_summary.successful_plugins,
-        #         format_summary.successful_plugins,
-        #         payload.get_format(),
-        #         conversation.get_transcription_status())
-        # return PipelineServiceSummary(summaries)
-        return PipelineServiceSummary({})
+        #Generating the conversation summary for all conversations.
+        summaries = dict()
+        conversations = payload.get_conversations()
+        #transcription_results = payload.get_transcription_stage_output()
+        analysis_results = payload.get_analysis_stage_output()
+        format_results = payload.get_format_stage_output()
+        for conversation_name, conversation in conversations.items():
+            analysis_summary = analysis_results.analysis_summaries[conversation_name]
+            format_summary = format_results.format_summaries[conversation_name]
+            summaries[conversation_name] = ConversationSummary(
+                conversation_name,
+                analysis_summary.successful_plugins,
+                format_summary.successful_plugins,
+                payload.get_format(),
+                conversation.get_transcription_status())
+        return PipelineServiceSummary(summaries)
 
 
 

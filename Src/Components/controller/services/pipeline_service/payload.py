@@ -1,6 +1,6 @@
 # Standard library imports
 from dataclasses import dataclass
-from typing import List, Dict, Any
+from typing import List, Dict
 # Local imports
 from ....organizer import Conversation
 from .....utils.manager import ObjectManager
@@ -30,13 +30,14 @@ class PipelineServicePayload:
 
     ############################ MODIFIERS ###################################
 
-    def add_conversation(self, conversation : Conversation) -> bool:
+    def add_conversation(self, conversation_name : str,
+            conversation : Conversation) -> bool:
         return self.manager.add_object(
-            conversation.get_conversation_name(),conversation)
+            conversation_name, conversation)
 
-    def add_conversations(self, conversations : List[Conversation]) -> bool:
-        return all([self.add_conversation(conversation) \
-            for conversation in conversations])
+    def add_conversations(self, conversations : Dict[str,Conversation]) -> bool:
+        return all([self.add_conversation(name,conversation) \
+            for name,conversation in conversations.items()])
 
     def remove_conversation(self, conversation_name : str) -> bool:
         return self.manager.remove_object(conversation_name)

@@ -155,7 +155,9 @@ class GailBotController:
     def transcribe(self) -> PipelineServiceSummary:
         self.pipeline_service.add_conversations(
             self.organizer_service.get_all_configured_source_conversations())
-        return self.pipeline_service.start_service()
+        summary = self.pipeline_service.start_service()
+        self.fs_service.shutdown()
+        return summary
 
     ############################### GETTERS ##################################
 

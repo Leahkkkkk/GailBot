@@ -50,8 +50,7 @@ class AnalysisStage:
         Returns:
             (AnalysisStageResult)
         """
-        ## Unpack the transcription stage output
-        # TODO: This might change.
+        # Unpack the transcription stage output
         conversations_audio_sources = \
             transcription_stage_output.conversations_audio_sources
         conversations_status_maps = \
@@ -60,6 +59,8 @@ class AnalysisStage:
         summaries = dict()
         plugin_names = self.plugin_manager.get_plugin_names()
         for conversation_name, conversation in conversations.items():
+            summaries[conversation_name] = None # TODO: POtentially remove.
+            # Only apply plugins if the conversation has been transcribed.
             apply_configs = dict()
             for plugin_name in plugin_names:
                 # Generating the input to the analaysis plugin.
