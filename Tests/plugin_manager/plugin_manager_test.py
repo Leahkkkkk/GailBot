@@ -46,7 +46,8 @@ def test_apply_plugins_valid() -> None:
     """
     Tests:
         1. Apply all plugins.
-        2. Apply some plugins
+        2. Apply some plugins.
+        3. Apply a plugin that is dependant on another only. (should fail).
     """
     plugin_manager = PluginManager()
     plugin_manager.register_plugins_from_directory(PLUGINS_DIR)
@@ -54,8 +55,13 @@ def test_apply_plugins_valid() -> None:
         "plugin_one" : ApplyConfig("plugin_one",[["path_1"]],{}),
         "plugin_two" : ApplyConfig("plugin_two",[["path_1"]],{}),
     })
-    print(summary)
     assert len(summary.successful_plugins) == 2
+    summary = plugin_manager.apply_plugins({
+        "plugin_one" : ApplyConfig("plugin_one",[["path_1"]],{})})
+    assert len(summary.successful_plugins) == 1
+    summary = plugin_manager.apply_plugins({
+        "plugin_two" : ApplyConfig("plugin_two",[["path_1"]],{})})
+    assert len(summary.successful_plugins) == 0
 
 def test_is_plugin() -> None:
     """

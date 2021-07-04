@@ -93,7 +93,7 @@ class PluginManager:
         did_generate, pipeline = self._generate_execution_pipeline(
             apply_configs)
         if not did_generate:
-            return False
+            return self._generate_summary({})
         pipeline.set_base_input(apply_configs)
         pipeline.execute()
         return self._generate_summary(pipeline.get_execution_summary())
@@ -215,6 +215,7 @@ class PluginManager:
             execution_summary (Dict[str,Any]):
                 Summary obtained by executing a Pipeline
         """
+
         # Generating the plugin summaries.
         plugin_summaries = dict()
         for component_name, summary in execution_summary.items():
