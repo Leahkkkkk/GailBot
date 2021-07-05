@@ -11,7 +11,7 @@ from ...utils.manager import ObjectManager
 
 class PluginLoader:
     """
-    Responsible for loading plugins using PluginConfigs.
+    Responsible for loading plugins using
     """
 
     def __init__(self) -> None:

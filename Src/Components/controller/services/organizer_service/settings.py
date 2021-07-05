@@ -1,5 +1,5 @@
 # Standard library imports
-from typing import Callable, Dict, Any
+from typing import Callable, Dict, Any, List
 from enum import Enum
 # Local imports
 from ....organizer import Settings
@@ -11,6 +11,8 @@ class GBSettingAttrs(Enum):
     watson_language_customization_id = "watson_language_customization_id"
     watson_base_language_model = "watson_base_language_model"
     watson_region = "watson_region"
+    output_format = "output_format"
+    analysis_plugins_to_apply = "analysis_plugins_to_apply"
 
 
 class GailBotSettings(Settings):
@@ -48,6 +50,12 @@ class GailBotSettings(Settings):
     def set_watson_region(self, region : str) -> bool:
         return self.set("watson_region",region)
 
+    def set_output_format(self, output_format : str) -> bool:
+        return self.set("output_format", output_format)
+
+    def set_analysis_plugins_to_apply(self, analysis_plugins : List[str]) -> bool:
+        return self.set("analysis_plugins_to_apply", analysis_plugins)
+
     ############################ GETTERS ####################################
 
     def get_all_values(self) -> Dict[str,Any]:
@@ -70,6 +78,12 @@ class GailBotSettings(Settings):
 
     def get_watson_region(self) -> bool:
         return self.get("watson_region")[1]
+
+    def get_output_format(self) -> str:
+        return self.get("output_format")[1]
+
+    def get_analysis_plugins_to_apply(self) -> List[str]:
+        return self.get("analysis_plugins_to_apply")[1]
 
     ############################ PRIVATE METHODS ##############################
 

@@ -1,28 +1,34 @@
 # Standard library imports
-from typing import Dict, Any
+from Src.Components.organizer.conversation import Conversation
+from typing import Any, Dict
 # Local imports
-from Src.Components.controller.services import OrganizerService, FileSystemService,\
-                                                GBSettingAttrs
+from Src.Components.controller.services \
+    import OrganizerService, SourceDetails,SettingDetails, FileSystemService,\
+        GBSettingAttrs
 from Src.Components.controller.services.pipeline_service import \
     PipelineService, PipelineServiceSummary
-from Src.Components.organizer import Conversation
-from Src.Components.io import IO
 
-# Third party imports
 
 ############################### GLOBALS #####################################
-
+# DIR PATHS
 WS_DIR_PATH = "TestData/workspace/fs_workspace"
-RESULT_DIR_PATH = "TestData/workspace/dir_2"
-WAV_FILE_PATH = "TestData/media/test.wav"
+RESULT_DIR_PATH = "TestData/workspace/results"
+# CONVERSATION PATHS
+MIXED_CONV_PATH = "TestData/media/audio_video_conversation"
+MOV_FILE_PATH = "TestData/media/sample-mov-file.mov"
 MP3_FILE_PATH = "TestData/media/sample1.mp3"
-CONV_DIR_PATH = "TestData/media/conversation"
-MIXED_CONV_DIR_PATH = "TestData/media/audio_video_conversation"
-MOV_FILE_PATH = "TestData/media/sample_video_conversation.mov"
-FORMAT_CONFIG_PATH = "TestData/plugins/normal_format_plugins/config.json"
-ANALYSIS_CONFIG_PATH = "TestData/plugins/analysis_plugins/config.json"
+# PLUGINS
+ANALYSIS_PLUGIN_CONFIG_PATH = "TestData/workspace/plugins/pipeline_service_test/analysis_config.json"
+FORMAT_PLUGIN_CONFIG_PATH = "TestData/workspace/plugins/pipeline_service_test/format_config.json"
 
-############################### SETUP ########################################
+############################### SETUP #####################################
+
+def initialize_configured_service() -> OrganizerService:
+    fs_service = FileSystemService()
+    fs_service.configure_from_workspace_path(WS_DIR_PATH)
+    service = OrganizerService(fs_service)
+    assert service.is_configured()
+    return service
 
 def obtain_settings_profile_data() -> Dict[str,Any]:
     return {
@@ -30,118 +36,31 @@ def obtain_settings_profile_data() -> Dict[str,Any]:
         GBSettingAttrs.watson_api_key : "MSgOPTS9CvbADe49nEg4wm8_gxeRuf4FGUmlHS9QqAw3",
         GBSettingAttrs.watson_language_customization_id : "41e54a38-2175-45f4-ac6a-1c11e42a2d54",
         GBSettingAttrs.watson_base_language_model : "en-US_BroadbandModel",
-        GBSettingAttrs.watson_region : "dallas"
-    }
+        GBSettingAttrs.watson_region : "dallas",
+        GBSettingAttrs.analysis_plugins_to_apply : ["second_analysis"],
+        GBSettingAttrs.output_format : "normal"}
 
-def initialize_conversation(source_path : str) -> Conversation:
-    fs_service = FileSystemService()
-    io = IO()
-    assert fs_service.configure_from_workspace_path(WS_DIR_PATH)
-    organizer_service = OrganizerService(fs_service)
+def conversation_from_source(source_name : str, source_path : str) -> Conversation:
+    organizer_service = initialize_configured_service()
+    profile_name = "new"
     assert organizer_service.create_new_settings_profile(
-        "s1",obtain_settings_profile_data())
-    source_name = io.get_name(source_path)
-    assert organizer_service.add_source(source_name,source_path,RESULT_DIR_PATH)
-    assert organizer_service.apply_settings_profile_to_source(source_name,"s1")
-    conv = organizer_service.get_configured_source_conversation(source_name)
-    assert type(conv) == Conversation
-    return conv
-
+        profile_name,obtain_settings_profile_data())
+    assert organizer_service.add_source(source_name, source_path,RESULT_DIR_PATH)
+    assert organizer_service.apply_settings_profile_to_source(
+        source_name,profile_name)
+    conversation =  organizer_service.get_configured_source_conversation(
+        source_name)
+    assert conversation != None
+    return conversation
 
 ########################## TEST DEFINITIONS ##################################
 
-def test_register_analysis_plugins() -> None:
-    """
-    Tests:
-        1. Register from valid file.
-        2. Register from invalid file.
-    """
-    service = PipelineService()
-    assert len(service.register_analysis_plugins(ANALYSIS_CONFIG_PATH)) > 0
-    assert len(service.register_analysis_plugins("invalid")) == 0
-
-def test_register_format() -> None:
-    """
-    Tests:
-        1. Register from a valid file.
-        2. Register from an invalid file.
-    """
-    service = PipelineService()
-    assert service.register_format(FORMAT_CONFIG_PATH) == \
-        ("normal" , ["plugin_one", "plugin_two"])
-    assert service.register_format("invalid") == ("",[])
-
-def test_start_service_valid() -> None:
-    """
-    Tests:
-        1. Test service with valid plugins and format added.
-    """
-    service = PipelineService()
-    service.register_analysis_plugins(ANALYSIS_CONFIG_PATH)
-    service.register_format(FORMAT_CONFIG_PATH)
-    # Conversations
-    c1 = initialize_conversation(MP3_FILE_PATH)
-    c2 = initialize_conversation(MOV_FILE_PATH)
-    c3 = initialize_conversation(MIXED_CONV_DIR_PATH)
-    service.add_conversations({
-        c1.get_conversation_name() : c1,
-        c2.get_conversation_name() : c2,
-        c3.get_conversation_name() : c3})
-    summary = service.start_service()
+def test() -> None:
+    service = PipelineService(4)
+    c1 = conversation_from_source("mp3",MP3_FILE_PATH)
+    assert service.add_source(c1.get_conversation_name(),c1)
+    assert service.is_source(c1.get_conversation_name())
+    print(service.register_analysis_plugins(ANALYSIS_PLUGIN_CONFIG_PATH))
+    print(service.register_format(FORMAT_PLUGIN_CONFIG_PATH))
+    summary = service.start()
     print(summary)
-
-def test_get_analysis_plugin_names() -> None:
-    """
-    Tests:
-        1. Make sure names are correct.
-    """
-    service = PipelineService()
-    service.register_analysis_plugins(ANALYSIS_CONFIG_PATH)
-    assert service.get_analysis_plugin_names() == ["plugin_one", "plugin_two"]
-
-def test_get_format_names() -> None:
-    """
-    Tests:
-        1. Check the format names.
-    """
-    service = PipelineService()
-    service.register_format(FORMAT_CONFIG_PATH)
-    assert service.get_format_names() == ["normal"]
-
-def test_get_format_plugin_names() -> None:
-    """
-    Tests:
-        1. Check the plugin names.
-    """
-    service = PipelineService()
-    service.register_format(FORMAT_CONFIG_PATH)
-    assert service.get_format_plugin_names("normal") == ["plugin_one", "plugin_two"]
-
-def test_add_conversations() -> None:
-    """
-    Tests:
-        1. Add multiple conversations.
-    """
-    service = PipelineService()
-    # Conversations
-    c1 = initialize_conversation(MP3_FILE_PATH)
-    c2 = initialize_conversation(MOV_FILE_PATH)
-    c3 = initialize_conversation(MIXED_CONV_DIR_PATH)
-    assert service.add_conversations({
-        c1.get_conversation_name() : c1,
-        c2.get_conversation_name() : c2,
-        c3.get_conversation_name() : c3})
-
-def test_is_conversation() -> None:
-    """
-    Tests:
-        1. Check valid conversation.
-        2. Check invalid conversation.
-    """
-    service = PipelineService()
-    # Conversations
-    c1 = initialize_conversation(MP3_FILE_PATH)
-    service.add_conversations({
-        c1.get_conversation_name() : c1})
-    assert service.is_conversation(c1.get_conversation_name())
-    assert not service.is_conversation("invalid")

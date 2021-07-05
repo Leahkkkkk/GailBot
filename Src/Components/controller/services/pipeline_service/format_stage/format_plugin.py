@@ -4,7 +4,7 @@ from typing import Dict, Any, List
 # Local imports
 from .....plugin_manager import Plugin
 from .....engines import Utterance
-from .input import FormatPluginInput
+from .format_plugin_input import FormatPluginInput
 
 class FormatPlugin(Plugin):
     """
@@ -13,7 +13,7 @@ class FormatPlugin(Plugin):
 
     @abstractmethod
     def apply_plugin(self, dependency_outputs : Dict[str,Any],
-            plugin_input : FormatPluginInput) -> Dict[str,List[Utterance]]:
+             plugin_input : FormatPluginInput) -> Any:
         pass
 
     @abstractmethod

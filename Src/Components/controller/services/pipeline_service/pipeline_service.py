@@ -1,31 +1,35 @@
-# Standard library imports
-from typing import List, Dict, Tuple
+# Standard imports
+from Src.Components.plugin_manager import plugin
+from Src.Components.plugin_manager.plugin_execution_summary import PluginExecutionSummary
+from typing import List, Tuple, Dict, Any
 # Local imports
+from .....utils.manager import ObjectManager
 from ....pipeline import Pipeline
 from ....organizer import Conversation
-from ....plugin_manager import PluginManagerSummary
 from ..fs_service import FileSystemService
-from .summary import PipelineServiceSummary
-from .conversation_summary import ConversationSummary
-from .transcription_stage import TranscriptionStage
-from .analysis_stage import AnalysisStage
-from .format_stage import FormatStage
-from .payload import PipelineServicePayload
-from .logic import PipelineServiceLogic
+from .service_summary import PipelineServiceSummary
+from .transcription_stage.transcription_stage import TranscriptionStage
+from .analysis_stage.analysis_stage import AnalysisStage
+from .format_stage.format_stage import FormatStage
 from .loader import PipelineServiceLoader
+from .logic import PipelineServiceLogic
+from .source import Source
 
 class PipelineService:
 
-    def __init__(self) -> None:
+    def __init__(self, num_threads : int) -> None:
         ## Vars.
         self.pipeline_name = "transcription_pipeline_service"
-        self.pipeline_num_threads = 4
+        self.max_threads = 4
+        if num_threads <= 0 or num_threads > self.max_threads:
+            raise Exception("Invalid number of threads")
+        self.pipeline_num_threads = num_threads
         ## Stage Objects
-        self.transcription_stage = TranscriptionStage()
-        self.analysis_stage = AnalysisStage()
-        self.format_stage = FormatStage()
+        self.transcription_stage = TranscriptionStage(self.pipeline_num_threads)
+        self.analysis_stage = AnalysisStage(self.pipeline_num_threads)
+        self.format_stage = FormatStage(self.pipeline_num_threads)
         ## Others
-        self.payload = PipelineServicePayload()
+        self.sources = ObjectManager()
         self.logic = PipelineServiceLogic()
         self.loader = PipelineServiceLoader()
         ## Initializing the pipeline
@@ -40,143 +44,84 @@ class PipelineService:
 
     ################################# MODIFIERS #############################
 
-    def add_conversations(self, conversations : Dict[str,Conversation]) -> bool:
-        """
-        Add conversations to the service.
-
-        Args:
-            conversations
-
-        Returns:
-            (bool): True if all conversations added. False otherwise.
-        """
-        return self.payload.add_conversations(conversations)
+    def add_source(self, source_name : str ,conversation : Conversation) -> bool:
+        source = Source(source_name, conversation)
+        return self.sources.add_object(source_name, source)
 
     def register_analysis_plugins(self, config_path : str) -> List[str]:
-        """
-        Register analysis plugins using the configuration file.
-
-        Args:
-            config_path (str): Path to the configuration file.
-
-        Returns:
-            (List[str]):
-                Names of plugins that were loaded from the configuration file.
-        """
-        names = self.analysis_stage.get_plugin_names()
-        parsed_data = self.loader.parse_analysis_plugin_configuration_file(
-            config_path)
-        for data in parsed_data:
-            self.analysis_stage.register_plugin_from_data(data)
-        return [name for name in self.analysis_stage.get_plugin_names() \
-                if name not in names]
+        success, data_list = \
+            self.loader.parse_analysis_plugin_configuration_file(config_path)
+        return self.analysis_stage.register_plugins_from_data(data_list)
 
     def register_format(self, config_path : str) -> Tuple[str,List[str]]:
-        """
-        Register a format from the configuration file.
+        success, data = self.loader.parse_format_configuration_file(config_path)
+        if not success:
+            return (None,None)
+        return self.format_stage.register_format(*data)
 
-        Args:
-            config_path (str): Path to the configuration file.
-
-        Returns:
-            (Tuple[str,List[str]]):
-                Name of the format + list of all plugins loaded.
-        """
-        format_name, parsed_data = self.loader.parse_format_configuration_file(
-            config_path)
-        return (format_name,
-            self.format_stage.register_format(format_name, parsed_data))
-
-    def start_service(self) -> PipelineServiceSummary:
-        """
-        Start the pipeline service.
-
-        Returns:
-            (PipelineServiceSummary)
-        """
-        # TODO: Do not hard-code format name
-        self.payload.set_format("normal")
-        self.pipeline.set_base_input(self.payload)
+    def start(self) -> PipelineServiceSummary:
+        self.pipeline.set_base_input(self.sources.get_all_objects())
         self.pipeline.execute()
-        return self._generate_pipeline_summary(
-            self.payload,self.pipeline.get_execution_summary())
+        # TODO: Generate this summary.
+        return self._generate_summary()
 
     ################################# GETTERS ###############################
 
     def get_analysis_plugin_names(self) -> List[str]:
-        """
-        Obtain a list of all analysis plugins.
-
-        Returns:
-            (List[str]): List of plugins to be used in the analysis.
-        """
         return self.analysis_stage.get_plugin_names()
 
     def get_format_names(self) -> List[str]:
-        """
-        Obtain a list of all formats that are available.
-
-        Returns:
-            (List[str]): List of format names.
-        """
         return self.format_stage.get_formats()
 
-    def get_format_plugin_names(self, format_name : str) -> List[str]:
-        """
-        Obtain a list of all plugins that are available with the specified
-        format.
-
-        Args:
-            format_name (str): Name of the format.
-
-        Returns:
-            (List[str]): List of plugins associated with format.
-        """
+    def get_format_plugin_names(self, format_name  : str) -> List[str]:
         return self.format_stage.get_format_plugins(format_name)
 
-    def is_conversation(self, conversation_name : str) -> bool:
-        """
-        Determine if the conversation has been added.
+    def is_source(self, source_name : str) -> bool:
+        return self.sources.is_object(source_name)
 
-        Args:
-            conversation_name (str)
-
-        Returns:
-            (bool): True if conversation exists, False otherwise.
-        """
-        return self.payload.is_conversation(conversation_name)
+    def get_conversation(self, source_name : str) -> Conversation:
+        if self.is_source(source_name):
+            return self.sources.get_object(source_name)
 
     def get_conversations(self) -> Dict[str,Conversation]:
-        """
-        Obtain all the conversations.
-
-        Returns:
-            (Dict[str,Conversation]):
-                Mapping from conversation name to conversation.
-        """
-        return self.payload.get_conversations()
+        conversations = dict()
+        sources = self.sources.get_all_objects()
+        for source_name, source in sources:
+            source : Source
+            conversations[source_name] = source.conversation
+        return conversations
 
     ########################## PRIVATE METHODS ###############################
 
-    # TODO: Standardize naming convention across stages.
-    def _generate_pipeline_summary(self, payload : PipelineServicePayload,
-            pipeline_summary : Dict) -> PipelineServiceSummary:
-        #Generating the conversation summary for all conversations.
-        summaries = dict()
-        conversations = payload.get_conversations()
-        #transcription_results = payload.get_transcription_stage_output()
-        analysis_results = payload.get_analysis_stage_output()
-        format_results = payload.get_format_stage_output()
-        for conversation_name, conversation in conversations.items():
-            analysis_summary = analysis_results.analysis_summaries[conversation_name]
-            format_summary = format_results.format_summaries[conversation_name]
-            summaries[conversation_name] = ConversationSummary(
-                conversation_name,
-                analysis_summary.successful_plugins,
-                format_summary.successful_plugins,
-                payload.get_format(),
-                conversation.get_transcription_status())
-        return PipelineServiceSummary(summaries)
+    def _generate_summary(self) -> PipelineServiceSummary:
+        summary = PipelineServiceSummary()
+        sources = self.sources.get_all_objects()
+        for source_name, source in sources.items():
+            source : Source
+            summary.source_names.append(source_name)
+            if source.transcription_successful:
+                summary.sources_transcribed.append(source_name)
+            if source.analysis_successful:
+                summary.sources_analyzed.append(source_name)
+            if source.format_successful:
+                summary.sources_formatted.append(source_name)
+
+            for plugin_name, plugin_summary in \
+                    source.analysis_plugin_summaries.items():
+                summary.sources_analysis_plugin_summaries[plugin_name] = \
+                    self._plugin_summary_as_dictionary(plugin_summary)
+            for plugin_name, plugin_summary in \
+                    source.format_plugin_summaries.items():
+                summary.sources_format_plugin_summaries[plugin_name] = \
+                    self._plugin_summary_as_dictionary(plugin_summary)
+        return summary
+
+    def _plugin_summary_as_dictionary(self,
+            plugin_summary : PluginExecutionSummary) -> Dict[str,Any]:
+        return {
+            "plugin_name" : plugin_summary.plugin_name,
+            "runtime" : plugin_summary.runtime_seconds,
+            "was_successful" : plugin_summary.was_successful}
 
 
 

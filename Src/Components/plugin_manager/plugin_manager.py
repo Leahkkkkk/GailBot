@@ -1,4 +1,5 @@
 # Standard library imports
+from Src.Components.plugin_manager import plugin
 from typing import Dict, Any, List, Tuple
 # Local imports
 from .apply_config import ApplyConfig
@@ -93,10 +94,11 @@ class PluginManager:
         did_generate, pipeline = self._generate_execution_pipeline(
             apply_configs)
         if not did_generate:
-            return self._generate_summary({})
+            return self._generate_summary({},apply_configs)
         pipeline.set_base_input(apply_configs)
         pipeline.execute()
-        return self._generate_summary(pipeline.get_execution_summary())
+        return self._generate_summary(
+            pipeline.get_execution_summary(), apply_configs)
 
     ############################# GETTERS ###################################
 
@@ -206,7 +208,8 @@ class PluginManager:
         return pipeline.add_component(
             plugin_name, plugin_source,plugin_source.plugin_dependencies)
 
-    def _generate_summary(self, execution_summary : Dict[str,Any]) \
+    def _generate_summary(self, execution_summary : Dict[str,Any],
+            apply_configs : Dict[str,ApplyConfig]) \
             -> PluginManagerSummary:
         """
         Generate the summary for executing all plugins in the pipeline.
@@ -215,25 +218,31 @@ class PluginManager:
             execution_summary (Dict[str,Any]):
                 Summary obtained by executing a Pipeline
         """
-
-        # Generating the plugin summaries.
-        plugin_summaries = dict()
-        for component_name, summary in execution_summary.items():
-            stream : Stream = summary["result"]
-            plugin_summaries[component_name] = stream.get_stream_data()
-        # Geerating the analysis summary
+        # Initializing the plugin summaries.
         total_time_seconds = 0
         successful_plugins = list()
         failed_plugins = list()
-        for plugin_summary in plugin_summaries.values():
-            plugin_summary : PluginExecutionSummary
-            total_time_seconds += plugin_summary.runtime_seconds
-            if plugin_summary.was_successful:
-                successful_plugins.append(plugin_summary.plugin_name)
+        plugin_summaries = dict()
+        # Summary only generated for plugins that were selected.
+        plugin_names = list(apply_configs.keys())
+        for plugin_name in plugin_names:
+            # Means plugin was executed and we can get summary.
+            if plugin_name in execution_summary.keys():
+                summary = execution_summary[plugin_name]
+                stream : Stream = summary["result"]
+                plugin_summary : PluginExecutionSummary = \
+                    stream.get_stream_data()
+                plugin_summaries[plugin_name] = plugin_summary
+                total_time_seconds += plugin_summary.runtime_seconds
+                if plugin_summary.was_successful:
+                    successful_plugins.append(plugin_summary.plugin_name)
+                else:
+                    failed_plugins.append(plugin_summary.plugin_name)
+            # Plugin was not executed.
             else:
-                failed_plugins.append(plugin_summary.plugin_name)
+                plugin_summaries[plugin_name] = PluginExecutionSummary(
+                    plugin_name, [],{},None,0,False)
+                failed_plugins.append(plugin_name)
         return PluginManagerSummary(
             total_time_seconds,successful_plugins,failed_plugins,
             plugin_summaries)
-
-
