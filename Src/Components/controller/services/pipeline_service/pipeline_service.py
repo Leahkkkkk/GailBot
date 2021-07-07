@@ -1,19 +1,21 @@
 # Standard imports
-from Src.Components.plugin_manager import plugin
-from Src.Components.plugin_manager.plugin_execution_summary import PluginExecutionSummary
 from typing import List, Tuple, Dict, Any
 # Local imports
 from .....utils.manager import ObjectManager
 from ....pipeline import Pipeline
 from ....organizer import Conversation
+from ....plugin_manager import PluginExecutionSummary
 from ..fs_service import FileSystemService
+from ..source import Source
 from .service_summary import PipelineServiceSummary
 from .transcription_stage.transcription_stage import TranscriptionStage
 from .analysis_stage.analysis_stage import AnalysisStage
 from .format_stage.format_stage import FormatStage
+from .output_stage.output_stage import OutputStage
 from .loader import PipelineServiceLoader
 from .logic import PipelineServiceLogic
-from .source import Source
+from .pipeline_payload import SourcePayload
+
 
 class PipelineService:
 
@@ -28,8 +30,10 @@ class PipelineService:
         self.transcription_stage = TranscriptionStage(self.pipeline_num_threads)
         self.analysis_stage = AnalysisStage(self.pipeline_num_threads)
         self.format_stage = FormatStage(self.pipeline_num_threads)
+        self.output_stage = OutputStage()
         ## Others
         self.sources = ObjectManager()
+        self.payloads = ObjectManager()
         self.logic = PipelineServiceLogic()
         self.loader = PipelineServiceLoader()
         ## Initializing the pipeline
@@ -44,12 +48,22 @@ class PipelineService:
 
     ################################# MODIFIERS #############################
 
-    def add_source(self, source_name : str ,conversation : Conversation) -> bool:
-        source = Source(source_name, conversation)
-        return self.sources.add_object(source_name, source)
+    def add_source(self, source_name : str, source : Source) -> bool:
+        payload = SourcePayload(
+            source.source_name,source.conversation,source.hook)
+        return self.sources.add_object(source_name, source) and \
+            self.payloads.add_object(source_name, payload)
+
+    def add_sources(self, sources : Dict[str,Source]) -> bool:
+        return all([self.add_source(name, source) \
+            for name, source in sources.items()])
+
+    def remove_source(self, source_name : str) -> bool:
+        return self.sources.remove_object(source_name) and \
+            self.payloads.remove_object(source_name)
 
     def register_analysis_plugins(self, config_path : str) -> List[str]:
-        success, data_list = \
+        _, data_list = \
             self.loader.parse_analysis_plugin_configuration_file(config_path)
         return self.analysis_stage.register_plugins_from_data(data_list)
 
@@ -60,8 +74,10 @@ class PipelineService:
         return self.format_stage.register_format(*data)
 
     def start(self) -> PipelineServiceSummary:
-        self.pipeline.set_base_input(self.sources.get_all_objects())
+        self.pipeline.set_base_input(self.payloads.get_all_objects())
         self.pipeline.execute()
+        # Run the output stage.
+        self._execute_output_stage(self.payloads.get_all_objects())
         # TODO: Generate this summary.
         return self._generate_summary()
 
@@ -79,39 +95,32 @@ class PipelineService:
     def is_source(self, source_name : str) -> bool:
         return self.sources.is_object(source_name)
 
-    def get_conversation(self, source_name : str) -> Conversation:
-        if self.is_source(source_name):
-            return self.sources.get_object(source_name)
+    def get_source(self, source_name : str) -> Source:
+       return self.sources.get_object(source_name)
 
-    def get_conversations(self) -> Dict[str,Conversation]:
-        conversations = dict()
-        sources = self.sources.get_all_objects()
-        for source_name, source in sources:
-            source : Source
-            conversations[source_name] = source.conversation
-        return conversations
+    def get_sources(self) -> Dict[str,Source]:
+        return self.sources.get_all_objects()
 
     ########################## PRIVATE METHODS ###############################
 
     def _generate_summary(self) -> PipelineServiceSummary:
         summary = PipelineServiceSummary()
-        sources = self.sources.get_all_objects()
-        for source_name, source in sources.items():
-            source : Source
+        payloads = self.payloads.get_all_objects()
+        for source_name, payload in payloads.items():
+            payload : SourcePayload
             summary.source_names.append(source_name)
-            if source.transcription_successful:
+            if payload.transcription_successful:
                 summary.sources_transcribed.append(source_name)
-            if source.analysis_successful:
+            if payload.analysis_successful:
                 summary.sources_analyzed.append(source_name)
-            if source.format_successful:
+            if payload.format_successful:
                 summary.sources_formatted.append(source_name)
-
             for plugin_name, plugin_summary in \
-                    source.analysis_plugin_summaries.items():
+                    payload.analysis_plugin_summaries.items():
                 summary.sources_analysis_plugin_summaries[plugin_name] = \
                     self._plugin_summary_as_dictionary(plugin_summary)
             for plugin_name, plugin_summary in \
-                    source.format_plugin_summaries.items():
+                    payload.format_plugin_summaries.items():
                 summary.sources_format_plugin_summaries[plugin_name] = \
                     self._plugin_summary_as_dictionary(plugin_summary)
         return summary
@@ -122,6 +131,10 @@ class PipelineService:
             "plugin_name" : plugin_summary.plugin_name,
             "runtime" : plugin_summary.runtime_seconds,
             "was_successful" : plugin_summary.was_successful}
+
+    def _execute_output_stage(self, payloads : Dict[str,SourcePayload]) -> bool:
+        return self.output_stage.output_payloads(payloads)
+
 
 
 

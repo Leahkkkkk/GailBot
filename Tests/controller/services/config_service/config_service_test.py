@@ -1,14 +1,16 @@
 # Standard library imports
-# Local imports
-from Src.Components.controller.services import ConfigService, FileSystemService
-from Src.Components.config import SystemBB
 
 ############################### GLOBALS #####################################
+from Src.Components.config import SystemBBAttributes,SystemBB
+from Src.Components.controller.services.config_service import ConfigService
+from Src.Components.controller.services.fs_service import FileSystemService
 
-WS_DIR_PATH = "TestData/workspace/fs_workspace"
-WAV_FILE_PATH = "TestData/media/test2a.wav"
-CONFIG_FILE_PATH = "TestData/workspace/fs_workspace/config.json"
 
+############################### SETUP #####################################
+
+WS_DIR_PATH = "TestData/workspace/temp_ws"
+CONFIG_FILE_PATH = "TestData/workspace/temp_ws/config.json"
+WAV_FILE_PATH = "TestData/media/overlayed.wav"
 
 
 ########################## TEST DEFINITIONS ##################################
@@ -24,6 +26,7 @@ def test_config_service_configure_from_path_valid() -> None:
     assert not service.configure_from_path()
     fs_service.configure_from_workspace_path(WS_DIR_PATH)
     assert service.configure_from_path()
+    fs_service.shutdown()
 
 def test_config_service_configure_from_path_invalid() -> None:
     """
@@ -34,6 +37,7 @@ def test_config_service_configure_from_path_invalid() -> None:
     service = ConfigService(fs_service)
     fs_service.configure_from_workspace_path(WAV_FILE_PATH)
     assert not service.configure_from_path()
+    fs_service.shutdown()
 
 def test_config_service_is_configured() -> None:
     """
@@ -47,6 +51,8 @@ def test_config_service_is_configured() -> None:
     fs_service.configure_from_workspace_path(WS_DIR_PATH)
     service.configure_from_path()
     assert service.is_configured()
+    fs_service.shutdown()
+
 
 def test_config_service_get_configuration_file_path() -> None:
     """
@@ -55,23 +61,23 @@ def test_config_service_get_configuration_file_path() -> None:
         2. Get path after configuring.
     """
     fs_service = FileSystemService()
-    service = ConfigService(fs_service)
-    assert service.get_configuration_file_path() == None
     fs_service.configure_from_workspace_path(WS_DIR_PATH)
+    service = ConfigService(fs_service)
     service.configure_from_path()
     assert service.get_configuration_file_path() == CONFIG_FILE_PATH
+    fs_service.shutdown()
 
 def test_config_service_get_supported_blackboard_types() -> None:
     """
     Tests:
         1. Get system blackboard and check values against file values.
     """
-
     fs_service = FileSystemService()
     fs_service.configure_from_workspace_path(WS_DIR_PATH)
     service = ConfigService(fs_service)
     service.configure_from_path()
     assert service.get_supported_blackboard_types() == ["system_blackboard"]
+    fs_service.shutdown()
 
 def test_config_service_get_system_blackboard() -> None:
     """
@@ -84,3 +90,4 @@ def test_config_service_get_system_blackboard() -> None:
     service.configure_from_path()
     system_bb = service.get_system_blackboard()
     assert type(system_bb) == SystemBB
+    fs_service.shutdown()

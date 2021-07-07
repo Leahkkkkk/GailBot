@@ -4,11 +4,13 @@ from dataclasses import dataclass, field
 # Local imports
 from ....organizer import Conversation
 from ....plugin_manager import PluginExecutionSummary
+from ..fs_service import SourceHook
 
 @dataclass
-class Source:
+class SourcePayload:
     source_name : str
     conversation : Conversation
+    hook : SourceHook
     # TranscriptionStage
     transcription_successful : bool = False
     source_to_audio_map : Dict[str,str] = field(default_factory=dict)
