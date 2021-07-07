@@ -140,7 +140,6 @@ class TranscriptionStage:
             payload.conversation.set_transcription_status(
                 TranscriptionStatus.unsuccessful)
 
-
     def _transcribe_watson_thread(self, source_file_name : str,
             payload : SourcePayload, utterances_map : Dict[str,List[Utterance]],
             source_status_map : Dict[str,bool]) -> None:

@@ -1,2 +1,6 @@
 from .pipeline_service import PipelineService
 from .service_summary import PipelineServiceSummary
+from .analysis_stage.analysis_plugin import AnalysisPlugin
+from .analysis_stage.analysis_plugin_input import AnalysisPluginInput
+from .format_stage.format_plugin import FormatPlugin
+from .format_stage.format_plugin_input import FormatPluginInput

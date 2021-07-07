@@ -63,15 +63,17 @@ class PipelineService:
             self.payloads.remove_object(source_name)
 
     def register_analysis_plugins(self, config_path : str) -> List[str]:
-        _, data_list = \
+        success, data_list = \
             self.loader.parse_analysis_plugin_configuration_file(config_path)
+        if not success:
+            return []
         return self.analysis_stage.register_plugins_from_data(data_list)
 
     def register_format(self, config_path : str) -> Tuple[str,List[str]]:
         success, data = self.loader.parse_format_configuration_file(config_path)
         if not success:
             return (None,None)
-        return self.format_stage.register_format(*data)
+        return (data[0],self.format_stage.register_format(*data))
 
     def start(self) -> PipelineServiceSummary:
         self.pipeline.set_base_input(self.payloads.get_all_objects())

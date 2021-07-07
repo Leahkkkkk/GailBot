@@ -15,8 +15,15 @@ from .source_details import SourceDetails
 # Third party imports
 
 class OrganizerService:
+    """
+    Service to Organize sources.
+    """
 
     def __init__(self, fs_service : FileSystemService) -> None:
+        """
+        Args:
+            fs_service (FileSystemService)
+        """
         ## Variables
         self.default_num_speakers = 1
         self.default_settings_type = "GailBotSettings"
@@ -38,6 +45,9 @@ class OrganizerService:
     def configure_from_disk(self) -> bool:
         """
         Configure the service from disk of the fs service is configured.
+
+        Returns:
+            (bool): True if configured successfully, False otherwise.
         """
         if not self.fs_service.is_workspace_configured():
             return False
@@ -51,6 +61,16 @@ class OrganizerService:
             result_dir_path : str, transcriber_name : str = "GailBot") -> bool:
         """
         Add a new source that can be either an audio or video file.
+
+        Args:
+            source_name (str): Name of the source.
+            source_path (str):
+                Path of the source. Can be either file or directory.
+            result_dir_path (str): Path to the result directory for this source.
+            transcriber_name (str): Name of the transcriber for this source.
+
+        Returns:
+            (bool): True if the source successfully added, False otherwise.
         """
         # Ensure that the source can be added.
         if self.is_source(source_name) and \
@@ -63,6 +83,8 @@ class OrganizerService:
         source_hook = self.fs_service.generate_source_hook(source_name)
         if source_hook == None:
             return False
+        # Create a log and attach to all events in the organizer
+        # Generate result dir
         source_result_dir_path = self.fs_service.generate_source_result_directory(
             source_name, result_dir_path)
         # Create and save the source object
@@ -73,6 +95,12 @@ class OrganizerService:
     def remove_source(self, source_name : str) -> bool:
         """
         Remove the given source if it exists.
+
+        Args:
+            source_name (str)
+
+        Returns:
+            (bool)" True if removed successfully, False otherwise.
         """
         if not self.is_source(source_name):
             return False
@@ -81,15 +109,36 @@ class OrganizerService:
         return self.sources.remove_object(source_name)
 
     def remove_sources(self, source_names : List[str]) -> bool:
+        """
+        Remove all sources with the specified names.
+
+        Args:
+            source_names (List[str])
+
+        Returns:
+            (bool): True if all sources removed, False otherwise.
+        """
         return all([self.remove_source(name) for name in source_names])
 
     def clear_sources(self) -> bool:
+        """
+        Remove all sources.
+
+        Returns:
+            (bool): True if all sources removed, False otherwise,
+        """
         return all([self.remove_source(name) for\
              name in self.sources.get_object_names()])
 
     def reset_source(self, source_name : str) -> bool:
         """
-        Reload the given source.
+        Reload the given source if it exists.
+
+        Args:
+            source_name (str)
+
+        Returns:
+            (bool): True if successfully reloaded, False otherwise.
         """
         # Must be a source.
         if not self.is_source(source_name):
@@ -111,6 +160,12 @@ class OrganizerService:
     def reset_sources(self, source_names : List[str]) -> bool:
         """
         Reload the given sources.
+
+        Args:
+            source_names (List[str])
+
+        Returns:
+            (bool): True if specified sources reloaded, False otherwise.
         """
         return all([self.reset_source(source_name) \
             for source_name in source_names])
@@ -118,6 +173,9 @@ class OrganizerService:
     def reset_all_sources(self) -> bool:
         """
         Reload all sources.
+
+        Returns:
+            (bool): True if all sources reloaded.
         """
         return self.reset_sources(self.sources.get_object_names())
 
@@ -128,6 +186,14 @@ class OrganizerService:
                 -> bool:
         """
         Create a new profile with the given data.
+
+        Args:
+            new_settings_profile_name (str): Name of the new profile.
+            data (Dict[GBSettingAttrs,Any]):
+                Must have all key-value pairs for settings.
+
+        Returns:
+            (bool): True if new profile created, False otherwise.
         """
         # Only work if configured and the profile does not exist.
         if self.is_settings_profile(new_settings_profile_name):
@@ -139,7 +205,13 @@ class OrganizerService:
 
     def save_settings_profile(self, settings_profile_name : str) -> bool:
         """
-        Save the given settings profile.
+        Save the given settings profile to disk.
+
+        Args:
+            settings_profile_name (str): Name of the profile.
+
+        Returns:
+            (bool): True if saved, False otherwise.
         """
         # Profile has to exist
         if not self.is_settings_profile(settings_profile_name):
@@ -151,6 +223,13 @@ class OrganizerService:
     def remove_settings_profile(self, settings_profile_name : str) -> bool:
         """
         Remove the given settings profile and any source using that profile.
+        Deletes the profile from disk if it is saved.
+
+        Args:
+            settings_profile_name (str)
+
+        Returns:
+            (bool): True if deleted, False otherwise.
         """
         # Profile has to exist
         if not self.is_settings_profile(settings_profile_name):
@@ -166,6 +245,9 @@ class OrganizerService:
     def remove_all_settings_profiles(self) -> bool:
         """
         Remove all settings profiles.
+
+        Returns:
+            (bool): True if all removed, False otherwise.
         """
         return all([self.remove_settings_profile(name) \
                 for name in self.settings_profiles.get_object_names()])
@@ -175,6 +257,13 @@ class OrganizerService:
         """
         Change the name of an existing settings profile, including in the
         sources using that settings profile.
+
+        Args:
+            settings_profile_name (str): Name of existing settings profiles.
+            new_name (str): New name for the settings profile.
+
+        Returns:
+            (bool): True if changed, False otherwise.
         """
         if not self.is_settings_profile(settings_profile_name):
             return False
@@ -195,7 +284,15 @@ class OrganizerService:
     def apply_settings_profile_to_source(self, source_name : str,
             settings_profile_name : str) -> bool:
         """
-        Apply the specified settings profile to the specified source.
+        Apply the specified settings profile to the specified source if they
+        exist.
+
+        Args:
+            source_name (str)
+            settings_profile_name (str)
+
+        Returns:
+            (bool): True if profile applied to source, False otherwise.
         """
         # Source has to exist
         if not self.is_source(source_name) or \
@@ -217,8 +314,8 @@ class OrganizerService:
             created, conversation = self.organizer.create_conversation(
                 source.source_path,source.source_name,self.default_num_speakers,
                 source.transcriber_name,source.result_dir_path,
-                self.fs_service.get_temporary_workspace_path(),
-                settings_profile.settings)
+                self.fs_service.generate_source_temporary_directory(
+                    source.source_name), settings_profile.settings)
             if not created:
                 return False
             conversation.set_transcription_status(TranscriptionStatus.ready)
@@ -228,6 +325,17 @@ class OrganizerService:
 
     def apply_settings_profile_to_sources(self, source_names : List[str],
             settings_profile_name : str) -> bool:
+        """
+        Apply the specified settings profile to the specified sources if they
+        exist.
+
+        Args:
+            source_names (List[str])
+            settings_profile_name (str)
+
+        Returns:
+            (bool): True if profile applied to source, False otherwise.
+        """
         return all([self.apply_settings_profile_to_source(
                 source_name,settings_profile_name)] \
                     for source_name in source_names )
@@ -238,6 +346,13 @@ class OrganizerService:
             new_settings_profile_name : str)  -> bool:
         """
         Save the settings profile associated with the source with the given name.
+
+        Args:
+            source_name (str)
+            new_settings_profile_name (str)
+
+        Returns:
+            (bool): True if the profile is saved, False otherwise.
         """
         if not self.is_source(source_name) or \
                 self.is_settings_profile(new_settings_profile_name) or \
@@ -261,12 +376,18 @@ class OrganizerService:
     def get_supported_audio_formats(self) -> List[str]:
         """
         Get the supported audio formats
+
+        Returns:
+            (List[str])
         """
         return self.io.get_supported_audio_formats()
 
     def get_supported_video_formats(self) -> List[str]:
         """
         Get the supported video formats
+
+        Returns:
+            (List[str])
         """
         return self.io.get_supported_video_formats()
 
@@ -275,12 +396,24 @@ class OrganizerService:
     def is_source(self, source_name : str) -> bool:
         """
         Determine whether the given source exists.
+
+        Args:
+            source_name (str)
+
+        Returns:
+            (bool): True if source exists, False otherwise.
         """
         return self.sources.is_object(source_name)
 
     def is_source_configured(self, source_name : str) -> bool:
         """
         Determine if the source is configured.
+
+        Args:
+            source_name (str)
+
+        Returns:
+            (bool): True if source configured, False otherwise.
         """
         return self.is_source(source_name) and \
             self.sources.get_object(source_name).is_configured
@@ -288,12 +421,18 @@ class OrganizerService:
     def get_source_names(self) -> List[str]:
         """
         Obtain the names of all sources.
+
+        Returns:
+            (List[str])
         """
         return self.sources.get_object_names()
 
     def get_configured_source_names(self) -> List[str]:
         """
         Get the names of all sources that have been configured.
+
+        Returns:
+            (List[str])
         """
         return list(self.sources.get_filtered_objects(
             lambda name, obj: obj.is_configured).keys())
@@ -301,6 +440,12 @@ class OrganizerService:
     def get_source_details(self, source_name : str) -> SourceDetails:
         """
         Get the details of the specified source.
+
+        Args:
+            source_name (str)
+
+        Returns:
+            (SourceDetails)
         """
         if not self.is_source(source_name):
             return
@@ -330,6 +475,16 @@ class OrganizerService:
 
     def get_sources_details(self, source_names : List[str]) \
             -> Dict[str,SourceDetails]:
+        """
+        Get details for all the specified sources if they exist.
+
+        Args:
+            source_names (List[str])
+
+        Returns:
+            (Dict[str,SourceDetails]):
+                Map from source name to its details.
+        """
         details = dict()
         for name in source_names:
             details[name] = self.get_source_details(name)
@@ -338,10 +493,21 @@ class OrganizerService:
     def get_all_source_details(self) -> Dict[str,SourceDetails]:
         """
         Get the source details of all sources.
+
+        Returns:
+            (Dict[str,SourceDetails]):
+                Map from source name to its details.
         """
         return self.get_sources_details(self.sources.get_object_names())
 
     def get_configured_sources(self) -> Dict[str,Source]:
+        """
+        Obtain all sources that have been configured.
+
+        Returns:
+            (Dict[str,Source]):
+                Mapping from source name to Source.
+        """
         configured = dict()
         sources = self.sources.get_all_objects()
         for source_name, source in sources.items():
@@ -353,11 +519,26 @@ class OrganizerService:
     ### Settings profiles
 
     def is_settings_profile(self, settings_profile_name : str) -> bool:
+        """
+        Determine if the settings profile exists.
+
+        Args:
+            settings_profile_name (str)
+
+        Returns:
+            (bool)" True if the profile exists, False otherwise.
+        """
         return self.settings_profiles.is_object(settings_profile_name)
 
     def is_settings_profile_saved(self, settings_profile_name : str) -> bool:
         """
         Determine if the specified settings profile is saved on disk.
+
+        Args:
+            settings_profile_name (str)
+
+        Returns:
+            (bool): True if the profile is saved on disk, False otherwise.
         """
         if not self.is_settings_profile(settings_profile_name):
             return False
@@ -369,6 +550,12 @@ class OrganizerService:
             -> SettingsDetails:
         """
         Get the details for the settings profile.
+
+        Args:
+            settings_profile_name (str)
+
+        Returns:
+            (SettingsDetails)
         """
         if not self.is_settings_profile(settings_profile_name):
             return
@@ -384,6 +571,13 @@ class OrganizerService:
             settings_profile_names : List[str]) -> Dict[str,SettingsDetails]:
         """
         Get the details for the specified settings profiles.
+
+        Args:
+            settings_profile_names (List[str])
+
+        Returns:
+            (Dict[str,SettingsDetails]):
+                Map from profile name to its details.
         """
         details = dict()
         for name in settings_profile_names:
@@ -393,11 +587,24 @@ class OrganizerService:
     def get_all_settings_profiles_details(self) -> Dict[str,SettingsDetails]:
         """
         Get the details for all settings profiles.
+
+        Returns:
+            (Dict[str,SettingsDetails]):
+                Map from profile name to its details.
         """
         return self.get_settings_profiles_details(
             self.settings_profiles.get_object_names())
 
-    def get_source_settings_profile_name(self, source_name) -> str:
+    def get_source_settings_profile_name(self, source_name : str) -> str:
+        """
+        Obtain the name of the settings profile associated with the source.
+
+        Args:
+            source_name (str)
+
+        Returns:
+            (str): Name of the settings profile associated with the source.
+        """
         if not self.is_source_configured(source_name):
             return
         source : Source = self.sources.get_object(source_name)
@@ -407,6 +614,12 @@ class OrganizerService:
             settings_profile_name : str) -> List[str]:
         """
         Obtain the name of all source using the given settings profile.
+
+        Args:
+            settings_profile_name (str)
+
+        Returns:
+            (List[str]): Names of sources.
         """
         return list(self.sources.get_filtered_objects(
             lambda name, obj : obj.settings_profile_name \
@@ -414,12 +627,30 @@ class OrganizerService:
 
     def get_sources_details_using_settings_profile(self,
             settings_profile_name : str) -> Dict[str,SourceDetails]:
+        """
+        Obtain the details of sources using the specified settings profile.
+
+        Args:
+            settings_profile_name (str)
+
+        Returns:
+            (Dict[str,SourceDetails]): Map from source name  to SourceDetails.
+        """
         names = self.get_source_names_using_settings_profile(
             settings_profile_name)
         return self.get_sources_details(names)
 
     def get_source_settings_profile_details(self, source_name : str) \
             -> SettingsDetails:
+        """
+        Obtain the SettingsDetails of the source.
+
+        Args:
+            source_name (str)
+
+        Returns:
+            (SettingsDetails)
+        """
         if not self.is_source_configured(source_name):
             return
         source : Source = self.sources.get_object(source_name)
@@ -427,6 +658,16 @@ class OrganizerService:
 
     def get_sources_settings_profile_details(self, source_names : List[str]) \
             -> Dict[str,SettingsDetails]:
+        """
+        Obtain the SettingsDetails of the sources
+
+        Args:
+            source_names (List[str])
+
+        Returns:
+            (Dict[str,SettingsDetails]):
+                Map from source name to SettingsDetails.
+        """
         details = dict()
         for name in source_names:
             if self.is_source_configured(name):
@@ -436,6 +677,13 @@ class OrganizerService:
 
     def get_all_sources_settings_profile_details(self) \
             -> Dict[str,SettingsDetails]:
+        """
+        Obtain the SettingsDetails of all sources
+
+        Returns:
+            (Dict[str,SettingsDetails]):
+                Map from source name to SettingsDetails.
+        """
         return self.get_sources_settings_profile_details(
             self.sources.get_object_names())
 
@@ -446,6 +694,14 @@ class OrganizerService:
         """
         Set the attribute of a given settings profile and for all the sources
         that are using this profile.
+
+        Args:
+            settings_profile_name (str)
+            attr (GBSettingAttrs)
+            value (Any)
+
+        Returns:
+            (bool): True if successful, False otherwise.
         """
         if not self.is_settings_profile(settings_profile_name):
             return False
@@ -466,6 +722,14 @@ class OrganizerService:
             attr : GBSettingAttrs, value : Any) -> bool:
         """
         Set the attribute of a settings profile attached to a specific source.
+
+        Args:
+            source_name (str)
+            attr (GBSettingAttrs)
+            value (Any)
+
+        Returns:
+            (bool): True if successful, False otherwise.
         """
         if not self.is_source_configured(source_name):
             return False
@@ -519,7 +783,4 @@ class OrganizerService:
             return True
         except:
             return False
-
-
-
 

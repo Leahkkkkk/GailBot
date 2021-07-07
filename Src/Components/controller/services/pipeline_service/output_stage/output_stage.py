@@ -26,8 +26,10 @@ class OutputStage:
                 not self._write_utterances(payload):
             return False
         # Save the hook.
-        payload.hook.copy_permanent_items(
-            payload.conversation.get_result_directory_path())
+        result_dir = payload.conversation.get_result_directory_path()
+        if not payload.hook.copy_permanent_items(result_dir):
+            # Remove result directory if hook not saved.
+            self.io.delete(result_dir)
 
     def output_payloads(self, payloads : Dict[str,SourcePayload]) -> bool:
         return all([self.output_payload(payload) \

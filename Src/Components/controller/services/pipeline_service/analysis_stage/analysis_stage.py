@@ -11,6 +11,7 @@ from .analysis_plugin_input import AnalysisPluginInput
 class AnalysisStage:
 
     def __init__(self, num_threads : int) -> None:
+
         ## Objects
         self.payloads = ObjectManager()
         self.plugin_manager = PluginManager()
