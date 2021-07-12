@@ -49,8 +49,7 @@ class PipelineService:
     ################################# MODIFIERS #############################
 
     def add_source(self, source_name : str, source : Source) -> bool:
-        payload = SourcePayload(
-            source.source_name,source.conversation,source.hook)
+        payload = SourcePayload(source)
         return self.sources.add_object(source_name, source) and \
             self.payloads.add_object(source_name, payload)
 

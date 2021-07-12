@@ -112,27 +112,27 @@ def test_register_format() -> None:
     assert service.register_format(FORMAT_PLUGINS_CONFIG)[0] != ""
     assert service.register_format("invalid")[0] == None
 
-def test_start_multiple() -> None:
-    """
-    Tests:
-        1. Start the transcription service with multiple inputs.
-    """
-    organizer_service = initialize_organizer_service()
-    service = PipelineService(NUM_THREADS)
-    # Adding plugins
-    service.register_analysis_plugins(ANALYSIS_PLUGINS_CONFIG)
-    service.register_format(FORMAT_PLUGINS_CONFIG)
-    assert organizer_service.add_source("file",MP3_FILE_PATH,RESULT_DIR_PATH)
-    # assert organizer_service.add_source("mixed",MIXED_DIR_PATH,RESULT_DIR_PATH)
-    # assert organizer_service.add_source("mov",MOV_FILE_PATH,RESULT_DIR_PATH)
-    assert organizer_service.create_new_settings_profile(
-        "s1",obtain_settings_profile_data())
-    assert organizer_service.apply_settings_profile_to_source("file","s1")
-    # assert organizer_service.apply_settings_profile_to_source("mixed","s1")
-    # assert organizer_service.apply_settings_profile_to_source("mov","s1")
-    assert service.add_sources(organizer_service.get_configured_sources())
-    summary = service.start()
-    print(summary)
+# def test_start_multiple() -> None:
+#     """
+#     Tests:
+#         1. Start the transcription service with multiple inputs.
+#     """
+#     organizer_service = initialize_organizer_service()
+#     service = PipelineService(NUM_THREADS)
+#     # Adding plugins
+#     service.register_analysis_plugins(ANALYSIS_PLUGINS_CONFIG)
+#     service.register_format(FORMAT_PLUGINS_CONFIG)
+#     assert organizer_service.add_source("file",MP3_FILE_PATH,RESULT_DIR_PATH)
+#     # assert organizer_service.add_source("mixed",MIXED_DIR_PATH,RESULT_DIR_PATH)
+#     # assert organizer_service.add_source("mov",MOV_FILE_PATH,RESULT_DIR_PATH)
+#     assert organizer_service.create_new_settings_profile(
+#         "s1",obtain_settings_profile_data())
+#     assert organizer_service.apply_settings_profile_to_source("file","s1")
+#     # assert organizer_service.apply_settings_profile_to_source("mixed","s1")
+#     # assert organizer_service.apply_settings_profile_to_source("mov","s1")
+#     assert service.add_sources(organizer_service.get_configured_sources())
+#     summary = service.start()
+#     print(summary)
 
 def test_get_analysis_plugin_names() -> None:
     """

@@ -88,8 +88,12 @@ class OrganizerService:
         source_result_dir_path = self.fs_service.generate_source_result_directory(
             source_name, result_dir_path)
         # Create and save the source object
-        source = Source(source_name, source_path, source_result_dir_path,
-            source_hook, transcriber_name)
+        source = Source()
+        source.set_source_name(source_name)
+        source.set_source_path(source_path)
+        source.set_result_directory_path(result_dir_path)
+        source.set_transcriber_name(transcriber_name)
+        source.set_hook(source_hook)
         return self.sources.add_object(source_name,source)
 
     def remove_source(self, source_name : str) -> bool:
@@ -105,7 +109,7 @@ class OrganizerService:
         if not self.is_source(source_name):
             return False
         source : Source = self.sources.get_object(source_name)
-        source.hook.cleanup()
+        source.get_hook().cleanup()
         return self.sources.remove_object(source_name)
 
     def remove_sources(self, source_names : List[str]) -> bool:
@@ -149,12 +153,13 @@ class OrganizerService:
             return False
         # Re-add source
         if not self.add_source(
-                source_name, source.source_path,source.result_dir_path,
-                source.transcriber_name):
+                source_name, source.get_source_path(),
+                source.get_result_directory_path(),
+                source.get_transcriber_name()):
             return False
-        if self.is_settings_profile(source.settings_profile_name):
+        if self.is_settings_profile(source.get_settings_profile_name()):
             return self.apply_settings_profile_to_source(
-                source_name, source.settings_profile_name)
+                source_name, source.get_settings_profile_name())
         return True
 
     def reset_sources(self, source_names : List[str]) -> bool:
@@ -300,27 +305,28 @@ class OrganizerService:
             return False
         # Change source data.
         source : Source = self.sources.get_object(source_name)
-        source.settings_profile_name = settings_profile_name
+        source.set_settings_profile_name(settings_profile_name)
         settings_profile : SettingProfile = self.settings_profiles.get_object(
             settings_profile_name)
         # Simply apply new profile to conversation if configured.
-        if source.is_configured:
+        if source.is_configured():
             self.organizer.apply_settings_to_conversation(
-                source.conversation,settings_profile.settings)
+                source.get_conversation(),settings_profile.settings)
         # Otherwise, create new conversation.
         else:
             if not self._is_source_configurable(source_name):
                 return False
             created, conversation = self.organizer.create_conversation(
-                source.source_path,source.source_name,self.default_num_speakers,
-                source.transcriber_name,source.result_dir_path,
+                source.get_source_path(),source.get_source_name()
+                ,self.default_num_speakers,
+                source.get_transcriber_name(),source.get_result_directory_path(),
                 self.fs_service.generate_source_temporary_directory(
-                    source.source_name), settings_profile.settings)
+                    source.get_source_name()), settings_profile.settings)
             if not created:
                 return False
             conversation.set_transcription_status(TranscriptionStatus.ready)
-            source.conversation = conversation
-            source.is_configured = True
+            source.set_conversation(conversation)
+            source.set_configured()
         return True
 
     def apply_settings_profile_to_sources(self, source_names : List[str],
@@ -356,11 +362,11 @@ class OrganizerService:
         """
         if not self.is_source(source_name) or \
                 self.is_settings_profile(new_settings_profile_name) or \
-                not self.sources.get_object(source_name).is_configured:
+                not self.sources.get_object(source_name).is_configured():
             return False
         # Save to disk and load profile
         source : Source = self.sources.get_object(source_name)
-        settings : GailBotSettings = source.conversation.get_settings()
+        settings : GailBotSettings = source.get_conversation().get_settings()
         data = settings.get_all_values()
         # Create this as new settings and save
         self._initialize_settings_profile(new_settings_profile_name,data)
@@ -416,7 +422,7 @@ class OrganizerService:
             (bool): True if source configured, False otherwise.
         """
         return self.is_source(source_name) and \
-            self.sources.get_object(source_name).is_configured
+            self.sources.get_object(source_name).is_configured()
 
     def get_source_names(self) -> List[str]:
         """
@@ -435,7 +441,7 @@ class OrganizerService:
             (List[str])
         """
         return list(self.sources.get_filtered_objects(
-            lambda name, obj: obj.is_configured).keys())
+            lambda name, obj: obj.is_configured()).keys())
 
     def get_source_details(self, source_name : str) -> SourceDetails:
         """
@@ -451,10 +457,10 @@ class OrganizerService:
             return
         source : Source = self.sources.get_object(source_name)
         if self.is_source_configured(source_name):
-            conversation : Conversation = source.conversation
+            conversation : Conversation = source.get_conversation()
             return SourceDetails(
                 source_name,
-                source.settings_profile_name,
+                source.get_settings_profile_name(),
                 conversation.get_conversation_size(),
                 conversation.get_source_type(),
                 conversation.get_transcription_date(),
@@ -469,9 +475,9 @@ class OrganizerService:
                 conversation.get_source_path())
         else:
             return SourceDetails(
-                source_name, source.settings_profile_name, None,None,None,
-                None,None, source.transcriber_name, None, None, None, None,
-                source.result_dir_path, source.source_path)
+                source_name, source.get_settings_profile_name(), None,None,None,
+                None,None, source.get_transcriber_name(), None, None, None, None,
+                source.get_result_directory_path(), source.get_source_path())
 
     def get_sources_details(self, source_names : List[str]) \
             -> Dict[str,SourceDetails]:
@@ -512,7 +518,7 @@ class OrganizerService:
         sources = self.sources.get_all_objects()
         for source_name, source in sources.items():
             source : Source
-            if source.is_configured:
+            if source.is_configured():
                 configured[source_name] = source
         return configured
 
@@ -608,7 +614,7 @@ class OrganizerService:
         if not self.is_source_configured(source_name):
             return
         source : Source = self.sources.get_object(source_name)
-        return source.settings_profile_name
+        return source.get_settings_profile_name()
 
     def get_source_names_using_settings_profile(self,
             settings_profile_name : str) -> List[str]:
@@ -654,7 +660,8 @@ class OrganizerService:
         if not self.is_source_configured(source_name):
             return
         source : Source = self.sources.get_object(source_name)
-        return self.get_settings_profile_details(source.settings_profile_name)
+        return self.get_settings_profile_details(
+            source.get_settings_profile_name())
 
     def get_sources_settings_profile_details(self, source_names : List[str]) \
             -> Dict[str,SettingsDetails]:
@@ -734,11 +741,12 @@ class OrganizerService:
         if not self.is_source_configured(source_name):
             return False
         source : Source = self.sources.get_object(source_name)
-        settings : GailBotSettings = source.conversation.get_settings()
+        settings : GailBotSettings = source.get_conversation().get_settings()
         if not settings.set_using_attribute(attr,value):
             return False
-        source.conversation = self.organizer.apply_settings_to_conversation(
-            source.conversation,settings)
+        source.set_conversation(
+            self.organizer.apply_settings_to_conversation(
+            source.get_conversation(),settings))
         return True
 
     ######################### PRIVATE METHODS ###############################
@@ -756,14 +764,14 @@ class OrganizerService:
     def _is_source_configurable(self, source_name : str) -> bool:
         source : Source = self.sources.get_object(source_name)
         return (source_name != None and self.is_source(source_name)) and \
-            (self.io.is_file(source.source_path) or\
-                 self.io.is_directory(source.source_path)) and \
-            (source.settings_profile_name != None and\
-                 self.is_settings_profile(source.settings_profile_name )) and \
-            (source.hook != None) and \
-            (source.transcriber_name != None) and \
-            (source.result_dir_path != None and \
-                self.io.is_directory(source.result_dir_path))
+            (self.io.is_file(source.get_source_path()) or\
+                 self.io.is_directory(source.get_source_path())) and \
+            (source.get_settings_profile_name() != None and\
+                 self.is_settings_profile(source.get_settings_profile_name() )) and \
+            (source.get_hook() != None) and \
+            (source.get_transcriber_name() != None) and \
+            (source.get_result_directory_path() != None and \
+                self.io.is_directory(source.get_result_directory_path()))
 
     def _initialize_settings_profile(self, settings_profile_name : str,
             data : Dict[str,Any], hook : SettingsHook = None) -> bool:
