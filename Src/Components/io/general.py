@@ -328,8 +328,7 @@ class GeneralIO:
         Returns:
             (bool): True if successful. False otherwise.
         """
-        if not self.is_file(src_file_path) or \
-                not self.is_directory(dst_dir_path):
+        if not self.is_directory(dst_dir_path):
             return False
         try:
             shutil.move(src_file_path,dst_dir_path)
@@ -459,9 +458,10 @@ class GeneralIO:
             # Data must be convertable to a dictionary to be written to json
             data = dict(data)
             if not overwrite:
-                previous_data = self._read_json(file_path)
-                previous_data.update(data)
-                data = deepcopy(previous_data)
+                _, previous_data = self._read_json(file_path)
+                if previous_data != None:
+                    previous_data.update(data)
+                    data = deepcopy(previous_data)
             with open(file_path,"w") as f:
                     json.dump(data,f)
             return True
@@ -548,9 +548,10 @@ class GeneralIO:
         try:
             data = dict(data)
             if not overwrite:
-                previous_data = yaml.load(file_path)
-                previous_data.update(data)
-                data = deepcopy(previous_data)
+                _, previous_data = self._read_yaml(file_path)
+                if previous_data != None:
+                    previous_data.update(data)
+                    data = deepcopy(previous_data)
             with open(file_path,"w") as f:
                 # Data must be convertable to a dictionary object to be written to
                 # a yaml file.

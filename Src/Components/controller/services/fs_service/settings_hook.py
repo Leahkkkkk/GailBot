@@ -1,6 +1,9 @@
 # Standard imports
+from Src.utils.observer.subscriber import Subscriber
 from typing import Dict, Callable, Any
 # Local imports
+from .....utils.observer import ObserverEventManager, Subscriber
+from .....utils.manager import ObjectManager
 from ....io import IO
 from ....organizer import Settings
 
@@ -9,7 +12,9 @@ class SettingsHook:
     File system hook for a settings profile.
     """
 
-    def __init__(self, settins_profile_name : str,
+    EVENT_TYPES = ("save", "load", "cleanup")
+
+    def __init__(self, settings_profile_name : str,
             parent_dir_path : str, settings_profile_extension : str) -> None:
         """
         Args:
@@ -17,16 +22,16 @@ class SettingsHook:
             parent_dir_path (str): Directory in which the hook is created.
             settings_profile_extension (str): Extension for a settings profile.
         """
-        ## Objects
-        self.listeners = {
-            "save" : [], "load" : [], "cleanup" : []}
-        self.io = IO()
-        if not self.io.is_directory(parent_dir_path):
-            raise Exception("Parent directory invalid")
         ## Vars.
-        self.settings_profile_name = settins_profile_name
+        self.settings_profile_name = settings_profile_name
         self.parent_dir_path = parent_dir_path
         self.settings_profile_extension = settings_profile_extension
+        ## Objects
+        self.io = IO()
+        self.observers = ObserverEventManager()
+        ## Initializing
+        self._initialize(
+            settings_profile_name, parent_dir_path, settings_profile_extension)
 
     ################################## MODIFIERS #############################
 
@@ -41,10 +46,17 @@ class SettingsHook:
         Returns:
             (bool): True if successfully saved. False otherwise.
         """
-        self._execute_callables("save")
-        path = self._get_profile_path()
-        return settings.save_to_file(
-            lambda data: self.io.write(path,data,True))
+        path = self._generate_profile_path(
+            self.settings_profile_name, self.parent_dir_path,
+            self.settings_profile_extension)
+        try:
+            if settings.save_to_file(
+                    lambda data : self.io.write(path,data,True)):
+                self.observers.notify("save",{"settings" : Settings})
+                return True
+            return False
+        except:
+            return False
 
     def load(self) -> Dict[str,Any]:
         """
@@ -53,24 +65,27 @@ class SettingsHook:
         Returns:
             (Dict[str,Any])
         """
-        self._execute_callables("load")
-        path = self._get_profile_path()
-        if not self.io.is_file(path):
-            return {}
+        path = self._generate_profile_path(
+            self.settings_profile_name, self.parent_dir_path,
+            self.settings_profile_extension)
         success, data = self.io.read(path)
         if not success:
             return {}
+        self.observers.notify("load",{"data" : data})
         return data
 
     def cleanup(self) -> None:
         """
         Cleanup the hook, removing all files inside the hook.
         """
-        self._execute_callables("cleanup")
-        self.io.delete(self._get_profile_path())
+        path = self._generate_profile_path(
+            self.settings_profile_name, self.parent_dir_path,
+            self.settings_profile_extension)
+        self.io.delete(path)
+        self.observers.notify("cleanup",{})
 
-    def register_listener(self, listener_type : str,
-            callable : Callable[[str],None]) -> bool:
+    def register_listener(self, event_type : str,
+            subscriber : Subscriber) -> bool:
         """
         Add a listener that takes in the settings hook name and is executed
         when the listener type method successfully finishes execution.
@@ -82,10 +97,9 @@ class SettingsHook:
         Returns:
             (bool): True if successfully registered, False otherwise.
         """
-        if not listener_type in self.listeners:
-            return False
-        self.listeners[listener_type].append(callable)
-        return True
+        if not event_type in self.EVENT_TYPES:
+            return
+        self.observers.subscribe(event_type, subscriber)
 
     ################################## GETTERS ###############################
 
@@ -96,43 +110,23 @@ class SettingsHook:
         Returns:
             (bool): True if the settings is saved, False otherwise.
         """
-        return self.io.is_file(
-            self._get_profile_path())
-
-    def get_parent_dir_path(self) -> str:
-        """
-        Obtain the path to the parent directory for this hook.
-
-        Returns:
-            (str): Parent dir path.
-        """
-        return self.parent_dir_path
-
-    def get_profile_path(self) -> str:
-        """
-        Obtain the path to the settings profile file.
-
-        Returns:
-            (str): Path to the settings profile file.
-        """
-        return self._get_profile_path()
+        path = self._generate_profile_path(
+            self.settings_profile_name, self.parent_dir_path,
+            self.settings_profile_extension)
+        return self.io.is_file(path)
 
     ############################### PRIVATE METHODS ##########################
 
-    def _get_profile_path(self) -> str:
-        """
-        Generate path for the settings profile file.
-        """
-        return "{}/{}.{}".format(self.parent_dir_path,
-            self.settings_profile_name,self.settings_profile_extension)
+    def _initialize(self, settings_profile_name : str,
+                parent_dir_path : str, settings_profile_extension : str) -> None:
+        # Must not already exist.
+        if not self.io.is_directory(parent_dir_path) or \
+                self.io.is_file(self._generate_profile_path(
+                    settings_profile_name, parent_dir_path,
+                    settings_profile_extension)):
+            raise Exception("Unable to configure settings hook")
 
-    def _execute_callables(self, listener_type : str) -> None:
-        """
-        Execute a callable of the specified listener type.
-        """
-        callables = self.listeners[listener_type]
-        for method in callables:
-            try:
-                method(self.settings_profile_name)
-            except:
-                pass
+    def _generate_profile_path(self, settings_profile_name : str,
+                parent_dir_path : str, settings_profile_extension : str) -> str:
+            return "{}/{}.{}".format(parent_dir_path, settings_profile_name,
+                settings_profile_extension)

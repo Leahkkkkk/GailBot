@@ -19,6 +19,17 @@ class FileSystemService:
         self.source_hooks = ObjectManager()
         self.paths = None
 
+    def __del__(self) -> None:
+        if not self.is_workspace_configured():
+            return
+        # Cleanup all the source hooks.
+        source_hooks = self.source_hooks.get_all_objects()
+        for source_hook in source_hooks.values():
+            source_hook : SourceHook
+            source_hook.cleanup()
+        # Delete the sources directory.
+        self.io.delete(self.paths.get_sources_workspace_path())
+
     ################################## MODIFIERS #############################
 
     def configure_from_workspace_path(self, ws_dir_path : str) -> bool:
@@ -38,21 +49,6 @@ class FileSystemService:
         self.paths = Paths(ws_dir_path)
         return self._initialize_workspace()
 
-    def shutdown(self) -> None:
-        """
-        Shutdown the filesystem, removing all unnecessary data.
-        """
-        if not self.is_workspace_configured():
-            return
-        # Cleanup all the source hooks.
-        source_hooks = self.source_hooks.get_all_objects()
-        for source_hook in source_hooks.values():
-            source_hook : SourceHook
-            source_hook.cleanup()
-        # Delete the sources directory.
-        self.io.delete(self.paths.get_sources_workspace_path())
-        self.io.delete(self.paths.get_temporary_workspace_path())
-
     def generate_settings_hook(self, settings_profile_name : str) \
             -> SettingsHook:
         """
@@ -69,16 +65,17 @@ class FileSystemService:
         self._raise_configure_exception()
         if self.is_settings_hook(settings_profile_name):
             return
-        hook = SettingsHook(
-            settings_profile_name, self.paths.get_settings_workspace_path(),
-            self.paths.get_settings_profile_extension())
-        hook.register_listener(
-            "cleanup",
-            lambda _ : self.remove_settings_hook(settings_profile_name))
-        self.settings_hooks.add_object(settings_profile_name,hook)
-        return hook
+        try:
+            hook = SettingsHook(
+                settings_profile_name, self.paths.get_settings_workspace_path(),
+                self.paths.get_settings_profile_extension())
+            self.settings_hooks.add_object(settings_profile_name,hook)
+            return hook
+        except:
+            pass
 
-    def generate_source_hook(self, source_name : str) -> SourceHook:
+    def generate_source_hook(self, source_name : str, result_dir_path : str) \
+            -> SourceHook:
         """
         Generate a hook for the specified source.
         The hook allows the source to interact with the file system.
@@ -95,11 +92,13 @@ class FileSystemService:
             return
         # Create the new source directory.
         parent_dir_path = self.paths.get_sources_workspace_path()
-        hook = SourceHook(parent_dir_path, source_name)
-        hook.register_listener(
-            "cleanup",lambda _: self.remove_source_hook(source_name))
-        self.source_hooks.add_object(source_name,hook)
-        return hook
+        try:
+            hook = SourceHook(parent_dir_path, source_name, result_dir_path)
+            self.source_hooks.add_object(source_name,hook)
+            return hook
+        except Exception as e:
+            print(e)
+            pass
 
     def remove_source_hook(self, source_name : str) -> bool:
         """
@@ -115,8 +114,9 @@ class FileSystemService:
             return False
         # Delete the hook directory.
         source_hook : SourceHook = self.source_hooks.get_object(source_name)
-        return self.io.delete(source_hook.get_path()) and \
-                self.source_hooks.remove_object(source_name)
+        source_hook.cleanup()
+        del source_hook
+        return self.source_hooks.remove_object(source_name)
 
     def remove_settings_hook(self, settings_profile_name : str) -> bool:
         """
@@ -130,41 +130,11 @@ class FileSystemService:
         """
         if not self.settings_hooks.is_object(settings_profile_name):
             return False
+        hook : SettingsHook = self.settings_hooks.get_object(
+            settings_profile_name)
+        hook.cleanup()
+        del hook
         return self.settings_hooks.remove_object(settings_profile_name)
-
-    def generate_source_result_directory(self, source_name : str,
-            result_dir_path : str) -> str:
-        """
-        Generate a result directory for the specified source in the specified
-        directory.
-        The given directory must exist.
-
-        Args:
-            source_name (str): Name of the source.
-
-        Returns:
-            (str): Name of the result directory for the source.
-        """
-        if not self.io.is_directory(result_dir_path):
-            return
-        dir_path = self.paths.get_source_result_directory_path(
-            source_name, result_dir_path)
-        self.io.create_directory(dir_path)
-        return dir_path
-
-    def generate_source_temporary_directory(self, source_name : str) -> str:
-        """
-        Obtain the temporary workspace path for the specified source
-
-        Args:
-            source_name (str)
-
-        Returns:
-            (str): Name of the temporary directory for this source.
-        """
-        path = self.paths.get_source_temporary_workspace_path(source_name)
-        self.io.create_directory(path)
-        return path
 
     ################################## GETTERS ###############################
 
@@ -312,8 +282,7 @@ class FileSystemService:
         """
         return self._initialize_configuration_file() and \
             self._initialize_sources_workspace() and \
-            self._initialize_settings_workspace() and \
-            self._initialize_temporary_workspace()
+            self._initialize_settings_workspace()
 
     # TODO: Change this to accommodate file.
     def _initialize_configuration_file(self) -> bool:
@@ -344,16 +313,3 @@ class FileSystemService:
             return all([self.generate_settings_hook(self.io.get_name(file_path))\
                     for file_path in file_paths])
         return self.io.create_directory(settings_ws_path)
-
-    def _initialize_temporary_workspace(self) -> bool:
-        """
-        Initialize temporary workspace.
-        """
-        temporary_ws_path = self.paths.get_temporary_workspace_path()
-        self.io.delete(temporary_ws_path)
-        return self.io.create_directory(temporary_ws_path)
-
-
-
-
-

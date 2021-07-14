@@ -1,11 +1,12 @@
 # Standard library imports
 from typing import Dict
+import pytest
 # Local imports
-from Src.Components.controller.services.gb_settings import GailBotSettings, GBSettingAttrs
+from Src.Components.io import IO
+from Src.Components.controller.services.organizer_service import GailBotSettings, \
+    GBSettingAttrs, Source,RequestType
 from Src.Components.controller.services import FileSystemService,OrganizerService,\
     SourceDetails,SettingsDetails
-from Src.Components.controller.services.source import Source
-
 ############################### GLOBALS #####################################
 
 WS_DIR_PATH = "TestData/workspace/temp_ws"
@@ -13,12 +14,12 @@ WAV_FILE_PATH = "TestData/media/test2a.wav"
 TXT_FILE_PATH = "TestData/configs/textfile.txt"
 IMAGES_DIR_PATH = "TestData/images"
 CONV_DIR_PATH = "TestData/media/conversation"
-RESULT_DIR_PATH = "TestData/workspace/dir_2"
+RESULT_DIR_PATH = "TestData/workspace/organizer_ws"
 
 ############################### SETUP #####################################
 def initialize_configured_service() -> OrganizerService:
     fs_service = FileSystemService()
-    fs_service.configure_from_workspace_path(WS_DIR_PATH)
+    assert fs_service.configure_from_workspace_path(WS_DIR_PATH)
     service = OrganizerService(fs_service)
     return service
 
@@ -32,6 +33,11 @@ def obtain_settings_profile_data() -> Dict:
         GBSettingAttrs.analysis_plugins_to_apply : ["second_analysis"],
         GBSettingAttrs.output_format : "normal"}
 
+@pytest.fixture(scope='session', autouse=True)
+def reset_workspace() -> None:
+    io = IO()
+    io.delete(RESULT_DIR_PATH)
+    io.create_directory(RESULT_DIR_PATH)
 
 ########################## TEST DEFINITIONS ##################################
 
@@ -73,8 +79,10 @@ def test_organizer_service_remove_sources() -> None:
     service = initialize_configured_service()
     service.add_source("file",WAV_FILE_PATH,RESULT_DIR_PATH)
     assert not service.remove_sources(["file","invalid"])
-    service.add_source("file",WAV_FILE_PATH,RESULT_DIR_PATH)
-    service.add_source("dir",CONV_DIR_PATH,RESULT_DIR_PATH)
+    assert service.add_source("file",WAV_FILE_PATH,RESULT_DIR_PATH)
+    assert service.add_source("dir",CONV_DIR_PATH,RESULT_DIR_PATH)
+    assert service.is_source("file")
+    assert service.is_source("dir")
     assert service.remove_sources(["file","dir"])
 
 def test_organizer_service_clear_sources() -> None:

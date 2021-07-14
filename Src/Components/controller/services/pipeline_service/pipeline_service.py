@@ -3,10 +3,8 @@ from typing import List, Tuple, Dict, Any
 # Local imports
 from .....utils.manager import ObjectManager
 from ....pipeline import Pipeline
-from ....organizer import Conversation
 from ....plugin_manager import PluginExecutionSummary
-from ..fs_service import FileSystemService
-from ..source import Source
+from ..organizer_service import Source, RequestType
 from .service_summary import PipelineServiceSummary
 from .transcription_stage.transcription_stage import TranscriptionStage
 from .analysis_stage.analysis_stage import AnalysisStage
@@ -15,7 +13,6 @@ from .output_stage.output_stage import OutputStage
 from .loader import PipelineServiceLoader
 from .logic import PipelineServiceLogic
 from .pipeline_payload import SourcePayload
-
 
 class PipelineService:
 
@@ -27,12 +24,11 @@ class PipelineService:
             raise Exception("Invalid number of threads")
         self.pipeline_num_threads = num_threads
         ## Stage Objects
-        self.transcription_stage = TranscriptionStage(self.pipeline_num_threads)
-        self.analysis_stage = AnalysisStage(self.pipeline_num_threads)
-        self.format_stage = FormatStage(self.pipeline_num_threads)
+        self.transcription_stage = TranscriptionStage()
+        self.analysis_stage = AnalysisStage()
+        self.format_stage = FormatStage()
         self.output_stage = OutputStage()
         ## Others
-        self.sources = ObjectManager()
         self.payloads = ObjectManager()
         self.logic = PipelineServiceLogic()
         self.loader = PipelineServiceLoader()
@@ -45,21 +41,30 @@ class PipelineService:
             "analysis_stage",self.analysis_stage,["transcription_stage"])
         self.pipeline.add_component(
             "format_stage",self.format_stage,["analysis_stage"])
+        self.pipeline.add_component(
+            "output_stage", self.output_stage, ["format_stage"])
 
     ################################# MODIFIERS #############################
 
     def add_source(self, source_name : str, source : Source) -> bool:
         payload = SourcePayload(source)
-        return self.sources.add_object(source_name, source) and \
-            self.payloads.add_object(source_name, payload)
+        if self.payloads.add_object(source_name, payload):
+            msg = "[{}]  Added to pipeline service".format(source_name)
+            payload.log(RequestType.FILE, msg)
+            return True
+        return False
 
     def add_sources(self, sources : Dict[str,Source]) -> bool:
         return all([self.add_source(name, source) \
             for name, source in sources.items()])
 
     def remove_source(self, source_name : str) -> bool:
-        return self.sources.remove_object(source_name) and \
-            self.payloads.remove_object(source_name)
+        if self.payloads.is_object(source_name):
+            payload : SourcePayload = self.payloads.get_object(source_name)
+            msg = "[{}] Removed from pipeline service".format(source_name)
+            payload.log(RequestType.FILE,msg)
+            return self.payloads.remove_object(source_name)
+        return False
 
     def register_analysis_plugins(self, config_path : str) -> List[str]:
         success, data_list = \
@@ -78,9 +83,8 @@ class PipelineService:
         self.pipeline.set_base_input(self.payloads.get_all_objects())
         self.pipeline.execute()
         # Run the output stage.
-        self._execute_output_stage(self.payloads.get_all_objects())
+        # self._execute_output_stage(self.payloads.get_all_objects())
         # TODO: Generate this summary.
-        return self._generate_summary()
 
     ################################# GETTERS ###############################
 
@@ -94,50 +98,19 @@ class PipelineService:
         return self.format_stage.get_format_plugins(format_name)
 
     def is_source(self, source_name : str) -> bool:
-        return self.sources.is_object(source_name)
+        return self.payloads.is_object(source_name)
 
     def get_source(self, source_name : str) -> Source:
-       return self.sources.get_object(source_name)
+       if self.is_source(source_name):
+           payload : SourcePayload = self.payloads.get_object(source_name)
+           return payload.get_source()
 
     def get_sources(self) -> Dict[str,Source]:
-        return self.sources.get_all_objects()
+        sources = dict()
+        for source_name in self.payloads.get_object_names():
+            sources[source_name] = self.get_source(source_name)
+        return sources
 
     ########################## PRIVATE METHODS ###############################
-
-    def _generate_summary(self) -> PipelineServiceSummary:
-        summary = PipelineServiceSummary()
-        payloads = self.payloads.get_all_objects()
-        for source_name, payload in payloads.items():
-            payload : SourcePayload
-            summary.source_names.append(source_name)
-            if payload.transcription_successful:
-                summary.sources_transcribed.append(source_name)
-            if payload.analysis_successful:
-                summary.sources_analyzed.append(source_name)
-            if payload.format_successful:
-                summary.sources_formatted.append(source_name)
-            for plugin_name, plugin_summary in \
-                    payload.analysis_plugin_summaries.items():
-                summary.sources_analysis_plugin_summaries[plugin_name] = \
-                    self._plugin_summary_as_dictionary(plugin_summary)
-            for plugin_name, plugin_summary in \
-                    payload.format_plugin_summaries.items():
-                summary.sources_format_plugin_summaries[plugin_name] = \
-                    self._plugin_summary_as_dictionary(plugin_summary)
-        return summary
-
-    def _plugin_summary_as_dictionary(self,
-            plugin_summary : PluginExecutionSummary) -> Dict[str,Any]:
-        return {
-            "plugin_name" : plugin_summary.plugin_name,
-            "runtime" : plugin_summary.runtime_seconds,
-            "was_successful" : plugin_summary.was_successful}
-
-    def _execute_output_stage(self, payloads : Dict[str,SourcePayload]) -> bool:
-        return self.output_stage.output_payloads(payloads)
-
-
-
-
 
 

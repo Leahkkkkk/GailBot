@@ -1,11 +1,12 @@
 # Standard library imports
 from typing import Dict
+import pytest
 # Local imports
-from Src.Components.controller.services.gb_settings import GailBotSettings, GBSettingAttrs
+from Src.Components.io import IO
+from Src.Components.controller.services.organizer_service import GailBotSettings, \
+    GBSettingAttrs, Source
 from Src.Components.controller.services import FileSystemService,OrganizerService,\
-    SourceDetails,SettingsDetails, PipelineService, PipelineServiceSummary, organizer_service
-from Src.Components.controller.services.source import Source
-
+    SourceDetails,SettingsDetails, PipelineService, PipelineServiceSummary
 
 ############################### GLOBALS #####################################
 
@@ -34,8 +35,21 @@ def obtain_settings_profile_data() -> Dict:
         GBSettingAttrs.watson_language_customization_id : "41e54a38-2175-45f4-ac6a-1c11e42a2d54",
         GBSettingAttrs.watson_base_language_model : "en-US_BroadbandModel",
         GBSettingAttrs.watson_region : "dallas",
-        GBSettingAttrs.analysis_plugins_to_apply : ["tcu_analysis","second_analysis"],
+        GBSettingAttrs.analysis_plugins_to_apply : [],
         GBSettingAttrs.output_format : "normal"}
+
+def add_source(organizer_service : OrganizerService, source_name : str ,
+        source_path : str, result_dir_path : str) -> None:
+    organizer_service.add_source(source_name, source_path, result_dir_path)
+    organizer_service.create_new_settings_profile(
+        "s1",obtain_settings_profile_data())
+    organizer_service.apply_settings_profile_to_source(source_name, "s1")
+
+@pytest.fixture(scope='session', autouse=True)
+def reset_workspace() -> None:
+    io = IO()
+    io.delete(RESULT_DIR_PATH)
+    io.create_directory(RESULT_DIR_PATH)
 
 ########################## TEST DEFINITIONS ##################################
 
@@ -47,16 +61,12 @@ def test_add_source() -> None:
     """
     organizer_service = initialize_organizer_service()
     service = PipelineService(NUM_THREADS)
-    organizer_service.add_source("file",MP3_FILE_PATH,RESULT_DIR_PATH)
-    organizer_service.add_source("dir",MIXED_DIR_PATH,RESULT_DIR_PATH)
-    organizer_service.create_new_settings_profile(
-        "s1",obtain_settings_profile_data())
-    organizer_service.apply_settings_profile_to_sources(["file","dir"],"s1")
+    add_source(organizer_service, "file",MP3_FILE_PATH,RESULT_DIR_PATH)
+    add_source(organizer_service, "dir",MIXED_DIR_PATH,RESULT_DIR_PATH)
     sources = organizer_service.get_configured_sources()
     for source_name, source in sources.items():
         assert service.add_source(source_name, source)
         assert not service.add_source(source_name, source)
-    organizer_service.remove_sources(["file","dir"])
 
 def test_add_sources() -> None:
     """
@@ -65,14 +75,10 @@ def test_add_sources() -> None:
     """
     organizer_service = initialize_organizer_service()
     service = PipelineService(NUM_THREADS)
-    organizer_service.add_source("file",MP3_FILE_PATH,RESULT_DIR_PATH)
-    organizer_service.add_source("dir",MIXED_DIR_PATH,RESULT_DIR_PATH)
-    organizer_service.create_new_settings_profile(
-        "s1",obtain_settings_profile_data())
-    organizer_service.apply_settings_profile_to_sources(["file","dir"],"s1")
+    add_source(organizer_service, "file",MP3_FILE_PATH,RESULT_DIR_PATH)
+    add_source(organizer_service, "dir",MIXED_DIR_PATH,RESULT_DIR_PATH)
     sources = organizer_service.get_configured_sources()
     assert service.add_sources(sources)
-    organizer_service.remove_sources(["file","dir"])
 
 def test_remove_source() -> None:
     """
@@ -82,12 +88,10 @@ def test_remove_source() -> None:
     """
     organizer_service = initialize_organizer_service()
     service = PipelineService(NUM_THREADS)
-    organizer_service.add_source("file",MP3_FILE_PATH,RESULT_DIR_PATH)
-    organizer_service.add_source("dir",MIXED_DIR_PATH,RESULT_DIR_PATH)
-    organizer_service.create_new_settings_profile(
-        "s1",obtain_settings_profile_data())
-    organizer_service.apply_settings_profile_to_sources(["file","dir"],"s1")
-    service.add_sources(organizer_service.get_configured_sources())
+    add_source(organizer_service, "file",MP3_FILE_PATH,RESULT_DIR_PATH)
+    add_source(organizer_service, "dir",MIXED_DIR_PATH,RESULT_DIR_PATH)
+    sources = organizer_service.get_configured_sources()
+    service.add_sources(sources)
     assert service.remove_source("file")
     assert service.remove_source("dir")
     assert not service.remove_source("invalid")
@@ -112,27 +116,53 @@ def test_register_format() -> None:
     assert service.register_format(FORMAT_PLUGINS_CONFIG)[0] != ""
     assert service.register_format("invalid")[0] == None
 
-# def test_start_multiple() -> None:
-#     """
-#     Tests:
-#         1. Start the transcription service with multiple inputs.
-#     """
+def test_start_audio() -> None:
+    organizer_service = initialize_organizer_service()
+    service = PipelineService(NUM_THREADS)
+    add_source(organizer_service, "file",MP3_FILE_PATH,RESULT_DIR_PATH)
+    sources = organizer_service.get_configured_sources()
+    service.add_sources(sources)
+    service.start()
+
+# def test_start_video() -> None:
 #     organizer_service = initialize_organizer_service()
 #     service = PipelineService(NUM_THREADS)
-#     # Adding plugins
-#     service.register_analysis_plugins(ANALYSIS_PLUGINS_CONFIG)
-#     service.register_format(FORMAT_PLUGINS_CONFIG)
-#     assert organizer_service.add_source("file",MP3_FILE_PATH,RESULT_DIR_PATH)
-#     # assert organizer_service.add_source("mixed",MIXED_DIR_PATH,RESULT_DIR_PATH)
-#     # assert organizer_service.add_source("mov",MOV_FILE_PATH,RESULT_DIR_PATH)
-#     assert organizer_service.create_new_settings_profile(
-#         "s1",obtain_settings_profile_data())
-#     assert organizer_service.apply_settings_profile_to_source("file","s1")
-#     # assert organizer_service.apply_settings_profile_to_source("mixed","s1")
-#     # assert organizer_service.apply_settings_profile_to_source("mov","s1")
-#     assert service.add_sources(organizer_service.get_configured_sources())
-#     summary = service.start()
-#     print(summary)
+#     add_source(organizer_service, "mixed",MIXED_DIR_PATH,RESULT_DIR_PATH)
+#     sources = organizer_service.get_configured_sources()
+#     service.add_sources(sources)
+#     service.start()
+
+# def test_start_multiple() -> None:
+#     organizer_service = initialize_organizer_service()
+#     service = PipelineService(NUM_THREADS)
+#     add_source(organizer_service, "file_multiple",MP3_FILE_PATH,RESULT_DIR_PATH)
+#     add_source(organizer_service, "mixed_multiple",MIXED_DIR_PATH,RESULT_DIR_PATH)
+#     sources = organizer_service.get_configured_sources()
+#     service.add_sources(sources)
+#     service.start()
+
+
+# # def test_start_multiple() -> None:
+# #     """
+# #     Tests:
+# #         1. Start the transcription service with multiple inputs.
+# #     """
+# #     organizer_service = initialize_organizer_service()
+# #     service = PipelineService(NUM_THREADS)
+# #     # Adding plugins
+# #     service.register_analysis_plugins(ANALYSIS_PLUGINS_CONFIG)
+# #     service.register_format(FORMAT_PLUGINS_CONFIG)
+# #     assert organizer_service.add_source("file",MP3_FILE_PATH,RESULT_DIR_PATH)
+# #     # assert organizer_service.add_source("mixed",MIXED_DIR_PATH,RESULT_DIR_PATH)
+# #     # assert organizer_service.add_source("mov",MOV_FILE_PATH,RESULT_DIR_PATH)
+# #     assert organizer_service.create_new_settings_profile(
+# #         "s1",obtain_settings_profile_data())
+# #     assert organizer_service.apply_settings_profile_to_source("file","s1")
+# #     # assert organizer_service.apply_settings_profile_to_source("mixed","s1")
+# #     # assert organizer_service.apply_settings_profile_to_source("mov","s1")
+# #     assert service.add_sources(organizer_service.get_configured_sources())
+# #     summary = service.start()
+# #     print(summary)
 
 def test_get_analysis_plugin_names() -> None:
     """

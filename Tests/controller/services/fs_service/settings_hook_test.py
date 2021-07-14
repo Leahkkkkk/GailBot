@@ -4,8 +4,8 @@ from typing import Dict
 # Local imports
 from Src.Components.io import IO
 from Src.Components.controller.services.fs_service.settings_hook import SettingsHook
-from Src.Components.controller.services.gb_settings import GailBotSettings, GBSettingAttrs
-
+from Src.Components.controller.services.organizer_service import GailBotSettings, GBSettingAttrs
+from Src.utils.observer import Subscriber
 
 
 ############################### GLOBALS #####################################
@@ -17,8 +17,9 @@ SETTINGS_PROFILE_EXTENSION = "json"
 
 ############################### SETUP #####################################
 
-def listener(arg : str) -> None:
-    print("Listening")
+class TestSubscriber(Subscriber):
+    def handle(self,event_type : str, data : Dict):
+        print(data)
 
 def get_settings_data() -> Dict:
     return {
@@ -73,9 +74,10 @@ def test_register_listener() -> None:
         1. Add a listener of all three types and check if it works.
     """
     hook = SettingsHook("test",SETTINGS_DIR_PATH,SETTINGS_PROFILE_EXTENSION)
-    assert hook.register_listener("save",listener)
-    assert hook.register_listener("load",listener)
-    assert hook.register_listener("cleanup",listener)
+    subscriber = TestSubscriber()
+    hook.register_listener("save",subscriber)
+    hook.register_listener("load",subscriber)
+    hook.register_listener("cleanup",subscriber)
     settings = GailBotSettings(get_settings_data())
     hook.save(settings)
     hook.load()
@@ -93,11 +95,3 @@ def test_is_saved() -> None:
     hook.save(settings)
     assert hook.is_saved()
     hook.cleanup()
-
-def test_get_parent_dir_path() -> None:
-    """
-    Tests:
-        1. Check the dir.
-    """
-    hook = SettingsHook("test",SETTINGS_DIR_PATH,SETTINGS_PROFILE_EXTENSION)
-    assert hook.get_parent_dir_path() == SETTINGS_DIR_PATH

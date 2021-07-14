@@ -3,7 +3,7 @@ from enum import Enum
 from typing import Any, Dict, Callable
 # Local imports
 from Src.Components.io import IO
-from Src.Components.controller.services.gb_settings import GailBotSettings, GBSettingAttrs
+from Src.Components.controller.services.organizer_service import GailBotSettings, GBSettingAttrs
 from Src.Components.controller.services.fs_service.fs_service import \
     FileSystemService,SettingsHook,SourceHook
 
@@ -39,15 +39,6 @@ def test_configure_from_workspace_path() -> None:
     assert service.configure_from_workspace_path(WS_DIR_PATH)
     assert not service.configure_from_workspace_path("invalid")
 
-def test_shutdown() -> None:
-    """
-    Tests:
-        1. Shutdown after configuring.
-    """
-    service = FileSystemService()
-    service.configure_from_workspace_path(WS_DIR_PATH)
-    service.shutdown()
-
 def test_generate_settings_hook() -> None:
     """
     Tests:
@@ -58,7 +49,6 @@ def test_generate_settings_hook() -> None:
     service.configure_from_workspace_path(WS_DIR_PATH)
     assert type(service.generate_settings_hook("test")) == SettingsHook
     assert service.generate_settings_hook("test") == None
-    service.shutdown()
 
 def test_generate_source_hook() -> None:
     """
@@ -68,9 +58,8 @@ def test_generate_source_hook() -> None:
     """
     service = FileSystemService()
     service.configure_from_workspace_path(WS_DIR_PATH)
-    assert type(service.generate_source_hook("test")) == SourceHook
-    assert service.generate_source_hook("test") == None
-    service.shutdown()
+    assert type(service.generate_source_hook("test",EMPTY_DIR_PATH)) == SourceHook
+    assert service.generate_source_hook("test",EMPTY_DIR_PATH) == None
 
 def test_remove_source_hook() -> None:
     """
@@ -80,10 +69,9 @@ def test_remove_source_hook() -> None:
     """
     service = FileSystemService()
     service.configure_from_workspace_path(WS_DIR_PATH)
-    service.generate_source_hook("test")
+    service.generate_source_hook("test",EMPTY_DIR_PATH)
     assert service.remove_source_hook("test")
     assert not service.remove_source_hook("invalid")
-    service.shutdown()
 
 def test_remove_settings_hook() -> None:
     """
@@ -107,7 +95,6 @@ def test_is_workspace_configured() -> None:
     assert not service.is_workspace_configured()
     service.configure_from_workspace_path(WS_DIR_PATH)
     assert service.is_workspace_configured()
-    service.shutdown()
 
 def test_is_settings_hook() -> None:
     """
@@ -120,7 +107,6 @@ def test_is_settings_hook() -> None:
     service.generate_settings_hook("test")
     assert service.is_settings_hook("test")
     assert not service.is_settings_hook("invalid")
-    service.shutdown()
 
 def test_is_source_hook() -> None:
     """
@@ -130,10 +116,9 @@ def test_is_source_hook() -> None:
     """
     service = FileSystemService()
     service.configure_from_workspace_path(WS_DIR_PATH)
-    service.generate_source_hook("test")
+    service.generate_source_hook("test",EMPTY_DIR_PATH)
     assert service.is_source_hook("test")
     assert not service.is_source_hook("invalid")
-    service.shutdown()
 
 def test_get_settings_hook() -> None:
     """
@@ -146,7 +131,6 @@ def test_get_settings_hook() -> None:
     service.generate_settings_hook("test")
     assert type(service.get_settings_hook("test")) == SettingsHook
     assert service.get_settings_hook("invalid") == None
-    service.shutdown()
 
 def test_get_source_hook() -> None:
     """
@@ -156,10 +140,9 @@ def test_get_source_hook() -> None:
     """
     service = FileSystemService()
     service.configure_from_workspace_path(WS_DIR_PATH)
-    service.generate_source_hook("test")
+    service.generate_source_hook("test",EMPTY_DIR_PATH)
     assert type(service.get_source_hook("test")) == SourceHook
     assert service.get_source_hook("invalid") == None
-    service.shutdown()
 
 def test_get_all_settings_hooks() -> None:
     """
@@ -172,7 +155,6 @@ def test_get_all_settings_hooks() -> None:
     service.generate_settings_hook("test2")
     assert list(service.get_all_settings_hooks().keys()) == \
         ["test","test2"]
-    service.shutdown()
 
 def test_get_all_source_hooks() -> None:
     """
@@ -181,11 +163,10 @@ def test_get_all_source_hooks() -> None:
     """
     service = FileSystemService()
     service.configure_from_workspace_path(WS_DIR_PATH)
-    service.generate_source_hook("test")
-    service.generate_source_hook("test2")
+    service.generate_source_hook("test",EMPTY_DIR_PATH)
+    service.generate_source_hook("test2",EMPTY_DIR_PATH)
     assert list(service.get_all_source_hooks().keys()) == \
         ["test","test2"]
-    service.shutdown()
 
 def test_get_source_hook_names() -> None:
     """
@@ -194,10 +175,9 @@ def test_get_source_hook_names() -> None:
     """
     service = FileSystemService()
     service.configure_from_workspace_path(WS_DIR_PATH)
-    service.generate_source_hook("test")
-    service.generate_source_hook("test2")
+    service.generate_settings_hook("test")
+    service.generate_settings_hook("test2")
     service.get_source_hook_names() == ["test","test2"]
-    service.shutdown()
 
 def test_get_settings_hook_names() -> None:
     """
@@ -209,5 +189,4 @@ def test_get_settings_hook_names() -> None:
     service.generate_settings_hook("test")
     service.generate_settings_hook("test2")
     service.get_settings_hook_names() == ["test","test2"]
-    service.shutdown()
 

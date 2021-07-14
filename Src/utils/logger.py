@@ -19,8 +19,12 @@ class BaseLogHandler(ABC):
     def can_handle(self, request_type :  LogRequestType) -> bool:
         return request_type == self.handle_type
 
+    def get_log_path(self) -> str:
+        return None
+
     def set_next(self, handler : Any) -> None:
         self.next = handler
+
 
 
 

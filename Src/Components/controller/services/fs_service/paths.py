@@ -9,7 +9,6 @@ class Paths:
         self.workspace_dir_path = workspace_dir_path
         self.source_ws_name = "sources"
         self.settings_ws_name = "settings_profiles"
-        self.temporary_workspace_name = "temporary_workspace"
         self.settings_profile_extension = "json"
         self.config_service_file_name = "config"
         self.config_service_file_extension = "json"
@@ -27,16 +26,6 @@ class Paths:
         """
         return self.workspace_dir_path
 
-    def get_temporary_workspace_path(self) -> str:
-        """
-        Obtain the path to the temporary workspace inside the workspace.
-
-        Returns:
-            (str): Temporary workspace path.
-        """
-        return "{}/{}".format(
-            self.workspace_dir_path,self.temporary_workspace_name)
-
      ## Sources
 
     def get_sources_workspace_path(self) -> str:
@@ -47,30 +36,6 @@ class Paths:
             (str): Path to the sources workspace directory.
         """
         return "{}/{}".format(self.workspace_dir_path,self.source_ws_name)
-
-    def get_source_result_directory_path(self, source_name : str,
-            result_dir_path : str) -> str:
-        """
-        Obtain the source result directory path for the given source.
-
-        Args:
-            source_name (str)
-            result_dir_path (str): Parent directory path.
-        """
-        return "{}/{}".format(result_dir_path,source_name)
-
-    def get_source_temporary_workspace_path(self, source_name : str) -> str:
-        """
-        Obtain the temporary workspace path for the specified source.
-
-        Args:
-            (source_name)
-
-        Returns:
-            (str): Temporary workspace path for the specified source.
-        """
-        return "{}/{}".format(self.get_temporary_workspace_path(),
-            source_name)
 
     ## Settings
 
