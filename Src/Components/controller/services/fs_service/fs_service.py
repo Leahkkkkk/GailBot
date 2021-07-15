@@ -32,6 +32,7 @@ class FileSystemService:
         for source_hook in source_hooks.values():
             source_hook : SourceHook
             source_hook.cleanup()
+            source_hook.destroy()
         # Delete the sources directory.
         self.io.delete(self.paths.get_sources_workspace_path())
 
