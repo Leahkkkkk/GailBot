@@ -19,7 +19,12 @@ class FileSystemService:
         self.source_hooks = ObjectManager()
         self.paths = None
 
-    def __del__(self) -> None:
+    ################################## MODIFIERS #############################
+
+    def shutdown(self) -> None:
+        """
+        Properly shutdown the file system.
+        """
         if not self.is_workspace_configured():
             return
         # Cleanup all the source hooks.
@@ -29,8 +34,6 @@ class FileSystemService:
             source_hook.cleanup()
         # Delete the sources directory.
         self.io.delete(self.paths.get_sources_workspace_path())
-
-    ################################## MODIFIERS #############################
 
     def configure_from_workspace_path(self, ws_dir_path : str) -> bool:
         """

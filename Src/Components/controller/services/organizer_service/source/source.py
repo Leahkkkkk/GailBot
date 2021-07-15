@@ -29,9 +29,6 @@ class Source:
         self.hook.register_listener("cleanup",self.source_hook_observer)
         self.hook.register_listener("save_to_directory",self.source_hook_observer)
 
-    def __del__(self) -> None:
-        self.log(RequestType.FILE,"source deleted")
-
     ################################## MODIFIERS ############################
 
     def log(self, event_type : RequestType, request : str) -> None:

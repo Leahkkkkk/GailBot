@@ -230,14 +230,16 @@ class PluginManager:
             if plugin_name in execution_summary.keys():
                 summary = execution_summary[plugin_name]
                 stream : Stream = summary["result"]
-                plugin_summary : PluginExecutionSummary = \
-                    stream.get_stream_data()
-                plugin_summaries[plugin_name] = plugin_summary
-                total_time_seconds += plugin_summary.runtime_seconds
-                if plugin_summary.was_successful:
-                    successful_plugins.append(plugin_summary.plugin_name)
-                else:
-                    failed_plugins.append(plugin_summary.plugin_name)
+                # TODO: This keeps causing issues.
+                if stream != None:
+                    plugin_summary : PluginExecutionSummary = \
+                        stream.get_stream_data()
+                    plugin_summaries[plugin_name] = plugin_summary
+                    total_time_seconds += plugin_summary.runtime_seconds
+                    if plugin_summary.was_successful:
+                        successful_plugins.append(plugin_summary.plugin_name)
+                    else:
+                        failed_plugins.append(plugin_summary.plugin_name)
             # Plugin was not executed.
             else:
                 plugin_summaries[plugin_name] = PluginExecutionSummary(

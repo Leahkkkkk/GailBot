@@ -39,14 +39,7 @@ class FormatStage:
         # Generate apply configs for all format plugins.
         apply_configs = dict()
         for plugin_name in plugin_manager.get_plugin_names():
-            plugin_input = FormatPluginInput(
-                payload.get_conversation().get_conversation_name(),
-                payload.get_conversation().get_utterances(),
-                # TODO: Check the analysis outputs.
-                #self._get_analysis_plugin_outputs(payload),
-                None,
-                payload.get_conversation().get_temp_directory_path(),
-                payload.get_conversation().get_result_directory_path())
+            plugin_input = FormatPluginInput(payload)
             apply_configs[plugin_name] = ApplyConfig(
                 plugin_name,[plugin_input],{})
         # Apply all the plugins
@@ -91,5 +84,6 @@ class FormatStage:
         settings : GailBotSettings = payload.get_conversation().get_settings()
         output_format = settings.get_output_format()
         return self.is_format(output_format)
+
 
 

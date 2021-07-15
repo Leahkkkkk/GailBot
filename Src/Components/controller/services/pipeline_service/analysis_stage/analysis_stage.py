@@ -1,14 +1,12 @@
 # Standard imports
-from Src.Components.controller.services.organizer_service.source.source import Source
 from typing import Dict, Any, List
 # Local imports
-from ......utils.threads import ThreadPool
-from ......utils.manager import ObjectManager
 from .....plugin_manager import PluginManager, PluginManagerSummary, ApplyConfig
 from ...organizer_service import GailBotSettings, RequestType
 from ..pipeline_payload import SourcePayload
 from .analysis_plugin_input import AnalysisPluginInput
 
+import sys
 
 class AnalysisStage:
 
@@ -32,7 +30,7 @@ class AnalysisStage:
     def analyze(self, payload : SourcePayload) -> bool:
         # Verify is analysis possible.
         if not self._can_analyze(payload):
-            msg = "[{}] [Analysis stagee] Cannot analyze".format(
+            msg = "[{}] [Analysis stage] Cannot analyze".format(
                 payload.get_source_name())
             payload.log(RequestType.FILE, msg)
             payload.set_analysis_status(False)
@@ -41,13 +39,7 @@ class AnalysisStage:
         settings : GailBotSettings = payload.get_conversation().get_settings()
         apply_configs = dict()
         for plugin_name in settings.get_analysis_plugins_to_apply():
-            plugin_input = AnalysisPluginInput(
-                payload.get_conversation().get_conversation_name(),
-                payload.get_conversation().get_utterances(),
-                payload.get_source_to_audio_map(),
-                payload.get_conversation().get_source_file_paths(),
-                payload.get_conversation().get_temp_directory_path(),
-                payload.get_conversation().get_result_directory_path())
+            plugin_input = AnalysisPluginInput(payload)
             apply_configs[plugin_name] = ApplyConfig(
                     plugin_name, [plugin_input],{})
         # Apply all plugins.

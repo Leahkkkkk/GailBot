@@ -81,10 +81,10 @@ class SourcePayload:
         return self.format_successful
 
     def get_analysis_plugin_summaries(self) -> Dict[str,PluginExecutionSummary]:
-        return deepcopy(self.analysis_plugin_summaries)
+        return self.analysis_plugin_summaries
 
     def get_format_plugin_summaries(self) -> Dict[str,PluginExecutionSummary]:
-        return deepcopy(self.format_plugin_summaries)
+        return self.format_plugin_summaries
 
     def get_source_to_audio_map(self) -> Dict[str,str]:
         return deepcopy(self.source_to_audio_map)

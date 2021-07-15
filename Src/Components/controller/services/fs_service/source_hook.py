@@ -18,7 +18,9 @@ class SourceHook:
     """
 
     ITEM_TYPES = ("permanent", "temporary","workspace")
-    EVENT_TYPES = ("add_to_source", "remove_from_source","cleanup","save_to_directory")
+    EVENT_TYPES = (
+        "add_to_source", "remove_from_source","cleanup",
+        "save_to_directory", "destroy")
 
     def __init__(self, parent_dir_path : str, source_name : str,
             result_dir_path : str) -> None:
@@ -40,10 +42,6 @@ class SourceHook:
         self._initialize_source_directory(
             parent_dir_path, source_name)
 
-    def __del__(self) -> None:
-        # Delete the source dir when destroyed.
-        if self.io.is_directory(self.source_dir_path):
-            self.io.delete(self.source_dir_path)
 
     ################################# MODIFIERS #############################
 
@@ -141,6 +139,15 @@ class SourceHook:
         self._delete_all_in_directory(self.temp_dir_path)
         self._delete_all_in_directory(self.ws_dir_path)
         self.observers.notify("cleanup", {})
+
+    def destroy(self) -> None:
+        """
+        Remove the source directory.
+        It is expected that the source hook will not be used after this call.
+        """
+        if self.io.is_directory(self.source_dir_path):
+            self.io.delete(self.source_dir_path)
+        self.observers.notify("destroy", {})
 
     def save_to_directory(self) -> bool:
         """

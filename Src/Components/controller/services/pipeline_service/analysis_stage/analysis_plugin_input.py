@@ -3,13 +3,16 @@ from dataclasses import dataclass
 from typing import Dict, List
 # Local imports
 from .....engines import Utterance
+from ..pipeline_plugin_input import PipelinePluginInput
+from ..pipeline_payload import SourcePayload
 
-@dataclass
-class AnalysisPluginInput:
-    conversation_name : str
-    utterances_map = Dict[str,List[Utterance]]
-    source_to_audio_map = Dict[str,str]
-    source_name_to_path_map = Dict[str,str]
-    workspace_directory_path : str
-    result_directory_path : str
+import sys
+class AnalysisPluginInput(PipelinePluginInput):
 
+    def __init__(self, payload : SourcePayload) -> None:
+        super().__init__(payload)
+
+    ################################# GETTERS ###############################
+
+    def get_source_to_audio_map(self) -> Dict[str,str]:
+        return self.payload.get_source_to_audio_map()
