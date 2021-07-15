@@ -116,49 +116,48 @@ def test_register_format() -> None:
     assert service.register_format(FORMAT_PLUGINS_CONFIG)[0] != ""
     assert service.register_format("invalid")[0] == None
 
-# def test_start_audio() -> None:
-#     organizer_service = initialize_organizer_service()
-#     service = PipelineService(NUM_THREADS)
-#     add_source(organizer_service, "file",MP3_FILE_PATH,RESULT_DIR_PATH)
-#     sources = organizer_service.get_configured_sources()
-#     service.add_sources(sources)
-#     service.start()
+def test_start_audio() -> None:
+    organizer_service = initialize_organizer_service()
+    service = PipelineService(NUM_THREADS)
+    add_source(organizer_service, "file",MP3_FILE_PATH,RESULT_DIR_PATH)
+    sources = organizer_service.get_configured_sources()
+    service.add_sources(sources)
+    service.start()
 
-# def test_start_video() -> None:
-#     organizer_service = initialize_organizer_service()
-#     service = PipelineService(NUM_THREADS)
-#     add_source(organizer_service, "mixed",MIXED_DIR_PATH,RESULT_DIR_PATH)
-#     sources = organizer_service.get_configured_sources()
-#     service.add_sources(sources)
-#     service.start()
+def test_start_video() -> None:
+    organizer_service = initialize_organizer_service()
+    service = PipelineService(NUM_THREADS)
+    add_source(organizer_service, "mixed",MIXED_DIR_PATH,RESULT_DIR_PATH)
+    sources = organizer_service.get_configured_sources()
+    service.add_sources(sources)
+    service.start()
 
-# def test_start_multiple() -> None:
-#     organizer_service = initialize_organizer_service()
-#     service = PipelineService(NUM_THREADS)
-#     add_source(organizer_service, "file_multiple",MP3_FILE_PATH,RESULT_DIR_PATH)
-#     add_source(organizer_service, "mixed_multiple",MIXED_DIR_PATH,RESULT_DIR_PATH)
-#     sources = organizer_service.get_configured_sources()
-#     service.add_sources(sources)
-#     service.start()
+def test_start_multiple() -> None:
+    organizer_service = initialize_organizer_service()
+    service = PipelineService(NUM_THREADS)
+    add_source(organizer_service, "file_multiple",MP3_FILE_PATH,RESULT_DIR_PATH)
+    add_source(organizer_service, "mixed_multiple",MIXED_DIR_PATH,RESULT_DIR_PATH)
+    sources = organizer_service.get_configured_sources()
+    service.add_sources(sources)
+    service.start()
 
-# def test_start_with_audio_plugins_only() -> None:
-#     organizer_service = initialize_organizer_service()
-#     service = PipelineService(NUM_THREADS)
-#     add_source(organizer_service, "file",MP3_FILE_PATH,RESULT_DIR_PATH)
-#     sources = organizer_service.get_configured_sources()
-#     assert len(service.register_analysis_plugins(ANALYSIS_PLUGINS_CONFIG)) > 0
-#     service.add_sources(sources)
-#     service.start()
+def test_start_with_audio_plugins_only() -> None:
+    organizer_service = initialize_organizer_service()
+    service = PipelineService(NUM_THREADS)
+    add_source(organizer_service, "file",MP3_FILE_PATH,RESULT_DIR_PATH)
+    sources = organizer_service.get_configured_sources()
+    assert len(service.register_analysis_plugins(ANALYSIS_PLUGINS_CONFIG)) > 0
+    service.add_sources(sources)
+    service.start()
 
-
-# def test_start_with_format_only() -> None:
-#     organizer_service = initialize_organizer_service()
-#     service = PipelineService(NUM_THREADS)
-#     add_source(organizer_service, "file",MP3_FILE_PATH,RESULT_DIR_PATH)
-#     sources = organizer_service.get_configured_sources()
-#     service.register_format(FORMAT_PLUGINS_CONFIG)
-#     service.add_sources(sources)
-#     service.start()
+def test_start_with_format_only() -> None:
+    organizer_service = initialize_organizer_service()
+    service = PipelineService(NUM_THREADS)
+    add_source(organizer_service, "file",MP3_FILE_PATH,RESULT_DIR_PATH)
+    sources = organizer_service.get_configured_sources()
+    service.register_format(FORMAT_PLUGINS_CONFIG)
+    service.add_sources(sources)
+    service.start()
 
 def test_start_analysis_and_format_plugins() -> None:
     organizer_service = initialize_organizer_service()
@@ -168,7 +167,7 @@ def test_start_analysis_and_format_plugins() -> None:
     service.register_analysis_plugins(ANALYSIS_PLUGINS_CONFIG)
     service.register_format(FORMAT_PLUGINS_CONFIG)
     service.add_sources(sources)
-    service.start()
+    print(service.start())
 
 
 def test_get_analysis_plugin_names() -> None:

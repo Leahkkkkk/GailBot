@@ -82,9 +82,7 @@ class PipelineService:
     def start(self) -> PipelineServiceSummary:
         self.pipeline.set_base_input(self.payloads.get_all_objects())
         self.pipeline.execute()
-        # Run the output stage.
-        # self._execute_output_stage(self.payloads.get_all_objects())
-        # TODO: Generate this summary.
+        return self._generate_service_summary()
 
     ################################# GETTERS ###############################
 
@@ -113,4 +111,19 @@ class PipelineService:
 
     ########################## PRIVATE METHODS ###############################
 
+    def _generate_service_summary(self) -> PipelineServiceSummary:
+        payload_summaries = dict()
+        for name , payload in self.payloads.get_all_objects().items():
+            payload : SourcePayload
+            payload_summaries[name] = payload.generate_summary()
+        # Get all the successful payloads
+        return PipelineServiceSummary(
+            self.payloads.get_object_names(),
+            list(self.payloads.get_filtered_objects(
+                lambda name , payload : payload.is_transcribed()).keys()),
+            list(self.payloads.get_filtered_objects(
+                lambda name , payload : payload.is_analyzed()).keys()),
+            list(self.payloads.get_filtered_objects(
+                lambda name , payload : payload.is_formatted()).keys()),
+            payload_summaries)
 

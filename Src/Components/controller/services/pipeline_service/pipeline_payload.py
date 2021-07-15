@@ -5,6 +5,7 @@ from copy import deepcopy
 from ....organizer import Conversation
 from ....plugin_manager import PluginExecutionSummary
 from ..organizer_service import Source, RequestType
+from .payload_summary import PayloadSummary
 
 class SourcePayload:
     """
@@ -42,6 +43,16 @@ class SourcePayload:
 
     def log(self, request_type : RequestType, request : str) -> None:
         self.source.log(request_type, request)
+
+    def generate_summary(self) -> PayloadSummary:
+        return PayloadSummary(
+            self.source.get_source_name(),
+            self.source.get_settings_profile_name(),
+            self.transcription_successful,
+            self.analysis_successful,
+            list(self.analysis_plugin_summaries.keys()),
+            self.format_successful,
+            list(self.format_plugin_summaries.keys()))
 
     ############################### GETTERS ###################################
 

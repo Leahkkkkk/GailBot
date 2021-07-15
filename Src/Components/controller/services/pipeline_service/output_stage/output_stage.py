@@ -22,19 +22,28 @@ class OutputStage:
         conversation = payload.get_conversation()
         # Generate metadata.
         metadata = {
-            "conversation_size" :conversation.get_conversation_size(),
+            "conversation_name" : conversation.get_conversation_name(),
+            "settings_profile_name" : payload.get_source().get_settings_profile_name(),
+            "source_path" : conversation.get_source_path(),
             "conversation_source_type" : conversation.get_source_type(),
+            "conversation_size" :conversation.get_conversation_size(),
             "transcription_date" : conversation.get_transcription_date(),
+            # TODO: the status returned is not a string. Fix this.
             #"transcription_status" : conversation.get_transcription_status(),
             "transcription_time" : conversation.get_transcription_time(),
             "transcriber_name" : conversation.get_transcriber_name(),
-            "number_of_source_files" : conversation.number_of_source_files(),
             "number_of_speakers" : conversation.number_of_speakers(),
+            "number_of_source_files" : conversation.number_of_source_files(),
             "source_file_names" : conversation.get_source_file_names(),
             "source_file_types" : conversation.get_source_file_types(),
             "result_directory_path" : conversation.get_result_directory_path(),
-            "source_path" : conversation.get_source_path(),
-            "outputs" : payload.get_output_names()}
+            "outputs" : payload.get_output_names(),
+            "is_transcribed" : payload.is_transcribed(),
+            "is_analyzed" : payload.is_analyzed(),
+            "is_formatted"  : payload.is_formatted(),
+            "analysis_plugins_applied" : list(payload.get_analysis_plugin_summaries().keys()),
+            "format_plugins_applied" : list(payload.get_format_plugin_summaries().keys())}
+
         # Write to permanent files.
         extension = "json"
         identifier = "metadata"
@@ -43,7 +52,6 @@ class OutputStage:
                 identifier,"permanent",identifier,extension,metadata):
             msg = "[{}] [Output stage] Metadata created as: {}".format(
                 payload.get_source_name(),file_name)
-
         else:
             msg = "[{}] [Output stage] Unable to generate metadata".format(
                 payload.get_source_name())
@@ -72,6 +80,5 @@ class OutputStage:
             else:
                 msg = "[{}] [Output stage] Source: {} --> output failed".format(
                     payload.get_source_name(),source_name)
-
             payload.log(RequestType.FILE,msg)
 
