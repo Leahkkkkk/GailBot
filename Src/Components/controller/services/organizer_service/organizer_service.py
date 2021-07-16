@@ -71,11 +71,17 @@ class OrganizerService:
         Returns:
             (bool): True if the source successfully added, False otherwise.
         """
+        # Only valid file type should be added for files.
+        _, source_extension = self.io.get_file_extension(source_path)
+        if self.io.is_file(source_path) and \
+                not source_extension in self.get_supported_audio_formats() and \
+                not source_extension in self.get_supported_video_formats():
+            return False
         # Ensure that the source can be added.
-        if self.is_source(source_name) and \
-            (self.io.is_directory(source_path) or\
-                 self.io.is_file(source_path)) and \
-            (self.io.is_directory(result_dir_path) or \
+        if self.is_source(source_name) or \
+            not (self.io.is_directory(source_path) or\
+                 self.io.is_file(source_path)) or \
+            not (self.io.is_directory(result_dir_path) or \
                 self.io.create_directory(result_dir_path)):
             return False
         # Create workspace for the source
@@ -156,9 +162,10 @@ class OrganizerService:
                 source.get_result_directory_path(),
                 source.get_transcriber_name()):
             return False
-        if self.is_settings_profile(source.get_settings_profile_name()):
-            return self.apply_settings_profile_to_source(
-                source_name, source.get_settings_profile_name())
+        # TODO: Determine if the settings profie should be re-applied.
+        # if self.is_settings_profile(source.get_settings_profile_name()):
+        #     return self.apply_settings_profile_to_source(
+        #         source_name, source.get_settings_profile_name())
         return True
 
     def reset_sources(self, source_names : List[str]) -> bool:
@@ -269,7 +276,12 @@ class OrganizerService:
         Returns:
             (bool): True if changed, False otherwise.
         """
+        if settings_profile_name == new_name:
+            return True
         if not self.is_settings_profile(settings_profile_name):
+            return False
+        # Cannot change the name to an existing profile name.
+        if self.is_settings_profile(new_name):
             return False
         # Obtaining current settings.
         settings_profile : SettingProfile = self.settings_profiles.get_object(
@@ -346,8 +358,10 @@ class OrganizerService:
             (bool): True if profile applied to source, False otherwise.
         """
         return all([self.apply_settings_profile_to_source(
-                source_name,settings_profile_name)] \
-                    for source_name in source_names )
+            source_name, settings_profile_name) \
+                for source_name in source_names])
+
+
 
     ### Sources and settings profiles.
 
@@ -496,7 +510,8 @@ class OrganizerService:
         """
         details = dict()
         for name in source_names:
-            details[name] = self.get_source_details(name)
+            if self.is_source(name):
+                details[name] = self.get_source_details(name)
         return details
 
     def get_all_source_details(self) -> Dict[str,SourceDetails]:
@@ -590,7 +605,8 @@ class OrganizerService:
         """
         details = dict()
         for name in settings_profile_names:
-            details[name] = self.get_settings_profile_details(name)
+            if self.is_settings_profile(name):
+                details[name] = self.get_settings_profile_details(name)
         return details
 
     def get_all_settings_profiles_details(self) -> Dict[str,SettingsDetails]:

@@ -1,5 +1,4 @@
 # Standard imports
-from Src.utils.observer.subscriber import Subscriber
 from typing import Dict, Callable, Any
 # Local imports
 from .....utils.observer import ObserverEventManager, Subscriber
@@ -119,12 +118,14 @@ class SettingsHook:
 
     def _initialize(self, settings_profile_name : str,
                 parent_dir_path : str, settings_profile_extension : str) -> None:
-        # Must not already exist.
-        if not self.io.is_directory(parent_dir_path) or \
-                self.io.is_file(self._generate_profile_path(
-                    settings_profile_name, parent_dir_path,
-                    settings_profile_extension)):
+        # Directory must exist
+        if not self.io.is_directory(parent_dir_path):
             raise Exception("Unable to configure settings hook")
+        # TODO: Check if the file contains all the data.
+        # # File may exist if it has all the data.
+        # file_path = self._generate_profile_path(
+        #         settings_profile_name, parent_dir_path,
+        #         settings_profile_extension)
 
     def _generate_profile_path(self, settings_profile_name : str,
                 parent_dir_path : str, settings_profile_extension : str) -> str:

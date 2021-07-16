@@ -1,4 +1,4 @@
-# Standard imports
+# # Standard imports
 from typing import List, Tuple, Dict, Any
 # Local imports
 from .....utils.manager import ObjectManager
@@ -66,6 +66,10 @@ class PipelineService:
             return self.payloads.remove_object(source_name)
         return False
 
+    def clear_sources(self) -> None:
+        for name, payload in self.payloads.get_all_objects().items():
+            self.remove_source(name)
+
     def register_analysis_plugins(self, config_path : str) -> List[str]:
         success, data_list = \
             self.loader.parse_analysis_plugin_configuration_file(config_path)
@@ -76,7 +80,7 @@ class PipelineService:
     def register_format(self, config_path : str) -> Tuple[str,List[str]]:
         success, data = self.loader.parse_format_configuration_file(config_path)
         if not success:
-            return (None,None)
+            return (None,[])
         return (data[0],self.format_stage.register_format(*data))
 
     def start(self) -> PipelineServiceSummary:

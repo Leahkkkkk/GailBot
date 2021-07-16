@@ -5,3 +5,4 @@ from .analysis_stage.analysis_plugin_input import AnalysisPluginInput
 from .format_stage.format_plugin import FormatPlugin
 from .format_stage.format_plugin_input import FormatPluginInput
 from .plugin_utterance_wrapper import Utt
+from .payload_summary import PayloadSummary

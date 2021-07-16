@@ -58,6 +58,9 @@ class OutputStage:
         payload.log(RequestType.FILE,msg)
 
     def _write_utterances(self, payload : SourcePayload) -> None:
+        # Utterances are only written if the transcription was successful
+        if not payload.is_transcribed():
+            return
         conversation = payload.get_conversation()
         for source_name, utterances in conversation.get_utterances().items():
             data = list()

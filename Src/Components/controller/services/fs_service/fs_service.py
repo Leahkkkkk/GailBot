@@ -100,8 +100,7 @@ class FileSystemService:
             hook = SourceHook(parent_dir_path, source_name, result_dir_path)
             self.source_hooks.add_object(source_name,hook)
             return hook
-        except Exception as e:
-            print(e)
+        except:
             pass
 
     def remove_source_hook(self, source_name : str) -> bool:
