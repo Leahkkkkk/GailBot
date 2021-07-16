@@ -1,243 +1,318 @@
 # Standard library imports
-from typing import Dict, Any, List
+from typing import Dict, List
 # Local imports
+from .....utils.manager import ObjectManager
 from ....io import IO
-from ....organizer import Settings
-
-# Third party imports
+from .settings_hook import SettingsHook
+from .source_hook import SourceHook
+from .paths import Paths
 
 class FileSystemService:
+    """
+    Manage the file system for the controller.
+    """
 
     def __init__(self) -> None:
-        ## Variables
-        self.ws_dir_path = None
         ## Objects
         self.io = IO()
-        self.settings_file_extension = "json"
-        self.settings_dir_name = "settings_profiles"
-        self.config_service_file_extension = "json"
-        self.config_service_file_name = "config"
-        self.source_ws_name = "source_ws"
+        self.settings_hooks = ObjectManager()
+        self.source_hooks = ObjectManager()
+        self.paths = None
 
     ################################## MODIFIERS #############################
 
+    def shutdown(self) -> None:
+        """
+        Properly shutdown the file system.
+        """
+        if not self.is_workspace_configured():
+            return
+        # Cleanup all the source hooks.
+        source_hooks = self.source_hooks.get_all_objects()
+        for source_hook in source_hooks.values():
+            source_hook : SourceHook
+            source_hook.cleanup()
+            source_hook.destroy()
+        # Delete the sources directory.
+        self.io.delete(self.paths.get_sources_workspace_path())
+
     def configure_from_workspace_path(self, ws_dir_path : str) -> bool:
-        if self._initialize_workspace(ws_dir_path):
-            self.ws_dir_path = ws_dir_path
-            return True
-        return False
+        """
+        Configure the workspace using the specified workspace directory
+        path.
+        THe directory must contain the blackboard configuration file.
 
-    def shutdown(self) -> bool:
-        # Delete the sources workspace
-        return self.is_configured() and \
-            self.io.delete(
-                self._generate_sources_workspace_path(self.ws_dir_path))
+        Args:
+            ws_dir_path (str): Path to the workspace directory.
 
-    #### OrganizerService
-
-    ## SettingsProfile
-
-    def save_settings_profile_to_disk(self, settings_profile_name : str,
-            settings : Settings) -> bool:
-        if not self.is_configured():
+        Returns:
+            (bool): True if successful, False otherwise.
+        """
+        if not self.io.is_directory(ws_dir_path):
             return False
-        settings_profile_path = self._generate_settings_profile_path(
+        self.paths = Paths(ws_dir_path)
+        return self._initialize_workspace()
+
+    def generate_settings_hook(self, settings_profile_name : str) \
+            -> SettingsHook:
+        """
+        Generate a settings hook for the specified settings profile name.
+        Hook allows a settings profile to interact with the file system.
+        A hook with the same name cannot be re-added.
+
+        Args:
+            settings_profile_name (str)
+
+        Returns:
+            (SettingsHook)
+        """
+        self._raise_configure_exception()
+        if self.is_settings_hook(settings_profile_name):
+            return
+        try:
+            hook = SettingsHook(
+                settings_profile_name, self.paths.get_settings_workspace_path(),
+                self.paths.get_settings_profile_extension())
+            self.settings_hooks.add_object(settings_profile_name,hook)
+            return hook
+        except:
+            pass
+
+    def generate_source_hook(self, source_name : str, result_dir_path : str) \
+            -> SourceHook:
+        """
+        Generate a hook for the specified source.
+        The hook allows the source to interact with the file system.
+        A hook with the same name cannot be re-added.
+
+        Args:
+            source_name (str)
+
+        Returns:
+            (SourceHook)
+        """
+        self._raise_configure_exception()
+        if self.is_source_hook(source_name):
+            return
+        # Create the new source directory.
+        parent_dir_path = self.paths.get_sources_workspace_path()
+        try:
+            hook = SourceHook(parent_dir_path, source_name, result_dir_path)
+            self.source_hooks.add_object(source_name,hook)
+            return hook
+        except:
+            pass
+
+    def remove_source_hook(self, source_name : str) -> bool:
+        """
+        Remove the given source hook if it exists.
+
+        Args:
+            source_name (str): Name of the source.
+
+        Returns:
+            (bool): True if successfully removed, False otherwise.
+        """
+        if not self.source_hooks.is_object(source_name):
+            return False
+        # Delete the hook directory.
+        source_hook : SourceHook = self.source_hooks.get_object(source_name)
+        source_hook.cleanup()
+        del source_hook
+        return self.source_hooks.remove_object(source_name)
+
+    def remove_settings_hook(self, settings_profile_name : str) -> bool:
+        """
+        Remove the given source hook if it exists.
+
+        Args:
+            settings_profile_name (str): Name of the profile.
+
+        Returns:
+            (bool): True if successfully removed, False otherwise.
+        """
+        if not self.settings_hooks.is_object(settings_profile_name):
+            return False
+        hook : SettingsHook = self.settings_hooks.get_object(
             settings_profile_name)
-
-        return settings.save_to_file(
-            lambda data: self.io.write(settings_profile_path,data,True))
-
-    def load_saved_settings_profile_data_from_disk(self,
-            settings_profile_name : str) -> Dict:
-        if not self.is_configured():
-            return
-        path = self._generate_settings_profile_path(settings_profile_name)
-        if not self.io.is_file(path):
-            return
-        success,data = self.io.read(path)
-        if not success:
-            return
-        return data
-
-    def load_all_settings_profiles_data_from_disk(self) -> Dict[str,Any]:
-        if not self.is_configured():
-            return
-        data = dict()
-        settings_dir_path = self._generate_settings_profile_dir_path(
-            self.ws_dir_path)
-        file_paths = self.io.path_of_files_in_directory(settings_dir_path,
-            [self.settings_file_extension],False)[1]
-        for file_path in file_paths:
-            name = self.io.get_name(file_path)
-            data[name] = self.load_saved_settings_profile_data_from_disk(name)
-        return data
-
-    def remove_settings_profile_from_disk(self,
-            settings_profile_name : str) -> bool:
-        if not self.is_configured():
-            return False
-        path = self._generate_settings_profile_path(settings_profile_name)
-        return self.io.delete(path)
-
-    ## Source
-
-    def create_source_workspace_on_disk(self, source_name : str) -> bool:
-        if not self.is_configured():
-            return False
-        path = self._generate_source_temporary_dir_path(source_name)
-        if self.io.is_directory(path):
-            return False
-        self.io.create_directory(path)
-        return True
-
-    def cleanup_source_workspace_from_disk(self, source_name : str) -> bool:
-        if not self.is_configured():
-            return False
-        path = self._generate_source_temporary_dir_path(source_name)
-        return self.io.delete(path)
+        hook.cleanup()
+        del hook
+        return self.settings_hooks.remove_object(settings_profile_name)
 
     ################################## GETTERS ###############################
 
-    def is_configured(self) -> bool:
-        return self.ws_dir_path != None and \
-            self.io.is_directory(self.ws_dir_path) and \
-            self._exists_config_service_configuration_file(self.ws_dir_path) and \
-            self._exists_settings_profile_directory(self.ws_dir_path) and \
-            self._exists_sources_workspace(self.ws_dir_path)
+    def is_workspace_configured(self) -> bool:
+        """
+        Determine if the workspace is configured.
 
-    def get_workspace_dir_path(self) -> str:
-        return self.ws_dir_path
+        Returns:
+            (bool): True if configured, False otherwise.
+        """
+        return self.paths != None and \
+            self.io.is_directory(self.paths.get_sources_workspace_path()) and \
+            self.io.is_directory(self.paths.get_settings_workspace_path())
+            # TODO: UNCOMMENT THIS TO CHECK FOR BLACKBOARD CONFIG FILE.
+            # self.io.is_file(self.paths.get_config_service_config_file_path())
+
+    def is_settings_hook(self, settings_profile_name : str) -> bool:
+        """
+        Determine if the settings hook exists.
+
+        Args:
+            settings_profile_name (str)
+
+        Returns:
+            (bool): True if hook exists, False otherwise.
+        """
+        self._raise_configure_exception()
+        return self.settings_hooks.is_object(settings_profile_name)
+
+    def is_source_hook(self, source_name : str) -> bool:
+        """
+        Determine if source hook exists.
+
+        Args:
+            source_name (str)
+
+        Returns:
+            (bool): True if hook exists, False otherwise.
+        """
+        self._raise_configure_exception()
+        return self.source_hooks.is_object(source_name)
+
+    def get_settings_hook(self, settings_profile_name) -> SettingsHook:
+        """
+        Obtain the settings hook if it exists.
+
+        Args:
+            settings_profile_name (str)
+
+        Returns:
+            (SettingsHook)
+        """
+        self._raise_configure_exception()
+        return self.settings_hooks.get_object(settings_profile_name)
+
+    def get_source_hook(self, source_name : str) -> SourceHook:
+        """
+        Obtain the source hook if it exists.
+
+        Args:
+            source_name (str)
+
+        Returns:
+            (SourceHook)
+        """
+        self._raise_configure_exception()
+        return self.source_hooks.get_object(source_name)
+
+    def get_all_settings_hooks(self) -> Dict[str,SettingsHook]:
+        """
+        Obtain a mapping from settings names to their Hooks.
+
+        Returns:
+            (Dict[str,SettingsHook])
+        """
+        self._raise_configure_exception()
+        return self.settings_hooks.get_all_objects()
+
+    def get_all_source_hooks(self) -> Dict[str,SourceHook]:
+        """
+        Obtain a mapping from all sources to their hooks.
+
+        Returns:
+            (Dict[str,SourceHook])
+        """
+        self._raise_configure_exception()
+        return self.source_hooks.get_all_objects()
+
+    def get_source_hook_names(self) -> List[str]:
+        """
+        Obtain the names of all source hooks.
+
+        Returns:
+            (List[str])
+        """
+        self._raise_configure_exception()
+        return self.source_hooks.get_object_names()
+
+    def get_settings_hook_names(self) -> List[str]:
+        """
+        Obtain the names of all settings hooks.
+
+        Returns:
+            (List[str])
+        """
+        self._raise_configure_exception()
+        return self.settings_hooks.get_object_names()
 
     ## ConfigService
 
     def get_config_service_data_from_disk(self) -> Dict:
-        if not self.is_configured():
-            return
-        path = self._generate_config_service_config_file_path(self.ws_dir_path)
-        success,data = self.io.read(path)
-        if not success:
-            return
-        return data
+        """
+        Obtain configuration service data from disk.
 
-    def get_config_service_configuration_source(self) -> str:
-        if not self.is_configured():
-            return None
-        return self._generate_config_service_config_file_path(self.ws_dir_path)
+        Returns:
+            (Dict)
+        """
+        self._raise_configure_exception()
+        success, data = self.io.read(
+            self.get_config_service_configuration_source())
+        return {} if not success else data
 
-    #### OrganizerService
-    ## Source
+    def get_config_service_configuration_path(self) -> str:
+        """
+        Obtain the path of the configuration service config file.
 
-    ## SettingsProfile
+        Returns:
+            (str): Path of the configuration file.
+        """
+        self._raise_configure_exception()
+        return self.paths.get_config_service_config_file_path()
 
-    def is_saved_settings_profile(self, settings_profile_name : str) -> bool:
-        if not self.is_configured():
-            return False
-        path = self._generate_settings_profile_path(settings_profile_name)
-        return self.io.is_file(path)
+    ##########################  PRIVATE METHODS ###############################
 
-    def get_saved_settings_profile_location_on_disk(self,
-            settings_profile_name : str) -> str:
-        if not self.is_configured():
-            return
-        path = self._generate_settings_profile_path(settings_profile_name)
-        return path if self.io.is_file(path) else ""
+    def _raise_configure_exception(self) -> None:
+        """
+        Raise an exception if the workspace is not configured.
+        """
+        if not self.is_workspace_configured():
+            raise Exception("Workspace not configured")
 
-    def get_saved_settings_profile_names(self) -> List[str]:
-        settings_dir_path = self._generate_settings_profile_dir_path(
-            self.ws_dir_path)
-        file_paths = self.io.path_of_files_in_directory(settings_dir_path,
-            [self.settings_file_extension],False)[1]
-        return [self.io.get_name(path) for path in file_paths]
+    def _initialize_workspace(self) -> bool:
+        """
+        Initialize the workspace.
+        """
+        return self._initialize_configuration_file() and \
+            self._initialize_sources_workspace() and \
+            self._initialize_settings_workspace()
 
-    ## Source
+    # TODO: Change this to accommodate file.
+    def _initialize_configuration_file(self) -> bool:
+        """
+        Initialize the configuration file.
+        """
+        return True
 
-    def get_source_workspace_names(self) -> List[str]:
-        names = list()
-        if not self.is_configured():
-            return names
-        source_ws_path = self._generate_sources_workspace_path(self.ws_dir_path)
-        # TODO: Need to add a method in IO to get directory names.
-        file_paths = self.io.path_of_files_in_directory(
-            source_ws_path,["*"],False)[1]
-        for path in file_paths:
-            if self.io.is_directory(path):
-                names.append(self.io.get_name(path))
-        return names
+    def _initialize_sources_workspace(self) -> bool:
+        """
+        Initialize the sources workspace directory.
+        """
+        sources_ws_path = self.paths.get_sources_workspace_path()
+        self.io.delete(sources_ws_path)
+        return self.io.create_directory(sources_ws_path)
 
-    def get_source_workspace_location_on_disk(self, source_name : str) -> str:
-        if not self.is_configured():
-            return
-        path = self._generate_source_temporary_dir_path(source_name)
-        return path if self.io.is_directory(path) else ""
-
-    ################################## SETTERS ###############################
-
-    def _initialize_workspace(self, ws_dir_path : str) -> bool:
-        if not self.io.is_directory(ws_dir_path):
-            return False
-        if not self._exists_config_service_configuration_file(ws_dir_path):
-            return False
-
-        self._initialize_settings_profile_directory(ws_dir_path)
-        self._initialize_sources_workspace(ws_dir_path)
-        return self._exists_settings_profile_directory(ws_dir_path) and \
-            self._exists_sources_workspace(ws_dir_path)
-
-    def _exists_config_service_configuration_file(self, ws_dir_path : str) \
-            -> bool:
-        return self.io.is_file(
-            self._generate_config_service_config_file_path(ws_dir_path))
-
-    def _exists_settings_profile_directory(self, ws_dir_path : str) -> bool:
-        return self.io.is_directory(
-            self._generate_settings_profile_dir_path(ws_dir_path))
-
-    def _exists_sources_workspace(self, ws_dir_path : str) -> bool:
-        return self.io.is_directory(
-            self._generate_sources_workspace_path(ws_dir_path))
-
-    def _initialize_settings_profile_directory(self, ws_dir_path : str) -> bool:
-        path = self._generate_settings_profile_dir_path(ws_dir_path)
-        if self._exists_settings_profile_directory(path):
-            return False
-        return self.io.create_directory(path)
-
-    def _initialize_sources_workspace(self, ws_dir_path : str) -> bool:
-        path = self._generate_sources_workspace_path(ws_dir_path)
-        if self._exists_sources_workspace(path):
-            return False
-        return self.io.create_directory(path)
-
-    def _generate_config_service_config_file_path(self, ws_dir_path : str) \
-            -> str:
-        return "{}/{}.{}".format(ws_dir_path,
-            self.config_service_file_name,self.config_service_file_extension)
-
-    def _generate_settings_profile_dir_path(self, ws_dir_path : str) -> str:
-        return "{}/{}".format(ws_dir_path,self.settings_dir_name)
-
-    def _generate_sources_workspace_path(self, ws_dir_path : str) -> str:
-        return "{}/{}".format(ws_dir_path, self.source_ws_name)
-
-    def _generate_settings_profile_path(self, settings_profile_name : str) \
-            -> str:
-        if not self.is_configured():
-            raise Exception("Not configured")
-        return "{}/{}/{}.{}".format(
-            self.ws_dir_path,self.settings_dir_name,settings_profile_name,
-            self.settings_file_extension)
-
-    def _generate_source_temporary_dir_path(self, source_name : str) -> str:
-        if not self.is_configured():
-            raise Exception("Not configured")
-        return "{}/{}/{}".format(self.ws_dir_path,self.source_ws_name,
-            source_name)
-
-
-
-
-
-
-
-
-
+    def _initialize_settings_workspace(self) -> bool:
+        """
+        Initialize the settings workspace directory and load any existing
+        settings profiles.
+        """
+        settings_ws_path = self.paths.get_settings_workspace_path()
+        if self.io.is_directory(settings_ws_path):
+             # Creating settings profile from paths.
+            _, file_paths = self.io.path_of_files_in_directory(
+                settings_ws_path,[self.paths.get_settings_profile_extension()],
+                False)
+            return all([self.generate_settings_hook(self.io.get_name(file_path))\
+                    for file_path in file_paths])
+        return self.io.create_directory(settings_ws_path)

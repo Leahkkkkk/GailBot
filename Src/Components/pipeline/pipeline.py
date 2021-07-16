@@ -153,6 +153,21 @@ class Pipeline:
             self.name_to_dependency_node[component_name]))
         return [dependency.get_name() for dependency in dependencies]
 
+    def get_number_of_dependencies(self, component_name : str) -> int:
+        """
+        Obtain the number of dependencies of the specified component.
+
+        Args:
+            component_name (str): Name of the component.
+
+        Raises:
+            (Exception): If the component is not defined.
+
+        Returns:
+            (int): Number of dependencies.
+        """
+        return len(self.get_component_dependencies(component_name))
+
     def get_execution_summary(self) -> Dict:
         """
         Obtain an execution summary for the pipeline that describes the

@@ -1,4 +1,5 @@
 # Standard library imports
+from Src.Components.plugin_manager import plugin
 from typing import Dict, Any, List, Tuple
 # Local imports
 from .apply_config import ApplyConfig
@@ -62,6 +63,16 @@ class PluginManager:
         return self.register_plugin_using_config_data(data)
 
     def register_plugin_using_config_data(self, data : Dict[str,Any]) -> bool:
+        """
+        Register a plugin using a dictionary representation of PluginConfig.
+
+        Args:
+            data (Dict[str,Any]):
+                Mapping from all keys in PluginConfig to their values.
+
+        Returns:
+            (bool): True if successfully configured. False otherwise.
+        """
         success, config = self._generate_config(data)
         if not success:
             return False
@@ -69,13 +80,25 @@ class PluginManager:
 
     def apply_plugins(self, apply_configs : Dict[str, ApplyConfig]) \
             -> PluginManagerSummary:
+        """
+        Apply all plugins defined by the given plugin configs.
+        The plugins must be previously registered.
+
+        Args:
+            apply_configs (Dict[str,ApplyConfig]):
+                Mapping from plugin name to ApplyConfig.
+
+        Returns:
+            (PluginManagerSummary): Summary for executing all plugins.
+        """
         did_generate, pipeline = self._generate_execution_pipeline(
             apply_configs)
         if not did_generate:
-            return False
+            return self._generate_summary({},apply_configs)
         pipeline.set_base_input(apply_configs)
         pipeline.execute()
-        return self._generate_summary(pipeline.get_execution_summary())
+        return self._generate_summary(
+            pipeline.get_execution_summary(), apply_configs)
 
     ############################# GETTERS ###################################
 
@@ -124,7 +147,7 @@ class PluginManager:
         Get mapping from plugin name to PluginDetails for all available plugins.
 
         Returns:
-            ( Dict[str,PluginDetails])
+            (Dict[str,PluginDetails])
         """
         details = dict()
         plugin_names = self.loader.get_loaded_plugin_names()
@@ -185,27 +208,43 @@ class PluginManager:
         return pipeline.add_component(
             plugin_name, plugin_source,plugin_source.plugin_dependencies)
 
-    def _generate_summary(self, execution_summary : Dict[str,Any]) \
+    def _generate_summary(self, execution_summary : Dict[str,Any],
+            apply_configs : Dict[str,ApplyConfig]) \
             -> PluginManagerSummary:
+        """
+        Generate the summary for executing all plugins in the pipeline.
 
-        # Generating the plugin summaries.
-        plugin_summaries = dict()
-        for component_name, summary in execution_summary.items():
-            stream : Stream = summary["result"]
-            plugin_summaries[component_name] = stream.get_stream_data()
-        # Geerating the analysis summary
+        Args:
+            execution_summary (Dict[str,Any]):
+                Summary obtained by executing a Pipeline
+        """
+        # Initializing the plugin summaries.
         total_time_seconds = 0
         successful_plugins = list()
         failed_plugins = list()
-        for plugin_summary in plugin_summaries.values():
-            plugin_summary : PluginExecutionSummary
-            total_time_seconds += plugin_summary.runtime_seconds
-            if plugin_summary.was_successful:
-                successful_plugins.append(plugin_summary.plugin_name)
+        plugin_summaries = dict()
+        # Summary only generated for plugins that were selected.
+        plugin_names = list(apply_configs.keys())
+        for plugin_name in plugin_names:
+            # Means plugin was executed and we can get summary.
+            if plugin_name in execution_summary.keys():
+                summary = execution_summary[plugin_name]
+                stream : Stream = summary["result"]
+                # TODO: This keeps causing issues.
+                if stream != None:
+                    plugin_summary : PluginExecutionSummary = \
+                        stream.get_stream_data()
+                    plugin_summaries[plugin_name] = plugin_summary
+                    total_time_seconds += plugin_summary.runtime_seconds
+                    if plugin_summary.was_successful:
+                        successful_plugins.append(plugin_summary.plugin_name)
+                    else:
+                        failed_plugins.append(plugin_summary.plugin_name)
+            # Plugin was not executed.
             else:
-                failed_plugins.append(plugin_summary.plugin_name)
+                plugin_summaries[plugin_name] = PluginExecutionSummary(
+                    plugin_name, [],{},None,0,False)
+                failed_plugins.append(plugin_name)
         return PluginManagerSummary(
             total_time_seconds,successful_plugins,failed_plugins,
             plugin_summaries)
-
-

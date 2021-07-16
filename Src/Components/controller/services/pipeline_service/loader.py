@@ -1,4 +1,5 @@
-from typing import List, Any, Tuple, Dict
+# Standard imports
+from typing import List, Dict, Tuple, Any
 # Local imports
 from ....io import IO
 
@@ -8,16 +9,17 @@ class PipelineServiceLoader:
         self.io = IO()
 
     def parse_analysis_plugin_configuration_file(self, config_file : str) \
-            -> List[Dict]:
+            -> Tuple[List[Dict]]:
         try:
             _ , data = self.io.read(config_file)
-            return data["plugin_configs"]
+            return (True, data["plugin_configs"])
         except:
-            return []
+            return (False, None)
 
-    def parse_format_configuration_file(self, config_file : str) -> Tuple[str,Dict[str,Any]]:
+    def parse_format_configuration_file(self, config_file : str) \
+            -> Tuple[Tuple[str,List[Dict[str,Any]]]]:
         try:
             _, data = self.io.read(config_file)
-            return (data["format_name"], data["format_plugin_configs"])
+            return (True,(data["format_name"], data["format_plugin_configs"]))
         except Exception as e:
-            return ("",[])
+            return (False, (None, None))

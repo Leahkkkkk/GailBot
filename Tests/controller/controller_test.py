@@ -1,623 +1,626 @@
+'''
+Contains tests for everything except the actual transcription.
+'''
+
 # Standard library imports
-from Tests.controller.services.pipeline_service.pipeline_service_test import MIXED_CONV_DIR_PATH, MOV_FILE_PATH
-from typing import List, Dict, Any
+import pytest
+from typing import Dict
 from Src.Components import controller
 # Local imports
-from Src.Components.controller import GailBotController, PipelineServiceSummary,\
-                                SourceDetails,SettingDetails, GBSettingAttrs
+from Src.Components.io import IO
+from Src.Components.controller import GailBotController, SettingsDetails,\
+    SourceDetails,GBSettingAttrs,PipelineServiceSummary
+
+
 ############################### GLOBALS #####################################
 
-WS_DIR_PATH = "TestData/workspace/fs_workspace"
+# DIR PATHS
+WS_DIR_PATH = "TestData/workspace/controller_workspace/gb_workspace"
+RESULT_DIR_PATH = "TestData/workspace/controller_workspace/results"
+# FILE PATHS
 WAV_FILE_PATH = "TestData/media/test2a.wav"
 MP3_FILE_PATH = "TestData/media/sample1.mp3"
-TXT_FILE_PATH = "TestData/configs/textfile.txt"
-IMAGES_DIR_PATH = "TestData/images"
-CONV_DIR_PATH = "TestData/media/small_conversation"
-RESULT_DIR_PATH = "TestData/workspace/dir_2"
-FORMAT_CONFIG_PATH = "TestData/plugins/normal_format_plugins/config.json"
-ANALYSIS_CONFIG_PATH = "TestData/plugins/analysis_plugins/config.json"
+MOV_FILE_PATH = "TestData/media/sample_video_conversation.mov"
+MIXED_DIR_PATH = "TestData/media/audio_video_conversation"
+ANALYSIS_PLUGINS_CONFIG = "TestData/plugins/pipeline_service_test/analysis_config.json"
+FORMAT_PLUGINS_CONFIG = "TestData/plugins/pipeline_service_test/format_config.json"
+EMPTY_JSON = "TestData/configs/empty_json.json"
+NUM_THREADS = 4
 
 
-
-############################### SETUP #######################################
-
-def initialize_controller() -> GailBotController:
-    return GailBotController(WS_DIR_PATH)
-
-def get_settings_profile_data() -> Dict[GBSettingAttrs,Any]:
+############################### SETUP #####################################
+def obtain_settings_profile_data() -> Dict:
     return {
         GBSettingAttrs.engine_type : "watson",
-        GBSettingAttrs.watson_api_key :
-            "MSgOPTS9CvbADe49nEg4wm8_gxeRuf4FGUmlHS9QqAw3",
-        GBSettingAttrs.watson_language_customization_id :
-            "41e54a38-2175-45f4-ac6a-1c11e42a2d54",
+        GBSettingAttrs.watson_api_key : "MSgOPTS9CvbADe49nEg4wm8_gxeRuf4FGUmlHS9QqAw3",
+        GBSettingAttrs.watson_language_customization_id : "41e54a38-2175-45f4-ac6a-1c11e42a2d54",
         GBSettingAttrs.watson_base_language_model : "en-US_BroadbandModel",
-        GBSettingAttrs.watson_region : "dallas"
-    }
+        GBSettingAttrs.watson_region : "dallas",
+        GBSettingAttrs.analysis_plugins_to_apply : ['tcu_analysis', 'second_analysis'],
+        GBSettingAttrs.output_format : "normal"}
+
+
+@pytest.fixture(scope='session', autouse=True)
+def reset_workspace() -> None:
+    io = IO()
+    io.delete(RESULT_DIR_PATH)
+    io.create_directory(RESULT_DIR_PATH)
 
 ########################## TEST DEFINITIONS ##################################
 
-def test_controller_add_source() -> None:
+def test_initialize() -> None:
     """
     Tests:
-        1. Add a valid file source.
-        2. Add a valid directory source.
-        3. Add an invalid source.
-        4. Add an existing source.
+        1. Initialize from valid source.
+        2. Initialize  using invalid path.
     """
-    controller = initialize_controller()
-    assert controller.add_source("file",MP3_FILE_PATH, RESULT_DIR_PATH)
-    assert controller.add_source("directory",CONV_DIR_PATH,RESULT_DIR_PATH)
-    assert not controller.add_source("file",MP3_FILE_PATH, RESULT_DIR_PATH)
-    # TODO: Run test after method fixed.
-    #assert not controller.add_source("invalid","invalid", RESULT_DIR_PATH)
-    assert controller.remove_sources(["file","directory"])
+    try:
+        GailBotController(MP3_FILE_PATH)
+        assert False
+    except:
+        pass
+    try:
+        GailBotController(WS_DIR_PATH)
+    except:
+        assert False
 
-def test_controller_remove_source() -> None:
+def test_shutdown() -> None:
     """
     Tests:
-        1. Remove an added source.
-        2. Remove a source that has not been added.
+        1. Shutdown after initializing.
     """
-    controller = initialize_controller()
-    assert not controller.remove_source("invalid")
-    controller.add_source("file",MP3_FILE_PATH, RESULT_DIR_PATH)
-    assert controller.remove_source("file")
+    controller = GailBotController(WS_DIR_PATH)
+    controller.shutdown()
 
-def test_controller_remove_sources() -> None:
+def test_add_source() -> None:
     """
     Tests:
-        1. Remove some valid and come invalid sources.
+        1. Add a valid audio file.
+        2. Add a valid video file.
+        3. Add a valid directory.
+        4. Add an invalid file type.
+        5. Add an invalid source.
+        6. Add a source with an existing identifier.
     """
-    controller = initialize_controller()
-    controller.add_source("file",MP3_FILE_PATH, RESULT_DIR_PATH)
-    controller.add_source("directory",CONV_DIR_PATH,RESULT_DIR_PATH)
-    assert not controller.remove_sources(["file","invalid","directory"])
-    controller.add_source("file",MP3_FILE_PATH, RESULT_DIR_PATH)
-    controller.add_source("directory",CONV_DIR_PATH,RESULT_DIR_PATH)
-    assert controller.remove_sources(["file","directory"])
+    controller = GailBotController(WS_DIR_PATH)
+    assert controller.add_source("audio",MP3_FILE_PATH,RESULT_DIR_PATH)
+    assert controller.add_source("video",MOV_FILE_PATH,RESULT_DIR_PATH)
+    assert controller.add_source("mixed",MIXED_DIR_PATH,RESULT_DIR_PATH)
+    assert not controller.add_source(
+        "invalid_type",ANALYSIS_PLUGINS_CONFIG,RESULT_DIR_PATH)
+    assert not controller.add_source("invalid_path", "invalid",RESULT_DIR_PATH)
+    assert not controller.add_source("audio",MP3_FILE_PATH,RESULT_DIR_PATH)
 
-def test_controller_clear_sources() -> None:
+def test_remove_source() -> None:
     """
     Tests:
-        1. Remove all sources.
+        1. Remove valid added source.
+        2. Remove invalid source.
     """
-    controller = initialize_controller()
-    controller.add_source("file",MP3_FILE_PATH, RESULT_DIR_PATH)
-    controller.add_source("directory",CONV_DIR_PATH,RESULT_DIR_PATH)
-    assert controller.clear_sources()
-    assert not controller.is_source("file")
-    assert not controller.is_source("directory")
+    controller = GailBotController(WS_DIR_PATH)
+    assert controller.add_source("audio",MP3_FILE_PATH,RESULT_DIR_PATH)
+    assert controller.remove_source("audio")
+    assert not controller.remove_source("audio")
 
-def test_controller_create_new_settings_profile() -> None:
+def test_remove_sources() -> None:
     """
     Tests:
-        1. Create a new profile with invalid data.
-        2. Create a profile with correct data.
+        1. Remove some valid and some invalid sources.
+        2. Remove all valid sources.
     """
-    controller = initialize_controller()
+    controller = GailBotController(WS_DIR_PATH)
+    assert controller.add_source("audio",MP3_FILE_PATH,RESULT_DIR_PATH)
+    assert controller.add_source("video",MOV_FILE_PATH,RESULT_DIR_PATH)
+    assert not controller.remove_sources(["audio","invalid"])
+    assert controller.add_source("audio",MP3_FILE_PATH,RESULT_DIR_PATH)
+    assert controller.remove_sources(["audio","video"])
+
+def test_clear_sources() -> None:
+    """
+    Tests:
+        1. Run the method before adding sources.
+        2. Run after adding sources.
+    """
+    controller = GailBotController(WS_DIR_PATH)
+    controller.clear_sources()
+    assert controller.add_source("audio",MP3_FILE_PATH,RESULT_DIR_PATH)
+    assert controller.add_source("video",MOV_FILE_PATH,RESULT_DIR_PATH)
+    controller.clear_sources()
+    assert not controller.is_source("audio")
+    assert not controller.is_source("video")
+
+def test_reset_source() -> None:
+    """
+    Tests:
+        1. Reset a source without adding it.
+        2. Reset a source after applying a settings profile.
+    """
+    controller = GailBotController(WS_DIR_PATH)
+    assert controller.add_source("audio",MP3_FILE_PATH,RESULT_DIR_PATH)
+    assert controller.reset_source("audio")
+    controller.create_new_settings_profile(
+        "s1",obtain_settings_profile_data())
+    assert controller.apply_settings_profile_to_source("audio","s1")
+    assert controller.get_source_settings_profile_details("audio").profile_name == \
+        "s1"
+    assert controller.reset_source("audio")
+    assert controller.get_source_settings_profile_details("audio") == None
+
+def test_create_new_settings_profile() -> None:
+    """
+    Tests:
+        1. Create a new settings profile with valid data.
+        2. Create a new settings profile with invalid data.
+        3. Create a settings profile with existing identifier.
+    """
+    controller = GailBotController(WS_DIR_PATH)
+    assert controller.create_new_settings_profile(
+        "s1",obtain_settings_profile_data())
     assert not controller.create_new_settings_profile(
-        "custom", {"invalid" : 1})
-    assert controller.create_new_settings_profile(
-        "custom" , get_settings_profile_data())
+        "invalid", {})
+    assert not controller.create_new_settings_profile(
+        "s1",obtain_settings_profile_data())
 
-def test_controller_save_settings_profile() -> None:
+def test_save_settings_profile() -> None:
     """
     Tests:
-        1. Save an invalid settings profile.
-        2. Save a valid settings profile on disk and check if it can be deleted.
+        1 Save a valid settings profile.
+        2. Save an invalid settings profile.
     """
-    controller = initialize_controller()
+    controller = GailBotController(WS_DIR_PATH)
     assert controller.create_new_settings_profile(
-        "custom" , get_settings_profile_data())
+        "s1",obtain_settings_profile_data())
+    assert controller.save_settings_profile("s1")
     assert not controller.save_settings_profile("invalid")
-    assert controller.save_settings_profile("custom")
-    assert controller.remove_settings_profile("custom")
+    controller.remove_settings_profile("s1")
 
-def test_controller_remove_settings_profile() -> None:
+def test_remove_settings_profile() -> None:
     """
     Tests:
-        1. Remove invalid settings profile.
-        2. Remove an existing settings profile that is saved on disk.
-        3. Remove a settings profile that is not saved on disk.
+        1. Remove a settings profile that does not exist.
+        2. Remove a settings profile that does exist.
     """
-    controller = initialize_controller()
-    controller.create_new_settings_profile(
-        "disk" , get_settings_profile_data())
-    controller.create_new_settings_profile(
-        "non_disk" , get_settings_profile_data())
-    controller.save_settings_profile("disk")
+    controller = GailBotController(WS_DIR_PATH)
+    assert controller.create_new_settings_profile(
+        "s1",obtain_settings_profile_data())
     assert not controller.remove_settings_profile("invalid")
-    assert controller.remove_settings_profile("disk")
-    assert controller.remove_settings_profile("non_disk")
+    assert controller.remove_settings_profile("s1")
 
-def test_controller_remove_all_settings_profiles() -> None:
+def test_remove_all_settings_profiles() -> None:
     """
     Tests:
         1. Remove all settings profile.
     """
-    controller = initialize_controller()
-    controller.create_new_settings_profile(
-        "disk" , get_settings_profile_data())
-    controller.create_new_settings_profile(
-        "non_disk" , get_settings_profile_data())
-    assert controller.remove_all_settings_profiles()
-    assert not controller.is_settings_profile("disk")
-    assert not controller.is_settings_profile("non_disk")
+    controller = GailBotController(WS_DIR_PATH)
+    assert controller.create_new_settings_profile(
+        "s1",obtain_settings_profile_data())
+    assert controller.create_new_settings_profile(
+        "s2",obtain_settings_profile_data())
+    assert controller.remove_all_settings_profile()
+    assert not controller.is_settings_profile("s1")
+    assert not controller.is_settings_profile("s2")
 
-def test_controller_change_settings_profile_name() -> None:
+def test_change_settings_profile_name() -> None:
     """
     Tests:
-        1. Change name of an invalid profile.
-        2. Change name of a profile that is not on disk.
-        3. Change the name  of a profile that is saved on disk.
-        4. Change the name of a profile saved on disk, and is applied to sources.
+        1. Change the name of an existing settings profile.
+        2. Change the name of an invalid settings profile.
+        3. Ensure sources using this settings profile also have changed name.
+        4. Change valid profile name to an existing profile name
     """
-    controller = initialize_controller()
-    controller.create_new_settings_profile(
-        "disk" , get_settings_profile_data())
-    controller.save_settings_profile("disk")
-    controller.create_new_settings_profile(
-        "non_disk" , get_settings_profile_data())
-    assert not controller.change_settings_profile_name("invalid","invalid")
-    assert controller.change_settings_profile_name("disk","disk_changed")
-    assert controller.is_settings_profile("disk_changed")
-    assert controller.is_settings_profile_saved("disk_changed")
-    assert not controller.is_settings_profile("disk")
-    assert controller.change_settings_profile_name("non_disk","non_disk_changed")
-    controller.add_source("file",MP3_FILE_PATH, RESULT_DIR_PATH)
-    controller.add_source("directory",CONV_DIR_PATH,RESULT_DIR_PATH)
-    controller.apply_settings_profile_to_source("file","disk_changed")
-    controller.apply_settings_profile_to_source("directory","disk_changed")
-    assert controller.change_settings_profile_name("disk_changed","disk")
-    assert controller.get_source_settings_profile_name("file") == "disk"
-    assert controller.get_source_settings_profile_name("directory") == "disk"
-    controller.remove_all_settings_profiles()
-    controller.clear_sources()
+    controller = GailBotController(WS_DIR_PATH)
+    assert controller.add_source("audio",MP3_FILE_PATH,RESULT_DIR_PATH)
+    assert controller.create_new_settings_profile(
+        "s1",obtain_settings_profile_data())
+    controller.apply_settings_profile_to_source("audio","s1")
+    assert controller.change_settings_profile_name("s1","s2")
+    assert controller.get_source_settings_profile_details("audio").\
+        profile_name == "s2"
+    assert not controller.is_settings_profile("s1")
+    assert not controller.change_settings_profile_name("invalid","s2")
+    assert controller.create_new_settings_profile(
+        "s3",obtain_settings_profile_data())
+    assert not controller.change_settings_profile_name("s2","s3")
 
-def test_controller_apply_settings_profile_to_source() -> None:
+def test_apply_settings_profile_to_source() -> None:
     """
     Tests:
-        1. Apply a profile to an invalid source.
-        2. Apply an invalid profile.
-        3. Apply a profile to a source and check if it is there.
+        1. Apply valid profile to valid source.
+        2. Apply invalid profile to valid source.
+        3. Apply valid profile to invalid source.
+        4. Apply invalid profile to invalid source.
     """
-    controller = initialize_controller()
-    controller.add_source("file",MP3_FILE_PATH, RESULT_DIR_PATH)
+    controller = GailBotController(WS_DIR_PATH)
+    controller.add_source("audio",MP3_FILE_PATH,RESULT_DIR_PATH)
     controller.create_new_settings_profile(
-        "disk" , get_settings_profile_data())
-    assert not controller.apply_settings_profile_to_source("invalid","disk")
-    assert not controller.apply_settings_profile_to_source("file","invalid")
-    assert controller.apply_settings_profile_to_source("file","disk")
-    assert controller.get_source_settings_profile_name("file") == "disk"
-    controller.remove_all_settings_profiles()
-    controller.clear_sources()
+        "s1",obtain_settings_profile_data())
+    assert controller.apply_settings_profile_to_source("audio","s1")
+    assert not controller.apply_settings_profile_to_source(
+        "audio","invalid")
+    assert not controller.apply_settings_profile_to_source(
+        "invalid","s1")
+    assert not controller.apply_settings_profile_to_source(
+        "invalid_source", "invalid_settings")
 
-def test_controller_save_source_settings_profile() -> None:
+def test_apply_settings_profile_to_sources() -> None:
     """
     Tests:
-        1. Save an invalid settings profile to disk.
-        2. Save a valid profile to disk.
+        1. Apply valid profile to multiple valid sources.
+        2. Apply invalid profile to multiple valid sources.
+        3. Apply valid profile to some valid and some invalid sources.
     """
-    controller = initialize_controller()
+    controller = GailBotController(WS_DIR_PATH)
+    controller.add_source("audio",MP3_FILE_PATH,RESULT_DIR_PATH)
+    controller.add_source("video",MOV_FILE_PATH,RESULT_DIR_PATH)
     controller.create_new_settings_profile(
-        "disk" , get_settings_profile_data())
-    assert not controller.save_settings_profile("invalid")
-    assert controller.save_settings_profile("disk")
-    assert controller.is_settings_profile_saved("disk")
-    controller.remove_all_settings_profiles()
-    controller.clear_sources()
+        "s1",obtain_settings_profile_data())
+    assert controller.apply_settings_profile_to_sources(
+        ["audio","video"],"s1")
+    assert not controller.apply_settings_profile_to_sources(
+        ["audio","video"],"invalid")
+    assert not controller.apply_settings_profile_to_sources(
+        ["audio","invalid"],"s1")
+
+def test_save_source_settings_profile() -> None:
+    """
+    Tests:
+        1. Save valid source profile with unused profile name.
+        2. Save invaid source profile.
+        3. Save valid source profile with used profile name.
+    """
+    controller = GailBotController(WS_DIR_PATH)
+    controller.add_source("audio",MP3_FILE_PATH,RESULT_DIR_PATH)
+    controller.create_new_settings_profile(
+        "s1",obtain_settings_profile_data())
+    controller.apply_settings_profile_to_source("audio","s1")
+    assert controller.save_source_settings_profile("audio","s2")
+    assert not controller.save_source_settings_profile("invalid","doesnt_matter")
+    assert not controller.save_source_settings_profile("audio","s1")
+    controller.remove_settings_profile("s2")
 
 def test_register_analysis_plugins() -> None:
     """
     Tests:
-        1. Register from valid path.
-        2. Register from invalid path.
+        1. Register from a valid config path.
+        2. Register from invalid config path.
+        3. Register from invalid file contents.
     """
-    controller = initialize_controller()
-    assert len(controller.register_analysis_plugins(ANALYSIS_CONFIG_PATH)) > 0
+    controller = GailBotController(WS_DIR_PATH)
+    assert len(controller.register_analysis_plugins(ANALYSIS_PLUGINS_CONFIG)) > 0
     assert len(controller.register_analysis_plugins("invalid")) == 0
+    assert len(controller.register_analysis_plugins(EMPTY_JSON)) == 0
 
 def test_register_format() -> None:
     """
     Tests:
-        1. Register from valid path.
-        2. Register from invalid path.
+        1. Register from valid config path.
+        2. Register from invalid config path.
+        3. Register from invalid structure path.
     """
-    controller = initialize_controller()
-    name, plugin_names = controller.register_format(FORMAT_CONFIG_PATH)
-    assert name == "normal"
-    assert len(plugin_names) > 0
+    controller = GailBotController(WS_DIR_PATH)
+    assert len(controller.register_format(FORMAT_PLUGINS_CONFIG)[1]) > 0
+    assert len(controller.register_format("invalid")[1]) == 0
+    assert len(controller.register_format(EMPTY_JSON)[1]) == 0
 
-def test_transcribe_audio_source() -> None:
+def test_get_supported_audio_formats() -> None:
     """
     Tests:
-        1. Test with a valid audio source.
+        1. Check all the audio formats.
     """
-    controller = initialize_controller()
-    controller.register_analysis_plugins(ANALYSIS_CONFIG_PATH)
-    controller.register_format(FORMAT_CONFIG_PATH)
-    controller.create_new_settings_profile(
-        "disk" , get_settings_profile_data())
-    controller.add_source("file",MP3_FILE_PATH,RESULT_DIR_PATH)
-    controller.apply_settings_profile_to_source("file","disk")
-    summary = controller.transcribe()
-    print(summary)
+    controller = GailBotController(WS_DIR_PATH)
+    assert len(controller.get_supported_audio_formats()) > 0
 
-def test_transcribe_video_source() -> None:
+def test_get_supported_video_formats() -> None:
     """
     Tests:
-        1. Test with a valid video source.
+        1. Check all the video formats.
     """
-    controller = initialize_controller()
-    controller.register_analysis_plugins(ANALYSIS_CONFIG_PATH)
-    controller.register_format(FORMAT_CONFIG_PATH)
-    controller.create_new_settings_profile(
-        "disk" , get_settings_profile_data())
-    controller.add_source("file",MOV_FILE_PATH,RESULT_DIR_PATH)
-    controller.apply_settings_profile_to_source("file","disk")
-    summary = controller.transcribe()
-    print(summary)
+    controller = GailBotController(WS_DIR_PATH)
+    assert len(controller.get_supported_video_formats()) > 0
 
-def test_transcribe_mixed_source() -> None:
+def test_is_source() -> None:
     """
     Tests:
-        1. Test with a valid mixed source.
+        1. Check for valid source.
+        2. Check for invalid source.
     """
-    controller = initialize_controller()
-    controller.register_analysis_plugins(ANALYSIS_CONFIG_PATH)
-    controller.register_format(FORMAT_CONFIG_PATH)
-    controller.create_new_settings_profile(
-        "disk" , get_settings_profile_data())
-    controller.add_source("file",MIXED_CONV_DIR_PATH,RESULT_DIR_PATH)
-    controller.apply_settings_profile_to_source("file","disk")
-    summary = controller.transcribe()
-    print(summary)
-
-def test_transcribe_multiple_sources() -> None:
-    """
-    Tests:
-        1. Transcribe from multiple sources.
-    """
-    controller = initialize_controller()
-    controller.register_analysis_plugins(ANALYSIS_CONFIG_PATH)
-    controller.register_format(FORMAT_CONFIG_PATH)
-    controller.create_new_settings_profile(
-        "disk" , get_settings_profile_data())
+    controller = GailBotController(WS_DIR_PATH)
     controller.add_source("audio",MP3_FILE_PATH,RESULT_DIR_PATH)
-    controller.add_source("video",MOV_FILE_PATH,RESULT_DIR_PATH)
-    controller.add_source("mixed",MIXED_CONV_DIR_PATH,RESULT_DIR_PATH)
-    controller.apply_settings_profile_to_source("audio","disk")
-    controller.apply_settings_profile_to_source("video","disk")
-    controller.apply_settings_profile_to_source("mixed","disk")
-    summary = controller.transcribe()
-    print(summary)
-
-def test_controller_is_source() -> None:
-    """
-    Tests:
-        1. Check an invalid source.
-        2. Check a valid source.
-    """
-    controller = initialize_controller()
-    controller.add_source("file",MP3_FILE_PATH, RESULT_DIR_PATH)
+    assert controller.is_source("audio")
     assert not controller.is_source("invalid")
-    assert controller.is_source("file")
 
-def test_controller_is_source_ready_to_transcribe() -> None:
+def test_is_source_ready_to_transcribe() -> None:
     """
     Tests:
-        1. Check an invalid source.
-        2. Check a source with no settings.
-        3. Check a source with settings.
+        1. Check before setting source profile.
+        2. Check after setting source profile.
+        3. Check invalid source.
     """
-    controller = initialize_controller()
-    controller.add_source("file",MP3_FILE_PATH, RESULT_DIR_PATH)
-    controller.create_new_settings_profile(
-        "disk" , get_settings_profile_data())
+    controller = GailBotController(WS_DIR_PATH)
+    controller.add_source("audio",MP3_FILE_PATH,RESULT_DIR_PATH)
+    assert not controller.is_source_ready_to_transcribe("audio")
     assert not controller.is_source_ready_to_transcribe("invalid")
-    assert not controller.is_source_ready_to_transcribe("file")
-    controller.apply_settings_profile_to_source("file","disk")
-    assert controller.is_source_ready_to_transcribe("file")
-    controller.remove_all_settings_profiles()
-    controller.clear_sources()
-
-def test_controller_get_source_names() -> None:
-    """
-    Tests:
-        1. Obtain the names of all sources.
-    """
-    controller = initialize_controller()
-    assert controller.get_source_names() == []
-    controller.add_source("file",MP3_FILE_PATH, RESULT_DIR_PATH)
-    controller.add_source("directory",CONV_DIR_PATH,RESULT_DIR_PATH)
-    assert controller.get_source_names() == ["file","directory"]
-    controller.remove_all_settings_profiles()
-    controller.clear_sources()
-
-def test_controller_get_names_of_sources_ready_to_transcribe() -> None:
-    """
-    Tests:
-        1. Obtain the names of sources that are ready to transcribe.
-    """
-    controller = initialize_controller()
-    controller.add_source("file",MP3_FILE_PATH, RESULT_DIR_PATH)
-    controller.add_source("directory",CONV_DIR_PATH,RESULT_DIR_PATH)
     controller.create_new_settings_profile(
-        "disk" , get_settings_profile_data())
-    controller.apply_settings_profile_to_source("file","disk")
-    assert controller.get_names_of_sources_ready_to_transcribe() == ["file"]
-    controller.remove_all_settings_profiles()
-    controller.clear_sources()
+        "s1",obtain_settings_profile_data())
+    controller.apply_settings_profile_to_source("audio","s1")
+    assert controller.is_source_ready_to_transcribe("audio")
 
-def test_controller_get_source_details() -> None:
+def test_get_source_names() -> None:
     """
     Tests:
-        1. Obtain the names of all source details.
+        1. Get the names of all added sources.
     """
-    controller = initialize_controller()
-    controller.add_source("file",MP3_FILE_PATH, RESULT_DIR_PATH)
-    assert type(controller.get_source_details("file")) == SourceDetails
-    controller.remove_all_settings_profiles()
-    controller.clear_sources()
+    controller = GailBotController(WS_DIR_PATH)
+    assert controller.get_source_names() == []
+    controller.add_source("audio",MP3_FILE_PATH,RESULT_DIR_PATH)
+    assert controller.get_source_names() == ["audio"]
 
-def test_controller_get_all_source_details() -> None:
+def test_get_names_of_sources_ready_to_transcribe() -> None:
+    """
+    Tests:
+        1. Check before and after applying settings profile.
+    """
+    controller = GailBotController(WS_DIR_PATH)
+    controller.add_source("audio",MP3_FILE_PATH,RESULT_DIR_PATH)
+    controller.create_new_settings_profile(
+        "s1",obtain_settings_profile_data())
+    assert controller.get_names_of_sources_ready_to_transcribe() == []
+    controller.apply_settings_profile_to_source("audio","s1")
+    assert controller.get_names_of_sources_ready_to_transcribe() == ["audio"]
+
+def test_get_source_details() -> None:
+    """
+    Tests:
+        1. Get the details of a source that does not exist.
+        2. Get details of source that does exist.
+    """
+    controller = GailBotController(WS_DIR_PATH)
+    controller.add_source("audio",MP3_FILE_PATH,RESULT_DIR_PATH)
+    assert type(controller.get_source_details("audio")) == SourceDetails
+    assert controller.get_source_details("invalid") == None
+
+def test_get_sources_details() -> None:
+    """
+    Tests:
+        1. Get details of both valid and invalid sources.
+    """
+    controller = GailBotController(WS_DIR_PATH)
+    controller.add_source("audio",MP3_FILE_PATH,RESULT_DIR_PATH)
+    assert list(controller.get_sources_details(["audio","invalid"]).keys()) == \
+        ["audio"]
+
+def test_get_all_source_details() -> None:
     """
     Tests:
         1. Get the details of all sources.
     """
-    controller = initialize_controller()
-    controller.add_source("file",MP3_FILE_PATH, RESULT_DIR_PATH)
-    controller.add_source("directory",CONV_DIR_PATH,RESULT_DIR_PATH)
-    assert list(controller.get_all_source_details().keys()) == ["file","directory"]
-    controller.remove_all_settings_profiles()
-    controller.clear_sources()
+    controller = GailBotController(WS_DIR_PATH)
+    controller.add_source("audio",MP3_FILE_PATH,RESULT_DIR_PATH)
+    controller.add_source("video",MOV_FILE_PATH,RESULT_DIR_PATH)
+    assert list(controller.get_all_source_details().keys()) == \
+        ["audio","video"]
 
-def test_controller_is_settings_profile() -> None:
+def test_is_settings_profile() -> None:
     """
     Tests:
-        1. Check an invalid profile.
-        2. Check a valid profile.
+        1. Check valid profile.
+        2. Check invalid profile.
     """
-    controller = initialize_controller()
+    controller = GailBotController(WS_DIR_PATH)
+    controller.create_new_settings_profile(
+        "s1",obtain_settings_profile_data())
+    assert controller.is_settings_profile("s1")
     assert not controller.is_settings_profile("invalid")
-    controller.create_new_settings_profile(
-        "disk" , get_settings_profile_data())
-    assert controller.is_settings_profile("disk")
-    controller.remove_all_settings_profiles()
-    controller.clear_sources()
 
-def test_controller_is_settings_profile_saved() -> None:
+def test_is_settings_profile_saved() -> None:
     """
     Tests:
-        1. Check an invalid profile.
-        2. Check an unsaved profile.
-        3. Check a saved profile.
+        1. Check a saved profile.
+        2. Check an invalid profile.
+        3. Check a created but not saved profile.
     """
-    controller = initialize_controller()
+    controller = GailBotController(WS_DIR_PATH)
     controller.create_new_settings_profile(
-        "disk" , get_settings_profile_data())
+        "s1",obtain_settings_profile_data())
+    controller.create_new_settings_profile(
+        "s2",obtain_settings_profile_data())
+    assert controller.save_settings_profile("s1")
+    assert controller.is_settings_profile_saved("s1")
+    assert not controller.is_settings_profile_saved("s2")
     assert not controller.is_settings_profile_saved("invalid")
-    assert not controller.is_settings_profile_saved("disk")
-    controller.save_settings_profile("disk")
-    assert controller.is_settings_profile_saved("disk")
-    controller.remove_all_settings_profiles()
-    controller.clear_sources()
+    controller.remove_settings_profile("s1")
 
-def test_controller_get_settings_profile_details() -> None:
+def test_get_settings_profile_details() -> None:
     """
     Tests:
-        1. Get details of invalid profile.
-        2. Get the details of a valid profile.
+        1. Get for valid profile.
+        2. Get for invalid profile.
     """
-    controller = initialize_controller()
+    controller = GailBotController(WS_DIR_PATH)
     controller.create_new_settings_profile(
-        "disk" , get_settings_profile_data())
+        "s1",obtain_settings_profile_data())
     assert controller.get_settings_profile_details("invalid") == None
-    assert type(controller.get_settings_profile_details("disk")) \
-        == SettingDetails
-    controller.remove_all_settings_profiles()
-    controller.clear_sources()
+    assert type(controller.get_settings_profile_details("s1")) == SettingsDetails
 
-def test_controller_get_all_settings_profile_details() -> None:
+def test_get_settings_profiles_details() -> None:
     """
     Tests:
-        1. Obtain the details of all settings.
+        1. Get some valid and some invalid profile details.
     """
-    controller = initialize_controller()
+    controller = GailBotController(WS_DIR_PATH)
     controller.create_new_settings_profile(
-        "disk" , get_settings_profile_data())
-    controller.create_new_settings_profile(
-        "disk2" , get_settings_profile_data())
-    assert list(controller.get_all_settings_profile_details().keys()) == \
-        ["disk","disk2"]
-    controller.remove_all_settings_profiles()
-    controller.clear_sources()
+        "s1",obtain_settings_profile_data())
+    assert list(controller.get_settings_profiles_details(["s1","invalid"]).keys()) == \
+        ["s1"]
 
-def test_controller_get_source_settings_profile_name() -> None:
+def test_get_all_settings_profiles_details() -> None:
     """
     Tests:
-        1. Obtain the name for an invalid source
-        2. Obtain the name for a valid source with no profile.
-        3. Obtain the name for a valid source with profile.
+        1. Get all profile details.
     """
-    controller = initialize_controller()
-    assert controller.get_source_settings_profile_name("invalid") == ""
-    controller.add_source("file",MP3_FILE_PATH, RESULT_DIR_PATH)
+    controller = GailBotController(WS_DIR_PATH)
     controller.create_new_settings_profile(
-        "disk" , get_settings_profile_data())
-    assert controller.get_source_settings_profile_name("file") == ""
-    controller.apply_settings_profile_to_source("file","disk")
-    assert controller.get_source_settings_profile_name("file") == "disk"
-    controller.remove_all_settings_profiles()
-    controller.clear_sources()
+        "s1",obtain_settings_profile_data())
+    assert list(controller.get_all_settings_profiles_details().keys()) == \
+        ["s1"]
 
-def test_controller_get_source_names_using_settings_profile() -> None:
+def test_get_source_settings_profile_name() -> None:
     """
     Tests:
-        1. Use an invalid profile name.
-        2. get the name of all sources using profile.
+        1. Get name for a source that does not have a profile.
+        2. Get name for a source that does have a profile.
     """
-    controller = initialize_controller()
+    controller = GailBotController(WS_DIR_PATH)
+    controller.add_source("audio",MP3_FILE_PATH,RESULT_DIR_PATH)
     controller.create_new_settings_profile(
-        "disk" , get_settings_profile_data())
-    controller.add_source("file",MP3_FILE_PATH, RESULT_DIR_PATH)
-    controller.add_source("directory",CONV_DIR_PATH,RESULT_DIR_PATH)
-    controller.apply_settings_profile_to_source("file","disk")
-    controller.get_source_names_using_settings_profile("invalid") == []
-    controller.get_source_names_using_settings_profile("disk") == ["file"]
-    controller.remove_all_settings_profiles()
-    controller.clear_sources()
-
-def test_controller_get_sources_details_using_settings_profile() -> None:
-    """
-    Tests:
-        1. Use an invalid profile name.
-        2. Get source details of valid profile
-    """
-    controller = initialize_controller()
-    controller.create_new_settings_profile(
-        "disk" , get_settings_profile_data())
-    controller.add_source("file",MP3_FILE_PATH, RESULT_DIR_PATH)
-    controller.add_source("directory",CONV_DIR_PATH,RESULT_DIR_PATH)
-    controller.apply_settings_profile_to_source("file","disk")
-    assert list(controller.get_sources_details_using_settings_profile(
-        "invalid").keys())== []
-    assert list(controller.get_sources_details_using_settings_profile(
-        "disk").keys()) == ["file"]
-    controller.remove_all_settings_profiles()
-    controller.clear_sources()
-
-def test_controller_get_source_settings_profile_name() -> None:
-    """
-    Tests:
-        1. Use an invalid source name.
-        2. Get the settings details of settings appled to a source.
-        3. Check for a source that does not have a settings profile.
-    """
-    controller = initialize_controller()
-    controller.create_new_settings_profile(
-        "disk" , get_settings_profile_data())
-    controller.add_source("file",MP3_FILE_PATH, RESULT_DIR_PATH)
-    controller.add_source("directory",CONV_DIR_PATH,RESULT_DIR_PATH)
-    controller.apply_settings_profile_to_source("file","disk")
+        "s1",obtain_settings_profile_data())
+    controller.apply_settings_profile_to_source("audio","s1")
+    assert controller.get_source_settings_profile_name("audio") == "s1"
     assert controller.get_source_settings_profile_name("invalid") == None
-    assert controller.get_source_settings_profile_name("file") == "disk"
-    assert controller.get_source_settings_profile_name("directory") == None
-    controller.remove_all_settings_profiles()
-    controller.clear_sources()
 
-# TODO: Run these tests
-def test_controller_get_source_settings_profile_details() -> None:
+def test_get_source_names_using_settings_profile() -> None:
     """
     Tests:
-        1. Use an invalid source name.
-        2. Get the settings details of settings appled to a source.
-        3. Check for a source that does not have a settings profile.
+        1. Get sources using the valid profile.
+        2. Get sources using invalid profile.
     """
-    controller = initialize_controller()
+    controller = GailBotController(WS_DIR_PATH)
+    controller.add_source("audio",MP3_FILE_PATH,RESULT_DIR_PATH)
+    controller.add_source("video",MOV_FILE_PATH,RESULT_DIR_PATH)
     controller.create_new_settings_profile(
-        "disk" , get_settings_profile_data())
-    controller.add_source("file",MP3_FILE_PATH, RESULT_DIR_PATH)
-    controller.add_source("directory",CONV_DIR_PATH,RESULT_DIR_PATH)
-    controller.apply_settings_profile_to_source("file","disk")
-    assert controller.get_source_settings_profile_details("invalid") == None
-    assert type(controller.get_source_settings_profile_details("file")) == \
-        SettingDetails
-    assert controller.get_source_settings_profile_details("directory") == None
-    controller.remove_all_settings_profiles()
-    controller.clear_sources()
+        "s1",obtain_settings_profile_data())
+    controller.apply_settings_profile_to_source("audio","s1")
+    assert controller.get_source_names_using_settings_profile("s1") == ["audio"]
+    assert controller.get_source_names_using_settings_profile("invalid") == []
 
-def test_controller_get_sources_settings_profile_details() -> None:
+def test_get_sources_details_using_settings_profile() -> None:
     """
     Tests:
-        1. Obtain the details of some sources.
+        1. Get source details using valid profile.
     """
-    controller = initialize_controller()
+    controller = GailBotController(WS_DIR_PATH)
+    controller.add_source("audio",MP3_FILE_PATH,RESULT_DIR_PATH)
+    controller.add_source("video",MOV_FILE_PATH,RESULT_DIR_PATH)
     controller.create_new_settings_profile(
-        "disk" , get_settings_profile_data())
-    controller.add_source("file",MP3_FILE_PATH, RESULT_DIR_PATH)
-    controller.add_source("directory",CONV_DIR_PATH,RESULT_DIR_PATH)
-    controller.apply_settings_profile_to_source("file","disk")
-    assert list(controller.get_sources_settings_profile_details(
-        ["file","directory"]).keys()) == ["file"]
-    controller.remove_all_settings_profiles()
-    controller.clear_sources()
+        "s1",obtain_settings_profile_data())
+    controller.apply_settings_profile_to_source("audio","s1")
+    assert list(controller.get_sources_details_using_settings_profile("s1").keys()) \
+        == ["audio"]
 
-def test_controller_get_all_sources_settings_profile_details() -> None:
+def test_get_source_settings_profile_details() -> None:
     """
     Tests:
-        1. Get all sources settings profiles details.
+        1. Get the settings profile details of a valid source.
+        2. Get the  settings profile details of an invalid source.
     """
-    controller = initialize_controller()
+    controller = GailBotController(WS_DIR_PATH)
+    controller.add_source("audio",MP3_FILE_PATH,RESULT_DIR_PATH)
     controller.create_new_settings_profile(
-        "disk" , get_settings_profile_data())
-    controller.add_source("file",MP3_FILE_PATH, RESULT_DIR_PATH)
-    controller.add_source("directory",CONV_DIR_PATH,RESULT_DIR_PATH)
-    controller.apply_settings_profile_to_source("file","disk")
-    assert list(controller.get_all_sources_settings_profile_details().keys()) \
-        == ["file"]
-    controller.remove_all_settings_profiles()
-    controller.clear_sources()
+        "s1",obtain_settings_profile_data())
+    controller.apply_settings_profile_to_source("audio","s1")
+    assert type(controller.get_source_settings_profile_details("audio")) == \
+        SettingsDetails
 
-# TODO: Test after implementation.
-def test_controller_get_supported_audio_formats() -> None:
+def test_get_sources_settings_profile_details() -> None:
     """
     Tests:
-        1. Check there is more than one format.
+        1. Get for some valid and invalid sources.
     """
-    controller = initialize_controller()
-    assert len(controller.get_supported_audio_formats()) > 0
+    controller = GailBotController(WS_DIR_PATH)
+    controller.add_source("audio",MP3_FILE_PATH,RESULT_DIR_PATH)
+    controller.create_new_settings_profile(
+        "s1",obtain_settings_profile_data())
+    controller.apply_settings_profile_to_source("audio","s1")
+    assert list(controller.get_sources_settings_profile_details(["audio","invalid"]).keys()) == \
+        ["audio"]
 
-# TODO: Test after implementation.
-def test_controller_get_supported_video_formats() -> None:
+def test_get_all_sources_settings_profile_details() -> None:
     """
     Tests:
-        1. Check there is more than one format.
+        1. Get for all sources if they are configured.
     """
-    controller = initialize_controller()
-    assert len(controller.get_supported_video_formats()) > 0
+    controller = GailBotController(WS_DIR_PATH)
+    controller.add_source("audio",MP3_FILE_PATH,RESULT_DIR_PATH)
+    controller.add_source("video",MOV_FILE_PATH,RESULT_DIR_PATH)
+    controller.create_new_settings_profile(
+        "s1",obtain_settings_profile_data())
+    controller.apply_settings_profile_to_source("audio","s1")
+    assert list(controller.get_all_sources_settings_profile_details().keys()) == \
+        ["audio"]
 
 def test_get_analysis_plugin_names() -> None:
     """
     Tests:
-        1. Check plugin names.
+        1. Get the names of all plugins.
     """
-    controller = initialize_controller()
-    assert len(controller.get_analysis_plugin_names()) == 0
-    controller.register_analysis_plugins(ANALYSIS_CONFIG_PATH)
+    controller = GailBotController(WS_DIR_PATH)
+    assert controller.get_analysis_plugin_names() == []
+    controller.register_analysis_plugins(ANALYSIS_PLUGINS_CONFIG)
     assert len(controller.get_analysis_plugin_names()) > 0
 
 def test_get_format_names() -> None:
     """
     Tests:
-        1. Check the return list length.
+        1. Get the names of registered format.
     """
-    controller = initialize_controller()
-    assert len(controller.get_format_names()) == 0
-    controller.register_format(FORMAT_CONFIG_PATH)
+    controller = GailBotController(WS_DIR_PATH)
+    assert controller.get_format_names() == []
+    controller.register_format(FORMAT_PLUGINS_CONFIG)
     assert len(controller.get_format_names()) > 0
 
 def test_get_format_plugin_names() -> None:
     """
     Tests:
-        1. Use invalid plugin name .
-        2. Check the plugin list length.
+        1. Get the plusing names for a valid format.
+        2. Get plugin names for an invalid format.
     """
-    controller = initialize_controller()
-    assert len(controller.get_format_plugin_names("invalid")) == 0
-    format_name, plugin_names = controller.register_format(FORMAT_CONFIG_PATH)
+    controller = GailBotController(WS_DIR_PATH)
+    format_name, plugin_names = controller.register_format(FORMAT_PLUGINS_CONFIG)
     assert controller.get_format_plugin_names(format_name) == plugin_names
+    assert controller.get_format_plugin_names("invalid") == []
 
-# TODO: Do this test.
 def test_set_settings_profile_attribute() -> None:
-    pass
+    """
+    Tests:
+        1. Change the attribute of a valid profile and check if it is changed
+        for all assciated sources.
+        2. Change attribute for an invalid profile.
+        3. Change an invalid attribute.
+    """
+    controller = GailBotController(WS_DIR_PATH)
+    controller.add_source("audio",MP3_FILE_PATH,RESULT_DIR_PATH)
+    controller.create_new_settings_profile(
+        "s1",obtain_settings_profile_data())
+    controller.apply_settings_profile_to_source("audio","s1")
+    assert controller.set_settings_profile_attribute(
+        "s1",GBSettingAttrs.analysis_plugins_to_apply,["test"])
+    assert controller.get_settings_profile_details("s1").\
+        values[GBSettingAttrs.analysis_plugins_to_apply.value] == ["test"]
+    assert controller.get_source_settings_profile_details("audio").\
+        values[GBSettingAttrs.analysis_plugins_to_apply.value] == ["test"]
+    assert not controller.set_settings_profile_attribute(
+        "invalid",GBSettingAttrs.analysis_plugins_to_apply,["test"])
+    assert not controller.set_settings_profile_attribute(
+        "s2","invalid",["test"])
 
-# TODO: Do this test.
 def test_set_source_settings_profile_attribute() -> None:
-    pass
-
-
-
+    """
+    Tests:
+        1. Set source settings profile attribute and check it is different from
+        the original settings profile attribute.
+        2. Set for a source that does not have a settings profile.
+    """
+    controller = GailBotController(WS_DIR_PATH)
+    controller.add_source("audio",MP3_FILE_PATH,RESULT_DIR_PATH)
+    controller.add_source("video",MOV_FILE_PATH,RESULT_DIR_PATH)
+    controller.create_new_settings_profile(
+        "s1",obtain_settings_profile_data())
+    controller.apply_settings_profile_to_source("audio","s1")
+    assert controller.set_source_settings_profile_attribute(
+        "audio",GBSettingAttrs.analysis_plugins_to_apply,["test"])
+    assert controller.get_settings_profile_details("s1").\
+        values[GBSettingAttrs.analysis_plugins_to_apply.value] != ["test"]
+    assert not controller.set_source_settings_profile_attribute(
+        "video",GBSettingAttrs.analysis_plugins_to_apply,["test"])
 
 

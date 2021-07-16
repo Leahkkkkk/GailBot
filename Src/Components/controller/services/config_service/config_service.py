@@ -5,11 +5,9 @@ from copy import deepcopy
 from ....io import IO
 from ....config import Config, SystemBB
 from ..fs_service import FileSystemService
-# Third party imports
 
 class ConfigService:
-    """
-    """
+
 
     def __init__(self, fs_service : FileSystemService) -> None:
         self.fs_service = fs_service
@@ -29,6 +27,7 @@ class ConfigService:
             return False
 
     ############################## GETTERS ####################################
+
     def is_configured(self) -> bool:
         for bb_type in self.config.get_blackboard_types():
             if not self.config.get_blackboard(bb_type)[0]:
@@ -65,5 +64,3 @@ class ConfigService:
                 return False
             self.blackboards[bb_type] = bb
         return True
-
-

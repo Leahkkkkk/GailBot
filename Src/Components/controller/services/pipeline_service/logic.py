@@ -1,62 +1,108 @@
 # Standard imports
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Callable
 # Local imports
+from .....utils.threads import ThreadPool
 from ....pipeline import Logic, Stream
-from .payload import PipelineServicePayload
-from .transcription_stage import TranscriptionStage
-from .analysis_stage import AnalysisStage
-from .format_stage import FormatStage
-
-# Third party imports
+from ..organizer_service import RequestType
+from .pipeline_payload import SourcePayload
+from .transcription_stage.transcription_stage import TranscriptionStage
+from .analysis_stage.analysis_stage import AnalysisStage
+from .format_stage.format_stage import FormatStage
+from .output_stage.output_stage import OutputStage
 
 class PipelineServiceLogic(Logic):
+
+    NUM_THREADS = 4
 
     def __init__(self) -> None:
         super().__init__()
         # Adding all components
         self._add_component_logic(
-            "transcription_stage", self._unwrap_stream,
-            self._transcription_stage_processor,self._wrap_as_stream)
+            "transcription_stage", self._get_base_sources,
+            self._transcription_stage_processor,self._wrap_sources_as_stream)
         self._add_component_logic(
-            "analysis_stage",self._unwrap_stream,
-            self._analyzer_stage_processor, self._wrap_as_stream)
+            "analysis_stage",self._get_base_sources,
+            self._analysis_stage_processor, self._wrap_sources_as_stream)
         self._add_component_logic(
-            "format_stage", self._unwrap_stream,
-            self._format_stage_processor,self._wrap_as_stream)
+            "format_stage", self._get_base_sources,
+            self._format_stage_processor, self._wrap_sources_as_stream)
+        self._add_component_logic(
+            "output_stage", self._get_base_sources,
+            self._output_stage_processor, self._wrap_sources_as_stream)
+        # Initializing the thread pools
+        self.thread_pool = ThreadPool(self.NUM_THREADS)
+        self.thread_pool.spawn_threads()
 
-    ## General
-
-    def _wrap_as_stream(self, payload : PipelineServicePayload) -> Stream:
-        return Stream(payload)
-
-    def _unwrap_stream(self, streams: Dict[str,Stream]) -> PipelineServicePayload:
+    def _get_base_sources(self, streams : Dict[str,Stream]) \
+            -> Dict[str,SourcePayload]:
         return streams["base"].get_stream_data()
+
+    def _wrap_sources_as_stream(self, payloads : Dict[str,SourcePayload]) \
+            -> Stream:
+        return Stream(payloads)
+
+    ## TranscriptionStage
 
     def _transcription_stage_processor(self,
             transcription_stage : TranscriptionStage,
-            payload : PipelineServicePayload) \
-            -> PipelineServicePayload:
-        output = transcription_stage.generate_utterances(
-            payload.get_conversations())
-        payload.set_transcription_stage_output(output)
-        return payload
+                payloads : Dict[str,SourcePayload]) -> Dict[str,SourcePayload]:
+        for payload_name, payload in payloads.items():
+            self.thread_pool.add_task(
+                self._transcription_stage_thread,
+                [transcription_stage,payload],{})
+        self.thread_pool.wait_completion()
+        return payloads
 
-    def _analyzer_stage_processor(self, analysis_stage : AnalysisStage,
-            payload : PipelineServicePayload) -> PipelineServicePayload:
-        output = analysis_stage.analyze(
-            payload.get_conversations(),
-            payload.get_transcription_stage_output())
-        payload.set_analysis_stage_output(output)
-        return payload
+    ## AnalysisStage
 
-    def _format_stage_processor(self, format_stage : FormatStage,
-            payload : PipelineServicePayload) -> PipelineServicePayload:
-        output = format_stage.format_conversations(
-            payload.get_format(), payload.get_conversations(),
-            payload.get_analysis_stage_output())
-        payload.set_format_stage_output(output)
-        return payload
+    def _analysis_stage_processor(self,
+            analysis_stage : AnalysisStage,
+                payloads : Dict[str,SourcePayload]) -> Dict[str,SourcePayload]:
+        for payload_name, payload in payloads.items():
+            self.thread_pool.add_task(
+                self._analysis_stage_thread,
+                [analysis_stage,payload],{})
+        self.thread_pool.wait_completion()
+        return payloads
 
+    def _output_stage_processor(self,
+            output_stage : OutputStage,
+                payloads : Dict[str,SourcePayload]) -> Dict[str,SourcePayload]:
+        for payload_name, payload in payloads.items():
+            self.thread_pool.add_task(
+                self._output_stage_thread,
+                [output_stage,payload],{})
+        self.thread_pool.wait_completion()
+        return payloads
 
+    ## FormatStage
 
+    def _format_stage_processor(self,
+            format_stage : FormatStage,
+                payloads : Dict[str,SourcePayload]) -> Dict[str,SourcePayload]:
+        for payload_name, payload in payloads.items():
+            self.thread_pool.add_task(
+                self._format_stage_thread,
+                [format_stage,payload],{})
+        self.thread_pool.wait_completion()
+        return payloads
 
+    def _transcription_stage_thread(self, stage : TranscriptionStage,
+            payload : SourcePayload) -> None:
+        payload.log(RequestType.FILE,"Starting transcription stage....")
+        stage.generate_utterances(payload)
+
+    def _analysis_stage_thread(self, stage : AnalysisStage,
+            payload : SourcePayload) -> None:
+        payload.log(RequestType.FILE,"Starting analysis stage....")
+        stage.analyze(payload)
+
+    def _format_stage_thread(self, stage : FormatStage,
+            payload : SourcePayload) -> None:
+        payload.log(RequestType.FILE,"Starting format stage....")
+        stage.apply_format(payload)
+
+    def _output_stage_thread(self, stage : OutputStage,
+            payload : SourcePayload) -> None:
+        payload.log(RequestType.FILE,"Starting output stage....")
+        stage.output(payload)

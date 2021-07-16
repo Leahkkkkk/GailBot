@@ -1,59 +1,64 @@
-# Standard library imports
-from typing import Any, List, Dict
+# Standard imports
+from typing import Dict, Any, List
 # Local imports
 from .....plugin_manager import PluginManager, PluginManagerSummary, ApplyConfig
-from .....organizer import Conversation
-from ......utils.threads import ThreadPool
-from ..transcription_stage import TranscriptionStageResult
-from .input import AnalysisPluginInput
-from .result import AnalysisStageResult
+from ...organizer_service import GailBotSettings, RequestType
+from ..pipeline_payload import SourcePayload
+from .analysis_plugin_input import AnalysisPluginInput
 
-# TODO: Methods to select / deselect plugins.
+import sys
+
 class AnalysisStage:
 
-    def __init__(self) -> None:
-        ## Objects
-        self.plugin_manager = PluginManager()
-        self.thread_pool = ThreadPool(4) # TODO: Remove hard-code.
-        self.thread_pool.spawn_threads()
 
-    ########################## MODIFIERS ######################################
+    def __init__(self) -> None:
+        self.plugin_manager = PluginManager()
+
+    ############################# MODIFIERS ##################################
 
     def register_plugin_from_data(self, data : Dict[str,Any]) -> bool:
         return self.plugin_manager.register_plugin_using_config_data(data)
 
-    def analyze(self, conversations : Dict[str,Conversation],
-            transcription_stage_output : TranscriptionStageResult) \
-                -> AnalysisStageResult:
-        ## Unpack the transcription stage output
-        # TODO: This might change.
-        conversations_audio_sources = \
-            transcription_stage_output.conversations_audio_sources
-        conversations_status_maps = \
-            transcription_stage_output.conversations_status_maps
-        # Analyze each conversation
-        summaries = dict()
-        plugin_names = self.plugin_manager.get_plugin_names()
-        for conversation_name, conversation in conversations.items():
-            apply_configs = dict()
-            for plugin_name in plugin_names:
-                # Generating the input to the analaysis plugin.
-                plugin_input = AnalysisPluginInput(
-                    conversation.get_utterances(),
-                    conversations_audio_sources[conversation_name],
-                    conversation.get_source_file_paths())
-                # Generating the apply_config for all plugins.
-                apply_configs[plugin_name] = ApplyConfig(
-                    plugin_name, [plugin_input],{})
-            # One thread per conversation.
-            self.thread_pool.add_task(
-                self._analyze_thread, [conversation_name, apply_configs,
-                    summaries],{})
-        self.thread_pool.wait_completion()
-        # Generating result.
-        return AnalysisStageResult(summaries)
+    def register_plugins_from_data(self, data_list : List[Dict[str,Any]]) \
+            -> List[str]:
+        current_plugins = self.get_plugin_names()
+        for data in data_list:
+            self.register_plugin_from_data(data)
+        return [plugin_name for plugin_name in self.get_plugin_names() \
+            if plugin_name not in current_plugins]
 
-    ########################## GETTERS #########################################
+    def analyze(self, payload : SourcePayload) -> bool:
+        # Verify is analysis possible.
+        if not self._can_analyze(payload):
+            msg = "[{}] [Analysis stage] Cannot analyze".format(
+                payload.get_source_name())
+            payload.log(RequestType.FILE, msg)
+            payload.set_analysis_status(False)
+            return
+        # Generate ApplyConfig for all plugins
+        settings : GailBotSettings = payload.get_conversation().get_settings()
+        apply_configs = dict()
+        for plugin_name in settings.get_analysis_plugins_to_apply():
+            plugin_input = AnalysisPluginInput(payload)
+            apply_configs[plugin_name] = ApplyConfig(
+                    plugin_name, [plugin_input],{})
+        # Apply all plugins.
+        manager_summary : PluginManagerSummary = \
+            self.plugin_manager.apply_plugins(apply_configs)
+        payload.set_analysis_plugin_summaries(
+            manager_summary.plugin_summaries)
+        # Determine if the plugins were successfully run.
+        if all([plugin_name in manager_summary.successful_plugins \
+                for plugin_name in apply_configs.keys()]):
+            payload.set_analysis_status(True)
+            msg = "[{}] [Analysis stage] successfully applied plugins: {}".format(
+                payload.get_source_name(),list(apply_configs.keys()))
+        else:
+            msg = "[{}] [Analysis stage] Analysis failed".format(
+                payload.get_source_name())
+        payload.log(RequestType.FILE,msg)
+
+    ########################## GETTERS #######################################
 
     def is_plugin(self, plugin_name : str) -> bool:
         return self.plugin_manager.is_plugin(plugin_name)
@@ -63,8 +68,10 @@ class AnalysisStage:
 
     ######################## PRIVATE METHODS ################################
 
-    def _analyze_thread(self, conversation_name,
-            apply_configs : Dict[str,ApplyConfig],
-            summaries : Dict[str,PluginManagerSummary]) -> None:
-        summaries[conversation_name] = \
-            self.plugin_manager.apply_plugins(apply_configs)
+    def _can_analyze(self, payload : SourcePayload) -> bool:
+        settings : GailBotSettings = payload.get_conversation().get_settings()
+        plugins_to_apply = settings.get_analysis_plugins_to_apply()
+        # All the plugins must be registered.
+        return all([self.is_plugin(plugin_name) \
+                for plugin_name in plugins_to_apply]) and \
+            payload.is_transcribed()

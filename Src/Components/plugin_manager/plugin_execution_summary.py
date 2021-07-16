@@ -4,6 +4,9 @@ from dataclasses import dataclass
 
 @dataclass
 class PluginExecutionSummary:
+    """
+    Summary for executing one individual plugin.
+    """
     plugin_name : str
     args : List[Any]
     kwargs : Dict[str,Any]
