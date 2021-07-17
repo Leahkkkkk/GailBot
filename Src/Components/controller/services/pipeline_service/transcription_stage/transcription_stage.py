@@ -12,6 +12,9 @@ from ...status import TranscriptionStatus
 from ..pipeline_payload import SourcePayload
 
 class TranscriptionStage:
+    """
+    Applies a STT service to a payload.
+    """
 
     SUPPORTED_ENGINES = ["watson","google"]
     NUM_THREADS = 4
@@ -27,6 +30,12 @@ class TranscriptionStage:
     ############################# MODIFIERS ##################################
 
     def generate_utterances(self, payload : SourcePayload) -> None:
+        """
+        Generate utterances using a STT service.
+
+        Args:
+            payload (SourcePayload)
+        """
         msg = "[{}] [Transcription stage] Extracting audio from sources".format(
             payload.get_source_name())
         payload.log(RequestType.FILE,msg)
@@ -40,11 +49,24 @@ class TranscriptionStage:
     ########################## GETTERS #######################################
 
     def get_supported_engines(self) -> List[str]:
+        """
+        Obtain a list of STT engines supported during this stage.
+        """
         return self.SUPPORTED_ENGINES
 
     ######################## PRIVATE METHODS ##################################
 
     def _extract_source_audios(self, payload : SourcePayload) -> Dict[str,str]:
+        """
+        Obtain a mapping from every source file in the payload to its
+        correspoding audio file path. This is used mainly for video files.
+
+        Args:
+            payload (SourcePayload)
+
+        Returns:
+            (Dict[str,str]): Source file name to audio file path map.
+        """
         source_to_audio_map = dict()
         conversation = payload.get_conversation()
         source_paths_map = conversation.get_source_file_paths()
@@ -61,6 +83,19 @@ class TranscriptionStage:
 
     def _extract_audio_from_path(self, source_path : str, source_type : str,
             extract_dir_path : str) -> Tuple[bool,str]:
+        """
+        Extract audio from the file at the specified path.
+
+        Args:
+            source_path (str)
+            source_type (str)L One of 'audio' or 'video'
+            extract_dir_path (str): Directory in which the files it to be output.
+
+        Returns:
+            (Tuple[bool,str]):
+                True + path of output file if successful.
+                False + None otherwise.
+        """
         if source_type == "audio":
             return (True, source_path)
         elif source_type == "video":
@@ -78,9 +113,16 @@ class TranscriptionStage:
         else:
             return (False, None)
 
-
     def _transcribe(self, payload : SourcePayload) -> bool:
+        """
+        Transcribe all source files in a single payload.
 
+        Args:
+            payload (SourcePayload)
+
+        Returns:
+            (bool): True if successfully transcribed all files, False otherwise.
+        """
         # Verify if transcription possible
         if not self._can_transcribe_source(payload):
             payload.get_conversation().set_transcription_status(
@@ -115,6 +157,9 @@ class TranscriptionStage:
     def _transcribe_watson_thread(self, source_file_name : str,
             payload : SourcePayload, utterances_map : Dict[str,List[Utterance]],
             source_status_map : Dict[str,bool]) -> None:
+        """
+        Transcribe file using the Watson engine.
+        """
         engine : WatsonEngine = self.engines.engine("watson")
         source_path = payload.get_source_to_audio_map()[source_file_name]
         settings : GailBotSettings = payload.get_conversation().get_settings()
@@ -128,9 +173,21 @@ class TranscriptionStage:
             engine.was_transcription_successful()
 
     def _transcribe_google_thread(self) -> None:
+        """
+        Transcribe file using the google engine.
+        """
         raise Exception("Not implemented")
 
     def _can_transcribe_source(self, payload : SourcePayload) -> bool:
+        """
+        Determine if files in the payload can be transcribed.
+
+        Args:
+            payload (SourcePayload)
+
+        Returns:
+            (bool): True if can be transcribed, False otherwise.
+        """
         # Engine must be supported
         settings : GailBotSettings = payload.get_conversation().get_settings()
         if not settings.get_engine_type() in self.SUPPORTED_ENGINES:

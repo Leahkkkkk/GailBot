@@ -6,10 +6,7 @@ from ...organizer_service import GailBotSettings, RequestType
 from ..pipeline_payload import SourcePayload
 from .analysis_plugin_input import AnalysisPluginInput
 
-import sys
-
 class AnalysisStage:
-
 
     def __init__(self) -> None:
         self.plugin_manager = PluginManager()
@@ -17,10 +14,30 @@ class AnalysisStage:
     ############################# MODIFIERS ##################################
 
     def register_plugin_from_data(self, data : Dict[str,Any]) -> bool:
+        """
+        Register a single plugin from a data dictionary.
+
+        Args:
+            data (Dict[str,Any])
+
+        Returns:
+            (bool):
+                True if the plugin is successfully registered, False otherwise.
+        """
         return self.plugin_manager.register_plugin_using_config_data(data)
 
     def register_plugins_from_data(self, data_list : List[Dict[str,Any]]) \
             -> List[str]:
+        """
+        Register plugins using a list of configuration data dictionaries.
+
+        Args:
+            data_list (List[Dict[str,Any]]):
+                List of data dictionaries.
+
+        Returns:
+            (List[str]): Names of plugins that were registered from the list.
+        """
         current_plugins = self.get_plugin_names()
         for data in data_list:
             self.register_plugin_from_data(data)
@@ -28,6 +45,17 @@ class AnalysisStage:
             if plugin_name not in current_plugins]
 
     def analyze(self, payload : SourcePayload) -> bool:
+        """
+        Apply analysis plugins, as defined using the settings profile, to the
+        payload.
+
+        Args:
+            payload (SourcePayload)
+
+        Returns:
+            (bool): True if all selected plugins are successfully executed,
+                    False otherwise.
+        """
         # Verify is analysis possible.
         if not self._can_analyze(payload):
             msg = "[{}] [Analysis stage] Cannot analyze".format(
@@ -61,9 +89,24 @@ class AnalysisStage:
     ########################## GETTERS #######################################
 
     def is_plugin(self, plugin_name : str) -> bool:
+        """
+        Determine if the plugin exists.
+
+        Args:
+            plugin_name (str)
+
+        Returns:
+            (bool): True if the plugins are applied successfully, False otherwise.
+        """
         return self.plugin_manager.is_plugin(plugin_name)
 
     def get_plugin_names(self) -> List[str]:
+        """
+        Obtain the names of the plugins.
+
+        Returns:
+            (List[str]): Names of plugins.
+        """
         return self.plugin_manager.get_plugin_names()
 
     ######################## PRIVATE METHODS ################################

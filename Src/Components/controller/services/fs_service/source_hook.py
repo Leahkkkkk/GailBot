@@ -90,6 +90,20 @@ class SourceHook:
 
     def write_to_file(self, identifier : str, item_type : str, file_name : str,
             extension : str, data : Any, overwrite : bool = False) -> bool:
+        """
+        Write a file with the specified identifier, file_name, extension,
+        and data to the results for this specific source.
+
+        Args:
+            identifier (str): Unique identifier for the file or directory.
+            file_name (str): Name of the file.
+            extension (str): Extension of the file.
+            overwrite (bool): If True, any existing file with the same name
+                            or extension is overwritten.
+
+        Returns:
+            (bool): True if successfully written, False otherwise.
+        """
         # Generate the save path.
         save_path = "{}/{}.{}".format(
             self._generate_move_dir_path(item_type),file_name,extension)
@@ -107,6 +121,14 @@ class SourceHook:
             return False
 
     def change_item_type(self, identifier : str, new_item_type : str) -> bool:
+        """
+        Change the type of the specified identifier.
+        The identifier and the type must exist.
+
+        Args:
+            identifier (str)
+            new_item_type (str): One of 'permanent', 'temporary', or 'workspace'
+        """
         if not self.is_contained(identifier) or \
                 not new_item_type in self.ITEM_TYPES:
             return False
@@ -191,6 +213,15 @@ class SourceHook:
     ################################## GETTERS ###############################
 
     def is_contained(self, identifier : str) -> bool:
+        """
+        Determine if the specified identifier exists.
+
+        Args:
+            identifier (str)
+
+        Returns:
+            (bool): True if the identifier exists, False otherwise.
+        """
         if self.hooked_items.is_object(identifier):
             hooked_item : HookedItem = self.hooked_items.get_object(identifier)
             path = hooked_item.path
@@ -198,13 +229,30 @@ class SourceHook:
                 self.io.is_file(path)
         return False
 
-
     def get_item_type(self, identifier : str) -> str:
+        """
+        Obtain the type of this item.
+
+        Args:
+            identifier (str)
+
+        Returns:
+            (str): Type
+        """
         if self.hooked_items.is_object(identifier):
             hooked_item : HookedItem = self.hooked_items.get_object(identifier)
             return hooked_item.item_type
 
     def get_hooked_paths(self, item_type : str) -> Dict[str,str]:
+        """
+        Obtain a mapping from identifier to path for items of the specified type
+
+        Args:
+            item_type (str)
+
+        Returns:
+            (Dict[str,str]): Identifier to its path mapping.
+        """
         paths = dict()
         if item_type in self.ITEM_TYPES:
             items = self.hooked_items.get_filtered_objects(
@@ -215,9 +263,15 @@ class SourceHook:
         return paths
 
     def get_workspace_path(self) -> str:
+        """
+        Obtain a path to the workspace.
+        """
         return self.ws_dir_path
 
     def get_result_directory_path(self) -> str:
+        """
+        Obtain the result directory path.
+        """
         return self.result_dir_path
 
     ############################### PRIVATE METHODS ##########################

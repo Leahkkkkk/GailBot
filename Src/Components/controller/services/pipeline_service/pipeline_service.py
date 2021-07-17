@@ -15,8 +15,16 @@ from .logic import PipelineServiceLogic
 from .pipeline_payload import SourcePayload
 
 class PipelineService:
+    """
+    Facade class that is the main API for the transcription pipeline.
+    """
 
     def __init__(self, num_threads : int) -> None:
+        """
+        Args:
+            num_threads (int):
+                Number of threads to be used. Must be greater than 0.
+        """
         ## Vars.
         self.pipeline_name = "transcription_pipeline_service"
         self.max_threads = 4
@@ -47,6 +55,16 @@ class PipelineService:
     ################################# MODIFIERS #############################
 
     def add_source(self, source_name : str, source : Source) -> bool:
+        """
+        Add a source to the pipeline.
+
+        Args:
+            source_name (str): Unique source name.
+            source (Source)
+
+        Returns:
+            (bool): True if added successfully, False otherwise.
+        """
         payload = SourcePayload(source)
         if self.payloads.add_object(source_name, payload):
             msg = "[{}]  Added to pipeline service".format(source_name)
@@ -55,10 +73,29 @@ class PipelineService:
         return False
 
     def add_sources(self, sources : Dict[str,Source]) -> bool:
+        """
+        Add multiple sources.
+
+        Args:
+            sources (Dict[str,Source]):
+                Map from source name to Source
+
+        Returns:
+            (bool): True if all sources are added, False otherwise.
+        """
         return all([self.add_source(name, source) \
             for name, source in sources.items()])
 
     def remove_source(self, source_name : str) -> bool:
+        """
+        Remove the specified source. Note that the source must exist.
+
+        Args:
+            source_name (str)
+
+        Returns:
+            (bool): True if successfully removed, False otherwise.
+        """
         if self.payloads.is_object(source_name):
             payload : SourcePayload = self.payloads.get_object(source_name)
             msg = "[{}] Removed from pipeline service".format(source_name)
@@ -67,10 +104,22 @@ class PipelineService:
         return False
 
     def clear_sources(self) -> None:
+        """
+        Remove all sources.
+        """
         for name, payload in self.payloads.get_all_objects().items():
             self.remove_source(name)
 
     def register_analysis_plugins(self, config_path : str) -> List[str]:
+        """
+        Register analysis plugins from the configuration path.
+
+        Args:
+            config_path (str)
+
+        Returns:
+            (List[str]): List of plugins loaded using the configuration file.
+        """
         success, data_list = \
             self.loader.parse_analysis_plugin_configuration_file(config_path)
         if not success:
@@ -78,12 +127,28 @@ class PipelineService:
         return self.analysis_stage.register_plugins_from_data(data_list)
 
     def register_format(self, config_path : str) -> Tuple[str,List[str]]:
+        """
+        Register a format from the specified configuration file.
+
+        Args:
+            config_path (str): Path to the configuration file.
+
+        Returns:
+            (Tuple[str,List[str]]):
+                Name of the format + plugins loaded.
+        """
         success, data = self.loader.parse_format_configuration_file(config_path)
         if not success:
             return (None,[])
         return (data[0],self.format_stage.register_format(*data))
 
     def start(self) -> PipelineServiceSummary:
+        """
+        Start the pipeline for the added sources.
+
+        Returns:
+            (PipelineServiceSummary)
+        """
         self.pipeline.set_base_input(self.payloads.get_all_objects())
         self.pipeline.execute()
         return self._generate_service_summary()
@@ -91,23 +156,68 @@ class PipelineService:
     ################################# GETTERS ###############################
 
     def get_analysis_plugin_names(self) -> List[str]:
+        """
+        Obtain the names of all registered analysis plugins.
+
+        Returns:
+            (List[str])
+        """
         return self.analysis_stage.get_plugin_names()
 
     def get_format_names(self) -> List[str]:
+        """
+        Obtain the name of all registered formats.
+
+        Returns:
+            (List[str])
+        """
         return self.format_stage.get_formats()
 
     def get_format_plugin_names(self, format_name  : str) -> List[str]:
+        """
+        Obtain the plugins associated with the specified format
+
+        Args:
+            format_name (str)
+
+        Returns:
+            (List[str]): Plugins associated with this format.
+        """
         return self.format_stage.get_format_plugins(format_name)
 
     def is_source(self, source_name : str) -> bool:
+        """
+        Determine if a source with the specified source name exists.
+
+        Args:
+            source_name (str)
+
+        Returns:
+            (bool: True if the source exists, False otherwise.
+        """
         return self.payloads.is_object(source_name)
 
     def get_source(self, source_name : str) -> Source:
-       if self.is_source(source_name):
+        """
+        Obtain the specified source if it exists.
+
+        Args:
+            source_name (str)
+
+        Returns:
+            (Source)
+        """
+        if self.is_source(source_name):
            payload : SourcePayload = self.payloads.get_object(source_name)
            return payload.get_source()
 
     def get_sources(self) -> Dict[str,Source]:
+        """
+        Obtain a mapping from source names to Source.
+
+        Returns:
+            (Dict[str,Source])
+        """
         sources = dict()
         for source_name in self.payloads.get_object_names():
             sources[source_name] = self.get_source(source_name)
@@ -116,6 +226,9 @@ class PipelineService:
     ########################## PRIVATE METHODS ###############################
 
     def _generate_service_summary(self) -> PipelineServiceSummary:
+        """
+        Generate the service summary.
+        """
         payload_summaries = dict()
         for name , payload in self.payloads.get_all_objects().items():
             payload : SourcePayload

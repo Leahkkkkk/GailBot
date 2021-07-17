@@ -21,7 +21,7 @@ class OrganizerService:
     def __init__(self, fs_service : FileSystemService) -> None:
         """
         Args:
-            fs_service (FileSystemService)
+            fs_service (FileSystemService): Must be configured.s
         """
         ## Variables
         self.default_num_speakers = 1
@@ -360,8 +360,6 @@ class OrganizerService:
         return all([self.apply_settings_profile_to_source(
             source_name, settings_profile_name) \
                 for source_name in source_names])
-
-
 
     ### Sources and settings profiles.
 

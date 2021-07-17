@@ -4,7 +4,6 @@ Contains tests for only the actual transcription process.
 # Standard library imports
 import pytest
 from typing import Dict
-from Src.Components import controller
 # Local imports
 from Src.Components.io import IO
 from Src.Components.controller import GailBotController, SettingsDetails,\

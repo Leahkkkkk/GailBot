@@ -5,11 +5,20 @@ from ...organizer_service import GailBotSettings, RequestType
 from ..pipeline_payload import SourcePayload
 
 class OutputStage:
+    """
+    Generate output files for all payloads.
+    """
 
     def __init__(self) -> None:
         pass
 
     def output(self, payload : SourcePayload) -> None:
+        """
+        Geerate the outputs for the specified payload.
+
+        Args:
+            payload (SourcePayload)
+        """
         # Write all files.
         self._write_utterances(payload)
         # Generate metadata at the end.
@@ -19,6 +28,12 @@ class OutputStage:
     ########################## PRIVATE METHODS ###############################
 
     def _write_metadata(self, payload : SourcePayload) -> None:
+        """
+        Write a metadata file for this specific payload.
+
+        Args:
+            payload (SourcePayload)
+        """
         conversation = payload.get_conversation()
         # Generate metadata.
         metadata = {
@@ -58,6 +73,12 @@ class OutputStage:
         payload.log(RequestType.FILE,msg)
 
     def _write_utterances(self, payload : SourcePayload) -> None:
+        """
+        Write utterances for all the source files in this payload.
+
+        Args:
+            payload (SourcePayload)
+        """
         # Utterances are only written if the transcription was successful
         if not payload.is_transcribed():
             return

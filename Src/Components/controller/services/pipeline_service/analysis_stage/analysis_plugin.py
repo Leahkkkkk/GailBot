@@ -14,17 +14,16 @@ class AnalysisPlugin(Plugin):
     def apply_plugin(self, dependency_outputs : Dict[str,Any],
             plugin_input : AnalysisPluginInput) -> Any:
         """
-        Apply this plugin using the given Applyconfig and return the execution
-        summary.
+        This method is called to apply the plugin on a single source.
 
         Args:
             dependency_outputs (Dict[str,Any]):
-                Mapping from all plugins this plugin is dependant on and their
-                outputs.
-            apply_config (ApplyConfig)
+                Map from any plugins this one is dependant on to their outputs.
+            plugin_input (AnalysisPluginInput):
+                Object that provides utility methods for this source.
 
         Returns:
-            (Any)
+            (Any): This is stored as the output for this plugin.
         """
         pass
 

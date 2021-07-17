@@ -14,7 +14,7 @@ class ConfigService:
         self.io = IO()
         self.config = Config()
         self.blackboards = {
-            "system_blackboard" : None
+            "system_blackboard" : None,
         }
 
     ################################ MODIFIERS ################################

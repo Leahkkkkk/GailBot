@@ -16,6 +16,13 @@ class FormatPluginInput(PipelinePluginInput):
     ################################# GETTERS ###############################
 
     def get_analysis_plugin_outputs(self) -> Dict[str,Any]:
+        """
+        Obtain the output of any analysis plugins that were executed.
+
+        Returns:
+            (Dict[str,Any]):
+                Mapping from name of plugin to its output.
+        """
         if not self.payload.is_analyzed():
             return {}
         # Generate the output from the plugin summary

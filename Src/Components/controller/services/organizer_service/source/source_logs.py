@@ -1,11 +1,16 @@
+'''
+Definitions for different loggers for a Source object.
+'''
 # Standard imports
-from enum import Enum
 from datetime import datetime
 # Local imports
 from ......utils.logger import BaseLogHandler,LogRequestType
 from .....io import IO
 
 class RequestType(LogRequestType):
+    """
+    Type of loggers that are supported.
+    """
     ERROR = "ERROR"
     FILE = "FILE"
     CONSOLE = "CONSOLE"
@@ -13,6 +18,11 @@ class RequestType(LogRequestType):
 class ErrorLogHandler(BaseLogHandler):
 
     def __init__(self,  result_dir_path : str) -> None:
+        """
+        Args:
+            result_dir_path (str):
+                Path to the directory where the log should be written.
+        """
         super().__init__()
         ## Vars.
         self.handle_type = RequestType.ERROR
@@ -28,9 +38,21 @@ class ErrorLogHandler(BaseLogHandler):
             raise Exception("Cannot initialize ErrorLogHandler")
 
     def get_log_path(self) -> str:
+        """
+        Obtain the path to the log file.
+        """
         return self.log_path
 
     def handle(self, request_type : RequestType, request : str) -> None:
+        """
+        Handle a request of the specified request type.
+        The request is delegated to self.next if it cannot be handled.
+        Writes the request to an error file.
+
+        Args:
+            request_type (RequestType)
+            request (str)
+        """
         if self.can_handle(request_type):
             # Create the message.
             now = datetime.now()
@@ -50,6 +72,15 @@ class ConsoleLogHandler(BaseLogHandler):
         self.handle_type = RequestType.CONSOLE
 
     def handle(self, request_type : RequestType, request : str) -> None:
+        """
+        Handle a request of the specified request type.
+        The request is delegated to self.next if it cannot be handled.
+        Prints the request to the console.
+
+        Args:
+            request_type (RequestType)
+            request (str)
+        """
         if self.can_handle(request_type):
             # This log simply writes to the console.
             now = datetime.now()
@@ -78,9 +109,21 @@ class FileLogHandler(BaseLogHandler):
             raise Exception("Cannot initialize FileLogHandler")
 
     def get_log_path(self) -> str:
+        """
+        Obtain the path to the log file.
+        """
         return self.log_path
 
     def handle(self, request_type : RequestType, request : str) -> None:
+        """
+        Handle a request of the specified request type.
+        The request is delegated to self.next if it cannot be handled.
+        Writes the request to an error file.
+
+        Args:
+            request_type (RequestType)
+            request (str)
+        """
         if self.can_handle(request_type):
             # Create the message.
             now = datetime.now()
