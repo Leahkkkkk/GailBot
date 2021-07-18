@@ -65,12 +65,11 @@ class OutputStage:
         file_name = "{}.{}".format(identifier,extension)
         if payload.write_to_file(
                 identifier,"permanent",identifier,extension,metadata):
-            msg = "[{}] [Output stage] Metadata created as: {}".format(
-                payload.get_source_name(),file_name)
+            msg = "Metadata created as: {}".format(file_name)
         else:
-            msg = "[{}] [Output stage] Unable to generate metadata".format(
-                payload.get_source_name())
-        payload.log(RequestType.FILE,msg)
+            msg = "Unable to generate metadata"
+            self._log_error_to_payload(payload,msg)
+        self._log_to_payload(payload, msg)
 
     def _write_utterances(self, payload : SourcePayload) -> None:
         """
@@ -99,10 +98,19 @@ class OutputStage:
             file_name = "{}.{}".format(identifier,extension)
             if  payload.write_to_file(
                     identifier, "permanent",identifier,extension,data):
-                msg = "[{}] [Output stage] Source: {} --> output: {}".format(
-                    payload.get_source_name(),source_name, file_name)
+                msg = "Source: {} --> output: {}".format(source_name, file_name)
             else:
-                msg = "[{}] [Output stage] Source: {} --> output failed".format(
-                    payload.get_source_name(),source_name)
-            payload.log(RequestType.FILE,msg)
+                msg = "Source: {} --> output failed".format(source_name)
+                self._log_error_to_payload(payload,msg)
+            self._log_to_payload(payload,msg)
+
+    def _log_to_payload(self, payload : SourcePayload, msg : str) -> None:
+        msg = "[Output Stage] [{}] {}".format(
+            payload.get_source_name(),msg)
+        payload.log(msg)
+
+    def _log_error_to_payload(self, payload : SourcePayload, msg : str) -> None:
+        msg = "[Output Stage] [{}] {}".format(
+            payload.get_source_name(),msg)
+        payload.log_error(msg)
 

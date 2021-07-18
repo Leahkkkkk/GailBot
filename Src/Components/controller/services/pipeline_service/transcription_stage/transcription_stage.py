@@ -36,15 +36,17 @@ class TranscriptionStage:
         Args:
             payload (SourcePayload)
         """
-        msg = "[{}] [Transcription stage] Extracting audio from sources".format(
-            payload.get_source_name())
-        payload.log(RequestType.FILE,msg)
+        msg = "Extracting audio from sources"
+        self._log_to_payload(payload,msg)
         payload.set_source_to_audio_map(self._extract_source_audios(payload))
-        status = self._transcribe(payload)
-        msg = "[{}] [Transcription stage] Was transcription successful: {}".format(
-            payload.get_source_name(),status)
-        payload.log(RequestType.FILE,msg)
-        payload.set_transcription_status(status)
+        is_successful = self._transcribe(payload)
+        msg = "Was transcription successful: {}".format(is_successful)
+        if not is_successful:
+            # Log separately to error log
+            self._log_error_to_payload(payload,msg)
+        self._log_to_payload(payload,msg)
+        payload.set_transcription_status(is_successful)
+
 
     ########################## GETTERS #######################################
 
@@ -76,6 +78,9 @@ class TranscriptionStage:
                 source_path, source_types_map[source_file_name],
                 conversation.get_temp_directory_path())
             if not success:
+                # Write individual file failures to the error log.
+                msg = "[{}] Failed to extract audio".format(source_file_name)
+                self._log_error_to_payload(payload,msg)
                 source_to_audio_map[source_file_name] = None
             else:
                 source_to_audio_map[source_file_name] = path
@@ -150,6 +155,12 @@ class TranscriptionStage:
             payload.get_conversation().set_utterances(utterances_map)
             return True
         else:
+            # Log unsuccessful transcriptions to error log.
+            unsuccessful = [k for k,v in source_status_map.items() if not v]
+            for source_file_name in unsuccessful:
+                if not source_status_map[source_file_name]:
+                    msg = "[{}] Transcription failed".format(source_file_name)
+                    self._log_error_to_payload(payload,msg)
             payload.get_conversation().set_transcription_status(
                 TranscriptionStatus.unsuccessful)
             return False
@@ -197,3 +208,13 @@ class TranscriptionStage:
             if audio_path == None:
                 return False
         return True
+
+    def _log_to_payload(self, payload : SourcePayload, msg : str) -> None:
+        msg = "[Transcription Stage] [{}] {}".format(
+            payload.get_source_name(),msg)
+        payload.log(msg)
+
+    def _log_error_to_payload(self, payload : SourcePayload, msg : str) -> None:
+        msg = "[Transcription Stage] [{}] {}".format(
+            payload.get_source_name(),msg)
+        payload.log_error(msg)

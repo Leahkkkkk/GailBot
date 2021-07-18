@@ -37,7 +37,7 @@ class Source:
 
     ################################## MODIFIERS ############################
 
-    def log(self, event_type : RequestType, request : str) -> None:
+    def log(self, request : str) -> None:
         """
         Add a log to this specific source of the specified event type and request.
 
@@ -45,7 +45,13 @@ class Source:
             event_type (RequestType)
             request (str)
         """
-        self.logger.handle(event_type,request)
+        self.logger.handle(RequestType.FILE,request)
+
+    def log_error(self, request : str) -> None:
+        self.logger.handle(RequestType.ERROR,request)
+
+    def log_to_console(self, request : str) -> None:
+        self.logger.handle(RequestType.CONSOLE,request)
 
     ################################## GETTERS ##############################
 

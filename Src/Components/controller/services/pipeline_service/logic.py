@@ -113,20 +113,20 @@ class PipelineServiceLogic(Logic):
 
     def _transcription_stage_thread(self, stage : TranscriptionStage,
             payload : SourcePayload) -> None:
-        payload.log(RequestType.FILE,"Starting transcription stage....")
+        payload.log("Starting transcription stage....")
         stage.generate_utterances(payload)
 
     def _analysis_stage_thread(self, stage : AnalysisStage,
             payload : SourcePayload) -> None:
-        payload.log(RequestType.FILE,"Starting analysis stage....")
+        payload.log("Starting analysis stage....")
         stage.analyze(payload)
 
     def _format_stage_thread(self, stage : FormatStage,
             payload : SourcePayload) -> None:
-        payload.log(RequestType.FILE,"Starting format stage....")
+        payload.log("Starting format stage....")
         stage.apply_format(payload)
 
     def _output_stage_thread(self, stage : OutputStage,
             payload : SourcePayload) -> None:
-        payload.log(RequestType.FILE,"Starting output stage....")
+        payload.log("Starting output stage....")
         stage.output(payload)

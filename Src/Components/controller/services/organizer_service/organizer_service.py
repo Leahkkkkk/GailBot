@@ -94,7 +94,7 @@ class OrganizerService:
         if self.sources.add_object(source_name,source):
             # Log that the source is created
             msg = "[{}] Source created".format(source_name)
-            source.log(RequestType.FILE,msg)
+            source.log(msg)
             return True
         return False
 
@@ -113,7 +113,7 @@ class OrganizerService:
         source : Source = self.sources.get_object(source_name)
         source.get_hook().cleanup()
         msg = "[{}] Source removed".format(source_name)
-        source.log(RequestType.FILE,msg)
+        source.log(msg)
         return self.sources.remove_object(source_name) and \
             self.fs_service.remove_source_hook(source_name)
 
@@ -341,7 +341,7 @@ class OrganizerService:
         # Logging
         msg = "[{}] Settings profile applied: {}".format(
             settings_profile_name,source_name)
-        source.log(RequestType.FILE,msg)
+        source.log(msg)
         return True
 
     def apply_settings_profile_to_sources(self, source_names : List[str],

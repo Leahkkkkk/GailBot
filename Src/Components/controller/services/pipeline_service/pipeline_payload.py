@@ -87,7 +87,7 @@ class SourcePayload:
         """
         return self.source.get_hook().save_to_directory()
 
-    def log(self, request_type : RequestType, request : str) -> None:
+    def log(self, request : str) -> None:
         """
         Log a request with the request_type to this payload.
 
@@ -95,7 +95,13 @@ class SourcePayload:
             request_type (RequestType)
             request (str)
         """
-        self.source.log(request_type, request)
+        self.source.log(request)
+
+    def log_error(self, request : str) -> None:
+        self.source.log_error(request)
+
+    def log_to_console(self, request : str) -> None:
+        self.source.log_to_console(request)
 
     def generate_summary(self) -> PayloadSummary:
         """

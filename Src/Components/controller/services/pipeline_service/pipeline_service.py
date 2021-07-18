@@ -68,7 +68,7 @@ class PipelineService:
         payload = SourcePayload(source)
         if self.payloads.add_object(source_name, payload):
             msg = "[{}]  Added to pipeline service".format(source_name)
-            payload.log(RequestType.FILE, msg)
+            payload.log(msg)
             return True
         return False
 
@@ -99,7 +99,7 @@ class PipelineService:
         if self.payloads.is_object(source_name):
             payload : SourcePayload = self.payloads.get_object(source_name)
             msg = "[{}] Removed from pipeline service".format(source_name)
-            payload.log(RequestType.FILE,msg)
+            payload.log(msg)
             return self.payloads.remove_object(source_name)
         return False
 
@@ -243,4 +243,5 @@ class PipelineService:
             list(self.payloads.get_filtered_objects(
                 lambda name , payload : payload.is_formatted()).keys()),
             payload_summaries)
+
 

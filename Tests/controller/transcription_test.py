@@ -27,15 +27,6 @@ NUM_THREADS = 4
 
 
 ############################### SETUP #####################################
-def obtain_settings_profile_data() -> Dict:
-    return {
-        GBSettingAttrs.engine_type : "watson",
-        GBSettingAttrs.watson_api_key : "MSgOPTS9CvbADe49nEg4wm8_gxeRuf4FGUmlHS9QqAw3",
-        GBSettingAttrs.watson_language_customization_id : "41e54a38-2175-45f4-ac6a-1c11e42a2d54",
-        GBSettingAttrs.watson_base_language_model : "en-US_BroadbandModel",
-        GBSettingAttrs.watson_region : "dallas",
-        GBSettingAttrs.analysis_plugins_to_apply : ['tcu_analysis', 'second_analysis'],
-        GBSettingAttrs.output_format : "normal"}
 
 
 @pytest.fixture(scope='session', autouse=True)
@@ -45,7 +36,6 @@ def reset_workspace() -> None:
     io.create_directory(RESULT_DIR_PATH)
 
 ########################## TEST DEFINITIONS ##################################
-
 
 def test_transcribe() -> None:
     """
@@ -60,10 +50,8 @@ def test_transcribe() -> None:
     summary = controller.transcribe()
     print(summary)
     # Add settings profile to sources and then re-try.
-    controller.create_new_settings_profile(
-        "s1",obtain_settings_profile_data())
     assert controller.apply_settings_profile_to_sources(
-        ["audio_transcribing","video_transcribing","mixed_transcribing"],"s1")
+        ["audio_transcribing","video_transcribing","mixed_transcribing"],"default")
     print(controller.is_source_ready_to_transcribe("audio"))
     summary = controller.transcribe()
     print(summary)

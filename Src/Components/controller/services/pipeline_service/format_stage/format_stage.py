@@ -49,9 +49,9 @@ class FormatStage:
             payload (SourcePayload)
         """
         if not self._can_format(payload):
-            msg = "[{}] [Format stage] Unable to format".format(
-                payload.get_source_name())
-            payload.log(RequestType.FILE,msg)
+            msg = "Unable to format"
+            self._log_to_payload(payload, msg)
+            self._log_error_to_payload(payload, msg)
             payload.set_format_status(False)
         # Apply the appropriate format
         settings : GailBotSettings = payload.get_conversation().get_settings()
@@ -70,13 +70,16 @@ class FormatStage:
         payload.set_format_plugin_summaries(manager_summary.plugin_summaries)
         if all([plugin_name in manager_summary.successful_plugins \
                 for plugin_name in apply_configs.keys()]):
-            msg = "[{}] [Format stage] Successful with plugins: {}".format(
-                payload.get_source_name(),list(apply_configs.keys()))
+            msg = "Successful with plugins: {}".format(
+               list(apply_configs.keys()))
             payload.set_format_status(True)
         else:
-            msg = "[{}] [Format stage] Unsuccessful".format(
-                payload.get_source_name())
-        payload.log(RequestType.FILE,msg)
+            # Log the unsuccessful plugins
+            for plugin_name in manager_summary.failed_plugins:
+                msg = "Format plugin failed: {}".format(plugin_name)
+                self._log_error_to_payload(payload,msg)
+            msg = "Unsuccessful"
+        self._log_to_payload(payload, msg)
 
     ########################## GETTERS #########################################
 
@@ -140,6 +143,16 @@ class FormatStage:
         settings : GailBotSettings = payload.get_conversation().get_settings()
         output_format = settings.get_output_format()
         return self.is_format(output_format)
+
+    def _log_to_payload(self, payload : SourcePayload, msg : str) -> None:
+        msg = "[Format Stage] [{}] {}".format(
+            payload.get_source_name(),msg)
+        payload.log(msg)
+
+    def _log_error_to_payload(self, payload : SourcePayload, msg : str) -> None:
+        msg = "[Format Stage] [{}] {}".format(
+            payload.get_source_name(),msg)
+        payload.log_error(msg)
 
 
 

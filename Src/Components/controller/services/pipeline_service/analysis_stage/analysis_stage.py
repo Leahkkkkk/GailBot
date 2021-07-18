@@ -58,9 +58,9 @@ class AnalysisStage:
         """
         # Verify is analysis possible.
         if not self._can_analyze(payload):
-            msg = "[{}] [Analysis stage] Cannot analyze".format(
-                payload.get_source_name())
-            payload.log(RequestType.FILE, msg)
+            msg = "Cannot analyze"
+            self._log_to_payload(payload,msg)
+            self._log_error_to_payload(payload,msg)
             payload.set_analysis_status(False)
             return
         # Generate ApplyConfig for all plugins
@@ -79,12 +79,14 @@ class AnalysisStage:
         if all([plugin_name in manager_summary.successful_plugins \
                 for plugin_name in apply_configs.keys()]):
             payload.set_analysis_status(True)
-            msg = "[{}] [Analysis stage] successfully applied plugins: {}".format(
-                payload.get_source_name(),list(apply_configs.keys()))
+            msg = "[successfully applied plugins: {}".format(
+                list(apply_configs.keys()))
         else:
-            msg = "[{}] [Analysis stage] Analysis failed".format(
-                payload.get_source_name())
-        payload.log(RequestType.FILE,msg)
+            for plugin_name in manager_summary.failed_plugins:
+                msg = "Analysis plugin failed: {}".format(plugin_name)
+                self._log_error_to_payload(payload, msg)
+            msg = "Analysis failed".format(payload.get_source_name())
+        self._log_to_payload(payload, msg)
 
     ########################## GETTERS #######################################
 
@@ -118,3 +120,13 @@ class AnalysisStage:
         return all([self.is_plugin(plugin_name) \
                 for plugin_name in plugins_to_apply]) and \
             payload.is_transcribed()
+
+    def _log_to_payload(self, payload : SourcePayload, msg : str) -> None:
+        msg = "[Analysis Stage] [{}] {}".format(
+            payload.get_source_name(),msg)
+        payload.log(msg)
+
+    def _log_error_to_payload(self, payload : SourcePayload, msg : str) -> None:
+        msg = "[Analysis Stage] [{}] {}".format(
+            payload.get_source_name(),msg)
+        payload.log_error(msg)
