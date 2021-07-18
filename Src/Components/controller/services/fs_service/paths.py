@@ -1,4 +1,6 @@
 # Standard imports
+# Local imports
+from ....io import IO
 
 class Paths:
     """
@@ -6,12 +8,15 @@ class Paths:
     """
 
     def __init__(self, workspace_dir_path : str) -> None:
+        ## Vars.
         self.workspace_dir_path = workspace_dir_path
         self.source_ws_name = "sources"
         self.settings_ws_name = "settings_profiles"
         self.settings_profile_extension = "json"
         self.config_service_file_name = "config"
         self.config_service_file_extension = "json"
+        ## Objects
+        self.io = IO()
 
     ################################## GETTERS ###############################
 
@@ -59,17 +64,19 @@ class Paths:
 
     ## Config service.
 
-    def get_config_service_config_file_path(self) -> str:
+    def get_system_blackboard_configuration_path(self) -> str:
         """
-        Obtain the expected path for the config service configuration file.
-
-        Returns:
-            (str): config service configuration file path.
+        Path to the system blackboard configuration file, which must
+        be named 'system_blackboard.json'
         """
-        return "{}/{}.{}".format(
-            self.workspace_dir_path,self.config_service_file_name,
-            self.config_service_file_extension)
-
+        success, file_paths = self.io.path_of_files_in_directory(
+            self.workspace_dir_path,['json'],True)
+        if not success:
+            return
+        for path in file_paths:
+            if self.io.get_name(path) == "system_blackboard" and \
+                    self.io.get_file_extension(path)[1] == 'json':
+                return path
 
 
 

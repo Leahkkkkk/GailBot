@@ -3,7 +3,7 @@ from typing import List, Dict, Any, Tuple
 # Local imports
 from .services import FileSystemService, ConfigService,OrganizerService, \
     SettingsDetails,SourceDetails,PipelineServiceSummary,PipelineService, \
-    GBSettingAttrs
+    GBSettingAttrs, SystemBlackBoard
 
 class GailBotController:
     """
@@ -19,9 +19,13 @@ class GailBotController:
         if not self.fs_service.is_workspace_configured():
             raise Exception("Unable to configure workspace")
         self.config_service = ConfigService(self.fs_service)
+        if not self.config_service.is_configured():
+            raise Exception("unable to configure ConfigService")
         self.organizer_service = OrganizerService(self.fs_service)
         self.pipeline_service = PipelineService(
             self.pipeline_service_num_threads)
+        # Initializing
+        self._add_default_settings()
 
     ############################### MODIFIERS ###############################
 
@@ -603,3 +607,28 @@ class GailBotController:
         """
         return self.organizer_service.set_source_settings_profile_attribute(
             source_name, attr, value)
+
+    ############################### PRIVATE METHODS ##########################
+
+    def _add_default_settings(self) -> None:
+        """
+        Add a default settings profile using the system blackboard.
+        """
+        system_bb = self.config_service.get_system_blackboard()
+        # Add a default settings profile.
+        try:
+            data = {
+                GBSettingAttrs.engine_type : system_bb.engine_type,
+                GBSettingAttrs.watson_api_key : system_bb.watson_api_key,
+                GBSettingAttrs.watson_language_customization_id : \
+                    system_bb.watson_language_customization_id,
+                GBSettingAttrs.watson_base_language_model : \
+                    system_bb.watson_base_language_model,
+                GBSettingAttrs.watson_region : system_bb.watson_region,
+                GBSettingAttrs.analysis_plugins_to_apply : \
+                    system_bb.analysis_plugins_to_apply,
+                GBSettingAttrs.output_format : system_bb.output_format}
+            self.organizer_service.create_new_settings_profile(
+                "default",data)
+        except:
+            pass

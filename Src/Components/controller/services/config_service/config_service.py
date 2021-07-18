@@ -1,66 +1,58 @@
 # Standard library imports
-from typing import Dict, List
-from copy import deepcopy
 # Local imports
 from ....io import IO
-from ....config import Config, SystemBB
+from ....config import Config
 from ..fs_service import FileSystemService
+from .system_bb_loader import SystemBlackBoard, SystemBlackBoardLoader
 
 class ConfigService:
 
-
     def __init__(self, fs_service : FileSystemService) -> None:
+        ## Vars.
+        self.system_blackboard : SystemBlackBoard = None
+        ## Objects
         self.fs_service = fs_service
         self.io = IO()
         self.config = Config()
-        self.blackboards = {
-            "system_blackboard" : None,
-        }
+        # Add loaders to the config service.
+        self.config.add_loader(SystemBlackBoardLoader())
+        self._load_blackboards()
 
-    ################################ MODIFIERS ################################
+    ############################# MODIFIERS ##################################
 
-    def configure_from_path(self) -> bool:
-        try:
-            return self._parse_config_data(
-                self.fs_service.get_config_service_data_from_disk())
-        except:
-            return False
-
-    ############################## GETTERS ####################################
+    ############################# GETTERS ####################################
 
     def is_configured(self) -> bool:
-        for bb_type in self.config.get_blackboard_types():
-            if not self.config.get_blackboard(bb_type)[0]:
-                return False
-        return True
+        """
+        Determine whether the service is configured i.e., all blackboards are
+        loaded.
 
-    def get_configuration_file_path(self) -> str:
-        return self.fs_service.get_config_service_configuration_source()
+        Returns:
+            (bool): True if the service is configured, False otherwise.
+        """
+        return self.system_blackboard != None
 
-    def get_supported_blackboard_types(self) -> List[str]:
-        return list(self.config.get_blackboard_types())
+    def get_system_blackboard(self) -> SystemBlackBoard:
+        """
+        Obtain the system blackboard.
 
-    def get_system_blackboard(self) -> SystemBB:
-        if self.is_configured():
-            return deepcopy(self.blackboards["system_blackboard"])
+        Returns:
+            (SystemBlackBoard)
+        """
+        return self.system_blackboard
 
-    ############################# PRIVATE METHODS #############################
+    ########################## PRIVATE METHODS ###############################
 
-    def _parse_config_data(self, data : Dict) -> bool:
-        # Data must have all blackboards data.
-        if not all([bb_type in data.keys() for bb_type \
-                in self.blackboards.keys()]):
-            return False
-        # Blackboard types must be supported
-        if not all([bb_type in self.config.get_blackboard_types() \
-                for bb_type in self.blackboards.keys()]):
-            return False
-        # Load all the blackboards.
-        for bb_type in self.blackboards.keys():
-            if not self.config.load_blackboard(bb_type,data[bb_type]):
-                return False
-            loaded, bb = self.config.get_blackboard(bb_type)
-            if not loaded:
-                return False
-            self.blackboards[bb_type] = bb
-        return True
+    def _load_blackboards(self) -> None:
+        """
+        Load all blackboards.
+        """
+        try:
+            # Load System BB
+            self.system_blackboard = self.config.load_blackboard(
+                self.fs_service.get_system_blackboard_configuration_data())
+        except:
+            raise Exception("ConfigService loader error")
+
+
+

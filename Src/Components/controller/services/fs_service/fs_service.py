@@ -1,5 +1,5 @@
 # Standard library imports
-from typing import Dict, List
+from typing import Dict, List, Any
 # Local imports
 from .....utils.manager import ObjectManager
 from ....io import IO
@@ -248,27 +248,13 @@ class FileSystemService:
 
     ## ConfigService
 
-    def get_config_service_data_from_disk(self) -> Dict:
-        """
-        Obtain configuration service data from disk.
-
-        Returns:
-            (Dict)
-        """
+    def get_system_blackboard_configuration_data(self) -> Any:
         self._raise_configure_exception()
-        success, data = self.io.read(
-            self.get_config_service_configuration_source())
+        path =  self.paths.get_system_blackboard_configuration_path()
+        if path == None:
+            return {}
+        success, data = self.io.read(path)
         return {} if not success else data
-
-    def get_config_service_configuration_path(self) -> str:
-        """
-        Obtain the path of the configuration service config file.
-
-        Returns:
-            (str): Path of the configuration file.
-        """
-        self._raise_configure_exception()
-        return self.paths.get_config_service_config_file_path()
 
     ##########################  PRIVATE METHODS ###############################
 
