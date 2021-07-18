@@ -52,7 +52,8 @@ class WatsonEngine(Engine):
 
     ################################### Core ##################################
     def configure(self, api_key : str, region : str, audio_path : str,
-            base_model_name : str, language_customization_id : str = "",
+            base_model_name : str, workspace_directory_path : str,
+            language_customization_id : str = "",
             acoustic_customization_id : str = "") -> bool:
         """
         Configure core attributes for the engine.
@@ -687,25 +688,3 @@ class WatsonEngine(Engine):
                 "transcript" : list(),
                 "hypothesis" : list(),
                 "data" : list()}}
-
-    # print("Index")
-    #             print(recognition_result.get_result_index())
-    #             print("Num labels")
-    #             print(recognition_result.num_speaker_labels())
-    #             print("Num results")
-    #             print(recognition_result.num_results())
-    #             print("Labels")
-    #             print(recognition_result.get_speaker_labels())
-    #             print("keyword results")
-    #             print(recognition_result.get_keywords_results())
-    #             print("word alternatives")
-    #             print(recognition_result.get_word_alternatives())
-    #             print("transcript")
-    #             print(recognition_result.get_transcript_from_alternatives())
-    #             print("transcript_confidences")
-    #             print(recognition_result.get_transcript_confidences_from_alternatives())
-    #             print("timestamps")
-    #             print(recognition_result.get_timestamps_from_alternatives())
-    #             print("word_confidences")
-    #             print(recognition_result.get_word_confidences_from_alternatives())
-    #             recognition_results.append(RecognitionResult(item))

@@ -15,14 +15,19 @@ from Src.Components.controller import GailBotController, SettingsDetails,\
 # DIR PATHS
 WS_DIR_PATH = "TestData/workspace/controller_workspace/gb_workspace"
 RESULT_DIR_PATH = "TestData/workspace/controller_workspace/results"
-# FILE PATHS
-WAV_FILE_PATH = "TestData/media/test2a.wav"
-MP3_FILE_PATH = "TestData/media/sample1.mp3"
-MOV_FILE_PATH = "TestData/media/sample_video_conversation.mov"
-MIXED_DIR_PATH = "TestData/media/audio_video_conversation"
+# CONFIG FILE PATHS
 ANALYSIS_PLUGINS_CONFIG = "TestData/plugins/pipeline_service_test/analysis_config.json"
 FORMAT_PLUGINS_CONFIG = "TestData/plugins/pipeline_service_test/format_config.json"
-EMPTY_JSON = "TestData/configs/empty_json.json"
+# AUDIO FILE PATHS
+WAV_FILE_PATH = ""
+MP3_FILE_PATH_SHORT = "TestData/transcription_tests_media/audio/mp3/sample1.mp3"
+MP3_FILE_PATH_MEDIUM = "TestData/transcription_tests_media/audio/mp3/medium.mp3"
+MP3_FILE_PATH_LONG = "TestData/transcription_tests_media/audio/mp3/07assassination1.mp3"
+# VIDEO FILE PATHS
+MOV_FILE_PATH = ""
+# MEDIA DIRECTORY PATHS
+MIXED_DIR_PATH = ""
+# VARS
 NUM_THREADS = 4
 
 
@@ -37,23 +42,58 @@ def reset_workspace() -> None:
 
 ########################## TEST DEFINITIONS ##################################
 
-def test_transcribe() -> None:
+def test_transcribe_audio_mp3() -> None:
     """
     Tests:
-        1. Transcribe without adding any sources.
-        2. Transcribe multiple sources.
+        1. Transcribe multiple mp3 files of different lengths
     """
     controller = GailBotController(WS_DIR_PATH)
-    controller.add_source("audio_transcribing",MP3_FILE_PATH,RESULT_DIR_PATH)
-    controller.add_source("video_transcribing",MOV_FILE_PATH,RESULT_DIR_PATH)
-    controller.add_source("mixed_transcribing",MIXED_DIR_PATH,RESULT_DIR_PATH)
-    summary = controller.transcribe()
-    print(summary)
-    # Add settings profile to sources and then re-try.
+    controller.add_source("mp3_short",MP3_FILE_PATH_SHORT,RESULT_DIR_PATH)
+    controller.add_source("mp3_medium",MP3_FILE_PATH_MEDIUM,RESULT_DIR_PATH)
+    # TODO: Run the long file for some tests only.
+    #controller.add_source("mp3_long",MP3_FILE_PATH_LONG,RESULT_DIR_PATH)
     assert controller.apply_settings_profile_to_sources(
-        ["audio_transcribing","video_transcribing","mixed_transcribing"],"default")
-    print(controller.is_source_ready_to_transcribe("audio"))
-    summary = controller.transcribe()
-    print(summary)
+        ["mp3_short","mp3_medium"],"default")
+    controller.transcribe()
 
-# TODO: Add individual transcription tests for all supported formats.
+def test_transcribe_audio_mpeg() -> None:
+    pass
+
+def test_transcribe_audio_opus() -> None:
+    pass
+
+def test_transcribe_audio_wav() -> None:
+    pass
+
+def test_transcribe_video_mxf() -> None:
+    pass
+
+def test_transcribe_video_mov() -> None:
+    pass
+
+def test_transcribe_video_wmv() -> None:
+    pass
+
+def test_transcribe_video_flv() -> None:
+    pass
+
+def test_transcribe_video_avi() -> None:
+    pass
+
+def test_transcribe_video_swf() -> None:
+    pass
+
+def test_transcribe_video_m4v() -> None:
+    pass
+
+def test_transcribe_mixed_type_directory() -> None:
+    pass
+
+def test_transcribe_valid_and_invalid_files_directory() -> None:
+    pass
+
+def test_transcribe_empty_directory() -> None:
+    pass
+
+def test_transcribe_large_directory() -> None:
+    pass
