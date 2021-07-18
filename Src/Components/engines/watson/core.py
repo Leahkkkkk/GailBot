@@ -45,7 +45,7 @@ class WatsonCore:
             io (IO): Instantiated IO object.
         """
         ## Vars.
-        self.max_file_size_bytes = 7e3
+        self.max_file_size_bytes = 7e7
         # Default parameters for watson
         self.watson_defaults = {
             "ssl_verification" : True,

@@ -113,7 +113,8 @@ class WatsonEngine(Engine):
             self.core.set_service_region(region) and \
             self.core.set_audio_source_path(audio_path) and \
             self.core.set_recognize_callback(recognize_cb) and \
-            self.core.set_base_language_model(base_model_name)
+            self.core.set_base_language_model(base_model_name) and \
+            self.core.set_workspace_directory_path(workspace_directory_path)
         return self.is_ready_for_transcription
 
     def get_configurations(self) -> Dict[str,Any]:

@@ -147,12 +147,18 @@ class TranscriptionStage:
                     self._transcribe_google_thread, [source_file_name, payload,
                     utterances_map, source_status_map],{})
         self.thread_pool.wait_completion()
+
         # Determine the status
         if all(list(source_status_map.values())):
             payload.get_conversation().set_transcription_status(
                 TranscriptionStatus.successful)
             # Set the conversation utterances
             payload.get_conversation().set_utterances(utterances_map)
+            # Log the utterances per file.
+            for name, utterances in utterances_map.items():
+                msg = "[{}] Number of utterances generated: {}".format(
+                    name, len(utterances))
+                self._log_error_to_payload(payload, msg)
             return True
         else:
             # Log unsuccessful transcriptions to error log.
@@ -177,6 +183,7 @@ class TranscriptionStage:
         engine.configure(
             settings.get_watson_api_key(),settings.get_watson_region(),
             source_path,settings.get_watson_base_language_model(),
+            payload.get_workspace_path(),
             settings.get_watson_language_customization_id())
         utterances = engine.transcribe()
         utterances_map[source_file_name] = utterances

@@ -51,9 +51,9 @@ def test_transcribe_audio_mp3() -> None:
     controller.add_source("mp3_short",MP3_FILE_PATH_SHORT,RESULT_DIR_PATH)
     controller.add_source("mp3_medium",MP3_FILE_PATH_MEDIUM,RESULT_DIR_PATH)
     # TODO: Run the long file for some tests only.
-    #controller.add_source("mp3_long",MP3_FILE_PATH_LONG,RESULT_DIR_PATH)
+    controller.add_source("mp3_long",MP3_FILE_PATH_LONG,RESULT_DIR_PATH)
     assert controller.apply_settings_profile_to_sources(
-        ["mp3_short","mp3_medium"],"default")
+        ["mp3_short","mp3_medium","mp3_long"],"default")
     controller.transcribe()
 
 def test_transcribe_audio_mpeg() -> None:
