@@ -36,7 +36,8 @@ class WatsonCore:
         #"mulaw" : "audio/mulaw",
         "wav" : "audio/wav",
         "webm" : "audio/webm",
-        "ogg" : "audio/ogg;codecs=opus"}
+        "ogg" : "audio/ogg;codecs=opus",
+        "opus": "audio/ogg;codecs=opus"}
 
     def __init__(self, io : IO) -> None:
         """
