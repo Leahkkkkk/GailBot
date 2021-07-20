@@ -118,6 +118,7 @@ class PluginLoader:
             instance = clazz(*args,**kwargs)
             return instance
         except Exception as e:
+            print(e)
             pass
 
 
