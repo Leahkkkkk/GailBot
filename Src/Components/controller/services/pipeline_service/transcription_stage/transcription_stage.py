@@ -39,6 +39,8 @@ class TranscriptionStage:
         msg = "Extracting audio from sources..."
         self._log_to_payload(payload,msg)
         payload.set_source_to_audio_map(self._extract_source_audios(payload))
+        msg = "Transcribing..."
+        self._log_to_payload(payload,msg)
         is_successful = self._transcribe(payload)
         msg = "Was transcription successful: {}".format(is_successful)
         if not is_successful:

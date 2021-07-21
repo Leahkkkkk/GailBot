@@ -53,7 +53,7 @@ M4V_FILE_PATH_SHORT = "TestData/transcription_tests_media/audio/m4v/short.m4v"
 M4V_FILE_PATH_MEDIUM = ""
 M4V_FILE_PATH_LONG = ""
 # MEDIA DIRECTORY PATHS
-MIXED_DIR_PATH = ""
+MIXED_DIR_PATH = "TestData/transcription_tests_media/directories/conversation_1"
 # VARS
 NUM_THREADS = 4
 
@@ -375,8 +375,15 @@ def test_video_formats_combined_long() -> None:
 
 ##### DIRECTORY TESTS
 
-# def test_transcribe_mixed_type_directory() -> None:
-#     pass
+def test_transcribe_mixed_type_directory() -> None:
+    controller = GailBotController(WS_DIR_PATH)
+    # Adding sources
+    controller.add_source("conversation_1_dir",MIXED_DIR_PATH,RESULT_DIR_PATH)
+    # Applying profiles.
+    assert controller.apply_settings_profile_to_source(
+        "conversation_1_dir","default")
+    # Transcribing
+    controller.transcribe()
 
 # def test_transcribe_valid_and_invalid_files_directory() -> None:
 #     pass

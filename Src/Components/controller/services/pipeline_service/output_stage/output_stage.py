@@ -93,7 +93,7 @@ class OutputStage:
                 data.append(msg)
             data = "\n".join(data)
             # Save data to file
-            extension = "txt"
+            extension = "gb_raw"
             identifier = "{}_utterances".format(source_name)
             file_name = "{}.{}".format(identifier,extension)
             if  payload.write_to_file(

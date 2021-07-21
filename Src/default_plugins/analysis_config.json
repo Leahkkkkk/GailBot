@@ -1,0 +1,37 @@
+{
+    "plugin_configs" : [
+        {
+            "plugin_name" : "turn_preprocessor",
+            "plugin_dependencies" : [],
+            "plugin_file_path" : "Src/default_plugins/turn_preprocessor.py",
+            "plugin_author" : "Umair",
+            "plugin_input_type" : "None",
+            "plugin_output_type" : "None",
+            "plugin_source_name" : "turn_preprocessor",
+            "plugin_class_name" : "TurnPreprocessor"
+        },
+        {
+            "plugin_name" : "individual_turns",
+            "plugin_dependencies" : ["turn_preprocessor"],
+            "plugin_file_path" : "Src/default_plugins/tcu_plugin.py",
+            "plugin_author" : "Umair",
+            "plugin_input_type" : "None",
+            "plugin_output_type" : "None",
+            "plugin_source_name" : "individual_turns",
+            "plugin_class_name" : "IndividualTurns"
+        },
+        {
+            "plugin_name" : "combine_transcripts",
+            "plugin_dependencies" : ["individual_turns"],
+            "plugin_file_path" : "Src/default_plugins/combine_transcripts.py",
+            "plugin_author" : "Umair",
+            "plugin_input_type" : "None",
+            "plugin_output_type" : "None",
+            "plugin_source_name" : "combine_transcripts",
+            "plugin_class_name" : "CombineTranscripts"
+        }
+
+
+    ]
+}
+

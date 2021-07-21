@@ -2,7 +2,7 @@
 from typing import Any, Dict, List
 from copy import deepcopy
 # Local imports
-from ....engines import Utterance
+from ....engines import Utterance, UtteranceAttributes
 from .plugin_utterance_wrapper import Utt
 from .pipeline_payload import SourcePayload
 
@@ -107,7 +107,15 @@ class PipelinePluginInput:
     ############################# PRIVATE METHODS ###########################
 
     def _wrap_utterances(self, utterances : List[Utterance]) -> List[Utt]:
-        return [Utt(utterance) for utterance in utterances]
+        return [self._wrap_utterance(utterance) for utterance in utterances]
+
+    def _wrap_utterance(self, utterance : Utterance) -> Utt:
+        utt = Utt()
+        utt.speaker_label = utterance.get(UtteranceAttributes.speaker_label)[1]
+        utt.start_time_seconds = utterance.get(UtteranceAttributes.start_time)[1]
+        utt.end_time_seconds = utterance.get(UtteranceAttributes.end_time)[1]
+        utt.transcript = utterance.get(UtteranceAttributes.transcript)[1]
+        return utt
 
 
 
