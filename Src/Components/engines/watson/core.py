@@ -36,7 +36,8 @@ class WatsonCore:
         #"mulaw" : "audio/mulaw",
         "wav" : "audio/wav",
         "webm" : "audio/webm",
-        "ogg" : "audio/ogg;codecs=opus"}
+        "ogg" : "audio/ogg;codecs=opus",
+        "opus": "audio/ogg;codecs=opus"}
 
     def __init__(self, io : IO) -> None:
         """
@@ -53,7 +54,7 @@ class WatsonCore:
                 "x-watson-learning-opt-out" : True },
             "customization_weight" : 0.3,
             "base_model_version" : None,
-            "inactivity_timeout" : 30,
+            "inactivity_timeout" : 600,
             "interim_results" : False,
             "keywords" : None,
             "keyword_threshold" : 0.8,
@@ -295,6 +296,7 @@ class WatsonCore:
             self.inputs[k] = None
         return True
 
+    # TODO:Needs to work for session timeout errors and large files.
     def recognize_using_websockets(self) -> bool:
         """
         Transcribes the provided audio stream using a websocket connections.
@@ -332,7 +334,7 @@ class WatsonCore:
                 with open(audio_path,"rb") as audio_file:
                     stt.recognize_using_websocket(
                         **self._prepare_websocket_args(audio_file))
-                    return True
+                return True
         except:
             return False
 
@@ -421,8 +423,9 @@ class WatsonCore:
         Returns:
             (Dict[str,Any]): Mapping from watson parameter to its value.
         """
+        source = AudioSource(audio_file)
         return {
-            "audio" : AudioSource(audio_file),
+            "audio" : source,
             "content_type" : self._determine_content_type(
                 self.inputs["audio_path"]),
             "recognize_callback" : self.inputs["recognize_callback"],

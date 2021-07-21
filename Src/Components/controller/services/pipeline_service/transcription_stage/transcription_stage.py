@@ -36,7 +36,7 @@ class TranscriptionStage:
         Args:
             payload (SourcePayload)
         """
-        msg = "Extracting audio from sources"
+        msg = "Extracting audio from sources..."
         self._log_to_payload(payload,msg)
         payload.set_source_to_audio_map(self._extract_source_audios(payload))
         is_successful = self._transcribe(payload)
@@ -83,6 +83,8 @@ class TranscriptionStage:
                 self._log_error_to_payload(payload,msg)
                 source_to_audio_map[source_file_name] = None
             else:
+                msg = "[{}] Extracted audio".format(source_file_name)
+                self._log_to_payload(payload,msg)
                 source_to_audio_map[source_file_name] = path
         return source_to_audio_map
 

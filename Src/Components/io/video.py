@@ -66,7 +66,9 @@ class VideoStream(IDictModel):
 class VideoIO:
 
     # Video formats that are currently supported.
-    INPUT_VIDEO_FORMATS = ("mxf","mov","mp4","wmv","flv","avi","swf","m4v")
+    INPUT_VIDEO_FORMATS = ("mxf","mov","mp4","wmv","flv","avi",
+                    #"swf",
+                    "m4v")
     OUTPUT_VIDEO_FORMATS = ("mp4")
     OUTPUT_AUDIO_FORMATS = ("wav")
 
@@ -248,7 +250,8 @@ class VideoIO:
             video_stream = VideoStream(input_file_path,input_format,video_clip,
                                     output_dir_path)
             return (True, video_stream)
-        except:
+        except Exception as e:
+            print(e)
             return (False, None)
 
     ### Write methods
