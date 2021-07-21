@@ -11,6 +11,8 @@ from .settings_details import SettingsDetails
 from .source_details import SourceDetails
 from .source import Source, RequestType
 from .settings_profile import GBSettingAttrs, GailBotSettings, SettingProfile
+from .source_loader import SourceLoader
+from .source_loaders import FileSourceLoader,DirectorySourceLoader
 
 # Third party imports
 class OrganizerService:
@@ -34,6 +36,9 @@ class OrganizerService:
         self.organizer.register_settings_type(
             self.default_settings_type, self.default_settings_creator)
         ## Sources + profiles
+        self.source_loaders : List[SourceLoader] = \
+            [FileSourceLoader(self.fs_service,self.organizer),
+            DirectorySourceLoader(self.fs_service,self.organizer)]
         self.sources = ObjectManager()
         self.settings_profiles  = ObjectManager()
         ## Initializing
@@ -58,44 +63,23 @@ class OrganizerService:
 
     def add_source(self, source_name : str, source_path : str,
             result_dir_path : str, transcriber_name : str = "GailBot") -> bool:
-        """
-        Add a new source that can be either an audio or video file.
-
-        Args:
-            source_name (str): Name of the source.
-            source_path (str):
-                Path of the source. Can be either file or directory.
-            result_dir_path (str): Path to the result directory for this source.
-            transcriber_name (str): Name of the transcriber for this source.
-
-        Returns:
-            (bool): True if the source successfully added, False otherwise.
-        """
-        # Only valid file type should be added for files.
-        _, source_extension = self.io.get_file_extension(source_path)
-        if self.io.is_file(source_path) and \
-                not source_extension in self.get_supported_audio_formats() and \
-                not source_extension in self.get_supported_video_formats():
+        # Cannot re-add source.
+        if self.is_source(source_name):
             return False
-        # Ensure that the source can be added.
-        if self.is_source(source_name) or \
-            not (self.io.is_directory(source_path) or\
-                 self.io.is_file(source_path)) or \
-            not (self.io.is_directory(result_dir_path) or \
-                self.io.create_directory(result_dir_path)):
-            return False
-        # Create workspace for the source
-        source_hook = self.fs_service.generate_source_hook(
-            source_name,result_dir_path)
-        if source_hook == None:
-            return False
-        # Create and save the source object
-        source = Source(source_name, source_path,transcriber_name, source_hook)
-        if self.sources.add_object(source_name,source):
-            # Log that the source is created
-            msg = "[{}] Source created".format(source_name)
-            source.log(msg)
-            return True
+        # Cycle through all the available SourceLoaders and use the appropriate
+        # one.
+        for source_loader in self.source_loaders:
+            source = source_loader.load_source(
+                source_name, source_path ,result_dir_path, transcriber_name)
+            if source != None:
+                # Add to sources objects
+                if self.sources.add_object(source_name,source):
+                    # Log that the source is created
+                    msg = "[{}] Source created".format(source_name)
+                    source.log(msg)
+                    return True
+                else:
+                    return False
         return False
 
     def remove_source(self, source_name : str) -> bool:
