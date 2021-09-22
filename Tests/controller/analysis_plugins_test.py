@@ -15,8 +15,8 @@ from Src.Components.controller import GailBotController, SettingsDetails,\
 WS_DIR_PATH = "TestData/workspace/controller_workspace/gb_workspace"
 RESULT_DIR_PATH = "TestData/workspace/controller_workspace/results"
 # CONFIG FILE PATHS
-ANALYSIS_PLUGINS_CONFIG = "Src/default_plugins/analysis_plugins/analysis_config.json"
-FORMAT_PLUGINS_CONFIG = "Src/default_plugins/chat_format/format_config.json"
+ANALYSIS_PLUGINS_CONFIG = "Src/default_plugins/analysis_config.json"
+FORMAT_PLUGINS_CONFIG = "Src/default_plugins/format_config.json"
 # AUDIO FILE PATHS
 MP3_FILE_PATH_SHORT = "TestData/transcription_tests_media/audio/mp3/sample1.mp3"
 MP3_FILE_PATH_MEDIUM = "TestData/transcription_tests_media/audio/mp3/medium.mp3"
@@ -53,13 +53,22 @@ M4V_FILE_PATH_SHORT = "TestData/transcription_tests_media/audio/m4v/short.m4v"
 M4V_FILE_PATH_MEDIUM = ""
 M4V_FILE_PATH_LONG = ""
 # MEDIA DIRECTORY PATHS
-MIXED_DIR_PATH = ""
+MIXED_DIR_PATH = "TestData/transcription_tests_media/directories/conversation_1"
 # VARS
 NUM_THREADS = 4
+# VARS
+
+PLUGINS_TO_APPLY = [
+    "tcu_analysis",
+    "overlap_analysis",
+    "pause_analysis",
+    "fto_analysis",
+    "gaps_analysis",
+    "conversation_gap_analysis"
+]
 
 
-############################### SETUP #####################################
-
+############################### SETUP #####################################s
 
 @pytest.fixture(scope='session', autouse=True)
 def reset_workspace() -> None:
@@ -75,10 +84,10 @@ def test_plugins_audio_short() -> None:
     """
     controller = GailBotController(WS_DIR_PATH)
     print(controller.register_analysis_plugins(ANALYSIS_PLUGINS_CONFIG))
+    print(controller.register_format(FORMAT_PLUGINS_CONFIG))
     controller.add_source("mp3_short",MP3_FILE_PATH_SHORT,RESULT_DIR_PATH)
     assert controller.apply_settings_profile_to_source("mp3_short","default")
     assert controller.set_settings_profile_attribute(
-        "default",GBSettingAttrs.analysis_plugins_to_apply,
-        ["tcu","overlaps"])
+        "default",GBSettingAttrs.analysis_plugins_to_apply,PLUGINS_TO_APPLY)
     controller.transcribe()
 
