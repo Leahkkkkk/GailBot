@@ -2,14 +2,12 @@
 # Local imports
 from Src.Components.engines import GoogleCore
 from Src.Components.io import IO
+from Tests.engines.vardefs import *
 
 ############################### GLOBALS #####################################
 
-AUDIO1 = "TestData/media/test2b.wav"
-AUDIO2 = "TestData/media/sample1.mp3"
-NON_AUDIO = "non_audio"
-
 ########################## TEST DEFINITIONS ##################################
+
 
 def test_google_core_set_get_audio_path_valid_mp3() -> None:
     """
@@ -20,6 +18,7 @@ def test_google_core_set_get_audio_path_valid_mp3() -> None:
     success = core.set_audio_path(AUDIO2)
     assert success and core.get_audio_path() == AUDIO2
 
+
 def test_google_core_set_get_audio_path_valid_wav() -> None:
     """
     Tests:
@@ -28,6 +27,7 @@ def test_google_core_set_get_audio_path_valid_wav() -> None:
     core = GoogleCore(IO())
     success = core.set_audio_path(AUDIO1)
     assert success and core.get_audio_path() == AUDIO1
+
 
 def test_google_core_set_get_audio_path_non_audio() -> None:
     """
@@ -38,12 +38,14 @@ def test_google_core_set_get_audio_path_non_audio() -> None:
     success = core.set_audio_path(NON_AUDIO)
     assert not success and core.get_audio_path() == None
 
+
 def test_google_core_set_get_audio_path_unsupported() -> None:
     """
     Tests:
         1. Sets and gets invalid unsupported audio file
     """
     pass
+
 
 def test_google_core_set_get_sample_rate_hertz_valid() -> None:
     """
@@ -54,6 +56,7 @@ def test_google_core_set_get_sample_rate_hertz_valid() -> None:
     success = core.set_sample_rate_hertz(16000)
     assert success and core.get_sample_rate_hertz() == 16000
 
+
 def test_google_core_set_get_sample_rate_hertz_invalid() -> None:
     """
     Tests:
@@ -62,6 +65,7 @@ def test_google_core_set_get_sample_rate_hertz_invalid() -> None:
     core = GoogleCore(IO())
     success = core.set_sample_rate_hertz(-10)
     assert not success and core.get_sample_rate_hertz() == None
+
 
 def test_google_core_set_get_speaker_count_valid() -> None:
     """
@@ -72,6 +76,7 @@ def test_google_core_set_get_speaker_count_valid() -> None:
     success = core.set_diarization_speaker_count(1)
     assert success and core.get_diarization_speaker_count() == 1
 
+
 def test_google_core_set_get_speaker_count_invalid() -> None:
     """
     Tests:
@@ -80,6 +85,7 @@ def test_google_core_set_get_speaker_count_invalid() -> None:
     core = GoogleCore(IO())
     success = core.set_diarization_speaker_count(0)
     assert not success and core.get_diarization_speaker_count() == None
+
 
 def test_google_core_get_supported_audio_formats() -> None:
     """
@@ -90,6 +96,7 @@ def test_google_core_get_supported_audio_formats() -> None:
     formats = core.get_supported_audio_formats()
     assert formats == ["flac", "mp3", "wav"]
 
+
 def test_google_core_get_supported_language_codes() -> None:
     """
     Tests:
@@ -98,6 +105,7 @@ def test_google_core_get_supported_language_codes() -> None:
     core = GoogleCore(IO())
     languages = core.get_supported_language_codes()
     assert languages == ["english"]
+
 
 def test_google_core_reset_configurations() -> None:
     """
@@ -115,6 +123,7 @@ def test_google_core_reset_configurations() -> None:
     is_reset = core.get_audio_path() == None and core.get_diarization_speaker_count() == None and\
         core.get_sample_rate_hertz() == None
     assert success and is_set and is_reset
+
 
 def test_google_core_transcribe() -> None:
     """
@@ -135,4 +144,3 @@ def test_google_core_transcribe() -> None:
     #     transcript = utterance.get(UtteranceAttributes.transcript)[1]
     #     print("{}: {} {}_{}".format(label,transcript,start_time,end_time))
     # print(len(utterances))
-

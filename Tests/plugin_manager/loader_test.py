@@ -2,16 +2,16 @@ from typing import List
 # Local imports
 from Src.Components.plugin_manager import PluginLoader, PluginSource, PluginConfig
 # Third party imports
+from Tests.plugin_manager.vardefs import *
 
 
 ############################### GLOBALS #####################################
 
-PLUGIN_FILE_PATH = "TestData/plugins/random_plugins/plugin_one/plugin.py"
-WAV_FILE_PATH = "TestData/media/test2a_copy.wav"
 
 ############################### SETUP #######################################
 
 ########################## TEST DEFINITIONS ##################################
+
 
 def test_load_plugin_using_config() -> None:
     """
@@ -22,8 +22,8 @@ def test_load_plugin_using_config() -> None:
     """
     loader = PluginLoader()
     assert loader.load_plugin_using_config(
-        PluginConfig("plugin_one",[],PLUGIN_FILE_PATH,"Umair","None","None","plugin","Plugin"))
+        PluginConfig("plugin_one", [], PLUGIN_FILE_PATH, "Umair", "None", "None", "plugin_one", "One"))
     assert not loader.load_plugin_using_config(
-        PluginConfig("plugin_one",[],"invalid","Umair","None","None","plugin", "Plugin"))
+        PluginConfig("plugin_one", [], "invalid", "Umair", "None", "None", "plugin_one", "One"))
     assert not loader.load_plugin_using_config(
-        PluginConfig("plugin_one",[],WAV_FILE_PATH,"Umair","None","None", "plugin", "Plugin"))
+        PluginConfig("plugin_one", [], WAV_FILE_PATH, "Umair", "None", "None", "plugin_one", "One"))

@@ -1,25 +1,26 @@
-# Standard library imports 
+# Standard library imports
 from typing import Dict, Callable, Any
 from queue import Queue, Empty
-# Local imports 
+# Local imports
 from .WS_protocol import WSInterfaceProtocol
 from .WS_models import WebsocketProtocolModel
-# Third party imports 
+# Third party imports
 from autobahn.twisted.websocket import WebSocketClientFactory, connectWS
 from twisted.internet import ssl, reactor
 import validators
 
+
 class WSInterfaceFactory(WebSocketClientFactory):
     """
     Factory responsible for spawning instancedata_parameters of a websocket client protocol
-    to connect to the specified url using a Websocket connection, and processing 
+    to connect to the specified url using a Websocket connection, and processing
     all items in the data queue through the connection.
 
     Inheritance:
         (WebSocketClientFactory)
     """
 
-    def __init__(self, url : str, headers : Dict) -> None:
+    def __init__(self, url: str, headers: Dict) -> None:
         """
         Args:
             url (str): Url of the server with which to establish the connection.
@@ -29,90 +30,90 @@ class WSInterfaceFactory(WebSocketClientFactory):
             url (str): Url of the server with which to establish the connection.
             headers (Dict): Header data to be passed to the server.
             protocol (WSInterfaceProtocol): Protcol used to define interaction.
-            data_queue (Queue): Queue containing the data associated with 
+            data_queue (Queue): Queue containing the data associated with
                                 each task.
             context_factory (ssl.ClientContextFactory)
             protocol_callbacks (Dict): Mapping of callback types to method.
         """
-        super().__init__(url = url, headers = headers)
-        # Factory params 
+        super().__init__(url=url, headers=headers)
+        # Factory params
         self.url = url
-        self.headers = headers 
-        self.protocol = None 
+        self.headers = headers
+        self.protocol = None
         self.data_queue = Queue(0)
-        self.context_factory = None 
+        self.context_factory = None
         self.protocol_callbacks = {
-            "on_connect" : lambda *args, **kwargs: None,
-            "on_connecting" : lambda *args, **kwargs: None,
-            "on_open" : lambda *args, **kwargs: None,
-            "on_message" : lambda *args, **kwargs: None,
-            "on_close" : lambda *args, **kwargs: None}
-        # Setting protocol options 
+            "on_connect": lambda *args, **kwargs: None,
+            "on_connecting": lambda *args, **kwargs: None,
+            "on_open": lambda *args, **kwargs: None,
+            "on_message": lambda *args, **kwargs: None,
+            "on_close": lambda *args, **kwargs: None}
+        # Setting protocol options
         self.setProtocolOptions(
-            utf8validateIncoming = True,
-            applyMask = True,
-            maxFramePayloadSize = 0,
-            maxMessagePayloadSize = 0,
-            autoFragmentSize = 0,
-            failByDrop = True,
-            echoCloseCodeReason = False,
-            openHandshakeTimeout= 10, 
-            closeHandshakeTimeout = 10,
-            tcpNoDelay = True,
-            autoPingInterval = 5,
-            autoPingTimeout= 5,
-            autoPingSize = 4,
-            version = 18,
-            acceptMaskedServerFrames = False, 
-            maskClientFrames = True,
-            serverConnectionDropTimeout = 1)
+            utf8validateIncoming=True,
+            applyMask=True,
+            maxFramePayloadSize=0,
+            maxMessagePayloadSize=0,
+            autoFragmentSize=0,
+            failByDrop=True,
+            echoCloseCodeReason=False,
+            openHandshakeTimeout=10,
+            closeHandshakeTimeout=10,
+            tcpNoDelay=True,
+            autoPingInterval=5,
+            autoPingTimeout=5,
+            autoPingSize=4,
+            version=18,
+            acceptMaskedServerFrames=False,
+            maskClientFrames=True,
+            serverConnectionDropTimeout=1)
 
     ################################# SETTERS ###############################
 
-    def set_protocol(self, protocol : WSInterfaceProtocol) -> bool:
+    def set_protocol(self, protocol: WSInterfaceProtocol) -> bool:
         """
-        Sets the protocol for this factory. The protocol defines how the 
+        Sets the protocol for this factory. The protocol defines how the
         interaction occurs when a connection with the server is established.
 
         Args:
             protocol (WSInterfaceProtocol)
-        
+
         Returns:
             (bool): True if set successfully. False otherwise.
         """
         self.protocol = protocol
-        return True  
+        return True
 
-    def set_data_queue(self, data_queue : Queue) -> bool:
+    def set_data_queue(self, data_queue: Queue) -> bool:
         """
         Sets the data queue that contains data associated with each task.
 
         Args:
-            data_queue (Queue): Queue containing the data associated with 
+            data_queue (Queue): Queue containing the data associated with
                                 each task.
-        
+
         Returns:
             (bool): True if set successfully. False otherwise.
         """
-        self.data_queue = data_queue 
-        return True 
+        self.data_queue = data_queue
+        return True
 
-    def set_context_factory(self, context_factory : ssl.ClientContextFactory ) \
+    def set_context_factory(self, context_factory: ssl.ClientContextFactory) \
             -> bool:
         """
         Sets the client context factory for the secure socket layer.
 
         Args:
             context_factory (ssl.ClientContextFactory)
-        
+
         Returns:
             (bool): True if set successfully. False otherwise.
-        """ 
+        """
         self.context_factory = context_factory
-        return True   
+        return True
 
-    def set_protocol_callback(self, callback_type : str, 
-            callback : Callable[[WebsocketProtocolModel], None]) -> bool:
+    def set_protocol_callback(self, callback_type: str,
+                              callback: Callable[[WebsocketProtocolModel], None]) -> bool:
         """
         Set a callback associated with the protocol.
 
@@ -132,11 +133,11 @@ class WSInterfaceFactory(WebSocketClientFactory):
         if not callback_type in self.protocol_callbacks.keys():
             return False
         self.protocol_callbacks[callback_type] = callback
-        return True 
-          
+        return True
+
     ################################# GETTERS ################################
 
-    def get_factory_configurations(self) -> Dict: 
+    def get_factory_configurations(self) -> Dict:
         """
         Get the different configurations associated with the server.
 
@@ -144,20 +145,20 @@ class WSInterfaceFactory(WebSocketClientFactory):
             (Dict): Dictionary containing the factory configurations.
         """
         return {
-            "is_secure" : self.isSecure,
-            "url" : self.url,
-            "context_factory" : self.context_factory,
-            "data_queue" : self.data_queue
+            "is_secure": self.isSecure,
+            "url": self.url,
+            "context_factory": self.context_factory,
+            "data_queue": self.data_queue
         }
 
     def is_ready(self) -> bool:
         """
-        Check whether the server is ready to connect. 
+        Check whether the server is ready to connect.
 
         Returns:
             (bool): True if the factory is ready. False otherwise.
         """
-        return self._is_ready_for_connection() 
+        return self._is_ready_for_connection()
 
     ########################## PUBLIC METHODS ################################
 
@@ -169,16 +170,15 @@ class WSInterfaceFactory(WebSocketClientFactory):
             (bool): True if successfully restarted. False otherwise.
         """
         try:
-            connectWS(self,self.context_factory) 
-            return True 
+            connectWS(self, self.context_factory)
+            return True
         except:
-            return False 
-    
-    ######################### PRIVATE METHODS ###############################
-    
+            return False
 
-    def buildProtocol(self, addr : Any) -> Any:
-        try: 
+    ######################### PRIVATE METHODS ###############################
+
+    def buildProtocol(self, addr: Any) -> Any:
+        try:
             data = self.data_queue.get_nowait()
             protocol = self.protocol()
             protocol.set_data_queue(self.data_queue)
@@ -188,7 +188,7 @@ class WSInterfaceFactory(WebSocketClientFactory):
                 protocol.set_callback(name, callback)
             return protocol
         except Empty:
-            return 
+            return
 
     def _is_ready_for_connection(self) -> bool:
         """
@@ -199,21 +199,20 @@ class WSInterfaceFactory(WebSocketClientFactory):
             (bool): True if ready to connect. False otherwise.
         """
         return self._is_valid_url(self.url) and \
-                not self.data_queue.empty() and  \
-                self.protocol
+            not self.data_queue.empty() and  \
+            self.protocol
 
-    def _is_valid_url(self, url : str) -> bool:
+    def _is_valid_url(self, url: str) -> bool:
         """
         Checks if the url is valid.
 
         Args:
             url (str):
-        
+
         Returns:
             (bool): True if the url is in the correct format. False otherwise.
         """
         # TODO: Validation function is not working for certain urls (wss:)
         # Need to change this later. Validators does not check for wss url's.
-        #return validators.url(url) 
+        # return validators.url(url)
         return url != ""
-

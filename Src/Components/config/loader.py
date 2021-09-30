@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 # Local imports
 from .blackboard import BlackBoard
 
+
 class ConfigLoader(ABC):
     """
     Provides a template for any loaders to be used with Config.
@@ -13,7 +14,7 @@ class ConfigLoader(ABC):
         pass
 
     @abstractmethod
-    def load_blackboard(self, blackboard_data : Any) -> BlackBoard:
+    def load_blackboard(self, blackboard_data: Any) -> BlackBoard:
         """
         Load the blackboard using the given data.
 

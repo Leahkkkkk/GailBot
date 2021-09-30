@@ -3,6 +3,7 @@
 from typing import Dict
 # Local imports
 from Src.Components.organizer import Meta, MetaAttributes
+from Tests.organizer.vardefs import *
 
 ############################### GLOBALS #####################################
 
@@ -11,16 +12,17 @@ from Src.Components.organizer import Meta, MetaAttributes
 
 def get_valid_data() -> Dict:
     return {
-        "conversation_name" : "test_conversation",
-        "total_size_bytes" : 0,
-        "num_data_files" : 0,
-        "source_type" : "file",
-        "transcription_date" : None,
-        "transcription_status" : "not_transcribed",
-        "transcription_time" : None,
-        "transcriber_name" : "John",
-        "num_speakers" : 1}
+        "conversation_name": "test_conversation",
+        "total_size_bytes": 0,
+        "num_data_files": 0,
+        "source_type": "file",
+        "transcription_date": None,
+        "transcription_status": "not_transcribed",
+        "transcription_time": None,
+        "transcriber_name": "John",
+        "num_speakers": 1}
 ########################## TEST DEFINITIONS #################################
+
 
 def test_create_meta_valid() -> None:
     """
@@ -37,6 +39,7 @@ def test_create_meta_valid() -> None:
     meta = Meta(data)
     assert meta.is_configured()
 
+
 def test_create_meta_invalid() -> None:
     """
     Tests the Meta object.
@@ -50,23 +53,24 @@ def test_create_meta_invalid() -> None:
     """
     data_1 = get_valid_data()
     data_2 = {
-        "conversation_name" : "test_conversation"}
+        "conversation_name": "test_conversation"}
     data_3 = {
-        "conversation_name" : "test_conversation",
-        "total_size_bytes" : 0,
-        "num_data_files" : 0,
-        "source_type" : "file",
-        "transcription_date" : None,
-        "transcription_status" : "not_transcribed",
-        "transcription_time" : None,
-        "total_speakers" : 1,
-        "extra" : None}
+        "conversation_name": "test_conversation",
+        "total_size_bytes": 0,
+        "num_data_files": 0,
+        "source_type": "file",
+        "transcription_date": None,
+        "transcription_status": "not_transcribed",
+        "transcription_time": None,
+        "total_speakers": 1,
+        "extra": None}
     meta_1 = Meta(data_1)
     meta_2 = Meta(data_2)
     meta_3 = Meta(data_3)
     assert meta_1.is_configured() and \
         not meta_2.is_configured() and \
         not meta_3.is_configured()
+
 
 def test_create_meta_invalid_missing_keys() -> None:
     """
@@ -80,9 +84,10 @@ def test_create_meta_invalid_missing_keys() -> None:
         (bool): True if all tests pass. False otherwise.
     """
     data = {
-        "conversation_name" : "test_conversation"}
+        "conversation_name": "test_conversation"}
     meta = Meta(data)
     assert not meta.is_configured()
+
 
 def test_create_meta_invalid_extra_keys() -> None:
     """
@@ -96,17 +101,18 @@ def test_create_meta_invalid_extra_keys() -> None:
         (bool): True if all tests pass. False otherwise.
     """
     data = {
-        "conversation_name" : "test_conversation",
-        "total_size_bytes" : 0,
-        "num_data_files" : 0,
-        "source_type" : "file",
-        "transcription_date" : None,
-        "transcription_status" : "not_transcribed",
-        "transcription_time" : None,
-        "total_speakers" : 1,
-        "extra" : None}
+        "conversation_name": "test_conversation",
+        "total_size_bytes": 0,
+        "num_data_files": 0,
+        "source_type": "file",
+        "transcription_date": None,
+        "transcription_status": "not_transcribed",
+        "transcription_time": None,
+        "total_speakers": 1,
+        "extra": None}
     meta = Meta(data)
     assert not meta.is_configured()
+
 
 def test_create_meta_invalid_empty() -> None:
     """
@@ -122,6 +128,7 @@ def test_create_meta_invalid_empty() -> None:
     data = {}
     meta = Meta(data)
     assert not meta.is_configured()
+
 
 def test_meta_get_valid() -> None:
     """
@@ -139,9 +146,10 @@ def test_meta_get_valid() -> None:
         meta.get(MetaAttributes.total_size_bytes)[1] == 0 and \
         meta.get(MetaAttributes.num_speakers)[1] == 1 and \
         meta.get(MetaAttributes.source_type)[1] == "file" and \
-        meta.get(MetaAttributes.transcription_status)[1] =="not_transcribed" and \
+        meta.get(MetaAttributes.transcription_status)[1] == "not_transcribed" and \
         meta.get(MetaAttributes.transcription_date)[1] == None and \
         meta.get(MetaAttributes.transcription_time)[1] == None
+
 
 def test_meta_get_invalid() -> None:
     """
@@ -157,6 +165,7 @@ def test_meta_get_invalid() -> None:
     meta = Meta(data)
     assert not meta.get("invalid")[0]
 
+
 def test_meta_set_valid() -> None:
     """
     Test the set method in Meta
@@ -171,6 +180,7 @@ def test_meta_set_valid() -> None:
     meta = Meta(data)
     assert meta.set(MetaAttributes.num_speakers, 10) and \
         meta.get(MetaAttributes.num_speakers)[1] == 10
+
 
 def test_meta_set_invalid() -> None:
     """

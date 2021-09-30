@@ -5,20 +5,21 @@ from .blackboard import BlackBoard
 from .loader import ConfigLoader
 # Third party imports
 
+
 class Config:
 
     def __init__(self) -> None:
-        self.loaders : List[ConfigLoader] = list()
+        self.loaders: List[ConfigLoader] = list()
 
     ################################## MODIFIERS #############################
 
-    def add_loader(self, config_loader : ConfigLoader) -> None:
+    def add_loader(self, config_loader: ConfigLoader) -> None:
         """
         Add a loader (or strategy) to load blackboards.
         """
         self.loaders.append(config_loader)
 
-    def load_blackboard(self, blackboard_data : Any) -> BlackBoard:
+    def load_blackboard(self, blackboard_data: Any) -> BlackBoard:
         """
         Load a blackboard using the given data.
         Cycles through available strategies and uses the appropriate one to
@@ -52,6 +53,3 @@ class Config:
             (List[ConfigLoader])
         """
         return self.loaders
-
-
-

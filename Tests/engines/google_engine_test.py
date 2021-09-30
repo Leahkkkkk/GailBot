@@ -1,14 +1,12 @@
 # Local imports
 from Src.Components.engines import GoogleEngine
 from Src.Components.io import IO
+from Tests.engines.vardefs import *
 
 ############################### GLOBALS #####################################
 
-AUDIO1 = "TestData/media/test2b.wav"
-AUDIO2 = "TestData/media/sample1.mp3"
-NON_AUDIO = "non_audio"
-
 ########################## TEST DEFINITIONS ##################################
+
 
 def test_google_engine_configure_valid() -> None:
     """
@@ -19,6 +17,7 @@ def test_google_engine_configure_valid() -> None:
     is_configured = engine.configure(AUDIO1, 22050, 1)
     assert is_configured
 
+
 def test_google_engine_configure_invalid() -> None:
     """
     Tests:
@@ -28,6 +27,7 @@ def test_google_engine_configure_invalid() -> None:
     is_configured = engine.configure(AUDIO1, -10, 1)
     assert not is_configured
 
+
 def test_google_engine_get_configurations_unset() -> None:
     """
     Tests:
@@ -36,10 +36,11 @@ def test_google_engine_get_configurations_unset() -> None:
     engine = GoogleEngine(IO())
     config = engine.get_configurations()
     assert config == {
-            "audio_path" : None,
-            "sample_rate_hertz" : None,
-            "diarization_speaker_count" : None
-            }
+        "audio_path": None,
+        "sample_rate_hertz": None,
+        "diarization_speaker_count": None
+    }
+
 
 def test_google_engine_get_configurations_set() -> None:
     """
@@ -51,10 +52,11 @@ def test_google_engine_get_configurations_set() -> None:
     is_configured = engine.configure(AUDIO1, 22050, 1)
     config = engine.get_configurations()
     assert config == {
-            "audio_path" : AUDIO1,
-            "sample_rate_hertz" : 22050,
-            "diarization_speaker_count" : 1
-            } and is_configured
+        "audio_path": AUDIO1,
+        "sample_rate_hertz": 22050,
+        "diarization_speaker_count": 1
+    } and is_configured
+
 
 def test_google_engine_get_name() -> None:
     """
@@ -64,6 +66,7 @@ def test_google_engine_get_name() -> None:
     engine = GoogleEngine(IO())
     assert engine.get_engine_name() == "google"
 
+
 def test_google_engine_get_supported_audio_formats() -> None:
     """
     Tests:
@@ -71,6 +74,7 @@ def test_google_engine_get_supported_audio_formats() -> None:
     """
     engine = GoogleEngine(IO())
     assert engine.get_supported_formats() == ["flac", "mp3", "wav"]
+
 
 def test_google_engine_is_file_supported_wav() -> None:
     """
@@ -80,13 +84,15 @@ def test_google_engine_is_file_supported_wav() -> None:
     engine = GoogleEngine(IO())
     assert engine.is_file_supported(AUDIO1)
 
+
 def test_google_engine_is_file_supported_non_audio() -> None:
     """
     Tests:
         1. Confirms non-audio file is an unsupported file
     """
     engine = GoogleEngine(IO())
-    assert not  engine.is_file_supported(NON_AUDIO)
+    assert not engine.is_file_supported(NON_AUDIO)
+
 
 def test_google_engine_transcribe() -> None:
     """
@@ -105,6 +111,7 @@ def test_google_engine_transcribe() -> None:
     #     transcript = utterance.get(UtteranceAttributes.transcript)[1]
     #     print("{}: {} {}_{}".format(label,transcript,start_time,end_time))
     # print(len(utterances))
+
 
 def test_google_engine_was_transcription_successful() -> None:
     """

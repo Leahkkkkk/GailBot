@@ -3,71 +3,75 @@ from typing import Any, Tuple, List
 # Local imports
 from Src.Components.io import IO
 from Src.Components.engines import WatsonCore, customWatsonCallbacks
+from Tests.engines.vardefs import *
 
 ############################### GLOBALS #####################################
 
-API_KEY = "MSgOPTS9CvbADe49nEg4wm8_gxeRuf4FGUmlHS9QqAw3"
-LANG_CUSTOM_ID =  "41e54a38-2175-45f4-ac6a-1c11e42a2d54"
-ACOUSTIC_CUSTOM_ID = "some_valid_id"
-WAV_FILE_PATH = "TestData/media/test2b.wav"
-MP3_FILE_PATH = "TestData/media/sample1.mp3"
-
 ################################# SETUP ######################################
 
-#### Custom callbacks for the websocket connection
+# Custom callbacks for the websocket connection
 
-def on_transcription(closure : List, transcript : Any) -> None:
+
+def on_transcription(closure: List, transcript: Any) -> None:
     """
     Called after the service returns the final result for the transcription.
     """
     closure[0]["transcript"] = transcript
     closure[0]["on_transcription"] = True
 
-def on_connected(closure : List) -> None:
+
+def on_connected(closure: List) -> None:
     """
     Called when a Websocket connection was made
     """
     closure[0]["on_connected"] = True
 
-def on_error(closure : List, error : Any) -> None:
+
+def on_error(closure: List, error: Any) -> None:
     """
     Called when there is an error in the Websocket connection.
     """
     closure[0]["on_error_error"] = error
     closure[0]["on_error"] = True
 
-def on_inactivity_timeout(closure : List, error : Any) -> None:
+
+def on_inactivity_timeout(closure: List, error: Any) -> None:
     """
     Called when there is an inactivity timeout.
     """
     closure[0]["on_inactivity_timeout_error"] = error
     closure[0]["on_inactivity_timeout"] = True
 
-def on_listening(closure : List) -> None:
+
+def on_listening(closure: List) -> None:
     """
     Called when the service is listening for audio.
     """
     closure[0]["on_listening"] = True
 
-def on_hypothesis(closure : List, hypothesis : Any) -> None:
+
+def on_hypothesis(closure: List, hypothesis: Any) -> None:
     """
     Called when an interim result is received.
     """
     closure[0]["hypothesis"] = hypothesis
     closure[0]["on_hypothesis"] = True
 
-def on_data(closure : List, data : Any) -> None:
+
+def on_data(closure: List, data: Any) -> None:
     """
     Called when the service returns results. The data is returned unparsed.
     """
     closure[0]["on_data"] = True
     closure[0]["data"] = data
 
-def on_close(closure : List) -> None:
+
+def on_close(closure: List) -> None:
     """
     Called when the Websocket connection is closed
     """
     closure[0]["on_close"] = True
+
 
 def create_custom_recognize_callbacks() -> Tuple[customWatsonCallbacks, List]:
     """
@@ -84,7 +88,7 @@ def create_custom_recognize_callbacks() -> Tuple[customWatsonCallbacks, List]:
     cb.set_on_hypothesis_callback(on_hypothesis)
     cb.set_on_data_callback(on_data)
     cb.set_on_close_callback(on_close)
-    return (cb,closure)
+    return (cb, closure)
 
 
 ########################## TEST DEFINITIONS ##################################
@@ -98,6 +102,7 @@ def test_watson_core_set_api_key_valid() -> None:
     watson_core = WatsonCore(IO())
     assert watson_core.set_api_key(API_KEY)
 
+
 def test_watson_core_set_api_key_invalid() -> None:
     """
     Tests:
@@ -105,6 +110,7 @@ def test_watson_core_set_api_key_invalid() -> None:
     """
     watson_core = WatsonCore(IO())
     assert not watson_core.set_api_key("invalid")
+
 
 def test_watson_core_set_service_region_valid() -> None:
     """
@@ -117,6 +123,7 @@ def test_watson_core_set_service_region_valid() -> None:
         watson_core.set_service_region("DALLAS") and \
         watson_core.set_service_region("seoul")
 
+
 def test_watson_core_set_service_region_invalid() -> None:
     """
     Tests:
@@ -126,6 +133,7 @@ def test_watson_core_set_service_region_invalid() -> None:
     assert not watson_core.set_service_region("dalls") and \
         not watson_core.set_service_region("invalid")
 
+
 def test_watson_core_set_recognize_callback() -> None:
     """
     Tests:
@@ -133,6 +141,7 @@ def test_watson_core_set_recognize_callback() -> None:
     """
     watson_core = WatsonCore(IO())
     assert watson_core.set_recognize_callback(customWatsonCallbacks([{}]))
+
 
 def test_watson_core_set_audio_source_path_valid() -> None:
     """
@@ -142,6 +151,7 @@ def test_watson_core_set_audio_source_path_valid() -> None:
     watson_core = WatsonCore(IO())
     assert watson_core.set_audio_source_path(WAV_FILE_PATH)
 
+
 def test_watson_core_set_audio_source_path_invalid() -> None:
     """
     Tests:
@@ -149,6 +159,7 @@ def test_watson_core_set_audio_source_path_invalid() -> None:
     """
     watson_core = WatsonCore(IO())
     assert not watson_core.set_audio_source_path("invalid/")
+
 
 def test_watson_core_set_base_language_model() -> None:
     """
@@ -158,6 +169,7 @@ def test_watson_core_set_base_language_model() -> None:
     watson_core = WatsonCore(IO())
     assert watson_core.set_base_language_model("en-US_BroadbandModel")
 
+
 def test_watson_core_set_language_customization_id() -> None:
     """
     Tests:
@@ -166,6 +178,7 @@ def test_watson_core_set_language_customization_id() -> None:
     watson_core = WatsonCore(IO())
     assert watson_core.set_language_customization_id(LANG_CUSTOM_ID)
 
+
 def test_watson_core_set_acoustic_customization_id() -> None:
     """
     Tests:
@@ -173,6 +186,7 @@ def test_watson_core_set_acoustic_customization_id() -> None:
     """
     watson_core = WatsonCore(IO())
     assert watson_core.set_acoustic_customization_id(ACOUSTIC_CUSTOM_ID)
+
 
 def test_watson_core_get_api_key() -> None:
     """
@@ -183,6 +197,7 @@ def test_watson_core_get_api_key() -> None:
     watson_core.set_api_key(API_KEY)
     assert watson_core.get_api_key() == API_KEY
 
+
 def test_watson_core_get_service_region() -> None:
     """
     Tests:
@@ -191,6 +206,7 @@ def test_watson_core_get_service_region() -> None:
     watson_core = WatsonCore(IO())
     watson_core.set_service_region("dallas")
     assert watson_core.get_service_region() == "dallas"
+
 
 def test_watson_core_get_audio_source_path() -> None:
     """
@@ -201,6 +217,7 @@ def test_watson_core_get_audio_source_path() -> None:
     watson_core.set_audio_source_path(WAV_FILE_PATH)
     assert watson_core.get_audio_source_path() == WAV_FILE_PATH
 
+
 def test_watson_core_get_selected_base_model() -> None:
     """
     Tests:
@@ -209,6 +226,7 @@ def test_watson_core_get_selected_base_model() -> None:
     watson_core = WatsonCore(IO())
     watson_core.set_base_language_model("en-US_BroadbandModel")
     assert watson_core.get_selected_base_model() == "en-US_BroadbandModel"
+
 
 def test_watson_core_get_language_customization_id() -> None:
     """
@@ -219,6 +237,7 @@ def test_watson_core_get_language_customization_id() -> None:
     watson_core.set_language_customization_id(LANG_CUSTOM_ID)
     assert watson_core.get_language_customization_id() == LANG_CUSTOM_ID
 
+
 def test_watson_core_get_acoustic_customization_id() -> None:
     """
     Tests:
@@ -227,6 +246,7 @@ def test_watson_core_get_acoustic_customization_id() -> None:
     watson_core = WatsonCore(IO())
     watson_core.set_acoustic_customization_id(ACOUSTIC_CUSTOM_ID)
     assert watson_core.get_acoustic_customization_id() == ACOUSTIC_CUSTOM_ID
+
 
 def test_watson_core_get_supported_regions() -> None:
     """
@@ -238,6 +258,7 @@ def test_watson_core_get_supported_regions() -> None:
         "dallas", "washington", "frankfurt", "sydney", "tokyo", "london",
         "seoul"]
 
+
 def test_watson_core_get_supported_audio_formats() -> None:
     """
     Tests:
@@ -245,6 +266,7 @@ def test_watson_core_get_supported_audio_formats() -> None:
     """
     watson_core = WatsonCore(IO())
     assert len(watson_core.get_supported_audio_formats()) > 0
+
 
 def test_watson_core_reset_configurations() -> None:
     """
@@ -267,6 +289,7 @@ def test_watson_core_reset_configurations() -> None:
         watson_core.get_selected_base_model() == None and \
         watson_core.get_language_customization_id() == None and \
         watson_core.get_acoustic_customization_id() == None
+
 
 def test_watson_core_recognize_using_websockets() -> None:
     """

@@ -1,23 +1,15 @@
 # Standard library imports
 # Local imports
 from Src.Components.plugin_manager import PluginManager, PluginDetails, ApplyConfig
+from Tests.plugin_manager.vardefs import *
 # Third party imports
 
 ############################### GLOBALS #####################################
 
-INVALID_DIR_PATH = "TestData/workspace/empty_dir_1"
-PLUGINS_DIR = "TestData/plugins/random_plugins"
-PLUGIN_ONE_DIR = "TestData/plugins/random_plugins/plugin_one"
-PLUGIN_ONE_CONFIG_PATH = "TestData/plugins/random_plugins/plugin_one/config.json"
-PLUGIN_TWO_DIR = "TestData/plugins/random_plugins/plugin_two"
-PLUGIN_TWO_CONFIG_PATH = "TestData/plugins/random_plugins/plugin_two/config.json"
-WAV_FILE_PATH = "TestData/media/test.wav"
-WORKSPACE_DIR_PATH = "TestData/workspace"
-RESULT_DIR_PATH = "TestData/workspace"
-
 ############################### SETUP #######################################
 
 ########################## TEST DEFINITIONS ##################################
+
 
 def test_register_plugin_from_directory() -> None:
     """
@@ -27,8 +19,9 @@ def test_register_plugin_from_directory() -> None:
     """
     plugin_manager = PluginManager()
     assert plugin_manager.register_plugins_from_directory(PLUGINS_DIR) > 0
-    assert plugin_manager.register_plugins_from_directory(PLUGIN_ONE_DIR) == 1
-    assert plugin_manager.register_plugins_from_directory(INVALID_DIR_PATH) == 0
+    assert plugin_manager.register_plugins_from_directory(
+        INVALID_DIR_PATH) == 0
+
 
 def test_register_plugin_using_config_file() -> None:
     """
@@ -38,9 +31,11 @@ def test_register_plugin_using_config_file() -> None:
         3. Use an invalid config file structure.
     """
     plugin_manager = PluginManager()
-    assert plugin_manager.register_plugin_using_config_file(PLUGIN_ONE_CONFIG_PATH)
+    assert plugin_manager.register_plugin_using_config_file(
+        PLUGIN_CONFIG_FILE_PATH)
     assert not plugin_manager.register_plugin_using_config_file(WAV_FILE_PATH)
     assert not plugin_manager.register_plugin_using_config_file("invalid")
+
 
 def test_apply_plugins_valid() -> None:
     """
@@ -52,16 +47,17 @@ def test_apply_plugins_valid() -> None:
     plugin_manager = PluginManager()
     plugin_manager.register_plugins_from_directory(PLUGINS_DIR)
     summary = plugin_manager.apply_plugins({
-        "plugin_one" : ApplyConfig("plugin_one",[["path_1"]],{}),
-        "plugin_two" : ApplyConfig("plugin_two",[["path_1"]],{}),
+        "plugin_one": ApplyConfig("plugin_one", [["path_1"]], {}),
+        "plugin_two": ApplyConfig("plugin_two", [["path_1"]], {}),
     })
     assert len(summary.successful_plugins) == 2
     summary = plugin_manager.apply_plugins({
-        "plugin_one" : ApplyConfig("plugin_one",[["path_1"]],{})})
+        "plugin_one": ApplyConfig("plugin_one", [["path_1"]], {})})
     assert len(summary.successful_plugins) == 1
     summary = plugin_manager.apply_plugins({
-        "plugin_two" : ApplyConfig("plugin_two",[["path_1"]],{})})
+        "plugin_two": ApplyConfig("plugin_two", [["path_1"]], {})})
     assert len(summary.successful_plugins) == 0
+
 
 def test_is_plugin() -> None:
     """
@@ -74,6 +70,7 @@ def test_is_plugin() -> None:
     assert plugin_manager.is_plugin("plugin_one")
     assert not plugin_manager.is_plugin("invalid")
 
+
 def test_get_plugin_names() -> None:
     """
     Tests:
@@ -81,7 +78,9 @@ def test_get_plugin_names() -> None:
     """
     plugin_manager = PluginManager()
     plugin_manager.register_plugins_from_directory(PLUGINS_DIR)
-    assert plugin_manager.get_plugin_names() == ["plugin_one","plugin_two"]
+    assert all([plugin in plugin_manager.get_plugin_names() for plugin in
+                ["plugin_one", "plugin_two"]])
+
 
 def test_get_plugin_details() -> None:
     """
@@ -91,8 +90,10 @@ def test_get_plugin_details() -> None:
     """
     plugin_manager = PluginManager()
     plugin_manager.register_plugins_from_directory(PLUGINS_DIR)
-    assert type(plugin_manager.get_plugin_details("plugin_one")) == PluginDetails
+    assert type(plugin_manager.get_plugin_details(
+        "plugin_one")) == PluginDetails
     assert plugin_manager.get_plugin_details("invalid") == None
+
 
 def test_get_all_plugin_details() -> None:
     """
@@ -101,7 +102,6 @@ def test_get_all_plugin_details() -> None:
     """
     plugin_manager = PluginManager()
     plugin_manager.register_plugins_from_directory(PLUGINS_DIR)
-    assert list(plugin_manager.get_all_plugin_details().keys()) \
-         == ["plugin_one","plugin_two"]
 
-
+    assert all(plugin in list(plugin_manager.get_all_plugin_details().keys())
+               for plugin in ["plugin_one", "plugin_two"])

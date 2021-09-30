@@ -1,5 +1,7 @@
 # Local imports
 from Src.Components.pipeline import Component, ComponentState
+from Tests.pipeline.vardefs import *
+
 
 ############################### GLOBALS #####################################
 
@@ -18,6 +20,7 @@ def test_component_get_set_state() -> None:
     state2 = component.get_state()
     assert res and state1 == ComponentState.ready and state2 == ComponentState.failed
 
+
 def test_component_get_name() -> None:
     """
     Tests:
@@ -25,6 +28,7 @@ def test_component_get_name() -> None:
     """
     component = Component("c1", None)
     assert component.get_name() == "c1"
+
 
 def test_component_get_inst_obj() -> None:
     """
@@ -34,6 +38,7 @@ def test_component_get_inst_obj() -> None:
     component = Component("c1", None)
     assert component.get_instantiated_object() == None
 
+
 def test_component_get_res() -> None:
     """
     Tests:
@@ -42,6 +47,7 @@ def test_component_get_res() -> None:
     component = Component("c1", None)
     result_start = component.get_result()
     assert result_start == None
+
 
 def test_component_get_set_runtime() -> None:
     """
@@ -53,6 +59,7 @@ def test_component_get_set_runtime() -> None:
     res = component.set_runtime(10)
     runtime2 = component.get_runtime()
     assert res and runtime1 == 0 and runtime2 == 10
+
 
 def test_component_set_invalid_runtime() -> None:
     """

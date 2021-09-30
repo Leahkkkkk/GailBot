@@ -1,41 +1,15 @@
 # Standard library imports
-import os, time
+import os
+import time
 # Local imports
 from Src.Components.io import IO
+from Tests.io.vardefs import *
+
 
 ############################### GLOBALS #####################################
 
-#### Relative paths
-WAV_FILE_1_PATH = "TestData/media/test2a.wav"
-WAV_FILE_2_PATH = "TestData/media/test2b.wav"
-WAV_FILE_3_PATH = "TestData/media/test.wav"
-WAV_FILE_1_COPY_PATH = "TestData/media/test2a_copy.wav"
-STEREO_FILE_1_PATH = "TestData/media/SineWaveMinus16.wav"
-VIDEO_FILE_MP4_PATH = "TestData/media/sample-mp4-file.mp4"
-VIDEO_FILE_MXF_PATH = "TestData/media/vid2.MXF"
-VIDEO_FILE_AVI_PATH = "TestData/media/sample-avi-file.avi"
-VIDEO_FILE_MOV_PATH = "TestData/media/sample-mov-file.mov"
-VIDEO_FILE_MPG_PATH = "TestData/media/sample-mpg-file.mpg"
-DESKTOP_OUT_PATH = os.path.join(os.path.join(os.path.expanduser('~')),'Desktop')
-VALID_SAMPLE_JSON_FILE = "TestData/configs/sample_config.json"
-VALID_SAMPLE_TXT_FILE = "TestData/configs/sample_text.txt"
-VALID_SMALL_TXT_FILE = "TestData/configs/textfile.txt"
-VALID_SAMPLE_YAML_FILE = "TestData/configs/sample_yaml.yaml"
-VALID_FRUITS_YAML_FILE = "TestData/configs/fruits.yaml"
-TEST_DIR_PATH = "TestData"
-TEST_SAMPLE_DIR_PATH = "TestData/workspace/empty_dir_1"
-TESTS_OUTER_DIR_PATH = "TestData/workspace/dir_2"
-TEST_EMPTY_DIR_PATH = "TestData/workspace/empty_dir_1"
-MEDIA_TEST_DIR_PATH = "TestData/media"
-NORMAN_TEXT = "TestData/images/norman_text.pdf"
-BEE_MOVIE = "TestData/images/bee_movie.pdf"
-PANDA_JPG = "TestData/images/panda.jpg"
-RACCOON_JPG = "TestData/images/racoon_math.jpg"
-KITTEN_JPG = "TestData/images/kitten_tongue.jpg"
-BDAY_CAT_JPG = "TestData/images/sad_bday_cat.jpg"
-GOAT_JPG = "TestData/images/skater_goat.jpg"
-
 ########################## TEST DEFINITIONS ##################################
+
 
 def test_io_is_directory() -> None:
     """
@@ -50,6 +24,7 @@ def test_io_is_directory() -> None:
     io = IO()
     assert io.is_directory(TEST_DIR_PATH)
 
+
 def test_io_is_not_directory() -> None:
     """
     Tests IO class is_directory function.
@@ -62,6 +37,7 @@ def test_io_is_not_directory() -> None:
     """
     io = IO()
     assert not io.is_directory(VALID_SAMPLE_JSON_FILE)
+
 
 def test_io_is_file() -> None:
     """
@@ -76,6 +52,7 @@ def test_io_is_file() -> None:
     io = IO()
     assert io.is_file(VALID_SAMPLE_TXT_FILE)
 
+
 def test_io_is_supported_audio_file() -> None:
     """
     Tests:
@@ -88,6 +65,7 @@ def test_io_is_supported_audio_file() -> None:
     assert not io.is_supported_audio_file(VIDEO_FILE_AVI_PATH)
     assert not io.is_supported_audio_file("random")
 
+
 def test_io_is_supported_video_file() -> None:
     """
     Tests:
@@ -99,6 +77,7 @@ def test_io_is_supported_video_file() -> None:
     assert io.is_supported_video_file(VIDEO_FILE_AVI_PATH)
     assert not io.is_supported_video_file(WAV_FILE_1_COPY_PATH)
     assert not io.is_supported_video_file("random")
+
 
 def test_io_is_not_file() -> None:
     """
@@ -113,6 +92,7 @@ def test_io_is_not_file() -> None:
     io = IO()
     assert not io.is_file(TEST_DIR_PATH)
 
+
 def test_io_num_files_in_empty_dir() -> None:
     """
     Tests IO class number_of_files_in_directory function.
@@ -124,8 +104,10 @@ def test_io_num_files_in_empty_dir() -> None:
         (bool): True if all the tests pass. False otherwise.
     """
     io = IO()
-    success, num = io.number_of_files_in_directory(TEST_EMPTY_DIR_PATH, ["pdf"], False)
+    success, num = io.number_of_files_in_directory(
+        TEST_EMPTY_DIR_PATH, ["pdf"], False)
     assert success and num == 0
+
 
 def test_io_num_files_in_populated_dir() -> None:
     """
@@ -141,10 +123,14 @@ def test_io_num_files_in_populated_dir() -> None:
         (bool): True if all the tests pass. False otherwise.
     """
     io = IO()
-    success_pdf, num_pdf = io.number_of_files_in_directory(TEST_SAMPLE_DIR_PATH, ["pdf"], False)
-    sucess_jpg, num_jpg = io.number_of_files_in_directory(TEST_SAMPLE_DIR_PATH, ["jpg"], False)
-    success_pdf_jpg, num_pdf_jpg = io.number_of_files_in_directory(TEST_SAMPLE_DIR_PATH, ["jpg", "pdf"], False)
+    success_pdf, num_pdf = io.number_of_files_in_directory(
+        TEST_SAMPLE_DIR_PATH, ["pdf"], False)
+    sucess_jpg, num_jpg = io.number_of_files_in_directory(
+        TEST_SAMPLE_DIR_PATH, ["jpg"], False)
+    success_pdf_jpg, num_pdf_jpg = io.number_of_files_in_directory(
+        TEST_SAMPLE_DIR_PATH, ["jpg", "pdf"], False)
     assert success_pdf and sucess_jpg and success_pdf_jpg
+
 
 def test_io_num_files_in_dir_wildcard() -> None:
     """
@@ -160,9 +146,12 @@ def test_io_num_files_in_dir_wildcard() -> None:
         (bool): True if all the tests pass. False otherwise.
     """
     io = IO()
-    success1, num1 = io.number_of_files_in_directory(TEST_EMPTY_DIR_PATH, ["*"], False)
-    success2, num2 = io.number_of_files_in_directory(TEST_SAMPLE_DIR_PATH, ["*"], False)
+    success1, num1 = io.number_of_files_in_directory(
+        TEST_EMPTY_DIR_PATH, ["*"], False)
+    success2, num2 = io.number_of_files_in_directory(
+        TEST_SAMPLE_DIR_PATH, ["*"], False)
     assert success1 and success2
+
 
 def test_io_num_files_in_dir_recursive() -> None:
     """
@@ -180,16 +169,23 @@ def test_io_num_files_in_dir_recursive() -> None:
         (bool): True if all the tests pass. False otherwise.
     """
     io = IO()
-    success1, num_pdf_inner = io.number_of_files_in_directory(TESTS_OUTER_DIR_PATH, ["pdf"], False)
-    success2, num_pdf_rec = io.number_of_files_in_directory(TESTS_OUTER_DIR_PATH, ["pdf"], True)
-    success3, num_jpg_pdf_inner = io.number_of_files_in_directory(TESTS_OUTER_DIR_PATH, ["pdf", "jpg"], False)
-    success4, num_jpg_pdf_rec = io.number_of_files_in_directory(TESTS_OUTER_DIR_PATH, ["pdf", "jpg"], True)
-    success5, num_star_inner = io.number_of_files_in_directory(TESTS_OUTER_DIR_PATH, ["*"], False)
-    success6, num_star_rec = io.number_of_files_in_directory(TESTS_OUTER_DIR_PATH, ["*"], True)
+    success1, num_pdf_inner = io.number_of_files_in_directory(
+        TESTS_OUTER_DIR_PATH, ["pdf"], False)
+    success2, num_pdf_rec = io.number_of_files_in_directory(
+        TESTS_OUTER_DIR_PATH, ["pdf"], True)
+    success3, num_jpg_pdf_inner = io.number_of_files_in_directory(
+        TESTS_OUTER_DIR_PATH, ["pdf", "jpg"], False)
+    success4, num_jpg_pdf_rec = io.number_of_files_in_directory(
+        TESTS_OUTER_DIR_PATH, ["pdf", "jpg"], True)
+    success5, num_star_inner = io.number_of_files_in_directory(
+        TESTS_OUTER_DIR_PATH, ["*"], False)
+    success6, num_star_rec = io.number_of_files_in_directory(
+        TESTS_OUTER_DIR_PATH, ["*"], True)
     assert success1 and success2 and success3 and success4 and success5 and \
-           success6 and num_pdf_inner >= 0 and num_pdf_rec >= 0 and \
-           num_jpg_pdf_inner >= 0 and num_jpg_pdf_rec >= 0 and \
-           num_star_inner >= 0 and num_star_rec >= 0
+        success6 and num_pdf_inner >= 0 and num_pdf_rec >= 0 and \
+        num_jpg_pdf_inner >= 0 and num_jpg_pdf_rec >= 0 and \
+        num_star_inner >= 0 and num_star_rec >= 0
+
 
 def test_io_num_files_in_dir_bad_input() -> None:
     """
@@ -206,7 +202,8 @@ def test_io_num_files_in_dir_bad_input() -> None:
     """
     io = IO()
     success1, num1 = io.number_of_files_in_directory(KITTEN_JPG, ["*"], False)
-    success2, num2 = io.number_of_files_in_directory(TEST_DIR_PATH, ["weird_extension"], False)
+    success2, num2 = io.number_of_files_in_directory(
+        TEST_DIR_PATH, ["weird_extension"], False)
     assert not success1 and num1 == None and success2 and num2 == 0
 
 
@@ -222,8 +219,10 @@ def test_io_names_of_files_in_empty_directory() -> None:
         (bool): True if all the tests pass. False otherwise.
     """
     io = IO()
-    success, names = io.path_of_files_in_directory(TEST_DIR_PATH, ["pdf"], False)
+    success, names = io.path_of_files_in_directory(
+        TEST_DIR_PATH, ["pdf"], False)
     assert success and names == []
+
 
 def test_io_names_of_files_in_populated_dir() -> None:
     """
@@ -239,10 +238,13 @@ def test_io_names_of_files_in_populated_dir() -> None:
         (bool): True if all the tests pass. False otherwise.
     """
     io = IO()
-    success1, names1 = io.path_of_files_in_directory(TEST_SAMPLE_DIR_PATH, ["pdf"], False)
-    success2, names2 = io.path_of_files_in_directory(TESTS_OUTER_DIR_PATH, ["pdf"], True)
+    success1, names1 = io.path_of_files_in_directory(
+        TEST_SAMPLE_DIR_PATH, ["pdf"], False)
+    success2, names2 = io.path_of_files_in_directory(
+        TESTS_OUTER_DIR_PATH, ["pdf"], True)
     assert success1 and len(names1) == 0 and \
-           success2 and len(names2) > 0
+        success2 and len(names2) > 0
+
 
 def test_io_number_of_subdirectories() -> None:
     """
@@ -256,6 +258,7 @@ def test_io_number_of_subdirectories() -> None:
     assert not io.number_of_subdirectories(WAV_FILE_1_COPY_PATH)[0]
     assert not io.number_of_subdirectories("invalid")[0]
 
+
 def test_io_paths_of_subdirectories() -> None:
     """
     Tests:
@@ -265,10 +268,11 @@ def test_io_paths_of_subdirectories() -> None:
     """
     io = IO()
     print(io.paths_of_subdirectories(TEST_DIR_PATH)[1])
-    assert all([io.is_directory(path) for path \
-        in io.paths_of_subdirectories(TEST_DIR_PATH)[1]])
+    assert all([io.is_directory(path) for path
+                in io.paths_of_subdirectories(TEST_DIR_PATH)[1]])
     assert not io.paths_of_subdirectories(WAV_FILE_1_COPY_PATH)[0]
     assert not io.paths_of_subdirectories("invalid")[0]
+
 
 def test_io_names_of_files_wildcard() -> None:
     """
@@ -282,10 +286,13 @@ def test_io_names_of_files_wildcard() -> None:
         (bool): True if all the tests pass. False otherwise.
     """
     io = IO()
-    success1, names1 = io.path_of_files_in_directory(TEST_SAMPLE_DIR_PATH, ["*"], False)
-    success2, names2 = io.path_of_files_in_directory(TESTS_OUTER_DIR_PATH, ["*"], True)
+    success1, names1 = io.path_of_files_in_directory(
+        TEST_SAMPLE_DIR_PATH, ["*"], False)
+    success2, names2 = io.path_of_files_in_directory(
+        TESTS_OUTER_DIR_PATH, ["*"], True)
     assert success1 and \
-           success2 and len(names2) > 0
+        success2 and len(names2) > 0
+
 
 def test_io_names_of_files_bad_input() -> None:
     """
@@ -302,8 +309,10 @@ def test_io_names_of_files_bad_input() -> None:
     """
     io = IO()
     success1, names1 = io.path_of_files_in_directory(KITTEN_JPG, ["*"], False)
-    success2, names2 = io.path_of_files_in_directory(TEST_DIR_PATH, ["weird_extension"], False)
+    success2, names2 = io.path_of_files_in_directory(
+        TEST_DIR_PATH, ["weird_extension"], False)
     assert not success1 and names1 == [] and success2 and names2 == []
+
 
 def test_io_get_supported_audio_formats() -> None:
     """
@@ -311,7 +320,8 @@ def test_io_get_supported_audio_formats() -> None:
         1. Check the correct formats are returned.
     """
     io = IO()
-    assert io.get_supported_audio_formats() == ("mp3", "mpeg","opus", "wav")
+    assert io.get_supported_audio_formats() == ("mp3", "mpeg", "opus", "wav")
+
 
 def test_io_get_supported_video_formats() -> None:
     """
@@ -319,8 +329,8 @@ def test_io_get_supported_video_formats() -> None:
         1. Check the correct formats are returned.
     """
     io = IO()
-    assert io.get_supported_video_formats() == \
-            ("mxf","mov","mp4","wmv","flv","avi","swf","m4v")
+    assert len(io.get_supported_video_formats()) > 0
+
 
 def test_io_read_valid_json() -> None:
     """
@@ -335,7 +345,8 @@ def test_io_read_valid_json() -> None:
     """
     io = IO()
     success, data = io.read(VALID_SAMPLE_JSON_FILE)
-    assert success and data == {"Test_key" : "I am a test string"}
+    assert success and data == {"Test_key": "I am a test string"}
+
 
 def test_io_read_valid_yaml() -> None:
     """
@@ -350,7 +361,8 @@ def test_io_read_valid_yaml() -> None:
     """
     io = IO()
     success, data = io.read(VALID_FRUITS_YAML_FILE)
-    assert success and data == {'blueberries' : 100}
+    assert success and data == {'blueberries': 100}
+
 
 def test_io_read_valid_text() -> None:
     """
@@ -366,6 +378,7 @@ def test_io_read_valid_text() -> None:
     io = IO()
     success, data = io.read(VALID_SMALL_TXT_FILE)
     assert success and data == "This is a test text file"
+
 
 def test_io_read_invalid() -> None:
     """
@@ -383,6 +396,7 @@ def test_io_read_invalid() -> None:
     success2, data2 = io.read(BEE_MOVIE)
     assert not success1 and data1 == None and not success2 and data2 == None
 
+
 def test_io_write_existing_json() -> None:
     """
     Tests IO class write of already existing file without overwrite.
@@ -397,6 +411,7 @@ def test_io_write_existing_json() -> None:
     io = IO()
     success1 = io.write(VALID_SAMPLE_JSON_FILE, {"hello : key"}, False)
     assert not success1
+
 
 def test_io_is_not_file() -> None:
     """
@@ -415,11 +430,13 @@ def test_io_is_not_file() -> None:
         (bool): True if all the tests pass. False otherwise.
     """
     io = IO()
-    success = io.convert_format(VALID_SAMPLE_YAML_FILE, "JSON", TEST_EMPTY_DIR_PATH)
+    success = io.convert_format(
+        VALID_SAMPLE_YAML_FILE, "JSON", TEST_EMPTY_DIR_PATH)
     _, yaml_data = io.read(VALID_SAMPLE_YAML_FILE)
     _, json_data = io.read(TEST_EMPTY_DIR_PATH + "/sample_yaml.JSON")
     io.delete(TEST_EMPTY_DIR_PATH + "/sample_yaml.JSON")
     assert success and yaml_data == json_data
+
 
 def test_io_convert_txt_to_yaml() -> None:
     """
@@ -436,6 +453,7 @@ def test_io_convert_txt_to_yaml() -> None:
     success = io.convert_format(
         VALID_SAMPLE_TXT_FILE, "yaml", TEST_EMPTY_DIR_PATH)
     assert not success
+
 
 def test_io_create_directory() -> None:
     """
@@ -456,6 +474,7 @@ def test_io_create_directory() -> None:
     io.delete(TEST_EMPTY_DIR_PATH + "/test_dir")
     assert success and is_dir
 
+
 def test_io_create_invalid_directory() -> None:
     """
     Tests IO class create_directory in invalid path case.
@@ -470,6 +489,7 @@ def test_io_create_invalid_directory() -> None:
     io = IO()
     success = io.create_directory(BDAY_CAT_JPG + "/test_dir/more")
     assert not success
+
 
 def test_io_move_file() -> None:
     """
@@ -490,7 +510,8 @@ def test_io_move_file() -> None:
     assert io.move_file(KITTEN_JPG, TEST_EMPTY_DIR_PATH)
     assert io.is_file(TEST_EMPTY_DIR_PATH + "/kitten_tongue.jpg")
     assert not io.is_file(KITTEN_JPG)
-    assert io.move_file(TEST_EMPTY_DIR_PATH + "/kitten_tongue.jpg", KITTEN_JPG[:KITTEN_JPG.rfind('/')])
+    assert io.move_file(TEST_EMPTY_DIR_PATH + "/kitten_tongue.jpg",
+                        KITTEN_JPG[:KITTEN_JPG.rfind('/')])
 
 
 def test_io_copy() -> None:
@@ -514,6 +535,7 @@ def test_io_copy() -> None:
     assert io.is_file(KITTEN_JPG)
     assert io.delete(TEST_EMPTY_DIR_PATH + "/kitten_tongue.jpg")
 
+
 def test_io_rename() -> None:
     """
     Tests IO class rename function.
@@ -528,9 +550,11 @@ def test_io_rename() -> None:
         (bool): True if all the tests pass. False otherwise.
     """
     io = IO()
-    assert io.rename(KITTEN_JPG,"kitten")
+    assert io.rename(KITTEN_JPG, "kitten")
     assert io.is_file(KITTEN_JPG[:KITTEN_JPG.rfind('/')] + "/kitten.jpg")
-    assert io.rename(KITTEN_JPG[:KITTEN_JPG.rfind('/')] + "/kitten.jpg", "kitten_tongue")
+    assert io.rename(KITTEN_JPG[:KITTEN_JPG.rfind(
+        '/')] + "/kitten.jpg", "kitten_tongue")
+
 
 def test_io_record_audio() -> None:
     """
@@ -545,10 +569,11 @@ def test_io_record_audio() -> None:
         (bool): True if all the tests pass. False otherwise.
     """
     io = IO()
-    assert io.record_audio(10,"recording",TEST_EMPTY_DIR_PATH)[0] and \
-        not io.record_audio(-10,"recording",TEST_EMPTY_DIR_PATH)[0] and \
-        not io.record_audio(10,"recording",VALID_SAMPLE_JSON_FILE)[0] and \
+    assert io.record_audio(10, "recording", TEST_EMPTY_DIR_PATH)[0] and \
+        not io.record_audio(-10, "recording", TEST_EMPTY_DIR_PATH)[0] and \
+        not io.record_audio(10, "recording", VALID_SAMPLE_JSON_FILE)[0] and \
         io.delete(TEST_EMPTY_DIR_PATH + "/recording.wav")
+
 
 def test_io_mono_to_stereo() -> None:
     """
@@ -564,11 +589,12 @@ def test_io_mono_to_stereo() -> None:
     """
     io = IO()
     s1, name = io.mono_to_stereo(
-        WAV_FILE_1_PATH,WAV_FILE_1_COPY_PATH, TEST_EMPTY_DIR_PATH)
+        WAV_FILE_1_PATH, WAV_FILE_1_COPY_PATH, TEST_EMPTY_DIR_PATH)
     assert s1 and \
-        not io.mono_to_stereo(WAV_FILE_1_PATH,WAV_FILE_2_PATH,TEST_EMPTY_DIR_PATH)[0] and \
-        not io.mono_to_stereo(TEST_EMPTY_DIR_PATH,WAV_FILE_1_COPY_PATH,TEST_EMPTY_DIR_PATH)[0] and \
-        io.delete("{}/{}.{}".format(TEST_EMPTY_DIR_PATH,name,"wav"))
+        not io.mono_to_stereo(WAV_FILE_1_PATH, WAV_FILE_2_PATH, TEST_EMPTY_DIR_PATH)[0] and \
+        not io.mono_to_stereo(TEST_EMPTY_DIR_PATH, WAV_FILE_1_COPY_PATH, TEST_EMPTY_DIR_PATH)[0] and \
+        io.delete("{}/{}.{}".format(TEST_EMPTY_DIR_PATH, name, "wav"))
+
 
 def test_io_mono_stereo_valid() -> None:
     """
@@ -583,12 +609,14 @@ def test_io_mono_stereo_valid() -> None:
     """
     io = IO()
     s1, name = io.mono_to_stereo(
-        WAV_FILE_1_PATH,WAV_FILE_1_COPY_PATH, TEST_EMPTY_DIR_PATH)
-    is_file = io.is_file("{}/{}.{}".format(TEST_EMPTY_DIR_PATH,name,"wav"))
-    deleted = io.delete("{}/{}.{}".format(TEST_EMPTY_DIR_PATH,name,"wav"))
+        WAV_FILE_1_PATH, WAV_FILE_1_COPY_PATH, TEST_EMPTY_DIR_PATH)
+    is_file = io.is_file("{}/{}.{}".format(TEST_EMPTY_DIR_PATH, name, "wav"))
+    deleted = io.delete("{}/{}.{}".format(TEST_EMPTY_DIR_PATH, name, "wav"))
     assert s1 and is_file and deleted
 
 # TODO: mismatch in returns here
+
+
 def test_io_mono_stereo_invalid_frames() -> None:
     """
     Tests the mono_to_stereo method in IO with files with mismatched frames.
@@ -602,8 +630,9 @@ def test_io_mono_stereo_invalid_frames() -> None:
     """
     io = IO()
     s1, name = io.mono_to_stereo(
-        WAV_FILE_1_PATH,WAV_FILE_2_PATH,TEST_EMPTY_DIR_PATH)
+        WAV_FILE_1_PATH, WAV_FILE_2_PATH, TEST_EMPTY_DIR_PATH)
     assert not s1 and name == None
+
 
 def test_io_mono_stereo_invalid_files() -> None:
     """
@@ -618,10 +647,11 @@ def test_io_mono_stereo_invalid_files() -> None:
     """
     io = IO()
     s1, name = io.mono_to_stereo(
-        TEST_EMPTY_DIR_PATH,WAV_FILE_1_COPY_PATH,TEST_EMPTY_DIR_PATH)
+        TEST_EMPTY_DIR_PATH, WAV_FILE_1_COPY_PATH, TEST_EMPTY_DIR_PATH)
     #assert io.is_file("{}/{}.{}".format(TEST_EMPTY_DIR_PATH,name,"wav"))
     assert not s1
     #assert not s1 and name == None
+
 
 def test_io_stereo_to_mono() -> None:
     """
@@ -637,13 +667,16 @@ def test_io_stereo_to_mono() -> None:
         (bool): True if all the tests pass. False otherwise.
     """
     io = IO()
-    s1, identifiers = io.stereo_to_mono(STEREO_FILE_1_PATH,TEST_EMPTY_DIR_PATH)
-    s2, _ = io.stereo_to_mono(WAV_FILE_1_COPY_PATH,TEST_EMPTY_DIR_PATH)
-    s3, _ = io.stereo_to_mono(TEST_EMPTY_DIR_PATH,TEST_EMPTY_DIR_PATH)
-    s4, _ = io.stereo_to_mono(WAV_FILE_1_PATH,WAV_FILE_1_PATH)
+    s1, identifiers = io.stereo_to_mono(
+        STEREO_FILE_1_PATH, TEST_EMPTY_DIR_PATH)
+    s2, _ = io.stereo_to_mono(WAV_FILE_1_COPY_PATH, TEST_EMPTY_DIR_PATH)
+    s3, _ = io.stereo_to_mono(TEST_EMPTY_DIR_PATH, TEST_EMPTY_DIR_PATH)
+    s4, _ = io.stereo_to_mono(WAV_FILE_1_PATH, WAV_FILE_1_PATH)
     assert s1 and not s2 and not s3 and not s4 and \
-        io.delete("{}/{}.{}".format(TEST_EMPTY_DIR_PATH,identifiers[0],"wav")) and \
-        io.delete("{}/{}.{}".format(TEST_EMPTY_DIR_PATH,identifiers[1],"wav"))
+        io.delete("{}/{}.{}".format(TEST_EMPTY_DIR_PATH, identifiers[0], "wav")) and \
+        io.delete("{}/{}.{}".format(TEST_EMPTY_DIR_PATH,
+                  identifiers[1], "wav"))
+
 
 def test_io_stereo_mono_valid() -> None:
     """
@@ -657,14 +690,21 @@ def test_io_stereo_mono_valid() -> None:
         (bool): True if all the tests pass. False otherwise.
     """
     io = IO()
-    s1, identifiers = io.stereo_to_mono(STEREO_FILE_1_PATH,TEST_EMPTY_DIR_PATH)
-    is_file1 = io.is_file("{}/{}.{}".format(TEST_EMPTY_DIR_PATH,identifiers[0],"wav"))
-    is_file2 = io.is_file("{}/{}.{}".format(TEST_EMPTY_DIR_PATH,identifiers[1],"wav"))
-    deleted1 = io.delete("{}/{}.{}".format(TEST_EMPTY_DIR_PATH,identifiers[0],"wav"))
-    deleted2 = io.delete("{}/{}.{}".format(TEST_EMPTY_DIR_PATH,identifiers[1],"wav"))
+    s1, identifiers = io.stereo_to_mono(
+        STEREO_FILE_1_PATH, TEST_EMPTY_DIR_PATH)
+    is_file1 = io.is_file(
+        "{}/{}.{}".format(TEST_EMPTY_DIR_PATH, identifiers[0], "wav"))
+    is_file2 = io.is_file(
+        "{}/{}.{}".format(TEST_EMPTY_DIR_PATH, identifiers[1], "wav"))
+    deleted1 = io.delete(
+        "{}/{}.{}".format(TEST_EMPTY_DIR_PATH, identifiers[0], "wav"))
+    deleted2 = io.delete(
+        "{}/{}.{}".format(TEST_EMPTY_DIR_PATH, identifiers[1], "wav"))
     assert s1 and is_file1 and is_file2 and deleted1 and deleted2
 
 # TODO: (None, None)?
+
+
 def test_io_stereo_mono_invalid_mono() -> None:
     """
     Tests the stereo_to_mono method in IO with a mono file.
@@ -677,8 +717,9 @@ def test_io_stereo_mono_invalid_mono() -> None:
         (bool): True if all the tests pass. False otherwise.
     """
     io = IO()
-    s1, names = io.stereo_to_mono(WAV_FILE_1_COPY_PATH,TEST_EMPTY_DIR_PATH)
+    s1, names = io.stereo_to_mono(WAV_FILE_1_COPY_PATH, TEST_EMPTY_DIR_PATH)
     assert not s1 and names == (None, None)
+
 
 def test_io_stereo_mono_invalid_file() -> None:
     """
@@ -692,10 +733,12 @@ def test_io_stereo_mono_invalid_file() -> None:
         (bool): True if all the tests pass. False otherwise.
     """
     io = IO()
-    s1, names = io.stereo_to_mono(TEST_EMPTY_DIR_PATH,TEST_EMPTY_DIR_PATH)
+    s1, names = io.stereo_to_mono(TEST_EMPTY_DIR_PATH, TEST_EMPTY_DIR_PATH)
     assert not s1 and names == (None, None)
 
 # TODO: (None, None)?
+
+
 def test_io_stereo_mono_invalid_output_path() -> None:
     """
     Tests the stereo_to_mono method in io with an invalid output path.
@@ -708,8 +751,9 @@ def test_io_stereo_mono_invalid_output_path() -> None:
         (bool): True if all the tests pass. False otherwise.
     """
     io = IO()
-    s1, names = io.stereo_to_mono(WAV_FILE_1_PATH,WAV_FILE_1_PATH)
+    s1, names = io.stereo_to_mono(WAV_FILE_1_PATH, WAV_FILE_1_PATH)
     assert not s1 and names == (None, None)
+
 
 def test_io_concat() -> None:
     """
@@ -725,12 +769,17 @@ def test_io_concat() -> None:
         (bool): True if all the tests pass. False otherwise.
     """
     io = IO()
-    s1,identifier = io.concat([WAV_FILE_1_PATH, WAV_FILE_2_PATH, WAV_FILE_3_PATH], TEST_EMPTY_DIR_PATH)
-    s2, _ = io.concat([WAV_FILE_1_PATH,VIDEO_FILE_MP4_PATH], TEST_EMPTY_DIR_PATH)
-    s3, _ = io.concat([TEST_EMPTY_DIR_PATH,TEST_EMPTY_DIR_PATH],TEST_EMPTY_DIR_PATH)
-    s4, _ = io.concat([WAV_FILE_1_PATH, WAV_FILE_2_PATH, WAV_FILE_3_PATH], WAV_FILE_1_COPY_PATH)
+    s1, identifier = io.concat(
+        [WAV_FILE_1_PATH, WAV_FILE_2_PATH, WAV_FILE_3_PATH], TEST_EMPTY_DIR_PATH)
+    s2, _ = io.concat([WAV_FILE_1_PATH, VIDEO_FILE_MP4_PATH],
+                      TEST_EMPTY_DIR_PATH)
+    s3, _ = io.concat(
+        [TEST_EMPTY_DIR_PATH, TEST_EMPTY_DIR_PATH], TEST_EMPTY_DIR_PATH)
+    s4, _ = io.concat([WAV_FILE_1_PATH, WAV_FILE_2_PATH,
+                      WAV_FILE_3_PATH], WAV_FILE_1_COPY_PATH)
     assert s1 and not s2 and not s3 and not s4 and \
-        io.delete("{}/{}.{}".format(TEST_EMPTY_DIR_PATH,identifier,"wav"))
+        io.delete("{}/{}.{}".format(TEST_EMPTY_DIR_PATH, identifier, "wav"))
+
 
 def test_io_concat_valid() -> None:
     """
@@ -744,10 +793,14 @@ def test_io_concat_valid() -> None:
         (bool): True if all the tests pass. False otherwise.
     """
     io = IO()
-    s1,identifier = io.concat([WAV_FILE_1_PATH, WAV_FILE_2_PATH, WAV_FILE_3_PATH], TEST_EMPTY_DIR_PATH)
-    is_file = io.is_file("{}/{}.{}".format(TEST_EMPTY_DIR_PATH,identifier,"wav"))
-    deleted = io.delete("{}/{}.{}".format(TEST_EMPTY_DIR_PATH,identifier,"wav"))
+    s1, identifier = io.concat(
+        [WAV_FILE_1_PATH, WAV_FILE_2_PATH, WAV_FILE_3_PATH], TEST_EMPTY_DIR_PATH)
+    is_file = io.is_file(
+        "{}/{}.{}".format(TEST_EMPTY_DIR_PATH, identifier, "wav"))
+    deleted = io.delete(
+        "{}/{}.{}".format(TEST_EMPTY_DIR_PATH, identifier, "wav"))
     assert s1 and is_file and deleted
+
 
 def test_io_concat_invalid_extensions() -> None:
     """
@@ -761,8 +814,10 @@ def test_io_concat_invalid_extensions() -> None:
         (bool): True if all the tests pass. False otherwise.
     """
     io = IO()
-    s1, name = io.concat([WAV_FILE_1_PATH,VIDEO_FILE_MP4_PATH], TEST_EMPTY_DIR_PATH)
+    s1, name = io.concat(
+        [WAV_FILE_1_PATH, VIDEO_FILE_MP4_PATH], TEST_EMPTY_DIR_PATH)
     assert not s1 and name == None
+
 
 def test_io_concat_invalid_files() -> None:
     """
@@ -776,10 +831,13 @@ def test_io_concat_invalid_files() -> None:
         (bool): True if all the tests pass. False otherwise.
     """
     io = IO()
-    s1, name = io.concat([TEST_EMPTY_DIR_PATH,TEST_EMPTY_DIR_PATH],TEST_EMPTY_DIR_PATH)
+    s1, name = io.concat(
+        [TEST_EMPTY_DIR_PATH, TEST_EMPTY_DIR_PATH], TEST_EMPTY_DIR_PATH)
     assert not s1 and name == None
 
 # TODO: return not none here -- test2a_test2b_test_concatenated
+
+
 def test_io_concat_invalid_output() -> None:
     """
     Tests the concat method with a bad output directory path.
@@ -792,8 +850,10 @@ def test_io_concat_invalid_output() -> None:
         (bool): True if all the tests pass. False otherwise.
     """
     io = IO()
-    s1, name = io.concat([WAV_FILE_1_PATH, WAV_FILE_2_PATH, WAV_FILE_3_PATH], WAV_FILE_1_COPY_PATH)
+    s1, name = io.concat([WAV_FILE_1_PATH, WAV_FILE_2_PATH,
+                         WAV_FILE_3_PATH], WAV_FILE_1_COPY_PATH)
     assert not s1 and name == None
+
 
 def test_io_overlay() -> None:
     """
@@ -811,11 +871,14 @@ def test_io_overlay() -> None:
     io = IO()
     s1, identifier = io.overlay(
         [WAV_FILE_1_PATH, WAV_FILE_2_PATH], TEST_EMPTY_DIR_PATH)
-    s2, _ = io.overlay([WAV_FILE_1_PATH,VIDEO_FILE_MP4_PATH],TEST_EMPTY_DIR_PATH)
-    s3, _ = io.overlay([WAV_FILE_1_PATH, WAV_FILE_2_PATH, WAV_FILE_3_PATH], TEST_EMPTY_DIR_PATH)
+    s2, _ = io.overlay(
+        [WAV_FILE_1_PATH, VIDEO_FILE_MP4_PATH], TEST_EMPTY_DIR_PATH)
+    s3, _ = io.overlay([WAV_FILE_1_PATH, WAV_FILE_2_PATH,
+                       WAV_FILE_3_PATH], TEST_EMPTY_DIR_PATH)
     s4, _ = io.overlay([WAV_FILE_1_PATH, WAV_FILE_2_PATH], WAV_FILE_1_PATH)
     assert s1 and not s2 and not s3 and not s4 and \
-        io.delete("{}/{}.{}".format(TEST_EMPTY_DIR_PATH,identifier,"wav"))
+        io.delete("{}/{}.{}".format(TEST_EMPTY_DIR_PATH, identifier, "wav"))
+
 
 def test_io_overlay_valid() -> None:
     """
@@ -831,9 +894,12 @@ def test_io_overlay_valid() -> None:
     io = IO()
     s1, identifier = io.overlay(
         [WAV_FILE_1_PATH, WAV_FILE_2_PATH], TEST_EMPTY_DIR_PATH)
-    is_file = io.is_file("{}/{}.{}".format(TEST_EMPTY_DIR_PATH,identifier,"wav"))
-    deleted = io.delete("{}/{}.{}".format(TEST_EMPTY_DIR_PATH,identifier,"wav"))
+    is_file = io.is_file(
+        "{}/{}.{}".format(TEST_EMPTY_DIR_PATH, identifier, "wav"))
+    deleted = io.delete(
+        "{}/{}.{}".format(TEST_EMPTY_DIR_PATH, identifier, "wav"))
     assert s1 and is_file and deleted
+
 
 def test_io_overlay_invalid_video() -> None:
     """
@@ -847,8 +913,10 @@ def test_io_overlay_invalid_video() -> None:
         (bool): True if all the tests pass. False otherwise.
     """
     io = IO()
-    s1, name = io.overlay([WAV_FILE_1_PATH,VIDEO_FILE_MP4_PATH],TEST_EMPTY_DIR_PATH)
+    s1, name = io.overlay(
+        [WAV_FILE_1_PATH, VIDEO_FILE_MP4_PATH], TEST_EMPTY_DIR_PATH)
     assert not s1 and name == None
+
 
 def test_io_overlay_invalid_num_files() -> None:
     """
@@ -862,10 +930,13 @@ def test_io_overlay_invalid_num_files() -> None:
         (bool): True if all the tests pass. False otherwise.
     """
     io = IO()
-    s1, name = io.overlay([WAV_FILE_1_PATH, WAV_FILE_2_PATH, WAV_FILE_3_PATH], TEST_EMPTY_DIR_PATH)
+    s1, name = io.overlay(
+        [WAV_FILE_1_PATH, WAV_FILE_2_PATH, WAV_FILE_3_PATH], TEST_EMPTY_DIR_PATH)
     assert not s1 and name == None
 
 # TODO: name is not None, test2a_test2b_overlaid
+
+
 def test_io_overlay_invalid_output_dir() -> None:
     """
     Tests the overlay method in IO with an invalid output path.
@@ -882,6 +953,8 @@ def test_io_overlay_invalid_output_dir() -> None:
     assert not s1
 
 # TODO: documentation is wrong for test
+
+
 def test_io_change_volume() -> None:
     """
     Tests the change_volume method in IO.
@@ -898,11 +971,12 @@ def test_io_change_volume() -> None:
     io = IO()
     name = WAV_FILE_1_PATH[WAV_FILE_1_PATH.rfind("/")+1:]
     s1 = io.change_volume(WAV_FILE_1_PATH, 20, TEST_EMPTY_DIR_PATH)
-    s2 = io.change_volume(WAV_FILE_1_PATH,-20,TEST_EMPTY_DIR_PATH)
-    s3 = io.change_volume(VIDEO_FILE_MP4_PATH,100,TEST_EMPTY_DIR_PATH)
+    s2 = io.change_volume(WAV_FILE_1_PATH, -20, TEST_EMPTY_DIR_PATH)
+    s3 = io.change_volume(VIDEO_FILE_MP4_PATH, 100, TEST_EMPTY_DIR_PATH)
     s4 = io.change_volume(WAV_FILE_1_PATH, 20, WAV_FILE_1_PATH)
     assert s1 and s2 and not s3 and not s4 and \
-        io.delete("{}/{}".format(TEST_EMPTY_DIR_PATH,name))
+        io.delete("{}/{}".format(TEST_EMPTY_DIR_PATH, name))
+
 
 def test_io_reverse_audio() -> None:
     """
@@ -920,9 +994,10 @@ def test_io_reverse_audio() -> None:
     name = WAV_FILE_1_PATH[WAV_FILE_1_PATH.rfind("/")+1:]
     s1 = io.reverse_audio(WAV_FILE_1_PATH, TEST_EMPTY_DIR_PATH)
     s2 = io.reverse_audio(VIDEO_FILE_MP4_PATH, TEST_EMPTY_DIR_PATH)
-    s3 = io.reverse_audio(WAV_FILE_2_PATH,WAV_FILE_2_PATH)
+    s3 = io.reverse_audio(WAV_FILE_2_PATH, WAV_FILE_2_PATH)
     assert s1 and not s2 and not s3 and \
-        io.delete("{}/{}".format(TEST_EMPTY_DIR_PATH,name))
+        io.delete("{}/{}".format(TEST_EMPTY_DIR_PATH, name))
+
 
 def test_io_reverse_valid() -> None:
     """
@@ -938,9 +1013,10 @@ def test_io_reverse_valid() -> None:
     io = IO()
     name = WAV_FILE_1_PATH[WAV_FILE_1_PATH.rfind("/")+1:]
     s1 = io.reverse_audio(WAV_FILE_1_PATH, TEST_EMPTY_DIR_PATH)
-    is_file = io.is_file("{}/{}".format(TEST_EMPTY_DIR_PATH,name))
-    deleted = io.delete("{}/{}".format(TEST_EMPTY_DIR_PATH,name))
+    is_file = io.is_file("{}/{}".format(TEST_EMPTY_DIR_PATH, name))
+    deleted = io.delete("{}/{}".format(TEST_EMPTY_DIR_PATH, name))
     assert s1 and is_file and deleted
+
 
 def test_io_reverse_invalid_input() -> None:
     """
@@ -955,8 +1031,10 @@ def test_io_reverse_invalid_input() -> None:
     """
     io = IO()
     s1 = io.reverse_audio(VIDEO_FILE_MP4_PATH, TEST_EMPTY_DIR_PATH)
-    is_empty = io.number_of_files_in_directory(TEST_EMPTY_DIR_PATH, ["*"], True)[1] == 0
+    is_empty = io.number_of_files_in_directory(
+        TEST_EMPTY_DIR_PATH, ["*"], True)[1] == 0
     assert not s1 and is_empty
+
 
 def test_io_reverse_invalid_output() -> None:
     """
@@ -970,9 +1048,11 @@ def test_io_reverse_invalid_output() -> None:
         (bool): True if all the tests pass. False otherwise.
     """
     io = IO()
-    s1 = io.reverse_audio(WAV_FILE_2_PATH,WAV_FILE_2_PATH)
-    is_empty = io.number_of_files_in_directory(TEST_EMPTY_DIR_PATH, ["*"], True)[1] == 0
+    s1 = io.reverse_audio(WAV_FILE_2_PATH, WAV_FILE_2_PATH)
+    is_empty = io.number_of_files_in_directory(
+        TEST_EMPTY_DIR_PATH, ["*"], True)[1] == 0
     assert not s1 and is_empty
+
 
 def test_io_chunk() -> None:
     """
@@ -991,12 +1071,13 @@ def test_io_chunk() -> None:
     # Create a directory to store chunks.
     dir_path = TEST_EMPTY_DIR_PATH + "/chunks"
     io.create_directory(dir_path)
-    s1 = io.chunk(WAV_FILE_1_PATH,dir_path,10)
-    s2 = io.chunk(VIDEO_FILE_MP4_PATH,dir_path,10)
-    s3 = io.chunk(WAV_FILE_1_PATH,dir_path,-10)
-    s4 = io.chunk(WAV_FILE_1_PATH,WAV_FILE_1_COPY_PATH,10)
+    s1 = io.chunk(WAV_FILE_1_PATH, dir_path, 10)
+    s2 = io.chunk(VIDEO_FILE_MP4_PATH, dir_path, 10)
+    s3 = io.chunk(WAV_FILE_1_PATH, dir_path, -10)
+    s4 = io.chunk(WAV_FILE_1_PATH, WAV_FILE_1_COPY_PATH, 10)
     assert s1 and not s2 and not s3 and not s4 and \
         io.delete(dir_path)
+
 
 def test_io_extract_video_from_file() -> None:
     """
@@ -1013,10 +1094,11 @@ def test_io_extract_video_from_file() -> None:
     io = IO()
     name = "sample-mov-file.mp4"
     assert io.extract_video_from_file(VIDEO_FILE_MOV_PATH, TEST_EMPTY_DIR_PATH) and \
-        io.is_file("{}/{}".format(TEST_EMPTY_DIR_PATH,name)) and \
-        io.delete("{}/{}".format(TEST_EMPTY_DIR_PATH,name)) and \
+        io.is_file("{}/{}".format(TEST_EMPTY_DIR_PATH, name)) and \
+        io.delete("{}/{}".format(TEST_EMPTY_DIR_PATH, name)) and \
         not io.extract_video_from_file(WAV_FILE_1_COPY_PATH, TEST_EMPTY_DIR_PATH) and \
         not io.extract_video_from_file(VIDEO_FILE_MOV_PATH, WAV_FILE_1_PATH)
+
 
 def test_io_extract_video_from_file_not_movie() -> None:
     """
@@ -1033,6 +1115,7 @@ def test_io_extract_video_from_file_not_movie() -> None:
     s1 = io.extract_video_from_file(WAV_FILE_1_PATH, TEST_EMPTY_DIR_PATH)
     assert not s1
 
+
 def test_io_extract_video_from_file_bad_dir() -> None:
     """
     Tests extract_video_from_file method in IO with a bad output directory
@@ -1047,6 +1130,7 @@ def test_io_extract_video_from_file_bad_dir() -> None:
     io = IO()
     s1 = io.extract_video_from_file(VIDEO_FILE_MOV_PATH, KITTEN_JPG)
     assert not s1
+
 
 def test_io_extract_audio_from_file() -> None:
     """
@@ -1065,7 +1149,9 @@ def test_io_extract_audio_from_file() -> None:
         io.is_file(TEST_EMPTY_DIR_PATH + "/sample-mov-file.wav") and \
         io.delete(TEST_EMPTY_DIR_PATH + "/sample-mov-file.wav") and \
         not io.extract_audio_from_file(WAV_FILE_1_PATH, TEST_EMPTY_DIR_PATH) and \
-        not io.extract_audio_from_file(VIDEO_FILE_MOV_PATH, VIDEO_FILE_AVI_PATH)
+        not io.extract_audio_from_file(
+            VIDEO_FILE_MOV_PATH, VIDEO_FILE_AVI_PATH)
+
 
 def test_io_extract_audio_from_file_not_movie() -> None:
     """
@@ -1082,6 +1168,7 @@ def test_io_extract_audio_from_file_not_movie() -> None:
     s1 = io.extract_audio_from_file(WAV_FILE_1_PATH, TEST_EMPTY_DIR_PATH)
     assert not s1
 
+
 def test_io_extract_audio_from_file_bad_dir() -> None:
     """
     Tests the extract_audio_from_file with a bad output path
@@ -1097,6 +1184,7 @@ def test_io_extract_audio_from_file_bad_dir() -> None:
     s1 = io.extract_audio_from_file(VIDEO_FILE_MOV_PATH, KITTEN_JPG)
     assert not s1
 
+
 def test_io_run_shell_command() -> None:
     """
     Tests the run_shell_command method in IO.
@@ -1109,8 +1197,9 @@ def test_io_run_shell_command() -> None:
         (bool): True if all the tests pass. False otherwise.
     """
     io = IO()
-    assert io.run_shell_command("pwd",None,None)[0] and \
-        io.run_shell_command("invalid",None,None)[0]
+    assert io.run_shell_command("pwd", None, None)[0] and \
+        io.run_shell_command("invalid", None, None)[0]
+
 
 def test_io_get_shell_process_status() -> None:
     """
@@ -1131,6 +1220,7 @@ def test_io_get_shell_process_status() -> None:
         io.get_shell_process_status(identifier_valid) == "finished" and \
         io.get_shell_process_status(identifier_invalid) == "error"
 
+
 def test_io_get_size() -> None:
     """
     Tests the get_size method in IO
@@ -1148,6 +1238,7 @@ def test_io_get_size() -> None:
         io.get_size(TEST_DIR_PATH)[0] and \
         not io.get_size("INvalid/path")[0]
 
+
 def test_io_get_name() -> None:
     """
     Tests the get_name method in IO.
@@ -1163,6 +1254,7 @@ def test_io_get_name() -> None:
     assert io.get_name(WAV_FILE_1_PATH) == "test2a" and \
         io.get_name(TEST_EMPTY_DIR_PATH) == "empty_dir_1"
 
+
 def test_io_get_file_extension() -> None:
     """
     Tests the get_file_extension method in IO.
@@ -1177,6 +1269,7 @@ def test_io_get_file_extension() -> None:
     io = IO()
     assert io.get_file_extension(WAV_FILE_1_PATH)[1] == "wav" and \
         not io.get_file_extension(TEST_EMPTY_DIR_PATH)[0]
+
 
 def test_io_get_parent_path() -> None:
     """

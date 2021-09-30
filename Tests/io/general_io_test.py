@@ -2,21 +2,14 @@
 import os
 # Local imports
 from Src.Components.io import GeneralIO
+from Tests.io.vardefs import *
+
 
 ############################### GLOBALS #####################################
 
-TEST_DIR_PATH = "TestData"
-WAV_FILE_1_PATH = "TestData/media/test2a.wav"
-MEDIA_TEST_DIR_PATH = "TestData/media"
-VALID_SAMPLE_JSON_FILE = "TestData/configs/sample_config.json"
-VALID_SAMPLE_TXT_FILE = "TestData/configs/sample_text.txt"
-VALID_SMALL_TXT_FILE = "TestData/configs/textfile.txt"
-VALID_SAMPLE_YAML_FILE = "TestData/configs/sample_yaml.yaml"
-VALID_FRUITS_YAML_FILE = "TestData/configs/fruits.yaml"
-VIDEO_FILE_AVI_PATH = "TestData/media/sample-avi-file.avi"
-DESKTOP_OUT_PATH = os.path.join(os.path.join(os.path.expanduser('~')),'Desktop')
 
 ########################## TEST DEFINITIONS ##################################
+
 
 def test_general_io_is_directory() -> None:
     """
@@ -49,6 +42,7 @@ def test_general_io_is_file() -> None:
     assert not general.is_file(TEST_DIR_PATH) and \
         general.is_file(WAV_FILE_1_PATH)
 
+
 def test_general_io_num_files_in_directory() -> None:
     """
     Tests the number_of_files_in_directory method in GeneralIO
@@ -67,9 +61,11 @@ def test_general_io_num_files_in_directory() -> None:
     general = GeneralIO()
     assert general.number_of_files_in_directory(TEST_DIR_PATH)[1] == 0 and \
         not general.number_of_files_in_directory(WAV_FILE_1_PATH)[0] and \
-        general.number_of_files_in_directory(MEDIA_TEST_DIR_PATH,["avi"])[1] == 1 and \
-        general.number_of_files_in_directory(TEST_DIR_PATH,[".asjkd.j"])[1] == 0 and \
-        general.number_of_files_in_directory(TEST_DIR_PATH,["avi"],True)[1] == 1
+        general.number_of_files_in_directory(MEDIA_TEST_DIR_PATH, ["avi"])[1] == 1 and \
+        general.number_of_files_in_directory(TEST_DIR_PATH, [".asjkd.j"])[1] == 0 and \
+        general.number_of_files_in_directory(
+            TEST_DIR_PATH, ["avi"], True)[1] == 1
+
 
 def test_general_io_path_of_files_in_directory() -> None:
     """
@@ -89,9 +85,10 @@ def test_general_io_path_of_files_in_directory() -> None:
     general = GeneralIO()
     assert general.path_of_files_in_directory(TEST_DIR_PATH)[0] and \
         not general.path_of_files_in_directory(WAV_FILE_1_PATH)[0] and \
-        general.path_of_files_in_directory(TEST_DIR_PATH,["pdf"])[0] and \
-        general.number_of_files_in_directory(TEST_DIR_PATH,[".asjkd.j"])[1] == 0 and \
-        general.number_of_files_in_directory(TEST_DIR_PATH,["pdf"],True)[0]
+        general.path_of_files_in_directory(TEST_DIR_PATH, ["pdf"])[0] and \
+        general.number_of_files_in_directory(TEST_DIR_PATH, [".asjkd.j"])[1] == 0 and \
+        general.number_of_files_in_directory(TEST_DIR_PATH, ["pdf"], True)[0]
+
 
 def test_general_io_number_of_subdirectories() -> None:
     """
@@ -105,6 +102,7 @@ def test_general_io_number_of_subdirectories() -> None:
     assert not general.number_of_subdirectories(WAV_FILE_1_PATH)[0]
     assert not general.number_of_subdirectories("invalid")[0]
 
+
 def test_general_io_paths_of_subdirectories() -> None:
     """
     Tests:
@@ -113,10 +111,11 @@ def test_general_io_paths_of_subdirectories() -> None:
         3. Provide an invalid path.
     """
     general = GeneralIO()
-    assert all([general.is_directory(path) for path \
-        in general.paths_of_subdirectories(TEST_DIR_PATH)[1]])
+    assert all([general.is_directory(path) for path
+                in general.paths_of_subdirectories(TEST_DIR_PATH)[1]])
     assert not general.paths_of_subdirectories(WAV_FILE_1_PATH)[0]
     assert not general.paths_of_subdirectories("invalid")[0]
+
 
 def test_general_io_is_readable() -> None:
     """
@@ -141,6 +140,7 @@ def test_general_io_is_readable() -> None:
         not general.is_readable(VIDEO_FILE_AVI_PATH) and \
         not general.is_readable(TEST_DIR_PATH)
 
+
 def test_general_io_get_file_extension() -> None:
     """
     Tests the get file extension method in GeneralIO.
@@ -155,6 +155,7 @@ def test_general_io_get_file_extension() -> None:
     general = GeneralIO()
     assert general.get_file_extension(WAV_FILE_1_PATH) == "wav" and \
         general.get_file_extension(TEST_DIR_PATH) == ""
+
 
 def test_general_io_read_files() -> None:
     """
@@ -177,6 +178,7 @@ def test_general_io_read_files() -> None:
         not general.read_file(VIDEO_FILE_AVI_PATH)[0] and \
         not general.read_file(TEST_DIR_PATH)[0]
 
+
 def test_general_io_read_files_custom_extension() -> None:
     """
     Tests:
@@ -184,12 +186,13 @@ def test_general_io_read_files_custom_extension() -> None:
     """
     general = GeneralIO()
     # Make a unique extension file and read it.
-    path = TEST_DIR_PATH +"/test_test.apple"
+    path = TEST_DIR_PATH + "/test_test.apple"
     general.write_to_file(path,
-        general.read_file(VALID_SAMPLE_TXT_FILE)[1], False)
+                          general.read_file(VALID_SAMPLE_TXT_FILE)[1], False)
     success, data = general.read_file(path)
     assert success
     assert data == general.read_file(VALID_SAMPLE_TXT_FILE)[1]
+
 
 def test_general_io_write_to_file() -> None:
     """
@@ -207,22 +210,23 @@ def test_general_io_write_to_file() -> None:
     """
     general = GeneralIO()
     assert general.write_to_file(TEST_DIR_PATH + "/json_test.json",
-        general.read_file(VALID_SAMPLE_JSON_FILE)[1], True) and \
-        general.delete(TEST_DIR_PATH +"/json_test.json") and \
+                                 general.read_file(VALID_SAMPLE_JSON_FILE)[1], True) and \
+        general.delete(TEST_DIR_PATH + "/json_test.json") and \
         general.write_to_file(TEST_DIR_PATH + "/yaml_test.yaml",
-        general.read_file(VALID_SAMPLE_YAML_FILE)[1], True) and \
-        general.delete(TEST_DIR_PATH +"/yaml_test.yaml") and \
-        general.write_to_file(TEST_DIR_PATH+ "/test_test.txt",
-        general.read_file(VALID_SAMPLE_TXT_FILE)[1], True) and \
-        general.delete(TEST_DIR_PATH +"/test_test.txt") and \
-        general.write_to_file(TEST_DIR_PATH +"/test_test.txt",
-        general.read_file(VALID_SAMPLE_TXT_FILE)[1], False) and \
-        general.delete(TEST_DIR_PATH +"/test_test.txt") and \
-        not general.write_to_file(TEST_DIR_PATH +"/Test/json_test.json",
-        general.read_file(VALID_SAMPLE_JSON_FILE)[1], True) and \
-        general.write_to_file(TEST_DIR_PATH +"/test_test.apple",
-        general.read_file(VALID_SAMPLE_TXT_FILE)[1], False) and \
-        general.delete(TEST_DIR_PATH +"/test_test.apple")
+                              general.read_file(VALID_SAMPLE_YAML_FILE)[1], True) and \
+        general.delete(TEST_DIR_PATH + "/yaml_test.yaml") and \
+        general.write_to_file(TEST_DIR_PATH + "/test_test.txt",
+                              general.read_file(VALID_SAMPLE_TXT_FILE)[1], True) and \
+        general.delete(TEST_DIR_PATH + "/test_test.txt") and \
+        general.write_to_file(TEST_DIR_PATH + "/test_test.txt",
+                              general.read_file(VALID_SAMPLE_TXT_FILE)[1], False) and \
+        general.delete(TEST_DIR_PATH + "/test_test.txt") and \
+        not general.write_to_file(TEST_DIR_PATH + "/Test/json_test.json",
+                                  general.read_file(VALID_SAMPLE_JSON_FILE)[1], True) and \
+        general.write_to_file(TEST_DIR_PATH + "/test_test.apple",
+                              general.read_file(VALID_SAMPLE_TXT_FILE)[1], False) and \
+        general.delete(TEST_DIR_PATH + "/test_test.apple")
+
 
 def test_general_io_create_directory() -> None:
     """
@@ -240,6 +244,7 @@ def test_general_io_create_directory() -> None:
         not general.create_directory(WAV_FILE_1_PATH) and \
         general.delete(TEST_DIR_PATH + "/test")
 
+
 def test_general_io_move_file() -> None:
     """
     Tests the move_file method in GeneralIO
@@ -255,15 +260,16 @@ def test_general_io_move_file() -> None:
     """
     general = GeneralIO()
     # Copy some files to the test directory
-    general.copy(WAV_FILE_1_PATH,TEST_DIR_PATH)
+    general.copy(WAV_FILE_1_PATH, TEST_DIR_PATH)
     # Get the names of all files in that directory and move them
     _, names = general.path_of_files_in_directory(
-        TEST_DIR_PATH,["wav"],False)
+        TEST_DIR_PATH, ["wav"], False)
     name = names[0]
     # Move all the files in the test directory.
-    general.move_file(name,DESKTOP_OUT_PATH)
+    general.move_file(name, DESKTOP_OUT_PATH)
     assert general.delete("{}/{}".format(DESKTOP_OUT_PATH,
-            name[name.rfind("/")+1:]))
+                                         name[name.rfind("/")+1:]))
+
 
 def test_general_io_copy() -> None:
     """
@@ -281,13 +287,14 @@ def test_general_io_copy() -> None:
     """
     general = GeneralIO()
     assert general.copy(WAV_FILE_1_PATH, TEST_DIR_PATH) and \
-        general.copy(MEDIA_TEST_DIR_PATH,TEST_DIR_PATH + "/copied") and \
-        not general.copy(MEDIA_TEST_DIR_PATH , WAV_FILE_1_PATH) and \
+        general.copy(MEDIA_TEST_DIR_PATH, TEST_DIR_PATH + "/copied") and \
+        not general.copy(MEDIA_TEST_DIR_PATH, WAV_FILE_1_PATH) and \
         not general.copy(TEST_DIR_PATH + "invalid",
-            TEST_DIR_PATH + "/copied-2") and \
-        general.delete(TEST_DIR_PATH +"/copied") and \
-        general.delete(TEST_DIR_PATH + "/" + \
-            WAV_FILE_1_PATH[WAV_FILE_1_PATH.rfind("/")+1:])
+                         TEST_DIR_PATH + "/copied-2") and \
+        general.delete(TEST_DIR_PATH + "/copied") and \
+        general.delete(TEST_DIR_PATH + "/" +
+                       WAV_FILE_1_PATH[WAV_FILE_1_PATH.rfind("/")+1:])
+
 
 def test_general_io_rename() -> None:
     """
@@ -329,9 +336,10 @@ def test_general_io_delete() -> None:
     general.create_directory(TEST_DIR_PATH+"/sub")
     # Delete
     _, names = general.path_of_files_in_directory(
-        TEST_DIR_PATH,["wav"],False)
+        TEST_DIR_PATH, ["wav"], False)
     assert all([general.delete(name,) for name in names]) and \
         general.delete(TEST_DIR_PATH+"/sub")
+
 
 def test_general_io_get_parent_directory() -> None:
     """
@@ -341,5 +349,5 @@ def test_general_io_get_parent_directory() -> None:
     """
     general = GeneralIO()
     assert general.is_directory(general.get_parent_directory(WAV_FILE_1_PATH))
-    assert general.is_directory(general.get_parent_directory(MEDIA_TEST_DIR_PATH))
-
+    assert general.is_directory(
+        general.get_parent_directory(MEDIA_TEST_DIR_PATH))

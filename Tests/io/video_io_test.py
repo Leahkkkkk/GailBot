@@ -2,19 +2,12 @@
 import os
 # Local imports
 from Src.Components.io import GeneralIO, VideoIO, VideoWriteTypes
+from Tests.io.vardefs import *
 
 ############################### GLOBALS #####################################
 
-DESKTOP_OUT_PATH = os.path.join(os.path.join(os.path.expanduser('~')),'Desktop')
-WAV_FILE_1_PATH = "TestData/media/test2a.wav"
-VIDEO_FILE_MP4_PATH = "TestData/media/sample-mp4-file.mp4"
-VIDEO_FILE_MXF_PATH = "TestData/media/vid2.MXF"
-VIDEO_FILE_AVI_PATH = "TestData/media/sample-avi-file.avi"
-VIDEO_FILE_MOV_PATH = "TestData/media/sample-mov-file.mov"
-VIDEO_FILE_MPG_PATH = "TestData/media/sample-mpg-file.mpg"
-TEST_DIR_PATH = "TestData"
-
 ########################## TEST DEFINITIONS ##################################
+
 
 def test_video_io_read_streams() -> None:
     """
@@ -31,10 +24,11 @@ def test_video_io_read_streams() -> None:
     """
     video = VideoIO()
     assert video.read_streams({
-        "file_1_mp4" : VIDEO_FILE_MP4_PATH, "file_2_mxf" : VIDEO_FILE_MXF_PATH}) and \
+        "file_1_mp4": VIDEO_FILE_MP4_PATH, "file_2_mxf": VIDEO_FILE_MXF_PATH}) and \
         video.read_streams({}) and \
-        not video.read_streams({"file_1" : DESKTOP_OUT_PATH}) and \
-        not video.read_streams({"file_1" : WAV_FILE_1_PATH})
+        not video.read_streams({"file_1": DESKTOP_OUT_PATH}) and \
+        not video.read_streams({"file_1": WAV_FILE_1_PATH})
+
 
 def test_video_io_is_readable() -> None:
     """
@@ -67,11 +61,11 @@ def test_video_io_get_stream_names() -> None:
         (bool): True if successful. False otherwise.
     """
     video = VideoIO()
-    video.read_streams({"file_1_mp4" : VIDEO_FILE_MP4_PATH})
+    video.read_streams({"file_1_mp4": VIDEO_FILE_MP4_PATH})
     names_1 = video.get_stream_names()
     video.read_streams({
-        "file_1_mp4" : VIDEO_FILE_MP4_PATH,
-        "invalid" : WAV_FILE_1_PATH})
+        "file_1_mp4": VIDEO_FILE_MP4_PATH,
+        "invalid": WAV_FILE_1_PATH})
     names_2 = video.get_stream_names()
     video.read_streams({})
     names_3 = video.get_stream_names()
@@ -89,8 +83,8 @@ def test_video_io_get_supported_formats() -> None:
         (bool): True if successful. False otherwise.
     """
     video = VideoIO()
-    assert video.get_supported_formats() == \
-         ("mxf","mov","mp4","wmv","flv","avi","swf","m4v")
+    assert len(video.get_supported_formats()) > 0
+
 
 def test_video_io_write() -> None:
     """
@@ -109,21 +103,21 @@ def test_video_io_write() -> None:
     video = VideoIO()
     general = GeneralIO()
     assert video.read_streams({
-            "mp4_file" : VIDEO_FILE_MP4_PATH,
-            "mov_file" : VIDEO_FILE_MOV_PATH,
-            "avi_file" : VIDEO_FILE_AVI_PATH }) and \
+        "mp4_file": VIDEO_FILE_MP4_PATH,
+        "mov_file": VIDEO_FILE_MOV_PATH,
+        "avi_file": VIDEO_FILE_AVI_PATH}) and \
         video.set_output_paths(
-            {"mp4_file" : TEST_DIR_PATH,
-            "mov_file" : TEST_DIR_PATH,
-            "avi_file" : TEST_DIR_PATH}) and \
+            {"mp4_file": TEST_DIR_PATH,
+             "mov_file": TEST_DIR_PATH,
+             "avi_file": TEST_DIR_PATH}) and \
         video.write({
-            "mp4_file" : VideoWriteTypes.audio,
-            "mov_file" : VideoWriteTypes.video,
-            "avi_file" : VideoWriteTypes.video_audio}) and \
+            "mp4_file": VideoWriteTypes.audio,
+            "mov_file": VideoWriteTypes.video,
+            "avi_file": VideoWriteTypes.video_audio}) and \
         video.write({
-            "mp4_file" : VideoWriteTypes.audio}) and \
+            "mp4_file": VideoWriteTypes.audio}) and \
         not video.write({
-            "invalid" : VideoWriteTypes.audio}) and \
+            "invalid": VideoWriteTypes.audio}) and \
         general.delete(TEST_DIR_PATH + "/mov_file.mp4") and \
         general.delete(TEST_DIR_PATH + "/avi_file.mp4") and \
         general.delete(TEST_DIR_PATH + "/mp4_file.wav")

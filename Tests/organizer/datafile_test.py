@@ -1,5 +1,6 @@
 # Local imports
 from Src.Components.organizer import DataFile, DataFileAttributes, DataFileTypes
+from Tests.organizer.vardefs import *
 
 ############################### GLOBALS #####################################
 
@@ -18,12 +19,12 @@ def test_create_data_file_valid() -> None:
         (bool): True if all tests pass. False otherwise
     """
     data = {
-        "name" : "test_name",
-        "extension" : "wav",
-        "file_type" : DataFileTypes.audio,
-        "path" : "test_path",
+        "name": "test_name",
+        "extension": "wav",
+        "file_type": DataFileTypes.audio,
+        "path": "test_path",
         "size_bytes": 0,
-        "utterances" : list()}
+        "utterances": list()}
     data_file = DataFile(data)
     assert data_file.is_configured()
 
@@ -40,26 +41,27 @@ def test_create_data_file_invalid() -> None:
         (bool): True if all tests pass. False otherwise
     """
     data_1 = {
-        "name" : "test_name",
-        "extension" : "wav",
-        "file_type" : "blah",
-        "path" : "test_path",
+        "name": "test_name",
+        "extension": "wav",
+        "file_type": "blah",
+        "path": "test_path",
         "size_bytes": 0}
     data_2 = {
-        "name" : "test_name"}
+        "name": "test_name"}
     data_3 = {
-        "name" : "test_name",
-        "extension" : "wav",
-        "file_type" : "blach",
-        "path" : "test_path",
+        "name": "test_name",
+        "extension": "wav",
+        "file_type": "blach",
+        "path": "test_path",
         "size_bytes": 0,
-        "extra" : None}
+        "extra": None}
     data_file_1 = DataFile(data_1)
     data_file_2 = DataFile(data_2)
     data_file_3 = DataFile(data_3)
     assert not data_file_1.is_configured() and \
         not data_file_2.is_configured() and \
         not data_file_3.is_configured()
+
 
 def test_create_data_file_invalid_bad_file_type() -> None:
     """
@@ -73,14 +75,15 @@ def test_create_data_file_invalid_bad_file_type() -> None:
         (bool): True if all tests pass. False otherwise
     """
     data = {
-        "name" : "test_name",
-        "extension" : "wav",
-        "file_type" : "blah",
-        "path" : "test_path",
+        "name": "test_name",
+        "extension": "wav",
+        "file_type": "blah",
+        "path": "test_path",
         "size_bytes": 0,
-        "utterances" : list()}
+        "utterances": list()}
     data_file = DataFile(data)
     assert not data_file.is_configured()
+
 
 def test_create_data_file_invalid_missing_keys() -> None:
     """
@@ -94,9 +97,10 @@ def test_create_data_file_invalid_missing_keys() -> None:
         (bool): True if all tests pass. False otherwise
     """
     data = {
-        "name" : "test_name"}
+        "name": "test_name"}
     data_file = DataFile(data)
     assert not data_file.is_configured()
+
 
 def test_create_data_file_invalid_extra_keys() -> None:
     """
@@ -110,14 +114,15 @@ def test_create_data_file_invalid_extra_keys() -> None:
         (bool): True if all tests pass. False otherwise
     """
     data = {
-        "name" : "test_name",
-        "extension" : "wav",
-        "file_type" : "blach",
-        "path" : "test_path",
+        "name": "test_name",
+        "extension": "wav",
+        "file_type": "blach",
+        "path": "test_path",
         "size_bytes": 0,
-        "extra" : None}
+        "extra": None}
     data_file = DataFile(data)
     assert not data_file.is_configured()
+
 
 def test_create_data_file_invalid_empty() -> None:
     """
@@ -134,6 +139,7 @@ def test_create_data_file_invalid_empty() -> None:
     data_file = DataFile(data)
     assert not data_file.is_configured()
 
+
 def test_data_file_get_valid() -> None:
     """
     Tests the get method in DataFile.
@@ -145,18 +151,19 @@ def test_data_file_get_valid() -> None:
         (bool): True if all tests pass. False otherwise
     """
     data = {
-        "name" : "test_name",
-        "extension" : "wav",
-        "file_type" : DataFileTypes.audio,
-        "path" : "test_path",
+        "name": "test_name",
+        "extension": "wav",
+        "file_type": DataFileTypes.audio,
+        "path": "test_path",
         "size_bytes": 0,
-        "utterances" : list()}
+        "utterances": list()}
     data_file = DataFile(data)
     assert data_file.get(DataFileAttributes.name)[1] == "test_name" and \
         data_file.get(DataFileAttributes.extension)[1] == "wav" and \
         data_file.get(DataFileAttributes.file_type)[1] == DataFileTypes.audio and \
         data_file.get(DataFileAttributes.path)[1] == "test_path" and \
         data_file.get(DataFileAttributes.size_bytes)[1] == 0
+
 
 def test_data_file_get_invalid() -> None:
     """
@@ -169,14 +176,15 @@ def test_data_file_get_invalid() -> None:
         (bool): True if all tests pass. False otherwise.
     """
     data = {
-        "name" : "test_name",
-        "extension" : "wav",
-        "file_type" : DataFileTypes.audio,
-        "path" : "test_path",
+        "name": "test_name",
+        "extension": "wav",
+        "file_type": DataFileTypes.audio,
+        "path": "test_path",
         "size_bytes": 0,
-        "utterances" : list()}
+        "utterances": list()}
     data_file = DataFile(data)
     assert not data_file.get("invalid")[0]
+
 
 def test_data_file_set_valid() -> None:
     """
@@ -189,15 +197,16 @@ def test_data_file_set_valid() -> None:
         (bool): True if all tests pass. False otherwise.
     """
     data = {
-        "name" : "test_name",
-        "extension" : "wav",
-        "file_type" : DataFileTypes.audio,
-        "path" : "test_path",
+        "name": "test_name",
+        "extension": "wav",
+        "file_type": DataFileTypes.audio,
+        "path": "test_path",
         "size_bytes": 0,
-        "utterances" : list()}
+        "utterances": list()}
     data_file = DataFile(data)
-    assert data_file.set(DataFileAttributes.name,"new_name") and \
+    assert data_file.set(DataFileAttributes.name, "new_name") and \
         data_file.get(DataFileAttributes.name)[1] == "new_name"
+
 
 def test_data_file_set_invalid() -> None:
     """
@@ -211,15 +220,16 @@ def test_data_file_set_invalid() -> None:
         (bool): True if all tests pass. False otherwise.
     """
     data = {
-        "name" : "test_name",
-        "extension" : "wav",
-        "file_type" : DataFileTypes.audio,
-        "path" : "test_path",
+        "name": "test_name",
+        "extension": "wav",
+        "file_type": DataFileTypes.audio,
+        "path": "test_path",
         "size_bytes": 0,
-        "utterances" : list()}
+        "utterances": list()}
     data_file = DataFile(data)
     assert not data_file.set("invalid", None) and \
-        not data_file.set(DataFileAttributes.file_type,"audio")
+        not data_file.set(DataFileAttributes.file_type, "audio")
+
 
 def test_data_file_set_invalid_bad_key() -> None:
     """
@@ -232,14 +242,15 @@ def test_data_file_set_invalid_bad_key() -> None:
         (bool): True if all tests pass. False otherwise.
     """
     data = {
-        "name" : "test_name",
-        "extension" : "wav",
-        "file_type" : DataFileTypes.audio,
-        "path" : "test_path",
+        "name": "test_name",
+        "extension": "wav",
+        "file_type": DataFileTypes.audio,
+        "path": "test_path",
         "size_bytes": 0,
-        "utterances" : list()}
+        "utterances": list()}
     data_file = DataFile(data)
     assert not data_file.set("invalid", None)
+
 
 def test_data_file_set_invalid_file_type() -> None:
     """
@@ -252,12 +263,12 @@ def test_data_file_set_invalid_file_type() -> None:
         (bool): True if all tests pass. False otherwise.
     """
     data = {
-        "name" : "test_name",
-        "extension" : "wav",
-        "file_type" : DataFileTypes.audio,
-        "path" : "test_path",
+        "name": "test_name",
+        "extension": "wav",
+        "file_type": DataFileTypes.audio,
+        "path": "test_path",
         "size_bytes": 0,
-        "utterances" : list()}
+        "utterances": list()}
     data_file = DataFile(data)
-    assert not data_file.set(DataFileAttributes.file_type,"audio") and \
+    assert not data_file.set(DataFileAttributes.file_type, "audio") and \
         data_file.get(DataFileAttributes.file_type)[1] == DataFileTypes.audio
