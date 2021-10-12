@@ -1,23 +1,24 @@
 # Standard library imports
 from typing import List, Dict, Any, Tuple
 # Local imports
-from .services import FileSystemService, ConfigService,OrganizerService, \
-    SettingsDetails,SourceDetails,PipelineServiceSummary,PipelineService, \
+from .services import FileSystemService, ConfigService, OrganizerService, \
+    SettingsDetails, SourceDetails, PipelineServiceSummary, PipelineService, \
     GBSettingAttrs, SystemBlackBoard
 from .initializer import ControllerInitializer
+
 
 class GailBotController:
     """
     Provides an API to use GailBot.
     """
 
-    def __init__(self, workspace_dir_path : str) -> None:
-        ## Objects
+    def __init__(self, workspace_dir_path: str) -> None:
+        # Objects
         self.controller_initializer = ControllerInitializer()
         self.controller_initializer.initialize(workspace_dir_path)
-        ## Vars.
+        # Vars.
         self.fs_service = self.controller_initializer.get_fs_service()
-        self.organizer_service  = \
+        self.organizer_service = \
             self.controller_initializer.get_organizer_service()
         self.pipeline_service = \
             self.controller_initializer.get_pipeline_service()
@@ -30,8 +31,8 @@ class GailBotController:
         """
         self.fs_service.shutdown()
 
-    def add_source(self, source_name : str, source_path : str,
-            result_dir_path : str, transcriber_name : str = "GailBot") -> bool:
+    def add_source(self, source_name: str, source_path: str,
+                   result_dir_path: str, transcriber_name: str = "GailBot") -> bool:
         """
         Add a source.
 
@@ -47,7 +48,7 @@ class GailBotController:
         return self.organizer_service.add_source(
             source_name, source_path, result_dir_path, transcriber_name)
 
-    def remove_source(self, source_name : str) -> bool:
+    def remove_source(self, source_name: str) -> bool:
         """
         Remove a source that has been added.
 
@@ -59,7 +60,7 @@ class GailBotController:
         """
         return self.organizer_service.remove_source(source_name)
 
-    def remove_sources(self, source_names : List[str]) -> bool:
+    def remove_sources(self, source_names: List[str]) -> bool:
         """
         Remove multiple sources that have been previously added.
 
@@ -80,7 +81,7 @@ class GailBotController:
         """
         return self.organizer_service.clear_sources()
 
-    def reset_source(self, source_name : str) -> bool:
+    def reset_source(self, source_name: str) -> bool:
         """
         Reset the specified source, removing any attached settings profiles.
 
@@ -92,7 +93,7 @@ class GailBotController:
         """
         return self.organizer_service.reset_source(source_name)
 
-    def reset_sources(self, source_names : List[str]) -> bool:
+    def reset_sources(self, source_names: List[str]) -> bool:
         """
         Reset all the specified sources, removing any attached settings profile.
 
@@ -110,8 +111,8 @@ class GailBotController:
         """
         return self.organizer_service.reset_all_sources()
 
-    def create_new_settings_profile(self, new_settings_profile_name : str,
-            data : Dict[GBSettingAttrs, Any]) -> bool:
+    def create_new_settings_profile(self, new_settings_profile_name: str,
+                                    data: Dict[GBSettingAttrs, Any]) -> bool:
         """
         Create a new settings profiles with the specified data.
         Note that this profile is not automatically saved to disk.
@@ -128,7 +129,7 @@ class GailBotController:
         return self.organizer_service.create_new_settings_profile(
             new_settings_profile_name, data)
 
-    def save_settings_profile(self, settings_profile_name : str) -> bool:
+    def save_settings_profile(self, settings_profile_name: str) -> bool:
         """
         Save the specified settings profile.
         Note that the specified profile must exist.
@@ -144,7 +145,7 @@ class GailBotController:
         return self.organizer_service.save_settings_profile(
             settings_profile_name)
 
-    def remove_settings_profile(self, settings_profile_name : str) -> bool:
+    def remove_settings_profile(self, settings_profile_name: str) -> bool:
         """
         Remove the specified settings profile.
         Note that this removes the profile from disk, if saved.
@@ -168,8 +169,8 @@ class GailBotController:
         """
         return self.organizer_service.remove_all_settings_profiles()
 
-    def change_settings_profile_name(self, settings_profile_name : str,
-            new_name : str) -> bool:
+    def change_settings_profile_name(self, settings_profile_name: str,
+                                     new_name: str) -> bool:
         """
         Change the name of the specified settings profile to a new name.
         Note that the settings profile must exist and there must not be an
@@ -182,8 +183,8 @@ class GailBotController:
         return self.organizer_service.change_settings_profile_name(
             settings_profile_name, new_name)
 
-    def apply_settings_profile_to_source(self, source_name : str,
-            settings_profile_name : str) -> bool:
+    def apply_settings_profile_to_source(self, source_name: str,
+                                         settings_profile_name: str) -> bool:
         """
         Apply the specified, existing settings profile to this specified,
         existing source.
@@ -199,8 +200,8 @@ class GailBotController:
         return self.organizer_service.apply_settings_profile_to_source(
             source_name, settings_profile_name)
 
-    def apply_settings_profile_to_sources(self, source_names : List[str],
-            settings_profile_name : str) -> bool:
+    def apply_settings_profile_to_sources(self, source_names: List[str],
+                                          settings_profile_name: str) -> bool:
         """
         Apply the specified settings profile to the specified sources.
         Note that the sources and settings profile must exist.
@@ -216,8 +217,8 @@ class GailBotController:
         return self.organizer_service.apply_settings_profile_to_sources(
             source_names, settings_profile_name)
 
-    def save_source_settings_profile(self, source_name : str,
-            new_settings_profile_name : str) -> bool:
+    def save_source_settings_profile(self, source_name: str,
+                                     new_settings_profile_name: str) -> bool:
         """
         Save the settings profile attached to this source to disk.
         This is useful if the settings profile attributes for the specified
@@ -234,7 +235,7 @@ class GailBotController:
         return self.organizer_service.save_source_settings_profile(
             source_name, new_settings_profile_name)
 
-    def register_analysis_plugins(self, config_path : str) -> List[str]:
+    def register_analysis_plugins(self, config_path: str) -> List[str]:
         """
         Register analysis plugins from the specified configuration file.
 
@@ -247,7 +248,7 @@ class GailBotController:
         return self.pipeline_service.register_analysis_plugins(
             config_path)
 
-    def register_format(self, config_path : str) -> Tuple[str,List[str]]:
+    def register_format(self, config_path: str) -> Tuple[str, List[str]]:
         """
         Register a format from the specified configuration file.
 
@@ -296,7 +297,7 @@ class GailBotController:
         """
         return self.organizer_service.get_supported_video_formats()
 
-    def is_source(self, source_name : str) -> bool:
+    def is_source(self, source_name: str) -> bool:
         """
         Determine if a source with the specified source name exists.
 
@@ -308,7 +309,7 @@ class GailBotController:
         """
         return self.organizer_service.is_source(source_name)
 
-    def is_source_ready_to_transcribe(self, source_name : str) -> bool:
+    def is_source_ready_to_transcribe(self, source_name: str) -> bool:
         """
         Determine if the specified source is ready to transcribe.
 
@@ -339,7 +340,7 @@ class GailBotController:
         """
         return self.organizer_service.get_configured_source_names()
 
-    def get_source_details(self, source_name : str) -> SourceDetails:
+    def get_source_details(self, source_name: str) -> SourceDetails:
         """
         Obtain the SourceDetails for the specified source.
 
@@ -351,8 +352,8 @@ class GailBotController:
         """
         return self.organizer_service.get_source_details(source_name)
 
-    def get_sources_details(self, source_names : List[str]) \
-            -> Dict[str,SourceDetails]:
+    def get_sources_details(self, source_names: List[str]) \
+            -> Dict[str, SourceDetails]:
         """
         Obtain a mapping from the source names to their SourceDetails.
 
@@ -365,7 +366,7 @@ class GailBotController:
         """
         return self.organizer_service.get_sources_details(source_names)
 
-    def get_all_source_details(self) -> Dict[str,SourceDetails]:
+    def get_all_source_details(self) -> Dict[str, SourceDetails]:
         """
         Obtain a mapping from source names to SourceDetails for all sources.
 
@@ -375,7 +376,7 @@ class GailBotController:
         """
         return self.organizer_service.get_all_source_details()
 
-    def is_settings_profile(self, settings_profile_name : str) -> bool:
+    def is_settings_profile(self, settings_profile_name: str) -> bool:
         """
         Determine if the settings profile exists.
 
@@ -387,7 +388,7 @@ class GailBotController:
         """
         return self.organizer_service.is_settings_profile(settings_profile_name)
 
-    def is_settings_profile_saved(self, settings_profile_name : str) -> bool:
+    def is_settings_profile_saved(self, settings_profile_name: str) -> bool:
         """
         Determine if the settings profile is saved to disk.
 
@@ -400,7 +401,7 @@ class GailBotController:
         return self.organizer_service.is_settings_profile_saved(
             settings_profile_name)
 
-    def get_settings_profile_details(self, settings_profile_name : str) \
+    def get_settings_profile_details(self, settings_profile_name: str) \
             -> SettingsDetails:
         """
         Get the details for the specified settings profile.
@@ -416,7 +417,7 @@ class GailBotController:
             settings_profile_name)
 
     def get_settings_profiles_details(self,
-            settings_profile_names : List[str]) -> Dict[str,SettingsDetails]:
+                                      settings_profile_names: List[str]) -> Dict[str, SettingsDetails]:
         """
         Obtain a mapping from the specified settings profiles to their
         SettingsDetails.
@@ -433,7 +434,7 @@ class GailBotController:
         return self.organizer_service.get_settings_profiles_details(
             settings_profile_names)
 
-    def get_all_settings_profiles_details(self) -> Dict[str,SettingsDetails]:
+    def get_all_settings_profiles_details(self) -> Dict[str, SettingsDetails]:
         """
         Obtain a mapping from all the specified settings profiles to their
         SettingsDetails.
@@ -444,7 +445,7 @@ class GailBotController:
         """
         return self.organizer_service.get_all_settings_profiles_details()
 
-    def get_source_settings_profile_name(self, source_name : str) -> str:
+    def get_source_settings_profile_name(self, source_name: str) -> str:
         """
         Obtain the name of the settings profile associated with the specified
         source, if any.
@@ -459,7 +460,7 @@ class GailBotController:
             source_name)
 
     def get_source_names_using_settings_profile(self,
-            settings_profile_name : str) -> List[str]:
+                                                settings_profile_name: str) -> List[str]:
         """
         Obtain the names of all sources using the specified settings profile.
         Note that the settings profile must exist.
@@ -474,7 +475,7 @@ class GailBotController:
             settings_profile_name)
 
     def get_sources_details_using_settings_profile(self,
-            settings_profile_name : str) -> Dict[str,SourceDetails]:
+                                                   settings_profile_name: str) -> Dict[str, SourceDetails]:
         """
         Obtain a map from source name to the associated SourceDetails for
         all sources using the specified settings profile.
@@ -490,7 +491,7 @@ class GailBotController:
         return self.organizer_service.get_sources_details_using_settings_profile(
             settings_profile_name)
 
-    def get_source_settings_profile_details(self, source_name : str) \
+    def get_source_settings_profile_details(self, source_name: str) \
             -> SettingsDetails:
         """
         Obtain the SettingsDetails, of the settings profile associated with the
@@ -506,8 +507,8 @@ class GailBotController:
         return self.organizer_service.get_source_settings_profile_details(
             source_name)
 
-    def get_sources_settings_profile_details(self, source_names : List[str]) \
-            -> Dict[str,SettingsDetails]:
+    def get_sources_settings_profile_details(self, source_names: List[str]) \
+            -> Dict[str, SettingsDetails]:
         """
         Obtain a mapping from source names to the SettingsDetails for their
         settings profile, if any.
@@ -523,7 +524,7 @@ class GailBotController:
             source_names)
 
     def get_all_sources_settings_profile_details(self) \
-            -> Dict[str,SettingsDetails]:
+            -> Dict[str, SettingsDetails]:
         """
         Obtain a mapping from all sources to the SettingsDetails for their
         settings profile, if any.
@@ -552,7 +553,7 @@ class GailBotController:
         """
         return self.pipeline_service.get_format_names()
 
-    def get_format_plugin_names(self, format_name  : str) -> List[str]:
+    def get_format_plugin_names(self, format_name: str) -> List[str]:
         """
         Obtain the plugins associated with the specified format
 
@@ -566,8 +567,8 @@ class GailBotController:
 
     ############################## SETTERS ###################################
 
-    def set_settings_profile_attribute(self,settings_profile_name : str,
-            attr : GBSettingAttrs, value : Any) -> bool:
+    def set_settings_profile_attribute(self, settings_profile_name: str,
+                                       attr: GBSettingAttrs, value: Any) -> bool:
         """
         Set a value for the specified attribtue for the specified
         settings profile.
@@ -584,8 +585,8 @@ class GailBotController:
         return self.organizer_service.set_settings_profile_attribute(
             settings_profile_name, attr, value)
 
-    def set_source_settings_profile_attribute(self, source_name : str,
-            attr : GBSettingAttrs, value : Any) -> bool:
+    def set_source_settings_profile_attribute(self, source_name: str,
+                                              attr: GBSettingAttrs, value: Any) -> bool:
         """
         Set a value for the specified attribute for the specified source.
         Note that this sets the attribute for the source only, and not for the
@@ -602,4 +603,3 @@ class GailBotController:
         """
         return self.organizer_service.set_source_settings_profile_attribute(
             source_name, attr, value)
-

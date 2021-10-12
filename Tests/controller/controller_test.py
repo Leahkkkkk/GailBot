@@ -10,32 +10,19 @@ from Src.Components import GailBotController
 from Src.Components.io import IO
 from Src.Components.controller import GailBotController, SettingsDetails,\
     SourceDetails, GBSettingAttrs, PipelineServiceSummary
-
+from Tests.controller.vardefs import *
 
 ############################### GLOBALS #####################################
-
-# DIR PATHS
-WS_DIR_PATH = "TestData/workspace/controller_workspace/gb_workspace"
-RESULT_DIR_PATH = "TestData/workspace/controller_workspace/results"
-# FILE PATHS
-WAV_FILE_PATH = "TestData/media/test2a.wav"
-MP3_FILE_PATH = "TestData/media/sample1.mp3"
-MOV_FILE_PATH = "TestData/media/sample_video_conversation.mov"
-MIXED_DIR_PATH = "TestData/media/audio_video_conversation"
-ANALYSIS_PLUGINS_CONFIG = "TestData/plugins/pipeline_service_test/analysis_config.json"
-FORMAT_PLUGINS_CONFIG = "TestData/plugins/pipeline_service_test/format_config.json"
-EMPTY_JSON = "TestData/configs/empty_json.json"
-NUM_THREADS = 4
 
 
 ############################### SETUP #####################################
 def obtain_settings_profile_data() -> Dict:
     return {
         GBSettingAttrs.engine_type: "watson",
-        GBSettingAttrs.watson_api_key: "MSgOPTS9CvbADe49nEg4wm8_gxeRuf4FGUmlHS9QqAw3",
-        GBSettingAttrs.watson_language_customization_id: "41e54a38-2175-45f4-ac6a-1c11e42a2d54",
-        GBSettingAttrs.watson_base_language_model: "en-US_BroadbandModel",
-        GBSettingAttrs.watson_region: "dallas",
+        GBSettingAttrs.watson_api_key: WATSON_API_KEY,
+        GBSettingAttrs.watson_language_customization_id: WATSON_LANG_CUSTOM_ID,
+        GBSettingAttrs.watson_base_language_model: WATSON_BASE_LANG_MODEL,
+        GBSettingAttrs.watson_region: WATSON_REGION,
         GBSettingAttrs.analysis_plugins_to_apply: ['tcu_analysis', 'second_analysis'],
         GBSettingAttrs.output_format: "normal"}
 

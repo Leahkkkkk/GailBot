@@ -4,34 +4,39 @@ import pytest
 # Local imports
 from Src.Components.io import IO
 from Src.Components.controller.services.organizer_service import GailBotSettings, \
-    GBSettingAttrs, Source,RequestType
-from Src.Components.controller.services import FileSystemService,OrganizerService,\
-    SourceDetails,SettingsDetails
+    GBSettingAttrs, Source, RequestType
+from Src.Components.controller.services import FileSystemService, OrganizerService,\
+    SourceDetails, SettingsDetails
+from Tests.controller.vardefs import *
 ############################### GLOBALS #####################################
 
-WS_DIR_PATH = "TestData/workspace/temp_ws"
-WAV_FILE_PATH = "TestData/media/test2a.wav"
-TXT_FILE_PATH = "TestData/configs/textfile.txt"
-IMAGES_DIR_PATH = "TestData/images"
-CONV_DIR_PATH = "TestData/media/conversation"
-RESULT_DIR_PATH = "TestData/workspace/organizer_ws"
+# WS_DIR_PATH = "TestData/workspace/temp_ws"
+# WAV_FILE_PATH = "TestData/media/test2a.wav"
+# TXT_FILE_PATH = "TestData/configs/textfile.txt"
+# IMAGES_DIR_PATH = "TestData/images"
+# CONV_DIR_PATH = "TestData/media/conversation"
+# RESULT_DIR_PATH = "TestData/workspace/organizer_ws"
 
 ############################### SETUP #####################################
+
+
 def initialize_configured_service() -> OrganizerService:
     fs_service = FileSystemService()
     assert fs_service.configure_from_workspace_path(WS_DIR_PATH)
     service = OrganizerService(fs_service)
     return service
 
+
 def obtain_settings_profile_data() -> Dict:
     return {
-        GBSettingAttrs.engine_type : "watson",
-        GBSettingAttrs.watson_api_key : "MSgOPTS9CvbADe49nEg4wm8_gxeRuf4FGUmlHS9QqAw3",
-        GBSettingAttrs.watson_language_customization_id : "41e54a38-2175-45f4-ac6a-1c11e42a2d54",
-        GBSettingAttrs.watson_base_language_model : "en-US_BroadbandModel",
-        GBSettingAttrs.watson_region : "dallas",
-        GBSettingAttrs.analysis_plugins_to_apply : ["second_analysis"],
-        GBSettingAttrs.output_format : "normal"}
+        GBSettingAttrs.engine_type: "watson",
+        GBSettingAttrs.watson_api_key: "MSgOPTS9CvbADe49nEg4wm8_gxeRuf4FGUmlHS9QqAw3",
+        GBSettingAttrs.watson_language_customization_id: "41e54a38-2175-45f4-ac6a-1c11e42a2d54",
+        GBSettingAttrs.watson_base_language_model: "en-US_BroadbandModel",
+        GBSettingAttrs.watson_region: "dallas",
+        GBSettingAttrs.analysis_plugins_to_apply: ["second_analysis"],
+        GBSettingAttrs.output_format: "normal"}
+
 
 @pytest.fixture(scope='session', autouse=True)
 def reset_workspace() -> None:
@@ -41,8 +46,10 @@ def reset_workspace() -> None:
 
 ########################## TEST DEFINITIONS ##################################
 
+
 def test_configure_from_disk() -> None:
     pass
+
 
 def test_organizer_service_add_source_valid() -> None:
     """
@@ -51,12 +58,14 @@ def test_organizer_service_add_source_valid() -> None:
         2. Add a valid source and ensure conversation created from directory.
     """
     service = initialize_configured_service()
-    assert service.add_source("file",WAV_FILE_PATH,RESULT_DIR_PATH)
-    assert service.add_source("dir",CONV_DIR_PATH,RESULT_DIR_PATH)
+    assert service.add_source("file", WAV_FILE_PATH, RESULT_DIR_PATH)
+    assert service.add_source("dir", CONV_DIR_PATH, RESULT_DIR_PATH)
     assert service.clear_sources()
+
 
 def test_organizer_service_add_source_invalid() -> None:
     pass
+
 
 def test_organizer_service_remove_source() -> None:
     """
@@ -65,7 +74,7 @@ def test_organizer_service_remove_source() -> None:
         2. Remove a source that does not exist.
     """
     service = initialize_configured_service()
-    assert service.add_source("file",WAV_FILE_PATH,RESULT_DIR_PATH)
+    assert service.add_source("file", WAV_FILE_PATH, RESULT_DIR_PATH)
     assert service.remove_source("file")
     assert not service.remove_source("file")
 
@@ -77,13 +86,14 @@ def test_organizer_service_remove_sources() -> None:
         2. Remove all valid sources.
     """
     service = initialize_configured_service()
-    service.add_source("file",WAV_FILE_PATH,RESULT_DIR_PATH)
-    assert not service.remove_sources(["file","invalid"])
-    assert service.add_source("file",WAV_FILE_PATH,RESULT_DIR_PATH)
-    assert service.add_source("dir",CONV_DIR_PATH,RESULT_DIR_PATH)
+    service.add_source("file", WAV_FILE_PATH, RESULT_DIR_PATH)
+    assert not service.remove_sources(["file", "invalid"])
+    assert service.add_source("file", WAV_FILE_PATH, RESULT_DIR_PATH)
+    assert service.add_source("dir", CONV_DIR_PATH, RESULT_DIR_PATH)
     assert service.is_source("file")
     assert service.is_source("dir")
-    assert service.remove_sources(["file","dir"])
+    assert service.remove_sources(["file", "dir"])
+
 
 def test_organizer_service_clear_sources() -> None:
     """
@@ -91,10 +101,11 @@ def test_organizer_service_clear_sources() -> None:
         1. Clear sources and check previously added cannot be retrieved.
     """
     service = initialize_configured_service()
-    assert service.add_source("file",WAV_FILE_PATH,RESULT_DIR_PATH)
+    assert service.add_source("file", WAV_FILE_PATH, RESULT_DIR_PATH)
     assert service.clear_sources()
-    assert service.add_source("file",WAV_FILE_PATH,RESULT_DIR_PATH)
+    assert service.add_source("file", WAV_FILE_PATH, RESULT_DIR_PATH)
     assert service.clear_sources()
+
 
 def test_reset_source() -> None:
     """
@@ -103,9 +114,10 @@ def test_reset_source() -> None:
         2. Reset an invalid source.
     """
     service = initialize_configured_service()
-    assert service.add_source("file",WAV_FILE_PATH,RESULT_DIR_PATH)
+    assert service.add_source("file", WAV_FILE_PATH, RESULT_DIR_PATH)
     assert service.reset_source("file")
     assert not service.reset_source("invalid")
+
 
 def test_reset_sources() -> None:
     """
@@ -113,9 +125,10 @@ def test_reset_sources() -> None:
         1. Reset only some sources.
     """
     service = initialize_configured_service()
-    service.add_source("file",WAV_FILE_PATH,RESULT_DIR_PATH)
-    service.add_source("dir",CONV_DIR_PATH,RESULT_DIR_PATH)
-    assert service.reset_sources(["file","dir"])
+    service.add_source("file", WAV_FILE_PATH, RESULT_DIR_PATH)
+    service.add_source("dir", CONV_DIR_PATH, RESULT_DIR_PATH)
+    assert service.reset_sources(["file", "dir"])
+
 
 def reset_all_sources() -> None:
     """
@@ -123,9 +136,10 @@ def reset_all_sources() -> None:
         1. Reset all sources.
     """
     service = initialize_configured_service()
-    service.add_source("file",WAV_FILE_PATH,RESULT_DIR_PATH)
-    service.add_source("dir",CONV_DIR_PATH,RESULT_DIR_PATH)
+    service.add_source("file", WAV_FILE_PATH, RESULT_DIR_PATH)
+    service.add_source("dir", CONV_DIR_PATH, RESULT_DIR_PATH)
     assert service.reset_all_sources()
+
 
 def test_organizer_service_create_new_settings_profile() -> None:
     """
@@ -135,12 +149,13 @@ def test_organizer_service_create_new_settings_profile() -> None:
         3. Create a profile with a repeated name.
     """
     service = initialize_configured_service()
-    assert not service.create_new_settings_profile("s1",{})
+    assert not service.create_new_settings_profile("s1", {})
     assert service.create_new_settings_profile(
-        "s1",obtain_settings_profile_data())
+        "s1", obtain_settings_profile_data())
     assert not service.create_new_settings_profile(
-        "s1",obtain_settings_profile_data())
+        "s1", obtain_settings_profile_data())
     service.clear_sources()
+
 
 def test_organizer_service_save_settings_profile() -> None:
     """
@@ -150,11 +165,12 @@ def test_organizer_service_save_settings_profile() -> None:
     """
     service = initialize_configured_service()
     service.create_new_settings_profile(
-        "s1",obtain_settings_profile_data())
+        "s1", obtain_settings_profile_data())
     assert not service.save_settings_profile("invalid")
     assert service.save_settings_profile("s1")
     service.remove_settings_profile("s1")
     assert service.clear_sources()
+
 
 def test_organizer_service_remove_settings_profile() -> None:
     """
@@ -164,12 +180,13 @@ def test_organizer_service_remove_settings_profile() -> None:
     """
     service = initialize_configured_service()
     service.create_new_settings_profile(
-        "s1",obtain_settings_profile_data())
-    service.add_source("file",WAV_FILE_PATH,RESULT_DIR_PATH)
-    service.apply_settings_profile_to_source("file","s1")
+        "s1", obtain_settings_profile_data())
+    service.add_source("file", WAV_FILE_PATH, RESULT_DIR_PATH)
+    service.apply_settings_profile_to_source("file", "s1")
     assert not service.remove_settings_profile("invalid")
     assert service.remove_settings_profile("s1")
     assert not service.is_source("file")
+
 
 def test_organizer_service_remove_all_settings_profiles() -> None:
     """
@@ -178,13 +195,13 @@ def test_organizer_service_remove_all_settings_profiles() -> None:
     """
     service = initialize_configured_service()
     service.create_new_settings_profile(
-        "s1",obtain_settings_profile_data())
+        "s1", obtain_settings_profile_data())
     service.create_new_settings_profile(
-        "s2",obtain_settings_profile_data())
-    service.add_source("file",WAV_FILE_PATH,RESULT_DIR_PATH)
-    service.add_source("file2",WAV_FILE_PATH,RESULT_DIR_PATH)
-    service.apply_settings_profile_to_source("file","s1")
-    service.apply_settings_profile_to_source("file2","s2")
+        "s2", obtain_settings_profile_data())
+    service.add_source("file", WAV_FILE_PATH, RESULT_DIR_PATH)
+    service.add_source("file2", WAV_FILE_PATH, RESULT_DIR_PATH)
+    service.apply_settings_profile_to_source("file", "s1")
+    service.apply_settings_profile_to_source("file2", "s2")
     assert service.remove_all_settings_profiles()
     assert not service.is_source("file")
     assert not service.is_source("file2")
@@ -199,15 +216,16 @@ def test_organizer_service_change_settings_profile_name() -> None:
     """
     service = initialize_configured_service()
     service.create_new_settings_profile(
-        "s1",obtain_settings_profile_data())
-    assert service.add_source("file",WAV_FILE_PATH,RESULT_DIR_PATH)
+        "s1", obtain_settings_profile_data())
+    assert service.add_source("file", WAV_FILE_PATH, RESULT_DIR_PATH)
     assert service.is_source("file")
-    service.apply_settings_profile_to_source("file","s1")
-    assert not service.change_settings_profile_name("s2","s3")
-    assert service.change_settings_profile_name("s1","s2")
+    service.apply_settings_profile_to_source("file", "s1")
+    assert not service.change_settings_profile_name("s2", "s3")
+    assert service.change_settings_profile_name("s1", "s2")
     assert service.get_source_settings_profile_name("file") == "s2"
     service.clear_sources()
     service.remove_settings_profile("s2")
+
 
 def test_organizer_service_apply_settings_profile_to_source() -> None:
     """
@@ -218,18 +236,19 @@ def test_organizer_service_apply_settings_profile_to_source() -> None:
         4. Apply profile to configured source.
     """
     service = initialize_configured_service()
-    service.add_source("file",WAV_FILE_PATH,RESULT_DIR_PATH)
-    assert not service.apply_settings_profile_to_source("file","invalid")
+    service.add_source("file", WAV_FILE_PATH, RESULT_DIR_PATH)
+    assert not service.apply_settings_profile_to_source("file", "invalid")
     service.create_new_settings_profile(
-        "s1",obtain_settings_profile_data())
-    assert not service.apply_settings_profile_to_source("invalid","s1")
-    assert service.apply_settings_profile_to_source("file","s1")
+        "s1", obtain_settings_profile_data())
+    assert not service.apply_settings_profile_to_source("invalid", "s1")
+    assert service.apply_settings_profile_to_source("file", "s1")
     service.create_new_settings_profile(
-        "s2",obtain_settings_profile_data())
-    assert service.apply_settings_profile_to_source("file","s2")
+        "s2", obtain_settings_profile_data())
+    assert service.apply_settings_profile_to_source("file", "s2")
     service.remove_settings_profile("s1")
     service.remove_settings_profile("s2")
     assert service.clear_sources()
+
 
 def test_apply_settings_profile_to_sources() -> None:
     """
@@ -237,11 +256,12 @@ def test_apply_settings_profile_to_sources() -> None:
         1. Apply a new settings profile to multiple sources.
     """
     service = initialize_configured_service()
-    service.add_source("file",WAV_FILE_PATH,RESULT_DIR_PATH)
-    service.add_source("dir",CONV_DIR_PATH,RESULT_DIR_PATH)
+    service.add_source("file", WAV_FILE_PATH, RESULT_DIR_PATH)
+    service.add_source("dir", CONV_DIR_PATH, RESULT_DIR_PATH)
     service.create_new_settings_profile(
-        "s1",obtain_settings_profile_data())
-    assert service.apply_settings_profile_to_sources(["file","dir"],"s1")
+        "s1", obtain_settings_profile_data())
+    assert service.apply_settings_profile_to_sources(["file", "dir"], "s1")
+
 
 def test_organizer_service_save_source_settings_profile() -> None:
     """
@@ -251,16 +271,17 @@ def test_organizer_service_save_source_settings_profile() -> None:
         3. Check that source has updated profile.
     """
     service = initialize_configured_service()
-    service.add_source("file",WAV_FILE_PATH,RESULT_DIR_PATH)
+    service.add_source("file", WAV_FILE_PATH, RESULT_DIR_PATH)
     service.create_new_settings_profile(
-        "s1",obtain_settings_profile_data())
-    service.apply_settings_profile_to_source("file","s1")
-    assert not service.save_source_settings_profile("invalid","new")
-    assert service.save_source_settings_profile("file","s2")
+        "s1", obtain_settings_profile_data())
+    service.apply_settings_profile_to_source("file", "s1")
+    assert not service.save_source_settings_profile("invalid", "new")
+    assert service.save_source_settings_profile("file", "s2")
     assert service.get_source_settings_profile_name("file") == "s2"
     service.remove_settings_profile("s1")
     service.remove_settings_profile("s2")
     service.clear_sources()
+
 
 def test_get_supported_audio_formats() -> None:
     """
@@ -270,6 +291,7 @@ def test_get_supported_audio_formats() -> None:
     service = initialize_configured_service()
     assert len(service.get_supported_audio_formats()) > 0
 
+
 def test_get_supported_video_formats() -> None:
     """
     Tests:
@@ -278,6 +300,7 @@ def test_get_supported_video_formats() -> None:
     service = initialize_configured_service()
     assert len(service.get_supported_video_formats()) > 0
 
+
 def test_organizer_service_is_source() -> None:
     """
     Tests:
@@ -285,10 +308,11 @@ def test_organizer_service_is_source() -> None:
         2. Check unknown source does not exist.
     """
     service = initialize_configured_service()
-    service.add_source("file",WAV_FILE_PATH,RESULT_DIR_PATH)
+    service.add_source("file", WAV_FILE_PATH, RESULT_DIR_PATH)
     assert service.is_source("file")
     assert not service.is_source("dir")
     service.clear_sources()
+
 
 def test_organizer_service_is_source_configured() -> None:
     """
@@ -298,15 +322,16 @@ def test_organizer_service_is_source_configured() -> None:
         3. Check an un-configured source
     """
     service = initialize_configured_service()
-    service.add_source("file",WAV_FILE_PATH,RESULT_DIR_PATH)
+    service.add_source("file", WAV_FILE_PATH, RESULT_DIR_PATH)
     service.create_new_settings_profile(
-        "s1",obtain_settings_profile_data())
+        "s1", obtain_settings_profile_data())
     assert not service.is_source_configured("file")
-    service.apply_settings_profile_to_source("file","s1")
+    service.apply_settings_profile_to_source("file", "s1")
     assert service.is_source_configured("file")
     assert not service.is_source_configured("invalid")
     service.clear_sources()
     service.remove_settings_profile("s1")
+
 
 def test_organizer_service_get_source_names() -> None:
     """
@@ -316,9 +341,10 @@ def test_organizer_service_get_source_names() -> None:
     """
     service = initialize_configured_service()
     assert len(service.get_source_names()) == 0
-    service.add_source("file",WAV_FILE_PATH,RESULT_DIR_PATH)
+    service.add_source("file", WAV_FILE_PATH, RESULT_DIR_PATH)
     assert service.get_source_names() == ["file"]
     service.clear_sources()
+
 
 def test_organizer_service_get_configured_source_names() -> None:
     """
@@ -328,14 +354,15 @@ def test_organizer_service_get_configured_source_names() -> None:
     """
     service = initialize_configured_service()
     assert len(service.get_configured_source_names()) == 0
-    service.add_source("file",WAV_FILE_PATH,RESULT_DIR_PATH)
+    service.add_source("file", WAV_FILE_PATH, RESULT_DIR_PATH)
     assert len(service.get_configured_source_names()) == 0
     service.create_new_settings_profile(
-        "s1",obtain_settings_profile_data())
-    service.apply_settings_profile_to_source("file","s1")
+        "s1", obtain_settings_profile_data())
+    service.apply_settings_profile_to_source("file", "s1")
     assert service.get_configured_source_names() == ["file"]
     service.clear_sources()
     service.remove_settings_profile("s1")
+
 
 def test_organizer_service_get_source_details() -> None:
     """
@@ -345,11 +372,11 @@ def test_organizer_service_get_source_details() -> None:
         3. Get details of source that exists and also has a settings profile.
     """
     service = initialize_configured_service()
-    service.add_source("file",WAV_FILE_PATH,RESULT_DIR_PATH)
-    service.add_source("file2",WAV_FILE_PATH,RESULT_DIR_PATH)
+    service.add_source("file", WAV_FILE_PATH, RESULT_DIR_PATH)
+    service.add_source("file2", WAV_FILE_PATH, RESULT_DIR_PATH)
     service.create_new_settings_profile(
-        "s1",obtain_settings_profile_data())
-    service.apply_settings_profile_to_source("file","s1")
+        "s1", obtain_settings_profile_data())
+    service.apply_settings_profile_to_source("file", "s1")
     assert service.get_source_details("invalid") == None
     assert type(service.get_source_details("file")) == SourceDetails
     assert type(service.get_source_details("file2")) == SourceDetails
@@ -363,11 +390,12 @@ def test_organizer_service_get_sources_details() -> None:
         1. Get source details of multiple sources some existing and some invalid.
     """
     service = initialize_configured_service()
-    service.add_source("file",WAV_FILE_PATH,RESULT_DIR_PATH)
-    service.add_source("file2",WAV_FILE_PATH,RESULT_DIR_PATH)
-    assert list(service.get_sources_details(["file","file2"]).keys()) \
-        == ["file","file2"]
+    service.add_source("file", WAV_FILE_PATH, RESULT_DIR_PATH)
+    service.add_source("file2", WAV_FILE_PATH, RESULT_DIR_PATH)
+    assert list(service.get_sources_details(["file", "file2"]).keys()) \
+        == ["file", "file2"]
     service.clear_sources()
+
 
 def test_organizer_get_all_source_details() -> None:
     """
@@ -375,10 +403,11 @@ def test_organizer_get_all_source_details() -> None:
         1. Get all details.
     """
     service = initialize_configured_service()
-    service.add_source("file",WAV_FILE_PATH,RESULT_DIR_PATH)
-    service.add_source("file2",WAV_FILE_PATH,RESULT_DIR_PATH)
-    assert list(service.get_all_source_details().keys()) == ["file","file2"]
+    service.add_source("file", WAV_FILE_PATH, RESULT_DIR_PATH)
+    service.add_source("file2", WAV_FILE_PATH, RESULT_DIR_PATH)
+    assert list(service.get_all_source_details().keys()) == ["file", "file2"]
     service.clear_sources()
+
 
 def test_get_configured_sources() -> None:
     """
@@ -386,12 +415,13 @@ def test_get_configured_sources() -> None:
         1. Check that only configured sources are obtained.
     """
     service = initialize_configured_service()
-    service.add_source("file",WAV_FILE_PATH,RESULT_DIR_PATH)
-    service.add_source("file2",WAV_FILE_PATH,RESULT_DIR_PATH)
+    service.add_source("file", WAV_FILE_PATH, RESULT_DIR_PATH)
+    service.add_source("file2", WAV_FILE_PATH, RESULT_DIR_PATH)
     service.create_new_settings_profile(
-        "s1",obtain_settings_profile_data())
-    service.apply_settings_profile_to_source("file","s1")
+        "s1", obtain_settings_profile_data())
+    service.apply_settings_profile_to_source("file", "s1")
     assert list(service.get_configured_sources().keys()) == ["file"]
+
 
 def test_organizer_service_is_settings_profile() -> None:
     """
@@ -401,9 +431,10 @@ def test_organizer_service_is_settings_profile() -> None:
     """
     service = initialize_configured_service()
     service.create_new_settings_profile(
-        "s1",obtain_settings_profile_data())
+        "s1", obtain_settings_profile_data())
     assert not service.is_settings_profile("invalid")
     assert service.is_settings_profile("s1")
+
 
 def test_organizer_service_is_settings_profile_saved() -> None:
     """
@@ -413,11 +444,12 @@ def test_organizer_service_is_settings_profile_saved() -> None:
     """
     service = initialize_configured_service()
     service.create_new_settings_profile(
-        "s1",obtain_settings_profile_data())
+        "s1", obtain_settings_profile_data())
     assert not service.is_settings_profile_saved("s1")
     service.save_settings_profile("s1")
     assert service.is_settings_profile_saved("s1")
     service.remove_settings_profile("s1")
+
 
 def test_organizer_service_get_settings_profile_details() -> None:
     """
@@ -427,10 +459,11 @@ def test_organizer_service_get_settings_profile_details() -> None:
     """
     service = initialize_configured_service()
     service.create_new_settings_profile(
-        "s1",obtain_settings_profile_data())
+        "s1", obtain_settings_profile_data())
     assert service.get_settings_profile_details("s2") == None
     assert type(service.get_settings_profile_details("s1")) == SettingsDetails
     service.remove_settings_profile("s1")
+
 
 def test_organizer_service_get_settings_profiles_details() -> None:
     """
@@ -439,13 +472,14 @@ def test_organizer_service_get_settings_profiles_details() -> None:
     """
     service = initialize_configured_service()
     service.create_new_settings_profile(
-        "s1",obtain_settings_profile_data())
+        "s1", obtain_settings_profile_data())
     service.create_new_settings_profile(
-        "s2",obtain_settings_profile_data())
-    assert list(service.get_settings_profiles_details(["s1","s2"]).keys()) == \
-        ["s1","s2"]
+        "s2", obtain_settings_profile_data())
+    assert list(service.get_settings_profiles_details(["s1", "s2"]).keys()) == \
+        ["s1", "s2"]
     service.remove_settings_profile("s1")
     service.remove_settings_profile("s2")
+
 
 def test_organizer_service_get_all_settings_profiles_details() -> None:
     """
@@ -454,13 +488,14 @@ def test_organizer_service_get_all_settings_profiles_details() -> None:
     """
     service = initialize_configured_service()
     service.create_new_settings_profile(
-        "s1",obtain_settings_profile_data())
+        "s1", obtain_settings_profile_data())
     service.create_new_settings_profile(
-        "s2",obtain_settings_profile_data())
+        "s2", obtain_settings_profile_data())
     assert list(service.get_all_settings_profiles_details().keys()) \
-            == ["s1","s2"]
+        == ["s1", "s2"]
     service.remove_settings_profile("s1")
     service.remove_settings_profile("s2")
+
 
 def test_organizer_service_get_source_settings_profile_name() -> None:
     """
@@ -470,13 +505,14 @@ def test_organizer_service_get_source_settings_profile_name() -> None:
     """
     service = initialize_configured_service()
     service.create_new_settings_profile(
-        "s1",obtain_settings_profile_data())
-    service.add_source("file",WAV_FILE_PATH,RESULT_DIR_PATH)
+        "s1", obtain_settings_profile_data())
+    service.add_source("file", WAV_FILE_PATH, RESULT_DIR_PATH)
     assert service.get_source_settings_profile_name("file") == None
-    service.apply_settings_profile_to_source("file","s1")
+    service.apply_settings_profile_to_source("file", "s1")
     assert service.get_source_settings_profile_name("file") == "s1"
     service.clear_sources()
     service.remove_settings_profile("s1")
+
 
 def test_organizer_service_get_source_names_using_settings_profile() -> None:
     """
@@ -485,19 +521,21 @@ def test_organizer_service_get_source_names_using_settings_profile() -> None:
         2. Get for valid sources.
     """
     service = initialize_configured_service()
-    assert service.add_source("file",WAV_FILE_PATH,RESULT_DIR_PATH)
-    assert service.add_source("dir",CONV_DIR_PATH,RESULT_DIR_PATH)
+    assert service.add_source("file", WAV_FILE_PATH, RESULT_DIR_PATH)
+    assert service.add_source("dir", CONV_DIR_PATH, RESULT_DIR_PATH)
     service.create_new_settings_profile(
-        "s1",obtain_settings_profile_data())
+        "s1", obtain_settings_profile_data())
     service.create_new_settings_profile(
-        "s2",obtain_settings_profile_data())
-    service.apply_settings_profile_to_source("file","s1")
-    service.apply_settings_profile_to_source("dir","s1")
-    assert service.get_source_names_using_settings_profile("s1") == ["file","dir"]
+        "s2", obtain_settings_profile_data())
+    service.apply_settings_profile_to_source("file", "s1")
+    service.apply_settings_profile_to_source("dir", "s1")
+    assert service.get_source_names_using_settings_profile("s1") == [
+        "file", "dir"]
     assert service.get_source_names_using_settings_profile("s2") == []
     service.remove_settings_profile("s1")
     service.remove_settings_profile("s2")
     service.clear_sources()
+
 
 def test_organizer_service_get_sources_details_using_settings_profile() -> None:
     """
@@ -506,16 +544,17 @@ def test_organizer_service_get_sources_details_using_settings_profile() -> None:
         2. Get for valid settings profile.
     """
     service = initialize_configured_service()
-    assert service.add_source("file",WAV_FILE_PATH,RESULT_DIR_PATH)
-    assert service.add_source("dir",CONV_DIR_PATH,RESULT_DIR_PATH)
+    assert service.add_source("file", WAV_FILE_PATH, RESULT_DIR_PATH)
+    assert service.add_source("dir", CONV_DIR_PATH, RESULT_DIR_PATH)
     service.create_new_settings_profile(
-        "s1",obtain_settings_profile_data())
-    service.apply_settings_profile_to_source("file","s1")
+        "s1", obtain_settings_profile_data())
+    service.apply_settings_profile_to_source("file", "s1")
     assert list(service.get_sources_details_using_settings_profile("s1").keys()) \
         == ["file"]
     assert len(service.get_sources_details_using_settings_profile("invalid").keys()) \
         == 0
     service.clear_sources()
+
 
 def test_organizer_service_get_source_settings_profile_details() -> None:
     """
@@ -525,16 +564,17 @@ def test_organizer_service_get_source_settings_profile_details() -> None:
         3. Get details for an un-configured source.
     """
     service = initialize_configured_service()
-    service.add_source("file",WAV_FILE_PATH,RESULT_DIR_PATH)
-    service.add_source("file2",WAV_FILE_PATH,RESULT_DIR_PATH)
+    service.add_source("file", WAV_FILE_PATH, RESULT_DIR_PATH)
+    service.add_source("file2", WAV_FILE_PATH, RESULT_DIR_PATH)
     service.create_new_settings_profile(
-        "s1",obtain_settings_profile_data())
-    service.apply_settings_profile_to_source("file","s1")
+        "s1", obtain_settings_profile_data())
+    service.apply_settings_profile_to_source("file", "s1")
     assert type(service.get_source_settings_profile_details("file")) == \
         SettingsDetails
-    assert  service.get_source_settings_profile_details("invalid") == None
-    assert  service.get_source_settings_profile_details("file2") == None
+    assert service.get_source_settings_profile_details("invalid") == None
+    assert service.get_source_settings_profile_details("file2") == None
     service.clear_sources()
+
 
 def test_organizer_service_get_all_sources_settings_profile_details() -> None:
     """
@@ -542,14 +582,15 @@ def test_organizer_service_get_all_sources_settings_profile_details() -> None:
         1. Get details for all configured sources.
     """
     service = initialize_configured_service()
-    service.add_source("file",WAV_FILE_PATH,RESULT_DIR_PATH)
-    service.add_source("file2",WAV_FILE_PATH,RESULT_DIR_PATH)
+    service.add_source("file", WAV_FILE_PATH, RESULT_DIR_PATH)
+    service.add_source("file2", WAV_FILE_PATH, RESULT_DIR_PATH)
     service.create_new_settings_profile(
-        "s1",obtain_settings_profile_data())
-    service.apply_settings_profile_to_source("file","s1")
+        "s1", obtain_settings_profile_data())
+    service.apply_settings_profile_to_source("file", "s1")
     assert list(service.get_all_sources_settings_profile_details().keys()) == \
         ["file"]
     service.clear_sources()
+
 
 def test_organizer_service_set_settings_profile_attribute() -> None:
     """
@@ -559,30 +600,32 @@ def test_organizer_service_set_settings_profile_attribute() -> None:
             are also changed.
     """
     service = initialize_configured_service()
-    service.add_source("file",WAV_FILE_PATH,RESULT_DIR_PATH)
-    service.add_source("file2",WAV_FILE_PATH,RESULT_DIR_PATH)
+    service.add_source("file", WAV_FILE_PATH, RESULT_DIR_PATH)
+    service.add_source("file2", WAV_FILE_PATH, RESULT_DIR_PATH)
     assert not service.set_settings_profile_attribute(
-        "s1",GBSettingAttrs.engine_type,"google")
+        "s1", GBSettingAttrs.engine_type, "google")
     service.create_new_settings_profile(
-        "s1",obtain_settings_profile_data())
+        "s1", obtain_settings_profile_data())
     service.create_new_settings_profile(
-        "s2",obtain_settings_profile_data())
-    service.apply_settings_profile_to_source("file","s1")
-    service.apply_settings_profile_to_source("file2","s2")
+        "s2", obtain_settings_profile_data())
+    service.apply_settings_profile_to_source("file", "s1")
+    service.apply_settings_profile_to_source("file2", "s2")
     service.set_settings_profile_attribute(
-        "s1",GBSettingAttrs.engine_type,"google")
-    settings_details : SettingsDetails = service.get_settings_profile_details("s1")
+        "s1", GBSettingAttrs.engine_type, "google")
+    settings_details: SettingsDetails = service.get_settings_profile_details(
+        "s1")
     assert settings_details.values["engine_type"] == "google"
     sources = service.get_configured_sources()
-    source : Source = sources["file"]
+    source: Source = sources["file"]
     conversation = source.conversation
-    settings : GailBotSettings = conversation.get_settings()
+    settings: GailBotSettings = conversation.get_settings()
     assert settings.get_engine_type() == "google"
     source2 = sources["file2"]
     conversation2 = source2.conversation
-    settings2 : GailBotSettings = conversation2.get_settings()
+    settings2: GailBotSettings = conversation2.get_settings()
     assert settings2.get_engine_type() != "google"
     service.clear_sources()
+
 
 def test_organizer_service_set_source_settings_profile_attribute() -> None:
     """
@@ -593,18 +636,17 @@ def test_organizer_service_set_source_settings_profile_attribute() -> None:
     """
     service = initialize_configured_service()
     assert not service.set_source_settings_profile_attribute(
-        "invalid",GBSettingAttrs.engine_type,"google")
-    service.add_source("file",WAV_FILE_PATH,RESULT_DIR_PATH)
+        "invalid", GBSettingAttrs.engine_type, "google")
+    service.add_source("file", WAV_FILE_PATH, RESULT_DIR_PATH)
     service.create_new_settings_profile(
-        "s1",obtain_settings_profile_data())
-    service.apply_settings_profile_to_source("file","s1")
+        "s1", obtain_settings_profile_data())
+    service.apply_settings_profile_to_source("file", "s1")
     service.set_source_settings_profile_attribute(
-        "file",GBSettingAttrs.engine_type,"google")
+        "file", GBSettingAttrs.engine_type, "google")
     sources = service.get_configured_sources()
-    source : Source = sources["file"]
-    settings : GailBotSettings = source.conversation.get_settings()
+    source: Source = sources["file"]
+    settings: GailBotSettings = source.conversation.get_settings()
     assert settings.get_engine_type() == "google"
     settings_details = service.get_settings_profile_details("s1")
     assert settings_details.values["engine_type"] != "google"
     service.clear_sources()
-

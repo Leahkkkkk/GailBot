@@ -5,12 +5,13 @@ from ....config import Config
 from ..fs_service import FileSystemService
 from .system_bb_loader import SystemBlackBoard, SystemBlackBoardLoader
 
+
 class ConfigService:
 
-    def __init__(self, fs_service : FileSystemService) -> None:
-        ## Vars.
-        self.system_blackboard : SystemBlackBoard = None
-        ## Objects
+    def __init__(self, fs_service: FileSystemService) -> None:
+        # Vars.
+        self.system_blackboard: SystemBlackBoard = None
+        # Objects
         self.fs_service = fs_service
         self.io = IO()
         self.config = Config()
@@ -53,6 +54,3 @@ class ConfigService:
                 self.fs_service.get_system_blackboard_configuration_data())
         except:
             raise Exception("ConfigService loader error")
-
-
-

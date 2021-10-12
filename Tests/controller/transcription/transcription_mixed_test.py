@@ -12,19 +12,8 @@ from Tests.controller.vardefs import *
 
 ############################### GLOBALS #####################################
 
-# VARS
+############################### SETUP #####################################
 
-PLUGINS_TO_APPLY = [
-    "tcu_analysis",
-    "overlap_analysis",
-    "pause_analysis",
-    "fto_analysis",
-    "gaps_analysis",
-    "conversation_gap_analysis"
-]
-
-
-# SETUP #####################################s
 
 @pytest.fixture(scope='session', autouse=True)
 def reset_workspace() -> None:
@@ -35,15 +24,22 @@ def reset_workspace() -> None:
 ########################## TEST DEFINITIONS ##################################
 
 
-def test_plugins_audio_short() -> None:
-    """
-    Test all analysis plugins with a short audio file.
-    """
+def test_transcribe_mixed_type_directory() -> None:
     controller = GailBotController(WS_DIR_PATH)
-    print(controller.register_analysis_plugins(ANALYSIS_PLUGINS_CONFIG))
-    print(controller.register_format(FORMAT_PLUGINS_CONFIG))
-    controller.add_source("mp3_short", MP3_FILE_PATH_SHORT, RESULT_DIR_PATH)
-    assert controller.apply_settings_profile_to_source("mp3_short", "default")
-    assert controller.set_settings_profile_attribute(
-        "default", GBSettingAttrs.analysis_plugins_to_apply, PLUGINS_TO_APPLY)
+    # Adding sources
+    controller.add_source("conversation_1_dir",
+                          MIXED_DIR_PATH, RESULT_DIR_PATH)
+    # Applying profiles.
+    assert controller.apply_settings_profile_to_source(
+        "conversation_1_dir", "default")
+    # Transcribing
     controller.transcribe()
+
+# def test_transcribe_valid_and_invalid_files_directory() -> None:
+#     pass
+
+# def test_transcribe_empty_directory() -> None:
+#     pass
+
+# def test_transcribe_large_directory() -> None:
+#     pass
