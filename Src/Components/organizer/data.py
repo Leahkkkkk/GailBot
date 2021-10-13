@@ -5,6 +5,7 @@ from enum import Enum
 from ...utils.models import IDictModel
 # Third party imports
 
+
 class DataFileTypes(Enum):
     """
     Defines the types of files that can be stored in DataFile objects.
@@ -14,6 +15,7 @@ class DataFileTypes(Enum):
     """
     audio = "audio"
     video = "video"
+
 
 class DataFileAttributes(Enum):
     """
@@ -43,7 +45,8 @@ class DataFile(IDictModel):
     Inherits:
         (IDictModel)
     """
-    def __init__(self, data : Dict[str,Any]) -> None:
+
+    def __init__(self, data: Dict[str, Any]) -> None:
         """
         Args:
             data (Dict[str,Any]):
@@ -61,7 +64,7 @@ class DataFile(IDictModel):
         """
         return self.configured
 
-    def set(self, attr : str, data : Any) -> bool:
+    def set(self, attr: str, data: Any) -> bool:
         """
         Sets the given attribute to the data if it exists in the models attributes.
 
@@ -74,11 +77,11 @@ class DataFile(IDictModel):
         """
         # Explicit check for file_type attribute
         if attr == DataFileAttributes.file_type and \
-                not isinstance(data,DataFileTypes):
+                not isinstance(data, DataFileTypes):
             return False
-        return super().set(attr,data)
+        return super().set(attr, data)
 
-    def _parse_data(self, data : Dict[str,Any]) -> bool:
+    def _parse_data(self, data: Dict[str, Any]) -> bool:
         """
         Parse the given data into the model.
 
@@ -93,7 +96,7 @@ class DataFile(IDictModel):
             for attr in DataFileAttributes:
                 # Explicit check for file_type attribute
                 if attr == DataFileAttributes.file_type and \
-                        not isinstance(data[attr.value],DataFileTypes):
+                        not isinstance(data[attr.value], DataFileTypes):
                     raise Exception
                 self.items[attr] = data[attr.value]
             return True

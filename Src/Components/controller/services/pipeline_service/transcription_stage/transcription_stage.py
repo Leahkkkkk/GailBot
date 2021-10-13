@@ -11,17 +11,18 @@ from ...organizer_service import GailBotSettings, RequestType
 from ...status import TranscriptionStatus
 from ..pipeline_payload import SourcePayload
 
+
 class TranscriptionStage:
     """
     Applies a STT service to a payload.
     """
 
-    SUPPORTED_ENGINES = ["watson","google"]
+    SUPPORTED_ENGINES = ["watson", "google"]
     NUM_THREADS = 4
 
     def __init__(self) -> None:
-        ## Objects
-        self.engines = Engines(IO(),Network())
+        # Objects
+        self.engines = Engines(IO(), Network())
         self.io = IO()
         self.thread_pool = ThreadPool(
             self.NUM_THREADS)
@@ -29,7 +30,7 @@ class TranscriptionStage:
 
     ############################# MODIFIERS ##################################
 
-    def generate_utterances(self, payload : SourcePayload) -> None:
+    def generate_utterances(self, payload: SourcePayload) -> None:
         """
         Generate utterances using a STT service.
 
@@ -37,18 +38,17 @@ class TranscriptionStage:
             payload (SourcePayload)
         """
         msg = "Extracting audio from sources..."
-        self._log_to_payload(payload,msg)
+        self._log_to_payload(payload, msg)
         payload.set_source_to_audio_map(self._extract_source_audios(payload))
         msg = "Transcribing..."
-        self._log_to_payload(payload,msg)
+        self._log_to_payload(payload, msg)
         is_successful = self._transcribe(payload)
         msg = "Was transcription successful: {}".format(is_successful)
         if not is_successful:
             # Log separately to error log
-            self._log_error_to_payload(payload,msg)
-        self._log_to_payload(payload,msg)
+            self._log_error_to_payload(payload, msg)
+        self._log_to_payload(payload, msg)
         payload.set_transcription_status(is_successful)
-
 
     ########################## GETTERS #######################################
 
@@ -60,7 +60,7 @@ class TranscriptionStage:
 
     ######################## PRIVATE METHODS ##################################
 
-    def _extract_source_audios(self, payload : SourcePayload) -> Dict[str,str]:
+    def _extract_source_audios(self, payload: SourcePayload) -> Dict[str, str]:
         """
         Obtain a mapping from every source file in the payload to its
         correspoding audio file path. This is used mainly for video files.
@@ -82,16 +82,16 @@ class TranscriptionStage:
             if not success:
                 # Write individual file failures to the error log.
                 msg = "[{}] Failed to extract audio".format(source_file_name)
-                self._log_error_to_payload(payload,msg)
+                self._log_error_to_payload(payload, msg)
                 source_to_audio_map[source_file_name] = None
             else:
                 msg = "[{}] Extracted audio".format(source_file_name)
-                self._log_to_payload(payload,msg)
+                self._log_to_payload(payload, msg)
                 source_to_audio_map[source_file_name] = path
         return source_to_audio_map
 
-    def _extract_audio_from_path(self, source_path : str, source_type : str,
-            extract_dir_path : str) -> Tuple[bool,str]:
+    def _extract_audio_from_path(self, source_path: str, source_type: str,
+                                 extract_dir_path: str) -> Tuple[bool, str]:
         """
         Extract audio from the file at the specified path.
 
@@ -114,7 +114,7 @@ class TranscriptionStage:
             # TODO: This path should eventually be obtained from IO directly
             # and should not be hard-coded.
             hard_coded_path = "{}/{}.{}".format(
-                extract_dir_path, self.io.get_name(source_path),"wav")
+                extract_dir_path, self.io.get_name(source_path), "wav")
             if not self.io.is_file(hard_coded_path):
                 return (False, None)
             ########################
@@ -122,7 +122,7 @@ class TranscriptionStage:
         else:
             return (False, None)
 
-    def _transcribe(self, payload : SourcePayload) -> bool:
+    def _transcribe(self, payload: SourcePayload) -> bool:
         """
         Transcribe all source files in a single payload.
 
@@ -140,16 +140,16 @@ class TranscriptionStage:
         # Transcribe using the appropriate engine.
         utterances_map = dict()
         source_status_map = dict()
-        settings : GailBotSettings = payload.get_conversation().get_settings()
+        settings: GailBotSettings = payload.get_conversation().get_settings()
         for source_file_name, _ in payload.get_source_to_audio_map().items():
             if settings.get_engine_type() == "watson":
                 self.thread_pool.add_task(
                     self._transcribe_watson_thread, [source_file_name, payload,
-                    utterances_map, source_status_map],{})
+                                                     utterances_map, source_status_map], {})
             elif settings.get_engine_type() == "google":
                 self.thread_pool.add_task(
                     self._transcribe_google_thread, [source_file_name, payload,
-                    utterances_map, source_status_map],{})
+                                                     utterances_map, source_status_map], {})
         self.thread_pool.wait_completion()
 
         # Determine the status
@@ -166,27 +166,27 @@ class TranscriptionStage:
             return True
         else:
             # Log unsuccessful transcriptions to error log.
-            unsuccessful = [k for k,v in source_status_map.items() if not v]
+            unsuccessful = [k for k, v in source_status_map.items() if not v]
             for source_file_name in unsuccessful:
                 if not source_status_map[source_file_name]:
                     msg = "[{}] Transcription failed".format(source_file_name)
-                    self._log_error_to_payload(payload,msg)
+                    self._log_error_to_payload(payload, msg)
             payload.get_conversation().set_transcription_status(
                 TranscriptionStatus.unsuccessful)
             return False
 
-    def _transcribe_watson_thread(self, source_file_name : str,
-            payload : SourcePayload, utterances_map : Dict[str,List[Utterance]],
-            source_status_map : Dict[str,bool]) -> None:
+    def _transcribe_watson_thread(self, source_file_name: str,
+                                  payload: SourcePayload, utterances_map: Dict[str, List[Utterance]],
+                                  source_status_map: Dict[str, bool]) -> None:
         """
         Transcribe file using the Watson engine.
         """
-        engine : WatsonEngine = self.engines.engine("watson")
+        engine: WatsonEngine = self.engines.engine("watson")
         source_path = payload.get_source_to_audio_map()[source_file_name]
-        settings : GailBotSettings = payload.get_conversation().get_settings()
+        settings: GailBotSettings = payload.get_conversation().get_settings()
         engine.configure(
-            settings.get_watson_api_key(),settings.get_watson_region(),
-            source_path,settings.get_watson_base_language_model(),
+            settings.get_watson_api_key(), settings.get_watson_region(),
+            source_path, settings.get_watson_base_language_model(),
             payload.get_workspace_path(),
             settings.get_watson_language_customization_id())
         utterances = engine.transcribe()
@@ -200,7 +200,7 @@ class TranscriptionStage:
         """
         raise Exception("Not implemented")
 
-    def _can_transcribe_source(self, payload : SourcePayload) -> bool:
+    def _can_transcribe_source(self, payload: SourcePayload) -> bool:
         """
         Determine if files in the payload can be transcribed.
 
@@ -211,7 +211,7 @@ class TranscriptionStage:
             (bool): True if can be transcribed, False otherwise.
         """
         # Engine must be supported
-        settings : GailBotSettings = payload.get_conversation().get_settings()
+        settings: GailBotSettings = payload.get_conversation().get_settings()
         if not settings.get_engine_type() in self.SUPPORTED_ENGINES:
             return False
         # Audio files should be valid.
@@ -220,12 +220,12 @@ class TranscriptionStage:
                 return False
         return True
 
-    def _log_to_payload(self, payload : SourcePayload, msg : str) -> None:
+    def _log_to_payload(self, payload: SourcePayload, msg: str) -> None:
         msg = "[Transcription Stage] [{}] {}".format(
-            payload.get_source_name(),msg)
+            payload.get_source_name(), msg)
         payload.log(msg)
 
-    def _log_error_to_payload(self, payload : SourcePayload, msg : str) -> None:
+    def _log_error_to_payload(self, payload: SourcePayload, msg: str) -> None:
         msg = "[Transcription Stage] [{}] {}".format(
-            payload.get_source_name(),msg)
+            payload.get_source_name(), msg)
         payload.log_error(msg)

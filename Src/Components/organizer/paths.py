@@ -5,6 +5,7 @@ from enum import Enum
 from ...utils.models import IDictModel
 # Third party imports
 
+
 class PathsAttributes(Enum):
     """
     Inherits:
@@ -20,6 +21,7 @@ class PathsAttributes(Enum):
     source_path = "source_path"
     temp_dir_path = "temp_dir_path"
 
+
 class Paths(IDictModel):
     """
     Responsible for storing paths relevant to a conversation.
@@ -28,7 +30,7 @@ class Paths(IDictModel):
         (IDictModel)
     """
 
-    def __init__(self, data : Dict[str,str]) -> None:
+    def __init__(self, data: Dict[str, str]) -> None:
         """
         Args:
             data (Dict[str,str]):
@@ -48,7 +50,7 @@ class Paths(IDictModel):
         """
         return self.configured
 
-    def _parse_data(self, data : Dict[str,str]) -> bool:
+    def _parse_data(self, data: Dict[str, str]) -> bool:
         """
         Parse the given data into the model.
 
@@ -65,11 +67,3 @@ class Paths(IDictModel):
             return True
         except:
             return False
-
-
-
-
-
-
-
-

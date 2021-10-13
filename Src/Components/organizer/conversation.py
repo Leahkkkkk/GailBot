@@ -8,13 +8,14 @@ from .paths import Paths, PathsAttributes
 from ..engines import Utterance
 # Third party imports
 
+
 class Conversation:
     """
     Responsible for sotring all relevant information about a conversation.
     """
 
-    def __init__(self, meta : Meta, data_files : List[DataFile],
-            settings : Settings, paths : Paths) -> None:
+    def __init__(self, meta: Meta, data_files: List[DataFile],
+                 settings: Settings, paths: Paths) -> None:
         """
         Args:
             meta (Meta): Contains all meta-data about the conversation.
@@ -32,7 +33,7 @@ class Conversation:
 
     ################################## GETTERS ##############################
 
-    ### Meta
+    # Meta
 
     def get_conversation_name(self) -> str:
         """
@@ -120,8 +121,7 @@ class Conversation:
         """
         return self.meta.get(MetaAttributes.num_speakers)[1]
 
-
-    ### DataFile
+    # DataFile
 
     def get_source_file_names(self) -> List[str]:
         """
@@ -130,10 +130,10 @@ class Conversation:
         Returns:
             (List[str]): Name of all source files.
         """
-        return [data_file.get(DataFileAttributes.name)[1] for data_file \
-            in self.data_files]
+        return [data_file.get(DataFileAttributes.name)[1] for data_file
+                in self.data_files]
 
-    def get_source_file_paths(self) -> Dict[str,str]:
+    def get_source_file_paths(self) -> Dict[str, str]:
         """
         Obtain the original paths of all source files.
 
@@ -147,7 +147,7 @@ class Conversation:
             data[name] = path
         return data
 
-    def get_source_file_types(self) -> Dict[str,str]:
+    def get_source_file_types(self) -> Dict[str, str]:
         """
         Obtain the type of each source file in the conversation.
         Can be either 'audio' or 'video'
@@ -166,7 +166,7 @@ class Conversation:
                 data[name] = 'video'
         return data
 
-    def get_utterances(self) -> Dict[str,List[Utterance]]:
+    def get_utterances(self) -> Dict[str, List[Utterance]]:
         """
         Get a mapping from the name of the data file to a list of utterances.
 
@@ -180,7 +180,7 @@ class Conversation:
                 data_file.get(DataFileAttributes.utterances)[1]
         return utterance_map
 
-    ### Settings
+    # Settings
 
     def get_settings(self) -> Settings:
         """
@@ -191,7 +191,7 @@ class Conversation:
         """
         return self.settings
 
-    ### Paths
+    # Paths
 
     def get_result_directory_path(self) -> str:
         """
@@ -225,7 +225,7 @@ class Conversation:
 
     ################################ SETTERS ################################
 
-    def set_transcription_status(self, status : str) -> bool:
+    def set_transcription_status(self, status: str) -> bool:
         """
         Set the status of the transcription
 
@@ -235,9 +235,9 @@ class Conversation:
         Returns:
             (bool): True if successfully set. False otherwise.
         """
-        return self.meta.set(MetaAttributes.transcription_status,status)
+        return self.meta.set(MetaAttributes.transcription_status, status)
 
-    def set_number_of_speakers(self, num_speakers : int) -> bool:
+    def set_number_of_speakers(self, num_speakers: int) -> bool:
         """
         Set the number of speakers in the conversation.
 
@@ -249,9 +249,9 @@ class Conversation:
         """
         if num_speakers < 1:
             return False
-        return self.meta.set(MetaAttributes.num_speakers,num_speakers)
+        return self.meta.set(MetaAttributes.num_speakers, num_speakers)
 
-    def set_utterances(self, utterance_map : Dict[str,List[Utterance]]) -> bool:
+    def set_utterances(self, utterance_map: Dict[str, List[Utterance]]) -> bool:
         """
         Set the utterances for every data file.
 
@@ -267,5 +267,5 @@ class Conversation:
             return False
         for data_file in self.data_files:
             data_file.set(DataFileAttributes.utterances,
-                utterance_map[data_file.get(DataFileAttributes.name)[1]])
+                          utterance_map[data_file.get(DataFileAttributes.name)[1]])
         return True

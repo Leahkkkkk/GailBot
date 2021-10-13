@@ -12,7 +12,8 @@ from .source_details import SourceDetails
 from .source import Source, RequestType
 from .settings_profile import GBSettingAttrs, GailBotSettings, SettingProfile
 from .source_loader import SourceLoader
-from .source_loaders import FileSourceLoader, DirectorySourceLoader
+from .source_loaders import FileSourceLoader, DirectorySourceLoader, \
+    TranscribedSourceLoader
 
 # Third party imports
 
@@ -37,9 +38,10 @@ class OrganizerService:
         self.organizer = Organizer(IO())
         self.organizer.register_settings_type(
             self.default_settings_type, self.default_settings_creator)
-        ## Sources + profiles
+        # Sources + profiles
         self.source_loaders: List[SourceLoader] = \
-            [FileSourceLoader(self.fs_service, self.organizer),
+            [TranscribedSourceLoader(self.fs_service, self.organizer),  # This has to run first
+             FileSourceLoader(self.fs_service, self.organizer),
              DirectorySourceLoader(self.fs_service, self.organizer)]
         self.sources = ObjectManager()
         self.settings_profiles = ObjectManager()
@@ -715,8 +717,8 @@ class OrganizerService:
         if not self.is_settings_profile(settings_profile_name):
             return False
         # Change the actual settings object first.
-        settings_profile: SettingProfile = \
-            self.settings_profiles.get_object(settings_profile_name)
+        settings_profile: SettingProfile = self.settings_profiles.get_object(
+            settings_profile_name)
         settings: GailBotSettings = settings_profile.get_settings()
         if not settings.set_using_attribute(attr, value):
             return False

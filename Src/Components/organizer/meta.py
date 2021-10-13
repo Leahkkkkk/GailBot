@@ -5,6 +5,7 @@ from enum import Enum
 from ...utils.models import IDictModel
 # Third party imports
 
+
 class MetaAttributes(Enum):
     """
     Inherits:
@@ -32,9 +33,10 @@ class MetaAttributes(Enum):
     transcriber_name = "transcriber_name"
     num_speakers = "num_speakers"
 
+
 class Meta(IDictModel):
 
-    def __init__(self, data : Dict[str,str]) -> None:
+    def __init__(self, data: Dict[str, str]) -> None:
         """
         Args:
             data (Dict[str,Any]):
@@ -52,7 +54,7 @@ class Meta(IDictModel):
         """
         return self.configured
 
-    def _parse_data(self, data : Dict[str,str]) -> bool:
+    def _parse_data(self, data: Dict[str, str]) -> bool:
         """
         Parse the given data into the model.
 
