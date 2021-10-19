@@ -1,9 +1,10 @@
 # Standard imports
 from dataclasses import dataclass
 
+
 @dataclass
 class Utt:
-    speaker_label : str
-    start_time_seconds : float
-    end_time_seconds : float
-    transcript : str
+    speaker_label: str = None
+    start_time_seconds: float = None
+    end_time_seconds: float = None
+    transcript: str = None

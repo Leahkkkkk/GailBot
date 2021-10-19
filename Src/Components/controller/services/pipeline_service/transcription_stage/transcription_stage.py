@@ -132,11 +132,18 @@ class TranscriptionStage:
         Returns:
             (bool): True if successfully transcribed all files, False otherwise.
         """
+        # -- NOTE: Checking if utterance dictionary is not empty for retranscription case
+        if all([len(v) > 0 for v in payload.get_conversation().get_utterances().values()]):
+            payload.get_conversation().set_transcription_status(
+                TranscriptionStatus.successful)
+            print("Already transcribed!")
+            return True
+
         # Verify if transcription possible
         if not self._can_transcribe_source(payload):
             payload.get_conversation().set_transcription_status(
                 TranscriptionStatus.unsuccessful)
-            return
+            return False
         # Transcribe using the appropriate engine.
         utterances_map = dict()
         source_status_map = dict()

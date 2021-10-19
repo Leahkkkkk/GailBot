@@ -61,11 +61,38 @@ def test_transcribe_audio_mp3_short() -> None:
 
 def test() -> None:
     """
-    This is from a previous GailBot output.
+    This is from a previous GailBot output
     """
     controller = GailBotController(WS_DIR_PATH)
+    # CONFIGURING ANALYSIS PLUGINS AND FORMAT PLUGINS TO BE USED.
+    controller.register_analysis_plugins(DEFAULT_ANALYSIS_PLUGIN_CONFIG)
+    assert controller.set_settings_profile_attribute(
+        "default", GBSettingAttrs.analysis_plugins_to_apply, PLUGINS_TO_APPLY)
     assert controller.add_source(
         "prev_mp3_short", PREV_AUDIO_MP3_SHORT, RESULT_DIR_PATH)
     assert controller.apply_settings_profile_to_source(
         "prev_mp3_short", "default")
+    # print(controller.get_source_details("prev_mp3_short"))
+
+    print(controller.transcribe())
+
+
+def test2() -> None:
+    """
+    This is from a previous GailBot output for a mixed dir. path
+    """
+    controller = GailBotController(WS_DIR_PATH)
+
+    local_plugins = ["turn_construct", 'combine_turns', "overlaps", "pauses",
+                     "fto", "gaps"]
+    # CONFIGURING ANALYSIS PLUGINS AND FORMAT PLUGINS TO BE USED.
+    controller.register_analysis_plugins(DEFAULT_ANALYSIS_PLUGIN_CONFIG)
+    assert controller.set_settings_profile_attribute(
+        "default", GBSettingAttrs.analysis_plugins_to_apply, local_plugins)
+    assert controller.add_source(
+        "prev_mixed_dir", PREV_MIXED_DIR_PATH, RESULT_DIR_PATH)
+    assert controller.apply_settings_profile_to_source(
+        "prev_mixed_dir", "default")
+    # print(controller.get_source_details("prev_mp3_short"))
+
     print(controller.transcribe())

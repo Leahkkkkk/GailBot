@@ -10,6 +10,7 @@ from pathlib import Path
 # Third party imports
 from copy import deepcopy
 
+
 class GeneralIO:
     """
     Provides methods that deal with reading and writing non-media files and
@@ -25,21 +26,21 @@ class GeneralIO:
                 Mapping from file extensions to write functions.
         """
         self.readers = {
-            "JSON" : self._read_json,
-            "TXT" : self._read_text,
-            "YML" : self._read_yaml,
-            "YAML" : self._read_yaml,
-            "*" : self._read_text}
+            "JSON": self._read_json,
+            "TXT": self._read_text,
+            "YML": self._read_yaml,
+            "YAML": self._read_yaml,
+            "*": self._read_text}
         self.writers = {
-            "JSON" : self._write_json,
-            "TXT" : self._write_text,
-            "YML" : self._write_yaml,
-            "YAML" : self._write_yaml,
-            "*" : self._write_text}
+            "JSON": self._write_json,
+            "TXT": self._write_text,
+            "YML": self._write_yaml,
+            "YAML": self._write_yaml,
+            "*": self._write_text}
 
     ############################## INSPECTORS ###############################
 
-    def is_directory(self, dir_path : str) -> bool:
+    def is_directory(self, dir_path: str) -> bool:
         """
         Determine if the given path is a directory.
 
@@ -51,7 +52,7 @@ class GeneralIO:
         """
         return os.path.isdir(dir_path)
 
-    def is_file(self, file_path : str) -> bool:
+    def is_file(self, file_path: str) -> bool:
         """
         Determine if the given path is a file.
 
@@ -63,9 +64,9 @@ class GeneralIO:
         """
         return os.path.isfile(file_path)
 
-    def number_of_files_in_directory(self, dir_path : str ,
-            extensions : List[str] = ["*"],
-            check_subdirectories : bool = False) -> Tuple[bool,int]:
+    def number_of_files_in_directory(self, dir_path: str,
+                                     extensions: List[str] = ["*"],
+                                     check_subdirectories: bool = False) -> Tuple[bool, int]:
         """
         Determine the number of files in the directory.
 
@@ -83,15 +84,15 @@ class GeneralIO:
                                 False + None if unsuccessful.
         """
         success, paths = self.path_of_files_in_directory(
-            dir_path,extensions,check_subdirectories)
+            dir_path, extensions, check_subdirectories)
         if success:
-            return (True,len(paths))
+            return (True, len(paths))
         else:
             return (False, None)
 
-    def path_of_files_in_directory(self, dir_path : str ,
-            extensions : List[str] = ["*"],
-            check_subdirectories : bool = False ) -> Tuple[bool,List[str]]:
+    def path_of_files_in_directory(self, dir_path: str,
+                                   extensions: List[str] = ["*"],
+                                   check_subdirectories: bool = False) -> Tuple[bool, List[str]]:
         """
         Determine the paths, relative to dir_path, of files in the directory.
 
@@ -121,13 +122,13 @@ class GeneralIO:
                 file_type = "*.{}".format(extension)
             # Generating the glob query.
             if check_subdirectories:
-                query = "{}/**/{}".format(dir_path,file_type)
+                query = "{}/**/{}".format(dir_path, file_type)
             else:
-                query = "{}/{}".format(dir_path,file_type)
-            paths.extend(glob.glob(query,recursive=True))
-        return (True,paths)
+                query = "{}/{}".format(dir_path, file_type)
+            paths.extend(glob.glob(query, recursive=True))
+        return (True, paths)
 
-    def number_of_subdirectories(self, dir_path : str) -> Tuple[bool,int]:
+    def number_of_subdirectories(self, dir_path: str) -> Tuple[bool, int]:
         """
         Obtain the number of subdirectories in a ditrectory
 
@@ -144,7 +145,7 @@ class GeneralIO:
             return (True, len(paths))
         return (False, None)
 
-    def paths_of_subdirectories(self, dir_path : str) -> Tuple[bool,List[str]]:
+    def paths_of_subdirectories(self, dir_path: str) -> Tuple[bool, List[str]]:
         """
         Obtain the paths of all subdirectories in a directory.
 
@@ -164,7 +165,7 @@ class GeneralIO:
                 paths.append(it.path)
         return (True, paths)
 
-    def is_readable(self, file_path : str) -> bool:
+    def is_readable(self, file_path: str) -> bool:
         """
         Determine if the file at the given path is readable.
 
@@ -177,7 +178,7 @@ class GeneralIO:
         return self.is_file(file_path) and \
             self.get_file_extension(file_path).upper() in self.readers.keys()
 
-    def get_file_extension(self, file_path : str) -> str:
+    def get_file_extension(self, file_path: str) -> str:
         """
         Obtain file extension /format, which is the substring after the right-
         most "." character.
@@ -190,7 +191,7 @@ class GeneralIO:
         """
         return os.path.splitext(file_path.strip())[1][1:]
 
-    def get_name(self, path : str) -> str:
+    def get_name(self, path: str) -> str:
         """
         Attempts to extract the name of the file or directory from the given
         path. The name is defined as anything to the right of the right-most
@@ -208,7 +209,7 @@ class GeneralIO:
             return path[path.rfind("/")+1:]
         return ""
 
-    def get_parent_directory(self, path : str) -> str:
+    def get_parent_directory(self, path: str) -> str:
         """
         Obtain the absolute path of the parent directory given a path to a file or
         directory.
@@ -225,7 +226,7 @@ class GeneralIO:
         path = Path(path)
         return path.parent.absolute()
 
-    def get_size(self, path : str) -> Tuple[bool, bytes]:
+    def get_size(self, path: str) -> Tuple[bool, bytes]:
         """
         Obtain the size of the file or directory in bytes.
         For a directory, the total size is the size of all items in the
@@ -243,16 +244,16 @@ class GeneralIO:
             return (True, os.path.getsize(path))
         elif self.is_directory(path):
             total_size = 0
-            all_paths_list = self.path_of_files_in_directory(path,["*"],True)[1]
+            all_paths_list = self.path_of_files_in_directory(
+                path, ["*"], True)[1]
             for file_path in all_paths_list:
                 total_size += os.path.getsize(file_path)
             return (True, total_size)
         return (False, None)
 
-
     ############################## ACTIONS #################################
 
-    def read_file(self, file_path : str) -> Tuple[bool,Any]:
+    def read_file(self, file_path: str) -> Tuple[bool, Any]:
         """
         Read the file at the given path. The file must be readable.
 
@@ -266,15 +267,15 @@ class GeneralIO:
         """
         # Determine the file format using extension
         if not self.is_file(file_path):
-             return (False, None)
+            return (False, None)
         if not self.get_file_extension(file_path).upper() \
-                    in self.readers.keys():
+                in self.readers.keys():
             return self.readers["*"](file_path)
         # Readers handle exceptions
         file_format = self.get_file_extension(file_path)
         return self.readers[file_format.upper()](file_path)
 
-    def write_to_file(self, file_path : str, data : Any, overwrite : bool) \
+    def write_to_file(self, file_path: str, data: Any, overwrite: bool) \
             -> bool:
         """
         Write the data in a file of the specified format at the given path.
@@ -294,13 +295,12 @@ class GeneralIO:
         if file_format.upper() in self.writers.keys():
             # The writers should handle exceptions
             return self.writers[file_format.upper()](
-                    file_path, data, overwrite)
+                file_path, data, overwrite)
         else:
             return self.writers["*"](
-                    file_path, data, overwrite)
+                file_path, data, overwrite)
 
-
-    def create_directory(self, dir_path : str) -> bool:
+    def create_directory(self, dir_path: str) -> bool:
         """
         Create a new directory with the given path.
 
@@ -316,7 +316,7 @@ class GeneralIO:
         except:
             return False
 
-    def move_file(self, src_file_path : str, dst_dir_path : str) -> bool:
+    def move_file(self, src_file_path: str, dst_dir_path: str) -> bool:
         """
         Move a source file to the destination directory.
 
@@ -331,12 +331,12 @@ class GeneralIO:
         if not self.is_directory(dst_dir_path):
             return False
         try:
-            shutil.move(src_file_path,dst_dir_path)
+            shutil.move(src_file_path, dst_dir_path)
             return True
         except:
             return False
 
-    def copy(self, src_path : str, dst_path : str) -> bool:
+    def copy(self, src_path: str, dst_path: str) -> bool:
         """
         Copy the source file or directory to the destination file or directory.
 
@@ -349,20 +349,20 @@ class GeneralIO:
         """
         if self.is_file(src_path):
             try:
-                shutil.copy(src_path,dst_path)
+                shutil.copy(src_path, dst_path)
             except:
                 return False
         elif self.is_directory(src_path) \
                 and not self.is_directory(dst_path):
             try:
-                shutil.copytree(src_path,dst_path)
+                shutil.copytree(src_path, dst_path)
             except:
                 return False
         else:
             return False
         return True
 
-    def rename(self, src_path : str, new_name : str) -> bool:
+    def rename(self, src_path: str, new_name: str) -> bool:
         """
         Rename the source file or directory.
 
@@ -381,16 +381,16 @@ class GeneralIO:
             if self.is_file(src_path):
                 ext = self.get_file_extension(src_path)
                 parent_dir_path = src_path[:src_path.rfind("/")]
-                new_path = "{}/{}.{}".format(parent_dir_path,new_name,ext)
+                new_path = "{}/{}.{}".format(parent_dir_path, new_name, ext)
             else:
                 parent_dir_path = src_path[:src_path.rfind("/")]
-                new_path = "{}/{}".format(parent_dir_path,new_name)
-            os.rename(src_path,new_path)
+                new_path = "{}/{}".format(parent_dir_path, new_name)
+            os.rename(src_path, new_path)
             return self.is_file(new_path) or self.is_directory(new_path)
         except:
             return False
 
-    def delete(self, path : str) -> bool:
+    def delete(self, path: str) -> bool:
         """
         Delete the given file or directory. For a directory, deletes all
         sub-directories as well.
@@ -417,7 +417,7 @@ class GeneralIO:
 
     ################################### PRIVATE METHODS ######################
 
-    def _read_json(self, file_path : str) -> Tuple[bool,Any]:
+    def _read_json(self, file_path: str) -> Tuple[bool, Any]:
         """
         Read a json file at the given path.
         Raises an exception if the file data cannot be converted to a
@@ -431,16 +431,16 @@ class GeneralIO:
                             False + None if unsuccessful.
         """
         try:
-            with open(file_path,"r") as f:
+            with open(file_path, "r") as f:
                 # Data must be a dictionary when read from a json file.
                 data = json.load(f)
                 if not type(data) == dict:
                     raise Exception
-                return (True,data)
+                return (True, data)
         except:
             return (False, None)
 
-    def _write_json(self, file_path : str, data : Dict, overwrite : bool) \
+    def _write_json(self, file_path: str, data: Dict, overwrite: bool) \
             -> bool:
         """
         Write the given data to a json file.
@@ -462,13 +462,13 @@ class GeneralIO:
                 if previous_data != None:
                     previous_data.update(data)
                     data = deepcopy(previous_data)
-            with open(file_path,"w") as f:
-                    json.dump(data,f)
+            with open(file_path, "w") as f:
+                json.dump(data, f)
             return True
         except:
             return False
 
-    def _read_text(self, file_path : str) -> Tuple[bool,Any]:
+    def _read_text(self, file_path: str) -> Tuple[bool, Any]:
         """
         Read a text file at the given path.
 
@@ -480,11 +480,11 @@ class GeneralIO:
                                 False + None if unsuccessful.
         """
         try:
-            return (True,open(file_path,"r").read())
+            return (True, open(file_path, "r").read())
         except:
-            return (False, None )
+            return (False, None)
 
-    def _write_text(self, file_path : str, data : str, overwrite : bool) \
+    def _write_text(self, file_path: str, data: str, overwrite: bool) \
             -> bool:
         """
         Write the given data to a text file.
@@ -502,13 +502,13 @@ class GeneralIO:
             # Anything written to a text file must be a string
             data = str(data)
             mode = 'w' if overwrite else "a"
-            with open(file_path,mode) as f:
+            with open(file_path, mode) as f:
                 f.write(data)
             return True
         except:
             return False
 
-    def _read_yaml(self, file_path : str) -> Tuple[bool,Any]:
+    def _read_yaml(self, file_path: str) -> Tuple[bool, Any]:
         """
         Read a yaml file at the given path.
         Raises an exception if the file data cannot be converted to a
@@ -522,16 +522,16 @@ class GeneralIO:
                                 False + None if unsuccessful.
         """
         try:
-            with open(file_path,'r') as f:
+            with open(file_path, 'r') as f:
                 data = yaml.load(f)
                 # Data loaded must be a dictionary
                 if not type(data) == dict:
                     raise Exception
-                return (True ,data)
+                return (True, data)
         except:
             return (False, None)
 
-    def _write_yaml(self, file_path : str, data : Dict, overwrite : bool) \
+    def _write_yaml(self, file_path: str, data: Dict, overwrite: bool) \
             -> bool:
         """
         Write the given data to a yaml file.
@@ -552,17 +552,10 @@ class GeneralIO:
                 if previous_data != None:
                     previous_data.update(data)
                     data = deepcopy(previous_data)
-            with open(file_path,"w") as f:
+            with open(file_path, "w") as f:
                 # Data must be convertable to a dictionary object to be written to
                 # a yaml file.
-                yaml.dump(data,f)
+                yaml.dump(data, f)
             return True
         except:
             return False
-
-
-
-
-
-
-

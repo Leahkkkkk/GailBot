@@ -84,7 +84,7 @@ class TranscribedSourceLoader(SourceLoader):
         # Determine if can load
         if not self._can_load_source(source_path):
             return
-         # Generate the source hook.
+        # Generate the source hook.
         source_hook = self.fs_service.generate_source_hook(
             source_name, result_dir_path)
         if source_hook == None:
@@ -99,10 +99,13 @@ class TranscribedSourceLoader(SourceLoader):
         """
         if not self.io.is_directory(source_path):
             return False
+        # Check if the metadata file exists
+        if not self._does_meta_exist(source_path):
+            return False
         # Read the metatafile and use it to check other files
         meta_path = self._get_meta_path(source_path)
         did_read, meta_data = self.io.read(meta_path)
-        if not did_read:
+        if meta_path == None or not did_read:
             return False
         try:
             # The data should have been transcribed properly and
@@ -131,3 +134,9 @@ class TranscribedSourceLoader(SourceLoader):
             source_path, [self.metadata_file_ext], False)
         return [path for path in paths if self.io.get_name(
             path) == self.metadata_file_name][0]
+
+    def _does_meta_exist(self, source_path: str) -> bool:
+        _, paths = self.io.path_of_files_in_directory(
+            source_path, [self.metadata_file_ext], False)
+        return len([path for path in paths if self.io.get_name(
+            path) == self.metadata_file_name]) > 0

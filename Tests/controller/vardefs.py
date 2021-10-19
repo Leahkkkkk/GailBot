@@ -74,6 +74,7 @@ WMV_FILE_PATH_LONG = ""
 
 """ PREVIOUS GAILBOT OUTPUT """
 PREV_AUDIO_MP3_SHORT = "test_data/controller_data/gb_output/mp3_short_0"
+PREV_MIXED_DIR_PATH = "test_data/controller_data/gb_output/conversation_1_dir_0"
 
 
 """ CONFIGURATION FILES """
@@ -81,6 +82,8 @@ CONFIG_FILE_PATH = "test_data/controller_data/configs/config.json"
 ANALYSIS_PLUGINS_CONFIG = "test_data/controller_data/configs/plugins/analysis_config.json"
 FORMAT_PLUGINS_CONFIG = "test_data/controller_data/configs/plugins/format_config.json"
 EMPTY_JSON = "test_data/controller_data/configs/empty_json.json"
+DEFAULT_ANALYSIS_PLUGIN_CONFIG = "Src/plugins/analysis/config.json"
+
 
 """ OTHER FILES """
 TXT_FILE_PATH = "test_data/controller_data/configs/textfile.txt"
@@ -93,3 +96,10 @@ WATSON_API_KEY = "MSgOPTS9CvbADe49nEg4wm8_gxeRuf4FGUmlHS9QqAw3"
 WATSON_LANG_CUSTOM_ID = "41e54a38-2175-45f4-ac6a-1c11e42a2d54"
 WATSON_BASE_LANG_MODEL = "en-US_BroadbandModel"
 WATSON_REGION = "dallas"
+PLUGINS_TO_APPLY = [
+    "turn_construct",
+    "overlaps",
+    "pauses",
+    "combine_turns",
+    "fto",
+    "gaps"]

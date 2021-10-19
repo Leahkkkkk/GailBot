@@ -10,6 +10,10 @@ from .meta import Meta
 from .data import DataFile, DataFileAttributes, DataFileTypes
 from .settings import Settings
 from .paths import Paths
+
+# -- NOTE: Check this later
+from ..engines import Utterance, UtteranceAttributes
+
 # Third party imports
 
 
@@ -186,9 +190,12 @@ class ConversationBuilder:
         """
         if not self._is_ready_to_build():
             return False
+        #print("Building the conversation!")
+        # print(self.core_data)
         # Create the data file objects first.
         data_files = self._initialize_data_files(
             self.core_data["source_path"])
+       # print(data_files)
         # Use datafile objects to initialize Meta values.
         meta = self._initialize_meta(
             self.core_data["source_path"], self.core_data["conversation_name"],
@@ -240,6 +247,10 @@ class ConversationBuilder:
             supported_formats = list(self.io.get_supported_audio_formats())
             supported_formats.extend(
                 list(self.io.get_supported_video_formats()))
+
+            # NOTE: Check - adding additional gb_raw format to look for
+            supported_formats.append("gb_raw")
+
             _, file_paths = self.io.path_of_files_in_directory(
                 source_path, supported_formats, False)
             for path in file_paths:
@@ -260,12 +271,28 @@ class ConversationBuilder:
         Returns:
             (DataFile): object representing the file at the given path.
         """
+        utterances = list()
         if not self.io.is_file(source_file_path):
             raise ExceptionInvalid()
         if self.io.is_supported_audio_file(source_file_path):
             file_type = DataFileTypes.audio
         elif self.io.is_supported_video_file(source_file_path):
             file_type = DataFileTypes.video
+        # -- NOTE: Check - assing handler for gb_raw file here!
+        elif self.io.get_file_extension(source_file_path)[1] == "gb_raw":
+            # Parse the raw file
+            # NOTE: The data file type needs to be changes / added maybe?
+            file_type = DataFileTypes.audio
+            data = open(source_file_path, "r").readlines()
+            #print("Size", self.io.get_size(source_file_path))
+            for line in data:
+                tokens = line.split(" ")
+                utt = Utterance(
+                    {"speaker_label": tokens[0].rstrip(":"),
+                     "start_time": float(tokens[2][:tokens[2].find("_")]),
+                     "end_time": float(tokens[2][tokens[2].find("_")+1:].rstrip("/n")),
+                     "transcript": tokens[1]})
+                utterances.append(utt)
         else:
             raise ExceptionInvalid()
         data = {
@@ -274,7 +301,8 @@ class ConversationBuilder:
             "file_type": file_type,
             "path": source_file_path,
             "size_bytes": self.io.get_size(source_file_path)[1],
-            "utterances": list()}
+            "utterances": utterances}
+        # print(data)
         data_file = DataFile(data)
         if not data_file.is_configured():
             raise ExceptionUnexpected
