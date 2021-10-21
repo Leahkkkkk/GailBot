@@ -1,5 +1,5 @@
 # Local imports
-from Src.Components.pipeline import Component, ComponentState
+from Src.components.pipeline import Component, ComponentState
 from Tests.pipeline.vardefs import *
 
 

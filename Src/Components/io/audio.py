@@ -3,7 +3,7 @@ import os
 from typing import Dict, List, Any, Tuple
 from enum import Enum
 # Local imports
-from ...utils.models import IDictModel
+from ..utils.models import IDictModel
 # Third party imports
 from pydub import AudioSegment
 from copy import deepcopy
@@ -28,15 +28,16 @@ class AudioStreamAttr(Enum):
     output_dir_path = "output_path"
     output_format = "output_format"
 
+
 class AudioStream(IDictModel):
     """
     Represents a single audio stream and is the basic unit of information
     used by AudioIO.
     """
 
-    def __init__(self, input_file_path : str, input_format : str,
-            audio_segment : AudioSegment, output_dir_path : str = None,
-            output_format : str  = None) -> None:
+    def __init__(self, input_file_path: str, input_format: str,
+                 audio_segment: AudioSegment, output_dir_path: str = None,
+                 output_format: str = None) -> None:
         """
         Params:
             input_file_path (str): Complete input file path, including filename
@@ -57,11 +58,12 @@ class AudioStream(IDictModel):
             output_dir_path = input_file_path[:input_file_path.rfind("/")]
         # Storing the items
         self.items = {
-            AudioStreamAttr.input_file_path : input_file_path,
-            AudioStreamAttr.input_format : input_format,
-            AudioStreamAttr.audio_segment : audio_segment,
-            AudioStreamAttr.output_dir_path : output_dir_path,
-            AudioStreamAttr.output_format : output_format}
+            AudioStreamAttr.input_file_path: input_file_path,
+            AudioStreamAttr.input_format: input_format,
+            AudioStreamAttr.audio_segment: audio_segment,
+            AudioStreamAttr.output_dir_path: output_dir_path,
+            AudioStreamAttr.output_format: output_format}
+
 
 class AudioIO:
     """
@@ -70,8 +72,8 @@ class AudioIO:
     """
 
     # Audio formats that are currently supported.
-    INPUT_AUDIO_FORMATS = ( "mp3", "mpeg", "opus", "wav")
-    OUTPUT_AUDIO_FORMATS = ("wav","opus")
+    INPUT_AUDIO_FORMATS = ("mp3", "mpeg", "opus", "wav")
+    OUTPUT_AUDIO_FORMATS = ("wav", "opus")
 
     def __init__(self) -> None:
         """
@@ -95,7 +97,7 @@ class AudioIO:
 
     ################################# SETTERS ###############################
 
-    def read_streams(self, file_paths : Dict[str,str]) -> bool:
+    def read_streams(self, file_paths: Dict[str, str]) -> bool:
         """
         Read the audio files at the given paths for future operations.
         If there is an error encountered while reading any single file,
@@ -117,7 +119,7 @@ class AudioIO:
          # If all files exist, they are read as AudioSegment objects.
         for name, file_path in file_paths.items():
             success, stream = self._initialize_audio_stream(
-                file_path,self.default_input_audio_format,None,None)
+                file_path, self.default_input_audio_format, None, None)
             # Verify that the stream is successfully created.
             if not success:
                 self.streams.clear()
@@ -126,7 +128,7 @@ class AudioIO:
         return True
 
     # TODO: This does not work properly. Needs to be fixed.
-    def record_stream(self, identifier : str , duration_seconds: float) -> bool:
+    def record_stream(self, identifier: str, duration_seconds: float) -> bool:
         """
         Record an audio stream with the given identifier and of
         duration_seconds.
@@ -143,23 +145,23 @@ class AudioIO:
         try:
             recording = sd.rec(
                 int(duration_seconds * self.recording_sample_rate),
-                samplerate = self.recording_sample_rate,
-                channels = self.recording_channels,
-                blocking = True)
+                samplerate=self.recording_sample_rate,
+                channels=self.recording_channels,
+                blocking=True)
             # Load the array as an audio segment
             audio_segment = AudioSegment(
-                data = recording.tobytes(),
-                sample_width = 2,
-                frame_rate = self.recording_sample_rate,
-                channels = self.recording_channels)
+                data=recording.tobytes(),
+                sample_width=2,
+                frame_rate=self.recording_sample_rate,
+                channels=self.recording_channels)
             self.streams.clear()
             self.streams[identifier] = AudioStream(
-                "",self.default_input_audio_format,audio_segment,None,None)
+                "", self.default_input_audio_format, audio_segment, None, None)
             return True
         except:
             return False
 
-    def set_output_paths(self, output_dir_paths : Dict[str,str]) -> bool:
+    def set_output_paths(self, output_dir_paths: Dict[str, str]) -> bool:
         """
         Set the output direcotry path for the audio streams associated with
         the identifiers.
@@ -179,10 +181,10 @@ class AudioIO:
                     not self._is_directory(output_dir_path):
                 return False
             self.streams[name].set(
-                AudioStreamAttr.output_dir_path,output_dir_path)
+                AudioStreamAttr.output_dir_path, output_dir_path)
         return True
 
-    def set_output_formats(self, output_formats : Dict[str,str]) -> bool:
+    def set_output_formats(self, output_formats: Dict[str, str]) -> bool:
         """
         Set the output formats for the audio streams associated with the
         identifiers.
@@ -201,12 +203,12 @@ class AudioIO:
                     not output_format in self.OUTPUT_AUDIO_FORMATS:
                 return False
             self.streams[name].set(
-                AudioStreamAttr.output_format,output_format)
+                AudioStreamAttr.output_format, output_format)
         return True
 
     ################################# GETTERS #############################
 
-    def is_readable(self, file_path : str) -> bool:
+    def is_readable(self, file_path: str) -> bool:
         """
         Determine if the file at the given path is readable by AudioIO.
 
@@ -218,8 +220,7 @@ class AudioIO:
         """
         return self._is_audio_file(file_path)
 
-
-    def get_stream_configurations(self) -> Dict[str,Dict[str,Any]]:
+    def get_stream_configurations(self) -> Dict[str, Dict[str, Any]]:
         """
         Obtain important configuration information for all files that have
         been read.
@@ -242,18 +243,18 @@ class AudioIO:
         """
         configs = dict()
         for name in self.streams.keys():
-            _ , audio_segment = self.streams[name].get(
+            _, audio_segment = self.streams[name].get(
                 AudioStreamAttr.audio_segment)
             configs[name] = {
-                "decibels_relative_to_full_scale" : audio_segment.dBFS,
-                "channels" : audio_segment.channels,
-                "sample_width" : audio_segment.sample_width,
-                "frame_rate" : audio_segment.frame_rate,
-                "frame_width" : audio_segment.frame_width,
-                "root_mean_square" : audio_segment.rms,
-                "highest_amplitude" : audio_segment.max,
-                "duration_seconds" : audio_segment.duration_seconds,
-                "num_frames" : audio_segment.frame_count()}
+                "decibels_relative_to_full_scale": audio_segment.dBFS,
+                "channels": audio_segment.channels,
+                "sample_width": audio_segment.sample_width,
+                "frame_rate": audio_segment.frame_rate,
+                "frame_width": audio_segment.frame_width,
+                "root_mean_square": audio_segment.rms,
+                "highest_amplitude": audio_segment.max,
+                "duration_seconds": audio_segment.duration_seconds,
+                "num_frames": audio_segment.frame_count()}
         return configs
 
     def get_stream_names(self) -> List[str]:
@@ -266,7 +267,7 @@ class AudioIO:
         """
         return list(self.streams.keys())
 
-    def get_streams(self) -> Dict[str,Any]:
+    def get_streams(self) -> Dict[str, Any]:
         """
         Obtain all streams that have been read as byte arrays.
 
@@ -275,7 +276,7 @@ class AudioIO:
         """
         streams = dict()
         for name in self.streams.keys():
-            _ , audio_segment = self.streams[name].get(
+            _, audio_segment = self.streams[name].get(
                 AudioStreamAttr.audio_segment)
             streams[name] = audio_segment.raw_data
         return streams
@@ -300,7 +301,7 @@ class AudioIO:
 
     ############################### PUBLIC METHODS ########################
 
-    def write(self, identifiers : List[str]) -> bool:
+    def write(self, identifiers: List[str]) -> bool:
         """
         Write the audio stream associated with the given identifiers.
         If the output path and formats were not explicitly set, they default
@@ -315,8 +316,8 @@ class AudioIO:
         # List to store success values
         is_success_list = list()
         # Verify all identifiers
-        if not all([identifier in self.streams.keys() \
-                for identifier in identifiers ]):
+        if not all([identifier in self.streams.keys()
+                    for identifier in identifiers]):
             return False
         # Write all the output files
         for name in identifiers:
@@ -328,11 +329,10 @@ class AudioIO:
                 AudioStreamAttr.output_format)
             is_success_list.append(
                 self._export_audio(audio_segment, output_dir_path, name,
-                    output_format))
+                                   output_format))
         return all(is_success_list)
 
-
-    def mono_to_stereo(self) -> Tuple[bool,str]:
+    def mono_to_stereo(self) -> Tuple[bool, str]:
         """
         Convert two mono streams into a single stereo stream.
         The streams must have the same number of frames.
@@ -350,13 +350,13 @@ class AudioIO:
         if len(self.streams.keys()) != 2:
             return (False, None)
         # Obtain the audio segments
-        name_1,name_2 = self.streams.keys()
+        name_1, name_2 = self.streams.keys()
         _, audio_segment_1 = self.streams[name_1].get(
-                AudioStreamAttr.audio_segment)
+            AudioStreamAttr.audio_segment)
         _, audio_segment_2 = self.streams[name_2].get(
-                AudioStreamAttr.audio_segment)
+            AudioStreamAttr.audio_segment)
         # Generate new file name and data for new stream.
-        stereo_name = "{}_{}_stereo".format(name_1,name_2)
+        stereo_name = "{}_{}_stereo".format(name_1, name_2)
         _, output_dir_path = self.streams[name_1].get(
             AudioStreamAttr.output_dir_path)
         _, output_format = self.streams[name_1].get(
@@ -364,18 +364,18 @@ class AudioIO:
         # Attempt to combine into stereo.
         try:
             stereo_segment = AudioSegment.from_mono_audiosegments(
-                audio_segment_1,audio_segment_2)
-            stream  = AudioStream(
-                "",self.default_input_audio_format,stereo_segment,
-                output_dir_path,output_format)
+                audio_segment_1, audio_segment_2)
+            stream = AudioStream(
+                "", self.default_input_audio_format, stereo_segment,
+                output_dir_path, output_format)
             # Clear existing streams is successful
             self.streams.clear()
             self.streams[stereo_name] = stream
-            return (True,stereo_name)
+            return (True, stereo_name)
         except:
             return (False, None)
 
-    def stereo_to_mono(self) -> Tuple[bool, Tuple[str,str]]:
+    def stereo_to_mono(self) -> Tuple[bool, Tuple[str, str]]:
         """
         Convert a stereo stream to two mono streams i.e. left stream and right
         stream.
@@ -392,14 +392,14 @@ class AudioIO:
         """
         # Only works when a single stereo audio file has been read.
         if len(self.streams.keys()) != 1:
-            return (False, (None,None))
+            return (False, (None, None))
         # Generating names for channels
         name, = self.streams.keys()
         left_channel_name = name + "_left_channel_mono"
         right_channel_name = name + "_right_channel_mono"
         # Gathering data for new potential streams
-        _ , audio_segment = self.streams[name].get(
-                AudioStreamAttr.audio_segment)
+        _, audio_segment = self.streams[name].get(
+            AudioStreamAttr.audio_segment)
         _, output_dir_path = self.streams[name].get(
             AudioStreamAttr.output_dir_path)
         _, output_format = self.streams[name].get(
@@ -410,19 +410,18 @@ class AudioIO:
             self.streams.clear()
             # Creating streams for left and right channels.
             left_stream = AudioStream(
-                "",self.default_input_audio_format,left_segment,
-                output_dir_path,output_format)
+                "", self.default_input_audio_format, left_segment,
+                output_dir_path, output_format)
             right_stream = AudioStream(
-                "",self.default_input_audio_format,right_segment,
-                output_dir_path,output_format)
+                "", self.default_input_audio_format, right_segment,
+                output_dir_path, output_format)
             self.streams[left_channel_name] = left_stream
             self.streams[right_channel_name] = right_stream
-            return (True, (left_channel_name,right_channel_name))
+            return (True, (left_channel_name, right_channel_name))
         except:
-            return (False, (None,None))
+            return (False, (None, None))
 
-
-    def concat(self) -> Tuple[bool,str]:
+    def concat(self) -> Tuple[bool, str]:
         """
         Combine all the streams into a single stream, one after another, in the
         specific order in which they were read. There must be at least one
@@ -449,10 +448,10 @@ class AudioIO:
         self.streams.clear()
         # Store new stream
         self.streams[combined_name] = AudioStream(
-            "",self.default_input_audio_format,combined_segment,None, None)
+            "", self.default_input_audio_format, combined_segment, None, None)
         return (True, combined_name)
 
-    def overlay(self, loop_shorter_stream : bool = False) -> Tuple[bool,str]:
+    def overlay(self, loop_shorter_stream: bool = False) -> Tuple[bool, str]:
         """
         Overlays two audio streams on top of each other.
         Clears all existing streams and only stores the overlaid stream.
@@ -473,21 +472,22 @@ class AudioIO:
         if len(self.streams.keys()) != 2:
             return (False, "")
         # Determine the longer and shorted segments
-        segment_1, segment_2 = [stream.get(AudioStreamAttr.audio_segment)[1] \
-            for  stream in self.streams.values()]
+        segment_1, segment_2 = [stream.get(AudioStreamAttr.audio_segment)[1]
+                                for stream in self.streams.values()]
         if segment_1.duration_seconds < segment_2.duration_seconds:
-            longer_segment, shorter_segment  = segment_2, segment_1
+            longer_segment, shorter_segment = segment_2, segment_1
         else:
             longer_segment, shorter_segment = segment_1, segment_2
 
         # Combine the segments
         if loop_shorter_stream:
-            overlaid_segment= longer_segment.overlay(shorter_segment,loop=True)
+            overlaid_segment = longer_segment.overlay(
+                shorter_segment, loop=True)
         else:
             # Create a silent stream to cover duration difference
             duration_difference = longer_segment.duration_seconds - \
                 shorter_segment.duration_seconds
-            silence = AudioSegment.silent(duration = duration_difference)
+            silence = AudioSegment.silent(duration=duration_difference)
             shorter_segment += silence
             overlaid_segment = longer_segment.overlay(shorter_segment)
         # Clear existing streams and store overlaid segment as new stream
@@ -495,10 +495,10 @@ class AudioIO:
         overlaid_name += "_overlaid"
         self.streams.clear()
         self.streams[overlaid_name] = AudioStream(
-            "",self.default_input_audio_format,overlaid_segment,None,None)
+            "", self.default_input_audio_format, overlaid_segment, None, None)
         return (True, overlaid_name)
 
-    def change_volume(self, change : Dict[str, int]) -> bool:
+    def change_volume(self, change: Dict[str, int]) -> bool:
         """
         Change the volume of the given file names.
 
@@ -519,13 +519,13 @@ class AudioIO:
         # Applying the gain
         for name, db_change in change.items():
             _, audio_segment = self.streams[name].get(
-                    AudioStreamAttr.audio_segment)
+                AudioStreamAttr.audio_segment)
             # Apply db change to the audio stream
             new_segment = audio_segment.apply_gain(db_change)
-            self.streams[name].set(AudioStreamAttr.audio_segment,new_segment)
+            self.streams[name].set(AudioStreamAttr.audio_segment, new_segment)
         return True
 
-    def reverse(self, names : List[str]) -> bool:
+    def reverse(self, names: List[str]) -> bool:
         """
         Reverse the audio stream with the name / identifier.
 
@@ -546,12 +546,12 @@ class AudioIO:
                 AudioStreamAttr.audio_segment)
             reversed_segment = audio_segment.reverse()
             if not self.streams[name].set(AudioStreamAttr.audio_segment,
-                                        reversed_segment):
+                                          reversed_segment):
                 return False
         return True
 
-    def chunk(self, chunks : Dict[str, int]) \
-            -> Tuple[bool, Dict[str,List[str]]]:
+    def chunk(self, chunks: Dict[str, int]) \
+            -> Tuple[bool, Dict[str, List[str]]]:
         """
         Chunks the streams with the given names / unique identifiers into
         segments of the defined duration. If the duration of the chunk is
@@ -576,7 +576,7 @@ class AudioIO:
         # The chunk durations should be valid
         for name, chunk_duration_seconds in chunks.items():
             if name not in self.streams.keys() or \
-                chunk_duration_seconds <= 0:
+                    chunk_duration_seconds <= 0:
                 return (False, {})
         # Mappings to store the new stream names and their relationships with
         # original stream.
@@ -595,7 +595,7 @@ class AudioIO:
                 for i, chunk_segment in enumerate(audio_segment[::duration_ms]):
                     chunk_name = "{}_chunk_{}".format(name, i)
                     new_streams[chunk_name] = AudioStream(
-                        "",self.default_input_audio_format,chunk_segment,None,
+                        "", self.default_input_audio_format, chunk_segment, None,
                         None)
                     chunk_names.append(chunk_name)
                 name_mappings[name] = chunk_names
@@ -605,10 +605,10 @@ class AudioIO:
 
     ############################# PRIVATE METHODS ##########################
 
-    ### Audio functions
+    # Audio functions
 
-    def _export_audio(self, audio_segment : AudioSegment,
-            output_dir_path : str , name : str ,output_format : str) -> bool:
+    def _export_audio(self, audio_segment: AudioSegment,
+                      output_dir_path: str, name: str, output_format: str) -> bool:
         """
         Export the audio stream.
 
@@ -628,14 +628,14 @@ class AudioIO:
                     not output_format in self.OUTPUT_AUDIO_FORMATS:
                 return False
             output_file_path = "{}/{}.{}".format(
-                output_dir_path,name,output_format)
-            audio_segment.export(output_file_path,format = output_format)
+                output_dir_path, name, output_format)
+            audio_segment.export(output_file_path, format=output_format)
             return True
         except:
             return False
 
     def _initialize_audio_stream(self, input_file_path, input_format,
-            output_dir_path, output_format) -> Tuple[bool,AudioStream]:
+                                 output_dir_path, output_format) -> Tuple[bool, AudioStream]:
         """
         Initializes and returns an AudioStream object by reading from input path.
 
@@ -652,16 +652,16 @@ class AudioIO:
         """
         try:
             audio_segment = AudioSegment.from_file(input_file_path,
-                format=input_format)
+                                                   format=input_format)
             return (True, AudioStream(
-                input_file_path,input_format, audio_segment,output_dir_path,
+                input_file_path, input_format, audio_segment, output_dir_path,
                 output_format))
         except:
             return (False, None)
 
-    ### Others
+    # Others
 
-    def _does_file_exist(self, file_path : str) -> bool:
+    def _does_file_exist(self, file_path: str) -> bool:
         """
         Determines if the file exists.
 
@@ -673,7 +673,7 @@ class AudioIO:
         """
         return os.path.exists(file_path) and os.path.isfile(file_path)
 
-    def _is_audio_file(self, file_path : str) -> bool:
+    def _is_audio_file(self, file_path: str) -> bool:
         """
         Determine if the file exists and is of a supported audio file format.
 
@@ -685,9 +685,9 @@ class AudioIO:
         """
         return self._does_file_exist(file_path) and \
             self._get_file_extension(file_path).lower() in \
-                self.INPUT_AUDIO_FORMATS
+            self.INPUT_AUDIO_FORMATS
 
-    def _is_directory(self, dir_path : str) -> bool:
+    def _is_directory(self, dir_path: str) -> bool:
         """
         Determine if path is a directory.
 
@@ -699,7 +699,7 @@ class AudioIO:
         """
         return os.path.isdir(dir_path)
 
-    def _get_file_extension(self, file_path : str) -> str:
+    def _get_file_extension(self, file_path: str) -> str:
         """
         Obtain file extension /format, which is the substring after the right-
         most "." character.

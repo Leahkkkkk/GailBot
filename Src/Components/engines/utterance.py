@@ -1,9 +1,10 @@
-# Standard library imports 
+# Standard library imports
 from typing import Dict, Any
 from enum import Enum
-# Local imports 
-from ...utils.models import IDictModel
-# Third party imports 
+# Local imports
+from ..utils.models import IDictModel
+# Third party imports
+
 
 class UtteranceAttributes(Enum):
     """
@@ -20,6 +21,7 @@ class UtteranceAttributes(Enum):
     end_time = "end_time"
     transcript = "transcript"
 
+
 class Utterance(IDictModel):
     """
     Object representing a single utterance in a conversation.
@@ -28,11 +30,11 @@ class Utterance(IDictModel):
         (IDictModel)
     """
 
-    def __init__(self, data : Dict[str,Any]) -> None:
+    def __init__(self, data: Dict[str, Any]) -> None:
         """
         Params:
-            data (Dict[str,str]): 
-                Mapping from UtteranceAttribute string to its value. 
+            data (Dict[str,str]):
+                Mapping from UtteranceAttribute string to its value.
         """
         super().__init__()
         self.configured = self._parse_data(data)
@@ -45,19 +47,17 @@ class Utterance(IDictModel):
         Returns:
             (bool): True if configured. False otherwise.
         """
-        return self.configured 
+        return self.configured
 
-    def _parse_data(self, data : Dict[str,str]) -> bool:
+    def _parse_data(self, data: Dict[str, str]) -> bool:
         """
-        Parse the data dictionary. 
+        Parse the data dictionary.
         """
         try:
             if len(data.keys()) != len(UtteranceAttributes):
-                return False 
+                return False
             for attr in UtteranceAttributes:
                 self.items[attr] = data[attr.value]
-            return True 
+            return True
         except:
-            return False  
-
-
+            return False

@@ -3,10 +3,12 @@ from typing import List, Any
 # Local imports
 from .blackboard import BlackBoard
 from .loader import ConfigLoader
-# Third party imports
 
 
 class Config:
+    """
+    Used to manage BlackBoard objects
+    """
 
     def __init__(self) -> None:
         self.loaders: List[ConfigLoader] = list()

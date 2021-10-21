@@ -1,6 +1,6 @@
 
 # Local imports
-from Src.Components.engines import WatsonAcousticModel
+from Src.components.engines import WatsonAcousticModel
 from Tests.engines.vardefs import *
 
 ############################### GLOBALS #####################################

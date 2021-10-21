@@ -2,7 +2,7 @@
 import os
 import time
 # Local imports
-from Src.Components.io import IO
+from Src.components.io import IO
 from Tests.io.vardefs import *
 
 
@@ -267,7 +267,6 @@ def test_io_paths_of_subdirectories() -> None:
         3. Provide an invalid path.
     """
     io = IO()
-    print(io.paths_of_subdirectories(TEST_DIR_PATH)[1])
     assert all([io.is_directory(path) for path
                 in io.paths_of_subdirectories(TEST_DIR_PATH)[1]])
     assert not io.paths_of_subdirectories(WAV_FILE_1_COPY_PATH)[0]

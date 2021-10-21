@@ -1,8 +1,8 @@
 # Standard library imports
 from typing import Any, Tuple, List
 # Local imports
-from Src.Components.io import IO
-from Src.Components.engines import WatsonCore, customWatsonCallbacks
+from Src.components.io import IO
+from Src.components.engines import WatsonCore, customWatsonCallbacks
 from Tests.engines.vardefs import *
 
 ############################### GLOBALS #####################################

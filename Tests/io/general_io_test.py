@@ -1,7 +1,7 @@
 # Standard library imports
 import os
 # Local imports
-from Src.Components.io import GeneralIO
+from Src.components.io import GeneralIO
 from Tests.io.vardefs import *
 
 

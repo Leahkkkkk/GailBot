@@ -1,7 +1,7 @@
 # Standard library imports
 from queue import Queue
 # Local imports
-from Src.Components.network import WebsocketProtocolModel, WSInterface,\
+from Src.components.network import WebsocketProtocolModel, WSInterface,\
     WSProtocolAttributes
 
 ############################### SETUP #####################################

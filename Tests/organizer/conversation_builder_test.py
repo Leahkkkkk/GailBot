@@ -1,9 +1,10 @@
 # Standard library imports
-from typing import Dict, Any
+from typing import Dict, Any, List
 # Local imports
-from Src.Components.io import IO
-from Src.Components.organizer import ConversationBuilder, Settings, \
-    SettingsBuilder, Conversation
+from Src.components.io import IO
+from Src.components.organizer import ConversationBuilder, Settings, \
+    SettingsBuilder, Conversation, Meta, Paths, DataFile
+from Src.components.organizer.conversation_builder import ConversationCreator
 from Tests.organizer.vardefs import *
 
 ############################### GLOBALS #####################################
@@ -13,314 +14,93 @@ from Tests.organizer.vardefs import *
 
 class CustomSettings(Settings):
 
-    ATTRS = ("attr_1", "attr_2")
+    KEYS = ("attr_1", "attr_2")
 
     def __init__(self, data: Dict[str, Any]) -> None:
-        super().__init__(attrs=self.ATTRS)
-        self._parse_data(data)
-
-    def get_attr_1(self) -> Any:
-        return self.get("attr_1")[1]
-
-    def get_attr_2(self) -> Any:
-        return self.get("attr_2")[1]
-
-    def _parse_data(self, data: Dict[str, Any]) -> bool:
-        if not all([k in data.keys() for k in self.ATTRS]):
-            return False
+        self.data = dict()
+        self.configured = False
+        for k in self.KEYS:
+            if k not in data:
+                return
         for k, v in data.items():
-            self._set_value(k, v)
+            self.data[k] = v
+        self.configured = True
+
+    def is_configured(self) -> bool:
+        return self.configured
+
+    def has_attribute(self, attr: str) -> bool:
+        return attr in self.data
+
+    def set_value(self, attr: str, value: Any) -> bool:
+        if attr in self.KEYS:
+            self.data[attr] = value
+            return True
+        return False
+
+    def get_value(self, attr: str) -> Any:
+        if attr in self.data:
+            return self.data[attr]
+
+
+class CustomConversationCreator(ConversationCreator):
+
+    def configure(self, test_arg: Any) -> bool:
         return True
 
+    def create_meta(self) -> Meta:
+        return Meta()
 
-def build_settings(data: Dict[str, Any]) -> Settings:
-    builder = SettingsBuilder()
-    builder.register_setting_type("custom", lambda data: CustomSettings(data))
-    _, settings = builder.create_settings("custom", data)
-    return settings
+    def create_data_files(self) -> List[DataFile]:
+        return [DataFile()]
+
+    def create_paths(self) -> Paths:
+        return Paths()
 
 ########################## TEST DEFINITIONS #################################
 
 
-def test_builder_set_conversation_source_path_valid() -> None:
+def test_register_creator() -> None:
     """
-    Tests the set_conversation_source_path method in ConversationBuilder
-
     Tests:
-        1. Set a valid file path.
-        2. Set a valid directory path.
-
-    Returns:
-        (bool): True if all tests pass. False otherwise.
+        1. Register and check creator
     """
-    builder = ConversationBuilder(IO())
-    assert builder.set_conversation_source_path(WAV_FILE_PATH) and \
-        builder.set_conversation_source_path(CONVERSATION_DIR_PATH)
+    builder = ConversationBuilder()
+    builder.register_creator("custom", CustomConversationCreator())
+    assert builder.is_creator("custom")
 
 
-def test_builder_set_conversation_source_path_invalid() -> None:
+def test_remove_creator() -> None:
     """
-    Tests the set_conversation_source_path method in ConversationBuilder
-
     Tests:
-        1. Set an invalid path.
-
-    Returns:
-        (bool): True if all tests pass. False otherwise.
+        1. Check that the ConversationCreator is removed.
     """
-    builder = ConversationBuilder(IO())
-    assert not builder.set_conversation_source_path("Not a path")
+    builder = ConversationBuilder()
+    builder.register_creator("custom", CustomConversationCreator())
+    builder.remove_creator("custom")
+    assert not builder.is_creator("custom")
 
 
-def test_builder_set_conversation_name() -> None:
+def test_is_creator() -> None:
     """
-    Tests the set_conversation_name method in ConversationBuilder
-
     Tests:
-        1. Set any random name.
-
-    Returns:
-        (bool): True if all tests pass. False otherwise.
+        1. Check valid creator.
+        2. Check invalid creator.
     """
-    builder = ConversationBuilder(IO())
-    assert builder.set_conversation_name("conversation_1")
+    builder = ConversationBuilder()
+    builder.register_creator("custom", CustomConversationCreator())
+    assert builder.is_creator("custom")
+    assert not builder.is_creator("invalid")
 
 
-def test_builder_set_result_directory_path_valid() -> None:
+def test_build_conversation() -> None:
     """
-    Tests the set_result_directory_path method in ConversationBuilder
-
     Tests:
-        1. Set a valid directory path.
-
-    Returns:
-        (bool): True if all tests pass. False otherwise.
+        1. Register and build a conversation
     """
-    builder = ConversationBuilder(IO())
-    assert builder.set_result_directory_path(TMP_DIR_PATH)
-
-
-def test_builder_set_result_directory_path_invalid() -> None:
-    """
-    Tests the set_result_directory_path method in ConversationBuilder
-
-    Tests:
-        1. Set a file path as directory.
-        2. Set an invalid path.
-
-    Returns:
-        (bool): True if all tests pass. False otherwise.
-    """
-    builder = ConversationBuilder(IO())
-    assert not builder.set_result_directory_path(WAV_FILE_PATH) and \
-        not builder.set_result_directory_path("invalid/")
-
-
-def test_builder_set_temporary_directory_path_valid() -> None:
-    """
-    Tests the set_temporary_directory_path method in ConversationBuilder
-
-    Tests:
-        1. Set a valid directory path.
-
-    Returns:
-        (bool): True if all tests pass. False otherwise.
-    """
-    builder = ConversationBuilder(IO())
-    assert builder.set_temporary_directory_path(TMP_DIR_PATH)
-
-
-def test_builder_set_temporary_directory_path_invalid() -> None:
-    """
-    Tests the set_temporary_directory_path method in ConversationBuilder
-
-    Tests:
-        1. Set a file path as directory.
-        2. Set an invalid path.
-
-    Returns:
-        (bool): True if all tests pass. False otherwise.
-    """
-    builder = ConversationBuilder(IO())
-    assert not builder.set_temporary_directory_path(WAV_FILE_PATH) and \
-        not builder.set_temporary_directory_path("invalid/")
-
-
-def test_builder_set_conversation_name() -> None:
-    """
-    Tests the set_conversation_name method in ConversationBuilder
-
-    Tests:
-        1. Set a name and check if it can be obtained in the conversation.
-    """
-    builder = ConversationBuilder(IO())
-    assert builder.set_conversation_name("conversation_name")
-
-
-def test_builder_set_transcriber_name() -> None:
-    """
-    Tests the set_transcriber_name method in ConversationBuilder
-
-    Tests:
-        1. Set a name and check if it can be obtained in the conversation.
-    """
-    builder = ConversationBuilder(IO())
-    assert builder.set_transcriber_name("conversation_name")
-
-
-def test_builder_set_number_of_speakers_valid() -> None:
-    """
-    Tests the set_number_of_speakers method in ConversationBuilder
-
-    Tests:
-        1. Set a positive number of speakers.
-
-    Returns:
-        (bool): True if all tests pass. False otherwise.
-    """
-    builder = ConversationBuilder(IO())
-    assert builder.set_number_of_speakers(10)
-
-
-def test_builder_set_number_of_speakers_invalid() -> None:
-    """
-    Tests the set_number_of_speakers method in ConversationBuilder
-
-    Tests:
-        1. Set 0 as number of speakers.
-        2. Set a negative number of speakers.
-
-    Returns:
-        (bool): True if all tests pass. False otherwise.
-    """
-    builder = ConversationBuilder(IO())
-    assert not builder.set_number_of_speakers(0) and \
-        not builder.set_number_of_speakers(-10)
-
-
-def test_builder_set_conversation_settings_valid() -> None:
-    """
-    Tests the set_conversation_settings method in ConversationBuilder
-
-    Tests:
-        1. Set a settings object that has all attributes set.
-
-    Returns:
-        (bool): True if all tests pass. False otherwise.
-    """
-    data = {
-        "attr_1": 1,
-        "attr_2": 2
-    }
-    settings = build_settings(data)
-    builder = ConversationBuilder(IO())
-    assert builder.set_conversation_settings(settings)
-
-
-def test_builder_set_conversation_settings_invalid() -> None:
-    """
-    Tests the set_conversation_settings method in ConversationBuilder
-
-    Tests:
-        1. Set a settings object that is not configured.
-
-    Returns:
-        (bool): True if all tests pass. False otherwise.
-    """
-    data = {
-        "attr_1": None}
-    settings = Settings(data.keys())
-    builder = ConversationBuilder(IO())
-    assert not builder.set_conversation_settings(settings)
-
-
-def test_builder_build_conversation_valid() -> None:
-    """
-    Tests the build_conversation method in ConversationBuilder
-
-    Tests:
-        1. Call method after setting all attributes with valid data.
-
-    Returns:
-        (bool): True if all tests pass. False otherwise.
-    """
-    data = {
-        "attr_1": 1,
-        "attr_2": 2}
-    settings = build_settings(data)
-    builder = ConversationBuilder(IO())
-    builder.set_conversation_source_path(CONVERSATION_DIR_PATH)
-    builder.set_conversation_name("conversation_1")
-    builder.set_result_directory_path(TMP_DIR_PATH)
-    builder.set_temporary_directory_path(TMP_DIR_PATH)
-    builder.set_number_of_speakers(2)
-    builder.set_transcriber_name("NAME")
-    builder.set_conversation_settings(settings)
-    assert builder.build_conversation()
-
-
-def test_builder_build_conversation_invalid() -> None:
-    """
-    Tests the build_conversation method of ConversationBuilder.
-
-    Tests:
-        1. Build a conversation without setting any attributes.
-        2. Build a conversation after setting only some attributes.
-        3. Build a conversation after clearing configurations.
-        4. Build a conversation after building a valid conversation.
-
-    Returns:
-        (bool): True if all tests pass. False otherwise.
-    """
-    data = {
-        "attr_1": 1,
-        "attr_2": 2}
-    settings = build_settings(data)
-    builder = ConversationBuilder(IO())
-    assert not builder.build_conversation()
-    assert builder.get_conversation() == None
-    assert builder.set_conversation_source_path(CONVERSATION_DIR_PATH)
-    assert builder.set_conversation_name("only some attributes set")
-    assert not builder.build_conversation()
-    assert builder.get_conversation() == None
-    assert builder.clear_conversation_configurations()
-    assert builder.set_conversation_source_path(CONVERSATION_DIR_PATH)
-    assert builder.set_conversation_name("conversation_1")
-    assert builder.set_result_directory_path(TMP_DIR_PATH)
-    assert builder.set_temporary_directory_path(TMP_DIR_PATH)
-    assert builder.set_number_of_speakers(2)
-    assert builder.set_transcriber_name("NAME")
-    assert builder.set_conversation_settings(settings)
-    assert builder.build_conversation()
-    assert builder.get_conversation() != None
-    assert builder.clear_conversation_configurations()
-    assert not builder.build_conversation()
-    assert builder.get_conversation() == None
-
-
-def test_builder_clear_conversation() -> None:
-    """
-    Tests the builder clear conversation method
-
-    Tests:
-        1. Builds conversation
-        2. Clear conversation
-        3. Confirms conversation is cleared with a get
-
-    Returns:
-        (bool): True if all tests pass. False otherwise.
-    """
-    data = {
-        "attr_1": 1,
-        "attr_2": 2}
-    settings = build_settings(data)
-    builder = ConversationBuilder(IO())
-    builder.set_conversation_source_path(CONVERSATION_DIR_PATH)
-    builder.set_conversation_name("conversation_1")
-    builder.set_result_directory_path(TMP_DIR_PATH)
-    builder.set_temporary_directory_path(TMP_DIR_PATH)
-    builder.set_number_of_speakers(2)
-    builder.set_conversation_settings(settings)
-    builder.build_conversation()
-    assert builder.clear_conversation_configurations() and\
-        builder.get_conversation() == None
+    builder = ConversationBuilder()
+    builder.register_creator("custom", CustomConversationCreator())
+    success, _ = builder.build_conversation(
+        "custom", ['random'], {}, CustomSettings({
+            "attr_1": None, "attr_2": None}))
+    assert success

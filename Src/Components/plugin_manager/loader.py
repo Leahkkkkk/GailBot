@@ -5,9 +5,10 @@ import imp
 from .config import PluginConfig
 from .plugin_source import PluginSource
 from ..io import IO
-from ...utils.manager import ObjectManager
+from ..utils.manager import ObjectManager
 
 # Third party imports
+
 
 class PluginLoader:
     """
@@ -15,13 +16,13 @@ class PluginLoader:
     """
 
     def __init__(self) -> None:
-        ## Objects
+        # Objects
         self.manager = ObjectManager()
         self.io = IO()
 
     ################################# MODIFIERS #############################
 
-    def load_plugin_using_config(self, plugin_config : PluginConfig) -> bool:
+    def load_plugin_using_config(self, plugin_config: PluginConfig) -> bool:
         """
         Load a plugin using information provided in the Config.
 
@@ -37,24 +38,24 @@ class PluginLoader:
                 return False
             # Read the file in this case
             plugin = self._load_class_from_file(
-                plugin_config.plugin_file_path,plugin_config.plugin_source_name,
+                plugin_config.plugin_file_path, plugin_config.plugin_source_name,
                 plugin_config.plugin_class_name)
             if plugin == None:
                 return False
             # save the plugin source.
             plugin_source = PluginSource(
-                plugin_config.plugin_name,plugin, plugin_config.plugin_dependencies,
+                plugin_config.plugin_name, plugin, plugin_config.plugin_dependencies,
                 len(plugin_config.plugin_dependencies),
                 plugin_config.plugin_file_path, plugin_config.plugin_author,
                 plugin_config.plugin_input_type, plugin_config.plugin_output_type)
-            return self._add_plugin(plugin_config.plugin_name,plugin_source)
+            return self._add_plugin(plugin_config.plugin_name, plugin_source)
         except Exception as e:
             print(e)
             pass
 
     ################################# GETTERS ###############################
 
-    def is_plugin_loaded(self, plugin_name : str) -> bool:
+    def is_plugin_loaded(self, plugin_name: str) -> bool:
         """
         Determine if the plugin is loaded.
 
@@ -75,7 +76,7 @@ class PluginLoader:
         """
         return self.manager.get_object_names()
 
-    def get_plugin(self, plugin_name : str) -> Any:
+    def get_plugin(self, plugin_name: str) -> Any:
         """
         Obtain the specified plugin.
 
@@ -89,7 +90,7 @@ class PluginLoader:
             return
         return self.manager.get_object(plugin_name)
 
-    def get_all_plugins(self) -> Dict[str,Any]:
+    def get_all_plugins(self) -> Dict[str, Any]:
         """
         Obtain all plugins.
 
@@ -100,28 +101,23 @@ class PluginLoader:
 
     ######################### PRIVATE METHODS ###############################
 
-    def _add_plugin(self, plugin_name : str, plugin : Any) -> bool:
+    def _add_plugin(self, plugin_name: str, plugin: Any) -> bool:
         """
         Add a plugin with the specified name to the manager.
         """
-        return self.manager.add_object(plugin_name,plugin,True)
+        return self.manager.add_object(plugin_name, plugin, True)
 
-    def _load_class_from_file(self, file_path : str, module_name : str,
-            class_name : str, *args, **kwargs) -> object:
+    def _load_class_from_file(self, file_path: str, module_name: str,
+                              class_name: str, *args, **kwargs) -> object:
         """
         Given a file path, load the specified class in the specified module
         from the path. The class is initialized with *args, **kwargs.
         """
         try:
             module_type = imp.load_source(module_name, file_path)
-            clazz = getattr(module_type,class_name)
-            instance = clazz(*args,**kwargs)
+            clazz = getattr(module_type, class_name)
+            instance = clazz(*args, **kwargs)
             return instance
         except Exception as e:
             print(e)
             pass
-
-
-
-
-

@@ -1,7 +1,7 @@
 # Standard library imports
 import os
 # Local imports
-from Src.Components.io import GeneralIO, VideoIO, VideoWriteTypes
+from Src.components.io import GeneralIO, VideoIO, VideoWriteTypes
 from Tests.io.vardefs import *
 
 ############################### GLOBALS #####################################

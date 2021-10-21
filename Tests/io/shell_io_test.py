@@ -1,7 +1,7 @@
 # Standard library imports
 import time
 # Local imports
-from Src.Components.io import ShellIO, ShellStatus
+from Src.components.io import ShellIO, ShellStatus
 from Tests.io.vardefs import *
 
 

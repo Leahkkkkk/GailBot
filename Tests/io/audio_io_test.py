@@ -1,7 +1,7 @@
 # Standard library imports
 import os
 # Local imports
-from Src.Components.io import AudioIO, IO, GeneralIO
+from Src.components.io import AudioIO, IO, GeneralIO
 from Tests.io.vardefs import *
 
 ############################### GLOBALS #####################################

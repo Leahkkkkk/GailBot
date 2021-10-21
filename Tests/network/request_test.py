@@ -1,5 +1,5 @@
 # Local imports
-from Src.Components.network import Request
+from Src.components.network import Request
 
 ############################### GLOBALS #####################################
 

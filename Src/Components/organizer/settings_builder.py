@@ -16,7 +16,8 @@ class SettingsBuilder:
         self.setting_creators = dict()
 
     def register_setting_type(self, settings_type: str,
-                              setting_creator: Callable[[Any], Settings]) -> bool:
+                              setting_creator: Callable[[Any], Settings]) \
+            -> bool:
         """
         Register a new type of settings if it is not already registered.
 
@@ -33,6 +34,13 @@ class SettingsBuilder:
             return False
         self.setting_creators[settings_type] = setting_creator
         return True
+
+    def remove_registered_settings_type(self, settings_type: str) -> None:
+        if self.is_registered_settings_type(settings_type):
+            del self.setting_creators[settings_type]
+
+    def is_registered_settings_type(self, settings_type: str) -> bool:
+        return settings_type in self.setting_creators
 
     def get_registered_setting_types(self) -> Dict[str, Settings]:
         """
@@ -60,9 +68,16 @@ class SettingsBuilder:
                 True + Settings object if successful.
                 False + None if unsuccessful.
         """
-        if not settings_type in self.setting_creators.keys():
+        if not settings_type in self.setting_creators:
             return (False, None)
-        return self._initialize_settings(settings_type, data)
+        try:
+            settings: Settings = self.setting_creators[settings_type](data)
+            if not settings.is_configured():
+                return (False, None)
+            return (True, settings)
+        except Exception as e:
+
+            return (False, None)
 
     def copy_settings(self, settings: Settings) -> Settings:
         """
@@ -95,38 +110,11 @@ class SettingsBuilder:
         """
         # The settings item must have a items dictionary
         for k, v in data.items():
-            if not settings._has_attribute(k):
+            if not settings.has_attribute(k):
                 return False
         for k, v in data.items():
-            if not settings._set_value(k, v):
+            if not settings.set_value(k, v):
                 return False
         return settings.is_configured()
 
     ################################# PRIVATE METHODS ##########################
-
-    def _contains_keys(self, dictionary: Dict, keys: List[Any]) -> bool:
-        """
-        Determine if all the keys are contained in the given dictionary.
-        """
-        return all([key in dictionary for key in keys])
-
-    def _initialize_settings(self, settings_type: str, data: Dict[str, Any])\
-            -> Tuple[bool, Settings]:
-        """
-        Initialize a settings object of the specified type.
-
-        Args:
-            settings_type (str): Type must be a registered setting.
-            data (Dict[str,Any]): Mapping from attribute to its value.
-
-        Returns:
-            (Tuple[bool,Settings]):
-                True + settings of type if successful. False otherwise.
-        """
-        try:
-            settings: Settings = self.setting_creators[settings_type](data)
-            if not settings.is_configured():
-                return (False, None)
-            return (True, settings)
-        except Exception as e:
-            return (False, None)

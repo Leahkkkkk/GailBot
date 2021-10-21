@@ -1,6 +1,6 @@
 from typing import List
 # Local imports
-from Src.Components.plugin_manager import PluginLoader, PluginSource, PluginConfig
+from Src.components.plugin_manager import PluginLoader, PluginSource, PluginConfig
 # Third party imports
 from Tests.plugin_manager.vardefs import *
 

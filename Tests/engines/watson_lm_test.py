@@ -1,6 +1,6 @@
 
 # Local imports
-from Src.Components.engines import WatsonLanguageModel
+from Src.components.engines import WatsonLanguageModel
 from Tests.engines.vardefs import *
 
 ############################### GLOBALS #####################################

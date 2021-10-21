@@ -8,9 +8,10 @@ from networkx.classes.graph import Graph
 from .logic import Logic
 from .stream import Stream
 from .component import Component, ComponentState
-from ...utils.threads import ThreadPool
+from ..utils.threads import ThreadPool
 # Third party imports
 import networkx as nx
+
 
 class Pipeline:
     """
@@ -18,7 +19,7 @@ class Pipeline:
     maintaining as much concurrency as possible.
     """
 
-    def __init__(self, name : str, num_threads : int = 10) -> None:
+    def __init__(self, name: str, num_threads: int = 10) -> None:
         """
         Args:
             name (str): Name of the pipeline.
@@ -34,7 +35,7 @@ class Pipeline:
         self.logic = None
         self.base_input = None
 
-    def set_logic(self, logic  : Logic) -> bool:
+    def set_logic(self, logic: Logic) -> bool:
         """
         Set an instantiated logic component that defines the overall logic
         for the pipeline.
@@ -48,7 +49,7 @@ class Pipeline:
         self.logic = logic
         return True
 
-    def set_base_input(self, data : Any) -> bool:
+    def set_base_input(self, data: Any) -> bool:
         """
         Set the base input that is passed to every component. This is useful
         for components that might need an external input.
@@ -62,8 +63,8 @@ class Pipeline:
         self.base_input = Stream(data)
         return True
 
-    def add_component(self, name : str, instantiated_object : object,
-            source_components : List[str] = []) -> bool:
+    def add_component(self, name: str, instantiated_object: object,
+                      source_components: List[str] = []) -> bool:
         """
         Add a component to the pipeline.
         Note that the Logic for the pipeline must be set before components
@@ -92,15 +93,15 @@ class Pipeline:
         """
         if self.logic == None:
             raise Exception("Logic must be defined before adding components")
-        if not all([source in self.name_to_dependency_node.keys() \
-                for source in source_components]):
+        if not all([source in self.name_to_dependency_node.keys()
+                    for source in source_components]):
             raise Exception("Source component is invalid")
         if not self.logic.is_component_supported(name):
             raise Exception("Component not supported in logic")
         # Component cannot be re-added
         if name in self.name_to_dependency_node:
-            raise Exception("Component {} already exists and cannot be "\
-                "re-added".format(name))
+            raise Exception("Component {} already exists and cannot be "
+                            "re-added".format(name))
         # Component cannot have a circular dependency
         if name in source_components:
             raise Exception("Cannot have circular dependency on component")
@@ -108,7 +109,7 @@ class Pipeline:
         self.dependency_graph.add_node(component)
         for source in source_components:
             self.dependency_graph.add_edges_from([
-                (component,self.name_to_dependency_node[source])])
+                (component, self.name_to_dependency_node[source])])
         if self._does_cycle_exist(self.dependency_graph):
             self.dependency_graph.remove_node(component)
             return False
@@ -133,7 +134,7 @@ class Pipeline:
         """
         return list(self.name_to_dependency_node.keys())
 
-    def get_component_dependencies(self, component_name : str) -> List[str]:
+    def get_component_dependencies(self, component_name: str) -> List[str]:
         """
         Obtain all the components that the specified component is dependant on.
 
@@ -149,11 +150,11 @@ class Pipeline:
         """
         if not component_name in self.name_to_dependency_node:
             raise Exception("Invalid component")
-        dependencies =  list(self.dependency_graph.neighbors(
+        dependencies = list(self.dependency_graph.neighbors(
             self.name_to_dependency_node[component_name]))
         return [dependency.get_name() for dependency in dependencies]
 
-    def get_number_of_dependencies(self, component_name : str) -> int:
+    def get_number_of_dependencies(self, component_name: str) -> int:
         """
         Obtain the number of dependencies of the specified component.
 
@@ -182,9 +183,9 @@ class Pipeline:
         results = dict()
         for component in self.executed_graph_view:
             results[component.get_name()] = {
-                "result" : component.get_result(),
-                "runtime_seconds" : component.get_runtime(),
-                "state" : component.get_state().value}
+                "result": component.get_result(),
+                "runtime_seconds": component.get_runtime(),
+                "state": component.get_state().value}
         return results
 
     def get_successful_components(self) -> List[str]:
@@ -195,9 +196,9 @@ class Pipeline:
             (List[str]): Names of all components that have state successful.
         """
         try:
-            return [component.get_name() for component in \
-                self.executed_graph_view.nodes\
-                        if component.get_state() == ComponentState.successful]
+            return [component.get_name() for component in
+                    self.executed_graph_view.nodes
+                    if component.get_state() == ComponentState.successful]
         except:
             return list()
 
@@ -209,9 +210,9 @@ class Pipeline:
             (List[str]): Names of all components that have state failed.
         """
         try:
-            return [component.get_name() for component in \
-                self.executed_graph_view.nodes\
-                        if component.get_state() == ComponentState.failed]
+            return [component.get_name() for component in
+                    self.executed_graph_view.nodes
+                    if component.get_state() == ComponentState.failed]
         except:
             return list()
 
@@ -235,9 +236,9 @@ class Pipeline:
             (List[str]): Names of all components that have state ready.
         """
         try:
-            return [component.get_name() for component in \
-                self.executed_graph_view.nodes\
-                        if component.get_state() == ComponentState.ready]
+            return [component.get_name() for component in
+                    self.executed_graph_view.nodes
+                    if component.get_state() == ComponentState.ready]
         except:
             return list()
 
@@ -270,8 +271,8 @@ class Pipeline:
             for component in executable_components:
                 self.thread_pool.add_task(
                     self._execute_component,
-                    [component,name_to_dependency_mapping,
-                    self.base_input],{})
+                    [component, name_to_dependency_mapping,
+                     self.base_input], {})
             self.thread_pool.wait_completion()
             self._cut_completed_vertices(execution_graph)
 
@@ -292,7 +293,7 @@ class Pipeline:
 
     ########################### PRIVATE METHODS #############################
 
-    def _create_component(self, name : str, instantiated_object  : object) \
+    def _create_component(self, name: str, instantiated_object: object) \
             -> Component:
         """
         Initialize a Component.
@@ -304,9 +305,9 @@ class Pipeline:
         Returns:
             (Component): Instantiated object.
         """
-        return Component(name,instantiated_object)
+        return Component(name, instantiated_object)
 
-    def _get_executables(self, graph : nx.Graph) -> List[Component]:
+    def _get_executables(self, graph: nx.Graph) -> List[Component]:
         """
         Obtain all the components that can be executed i.e., all components
         that do not have any failed or ready dependencies.
@@ -325,7 +326,7 @@ class Pipeline:
                 executables.append(component)
         return executables
 
-    def _cut_completed_vertices(self, graph : nx.Graph) -> None:
+    def _cut_completed_vertices(self, graph: nx.Graph) -> None:
         """
         Remove all components that are successfull and do not have any
         failed or ready dependencies from the dependency graph.
@@ -338,9 +339,9 @@ class Pipeline:
             if component.get_state() == ComponentState.successful and val == 0:
                 graph.remove_node(component)
 
-    def _execute_component(self, component : Component,
-            name_to_dependency_node : Dict[str,Component],
-            base_input : Any) -> None:
+    def _execute_component(self, component: Component,
+                           name_to_dependency_node: Dict[str, Component],
+                           base_input: Any) -> None:
         """
         Execute the given component by running it through the pre_processor,
         processor, and post-processor.
@@ -359,7 +360,7 @@ class Pipeline:
             post_processor = self.logic.get_postprocessor(component.get_name())
             start_time = time.time()
             inputs = {
-                "base" : base_input}
+                "base": base_input}
             dependency_names = self.get_component_dependencies(
                 component.get_name())
             for name in dependency_names:
@@ -378,7 +379,7 @@ class Pipeline:
         finally:
             self._sync_execution_with_dependency_graph(component)
 
-    def _sync_execution_with_dependency_graph(self, component : Component) \
+    def _sync_execution_with_dependency_graph(self, component: Component) \
             -> None:
         """
         Given a component, syncs all its results to the component with
@@ -401,18 +402,18 @@ class Pipeline:
             component.set_runtime(0)
             component.set_result(None)
 
-    def _does_cycle_exist(self, graph : nx.Graph) -> bool:
+    def _does_cycle_exist(self, graph: nx.Graph) -> bool:
         """
         Return True if there are any cycles in the graph. False otherwise.
         """
         try:
-            nx.find_cycle(graph,orientation="original")
+            nx.find_cycle(graph, orientation="original")
             return True
         except:
             return False
 
-    def _generate_execution_graph(self, graph : nx.Graph) \
-            -> Tuple[nx.Graph,Dict[str,Component]]:
+    def _generate_execution_graph(self, graph: nx.Graph) \
+            -> Tuple[nx.Graph, Dict[str, Component]]:
         """
         Generate an execution graph based on the provided graph.
 
@@ -429,5 +430,4 @@ class Pipeline:
         #execution_graph = deepcopy(graph)
         for node in execution_graph.nodes:
             name_to_node_mapping[node.get_name()] = node
-        return (execution_graph,name_to_node_mapping)
-
+        return (execution_graph, name_to_node_mapping)

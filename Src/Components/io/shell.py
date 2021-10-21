@@ -4,8 +4,9 @@ from copy import deepcopy
 from enum import Enum
 from typing import Tuple, Any, Dict, List
 # Local imports
-from ...utils.threads import ThreadPool
+from ..utils.threads import ThreadPool
 # Third party imports
+
 
 class ShellStatus(Enum):
     """
@@ -16,13 +17,14 @@ class ShellStatus(Enum):
     finished = "finished"
     error = "error"
 
+
 class Command:
     """
     Stores all data associated with a command that can be run as a shell
     command.
     """
 
-    def __init__(self,command : str) -> None:
+    def __init__(self, command: str) -> None:
         """
         Args:
             command (str): Command to run on a shell.
@@ -37,11 +39,11 @@ class Command:
         self.status = ShellStatus.ready
         # Command flags
         self.params = {
-            "shell" : True,
-            "stdout" : None,
-            "stdin" : None}
+            "shell": True,
+            "stdout": None,
+            "stdin": None}
 
-    def set_status(self, status : ShellStatus) -> bool:
+    def set_status(self, status: ShellStatus) -> bool:
         """
         Set the current status of the command
 
@@ -54,7 +56,7 @@ class Command:
         self.status = status
         return True
 
-    def set_flags(self, stdout : Any, stdin : Any) -> bool:
+    def set_flags(self, stdout: Any, stdin: Any) -> bool:
         """
         Set the flags for this command
 
@@ -66,8 +68,8 @@ class Command:
             (bool): True if successfully set. False otherwise.
         """
         self.params.update({
-            "stdout" : stdout,
-            "stdin" : stdin})
+            "stdout": stdout,
+            "stdin": stdin})
         return True
 
     def get_status(self) -> ShellStatus:
@@ -98,6 +100,7 @@ class Command:
         """
         return self.command
 
+
 class ShellIO:
     """
     Responsible for running shell commands as sub-processes.
@@ -119,8 +122,8 @@ class ShellIO:
 
     ################################ SETTERS ###############################
 
-    def add_command(self, identifier : str,command : str,
-            stdout : Any = None, stdin : Any = None) -> bool:
+    def add_command(self, identifier: str, command: str,
+                    stdout: Any = None, stdin: Any = None) -> bool:
         """
         Add a shell command.
 
@@ -131,13 +134,13 @@ class ShellIO:
             stdin (Any): Stream for command input
         """
         cmd = Command(command)
-        cmd.set_flags(stdout,stdin)
+        cmd.set_flags(stdout, stdin)
         self.commands[identifier] = cmd
         return True
 
     ################################ GETTERS ###############################
 
-    def get_status(self, identifier : str) -> Tuple[bool, ShellStatus]:
+    def get_status(self, identifier: str) -> Tuple[bool, ShellStatus]:
         """
         Obtain the status of the shell command associated with this identifier.
 
@@ -154,7 +157,7 @@ class ShellIO:
 
     ################################ OTHERS ###############################
 
-    def run_command(self, identifier : str) -> bool:
+    def run_command(self, identifier: str) -> bool:
         """
         Run the shell command associated with this identifier.
 
@@ -170,13 +173,13 @@ class ShellIO:
         command = self.commands[identifier].get_command()
         cmd = self.commands[identifier]
         self.thread_pool.add_task(
-            self._run_command_check_call, [command,flags,[cmd]])
+            self._run_command_check_call, [command, flags, [cmd]])
         return True
 
     ############################### PRIVATE METHODS ########################
 
-    def _run_command_check_call(self, command : str, kwargs : Dict,
-            closure : List[Command]) -> None:
+    def _run_command_check_call(self, command: str, kwargs: Dict,
+                                closure: List[Command]) -> None:
         """
         Run the shell command while checking for exceptions.
         Changes the state of Command object to running, runs the process, and
@@ -191,7 +194,7 @@ class ShellIO:
         """
         try:
             closure[0].set_status(ShellStatus.running)
-            subprocess.check_call(command,**kwargs)
+            subprocess.check_call(command, **kwargs)
             closure[0].set_status(ShellStatus.finished)
         except subprocess.CalledProcessError:
-             closure[0].set_status(ShellStatus.error)
+            closure[0].set_status(ShellStatus.error)

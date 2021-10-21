@@ -1,6 +1,6 @@
 # Local imports
-from Src.Components.engines import GoogleEngine
-from Src.Components.io import IO
+from Src.components.engines import GoogleEngine
+from Src.components.io import IO
 from Tests.engines.vardefs import *
 
 ############################### GLOBALS #####################################

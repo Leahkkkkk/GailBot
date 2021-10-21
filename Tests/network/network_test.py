@@ -1,5 +1,5 @@
 # Local imports
-from Src.Components.network import WebsocketProtocolModel, WSProtocolAttributes,\
+from Src.components.network import WebsocketProtocolModel, WSProtocolAttributes,\
     Network
 
 ############################### GLOBALS #####################################

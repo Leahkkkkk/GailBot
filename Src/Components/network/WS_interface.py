@@ -5,7 +5,7 @@ from typing import Callable, Dict, List
 from .WS_protocol import WSInterfaceProtocol
 from .WS_models import WebsocketProtocolModel
 from .WS_factory import WSInterfaceFactory
-from ...utils.threads import ThreadPool
+from ..utils.threads import ThreadPool
 # Third party imports
 from queue import Queue
 from autobahn.twisted.websocket import connectWS

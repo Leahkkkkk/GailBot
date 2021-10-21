@@ -1,50 +1,26 @@
-# Standard library imports
-from typing import Any, List
-# Local imports
-from ...utils.models import IDictModel
-# Third party imports
+from abc import ABC, abstractmethod
+from typing import Any, Dict
 
-class Settings(IDictModel):
 
-    def __init__(self, attrs : List[str]) -> None:
-        super().__init__()
-        for attr in attrs:
-            self._add_attribute(attr)
+class Settings(ABC):
+
+    def __init__(self, data: Dict) -> None:
+        pass
 
     def is_configured(self) -> bool:
-        """
-        Determine if the Paths object has successfully read data.
+        pass
 
-        Returns:
-            (bool): True if data has been successfully read. False otherwise.
-        """
-        return all([v != None for v in self.items.values()])
+    def has_attribute(self, attr: str) -> bool:
+        pass
 
-    def _has_attribute(self, attr : str) -> bool:
-        """
-        Determine if the settings object has the given attribute.
-        """
-        return attr in self.items
+    def set_value(self, attr: str, value: Any) -> bool:
+        pass
 
-    def _add_attribute(self, attr : str) -> None:
-        """
-        Add the attribute to the list of accepted attributes.
+    def get_value(self, attr: str) -> Any:
+        pass
 
-        Args:
-            attr (str): Attribute name
-        """
-        self.items[attr] = None
+    def get_all_values(self) -> Dict:
+        pass
 
-    def _set_value(self, attr : str, data : Any) -> bool:
-        """
-        Set the value for the given attribute if it is accepted.
-
-        Args:
-            attr (str): Attribute to change
-            data (Any): Data to be set as the value for that attribute
-
-        Returns:
-            (bool): True if set. False if not set or if attr is not accepted.
-
-        """
-        return self.set(attr,data)
+    def save_to_file(self, save_path: str) -> None:
+        pass

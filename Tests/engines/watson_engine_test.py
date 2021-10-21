@@ -1,8 +1,8 @@
 
 # Local imports
-from Src.Components.engines import WatsonEngine, Utterance, UtteranceAttributes
-from Src.Components.io import IO
-from Src.Components.network import Network
+from Src.components.engines import WatsonEngine, Utterance, UtteranceAttributes
+from Src.components.io import IO
+from Src.components.network import Network
 from Tests.engines.vardefs import *
 
 ############################### GLOBALS #####################################

@@ -1,6 +1,6 @@
 # Standard library imports
 # Local imports
-from Src.Components.plugin_manager import PluginManager, PluginDetails, ApplyConfig
+from Src.components.plugin_manager import PluginManager, PluginDetails, ApplyConfig
 from Tests.plugin_manager.vardefs import *
 # Third party imports
 

@@ -1,10 +1,10 @@
 # Standard library import
 from typing import Dict
 # Local imports
-from Src.Components.io import IO
-from Src.Components.pipeline import Pipeline, Logic, Stream
-from Src.Components.network.network import Network
-from Src.Components.engines.watson import WatsonEngine
+from Src.components.io import IO
+from Src.components.pipeline import Pipeline, Logic, Stream
+from Src.components.network.network import Network
+from Src.components.engines.watson import WatsonEngine
 from Tests.pipeline.vardefs import *
 
 ############################### GLOBALS #####################################
