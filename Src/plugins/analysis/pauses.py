@@ -3,12 +3,10 @@ from typing import Dict, Any, List, Tuple
 import re
 from dataclasses import dataclass
 # Local imports
-from Src.default_plugins.turn import Turn
-from Src.Components.controller.services import AnalysisPluginInput, \
-    AnalysisPlugin, Utt
+from Src.components.controller import GBPlugin, PluginMethodSuite, Utt
 
 
-class Pauses(AnalysisPlugin):
+class Pauses(GBPlugin):
 
     def __init__(self) -> None:
         @dataclass
@@ -29,7 +27,7 @@ class Pauses(AnalysisPlugin):
         self.delimiters = Delimiters
 
     def apply_plugin(self, dependency_outputs: Dict[str, Any],
-                     plugin_input: AnalysisPluginInput) -> List[Turn]:
+                     plugin_input: PluginMethodSuite) -> List[Utt]:
         # Get the utterances from the dependencies
         try:
             utterances: List[Utt] = dependency_outputs["overlaps"]
@@ -43,13 +41,13 @@ class Pauses(AnalysisPlugin):
                 fto = round(nxt_utt.start_time_seconds -
                             curr_utt.end_time_seconds, 2)
                 if self.thresholds.lb_latch <= fto <= self.thresholds.ub_latch:
-                    curr_utt.transcript += " {} ".format(
+                    curr_utt.text += " {} ".format(
                         self.delimiters.latch_marker)
                 elif self.thresholds.lb_pause <= fto <= self.thresholds.ub_pause:
-                    curr_utt.transcript += " ({}) ".format(str(round(fto, 1)))
+                    curr_utt.text += " ({}) ".format(str(round(fto, 1)))
                 elif self.thresholds.lb_micropause <= fto \
                         <= self.thresholds.ub_micropause:
-                    curr_utt.transcript += " ({}) ".format(str(round(fto, 1)))
+                    curr_utt.text += " ({}) ".format(str(round(fto, 1)))
                 elif fto >= self.thresholds.lb_large_pause:
                     new_utterances.extend([
                         curr_utt,
@@ -61,7 +59,7 @@ class Pauses(AnalysisPlugin):
             new_utterances.append(utterances[-1])
             return new_utterances
         except Exception as e:
-            print(e)
+            print("pauses", e)
 
     ################################# GETTERS ###############################
 

@@ -13,8 +13,7 @@ class GBSettingAttrs(Enum):
     watson_language_customization_id = "watson_language_customization_id"
     watson_base_language_model = "watson_base_language_model"
     watson_region = "watson_region"
-    output_format = "output_format"
-    analysis_plugins_to_apply = "analysis_plugins_to_apply"
+    plugins_to_apply = "plugins_to_apply"
 
 
 class GailBotSettings(Settings):
@@ -29,10 +28,9 @@ class GailBotSettings(Settings):
             return
         for attr in self.attrs:
             self.data[attr] = None
+        self.configured = True
         for attr, value in data.items():
             self.set_value(attr, value)
-        self.configured = True
-
     ############################ MODIFIERS ####################################
 
     def save_to_file(self, save_path: str) -> bool:

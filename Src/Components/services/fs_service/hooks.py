@@ -18,8 +18,9 @@ class SourceHook:
         self.io = IO()
         self.parent_dir_path = parent_dir_path
         self.source_name = source_name
-        self.result_dir_path = result_dir_path
+        self.result_dir_path = "{}/{}".format(result_dir_path, source_name)
         self.temp_dir_path = "{}/{}".format(parent_dir_path, "temp")
+        self.io.create_directory(self.result_dir_path)
         self.io.create_directory(self.temp_dir_path)
 
     ################################# MODIFIERS #############################

@@ -247,6 +247,7 @@ class GailBotController:
         Returns:
             (List[str]): List of plugins loaded using the configuration file.
         """
+        print("Registering")
         return self.pipeline.register_plugins(config_path)
 
     # TODO: Potentially make this return Controller specific summary.

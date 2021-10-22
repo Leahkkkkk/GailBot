@@ -7,15 +7,11 @@ from abc import ABC
 from .settings import Settings
 
 
-class DataFileType(ABC):
-    pass
-
-
 @dataclass
 class DataFile:
     name: str = None
     extension: str = None
-    file_type: DataFileType = None
+    file_type: str = None
     path: str = None
     size_bytes: str = None
     utterances: List = None
@@ -153,7 +149,7 @@ class Conversation:
             data[name] = path
         return data
 
-    def get_source_file_types(self) -> Dict[str, DataFileType]:
+    def get_source_file_types(self) -> Dict[str, str]:
         """
         Obtain the type of each source file in the conversation.
         Can be either 'audio' or 'video'
@@ -166,6 +162,7 @@ class Conversation:
         for data_file in self.data_files:
             name = data_file.name
             file_type = data_file.file_type
+            data[name] = file_type
         return data
 
     def get_utterances(self) -> Dict[str, List]:

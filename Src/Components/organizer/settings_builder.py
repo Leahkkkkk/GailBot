@@ -76,7 +76,7 @@ class SettingsBuilder:
                 return (False, None)
             return (True, settings)
         except Exception as e:
-
+            print(e)
             return (False, None)
 
     def copy_settings(self, settings: Settings) -> Settings:

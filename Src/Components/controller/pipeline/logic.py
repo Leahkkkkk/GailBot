@@ -1,13 +1,18 @@
 # # Standard imports
 from typing import List, Tuple, Dict, Any
 # Local imports
+from ...utils.threads import ThreadPool
 from ...utils.manager import ObjectManager
 from ...pipeline import Pipeline, Logic, Stream
 from ...plugin_manager import PluginExecutionSummary
 from ...services import Source, SettingsProfile
+from .stages import TranscriptionStage, PluginsStage, OutputStage
+from .models import Payload
 
 
 class GBPipelineLogic(Logic):
+
+    NUM_THREADS = 4
 
     def __init__(self) -> None:
         super().__init__()
@@ -24,14 +29,17 @@ class GBPipelineLogic(Logic):
             "output_stage", self._get_base_sources,
             self._output_stage_processor,
             self._wrap_payloads_as_stream)
+        # Initializing the thread pools
+        self.thread_pool = ThreadPool(self.NUM_THREADS)
+        self.thread_pool.spawn_threads()
 
     def _get_base_sources(self, streams: Dict[str, Stream]) \
-            -> Dict[str, Any]:
+            -> Dict[str, Payload]:
         return streams["base"].get_stream_data()
 
-    def _wrap_payloads_as_stream(self, payloads: Dict[str, Any]) \
+    def _wrap_payloads_as_stream(self, payloads: Dict[str, Payload]) \
             -> Stream:
-        pass
+        return Stream(payloads)
 
     # TranscriptionStage
 
@@ -42,18 +50,33 @@ class GBPipelineLogic(Logic):
         Executes the transcription stage for each payload object in a separate
         thread.
         """
-        pass
+        print("transcription stage processor ")
+        for payload_name, payload in payloads.items():
+            self.thread_pool.add_task(
+                self._transcription_stage_thread,
+                [transcription_stage, payload], {})
+        print("Waiting...")
+        self.thread_pool.wait_completion()
+        return payloads
 
     # AnalysisStage
 
-    def _plugin_stage_processor(self,
-                                analysis_stage: Any,
-                                payloads: Dict[str, Any]) -> Dict[str, Any]:
+    def _plugin_stage_processor(
+            self, plugins_stage: Any,
+            payloads: Dict[str, Any]) -> Dict[str, Any]:
         """
         Executes the analysis stage for each payload object in a separate
         thread.
         """
-        pass
+        print("Plugins stage processor")
+        for payload_name, payload in payloads.items():
+            self.thread_pool.add_task(
+                self._plugins_stage_thread,
+                [plugins_stage, payload], {})
+        print("Waiting...")
+        self.thread_pool.wait_completion()
+        print("Done plugins")
+        return payloads
 
     # Output stage
 
@@ -64,19 +87,25 @@ class GBPipelineLogic(Logic):
         Executes the output stage for each payload object in a separate
         thread.
         """
-        pass
+        print("Output stage ")
+        for payload_name, payload in payloads.items():
+            self.thread_pool.add_task(
+                self._output_stage_thread,
+                [output_stage, payload], {})
+        print("Waiting...")
+        self.thread_pool.wait_completion()
+        print("Completed!")
+        return payloads
 
-    def _transcription_stage_thread(self, stage: Any,
+    def _transcription_stage_thread(self, stage: TranscriptionStage,
                                     payload: Any) -> None:
-        payload.log("Starting transcription stage....")
         stage.generate_utterances(payload)
 
-    def _plugin_stage_thread(self, stage: Any,
-                             payload: Any) -> None:
-        payload.log("Starting analysis stage....")
-        stage.analyze(payload)
+    def _plugins_stage_thread(self, stage: PluginsStage,
+                              payload: Payload) -> None:
 
-    def _output_stage_thread(self, stage: Any,
-                             payload: Any) -> None:
-        payload.log("Starting output stage....")
+        stage.apply_plugins(payload)
+
+    def _output_stage_thread(self, stage: OutputStage,
+                             payload: Payload) -> None:
         stage.output(payload)
