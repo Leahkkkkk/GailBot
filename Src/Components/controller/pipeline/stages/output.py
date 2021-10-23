@@ -1,23 +1,22 @@
 from typing import Dict, Any, List
 from abc import abstractmethod
 
-from Src.components.organizer.conversation import Conversation
 # Local imports
 from ....io import IO
 from ....plugin_manager import Plugin
+from ....organizer import Conversation
 from ..models import Payload, Utt, ProcessStatus
 from ....plugin_manager import PluginManager, PluginManagerSummary, ApplyConfig
 from ...helpers.gb_settings import GBSettingAttrs, GailBotSettings
+#from Src.components.controller.initializer import PipelineBlackBoard
+from ...blackboards import PipelineBlackBoard
 
 
 class OutputStage:
 
-    METADATA_EXTENSION = "json"
-    METADATA_NAME = "metadata"
-    RAW_EXTENSION = "gb"
-
-    def __init__(self) -> None:
+    def __init__(self, blackboard: PipelineBlackBoard) -> None:
         self.io = IO()
+        self.blackboard = blackboard
 
     ############################# MODIFIERS ##################################
 
@@ -53,9 +52,11 @@ class OutputStage:
         # "outputs": payload.get_output_names(),
         # "process_status": payload.status,
         # "plugins_applied": list(payload.get_analysis_plugin_summaries().keys()),
-        path = "{}/{}_metadata.{}".format(
+        path = "{}/{}_{}.{}".format(
             payload.source.hook.get_temp_directory_path(),
-            payload.source.source_name, self.METADATA_EXTENSION)
+            payload.source.source_name,
+            self.blackboard.METADATA_NAME,
+            self.blackboard.METADATA_EXTENSION)
         self.io.write(path, data, True)
 
     def _write_raw_utterances(self, payload: Payload) -> None:
@@ -78,5 +79,5 @@ class OutputStage:
             # Save to file
             path = "{}/{}.{}".format(
                 payload.source.hook.get_temp_directory_path(),
-                source_name, self.RAW_EXTENSION)
+                source_name, self.blackboard.RAW_EXTENSION)
             self.io.write(path, data, True)

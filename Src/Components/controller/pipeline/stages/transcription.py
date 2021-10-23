@@ -11,6 +11,7 @@ from ....io import IO
 from ....services import Source
 from ...helpers.gb_settings import GailBotSettings, GBSettingAttrs
 from ..models import Payload, Utt, ProcessStatus
+from ...blackboards import PipelineBlackBoard
 
 
 class TranscriptionStage:
@@ -18,7 +19,8 @@ class TranscriptionStage:
     SUPPORTED_ENGINES = ["watson", "google"]
     NUM_THREADS = 4
 
-    def __init__(self) -> None:
+    def __init__(self, blackboard: PipelineBlackBoard) -> None:
+        self.blackboard = blackboard
         self.engines = Engines(IO(), Network())
         self.io = IO()
         self.thread_pool = ThreadPool(

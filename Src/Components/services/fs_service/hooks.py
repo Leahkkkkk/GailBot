@@ -18,7 +18,8 @@ class SourceHook:
         self.io = IO()
         self.parent_dir_path = parent_dir_path
         self.source_name = source_name
-        self.result_dir_path = "{}/{}".format(result_dir_path, source_name)
+        self.result_dir_path = self._generate_result_dir_path(
+            result_dir_path, source_name)
         self.temp_dir_path = "{}/{}".format(parent_dir_path, "temp")
         self.io.create_directory(self.result_dir_path)
         self.io.create_directory(self.temp_dir_path)
@@ -60,6 +61,18 @@ class SourceHook:
             paths.extend(file_paths)
             paths.extend(dir_paths)
         return paths
+
+    def _generate_result_dir_path(self, dir_path: str, source_name: str) \
+            -> str:
+        count = 0
+        while True:
+            path = "{}/{}_{}".format(dir_path, source_name, count)
+            if self.io.is_directory(path):
+                count += 1
+            else:
+                self.io.create_directory(path)
+                break
+        return path
 
 
 class SettingsHook:

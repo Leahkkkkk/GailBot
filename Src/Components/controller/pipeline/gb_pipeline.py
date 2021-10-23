@@ -11,20 +11,21 @@ from ...pipeline import Pipeline
 from ...plugin_manager import PluginExecutionSummary
 from ...services import Source, SettingsProfile
 from ...io import IO
+from ..blackboards import PipelineBlackBoard
 
 
 class GBPipeline:
 
-    def __init__(self) -> None:
+    def __init__(self, blackboard: PipelineBlackBoard) -> None:
         # Vars.
         self.pipeline_name = "transcription_pipeline_service"
         self.pipeline_num_threads = 4
         # Objects
         self.io = IO()
         self.logic = GBPipelineLogic()
-        self.transcription_stage = TranscriptionStage()
-        self.plugins_stage = PluginsStage()
-        self.output_stage = OutputStage()
+        self.transcription_stage = TranscriptionStage(blackboard)
+        self.plugins_stage = PluginsStage(blackboard)
+        self.output_stage = OutputStage(blackboard)
         # Initialize pipeline
         self.pipeline = Pipeline(self.pipeline_name, self.pipeline_num_threads)
         self.pipeline.set_logic(self.logic)

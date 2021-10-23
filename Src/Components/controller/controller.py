@@ -13,8 +13,6 @@ class GailBotController:
     Provides an API to use GailBot.
     """
 
-    DEFAULT_SETTINGS_TYPE = "gb"
-
     def __init__(self, workspace_dir_path: str) -> None:
         self.initializer = GBInitializer(workspace_dir_path)
         self.services = self.initializer.initialize()
@@ -128,7 +126,7 @@ class GailBotController:
             (bool): True if profile created, False otherwise.
         """
         return self.organizer_service.create_new_settings_profile(
-            self.DEFAULT_SETTINGS_TYPE,
+            self.services.blackboards.services_blackboard.DEFAULT_SETTINGS_TYPE,
             new_settings_profile_name, data)
 
     def save_settings_profile(self, settings_profile_name: str) -> bool:
@@ -247,11 +245,8 @@ class GailBotController:
         Returns:
             (List[str]): List of plugins loaded using the configuration file.
         """
-        print("Registering")
         return self.pipeline.register_plugins(config_path)
 
-    # TODO: Potentially make this return Controller specific summary.
-    # TODO: Need to add more error logs for this.
     def transcribe(self) -> Any:
         """
         Transcribe sources that are ready to transcribe.

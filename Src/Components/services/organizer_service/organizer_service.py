@@ -28,16 +28,15 @@ class OrganizerService:
             TranscribedSourceLoader(fs_service)]
         self.sources: ObjectManager = ObjectManager()
         self.settings_profiles: ObjectManager = ObjectManager()
+        self.conversation_creator_method = None
 
     ############################## MODIFIERS #################################
 
     # --- Configuration methods
 
-    # def add_source_loader(self, source_loader: SourceLoader) -> bool:
-    #     if not source_loader in self.source_loaders:
-    #         self.source_loaders.append(source_loader)
-    #         return True
-    #     return False
+    def set_conversation_creator_method(self, method: Callable[[str], Dict]) \
+            -> None:
+        self.conversation_creator_method = method
 
     def add_settings_profile_type(self, settings_type: str,
                                   setting_creator: Callable[[], Settings]) -> bool:
@@ -167,11 +166,12 @@ class OrganizerService:
                 "custom", [], {
                     "source_path": source.source_path,
                     "conversation_name": source.source_name,
-                    "num_speakers": 1,  # TODO: Change this
                     "transcriber_name": source.transcriber_name,
+                    "num_speakers": 1,  # TODO: Change this
                     "result_dir_path": source.hook.get_result_directory_path(),
                     "temp_dir_path": source.hook.get_temp_directory_path(),
-                    "settings": settings_profile.settings}, settings_profile.settings)
+                    "data_file_configs": self.conversation_creator_method(source.source_path)},
+                settings_profile.settings)
             if not created:
                 return False
             source.conversation = conversation

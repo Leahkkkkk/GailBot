@@ -5,6 +5,7 @@ from ....plugin_manager import Plugin
 from ..models import Payload, Utt, ProcessStatus
 from ....plugin_manager import PluginManager, PluginManagerSummary, ApplyConfig
 from ...helpers.gb_settings import GBSettingAttrs, GailBotSettings
+from ...blackboards import PipelineBlackBoard
 
 
 class PluginMethodSuite:
@@ -47,7 +48,8 @@ class GBPlugin(Plugin):
 
 class PluginsStage:
 
-    def __init__(self) -> None:
+    def __init__(self, blackboard: PipelineBlackBoard) -> None:
+        self.blackboard = blackboard
         self.plugin_manager = PluginManager()
 
     ############################# MODIFIERS ##################################
