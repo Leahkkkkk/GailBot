@@ -1,9 +1,76 @@
+# Standard library imports
+from typing import Dict, Any, Callable
 # Local imports
-from Src.Components.organizer import SettingsBuilder, SettingsAttributes, Settings
+from Src.components.organizer import SettingsBuilder, Settings
+from Tests.organizer.vardefs import *
 
 ############################### GLOBALS #####################################
 
-########################## TEST DEFINITIONS #################################
+############################### SETUP #######################################
+
+
+class CustomSettings(Settings):
+
+    KEYS = ("attr_1", "attr_2")
+
+    def __init__(self, data: Dict[str, Any]) -> None:
+        self.data = dict()
+        self.configured = False
+        for k in self.KEYS:
+            if k not in data:
+                return
+        for k, v in data.items():
+            self.data[k] = v
+        self.configured = True
+
+    def is_configured(self) -> bool:
+        return self.configured
+
+    def has_attribute(self, attr: str) -> bool:
+        return attr in self.data
+
+    def set_value(self, attr: str, value: Any) -> bool:
+        if attr in self.KEYS:
+            self.data[attr] = value
+            return True
+        return False
+
+    def get_value(self, attr: str) -> Any:
+        if attr in self.data:
+            return self.data[attr]
+
+
+def settings_creator() -> Callable[[], Settings]:
+    return lambda data: CustomSettings(data)
+
+
+def get_valid_data() -> Dict[str, Any]:
+    return {
+        "attr_1": 1,
+        "attr_2": 2
+    }
+
+
+# ########################## TEST DEFINITIONS #################################
+
+def test_settings_builder_register_setting_type_valid() -> None:
+    """
+    Tests:
+        1. Add a valid settings creator
+    """
+    builder = SettingsBuilder()
+    assert builder.register_setting_type("custom", settings_creator())
+
+
+def test_settings_builder_register_setting_type_invalid() -> None:
+    """
+    Tests:
+        1. Add a settings creator that has been added before.
+    """
+    builder = SettingsBuilder()
+    assert builder.register_setting_type("custom", settings_creator())
+    assert not builder.register_setting_type("custom", settings_creator())
+
 
 def test_settings_builder_create_settings_valid() -> None:
     """
@@ -16,15 +83,15 @@ def test_settings_builder_create_settings_valid() -> None:
     Returns:
         (bool): True if all tests pass. False otherwise.
     """
-    data = {
-        "sample_attribute_1" : "1",
-        "sample_attribute_2" : "2"}
+    settings_name = "custom"
     builder = SettingsBuilder()
-    success, settings = builder.create_settings(data)
-    assert success and \
-        type(settings) == Settings and \
-        settings.get(SettingsAttributes.sample_attribute_1)[1] == "1" and \
-        settings.get(SettingsAttributes.sample_attribute_2)[1] == "2"
+    builder.register_setting_type(settings_name, settings_creator())
+    data = get_valid_data()
+    success, settings = builder.create_settings(settings_name, data)
+    assert success
+    assert isinstance(settings, Settings)
+    assert settings.get_value("attr_1") == 1
+    assert settings.get_value("attr_2") == 2
 
 
 def test_settings_builder_create_settings_invalid() -> None:
@@ -38,18 +105,19 @@ def test_settings_builder_create_settings_invalid() -> None:
         (bool): True if all tests pass. False otherwise.
     """
     data_1 = {
-        "sample_attribute_1" : "1"}
+        "attr_1": "1"}
     data_2 = {
-        "sample_attribute_1" : "1",
-        "sample_attribute_2" : "2",
-        "additional" : "3"}
+        "attr_1": "1",
+        "attr_2": "2",
+        "additional": "3"}
+    settings_name = "custom"
     builder = SettingsBuilder()
-    success_1, settings_1 = builder.create_settings(data_1)
-    success_2, settings_2 = builder.create_settings(data_2)
-    assert not success_1 and \
-        not success_2 and \
-        settings_1 == None and \
-        settings_2 == None
+    builder.register_setting_type(settings_name, settings_creator())
+    success_1, _ = builder.create_settings(settings_name, data_1)
+    success_2, _ = builder.create_settings(settings_name, data_2)
+    assert not success_1
+    assert success_2
+
 
 def test_settings_builder_create_settings_invalid_missing_keys() -> None:
     """
@@ -62,10 +130,12 @@ def test_settings_builder_create_settings_invalid_missing_keys() -> None:
         (bool): True if all tests pass. False otherwise.
     """
     data = {
-        "sample_attribute_1" : "1"}
+        "attr_1": "1"}
     builder = SettingsBuilder()
-    success, settings = builder.create_settings(data)
+    builder.register_setting_type("custom", settings_creator())
+    success, settings = builder.create_settings("custom", data)
     assert not success and settings == None
+
 
 def test_settings_builder_create_settings_invalid_extra_keys() -> None:
     """
@@ -78,12 +148,14 @@ def test_settings_builder_create_settings_invalid_extra_keys() -> None:
         (bool): True if all tests pass. False otherwise.
     """
     data = {
-        "sample_attribute_1" : "1",
-        "sample_attribute_2" : "2",
-        "additional" : "3"}
+        "attr_1": "1",
+        "attr_2": "2",
+        "additional": "3"}
     builder = SettingsBuilder()
-    success, settings = builder.create_settings(data)
-    assert not success and settings == None
+    builder.register_setting_type("custom", settings_creator())
+    success, settings = builder.create_settings("custom", data)
+    assert success and settings != None
+
 
 def test_settings_builder_create_settings_invalid_misnamed_keys() -> None:
     """
@@ -96,11 +168,13 @@ def test_settings_builder_create_settings_invalid_misnamed_keys() -> None:
         (bool): True if all tests pass. False otherwise.
     """
     data = {
-        "sample_attribute_1" : "1",
-        "sample_attribute" : "2"}
+        "attr_1": "1",
+        "attr": "2"}
     builder = SettingsBuilder()
-    success, settings = builder.create_settings(data)
+    builder.register_setting_type("custom", settings_creator())
+    success, settings = builder.create_settings("custom", data)
     assert not success and settings == None
+
 
 def test_settings_builder_create_settings_invalid_empty() -> None:
     """
@@ -114,8 +188,10 @@ def test_settings_builder_create_settings_invalid_empty() -> None:
     """
     data = {}
     builder = SettingsBuilder()
-    success, settings = builder.create_settings(data)
+    builder.register_setting_type("custom", settings_creator())
+    success, settings = builder.create_settings("custom", data)
     assert not success and settings == None
+
 
 def test_settings_builder_copy_settings() -> None:
     """
@@ -127,18 +203,18 @@ def test_settings_builder_copy_settings() -> None:
     Returns:
         (bool): True if all tests pass. False otherwise.
     """
-    data = {
-        "sample_attribute_1" : "1",
-        "sample_attribute_2" : "2"}
+    data = get_valid_data()
     builder = SettingsBuilder()
-    success, settings = builder.create_settings(data)
+    builder.register_setting_type("custom", settings_creator())
+    success, settings = builder.create_settings("custom", data)
     copied_settings = builder.copy_settings(settings)
     assert success and \
         settings != copied_settings and \
-        settings.get(SettingsAttributes.sample_attribute_1) == \
-            copied_settings.get(SettingsAttributes.sample_attribute_1) and \
-        settings.get(SettingsAttributes.sample_attribute_2) == \
-            copied_settings.get(SettingsAttributes.sample_attribute_2)
+        settings.get_value("attr_1") == \
+        copied_settings.get_value("attr_1") and \
+        settings.get_value("attr_2") == \
+        copied_settings.get_value("attr_2")
+
 
 def test_settings_builder_copy_settings_not_configured() -> None:
     """
@@ -153,12 +229,14 @@ def test_settings_builder_copy_settings_not_configured() -> None:
         (bool): True if all tests pass. False otherwise.
     """
     data = {
-        "sample_attribute_1" : "1"}
+        "attr_1": "1"}
     builder = SettingsBuilder()
-    success, settings = builder.create_settings(data)
+    builder.register_setting_type("custom", settings_creator())
+    success, settings = builder.create_settings("custom", data)
     copied_settings = builder.copy_settings(settings)
     assert not success and \
         copied_settings == None
+
 
 def test_settings_builder_change_settings_valid() -> None:
     """
@@ -172,24 +250,27 @@ def test_settings_builder_change_settings_valid() -> None:
         (bool): True if all tests pass. False otherwise.
     """
     data = {
-        "sample_attribute_1" : "1",
-        "sample_attribute_2" : "2"}
+        "attr_1": "1",
+        "attr_2": "2"}
     new_data_1 = {
-        "sample_attribute_1" : "3"}
+        "attr_1": "3"}
     new_data_2 = {
-        "sample_attribute_1" : "4",
-        "sample_attribute_2" : "5"}
+        "attr_1": "4",
+        "attr_2": "5"}
+
     builder = SettingsBuilder()
-    _, settings = builder.create_settings(data)
+    builder.register_setting_type("custom", settings_creator())
+    _, settings = builder.create_settings("custom", data)
     copied_1 = builder.copy_settings(settings)
     copied_2 = builder.copy_settings(settings)
     builder.change_settings(copied_1, new_data_1)
     builder.change_settings(copied_2, new_data_2)
     assert copied_1 != copied_2 and \
-        copied_1.get(SettingsAttributes.sample_attribute_1)[1] == "3" and \
-        copied_1.get(SettingsAttributes.sample_attribute_2)[1] == "2" and \
-        copied_2.get(SettingsAttributes.sample_attribute_1)[1] == "4" and \
-        copied_2.get(SettingsAttributes.sample_attribute_2)[1] == "5"
+        copied_1.get_value("attr_1") == "3" and \
+        copied_1.get_value("attr_2") == "2" and \
+        copied_2.get_value("attr_1") == "4" and \
+        copied_2.get_value("attr_2") == "5"
+
 
 def test_settings_builder_change_settings_invalid() -> None:
     """
@@ -202,20 +283,21 @@ def test_settings_builder_change_settings_invalid() -> None:
     Returns:
         (bool): True if all tests pass. False otherwise.
     """
-    data = {
-        "sample_attribute_1" : "1",
-        "sample_attribute_2" : "2"}
+    data = get_valid_data()
     invalid_data_1 = {
-        "sample_attribute_1" : "1",
-        "invalid" : None}
+        "attr_1": "1",
+        "invalid": None}
     invalid_data_2 = {
-        "invalid" : None }
+        "attr_3": "2",
+        "invalid": None}
     builder = SettingsBuilder()
-    _, settings = builder.create_settings(data)
-    assert not builder.change_settings(settings, invalid_data_1) and \
-        not builder.change_settings(settings,invalid_data_2) and \
-        settings.get(SettingsAttributes.sample_attribute_1)[1] == "1" and \
-        settings.get(SettingsAttributes.sample_attribute_2)[1] == "2"
+    builder.register_setting_type("custom", settings_creator())
+    _, settings = builder.create_settings("custom", data)
+    assert not builder.change_settings(settings, invalid_data_1)
+    assert not builder.change_settings(settings, invalid_data_2)
+    assert not settings.get_value("attr_1") == "1"
+    assert not settings.get_value("attr_2") == "2"
+
 
 def test_settings_builder_change_settings_empty() -> None:
     """
@@ -228,12 +310,26 @@ def test_settings_builder_change_settings_empty() -> None:
     Returns:
         (bool): True if all tests pass. False otherwise.
     """
-    data = {
-        "sample_attribute_1" : "1",
-        "sample_attribute_2" : "2"}
+    data = get_valid_data()
     invalid_data = {}
     builder = SettingsBuilder()
-    _, settings = builder.create_settings(data)
+    builder.register_setting_type("custom", settings_creator())
+    _, settings = builder.create_settings("custom", data)
     assert builder.change_settings(settings, invalid_data) and \
-        settings.get(SettingsAttributes.sample_attribute_1)[1] == "1" and \
-        settings.get(SettingsAttributes.sample_attribute_2)[1] == "2"
+        settings.get_value("attr_1") == 1 and \
+        settings.get_value("attr_2") == 2
+
+
+def test_settings_builder_get_registered_setting_types() -> None:
+    """
+    Tests:
+        1. Make sure there are no registered settings initially.
+        2. Make sure name is valid when a settings is registered.
+        3. Make sure the type of creator is valid
+    """
+    builder = SettingsBuilder()
+    assert len(builder.get_registered_setting_types().keys()) == 0
+    builder.register_setting_type("custom", settings_creator())
+    assert "custom" in builder.get_registered_setting_types()
+    assert type(builder.get_registered_setting_types()["custom"]) \
+        == type(settings_creator())

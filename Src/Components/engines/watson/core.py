@@ -36,7 +36,8 @@ class WatsonCore:
         #"mulaw" : "audio/mulaw",
         "wav" : "audio/wav",
         "webm" : "audio/webm",
-        "ogg" : "audio/ogg;codecs=opus"}
+        "ogg" : "audio/ogg;codecs=opus",
+        "opus": "audio/ogg;codecs=opus"}
 
     def __init__(self, io : IO) -> None:
         """
@@ -44,6 +45,8 @@ class WatsonCore:
             network (Network): Instantiated network object.
             io (IO): Instantiated IO object.
         """
+        ## Vars.
+        self.max_file_size_bytes = 7e7
         # Default parameters for watson
         self.watson_defaults = {
             "ssl_verification" : True,
@@ -51,7 +54,7 @@ class WatsonCore:
                 "x-watson-learning-opt-out" : True },
             "customization_weight" : 0.3,
             "base_model_version" : None,
-            "inactivity_timeout" : 30,
+            "inactivity_timeout" : 600,
             "interim_results" : False,
             "keywords" : None,
             "keyword_threshold" : 0.8,
@@ -81,7 +84,8 @@ class WatsonCore:
             "recognize_callback" : None,
             "base_model_name" : None,
             "language_customization_id" : None,
-            "acoustic_customization_id" : None}
+            "acoustic_customization_id" : None,
+            "workspace_directory_path" : None}
         # Objects
         self.io = io
 
@@ -193,6 +197,14 @@ class WatsonCore:
         self.inputs["acoustic_customization_id"] = customization_id
         return True
 
+    def set_workspace_directory_path(self, workspace_dir_path : str) -> bool:
+        if not self.io.is_directory(workspace_dir_path):
+            return False
+        engine_workspace_dir = "{}/watson_engine_ws".format(
+            workspace_dir_path)
+        self.inputs["workspace_directory_path"] = engine_workspace_dir
+        return True
+
     ### GETTERS
 
     def get_api_key(self) -> str:
@@ -268,6 +280,9 @@ class WatsonCore:
         """
         return list(self.format_to_content_types.keys())
 
+    def get_workspace_directory_path(self) -> str:
+        return self.inputs["workspace_directory_path"]
+
     ### Others
 
     def reset_configurations(self) -> bool:
@@ -281,6 +296,7 @@ class WatsonCore:
             self.inputs[k] = None
         return True
 
+    # TODO:Needs to work for session timeout errors and large files.
     def recognize_using_websockets(self) -> bool:
         """
         Transcribes the provided audio stream using a websocket connections.
@@ -294,10 +310,33 @@ class WatsonCore:
         # Creating STT object.
         stt = self._initialize_stt_service(self.inputs["api_key"])
         stt.set_service_url(self.regions[self.inputs["region"]])
-        with open(self.inputs["audio_path"],"rb") as audio_file:
-            stt.recognize_using_websocket(
-                **self._prepare_websocket_args(audio_file))
-            return True
+        audio_path = self.inputs["audio_path"]
+        workspace_dir_path = self.inputs["workspace_directory_path"]
+        # If the audio file is larger than the max supported size, it needs to
+        # be chunked.
+        try:
+            # TODO: Test the chunk logic a bit more.
+            _, size_bytes = self.io.get_size(audio_path)
+            if size_bytes >= self.max_file_size_bytes:
+                # TODO: Add an IO method to chunk by size as well as duration.
+                if not self.io.chunk(audio_path,workspace_dir_path,120):
+                    return False
+                # Read all the chunks and transcribe one by one.
+                chunk_paths = self.io.path_of_files_in_directory(
+                    workspace_dir_path,["*"],False)
+                for chunk_path in chunk_paths:
+                    with open(chunk_path,"rb") as audio_file:
+                        stt.recognize_using_websocket(
+                            **self._prepare_websocket_args(audio_file))
+                    self.io.delete(chunk_path)
+                return True
+            else:
+                with open(audio_path,"rb") as audio_file:
+                    stt.recognize_using_websocket(
+                        **self._prepare_websocket_args(audio_file))
+                return True
+        except:
+            return False
 
     ############################ PRIVATE METHODS ###########################
 
@@ -384,8 +423,9 @@ class WatsonCore:
         Returns:
             (Dict[str,Any]): Mapping from watson parameter to its value.
         """
+        source = AudioSource(audio_file)
         return {
-            "audio" : AudioSource(audio_file),
+            "audio" : source,
             "content_type" : self._determine_content_type(
                 self.inputs["audio_path"]),
             "recognize_callback" : self.inputs["recognize_callback"],

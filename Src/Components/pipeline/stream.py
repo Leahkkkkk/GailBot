@@ -1,8 +1,9 @@
 # Standard library imports
 from typing import Any
 # Local imports
-from ...utils.models import IDictModel
+from ..utils.models import IDictModel
 # Third party imports
+
 
 class Stream(IDictModel):
     """
@@ -13,14 +14,14 @@ class Stream(IDictModel):
         (IDictModel)
     """
 
-    def __init__(self, data : Any = None) -> None:
+    def __init__(self, data: Any = None) -> None:
         """
         Args:
             data (Any): Data to store.
         """
         super().__init__()
         self.items = {
-            "data" : data}
+            "data": data}
 
     def get_stream_data(self) -> Any:
         """
@@ -31,7 +32,7 @@ class Stream(IDictModel):
         """
         return self.get("data")[1]
 
-    def set_stream_data(self, data : Any) -> bool:
+    def set_stream_data(self, data: Any) -> bool:
         """
         Set the data stored in the stream.
 
@@ -41,4 +42,4 @@ class Stream(IDictModel):
         Returns:
             (bool): True if successfully stored. False otherwise.
         """
-        return self.set("data",data)
+        return self.set("data", data)

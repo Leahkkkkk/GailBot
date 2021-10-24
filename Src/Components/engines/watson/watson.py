@@ -50,9 +50,10 @@ class WatsonEngine(Engine):
         # State parameters
         self.is_ready_for_transcription = False
 
-    ### Core
+    ################################### Core ##################################
     def configure(self, api_key : str, region : str, audio_path : str,
-            base_model_name : str, language_customization_id : str = "",
+            base_model_name : str, workspace_directory_path : str,
+            language_customization_id : str = "",
             acoustic_customization_id : str = "") -> bool:
         """
         Configure core attributes for the engine.
@@ -112,7 +113,8 @@ class WatsonEngine(Engine):
             self.core.set_service_region(region) and \
             self.core.set_audio_source_path(audio_path) and \
             self.core.set_recognize_callback(recognize_cb) and \
-            self.core.set_base_language_model(base_model_name)
+            self.core.set_base_language_model(base_model_name) and \
+            self.core.set_workspace_directory_path(workspace_directory_path)
         return self.is_ready_for_transcription
 
     def get_configurations(self) -> Dict[str,Any]:
@@ -194,7 +196,18 @@ class WatsonEngine(Engine):
         """
         return self.core.get_supported_audio_formats()
 
-    ## Language model methods
+    def was_transcription_successful(self) -> bool:
+        """
+        Determine whether the transcription was successful.
+
+        Returns:
+            (bool): True if transcription was successful. False otherwise.
+        """
+        return self.callback_closure["callback_status"]["on_connected"] and \
+            self.callback_closure["callback_status"]["on_data"] and \
+            self.callback_closure["callback_status"]["on_close"]
+
+    ####################### Language model methods ###########################
     def get_base_model(self, model_name : str) -> Union[Dict[str,Any],None]:
         """
         Obtain information about the given base model.
@@ -456,7 +469,7 @@ class WatsonEngine(Engine):
         """
         return self.lm.delete_custom_grammar(customization_id, grammar_name)
 
-    ## Acoustic model methods
+    ########################## Acoustic model methods #########################
     def get_acoustic_models(self) -> Dict[str,str]:
         """
         Obtain a list of available acoustic models.
@@ -676,25 +689,3 @@ class WatsonEngine(Engine):
                 "transcript" : list(),
                 "hypothesis" : list(),
                 "data" : list()}}
-
-    # print("Index")
-    #             print(recognition_result.get_result_index())
-    #             print("Num labels")
-    #             print(recognition_result.num_speaker_labels())
-    #             print("Num results")
-    #             print(recognition_result.num_results())
-    #             print("Labels")
-    #             print(recognition_result.get_speaker_labels())
-    #             print("keyword results")
-    #             print(recognition_result.get_keywords_results())
-    #             print("word alternatives")
-    #             print(recognition_result.get_word_alternatives())
-    #             print("transcript")
-    #             print(recognition_result.get_transcript_from_alternatives())
-    #             print("transcript_confidences")
-    #             print(recognition_result.get_transcript_confidences_from_alternatives())
-    #             print("timestamps")
-    #             print(recognition_result.get_timestamps_from_alternatives())
-    #             print("word_confidences")
-    #             print(recognition_result.get_word_confidences_from_alternatives())
-    #             recognition_results.append(RecognitionResult(item))

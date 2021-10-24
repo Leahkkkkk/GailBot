@@ -1,0 +1,32 @@
+import os
+
+# Relative paths
+WAV_FILE_1_PATH = "test_data/io_data/media/test2a.wav"
+WAV_FILE_2_PATH = "test_data/io_data/media/test2b.wav"
+WAV_FILE_3_PATH = "test_data/io_data/media/test.wav"
+WAV_FILE_1_COPY_PATH = "test_data/io_data/media/test2a_copy.wav"
+STEREO_FILE_1_PATH = "test_data/io_data/media/SineWaveMinus16.wav"
+VIDEO_FILE_MP4_PATH = "test_data/io_data/media/sample-mp4-file.mp4"
+VIDEO_FILE_MXF_PATH = "test_data/io_data/media/vid2.MXF"
+VIDEO_FILE_AVI_PATH = "test_data/io_data/media/sample-avi-file.avi"
+VIDEO_FILE_MOV_PATH = "test_data/io_data/media/sample-mov-file.mov"
+VIDEO_FILE_MPG_PATH = "test_data/io_data/media/sample-mpg-file.mpg"
+DESKTOP_OUT_PATH = os.path.join(
+    os.path.join(os.path.expanduser('~')), 'Desktop')
+VALID_SAMPLE_JSON_FILE = "test_data/io_data/files/config.json"
+VALID_SAMPLE_TXT_FILE = "test_data/io_data/files/sample_text.txt"
+VALID_SMALL_TXT_FILE = "test_data/io_data/files/textfile.txt"
+VALID_SAMPLE_YAML_FILE = "test_data/io_data/files/sample_yaml.yaml"
+VALID_FRUITS_YAML_FILE = "test_data/io_data/files/fruits.yaml"
+TEST_DIR_PATH = "test_data/io_data"
+TEST_SAMPLE_DIR_PATH = "test_data/io_data/empty_dir_1"
+TESTS_OUTER_DIR_PATH = "test_data/io_data/dir2"
+TEST_EMPTY_DIR_PATH = "test_data/io_data/empty_dir_1"
+MEDIA_TEST_DIR_PATH = "test_data/io_data/media"
+NORMAN_TEXT = "test_data/io_data/images/norman_text.pdf"
+BEE_MOVIE = "test_data/io_data/images/bee_movie.pdf"
+PANDA_JPG = "test_data/io_data/images/panda.jpg"
+RACCOON_JPG = "test_data/io_data/images/racoon_math.jpg"
+KITTEN_JPG = "test_data/io_data/images/kitten_tongue.jpg"
+BDAY_CAT_JPG = "test_data/io_data/images/sad_bday_cat.jpg"
+GOAT_JPG = "test_data/io_data/images/skater_goat.jpg"

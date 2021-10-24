@@ -1,24 +1,24 @@
-# Standard library imports 
-# Local imports 
+# Standard library imports
+# Local imports
 from typing import List, Any, Dict
 from ..engine import Engine
 from .core import GoogleCore
-from ...io import IO 
+from ...io import IO
 from ..utterance import Utterance, UtteranceAttributes
 
-# Third party imports 
+# Third party imports
 
 class GoogleEngine(Engine):
-    
+
     def __init__(self, io = IO) -> None:
         self.engine_name = "google"
         self.io = io
         self.core = GoogleCore(io)
         self.is_ready_for_transcription = False
-    
+
     def configure(self, audio_path: str, sample_rate: int, speaker_count: int) -> bool:
         """
-        Configure core attributes of the engine. 
+        Configure core attributes of the engine.
 
         Returns:
             (bool): True if successfully configured. False otherwise.
@@ -26,7 +26,7 @@ class GoogleEngine(Engine):
         self.is_ready_for_transcription =  self.core.set_audio_path(audio_path) and \
             self.core.set_sample_rate_hertz(sample_rate) and \
             self.core.set_diarization_speaker_count(speaker_count)
-        
+
         return self.is_ready_for_transcription
 
     def get_configurations(self) -> Dict[str,Any]:
@@ -53,7 +53,7 @@ class GoogleEngine(Engine):
 
     def get_supported_formats(self) -> List[str]:
         """
-        Obtain a list of audio file formats that are supported. 
+        Obtain a list of audio file formats that are supported.
 
         Returns:
             (List[str]): Supported audio file formats.
@@ -66,7 +66,7 @@ class GoogleEngine(Engine):
 
         Args:
             file_path (str)
-        
+
         Returns:
             (bool): True if file is supported. False otherwise.
         """
@@ -80,7 +80,7 @@ class GoogleEngine(Engine):
 
         Returns:
             List[Utterance]: Returns list of utterances on the word level from
-                speech client response. Returns empty list if engine is not 
+                speech client response. Returns empty list if engine is not
                 configured properly for transcription.
         """
         if not self.is_ready_for_transcription:
@@ -90,3 +90,12 @@ class GoogleEngine(Engine):
         self.core.reset_configurations()
 
         return utterances
+
+    def was_transcription_successful(self) -> bool:
+        """
+        Determine whether the transcription was successful.
+
+        Returns:
+            (bool): True if transcription was successful. False otherwise.
+        """
+        raise Exception("Not implemented")

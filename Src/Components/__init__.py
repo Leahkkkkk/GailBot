@@ -1,1 +1,1 @@
-# Components init file 
+from .controller import GailBotController

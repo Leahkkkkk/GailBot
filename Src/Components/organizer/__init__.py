@@ -1,8 +1,5 @@
-# Organizer init file 
-from .paths import Paths, PathsAttributes
-from .settings import Settings,SettingsAttributes, SettingsBuilder
-from .data import DataFile, DataFileAttributes, DataFileTypes
-from .meta import Meta, MetaAttributes
-from .conversation import Conversation
-from .conversation_builder import ConversationBuilder
+from .conversation_builder import ConversationCreator, ConversationBuilder
+from .conversation import Conversation, Meta, DataFile, Paths
+from .settings import Settings
+from .settings_builder import SettingsBuilder
 from .organizer import Organizer

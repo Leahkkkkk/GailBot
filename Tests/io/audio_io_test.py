@@ -1,27 +1,14 @@
 # Standard library imports
 import os
 # Local imports
-from Src.Components.io import AudioIO, IO, GeneralIO
+from Src.components.io import AudioIO, IO, GeneralIO
+from Tests.io.vardefs import *
 
 ############################### GLOBALS #####################################
 
-TEST_DIR_PATH = "TestData"
-TEST_EMPTY_DIR_PATH = "TestData/workspace"
-WAV_FILE_1_PATH = "TestData/media/test2a.wav"
-WAV_FILE_2_PATH = "TestData/media/test2b.wav"
-WAV_FILE_3_PATH = "TestData/media/test.wav"
-STEREO_FILE_1_PATH = "TestData/media/SineWaveMinus16.wav"
-MEDIA_TEST_DIR_PATH = "TestData/media"
-VALID_SAMPLE_JSON_FILE = "TestData/configs/sample_config.json"
-VALID_SAMPLE_TXT_FILE = "TestData/configs/sample_text.txt"
-VALID_SMALL_TXT_FILE = "TestData/configs/textfile.txt"
-VALID_SAMPLE_YAML_FILE = "TestData/configs/sample_yaml.yaml"
-VALID_FRUITS_YAML_FILE = "TestData/configs/fruits.yaml"
-VIDEO_FILE_AVI_PATH = "TestData/media/sample-avi-file.avi"
-VIDEO_FILE_MP4_PATH = "TestData/media/sample-mp4-file.mp4"
-DESKTOP_OUT_PATH = os.path.join(os.path.join(os.path.expanduser('~')),'Desktop')
 
 ########################## TEST DEFINITIONS ##################################
+
 
 def test_audio_io_read_streams() -> None:
     """
@@ -38,10 +25,11 @@ def test_audio_io_read_streams() -> None:
     """
     audio = AudioIO()
     assert audio.read_streams(
-        {"file_1" : WAV_FILE_1_PATH, "file_2" : WAV_FILE_2_PATH}) and \
+        {"file_1": WAV_FILE_1_PATH, "file_2": WAV_FILE_2_PATH}) and \
         audio.read_streams({}) and \
-        not audio.read_streams({"file_1" : DESKTOP_OUT_PATH}) and \
-        not audio.read_streams({"file_1" : VIDEO_FILE_MP4_PATH})
+        not audio.read_streams({"file_1": DESKTOP_OUT_PATH}) and \
+        not audio.read_streams({"file_1": VIDEO_FILE_MP4_PATH})
+
 
 def test_audio_io_record_stream() -> None:
     """
@@ -53,12 +41,13 @@ def test_audio_io_record_stream() -> None:
     """
     audio = AudioIO()
     io = IO()
-    assert audio.record_stream("recorded",5) and \
-        audio.set_output_paths({"recorded" : TEST_EMPTY_DIR_PATH}) and \
+    assert audio.record_stream("recorded", 5) and \
+        audio.set_output_paths({"recorded": TEST_EMPTY_DIR_PATH}) and \
         audio.write(["recorded"]) and \
-        not audio.record_stream("recorded",0) and \
-        not audio.record_stream("recorded",-5) and \
+        not audio.record_stream("recorded", 0) and \
+        not audio.record_stream("recorded", -5) and \
         io.delete(TEST_EMPTY_DIR_PATH + "/recorded.wav")
+
 
 def test_audio_io_is_readable() -> None:
     """
@@ -77,6 +66,7 @@ def test_audio_io_is_readable() -> None:
         not audio.is_readable(VIDEO_FILE_AVI_PATH) and \
         not audio.is_readable(TEST_DIR_PATH)
 
+
 def test_audio_io_get_stream_configurations() -> None:
     """
     Tests the get_stream_configurations method in AudioIO.
@@ -89,8 +79,9 @@ def test_audio_io_get_stream_configurations() -> None:
     """
     audio = AudioIO()
     audio.read_streams(
-        {"file_1" : WAV_FILE_1_PATH, "file_2" : WAV_FILE_2_PATH})
+        {"file_1": WAV_FILE_1_PATH, "file_2": WAV_FILE_2_PATH})
     audio.get_stream_configurations()
+
 
 def test_audio_io_get_stream_names() -> None:
     """
@@ -106,16 +97,17 @@ def test_audio_io_get_stream_names() -> None:
     """
     audio = AudioIO()
     audio.read_streams(
-        {"file_1" : WAV_FILE_1_PATH, "file_2" : WAV_FILE_2_PATH})
+        {"file_1": WAV_FILE_1_PATH, "file_2": WAV_FILE_2_PATH})
     names_1 = audio.get_stream_names()
     audio.read_streams(
-        {"file_1" : WAV_FILE_1_PATH, "file_2" : DESKTOP_OUT_PATH})
+        {"file_1": WAV_FILE_1_PATH, "file_2": DESKTOP_OUT_PATH})
     names_2 = audio.get_stream_names()
     audio.read_streams({})
     names_3 = audio.get_stream_names()
-    assert names_1 == ["file_1","file_2"] and \
+    assert names_1 == ["file_1", "file_2"] and \
         names_2 == [] and \
         names_3 == []
+
 
 def test_audio_io_get_streams() -> None:
     """
@@ -129,7 +121,7 @@ def test_audio_io_get_streams() -> None:
     """
     audio = AudioIO()
     audio.read_streams(
-        {"file_1" : WAV_FILE_1_PATH, "file_2" : WAV_FILE_2_PATH})
+        {"file_1": WAV_FILE_1_PATH, "file_2": WAV_FILE_2_PATH})
     streams = audio.get_streams()
     for stream in streams.values():
         assert type(stream) == bytes
@@ -146,7 +138,8 @@ def test_audio_io_get_supported_input_formats() -> None:
         (bool): True if successful. False otherwise.
     """
     audio = AudioIO()
-    assert audio.get_supported_input_formats() == ("mp3", "mpeg","opus", "wav")
+    assert audio.get_supported_input_formats() == ("mp3", "mpeg", "opus", "wav")
+
 
 def test_audio_io_get_supported_output_formats() -> None:
     """
@@ -159,7 +152,8 @@ def test_audio_io_get_supported_output_formats() -> None:
         (bool): True if successful. False otherwise.
     """
     audio = AudioIO()
-    assert audio.get_supported_output_formats() == ("wav","opus")
+    assert audio.get_supported_output_formats() == ("wav", "opus")
+
 
 def test_audio_io_write() -> None:
     """
@@ -179,12 +173,12 @@ def test_audio_io_write() -> None:
     audio = AudioIO()
     general = GeneralIO()
     assert audio.read_streams(
-        {"file_1" : WAV_FILE_1_PATH, "file_2" : WAV_FILE_2_PATH}) and \
+        {"file_1": WAV_FILE_1_PATH, "file_2": WAV_FILE_2_PATH}) and \
         audio.set_output_paths({
-            "file_1" : TEST_DIR_PATH, "file_2" : TEST_DIR_PATH}) and \
-        audio.write(["file_1","file_2"]) and \
+            "file_1": TEST_DIR_PATH, "file_2": TEST_DIR_PATH}) and \
+        audio.write(["file_1", "file_2"]) and \
         audio.write(["file_1"]) and \
-        not audio.set_output_paths({"file_1" : WAV_FILE_1_PATH}) and \
+        not audio.set_output_paths({"file_1": WAV_FILE_1_PATH}) and \
         not audio.write(["invalid"]) and \
         general.delete(TEST_DIR_PATH + "/file_1.wav") and \
         general.delete(TEST_DIR_PATH + "/file_2.wav")
@@ -205,16 +199,17 @@ def test_audio_io_mono_to_stereo() -> None:
         (bool): True if successful. False otherwise.
     """
     audio = AudioIO()
-    assert audio.read_streams({"file_1" : WAV_FILE_1_PATH }) and \
+    assert audio.read_streams({"file_1": WAV_FILE_1_PATH}) and \
         not audio.mono_to_stereo()[0] and \
         audio.read_streams(
-            {"file_1" : WAV_FILE_1_PATH,
-            "file_2" : WAV_FILE_2_PATH,
-            "file_3" : WAV_FILE_3_PATH}) and \
+            {"file_1": WAV_FILE_1_PATH,
+             "file_2": WAV_FILE_2_PATH,
+             "file_3": WAV_FILE_3_PATH}) and \
         not audio.mono_to_stereo()[0] and \
         audio.read_streams({
-            "file_1" : WAV_FILE_1_PATH, "file_2" : WAV_FILE_2_PATH}) and \
+            "file_1": WAV_FILE_1_PATH, "file_2": WAV_FILE_2_PATH}) and \
         not audio.mono_to_stereo()[0]
+
 
 def test_audio_io_stereo_to_mono() -> None:
     """
@@ -229,14 +224,15 @@ def test_audio_io_stereo_to_mono() -> None:
         (bool): True if successful. False otherwise.
     """
     audio = AudioIO()
-    assert audio.read_streams({"file_1" : WAV_FILE_1_PATH}) and \
+    assert audio.read_streams({"file_1": WAV_FILE_1_PATH}) and \
         not audio.stereo_to_mono()[0] and \
-        audio.read_streams({"stereo" : STEREO_FILE_1_PATH}) and \
-        audio.stereo_to_mono()[0]  and \
+        audio.read_streams({"stereo": STEREO_FILE_1_PATH}) and \
+        audio.stereo_to_mono()[0] and \
         len(audio.get_stream_names()) == 2 and \
         audio.read_streams({
-            "file_1" : WAV_FILE_1_PATH, "file_2" : WAV_FILE_2_PATH}) and \
+            "file_1": WAV_FILE_1_PATH, "file_2": WAV_FILE_2_PATH}) and \
         not audio.stereo_to_mono()[0]
+
 
 def test_audio_io_concat() -> None:
     """
@@ -255,27 +251,28 @@ def test_audio_io_concat() -> None:
     general = GeneralIO()
     # Test 1
     audio.read_streams({
-        "file_1" : WAV_FILE_1_PATH,
-        "file_2" : WAV_FILE_2_PATH,
-        "file_3" : WAV_FILE_3_PATH})
+        "file_1": WAV_FILE_1_PATH,
+        "file_2": WAV_FILE_2_PATH,
+        "file_3": WAV_FILE_3_PATH})
     s_1, name_1 = audio.concat()
     # Test 2
-    audio.read_streams({"file_1" : WAV_FILE_1_PATH})
+    audio.read_streams({"file_1": WAV_FILE_1_PATH})
     s_2, _ = audio.concat()
     # Test 3
     audio.read_streams({})
     s_3, _ = audio.concat()
     # Test 4
     audio.read_streams({
-        "mono" : WAV_FILE_1_PATH,
-        "stereo" : STEREO_FILE_1_PATH})
+        "mono": WAV_FILE_1_PATH,
+        "stereo": STEREO_FILE_1_PATH})
     s_4, name_4 = audio.concat()
-    audio.set_output_formats({name_4 : TEST_DIR_PATH})
+    audio.set_output_formats({name_4: TEST_DIR_PATH})
     audio.write([name_4])
     general.delete(TEST_DIR_PATH + "/mono_stereo_concatenated.wav")
     assert s_1 and s_2 and not s_3 and s_4 and \
         name_1 == "file_1_file_2_file_3_concatenated" and \
         name_4 == "mono_stereo_concatenated"
+
 
 def test_audio_io_overlay() -> None:
     """
@@ -292,17 +289,18 @@ def test_audio_io_overlay() -> None:
     """
     audio = AudioIO()
     audio.read_streams(
-            {"file_1" : WAV_FILE_1_PATH, "file_2" : WAV_FILE_2_PATH})
+        {"file_1": WAV_FILE_1_PATH, "file_2": WAV_FILE_2_PATH})
     success_1, _ = audio.overlay(loop_shorter_stream=True)
     audio.read_streams(
-            {"file_1" : WAV_FILE_1_PATH, "file_2" : WAV_FILE_2_PATH})
+        {"file_1": WAV_FILE_1_PATH, "file_2": WAV_FILE_2_PATH})
     success_2, _ = audio.overlay(loop_shorter_stream=False)
     audio.read_streams(
-            {"file_1" : WAV_FILE_1_PATH, "file_2" : WAV_FILE_1_PATH})
+        {"file_1": WAV_FILE_1_PATH, "file_2": WAV_FILE_1_PATH})
     success_3, _ = audio.overlay()
-    audio.read_streams({"file_1" : WAV_FILE_1_PATH})
+    audio.read_streams({"file_1": WAV_FILE_1_PATH})
     success_4, _ = audio.overlay()
     assert success_1 and success_2 and success_3 and not success_4
+
 
 def test_audio_io_change_volume() -> None:
     """
@@ -318,11 +316,12 @@ def test_audio_io_change_volume() -> None:
         (bool): True if successful. False otherwise.
     """
     audio = AudioIO()
-    assert audio.read_streams({"file_1" : WAV_FILE_1_PATH}) and \
-        audio.change_volume({"file_1" : -20}) and \
-        audio.change_volume({"file_1" : 20}) and \
-        audio.change_volume({"file_1" : 0}) and \
-        not audio.change_volume({"invalid" : -20})
+    assert audio.read_streams({"file_1": WAV_FILE_1_PATH}) and \
+        audio.change_volume({"file_1": -20}) and \
+        audio.change_volume({"file_1": 20}) and \
+        audio.change_volume({"file_1": 0}) and \
+        not audio.change_volume({"invalid": -20})
+
 
 def test_audio_io_reverse() -> None:
     """
@@ -336,9 +335,10 @@ def test_audio_io_reverse() -> None:
         (bool): True if successful. False otherwise.
     """
     audio = AudioIO()
-    assert audio.read_streams({"file_1" : WAV_FILE_1_PATH}) and \
+    assert audio.read_streams({"file_1": WAV_FILE_1_PATH}) and \
         audio.reverse(["file_1"]) and \
         not audio.reverse(["invalid"]) \
+
 
 
 def test_audio_io_chunk() -> None:
@@ -354,11 +354,11 @@ def test_audio_io_chunk() -> None:
         (bool): True if successful. False otherwise.
     """
     audio = AudioIO()
-    audio.read_streams({"file_1" : WAV_FILE_1_PATH})
-    s1 , _ = audio.chunk({"file_1" : 60})
-    audio.read_streams({"file_1" : WAV_FILE_1_PATH})
+    audio.read_streams({"file_1": WAV_FILE_1_PATH})
+    s1, _ = audio.chunk({"file_1": 60})
+    audio.read_streams({"file_1": WAV_FILE_1_PATH})
     duration = audio.get_stream_configurations()["file_1"]["duration_seconds"]
-    s2, _ = audio.chunk({"file_1" : duration})
-    audio.read_streams({"file_1" : WAV_FILE_1_PATH})
-    s3, _ = audio.chunk({"file_1" : -10})
+    s2, _ = audio.chunk({"file_1": duration})
+    audio.read_streams({"file_1": WAV_FILE_1_PATH})
+    s3, _ = audio.chunk({"file_1": -10})
     assert s1 and s2 and not s3

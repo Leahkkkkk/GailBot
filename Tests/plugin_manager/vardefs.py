@@ -1,0 +1,5 @@
+INVALID_DIR_PATH = "test_data/plugin_data/empty_dir_1"
+PLUGINS_DIR = "test_data/plugin_data/plugins"
+PLUGIN_CONFIG_FILE_PATH = "test_data/plugin_data/plugins/plugin_one.json"
+WAV_FILE_PATH = "test_data/plugin_data/media/test.wav"
+PLUGIN_FILE_PATH = "test_data/plugin_data/plugins/plugin_one.py"

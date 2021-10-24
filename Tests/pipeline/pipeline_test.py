@@ -1,19 +1,14 @@
 # Standard library import
 from typing import Dict
 # Local imports
-from Src.Components.io import IO
-from Src.Components.pipeline import Pipeline, Logic, Stream
-from Src.Components.network.network import Network
-from Src.Components.engines.watson import WatsonEngine
+from Src.components.io import IO
+from Src.components.pipeline import Pipeline, Logic, Stream
+from Src.components.network.network import Network
+from Src.components.engines.watson import WatsonEngine
+from Tests.pipeline.vardefs import *
 
 ############################### GLOBALS #####################################
-API_KEY = "MSgOPTS9CvbADe49nEg4wm8_gxeRuf4FGUmlHS9QqAw3"
-LANG_CUSTOM_ID =  "41e54a38-2175-45f4-ac6a-1c11e42a2d54"
-ACOUSTIC_CUSTOM_ID = "some_valid_id"
-WAV_FILE_PATH = "TestData/media/test2b.wav"
-MP3_FILE_PATH = "TestData/media/sample1.mp3"
-BASE_LANG_MODEL = "en-US_BroadbandModel"
-REGION = "dallas"
+
 ############################### SETUP #####################################
 
 
@@ -23,94 +18,95 @@ class TestPipelineLogic(Logic):
         super().__init__()
         # Adding all logic methods
         self._add_component_logic(
-            "c1",self._preprocessor,self._processor_c1,self._post_processor)
+            "c1", self._preprocessor, self._processor_c1, self._post_processor)
         self._add_component_logic(
-            "c2",self._preprocessor,self._processor_c2,self._post_processor)
+            "c2", self._preprocessor, self._processor_c2, self._post_processor)
         self._add_component_logic(
-            "c3",self._preprocessor,self._processor_c3,self._post_processor)
+            "c3", self._preprocessor, self._processor_c3, self._post_processor)
         self._add_component_logic(
-            "c4",self._preprocessor,self._processor_c4,self._post_processor)
+            "c4", self._preprocessor, self._processor_c4, self._post_processor)
 
     ########################### PRIVATE METHODS #############################
 
-
-    def _preprocessor(self, streams : Dict[str,Stream]) -> Dict:
+    def _preprocessor(self, streams: Dict[str, Stream]) -> Dict:
         return streams
 
-    def _processor_c1(self, instantiated_obj : object, preprocessed_data : Dict) \
+    def _processor_c1(self, instantiated_obj: object, preprocessed_data: Dict) \
             -> Dict:
         print("Processing c1".format(instantiated_obj), preprocessed_data)
         return preprocessed_data
 
-    def _processor_c2(self, instantiated_obj : object, preprocessed_data : Dict) \
+    def _processor_c2(self, instantiated_obj: object, preprocessed_data: Dict) \
             -> Dict:
         print("Processing c2".format(instantiated_obj), preprocessed_data)
         return preprocessed_data
 
-    def _processor_c3(self, instantiated_obj : object, preprocessed_data : Dict) \
+    def _processor_c3(self, instantiated_obj: object, preprocessed_data: Dict) \
             -> Dict:
         print("Processing c3".format(instantiated_obj), preprocessed_data)
         raise Exception("c3 failed")
-        #return preprocessed_data
+        # return preprocessed_data
 
-    def _processor_c4(self, instantiated_obj : object, preprocessed_data : Dict) \
+    def _processor_c4(self, instantiated_obj: object, preprocessed_data: Dict) \
             -> Dict:
         print("Processing c4".format(instantiated_obj), preprocessed_data)
         return preprocessed_data
 
-    def _post_processor(self, processed_data : Dict) -> Stream:
+    def _post_processor(self, processed_data: Dict) -> Stream:
         return processed_data["base"]
+
 
 class TestPipelineLogic2(Logic):
     def __init__(self) -> None:
         super().__init__()
         # Adding all logic methods
         self._add_component_logic(
-            "c1",self._preprocessor,self._processor_c1,self._post_processor)
+            "c1", self._preprocessor, self._processor_c1, self._post_processor)
         self._add_component_logic(
-            "c2",self._preprocessor,self._processor_c2,self._post_processor)
+            "c2", self._preprocessor, self._processor_c2, self._post_processor)
         self._add_component_logic(
-            "c3",self._preprocessor,self._processor_c3,self._post_processor)
+            "c3", self._preprocessor, self._processor_c3, self._post_processor)
         self._add_component_logic(
-            "c4",self._preprocessor,self._processor_c4,self._post_processor)
+            "c4", self._preprocessor, self._processor_c4, self._post_processor)
         self._add_component_logic(
-            "c5",self._preprocessor,self._processor_c5,self._post_processor)
+            "c5", self._preprocessor, self._processor_c5, self._post_processor)
 
-    def _preprocessor(self, streams : Dict[str,Stream]) -> Dict:
+    def _preprocessor(self, streams: Dict[str, Stream]) -> Dict:
         return streams
 
-    def _processor_c1(self, instantiated_obj : object, preprocessed_data : Dict) \
+    def _processor_c1(self, instantiated_obj: object, preprocessed_data: Dict) \
             -> Dict:
         print("Processing c1".format(instantiated_obj), preprocessed_data)
         preprocessed_data["base"] = "hello!"
         return preprocessed_data
 
-    def _processor_c2(self, instantiated_obj : object, preprocessed_data : Dict) \
+    def _processor_c2(self, instantiated_obj: object, preprocessed_data: Dict) \
             -> Dict:
         print("Processing c2".format(instantiated_obj), preprocessed_data)
         if preprocessed_data["c1"] == "hello!":
             print("c1 successfully changed base data and sent to to c2")
         return preprocessed_data
 
-    def _processor_c3(self, instantiated_obj : object, preprocessed_data : Dict) \
+    def _processor_c3(self, instantiated_obj: object, preprocessed_data: Dict) \
             -> Dict:
         print("Processing c3".format(instantiated_obj), preprocessed_data)
         preprocessed_data["base"] = "world!"
         return preprocessed_data
 
-    def _processor_c4(self, instantiated_obj : object, preprocessed_data : Dict) \
+    def _processor_c4(self, instantiated_obj: object, preprocessed_data: Dict) \
             -> Dict:
         print("Processing c4".format(instantiated_obj), preprocessed_data)
         if preprocessed_data["c1"] == "hello!" and preprocessed_data["c3"] == "world!":
-            print("c1 successfully changed base data and sent to to c4, and c3 did the same")
+            print(
+                "c1 successfully changed base data and sent to to c4, and c3 did the same")
         return preprocessed_data
 
-    def _processor_c5(self, instantiated_obj : object, preprocessed_data : Dict) \
+    def _processor_c5(self, instantiated_obj: object, preprocessed_data: Dict) \
             -> Dict:
         print("Processing c5".format(instantiated_obj), preprocessed_data)
         raise Exception("c5 failed")
 
-    def _post_processor(self, processed_data : Dict) -> Stream:
+    def _post_processor(self, processed_data: Dict) -> Stream:
         return processed_data["base"]
 
 
@@ -119,42 +115,41 @@ class TestPipelineLogic3(Logic):
         super().__init__()
         # Adding all logic methods
         self._add_component_logic(
-            "c1",self._preprocessor,self._processor_c1,self._post_processor)
+            "c1", self._preprocessor, self._processor_c1, self._post_processor)
         self._add_component_logic(
-            "c2",self._preprocessor,self._processor_c2,self._post_processor)
+            "c2", self._preprocessor, self._processor_c2, self._post_processor)
 
-
-    def _preprocessor(self, streams : Dict[str,Stream]) -> Dict:
+    def _preprocessor(self, streams: Dict[str, Stream]) -> Dict:
         return streams
 
-    def _processor_c1(self, instantiated_obj : object, preprocessed_data : Dict) \
+    def _processor_c1(self, instantiated_obj: object, preprocessed_data: Dict) \
             -> Dict:
         preprocessed_data["base"] = instantiated_obj.is_file(MP3_FILE_PATH)
         print("Processing c1", preprocessed_data)
         return preprocessed_data
 
-    def _processor_c2(self, instantiated_obj : object, preprocessed_data : Dict) \
+    def _processor_c2(self, instantiated_obj: object, preprocessed_data: Dict) \
             -> Dict:
-        print("Processing c2", preprocessed_data)
         if preprocessed_data["c1"] == True:
             try:
                 # instantiated_obj.configure("Test_files/Media/test2a.wav", 22050, 1)
                 # utterances = instantiated_obj.transcribe()
                 s1 = instantiated_obj.configure(
-                    api_key = API_KEY, region = REGION,
-                    audio_path = MP3_FILE_PATH,
+                    workspace_directory_path=WORKSPACE_DIR_PATH,
+                    api_key=API_KEY, region=REGION,
+                    audio_path=MP3_FILE_PATH,
                     base_model_name=BASE_LANG_MODEL)
+                print(s1)
                 utterances = instantiated_obj.transcribe()
             except Exception as e:
                 print(e)
             print("engine output:", utterances)
         return preprocessed_data
 
-    def _post_processor(self, processed_data : Dict) -> Stream:
+    def _post_processor(self, processed_data: Dict) -> Stream:
         return processed_data["base"]
 
 ########################## TEST DEFINITIONS #################################
-
 
 
 def test_pipeline_set_logic() -> None:
@@ -166,13 +161,15 @@ def test_pipeline_set_logic() -> None:
     p = Pipeline("Test_pipeline")
     assert p.set_logic(logic)
 
+
 def test_pipeline_set_base_input() -> None:
     """
     Tests:
         1. Verifies base input properly set in pipeline
     """
     p = Pipeline("Test_pipeline")
-    assert p.set_base_input(list(range(1,100)))
+    assert p.set_base_input(list(range(1, 100)))
+
 
 def test_pipeline_add_component() -> None:
     """
@@ -184,14 +181,15 @@ def test_pipeline_add_component() -> None:
     logic = TestPipelineLogic()
     p = Pipeline("Test_pipeline")
     p.set_logic(logic)
-    s1 = p.add_component("c1",None,[])
-    s2 = p.add_component("c2",None,["c1"])
+    s1 = p.add_component("c1", None, [])
+    s2 = p.add_component("c2", None, ["c1"])
     try:
-        p.add_component("c10",None,[])
+        p.add_component("c10", None, [])
         p.add_component("c1", None, ["c10"])
         assert False
     except:
         assert s1 and s2
+
 
 def test_pipeline_add_component_without_logic() -> None:
     """
@@ -202,10 +200,11 @@ def test_pipeline_add_component_without_logic() -> None:
     logic = TestPipelineLogic()
     p = Pipeline("Test_pipeline")
     try:
-        p.add_component("c1",None)
+        p.add_component("c1", None)
         assert False
     except:
         assert True
+
 
 def test_pipeline_add_component_unsupported_name() -> None:
     """
@@ -222,6 +221,7 @@ def test_pipeline_add_component_unsupported_name() -> None:
     except:
         assert True
 
+
 def test_pipeline_add_component_bad_source() -> None:
     """
     Tests:
@@ -232,13 +232,15 @@ def test_pipeline_add_component_bad_source() -> None:
     p = Pipeline("Test_pipeline")
     p.set_logic(logic)
     try:
-        p.add_component("c1",None)
-        p.add_component("c2",None, ['not_component'])
+        p.add_component("c1", None)
+        p.add_component("c2", None, ['not_component'])
         assert False
     except:
         assert True
 
 # TODO: Bug, c2 can be set twice, overwrites dependency of c1 to c3
+
+
 def test_pipeline_add_duplicate_component() -> None:
     """
     Tests:
@@ -247,11 +249,11 @@ def test_pipeline_add_duplicate_component() -> None:
     logic = TestPipelineLogic()
     p = Pipeline("Test_pipeline")
     p.set_logic(logic)
-    p.add_component("c1",None)
-    p.add_component("c3",None)
-    p.add_component("c2",None, ['c1'])
+    p.add_component("c1", None)
+    p.add_component("c3", None)
+    p.add_component("c2", None, ['c1'])
     try:
-        p.add_component("c2",None, ['c3'])
+        p.add_component("c2", None, ['c3'])
         assert False
     except:
         pass
@@ -259,6 +261,8 @@ def test_pipeline_add_duplicate_component() -> None:
         and p.get_component_dependencies("c2") == ["c1"]
 
 # TODO: Bug, can add c1 twice, and c1 can be dependent on itself
+
+
 def test_pipeline_add_invalid_component() -> None:
     """
     Tests:
@@ -267,14 +271,15 @@ def test_pipeline_add_invalid_component() -> None:
     logic = TestPipelineLogic()
     p = Pipeline("Test_pipeline")
     p.set_logic(logic)
-    p.add_component("c1",None)
+    p.add_component("c1", None)
     try:
-        p.add_component("c1",None, ['c1'])
+        p.add_component("c1", None, ['c1'])
         assert False
     except:
         pass
     print("invalid:", p.get_component_dependencies("c1"))
     assert True
+
 
 def test_pipeline_add_multiple_component() -> None:
     """
@@ -292,6 +297,7 @@ def test_pipeline_add_multiple_component() -> None:
     except:
         assert True
 
+
 def test_pipeline_get_name() -> None:
     """
     Tests:
@@ -301,6 +307,7 @@ def test_pipeline_get_name() -> None:
     p = Pipeline(name)
     assert p.get_name() == name
 
+
 def test_pipeline_get_component_names() -> None:
     """
     Tests:
@@ -309,14 +316,15 @@ def test_pipeline_get_component_names() -> None:
     logic = TestPipelineLogic()
     p = Pipeline("Test_pipeline")
     p.set_logic(logic)
-    p.add_component("c1",None,[])
-    p.add_component("c2",None,["c1"])
+    p.add_component("c1", None, [])
+    p.add_component("c2", None, ["c1"])
     try:
-        p.add_component("c10",None,[])
+        p.add_component("c10", None, [])
         p.add_component("c1", None, ["c10"])
         assert False
     except:
-        assert p.get_component_names() == ["c1","c2"]
+        assert p.get_component_names() == ["c1", "c2"]
+
 
 def test_pipeline_get_component_dependencies() -> None:
     """
@@ -326,15 +334,16 @@ def test_pipeline_get_component_dependencies() -> None:
     logic = TestPipelineLogic()
     p = Pipeline("Test_pipeline")
     p.set_logic(logic)
-    p.add_component("c1",None,[])
-    p.add_component("c2",None,["c1"])
+    p.add_component("c1", None, [])
+    p.add_component("c2", None, ["c1"])
     try:
-        p.add_component("c10",None,[])
+        p.add_component("c10", None, [])
         p.add_component("c1", None, ["c10"])
         assert False
     except:
         assert p.get_component_dependencies("c1") == [] and \
             p.get_component_dependencies("c2") == ["c1"]
+
 
 def test_pipeline_get_execution_summary() -> None:
     """
@@ -344,9 +353,10 @@ def test_pipeline_get_execution_summary() -> None:
     logic = TestPipelineLogic()
     p = Pipeline("Test_pipeline")
     p.set_logic(logic)
-    p.add_component("c1",None,[])
-    p.add_component("c2",None,["c1"])
+    p.add_component("c1", None, [])
+    p.add_component("c2", None, ["c1"])
     assert type(p.get_execution_summary()) == dict
+
 
 def test_pipeline_get_successful_components() -> None:
     """
@@ -356,10 +366,11 @@ def test_pipeline_get_successful_components() -> None:
     logic = TestPipelineLogic()
     p = Pipeline("Test_pipeline")
     p.set_logic(logic)
-    p.add_component("c1",None)
-    p.add_component("c2",None,["c1"])
+    p.add_component("c1", None)
+    p.add_component("c2", None, ["c1"])
     p.execute()
-    assert p.get_successful_components() == ["c1","c2"]
+    assert p.get_successful_components() == ["c1", "c2"]
+
 
 def test_pipeline_get_failed_components() -> None:
     """
@@ -369,11 +380,12 @@ def test_pipeline_get_failed_components() -> None:
     logic = TestPipelineLogic()
     p = Pipeline("Test_pipeline")
     p.set_logic(logic)
-    p.add_component("c1",None)
-    p.add_component("c2",None,["c1"])
-    p.add_component("c3",None)
+    p.add_component("c1", None)
+    p.add_component("c2", None, ["c1"])
+    p.add_component("c3", None)
     p.execute()
     assert p.get_failed_components() == ["c3"]
+
 
 def test_pipeline_get_executed_components() -> None:
     """
@@ -383,11 +395,12 @@ def test_pipeline_get_executed_components() -> None:
     logic = TestPipelineLogic()
     p = Pipeline("Test_pipeline")
     p.set_logic(logic)
-    p.add_component("c1",None)
-    p.add_component("c2",None,["c1"])
-    p.add_component("c3",None)
+    p.add_component("c1", None)
+    p.add_component("c2", None, ["c1"])
+    p.add_component("c3", None)
     p.execute()
-    assert p.get_executed_components() == ["c1","c2","c3"]
+    assert p.get_executed_components() == ["c1", "c2", "c3"]
+
 
 def test_pipeline_get_unexecuted_components() -> None:
     """
@@ -397,12 +410,13 @@ def test_pipeline_get_unexecuted_components() -> None:
     logic = TestPipelineLogic()
     p = Pipeline("Test_pipeline")
     p.set_logic(logic)
-    p.add_component("c1",None)
-    p.add_component("c2",None,["c1"])
-    p.add_component("c3",None)
-    p.add_component("c4",None,["c3"])
+    p.add_component("c1", None)
+    p.add_component("c2", None, ["c1"])
+    p.add_component("c3", None)
+    p.add_component("c4", None, ["c3"])
     p.execute()
     assert p.get_unexecuted_components() == ["c4"]
+
 
 def test_pipeline_simple_passing() -> None:
     """
@@ -412,9 +426,10 @@ def test_pipeline_simple_passing() -> None:
     logic = TestPipelineLogic2()
     p = Pipeline("Test_pipeline")
     p.set_logic(logic)
-    p.add_component("c1",None)
-    p.add_component("c2",None,["c1"])
+    p.add_component("c1", None)
+    p.add_component("c2", None, ["c1"])
     p.execute()
+
 
 def test_pipeline_two_dependencies() -> None:
     """
@@ -425,10 +440,11 @@ def test_pipeline_two_dependencies() -> None:
     logic = TestPipelineLogic2()
     p = Pipeline("Test_pipeline")
     p.set_logic(logic)
-    p.add_component("c1",None)
-    p.add_component("c3",None)
-    p.add_component("c4",None, ["c1", "c3"])
+    p.add_component("c1", None)
+    p.add_component("c3", None)
+    p.add_component("c4", None, ["c1", "c3"])
     p.execute()
+
 
 def test_pipeline_pass_data_despite_nondependent_failure() -> None:
     """
@@ -439,12 +455,14 @@ def test_pipeline_pass_data_despite_nondependent_failure() -> None:
     logic = TestPipelineLogic2()
     p = Pipeline("Test_pipeline")
     p.set_logic(logic)
-    p.add_component("c1",None)
-    p.add_component("c3",None)
-    p.add_component("c4",None, ["c1", "c3"])
+    p.add_component("c1", None)
+    p.add_component("c3", None)
+    p.add_component("c4", None, ["c1", "c3"])
     p.add_component("c5", None)
     p.execute()
-    assert p.get_failed_components() == ["c5"] and p.get_successful_components() == ["c1", "c3", "c4"]
+    assert p.get_failed_components() == ["c5"] and p.get_successful_components() == [
+        "c1", "c3", "c4"]
+
 
 def test_pipeline_execute_two_dependencies_one_failure() -> None:
     """
@@ -455,12 +473,13 @@ def test_pipeline_execute_two_dependencies_one_failure() -> None:
     logic = TestPipelineLogic2()
     p = Pipeline("Test_pipeline")
     p.set_logic(logic)
-    p.add_component("c1",None)
+    p.add_component("c1", None)
     p.add_component("c5", None)
-    p.add_component("c4",None, ["c1", "c5"])
+    p.add_component("c4", None, ["c1", "c5"])
     p.execute()
     assert p.get_failed_components() == ["c5"] and p.get_unexecuted_components() == ["c4"] and \
         p.get_successful_components() == ["c1"]
+
 
 def test_pipeline_execute_simple_failure_dependency() -> None:
     """
@@ -476,6 +495,7 @@ def test_pipeline_execute_simple_failure_dependency() -> None:
     p.execute()
     assert p.get_successful_components() == [] and p.get_unexecuted_components() == ["c1"] and \
         p.get_failed_components() == ["c5"]
+
 
 def test_pipeline_execute_failure_in_chain() -> None:
     """
@@ -493,6 +513,7 @@ def test_pipeline_execute_failure_in_chain() -> None:
     assert p.get_successful_components() == [] and p.get_unexecuted_components() == ["c1", "c2"] and \
         p.get_failed_components() == ["c5"]
 
+
 def test_pipeline_execute() -> None:
     """
     Tests:
@@ -501,12 +522,13 @@ def test_pipeline_execute() -> None:
     logic = TestPipelineLogic()
     p = Pipeline("Test_pipeline")
     p.set_logic(logic)
-    p.add_component("c1",None)
-    p.add_component("c2",None)
-    p.add_component("c3",None,["c1","c2"])
-    p.add_component("c4",None,["c2","c3"])
+    p.add_component("c1", None)
+    p.add_component("c2", None)
+    p.add_component("c3", None, ["c1", "c2"])
+    p.add_component("c4", None, ["c2", "c3"])
     p.execute()
     print(p.get_execution_summary())
+
 
 def test_pipeline_two_executions() -> None:
     """
@@ -516,8 +538,8 @@ def test_pipeline_two_executions() -> None:
     logic = TestPipelineLogic2()
     p = Pipeline("Test_pipeline")
     p.set_logic(logic)
-    p.add_component("c1",None)
-    p.add_component("c2",None,["c1"])
+    p.add_component("c1", None)
+    p.add_component("c2", None, ["c1"])
     p.execute()
     execution1_succ = p.get_successful_components()
     print("execution1: ", p.get_execution_summary())
@@ -525,6 +547,9 @@ def test_pipeline_two_executions() -> None:
     execution2_succ = p.get_successful_components()
     print("execution2: ", p.get_execution_summary())
     assert execution1_succ == execution2_succ
+
+# TODO:
+
 
 def test_pipeline_execute_with_objects() -> None:
     """
@@ -536,7 +561,7 @@ def test_pipeline_execute_with_objects() -> None:
     p.set_logic(logic)
     p.add_component("c1", IO())
     p.print_dependency_graph()
-    p.add_component("c2",WatsonEngine(IO(),Network()),["c1"])
+    p.add_component("c2", WatsonEngine(IO(), Network()), ["c1"])
     p.print_dependency_graph()
     p.execute()
     p.print_dependency_graph()
@@ -548,6 +573,7 @@ def test_pipeline_execute_with_objects() -> None:
     assert p.get_successful_components() == ["c1", "c2"] and p.get_failed_components() == [] and\
         p.get_unexecuted_components() == []
 
+
 def test_pipeline_reset() -> None:
     """
     Tests:
@@ -556,10 +582,8 @@ def test_pipeline_reset() -> None:
     logic = TestPipelineLogic2()
     p = Pipeline("Test_pipeline")
     p.set_logic(logic)
-    p.add_component("c1",None)
-    p.add_component("c2",None,["c1"])
+    p.add_component("c1", None)
+    p.add_component("c2", None, ["c1"])
     p.execute()
     p.reset_pipeline()
     assert p.get_component_names() == [] and p.get_unexecuted_components() == []
-
-
