@@ -61,23 +61,27 @@ class OutputStage:
 
     def _write_raw_utterances(self, payload: Payload) -> None:
         # Has to be transcribed or plugins applied
-        if payload.status != ProcessStatus.PLUGINS_APPLIED and \
-                payload.status != ProcessStatus.TRANSCRIBED:
-            return
-        conversation = payload.source.conversation
-        for source_name, utterances in conversation.get_utterances().items():
-            data = list()
-            for utt in utterances:
-                utt: Utt
-                msg = "{}, {}, {}, {}".format(
-                    utt.speaker_label,
-                    utt.text,
-                    utt.start_time_seconds,
-                    utt.end_time_seconds)
-                data.append(msg)
-            data = "\n".join(data)
-            # Save to file
-            path = "{}/{}.{}".format(
-                payload.source.hook.get_temp_directory_path(),
-                source_name, self.blackboard.RAW_EXTENSION)
-            self.io.write(path, data, True)
+        try:
+            if payload.status != ProcessStatus.PLUGINS_APPLIED and \
+                    payload.status != ProcessStatus.TRANSCRIBED:
+                return
+            conversation = payload.source.conversation
+            print(conversation.get_utterances())
+            for source_name, utterances in conversation.get_utterances().items():
+                data = list()
+                for utt in utterances:
+                    utt: Utt
+                    msg = "{}, {}, {}, {}".format(
+                        utt.speaker_label,
+                        utt.text,
+                        utt.start_time_seconds,
+                        utt.end_time_seconds)
+                    data.append(msg)
+                data = "\n".join(data)
+                # Save to file
+                path = "{}/{}.{}".format(
+                    payload.source.hook.get_temp_directory_path(),
+                    source_name, self.blackboard.RAW_EXTENSION)
+                self.io.write(path, data, True)
+        except Exception as e:
+            print(e)

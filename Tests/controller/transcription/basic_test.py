@@ -30,13 +30,22 @@ def reset_workspace() -> None:
     io.create_directory(RESULT_DIR_PATH)
 
 
-# def test_transcription() -> None:
-#     controller = GailBotController(WS_DIR_PATH)
-#     assert controller.add_source("audio", MP3_FILE_PATH, RESULT_DIR_PATH)
-#     assert controller.create_new_settings_profile(
-#         "s1", obtain_settings_profile_data())
-#     assert controller.apply_settings_profile_to_source("audio", "s1")
-#     controller.transcribe()
+def test_transcription_audio_file() -> None:
+    controller = GailBotController(WS_DIR_PATH)
+    assert controller.add_source("audio", MP3_FILE_PATH, RESULT_DIR_PATH)
+    assert controller.create_new_settings_profile(
+        "s1", obtain_settings_profile_data())
+    assert controller.apply_settings_profile_to_source("audio", "s1")
+    controller.transcribe()
+
+
+def test_transcription_audio_directory() -> None:
+    controller = GailBotController(WS_DIR_PATH)
+    assert controller.add_source("audio_dir", MIXED_DIR_PATH, RESULT_DIR_PATH)
+    assert controller.create_new_settings_profile(
+        "s1", obtain_settings_profile_data())
+    assert controller.apply_settings_profile_to_source("audio_dir", "s1")
+    controller.transcribe()
 
 
 def test_plugins() -> None:
@@ -50,4 +59,11 @@ def test_plugins() -> None:
 
 
 def test_retranscription() -> None:
-    pass
+    controller = GailBotController(WS_DIR_PATH)
+    assert controller.add_source(
+        "prev_mp3_short", PREV_AUDIO_MP3_SHORT, RESULT_DIR_PATH)
+    assert controller.create_new_settings_profile(
+        "s1", obtain_settings_profile_data())
+    assert controller.apply_settings_profile_to_source("prev_mp3_short", "s1")
+    print(controller.register_plugins(DEFAULT_ANALYSIS_PLUGIN_CONFIG))
+    controller.transcribe()

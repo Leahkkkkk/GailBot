@@ -92,14 +92,14 @@ class GBInitializer:
             # NOTE: Check - adding additional gb_raw format to look for
             supported_formats.append("gb")
             _, file_paths = self.io.path_of_files_in_directory(
-                self.source_path, supported_formats, False)
+                source_path, supported_formats, False)
             for path in file_paths:
                 data_file_configs.append(
                     self._create_data_file_config(path))
         return data_file_configs
 
     def _create_data_file_config(self, source_file_path: str) -> Dict:
-        configs = dict()
+        #configs = dict()
         utterances = list()
         if not self.io.is_file(source_file_path):
             raise Exception()
@@ -114,11 +114,13 @@ class GBInitializer:
             file_type = "audio"
             data = open(source_file_path, "r").readlines()
             for line in data:
-                tokens = line.split(" ")
+                # NOTE: This split delimiter should also be in the
+                # blackboard.
+                tokens = line.split(",")
                 utt = Utt(
-                    tokens[0].rstrip(":"),
-                    float(tokens[2][:tokens[2].find("_")]),
-                    float(tokens[2][tokens[2].find("_")+1:].rstrip("/n")),
+                    tokens[0],
+                    float(tokens[2]),
+                    float(tokens[3]),
                     tokens[1])
                 utterances.append(utt)
         else:

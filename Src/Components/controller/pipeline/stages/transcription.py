@@ -32,6 +32,13 @@ class TranscriptionStage:
         Transcribe all the files in a single payload
         """
 
+        # NOTE: Need to do this in a better way. Maybe attach something to
+        # previously transcribed conversations
+        utterance_map = payload.source.conversation.get_utterances()
+        if all([len(v) > 0 for v in utterance_map.values()]):
+            payload.status = ProcessStatus.TRANSCRIBED
+            return
+        # -----
         self._construct_source_to_audio_map(payload)
         if self._can_transcribe(payload):
             self._transcribe(payload)
