@@ -2,8 +2,9 @@
 # Standard imports
 from typing import List, Dict, Any, Callable, Set
 # Local imports
-from .source_loaders import SourceLoader, FileSourceLoader, \
-    DirectorySourceLoader, TranscribedSourceLoader
+# from .source_loaders import SourceLoader, FileSourceLoader, \
+#     DirectorySourceLoader, TranscribedSourceLoader
+from .source_loaders import SourceLoader
 from .details import SourceDetails, SettingsDetails
 from .objects import Source, SettingsProfile
 from .conversation_creator import CustomConversationCreator
@@ -22,10 +23,7 @@ class OrganizerService:
         self.io = IO()
         self.organizer = Organizer(IO)
         self.organizer.register_creator("custom", CustomConversationCreator)
-        self.source_loaders: List[SourceLoader] = [
-            FileSourceLoader(fs_service),
-            DirectorySourceLoader(fs_service),
-            TranscribedSourceLoader(fs_service)]
+        self.source_loader = SourceLoader(fs_service)
         self.sources: ObjectManager = ObjectManager()
         self.settings_profiles: ObjectManager = ObjectManager()
         self.conversation_creator_method = None
@@ -33,6 +31,9 @@ class OrganizerService:
     ############################## MODIFIERS #################################
 
     # --- Configuration methods
+
+    def add_source_can_load_method(self, method: Callable) -> None:
+        self.source_loader.add_source_checker(method)
 
     def set_conversation_creator_method(self, method: Callable[[str], Dict]) \
             -> None:
@@ -49,12 +50,12 @@ class OrganizerService:
                    result_dir_path: str, transcriber_name: str) -> bool:
         if self.is_source(source_name):
             return False
-        for loader in self.source_loaders:
-            source = loader.load_source(
-                source_name, source_path, result_dir_path, transcriber_name)
-            if source != None:
-                return self.sources.add_object(source_name, source)
-        return False
+        # Load using the source loader
+        source = self.source_loader.load_source(
+            source_name, source_path, result_dir_path, transcriber_name
+        )
+        return self.sources.add_object(source_name, source) \
+            if source != None else False
 
     def remove_source(self, source_name: str) -> bool:
         if not self.is_source(source_name):

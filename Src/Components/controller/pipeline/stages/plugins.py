@@ -64,6 +64,7 @@ class PluginsStage:
 
     def apply_plugins(self, payload: Payload) -> None:
         if not self._can_apply_plugins(payload):
+            print("Cannot apply plugins")
             payload.status = ProcessStatus.FAILED
             return
         # Generate apply configs
@@ -82,6 +83,9 @@ class PluginsStage:
         settings: GailBotSettings = payload.source.conversation.get_settings()
         plugins_to_apply = settings.get_value(
             GBSettingAttrs.plugins_to_apply)
+        print(self.plugin_manager.get_plugin_names())
+        print(plugins_to_apply)
+        print(payload)
         return all([self.plugin_manager.is_plugin(plugin_name)
                     for plugin_name in plugins_to_apply]) and \
             payload.status == ProcessStatus.TRANSCRIBED

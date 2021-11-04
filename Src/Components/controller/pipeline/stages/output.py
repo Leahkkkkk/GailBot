@@ -21,12 +21,15 @@ class OutputStage:
     ############################# MODIFIERS ##################################
 
     def output(self, payload: Payload) -> None:
-        # Write the metadata
-        self._write_metadata(payload)
-        # Write the raw utterance files.
-        self._write_raw_utterances(payload)
-        # Save the hook to the result directory.
-        payload.source.hook.save()
+        try:
+            # Write the metadata
+            self._write_metadata(payload)
+            # Write the raw utterance files.
+            self._write_raw_utterances(payload)
+            # Save the hook to the result directory.
+            payload.source.hook.save()
+        except Exception as e:
+            print(e)
 
     ########################## PRIVATE METHODS ###############################
 
@@ -62,8 +65,10 @@ class OutputStage:
     def _write_raw_utterances(self, payload: Payload) -> None:
         # Has to be transcribed or plugins applied
         try:
+            print("Writting raw utterances")
             if payload.status != ProcessStatus.PLUGINS_APPLIED and \
                     payload.status != ProcessStatus.TRANSCRIBED:
+                print(payload.status)
                 return
             conversation = payload.source.conversation
             for source_name, utterances in conversation.get_utterances().items():
@@ -82,5 +87,6 @@ class OutputStage:
                     payload.source.hook.get_temp_directory_path(),
                     source_name, self.blackboard.RAW_EXTENSION)
                 self.io.write(path, data, True)
+                print("Written")
         except Exception as e:
             print(e)

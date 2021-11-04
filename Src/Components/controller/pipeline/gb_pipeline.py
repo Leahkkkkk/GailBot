@@ -1,6 +1,6 @@
 
 # # Standard imports
-from typing import List, Tuple, Dict, Any
+from typing import List, Tuple, Dict, Any, Callable
 
 from Src.components.controller.pipeline.models import Payload
 # Local imports
@@ -40,6 +40,10 @@ class GBPipeline:
         success, configs = self._parse_plugins_config_file(config_path)
         return self.plugins_stage.register_plugins(configs) if success else []
 
+    def configure_methods(self, payload_creator: Callable,
+                          metadata_creator: Callable) -> None:
+        self.payload_creator = payload_creator
+
     def execute(self, sources: Dict[str, Source]) -> Any:
         self.pipeline.set_base_input(
             self._generate_payloads_from_sources(sources))
@@ -52,7 +56,8 @@ class GBPipeline:
             -> Dict[str, Payload]:
         payloads = dict()
         for name, source in sources.items():
-            payloads[name] = Payload(source)
+            payloads[name] = self.payload_creator(source)
+            #payloads[name] = Payload(source)
         return payloads
 
     def _parse_plugins_config_file(self, config_path: str) \

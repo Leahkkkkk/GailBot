@@ -36,6 +36,7 @@ def test_transcription_audio_file() -> None:
     assert controller.create_new_settings_profile(
         "s1", obtain_settings_profile_data())
     assert controller.apply_settings_profile_to_source("audio", "s1")
+    controller.register_plugins(DEFAULT_ANALYSIS_PLUGIN_CONFIG)
     controller.transcribe()
 
 
@@ -48,6 +49,7 @@ def test_transcription_audio_directory() -> None:
     assert controller.create_new_settings_profile(
         "s1", obtain_settings_profile_data())
     assert controller.apply_settings_profile_to_source("audio_dir", "s1")
+    controller.register_plugins(DEFAULT_ANALYSIS_PLUGIN_CONFIG)
     controller.transcribe()
 
 
