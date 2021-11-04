@@ -40,6 +40,9 @@ def test_transcription_audio_file() -> None:
 
 
 def test_transcription_audio_directory() -> None:
+    """
+    Output stage not working for this currently.
+    """
     controller = GailBotController(WS_DIR_PATH)
     assert controller.add_source("audio_dir", MIXED_DIR_PATH, RESULT_DIR_PATH)
     assert controller.create_new_settings_profile(

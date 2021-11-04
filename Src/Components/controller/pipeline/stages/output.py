@@ -66,7 +66,6 @@ class OutputStage:
                     payload.status != ProcessStatus.TRANSCRIBED:
                 return
             conversation = payload.source.conversation
-            print(conversation.get_utterances())
             for source_name, utterances in conversation.get_utterances().items():
                 data = list()
                 for utt in utterances:
