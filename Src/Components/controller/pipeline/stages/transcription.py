@@ -10,7 +10,7 @@ from ....network import Network
 from ....io import IO
 from ....services import Source
 from ...helpers.gb_settings import GailBotSettings, GBSettingAttrs
-from ..models import Payload, Utt, ProcessStatus
+from ..models import ExternalMethods, Payload, Utt, ProcessStatus
 from ...blackboards import PipelineBlackBoard
 
 
@@ -19,7 +19,8 @@ class TranscriptionStage:
     SUPPORTED_ENGINES = ["watson", "google"]
     NUM_THREADS = 4
 
-    def __init__(self, blackboard: PipelineBlackBoard) -> None:
+    def __init__(self, blackboard: PipelineBlackBoard,
+                 external_methods: ExternalMethods) -> None:
         self.blackboard = blackboard
         self.engines = Engines(IO(), Network())
         self.io = IO()

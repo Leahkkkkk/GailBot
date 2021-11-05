@@ -14,8 +14,8 @@ class GailBotController:
     """
 
     def __init__(self, workspace_dir_path: str) -> None:
-        self.initializer = GBInitializer(workspace_dir_path)
-        self.services = self.initializer.initialize()
+        self.initializer = GBInitializer()
+        self.services = self.initializer.initialize(workspace_dir_path)
         if not self.services.is_initialized:
             raise Exception("Controller cannot be initialized")
         self.fs_service = self.services.fs_service

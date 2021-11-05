@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from enum import IntEnum
-from typing import Dict
+from typing import Dict, Callable
 from ...services import Source
 from ...plugin_manager import PluginExecutionSummary
 
@@ -33,3 +33,9 @@ class Utt:
     start_time_seconds: float
     end_time_seconds: float
     text: str
+
+
+@dataclass
+class ExternalMethods:
+    create_payload_from_source: Callable
+    create_metadata: Callable

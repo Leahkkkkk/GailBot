@@ -2,7 +2,6 @@
 # # Standard imports
 from typing import List, Tuple, Dict, Any, Callable
 
-from Src.components.controller.pipeline.models import Payload
 # Local imports
 from .logic import GBPipelineLogic
 from .stages import TranscriptionStage, PluginsStage, OutputStage
@@ -12,20 +11,24 @@ from ...plugin_manager import PluginExecutionSummary
 from ...services import Source, SettingsProfile
 from ...io import IO
 from ..blackboards import PipelineBlackBoard
+from .models import Payload, ExternalMethods
 
 
 class GBPipeline:
 
-    def __init__(self, blackboard: PipelineBlackBoard) -> None:
+    def __init__(self, blackboard: PipelineBlackBoard,
+                 external_methods: ExternalMethods) -> None:
         # Vars.
         self.pipeline_name = "transcription_pipeline_service"
         self.pipeline_num_threads = 4
         # Objects
+        self.external_methods = external_methods
         self.io = IO()
         self.logic = GBPipelineLogic()
-        self.transcription_stage = TranscriptionStage(blackboard)
-        self.plugins_stage = PluginsStage(blackboard)
-        self.output_stage = OutputStage(blackboard)
+        self.transcription_stage = TranscriptionStage(
+            blackboard, external_methods)
+        self.plugins_stage = PluginsStage(blackboard, external_methods)
+        self.output_stage = OutputStage(blackboard, external_methods)
         # Initialize pipeline
         self.pipeline = Pipeline(self.pipeline_name, self.pipeline_num_threads)
         self.pipeline.set_logic(self.logic)
@@ -40,10 +43,6 @@ class GBPipeline:
         success, configs = self._parse_plugins_config_file(config_path)
         return self.plugins_stage.register_plugins(configs) if success else []
 
-    def configure_methods(self, payload_creator: Callable,
-                          metadata_creator: Callable) -> None:
-        self.payload_creator = payload_creator
-
     def execute(self, sources: Dict[str, Source]) -> Any:
         self.pipeline.set_base_input(
             self._generate_payloads_from_sources(sources))
@@ -56,8 +55,8 @@ class GBPipeline:
             -> Dict[str, Payload]:
         payloads = dict()
         for name, source in sources.items():
-            payloads[name] = self.payload_creator(source)
-            #payloads[name] = Payload(source)
+            payloads[name] = self.external_methods.create_payload_from_source(
+                source)
         return payloads
 
     def _parse_plugins_config_file(self, config_path: str) \
