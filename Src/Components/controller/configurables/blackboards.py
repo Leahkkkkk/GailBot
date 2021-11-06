@@ -1,6 +1,6 @@
 from typing import Any
 from dataclasses import dataclass
-from ..config import Config, ConfigLoader, BlackBoard
+from ...config import Config, ConfigLoader, BlackBoard
 
 # ------------ Blackboards
 

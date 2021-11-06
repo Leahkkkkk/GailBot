@@ -1,7 +1,7 @@
 # Standard imports
 from typing import List, Any, Dict
 # Local imports
-from .helpers.gb_settings import GBSettingAttrs, GailBotSettings
+from .configurables.gb_settings import GBSettingAttrs, GailBotSettings
 from .initializer import GBInitializer, Services
 from .pipeline import GBPipeline
 from ..services import FileSystemService, OrganizerService, SourceDetails, \

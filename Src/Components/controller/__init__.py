@@ -1,3 +1,4 @@
+from .pipeline import GBPipeline, GBPlugin, PluginMethodSuite, Utt,\
+    Payload, ExternalMethods
 from .controller import GailBotController
-from .helpers.gb_settings import GBSettingAttrs, GailBotSettings
-from .pipeline import GBPlugin, PluginMethodSuite, Utt
+from .configurables.gb_settings import GBSettingAttrs, GailBotSettings

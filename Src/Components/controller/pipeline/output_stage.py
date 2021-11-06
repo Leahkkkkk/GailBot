@@ -2,14 +2,14 @@ from typing import Dict, Any, List
 from abc import abstractmethod
 
 # Local imports
-from ....io import IO
-from ....plugin_manager import Plugin
-from ....organizer import Conversation
-from ..models import ExternalMethods, Payload, Utt, ProcessStatus
-from ....plugin_manager import PluginManager, PluginManagerSummary, ApplyConfig
-from ...helpers.gb_settings import GBSettingAttrs, GailBotSettings
+from ...io import IO
+from ...plugin_manager import Plugin
+from ...organizer import Conversation
+from .models import ExternalMethods, Payload, Utt, ProcessStatus
+from ...plugin_manager import PluginManager, PluginManagerSummary, ApplyConfig
+from ..configurables.gb_settings import GBSettingAttrs, GailBotSettings
 # from Src.components.controller.initializer import PipelineBlackBoard
-from ...blackboards import PipelineBlackBoard
+from ..configurables.blackboards import PipelineBlackBoard
 
 
 class OutputStage:

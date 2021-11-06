@@ -4,13 +4,15 @@ from typing import List, Tuple, Dict, Any, Callable
 
 # Local imports
 from .logic import GBPipelineLogic
-from .stages import TranscriptionStage, PluginsStage, OutputStage
+from .transcription_stage import TranscriptionStage
+from .plugins_stage import PluginsStage
+from .output_stage import OutputStage
 from ...utils.manager import ObjectManager
 from ...pipeline import Pipeline
 from ...plugin_manager import PluginExecutionSummary
 from ...services import Source, SettingsProfile
 from ...io import IO
-from ..blackboards import PipelineBlackBoard
+from ..configurables.blackboards import PipelineBlackBoard
 from .models import Payload, ExternalMethods
 
 

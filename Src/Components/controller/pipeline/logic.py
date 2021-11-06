@@ -6,7 +6,9 @@ from ...utils.manager import ObjectManager
 from ...pipeline import Pipeline, Logic, Stream
 from ...plugin_manager import PluginExecutionSummary
 from ...services import Source, SettingsProfile
-from .stages import TranscriptionStage, PluginsStage, OutputStage
+from .transcription_stage import TranscriptionStage
+from .plugins_stage import PluginsStage
+from .output_stage import OutputStage
 from .models import Payload
 
 

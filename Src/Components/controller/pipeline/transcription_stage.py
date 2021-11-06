@@ -3,15 +3,15 @@ from typing import Dict, Tuple, List
 
 from Src.components.engines.utterance import UtteranceAttributes
 # Local imports
-from ....utils.threads import ThreadPool
-from ....organizer import Conversation, Settings
-from ....engines import Engines, WatsonEngine, GoogleEngine, Utterance
-from ....network import Network
-from ....io import IO
-from ....services import Source
-from ...helpers.gb_settings import GailBotSettings, GBSettingAttrs
-from ..models import ExternalMethods, Payload, Utt, ProcessStatus
-from ...blackboards import PipelineBlackBoard
+from ...utils.threads import ThreadPool
+from ...organizer import Conversation, Settings
+from ...engines import Engines, WatsonEngine, GoogleEngine, Utterance
+from ...network import Network
+from ...io import IO
+from ...services import Source
+from ..configurables.gb_settings import GailBotSettings, GBSettingAttrs
+from .models import ExternalMethods, Payload, Utt, ProcessStatus
+from ..configurables.blackboards import PipelineBlackBoard
 
 
 class TranscriptionStage:

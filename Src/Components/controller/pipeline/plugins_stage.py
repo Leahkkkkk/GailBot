@@ -1,11 +1,11 @@
 from typing import Dict, Any, List
 from abc import abstractmethod
 # Local imports
-from ....plugin_manager import Plugin
-from ..models import ExternalMethods, Payload, Utt, ProcessStatus
-from ....plugin_manager import PluginManager, PluginManagerSummary, ApplyConfig
-from ...helpers.gb_settings import GBSettingAttrs, GailBotSettings
-from ...blackboards import PipelineBlackBoard
+from ...plugin_manager import Plugin
+from .models import ExternalMethods, Payload, Utt, ProcessStatus
+from ...plugin_manager import PluginManager, PluginManagerSummary, ApplyConfig
+from ..configurables.gb_settings import GBSettingAttrs, GailBotSettings
+from ..configurables.blackboards import PipelineBlackBoard
 
 
 class PluginMethodSuite:
