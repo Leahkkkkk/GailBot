@@ -39,3 +39,5 @@ class Utt:
 class ExternalMethods:
     create_payload_from_source: Callable
     create_metadata: Callable
+    stringify_utt: Callable
+    string_to_utt: Callable

@@ -15,13 +15,13 @@ from ..configurables.blackboards import PipelineBlackBoard
 
 
 class TranscriptionStage:
-
     SUPPORTED_ENGINES = ["watson", "google"]
     NUM_THREADS = 4
 
     def __init__(self, blackboard: PipelineBlackBoard,
                  external_methods: ExternalMethods) -> None:
         self.blackboard = blackboard
+        self.external_methods = external_methods
         self.engines = Engines(IO(), Network())
         self.io = IO()
         self.thread_pool = ThreadPool(
@@ -29,58 +29,73 @@ class TranscriptionStage:
         self.thread_pool.spawn_threads()
 
     def generate_utterances(self, payload: Payload) -> None:
-        """
-        Transcribe all the files in a single payload
-        """
-
-        # NOTE: Need to do this in a better way. Maybe attach something to
-        # previously transcribed conversations
-        utterance_map = payload.source.conversation.get_utterances()
-        if all([len(v) > 0 for v in utterance_map.values()]):
-            payload.status = ProcessStatus.TRANSCRIBED
-            return
-        # -----
-        self._construct_source_to_audio_map(payload)
-        if self._can_transcribe(payload):
-            self._transcribe(payload)
-        else:
-            payload.status = ProcessStatus.FAILED
-
-    ########################## GETTERS #######################################
+        try:
+            # Determine if possible to transcribe
+            if not self._can_transcribe(payload):
+                payload.status = ProcessStatus.FAILED
+                return
+            # Extract the audio from the sources first and obtain a mapping
+            # TODO: Assuming one audio per source, change later.
+            source_audio_map = self._construct_source_to_audio_map(payload)
+            payload.addons.source_to_audio_map = source_audio_map
+            # Transcribe from the temp. dir
+            payload.status = self._transcribe(payload)
+        except Exception as e:
+            print(e)
 
     def get_supported_engines(self) -> List[str]:
         return self.SUPPORTED_ENGINES
 
     ######################## PRIVATE METHODS ##################################
 
-    def _construct_source_to_audio_map(self, payload: Payload) -> None:
+    def _can_transcribe(self, payload: Payload) -> bool:
+        settings: Settings = payload.source.conversation.get_settings()
+        if not settings.get_value(GBSettingAttrs.engine_type) \
+            in self.SUPPORTED_ENGINES or \
+                payload.status != ProcessStatus.READY:
+            return False
+        return True
+
+    def _construct_source_to_audio_map(self, payload: Payload) -> Dict[str, str]:
         source_to_audio_map = dict()
         conversation: Conversation = payload.source.conversation
         source_paths_map = conversation.get_source_file_paths()
         source_types_map = conversation.get_source_file_types()
         for source_file_name, source_path in source_paths_map.items():
-            _, path = self._extract_audio_from_path(
-                source_path, source_types_map[source_file_name],
-                conversation.get_temp_directory_path())
+            # Extract audio from this path
+            if self.io.is_supported_audio_file(source_path):
+                # Move to the tmp dir.
+                tmp_dir_path = conversation.get_temp_directory_path()
+                self.io.copy(source_path, tmp_dir_path)
+                path = "{}/{}.{}".format(
+                    tmp_dir_path, self.io.get_name(
+                        source_path), self.io.get_file_extension(source_path)[1])
+            else:
+                # Extract audio from video
+                # NOTE: Assuming each video has single audio map.
+                self.io.extract_audio_from_file(
+                    source_path, conversation.get_temp_directory_path())
+                path = "{}/{}.{}".format(
+                    conversation.get_temp_directory_path(),
+                    self.io.get_name(source_path), "wav")
             source_to_audio_map[source_file_name] = path
-        payload.addons.source_to_audio_map = source_to_audio_map
+        return source_to_audio_map
 
-    def _extract_audio_from_path(self, source_path: str, source_type: str,
-                                 extract_dir_path: str) -> Tuple[bool, str]:
+    def _transcribe(self, payload: Payload) -> ProcessStatus:
+        utterances_map = dict()
+        source_status_map = dict()
+        self._execute_transcription_threads(
+            payload, utterances_map, source_status_map)
+        # Convert Utterances to Utt
+        utts_map = self._utterances_to_utt(utterances_map)
+        # Check status
+        if all(list(source_status_map.values())):
+            payload.source.conversation.set_utterances(utts_map)
+            return ProcessStatus.TRANSCRIBED
+        else:
+            return ProcessStatus.FAILED
 
-        if self.io.is_supported_audio_file(source_path):
-            return (True, source_path)
-        if not self.io.extract_audio_from_file(source_path, extract_dir_path):
-            return (False, None)
-        ####### REMOVE ########
-        # TODO: This path should eventually be obtained from IO directly
-        # and should not be hard-coded.
-        hard_coded_path = "{}/{}.{}".format(
-            extract_dir_path, self.io.get_name(source_path), "wav")
-        if not self.io.is_file(hard_coded_path):
-            return (False, None)
-        return (True, hard_coded_path)
-        ########################
+    # --- Helpers
 
     def _utterances_to_utt(self, utterances_map: Dict[str, Utterance]) \
             -> Dict[str, Utt]:
@@ -93,30 +108,6 @@ class TranscriptionStage:
                 utterance.get(UtteranceAttributes.transcript)[1]
             ) for utterance in utterances]
         return utt_map
-
-    def _can_transcribe(self, payload: Payload) -> bool:
-        settings: Settings = payload.source.conversation.get_settings()
-        if not settings.get_value(GBSettingAttrs.engine_type) in self.SUPPORTED_ENGINES or \
-                payload.status != ProcessStatus.READY:
-            return False
-        for audio_path in payload.addons.source_to_audio_map.values():
-            if audio_path == None:
-                return False
-        return True
-
-    def _transcribe(self, payload: Payload) -> None:
-        utterances_map = dict()
-        source_status_map = dict()
-        self._execute_transcription_threads(
-            payload, utterances_map, source_status_map)
-        # Convert Utterances to Utt
-        utts_map = self._utterances_to_utt(utterances_map)
-        # Check status
-        if all(list(source_status_map.values())):
-            payload.status = ProcessStatus.TRANSCRIBED
-            payload.source.conversation.set_utterances(utts_map)
-        else:
-            payload.status = ProcessStatus.FAILED
 
     def _execute_transcription_threads(
             self, payload: Payload, utterances_map: Dict,
@@ -152,10 +143,7 @@ class TranscriptionStage:
                 settings.get_value(GBSettingAttrs.watson_language_customization_id))
             utterances = engine.transcribe()
             utterances_map[source_file_name] = utterances
-            source_status_map[source_file_name] =\
-                engine.was_transcription_successful()
+            source_status_map[source_file_name] = engine.was_transcription_successful(
+            )
         except Exception as e:
             print(e)
-
-    def _transcribe_google_thread(self) -> None:
-        raise Exception("Not implemented")
