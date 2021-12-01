@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+# @Author: Muhammad Umair
+# @Date:   2021-10-21 10:30:14
+# @Last Modified by:   Muhammad Umair
+# @Last Modified time: 2021-11-30 10:41:05
 
 from typing import Dict
 from Src.components.controller import GailBotController, GBSettingAttrs, \

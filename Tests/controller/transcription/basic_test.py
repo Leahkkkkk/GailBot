@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+# @Author: Muhammad Umair
+# @Date:   2021-10-22 09:07:35
+# @Last Modified by:   Muhammad Umair
+# @Last Modified time: 2021-11-30 17:46:42
 
 from typing import Dict
 from Src.components.controller import GailBotController, GBSettingAttrs, \
@@ -49,6 +54,19 @@ def test_transcription_audio_directory() -> None:
     assert controller.create_new_settings_profile(
         "s1", obtain_settings_profile_data())
     assert controller.apply_settings_profile_to_source("audio_dir", "s1")
+    controller.register_plugins(DEFAULT_ANALYSIS_PLUGIN_CONFIG)
+    controller.transcribe()
+
+
+def test_transcription_dual_channel_video() -> None:
+
+    controller = GailBotController(WS_DIR_PATH)
+    assert controller.add_source(
+        "dual_channel_video", MXF_FILE_PATH_SHORT, RESULT_DIR_PATH)
+    assert controller.create_new_settings_profile(
+        "s1", obtain_settings_profile_data())
+    assert controller.apply_settings_profile_to_source(
+        "dual_channel_video", "s1")
     controller.register_plugins(DEFAULT_ANALYSIS_PLUGIN_CONFIG)
     controller.transcribe()
 

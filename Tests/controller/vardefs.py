@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+# @Author: Muhammad Umair
+# @Date:   2021-10-21 10:29:49
+# @Last Modified by:   Muhammad Umair
+# @Last Modified time: 2021-11-30 17:45:18
+
 """ DIRECTORIES """
 
 
@@ -63,7 +69,7 @@ MOV_FILE_PATH_MEDIUM = ""
 MOV_FILE_PATH_LONG = ""
 
 # MXF files
-MXF_FILE_PATH_SHORT = "test_data/controller_data/media/audio/mxf/short.mxf"
+MXF_FILE_PATH_SHORT = "test_data/controller_data/media/audio/mxf/vid2.MXF"
 MXF_FILE_PATH_MEDIUM = ""
 MXF_FILE_PATH_LONG = ""
 
