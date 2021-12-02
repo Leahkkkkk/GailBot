@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+# @Author: Muhammad Umair
+# @Date:   2021-12-02 13:13:08
+# @Last Modified by:   Muhammad Umair
+# @Last Modified time: 2021-12-02 16:01:07
 # Standard library imports
 from typing import Dict, Any, List, Tuple
 # Local imports
@@ -167,6 +172,7 @@ class PluginManager:
                 data["plugin_source_name"], data["plugin_class_name"])
             return (True, config)
         except Exception as e:
+            print(e)
             return (False, None)
 
     def _generate_execution_pipeline(self,

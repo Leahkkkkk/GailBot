@@ -2,11 +2,10 @@
 # @Author: Muhammad Umair
 # @Date:   2021-11-30 17:58:39
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-11-30 20:26:48
+# @Last Modified time: 2021-12-02 15:28:13
 # Standard library imports
 from typing import List, Any, Dict
 # Local imports
-from ...network import Network
 from ...io import IO
 # Third party imports
 from ibm_watson import SpeechToTextV1
@@ -321,7 +320,7 @@ class WatsonCore:
         # be chunked.
         try:
             # TODO: Test the chunk logic a bit more.
-            _, size_bytes = self.io.get_size(audio_path)
+            size_bytes = self.io.get_size(audio_path)
             if size_bytes >= self.max_file_size_bytes:
                 # TODO: Add an IO method to chunk by size as well as duration.
                 if not self.io.chunk(audio_path, workspace_dir_path, 120):
@@ -355,7 +354,7 @@ class WatsonCore:
         Returns:
             (str): Watson content type for that file.
         """
-        _, extension = self.io.get_file_extension(file_path)
+        extension = self.io.get_file_extension(file_path)
         if extension in self.format_to_content_types.keys():
             return self.format_to_content_types[extension]
 
@@ -369,7 +368,7 @@ class WatsonCore:
         Returns:
             (bool): True if the file is supported. False otherwise.
         """
-        _, extension = self.io.get_file_extension(file_path)
+        extension = self.io.get_file_extension(file_path)
         return extension in self.format_to_content_types.keys()
 
     def _is_ready_to_connect(self) -> bool:

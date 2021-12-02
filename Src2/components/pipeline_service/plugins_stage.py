@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 # @Author: Muhammad Umair
-# @Date:   2021-11-05 21:08:48
+# @Date:   2021-12-02 13:48:19
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-02 15:32:35
+# @Last Modified time: 2021-12-02 16:23:36
 from typing import Dict, Any, List
 from abc import abstractmethod
+from copy import deepcopy
 # Local imports
-from ...plugin_manager import Plugin
-from .models import ExternalMethods, Payload, Utt, ProcessStatus
-from ...plugin_manager import PluginManager, PluginManagerSummary, ApplyConfig
-from ..configurables.gb_settings import GBSettingAttrs, GailBotSettings
-from ..configurables.blackboards import PipelineBlackBoard
+from .payload import Payload
+from ..plugin_manager import Plugin, PluginConfig, PluginManager, ApplyConfig, \
+    PluginManagerSummary
+from ..shared_models import Utt
 
 
 class PluginMethodSuite:
@@ -18,8 +18,8 @@ class PluginMethodSuite:
     def __init__(self, payload: Payload) -> None:
         self.payload = payload
 
-    def get_utterances(self) -> Dict[str, Utt]:
-        return self.payload.source.conversation.get_utterances()
+    def get_utterances(self):
+        return self.payload.utterances_map
 
 
 class GBPlugin(Plugin):
@@ -53,9 +53,7 @@ class GBPlugin(Plugin):
 
 class PluginsStage:
 
-    def __init__(self, blackboard: PipelineBlackBoard,
-                 external_methods: ExternalMethods) -> None:
-        self.blackboard = blackboard
+    def __init__(self) -> None:
         self.plugin_manager = PluginManager()
 
     ############################# MODIFIERS ##################################
@@ -65,12 +63,13 @@ class PluginsStage:
         current_plugins = self.plugin_manager.get_plugin_names()
         for data in plugins_data_list:
             self.plugin_manager.register_plugin_using_config_data(data)
+
         return [plugin_name for plugin_name in self.plugin_manager.get_plugin_names()
                 if plugin_name not in current_plugins]
 
     def apply_plugins(self, payload: Payload) -> None:
         if not self._can_apply_plugins(payload):
-            payload.status = ProcessStatus.FAILED
+            print("Cant apply ")
             return
         # Generate apply configs
         apply_configs = self._generate_plugin_configs(payload)
@@ -80,22 +79,26 @@ class PluginsStage:
         # Determine if all plugins were successful
         # if all([plugin_name in manager_summary.successful_plugins
         #         for plugin_name in apply_configs.keys()]):
-        payload.status = ProcessStatus.PLUGINS_APPLIED
-
+        print("Applied!!")
         ######################## PRIVATE METHODS ################################
 
     def _can_apply_plugins(self, payload: Payload) -> bool:
-        settings: GailBotSettings = payload.source.conversation.get_settings()
-        plugins_to_apply = settings.get_value(
-            GBSettingAttrs.plugins_to_apply)
+        plugins_to_apply = [
+            "turn_construct",
+            "overlaps",
+            "pauses",
+            "combine_turns",
+            "fto", ]
         return all([self.plugin_manager.is_plugin(plugin_name)
-                    for plugin_name in plugins_to_apply]) and \
-            payload.status == ProcessStatus.TRANSCRIBED
+                    for plugin_name in plugins_to_apply])
 
-    def _generate_plugin_configs(self, payload) -> List[ApplyConfig]:
-        settings: GailBotSettings = payload.source.conversation.get_settings()
-        plugin_names = settings.get_value(
-            GBSettingAttrs.plugins_to_apply)
+    def _generate_plugin_configs(self, payload):
+        plugin_names = [
+            "turn_construct",
+            "overlaps",
+            "pauses",
+            "combine_turns",
+            "fto", ]
         apply_configs = dict()
         for plugin_name in plugin_names:
             plugin_input = PluginMethodSuite(payload)

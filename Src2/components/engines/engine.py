@@ -1,11 +1,16 @@
+# -*- coding: utf-8 -*-
+# @Author: Muhammad Umair
+# @Date:   2021-12-02 13:13:08
+# @Last Modified by:   Muhammad Umair
+# @Last Modified time: 2021-12-02 14:41:44
 # Standard library imports
-from abc import ABC,abstractmethod
+from abc import ABC, abstractmethod
 from typing import Any, Dict, List
 # Local imports
-from .utterance import Utterance
+from ..shared_models import Utt
 from ..io import IO
-from ..network import Network
 # Third party imports
+
 
 class Engine(ABC):
     """
@@ -15,7 +20,7 @@ class Engine(ABC):
         (ABC)
     """
     @abstractmethod
-    def __init__(self, io : IO, network : Network ) -> None:
+    def __init__(self, io: IO) -> None:
         pass
 
     @abstractmethod
@@ -29,7 +34,7 @@ class Engine(ABC):
         pass
 
     @abstractmethod
-    def get_configurations(self) -> Dict[str,Any]:
+    def get_configurations(self) -> Dict[str, Any]:
         """
         Obtain all core configurations of the engine/
 
@@ -59,7 +64,7 @@ class Engine(ABC):
         pass
 
     @abstractmethod
-    def is_file_supported(self, file_path : str) -> bool:
+    def is_file_supported(self, file_path: str) -> bool:
         """
         Determine if the given file is supported by the engine.
 
@@ -72,7 +77,7 @@ class Engine(ABC):
         pass
 
     @abstractmethod
-    def transcribe(self) -> List[Utterance]:
+    def transcribe(self) -> List[Utt]:
         """
         Transcribe the audio file that can be added through the configure method
         """
@@ -87,4 +92,3 @@ class Engine(ABC):
             (bool): True if transcription was successful. False otherwise.
         """
         pass
-
