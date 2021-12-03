@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-11-05 21:07:36
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-02 15:40:47
+# @Last Modified time: 2021-12-02 16:45:05
 # Standard imports
 from typing import List, Any, Dict
 
@@ -55,7 +55,6 @@ class GailBotController:
         Returns:
             (bool): True if removed successfully, False otherwise.
         """
-        pass
 
     def reset_source(self, source_name: str) -> bool:
         """

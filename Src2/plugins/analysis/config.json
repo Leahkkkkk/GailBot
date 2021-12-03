@@ -59,6 +59,16 @@
       "plugin_output_type": "None",
       "plugin_source_name": "gaps",
       "plugin_class_name": "Gaps"
+    },
+    {
+      "plugin_name": "chat",
+      "plugin_dependencies": ["gaps"],
+      "plugin_file_path": "Src2/plugins/analysis/chat.py",
+      "plugin_author": "Umair",
+      "plugin_input_type": "None",
+      "plugin_output_type": "None",
+      "plugin_source_name": "chat",
+      "plugin_class_name": "CHAT"
     }
   ]
 }

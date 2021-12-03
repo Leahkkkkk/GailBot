@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:31:00
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-02 14:38:18
+# @Last Modified time: 2021-12-02 16:43:45
 from dataclasses import dataclass
 from typing import Dict, Any, List
 from ..io import IO
@@ -53,9 +53,9 @@ class SourceHook:
     def _get_paths_of_items_in_directory(self, dir_path: str) -> List[str]:
         paths = list()
         if self.io.is_directory(dir_path):
-            _, file_paths = self.io.path_of_files_in_directory(
+            file_paths = self.io.path_of_files_in_directory(
                 dir_path, ["*"], False)
-            _, dir_paths = self.io.paths_of_subdirectories(dir_path)
+            dir_paths = self.io.paths_of_subdirectories(dir_path)
             paths.extend(file_paths)
             paths.extend(dir_paths)
         return paths

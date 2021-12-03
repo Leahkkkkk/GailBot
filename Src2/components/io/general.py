@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-11-30 17:58:28
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-11-30 19:37:46
+# @Last Modified time: 2021-12-02 16:47:40
 # Standard library imports
 from typing import Any, Callable, Tuple, List, Dict
 import os
@@ -403,6 +403,12 @@ class GeneralIO:
         else:
             return False
         return True
+
+    def clear_directory(self, dir_path: str) -> bool:
+        if not self.is_directory(dir_path):
+            return False
+        return self.delete(dir_path) and \
+            self.create_directory(dir_path)
 
     ################################### PRIVATE METHODS ######################
 

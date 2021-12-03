@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-10-21 10:29:49
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-02 15:50:30
+# @Last Modified time: 2021-12-02 19:03:14
 
 """ DIRECTORIES """
 
@@ -108,4 +108,5 @@ PLUGINS_TO_APPLY = [
     "pauses",
     "combine_turns",
     "fto",
-    "gaps"]
+    "gaps",
+    "chat"]

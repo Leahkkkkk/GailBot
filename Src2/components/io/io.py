@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-11-30 17:58:28
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-11-30 20:24:52
+# @Last Modified time: 2021-12-02 16:48:13
 
 # Standard library imports
 from typing import List, Tuple, Any
@@ -333,6 +333,12 @@ class IO:
            (bool): True if successful. False otherwise
         """
         return self.general.delete(path)
+
+    def clear_directory(self, dir_path: str) -> bool:
+        """
+        Remove the files in a directory
+        """
+        return self.general.clear_directory(dir_path)
 
     # Audio only manipulation methods
 

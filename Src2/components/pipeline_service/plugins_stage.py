@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:48:19
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-02 16:23:36
+# @Last Modified time: 2021-12-02 19:12:25
 from typing import Dict, Any, List
 from abc import abstractmethod
 from copy import deepcopy
@@ -20,6 +20,9 @@ class PluginMethodSuite:
 
     def get_utterances(self):
         return self.payload.utterances_map
+
+    def get_result_directory_path(self):
+        return self.payload.source.hook.get_result_directory_path()
 
 
 class GBPlugin(Plugin):
@@ -76,9 +79,6 @@ class PluginsStage:
         # Apply plugins
         manager_summary: PluginManagerSummary = \
             self.plugin_manager.apply_plugins(apply_configs)
-        # Determine if all plugins were successful
-        # if all([plugin_name in manager_summary.successful_plugins
-        #         for plugin_name in apply_configs.keys()]):
         print("Applied!!")
         ######################## PRIVATE METHODS ################################
 
@@ -88,7 +88,9 @@ class PluginsStage:
             "overlaps",
             "pauses",
             "combine_turns",
-            "fto", ]
+            "fto",
+            "gaps",
+            "chat"]
         return all([self.plugin_manager.is_plugin(plugin_name)
                     for plugin_name in plugins_to_apply])
 
@@ -98,7 +100,9 @@ class PluginsStage:
             "overlaps",
             "pauses",
             "combine_turns",
-            "fto", ]
+            "fto",
+            "gaps",
+            "chat"]
         apply_configs = dict()
         for plugin_name in plugin_names:
             plugin_input = PluginMethodSuite(payload)

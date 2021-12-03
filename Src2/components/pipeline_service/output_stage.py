@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:48:19
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-02 16:28:52
+# @Last Modified time: 2021-12-02 18:58:55
 from typing import Dict, Any, List
 from abc import abstractmethod
 
@@ -26,9 +26,9 @@ class OutputStage:
             # Write the metadata
             self._write_metadata(payload)
             # Write the raw utterance files.
-            # self._write_raw_utterances(payload)
+            self._write_raw_utterances(payload)
             # Save the hook to the result directory.
-            # payload.source.hook.save()
+            payload.source.hook.save()
             print("output done")
         except Exception as e:
             print(e)
@@ -41,24 +41,23 @@ class OutputStage:
             payload.source.identifier,
             "metadata",
             "json")
-        print(path)
         data = {
-            payload.source.identifier
+            "source_identifier": payload.source.identifier
         }
         self.io.write(path, data, True)
 
     def _write_raw_utterances(self, payload: Payload) -> None:
-        for source_name, utterances in payload.utterances_map:
+        for source_name, utterances in payload.utterances_map.items():
             data = list()
             for utt in utterances:
                 utt: Utt
-                msg = [utt.speaker_label, utt.text,
-                       utt.start_time_seconds, utt.end_time_seconds]
-                msg = msg.jon(",")
+                msg = [str(utt.speaker_label), utt.text,
+                       str(utt.start_time_seconds), str(utt.end_time_seconds)]
+                msg = ",".join(msg)
                 data.append(msg)
             data = "\n".join(data)
             # Save to file
             path = "{}/{}.{}".format(
                 payload.source.hook.get_temp_directory_path(),
-                source_name, self.blackboard.RAW_EXTENSION)
+                self.io.get_name(source_name), "gb")
             self.io.write(path, data, True)

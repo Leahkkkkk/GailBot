@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-10-19 18:14:54
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-02 14:56:58
+# @Last Modified time: 2021-12-02 16:50:49
 
 # Standard imports
 from typing import List, Dict, Any, Callable, Set
@@ -16,10 +16,14 @@ from .source_loader import SourceLoader
 class OrganizerService:
 
     def __init__(self, ws_dir_path: str) -> None:
+        self.ws_dir_path = ws_dir_path
+        self.save_ws_path = "{}/save".format(self.ws_dir_path)
         self.io = IO()
         self.sources: ObjectManager = ObjectManager()
         self.settings_profiles: ObjectManager = ObjectManager()
         self.source_loader = SourceLoader()
+        # Clear the workspace
+        self.io.clear_directory(self.ws_dir_path)
 
     ############################## MODIFIERS #################################
     # ---- Others
@@ -29,7 +33,8 @@ class OrganizerService:
         if self.is_source(source_name):
             return False
         source = self.source_loader.load_source(
-            source_name, source_path, result_dir_path, transcriber_name)
+            source_name, source_path, result_dir_path, transcriber_name,
+            self.save_ws_path)
         return self.sources.add_object(source_name, source) \
             if source != None else False
 
