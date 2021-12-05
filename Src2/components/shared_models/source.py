@@ -2,31 +2,33 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:31:00
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-02 16:43:45
+# @Last Modified time: 2021-12-05 14:17:02
 from dataclasses import dataclass
 from typing import Dict, Any, List
 from ..io import IO
+from .utt import Utt
 
 
 class SourceHook:
 
-    def __init__(self, parent_dir_path: str, source_name: str,
+    def __init__(self, source_name: str, temp_ws_path: str,
                  result_dir_path: str) -> None:
         # Objects
         self.io = IO()
-        self.parent_dir_path = parent_dir_path
-        self.source_name = source_name
+        # Temp ws for this source
+        self.temp_ws_path = "{}/{}".format(temp_ws_path, source_name)
+        # Result will make sure there is no conflicting name
         self.result_dir_path = self._generate_result_dir_path(
             result_dir_path, source_name)
-        self.temp_dir_path = "{}/{}".format(parent_dir_path, "temp")
-        self.io.create_directory(self.result_dir_path)
+        # Create a temp. dir for this source specifically
+        self.temp_dir_path = "{}/{}".format(self.temp_ws_path, "temp")
         self.io.create_directory(self.temp_dir_path)
 
     ################################# MODIFIERS #############################
 
     def save(self) -> None:
         """
-        Move the temp directory to the result directpry path.
+        Move the temp directory to the result directory path.
         """
         if not self.io.is_directory(self.result_dir_path) and \
                 not self.io.create_directory(self.result_dir_path):
@@ -39,7 +41,8 @@ class SourceHook:
         """
         Cleanup this source hook, removing all items in the hook.
         """
-        self.io.delete(self.temp_dir_path)
+        self.io.delete(self.temp_ws_path)
+
     ################################## GETTERS ###############################
 
     def get_result_directory_path(self) -> str:
@@ -62,19 +65,20 @@ class SourceHook:
 
     def _generate_result_dir_path(self, dir_path: str, source_name: str) \
             -> str:
-        count = 0
-        while True:
-            path = "{}/{}_{}".format(dir_path, source_name, count)
-            if self.io.is_directory(path):
+        result_dir_path = "{}/{}".format(dir_path, source_name)
+        if self.io.is_directory(result_dir_path):
+            count = 0
+            while self.io.is_directory(result_dir_path):
+                result_dir_path = "{}_{}".format(
+                    result_dir_path, str(count))
                 count += 1
-            else:
-                self.io.create_directory(path)
-                break
-        return path
+        self.io.create_directory(result_dir_path)
+        return result_dir_path
 
 
 @dataclass
 class DataFile:
+    identifier: str
     path: str = None
     audio_path: str = None
     video_path: str = None

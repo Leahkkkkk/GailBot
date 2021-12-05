@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-10-19 18:14:54
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-02 16:50:49
+# @Last Modified time: 2021-12-03 19:58:07
 
 # Standard imports
 from typing import List, Dict, Any, Callable, Set
@@ -17,24 +17,24 @@ class OrganizerService:
 
     def __init__(self, ws_dir_path: str) -> None:
         self.ws_dir_path = ws_dir_path
-        self.save_ws_path = "{}/save".format(self.ws_dir_path)
+        self.temp_ws_path = None
         self.io = IO()
         self.sources: ObjectManager = ObjectManager()
         self.settings_profiles: ObjectManager = ObjectManager()
         self.source_loader = SourceLoader()
-        # Clear the workspace
-        self.io.clear_directory(self.ws_dir_path)
+        #  Initialize the workspace
+        self._initialize_workspace(ws_dir_path)
 
     ############################## MODIFIERS #################################
     # ---- Others
 
     def add_source(self, source_name: str, source_path: str,
-                   result_dir_path: str, transcriber_name: str) -> bool:
+                   result_dir_path: str) -> bool:
         if self.is_source(source_name):
             return False
         source = self.source_loader.load_source(
-            source_name, source_path, result_dir_path, transcriber_name,
-            self.save_ws_path)
+            source_name, source_path, result_dir_path,
+            self.temp_ws_path)
         return self.sources.add_object(source_name, source) \
             if source != None else False
 
@@ -130,3 +130,15 @@ class OrganizerService:
 
     def _is_source_configurable(self, source_name: str) -> bool:
         pass
+
+    def _initialize_workspace(self, ws_dir_path: str) -> None:
+        # Reset the workspace
+        if not self.io.is_directory(ws_dir_path):
+            if not self.io.create_directory(ws_dir_path):
+                raise Exception("Cannot initialize workspace")
+        else:
+            self.io.clear_directory(self.ws_dir_path)
+        # Create the temporary workspace dir inside workspace
+        self.temp_ws_path = "{}/temp".format(ws_dir_path)
+        if not self.io.create_directory(self.temp_ws_path):
+            raise Exception("Cannot initialize workspace")

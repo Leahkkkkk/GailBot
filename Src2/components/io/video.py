@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-11-30 17:58:28
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-11-30 20:19:58
+# @Last Modified time: 2021-12-03 19:27:28
 # Standard library imports
 from typing import Dict, List, Any, Tuple
 from enum import IntEnum, Enum
@@ -89,7 +89,7 @@ class VideoIO:
             return False
         # If all files exist, they are read as VideoClip objects.
         for name, file_path in file_paths.items():
-            success, stream = self._initialize_video_stream(
+            success, stream = self._initialize_video_stream_from_file(
                 file_path, self.default_video_input_format, None)
             if not success:
                 self.streams.clear()

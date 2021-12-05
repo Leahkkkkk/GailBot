@@ -2,9 +2,10 @@
 # @Author: Muhammad Umair
 # @Date:   2021-11-05 21:08:01
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-02 16:22:39
+# @Last Modified time: 2021-12-05 14:24:47
 
 # # Standard imports
+import collections
 from typing import List, Tuple, Dict, Any, Callable
 from ..io import IO
 from ..shared_models import Source, SourceHook, Settings, SettingsHook,\
@@ -14,7 +15,7 @@ from .logic import GBPipelineLogic
 from .transcription_stage import TranscriptionStage
 from .plugins_stage import PluginsStage
 from .output_stage import OutputStage
-from .payload import Payload
+from .payload import Payload, SourceAddons
 
 # Local imports
 
@@ -46,7 +47,9 @@ class PipelineService:
     def execute(self, sources: List[Source]) -> Any:
         payloads = dict()
         for source in sources:
-            payloads[source.identifier] = Payload(source)
+            payloads[source.identifier] = \
+                Payload(source, SourceAddons(
+                    {}, collections.defaultdict(dict)))
         self.pipeline.set_base_input(payloads)
         self.pipeline.execute()
 

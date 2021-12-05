@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-11-05 21:07:36
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-02 16:45:05
+# @Last Modified time: 2021-12-03 19:58:16
 # Standard imports
 from typing import List, Any, Dict
 
@@ -29,7 +29,7 @@ class GailBotController:
         pass
 
     def add_source(self, source_name: str, source_path: str,
-                   result_dir_path: str, transcriber_name: str = "gb") -> bool:
+                   result_dir_path: str) -> bool:
         """
         Add a source.
 
@@ -43,7 +43,7 @@ class GailBotController:
             (bool): True if added successfully. False otherwise.
         """
         return self.organizer_service.add_source(
-            source_name, source_path, result_dir_path, transcriber_name)
+            source_name, source_path, result_dir_path)
 
     def remove_source(self, source_name: str) -> bool:
         """

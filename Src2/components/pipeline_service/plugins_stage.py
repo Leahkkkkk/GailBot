@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:48:19
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-02 19:12:25
+# @Last Modified time: 2021-12-05 14:19:04
 from typing import Dict, Any, List
 from abc import abstractmethod
 from copy import deepcopy
@@ -19,10 +19,10 @@ class PluginMethodSuite:
         self.payload = payload
 
     def get_utterances(self):
-        return self.payload.utterances_map
+        return self.payload.source_addons.utterances_map
 
     def get_result_directory_path(self):
-        return self.payload.source.hook.get_result_directory_path()
+        return self.payload.source.hook.get_temp_directory_path()
 
 
 class GBPlugin(Plugin):
@@ -66,20 +66,18 @@ class PluginsStage:
         current_plugins = self.plugin_manager.get_plugin_names()
         for data in plugins_data_list:
             self.plugin_manager.register_plugin_using_config_data(data)
-
         return [plugin_name for plugin_name in self.plugin_manager.get_plugin_names()
                 if plugin_name not in current_plugins]
 
     def apply_plugins(self, payload: Payload) -> None:
         if not self._can_apply_plugins(payload):
-            print("Cant apply ")
             return
         # Generate apply configs
         apply_configs = self._generate_plugin_configs(payload)
         # Apply plugins
         manager_summary: PluginManagerSummary = \
             self.plugin_manager.apply_plugins(apply_configs)
-        print("Applied!!")
+
         ######################## PRIVATE METHODS ################################
 
     def _can_apply_plugins(self, payload: Payload) -> bool:

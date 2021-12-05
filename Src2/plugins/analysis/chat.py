@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:57:50
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-02 19:19:34
+# @Last Modified time: 2021-12-03 19:00:45
 # Standard imports
 
 
@@ -39,7 +39,6 @@ class CHAT(GBPlugin):
             ]
             path = "{}/{}.cha".format(plugin_input.get_result_directory_path(),
                                       str(count))
-            print(path)
             with io.open(path, "w", encoding='utf-8') as outfile:
                 for item in data:
                     outfile.write(item)

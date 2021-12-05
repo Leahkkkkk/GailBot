@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:27:23
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-02 16:21:26
+# @Last Modified time: 2021-12-03 19:12:46
 # # Standard imports
 from typing import List, Tuple, Dict, Any
 # Local imports
@@ -93,7 +93,6 @@ class GBPipelineLogic(Logic):
         Executes the output stage for each payload object in a separate
         thread.
         """
-        print("Output stage ")
         for payload_name, payload in payloads.items():
             self.thread_pool.add_task(
                 self._output_stage_thread,

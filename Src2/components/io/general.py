@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-11-30 17:58:28
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-02 16:47:40
+# @Last Modified time: 2021-12-03 19:00:56
 # Standard library imports
 from typing import Any, Callable, Tuple, List, Dict
 import os
@@ -319,9 +319,13 @@ class GeneralIO:
             return False, None
         try:
             # Generate the moved path.
-            moved_file_path = "{}/{}.{}".format(
-                dst_dir_path, self.get_name(
-                    src_file_path), self.get_file_extension(src_file_path))
+            if self.is_file(src_file_path):
+                moved_file_path = "{}/{}.{}".format(
+                    dst_dir_path, self.get_name(
+                        src_file_path), self.get_file_extension(src_file_path))
+            else:
+                moved_file_path = "{}/{}".format(
+                    dst_dir_path, self.get_name(src_file_path))
             shutil.move(src_file_path, dst_dir_path)
             return True, moved_file_path
         except:

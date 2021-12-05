@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-11-30 17:58:28
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-02 16:48:13
+# @Last Modified time: 2021-12-05 15:06:44
 
 # Standard library imports
 from typing import List, Tuple, Any
@@ -150,12 +150,12 @@ class IO:
         success = False
         data = None
         # Use the appropriate object to read the file
-        if self.general.is_readable(path):
-            success, data = self.general.read_file(path)
-        elif self.audio.is_readable(path):
+        if self.audio.is_readable(path):
             success = self.audio.read_streams({"audio_file": path})
             if success:
                 data = self.audio.get_streams()["audio_file"]
+        else:
+            success, data = self.general.read_file(path)
         return (success, data)
 
     def write(self, file_path: str, data: Any, overwrite: bool) -> bool:
@@ -619,7 +619,7 @@ class IO:
         # Ensure readability
         if not self.video.is_readable(file_path) or \
                 not self.general.is_directory(output_dir_path):
-            return False
+            return
         # Extract audio
         name = self._get_file_name_from_path(file_path)
         self.video.read_streams({name: file_path})

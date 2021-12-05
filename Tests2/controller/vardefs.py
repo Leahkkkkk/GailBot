@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-10-21 10:29:49
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-02 19:03:14
+# @Last Modified time: 2021-12-05 14:59:09
 
 """ DIRECTORIES """
 
@@ -16,7 +16,8 @@ EMPTY_DIR_PATH = "test_data/controller_data/workspaces/empty"
 SETTINGS_DIR_PATH = "test_data/controller_data/workspaces/temp_ws"
 SOURCE_DIR_PATH = "test_data/controller_data/workspaces/temp_ws"
 DIR_CONV_PATH = "test_data/controller_data/media/conversations/conversation"
-
+AUDIO_VIDEO_DIR_PATH = "test_data/controller_data/media/conversations/audio_video_conversation"
+TRANSCRIBED_DIR = "test_data/controller_data/media/conversations/transcribed_audio_video_dir"
 """ MEDIA FILES """
 
 
