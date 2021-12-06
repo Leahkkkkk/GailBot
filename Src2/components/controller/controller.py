@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-11-05 21:07:36
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-03 19:58:16
+# @Last Modified time: 2021-12-05 21:15:01
 # Standard imports
 from typing import List, Any, Dict
 
@@ -55,6 +55,7 @@ class GailBotController:
         Returns:
             (bool): True if removed successfully, False otherwise.
         """
+        return self.organizer_service.remove_source(source_name)
 
     def reset_source(self, source_name: str) -> bool:
         """
@@ -83,7 +84,8 @@ class GailBotController:
         Returns:
             (bool): True if profile created, False otherwise.
         """
-        pass
+        return self.organizer_service.create_new_settings_profile(
+            new_settings_profile_name, data)
 
     def save_settings_profile(self, settings_profile_name: str) -> bool:
         """
@@ -98,7 +100,8 @@ class GailBotController:
                 True if the  profile is successfully saved to disk,
                 False otherwise.
         """
-        pass
+        return self.organizer_service.save_settings_profile(
+            settings_profile_name)
 
     def remove_settings_profile(self, settings_profile_name: str) -> bool:
         """
@@ -111,17 +114,8 @@ class GailBotController:
         Returns:
             (bool): True if the profile is removed successfully, False otherwise.
         """
-        pass
-
-    def remove_all_settings_profile(self) -> bool:
-        """
-        Remove all the settings profiles.
-        Note that this removes the profile from disk, if saved.
-
-        Returns:
-            (bool): True if all profiles are removed, False otherwise.
-        """
-        pass
+        return self.organizer_service.remove_settings_profile(
+            settings_profile_name)
 
     def change_settings_profile_name(self, settings_profile_name: str,
                                      new_name: str) -> bool:
@@ -134,7 +128,8 @@ class GailBotController:
             settings_profile_name (str): Name of the profile.
             new_name (str): The profile name is changed to this.
         """
-        pass
+        return self.organizer_service.change_settings_profile_name(
+            settings_profile_name, new_name)
 
     def apply_settings_profile_to_source(self, source_name: str,
                                          settings_profile_name: str) -> bool:
@@ -150,7 +145,9 @@ class GailBotController:
             (bool):
             True if the profile is applied to the source, False otherwise.
         """
-        pass
+        return self.organizer_service.apply_settings_profile_to_source(
+            source_name, settings_profile_name
+        )
 
     def apply_settings_profile_to_sources(self, source_names: List[str],
                                           settings_profile_name: str) -> bool:
@@ -166,7 +163,8 @@ class GailBotController:
             (bool): True if the specified profile is applied to all
                     the specified sources.
         """
-        pass
+        return self.organizer_service.apply_settings_profile_to_sources(
+            source_names, settings_profile_name)
 
     def save_source_settings_profile(self, source_name: str,
                                      new_settings_profile_name: str) -> bool:
@@ -183,7 +181,8 @@ class GailBotController:
         Returns:
             (bool): True if the profile is saved, False otherwise.
         """
-        pass
+        return self.organizer_service.save_source_settings_profile(
+            source_name, new_settings_profile_name)
 
     def register_plugins(self, config_path: str) -> List[str]:
         """
@@ -209,15 +208,6 @@ class GailBotController:
 
     ############################### GETTERS #################################
 
-    def get_supported_source_formats(self) -> List[str]:
-        """
-        Obtain a list of supported audio formats.
-
-        Returns:
-            (List[str]): Supported audio formats.
-        """
-        pass
-
     def is_source(self, source_name: str) -> bool:
         """
         Determine if a source with the specified source name exists.
@@ -228,7 +218,7 @@ class GailBotController:
         Returns:
             (bool: True if the source exists, False otherwise.
         """
-        pass
+        return self.organizer_service.is_source(source_name)
 
     def is_source_ready_to_transcribe(self, source_name: str) -> bool:
         """
@@ -241,7 +231,7 @@ class GailBotController:
             (bool): True if the specified source is ready to transcribe,
                     False otherwise.
         """
-        pass
+        return self.organizer_service.is_source_configured(source_name)
 
     def get_source_names(self) -> List[str]:
         """
@@ -250,7 +240,7 @@ class GailBotController:
         Returns:
             (List[str]): Names of sources
         """
-        pass
+        return self.organizer_service.get_source_names()
 
     def get_names_of_sources_ready_to_transcribe(self) -> List[str]:
         """
@@ -259,7 +249,7 @@ class GailBotController:
         Returns:
             (List[str]): Names of sources
         """
-        pass
+        return self.organizer_service.get_configured_source_names()
 
     def is_settings_profile(self, settings_profile_name: str) -> bool:
         """
@@ -271,7 +261,7 @@ class GailBotController:
         Returns:
             (bool): True if the profile exists, False otherwise.
         """
-        pass
+        return self.organizer_service.is_settings_profile(settings_profile_name)
 
     def is_settings_profile_saved(self, settings_profile_name: str) -> bool:
         """
@@ -283,7 +273,8 @@ class GailBotController:
         Returns:
             (bool): True if profile is saved on disk, False otherwise.
         """
-        pass
+        return self.organizer_service.is_settings_profile_saved(
+            settings_profile_name)
 
     def get_settings_profile_details(self, settings_profile_name: str):
         """

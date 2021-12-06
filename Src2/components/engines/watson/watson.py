@@ -2,7 +2,9 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:13:08
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-02 15:28:31
+# @Last Modified time: 2021-12-05 21:37:13
+
+
 # Standard library imports
 from typing import Dict, List, Any, Union
 from itertools import chain
@@ -606,7 +608,7 @@ class WatsonEngine(Engine):
     def _on_transcription_callback(self,
                                    closure: List[Dict], transcript: List) -> None:
         closure[0]["callback_status"]["on_transcription"] = True
-        # closure[0]["results"]["transcript"].append(transcript)
+        closure[0]["results"]["transcript"].append(transcript)
 
     def _on_connected_callback(self, closure: List[Dict]) -> None:
         closure[0]["callback_status"]["on_connected"] = True
@@ -643,6 +645,12 @@ class WatsonEngine(Engine):
             # Aggregated data from recognition results
             labels = list()
             timestamps = list()
+            import json
+            self.io.write(
+                "./data.json", json.dumps(closure["results"]["data"]), False)
+            self.io.write("./results.json",
+                          json.dumps(closure["results"]["data"]), False)
+            self.io.write("./closure.json", json.dumps(closure), False)
             # Creating RecognitionResults objects
             for item in closure["results"]["data"]:
                 recognition_result = RecognitionResult(item)
@@ -673,7 +681,6 @@ class WatsonEngine(Engine):
                 utterances.append(utt)
             return utterances
         except Exception as e:
-            print(e)
             return []
 
     def _reset_callback_closure(self) -> None:

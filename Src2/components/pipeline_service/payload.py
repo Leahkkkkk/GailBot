@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:32:23
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-05 14:25:03
+# @Last Modified time: 2021-12-05 21:11:01
 
 from typing import Dict, List
 from dataclasses import dataclass, field
@@ -12,6 +12,7 @@ from ..shared_models import Source, Utt, DataFile
 
 @dataclass
 class SourceAddons:
+
     utterances_map: Dict[str, Utt]
     data_file_paths: Dict[str, Dict]
 

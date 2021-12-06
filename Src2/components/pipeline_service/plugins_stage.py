@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:48:19
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-05 14:19:04
+# @Last Modified time: 2021-12-05 22:00:43
 from typing import Dict, Any, List
 from abc import abstractmethod
 from copy import deepcopy
@@ -18,11 +18,17 @@ class PluginMethodSuite:
     def __init__(self, payload: Payload) -> None:
         self.payload = payload
 
-    def get_utterances(self):
+    def get_utterances(self) -> Dict:
         return self.payload.source_addons.utterances_map
 
-    def get_result_directory_path(self):
+    def get_result_directory_path(self) -> str:
         return self.payload.source.hook.get_temp_directory_path()
+
+    def get_audio_paths(self) -> Dict:
+        audio_map = dict()
+        for data_file in self.payload.source.conversation.data_files:
+            audio_map[data_file.identifier] = data_file.audio_path
+        return audio_map
 
 
 class GBPlugin(Plugin):
@@ -82,6 +88,7 @@ class PluginsStage:
 
     def _can_apply_plugins(self, payload: Payload) -> bool:
         plugins_to_apply = [
+            # "laughter",
             "turn_construct",
             "overlaps",
             "pauses",
@@ -94,6 +101,7 @@ class PluginsStage:
 
     def _generate_plugin_configs(self, payload):
         plugin_names = [
+            # "laughter",
             "turn_construct",
             "overlaps",
             "pauses",

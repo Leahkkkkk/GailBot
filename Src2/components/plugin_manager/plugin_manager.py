@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:13:08
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-03 14:19:02
+# @Last Modified time: 2021-12-05 22:02:17
 # Standard library imports
 from typing import Dict, Any, List, Tuple
 # Local imports
@@ -78,10 +78,13 @@ class PluginManager:
         Returns:
             (bool): True if successfully configured. False otherwise.
         """
-        success, config = self._generate_config(data)
-        if not success:
-            return False
-        return self.loader.load_plugin_using_config(config)
+        try:
+            success, config = self._generate_config(data)
+            if not success:
+                return False
+            return self.loader.load_plugin_using_config(config)
+        except Exception as e:
+            print(e)
 
     def apply_plugins(self, apply_configs: Dict[str, ApplyConfig]) \
             -> PluginManagerSummary:

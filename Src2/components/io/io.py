@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-11-30 17:58:28
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-05 15:06:44
+# @Last Modified time: 2021-12-05 17:49:59
 
 # Standard library imports
 from typing import List, Tuple, Any
@@ -202,7 +202,6 @@ class IO:
             self.audio.set_output_formats({output_file_name: output_format})
             self.audio.set_output_paths({output_file_name: output_dir_path})
             success, paths = self.audio.write([output_file_name])
-
         elif self.video.is_readable(file_path):
             output_file_name = self._get_file_name_from_path(file_path)
             self.video.read_streams({output_file_name: file_path})
@@ -574,7 +573,7 @@ class IO:
         for chunk_name in all_chunk_names:
             paths[chunk_name] = output_dir_path
         self.audio.set_output_paths(paths)
-        paths = self.audio.write(all_chunk_names)
+        _, paths = self.audio.write(all_chunk_names)
         return list(paths.values())
 
     # Video only manipulation methods

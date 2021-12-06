@@ -2,9 +2,11 @@
 # @Author: Muhammad Umair
 # @Date:   2021-11-05 21:08:35
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-05 15:13:01
+# @Last Modified time: 2021-12-05 18:20:03
 # Standard imports
 from typing import Dict, Tuple, List
+
+from Src2.components.shared_models import utt
 # Local imports
 from ..utils.threads import ThreadPool
 from ..engines import Engines, WatsonEngine
@@ -15,7 +17,7 @@ from ..shared_models import DataFile, Utt
 
 class TranscriptionStage:
     SUPPORTED_ENGINES = ["watson", "google"]
-    NUM_THREADS = 4
+    NUM_THREADS = 10
 
     def __init__(self) -> None:
         self.engines = Engines(IO())
@@ -53,7 +55,9 @@ class TranscriptionStage:
     def _transcribe_watson_thread(
             self, payload: Payload, data_file: DataFile) -> None:
         try:
+            print("transcribing", data_file.identifier)
             engine: WatsonEngine = self.engines.engine("watson")
+            print(data_file.audio_path)
             engine.configure(
                 "MSgOPTS9CvbADe49nEg4wm8_gxeRuf4FGUmlHS9QqAw3",
                 "dallas",
@@ -62,8 +66,10 @@ class TranscriptionStage:
                 payload.source.hook.get_temp_directory_path(),
             )
             utterances = engine.transcribe()
+            print("utterances", len(utterances))
             payload.source_addons.utterances_map[data_file.identifier] =\
                 utterances
+            print("transcribed!", data_file.identifier)
         except Exception as e:
             print(e)
 

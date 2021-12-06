@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:27:23
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-03 19:12:46
+# @Last Modified time: 2021-12-05 15:27:00
 # # Standard imports
 from typing import List, Tuple, Dict, Any
 # Local imports
@@ -14,7 +14,7 @@ from ..utils.threads import ThreadPool
 
 class GBPipelineLogic(Logic):
 
-    NUM_THREADS = 4
+    NUM_THREADS = 10
 
     def __init__(self) -> None:
         super().__init__()
@@ -50,18 +50,18 @@ class GBPipelineLogic(Logic):
         Executes the transcription stage for each payload object in a separate
         thread.
         """
-        print("transcription stage processor ", transcription_stage, payloads)
+        print("Transcription stage processor")
         for payload_name, payload in payloads.items():
+            print("Transcribing", payload_name)
             self.thread_pool.add_task(
                 self._transcription_stage_thread,
                 [transcription_stage, payload], {})
-        print("Waiting...")
         self.thread_pool.wait_completion()
+        print("Completed")
         return payloads
 
     def _transcription_stage_thread(self, stage: Any,
                                     payload: Any) -> None:
-        print("generating!")
         stage.generate_utterances(payload)
 
     def _plugin_stage_processor(
@@ -71,14 +71,13 @@ class GBPipelineLogic(Logic):
         Executes the analysis stage for each payload object in a separate
         thread.
         """
-        print("Plugins stage processor")
+        print("PLugins stage processor")
         for payload_name, payload in payloads.items():
             self.thread_pool.add_task(
                 self._plugins_stage_thread,
                 [plugins_stage, payload], {})
-        print("Waiting...")
         self.thread_pool.wait_completion()
-        print("Done plugins")
+        print("Completed ")
         return payloads
 
     def _plugins_stage_thread(self, stage: Any,
@@ -93,13 +92,13 @@ class GBPipelineLogic(Logic):
         Executes the output stage for each payload object in a separate
         thread.
         """
+        print("Output stage processor")
         for payload_name, payload in payloads.items():
             self.thread_pool.add_task(
                 self._output_stage_thread,
                 [output_stage, payload], {})
-        print("Waiting...")
         self.thread_pool.wait_completion()
-        print("Completed!")
+        print("Completed")
         return payloads
 
     def _output_stage_thread(self, stage: Any,

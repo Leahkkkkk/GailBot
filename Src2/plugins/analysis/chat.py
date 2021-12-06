@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:57:50
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-03 19:00:45
+# @Last Modified time: 2021-12-05 15:17:53
 # Standard imports
 
 
@@ -24,7 +24,6 @@ class CHAT(GBPlugin):
         # conversation.
         try:
             utterances: List[Utt] = dependency_outputs["gaps"]
-            print("Applying CHAT plugin")
             count = 0
 
             data = [
@@ -47,7 +46,6 @@ class CHAT(GBPlugin):
                         utt.speaker_label, utt.text, utt.start_time_seconds, utt.end_time_seconds,
                         0x15)
                     outfile.write(turn)
-            print("Completed CHAT")
         except Exception as e:
             print("CHAT", e)
 

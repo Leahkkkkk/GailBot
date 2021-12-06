@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-11-30 17:58:39
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-02 15:28:13
+# @Last Modified time: 2021-12-05 22:03:55
 # Standard library imports
 from typing import List, Any, Dict
 # Local imports
@@ -205,9 +205,9 @@ class WatsonCore:
     def set_workspace_directory_path(self, workspace_dir_path: str) -> bool:
         if not self.io.is_directory(workspace_dir_path):
             return False
-        engine_workspace_dir = "{}/watson_engine_ws".format(
+        self.engine_workspace_dir = "{}/watson_engine_ws".format(
             workspace_dir_path)
-        self.inputs["workspace_directory_path"] = engine_workspace_dir
+        self.inputs["workspace_directory_path"] = self.engine_workspace_dir
         return True
 
     # GETTERS
@@ -311,35 +311,46 @@ class WatsonCore:
         """
         if not self._is_ready_to_connect():
             return False
+        # Create ws dir
+        self.io.create_directory(self.engine_workspace_dir)
         # Creating STT object.
         stt = self._initialize_stt_service(self.inputs["api_key"])
         stt.set_service_url(self.regions[self.inputs["region"]])
         audio_path = self.inputs["audio_path"]
         workspace_dir_path = self.inputs["workspace_directory_path"]
         # If the audio file is larger than the max supported size, it needs to
-        # be chunked.
+        # convert to opus
         try:
-            # TODO: Test the chunk logic a bit more.
+            # TODO: Eventually add chunking logic instead of opus
+            # TODO: Does not work yet
             size_bytes = self.io.get_size(audio_path)
             if size_bytes >= self.max_file_size_bytes:
-                # TODO: Add an IO method to chunk by size as well as duration.
-                if not self.io.chunk(audio_path, workspace_dir_path, 120):
-                    return False
-                # Read all the chunks and transcribe one by one.
-                chunk_paths = self.io.path_of_files_in_directory(
-                    workspace_dir_path, ["*"], False)
-                for chunk_path in chunk_paths:
-                    with open(chunk_path, "rb") as audio_file:
-                        stt.recognize_using_websocket(
-                            **self._prepare_websocket_args(audio_file))
-                    self.io.delete(chunk_path)
-                return True
+                # Convert to opus and run
+                out_path = "{}/{}.opus".format(
+                    workspace_dir_path, self.io.get_name(audio_path)
+                )
+                _, identifier = self.io.run_shell_command(
+                    "ffmpeg -y -i {} -strict -2  {}".format(
+                        audio_path, out_path), None, None)
+                while True:
+                    if self.io.get_shell_process_status(identifier) == "finished":
+                        break
+                    if self.io.get_shell_process_status(identifier) == "error":
+                        break
+                    if self.io.get_shell_process_status(identifier) == "":
+                        break
+                with open(audio_path, "rb") as audio_file:
+                    stt.recognize_using_websocket(
+                        **self._prepare_websocket_args(audio_file))
             else:
                 with open(audio_path, "rb") as audio_file:
                     stt.recognize_using_websocket(
                         **self._prepare_websocket_args(audio_file))
-                return True
-        except:
+            # Remove the workspace directory
+            self.io.delete(self.engine_workspace_dir)
+            return True
+        except Exception as e:
+            print(e)
             return False
 
     ############################ PRIVATE METHODS ###########################
@@ -368,7 +379,7 @@ class WatsonCore:
         Returns:
             (bool): True if the file is supported. False otherwise.
         """
-        extension = self.io.get_file_extension(file_path)
+        _, extension = self.io.get_file_extension(file_path)
         return extension in self.format_to_content_types.keys()
 
     def _is_ready_to_connect(self) -> bool:

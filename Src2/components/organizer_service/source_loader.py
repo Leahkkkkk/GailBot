@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 14:12:19
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-05 15:01:38
+# @Last Modified time: 2021-12-05 16:17:54
 from typing import List
 from ..io import IO
 from ..shared_models import Source, SourceHook, Conversation, DataFile
@@ -64,9 +64,13 @@ class VideoFileLoader:
         if not self.io.is_file(source_path) or \
                 not self.io.is_supported_video_file(source_path):
             return
+        # Create the hook first
+        hook = SourceHook(
+            source_name, temp_ws_path, result_dir_path)
         # Extract audio from the video
         # NOTE: Assuming only one audio extracted
-        audio_path = self.io.extract_audio_from_file(source_path, temp_ws_path)
+        audio_path = self.io.extract_audio_from_file(
+            source_path, hook.get_temp_directory_path())
         if audio_path == None:
             return False
         data_files = list()
@@ -75,8 +79,7 @@ class VideoFileLoader:
                 self.io.get_name(source_path), source_path, path, source_path)
             data_files.append(data_file)
         conversation = Conversation(data_files)
-        hook = SourceHook(
-            source_name, temp_ws_path, result_dir_path)
+
         return Source(source_name, conversation, hook)
 
 

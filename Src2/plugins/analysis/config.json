@@ -2,7 +2,7 @@
   "plugin_configs": [
     {
       "plugin_name": "turn_construct",
-      "plugin_dependencies": [],
+      "plugin_dependencies": ["laughter"],
       "plugin_file_path": "Src2/plugins/analysis/turn_construct.py",
       "plugin_author": "Umair",
       "plugin_input_type": "None",

@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:33:48
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-05 14:59:17
+# @Last Modified time: 2021-12-05 22:01:42
 
 import pytest
 from Tests2.controller.vardefs import *
@@ -20,6 +20,15 @@ def test():
     controller = GailBotController(WS_DIR_PATH)
 
     loaded = controller.add_source(
-        "audio_video_dir", TRANSCRIBED_DIR, RESULT_DIR_PATH)
+        "mp3_medium", MXF_FILE_PATH_SHORT, RESULT_DIR_PATH)
     print(controller.register_plugins(DEFAULT_ANALYSIS_PLUGIN_CONFIG))
     controller.transcribe()
+
+
+# def test():
+#     controller = GailBotController(WS_DIR_PATH)
+#     for i in range(20):
+#         loaded = controller.add_source(
+#             "mp3_{}".format(i), MP3_FILE_PATH_SHORT, RESULT_DIR_PATH)
+#     print(controller.register_plugins(DEFAULT_ANALYSIS_PLUGIN_CONFIG))
+#     controller.transcribe()

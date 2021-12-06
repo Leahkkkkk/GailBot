@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-10-19 15:34:24
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-11-30 20:19:49
+# @Last Modified time: 2021-12-05 17:04:18
 # Standard library imports
 import os
 from typing import Dict, List, Any, Tuple
@@ -231,7 +231,7 @@ class AudioIO:
         # Verify all identifiers
         if not all([identifier in self.streams.keys()
                     for identifier in identifiers]):
-            return paths
+            return False, paths
         # Write all the output files
         for name in identifiers:
             success, output_path = self._export_audio(
@@ -471,27 +471,30 @@ class AudioIO:
                 return (False, {})
         # Mappings to store the new stream names and their relationships with
         # original stream.
-        name_mappings = dict()
-        new_streams = dict()
-        for name, chunk_duration_seconds in chunks.items():
-            audio_segment = self.streams[name].audio_segment
-            # Chunk based on the duration given.
-            if audio_segment.duration_seconds <= chunk_duration_seconds:
-                name_mappings[name] = [name]
-                new_streams[name] = deepcopy(self.streams[name])
-            else:
-                chunk_names = list()
-                duration_ms = chunk_duration_seconds * 1000
-                for i, chunk_segment in enumerate(audio_segment[::duration_ms]):
-                    chunk_name = "{}_chunk_{}".format(name, i)
-                    new_streams[chunk_name] = AudioStream(
-                        "", self.default_input_audio_format, chunk_segment, None,
-                        None)
-                    chunk_names.append(chunk_name)
-                name_mappings[name] = chunk_names
-        self.streams.clear()
-        self.streams = new_streams
-        return (True, name_mappings)
+        try:
+            name_mappings = dict()
+            new_streams = dict()
+            for name, chunk_duration_seconds in chunks.items():
+                audio_segment = self.streams[name].audio_segment
+                # Chunk based on the duration given.
+                if audio_segment.duration_seconds <= chunk_duration_seconds:
+                    name_mappings[name] = [name]
+                    new_streams[name] = deepcopy(self.streams[name])
+                else:
+                    chunk_names = list()
+                    duration_ms = chunk_duration_seconds * 1000
+                    for i, chunk_segment in enumerate(audio_segment[::duration_ms]):
+                        chunk_name = "{}_chunk_{}".format(name, i)
+                        new_streams[chunk_name] = AudioStream(
+                            "", self.default_input_audio_format, chunk_segment, None,
+                            "wav")
+                        chunk_names.append(chunk_name)
+                    name_mappings[name] = chunk_names
+            self.streams.clear()
+            self.streams = new_streams
+            return (True, name_mappings)
+        except Exception as e:
+            print(e)
 
     # -------------------------- PRIVATE METHODS
 
@@ -513,12 +516,13 @@ class AudioIO:
         try:
             if not self._is_directory(output_dir_path) or \
                     not output_format in self.OUTPUT_AUDIO_FORMATS:
-                return False
+                return False, None
+
             output_file_path = "{}/{}.{}".format(
                 output_dir_path, name, output_format)
             audio_segment.export(output_file_path, format=output_format)
             return True, output_file_path
-        except:
+        except Exception as e:
             return False, None
 
     def _initialize_audio_stream_from_file(
