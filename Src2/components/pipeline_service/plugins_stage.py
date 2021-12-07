@@ -2,15 +2,16 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:48:19
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-05 22:00:43
+# @Last Modified time: 2021-12-07 11:57:28
 from typing import Dict, Any, List
 from abc import abstractmethod
 from copy import deepcopy
+
 # Local imports
 from .payload import Payload
 from ..plugin_manager import Plugin, PluginConfig, PluginManager, ApplyConfig, \
     PluginManagerSummary
-from ..shared_models import Utt
+from ..shared_models import Utt, GailBotSettings
 
 
 class PluginMethodSuite:
@@ -87,28 +88,14 @@ class PluginsStage:
         ######################## PRIVATE METHODS ################################
 
     def _can_apply_plugins(self, payload: Payload) -> bool:
-        plugins_to_apply = [
-            # "laughter",
-            "turn_construct",
-            "overlaps",
-            "pauses",
-            "combine_turns",
-            "fto",
-            "gaps",
-            "chat"]
+        settings: GailBotSettings = payload.source.settings_profile.settings
+        plugins_to_apply = settings.plugins.plugins_to_apply
         return all([self.plugin_manager.is_plugin(plugin_name)
                     for plugin_name in plugins_to_apply])
 
     def _generate_plugin_configs(self, payload):
-        plugin_names = [
-            # "laughter",
-            "turn_construct",
-            "overlaps",
-            "pauses",
-            "combine_turns",
-            "fto",
-            "gaps",
-            "chat"]
+        settings: GailBotSettings = payload.source.settings_profile.settings
+        plugin_names = settings.plugins.plugins_to_apply
         apply_configs = dict()
         for plugin_name in plugin_names:
             plugin_input = PluginMethodSuite(payload)

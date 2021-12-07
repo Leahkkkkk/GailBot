@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-11-30 17:58:28
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-03 19:00:56
+# @Last Modified time: 2021-12-07 08:58:34
 # Standard library imports
 from typing import Any, Callable, Tuple, List, Dict
 import os
@@ -55,7 +55,10 @@ class GeneralIO:
         """
         Determine if the given path is a file.
         """
-        return os.path.isfile(file_path)
+        try:
+            return os.path.isfile(file_path)
+        except:
+            return False
 
     def number_of_files_in_directory(
             self, dir_path: str,

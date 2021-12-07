@@ -2,11 +2,12 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:31:00
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-05 14:17:02
+# @Last Modified time: 2021-12-07 09:06:38
 from dataclasses import dataclass
 from typing import Dict, Any, List
 from ..io import IO
 from .utt import Utt
+from .settings import SettingsProfile
 
 
 class SourceHook:
@@ -94,3 +95,4 @@ class Source:
     identifier: str
     conversation: Conversation
     hook: SourceHook
+    settings_profile: SettingsProfile = None

@@ -2,9 +2,11 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:48:19
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-05 14:53:26
+# @Last Modified time: 2021-12-07 12:26:47
 from typing import Dict, Any, List
 from abc import abstractmethod
+import time
+from datetime import datetime
 import os
 # Local imports
 from ..io import IO
@@ -22,11 +24,17 @@ class OutputStage:
 
     def output(self, payload: Payload) -> None:
         try:
+            start_time = time.time()
             # Create the different output directories.
             self._create_plugin_results_dir(payload)
             self._create_media_dir(payload)
             self._create_gb_results_dir(payload)
             # Write the metadata
+            # Set the times
+            payload.source_addons.stats.process_end_time = \
+                datetime.now().strftime("%H:%M:%S")
+            payload.source_addons.stats.output_time_sec = \
+                time.time() - start_time
             self._write_metadata(payload)
             # Save the hook to the result directory.
             payload.source.hook.save()
@@ -110,7 +118,17 @@ class OutputStage:
             }
         data = {
             "source_identifier": payload.source.identifier,
-            "result_directory_path": result_dir_path,
+            "source_info": {
+                "settings_profile_name": payload.source.settings_profile.name,
+                "result_directory_path": result_dir_path,
+                "stats": {
+                    "process_date": payload.source_addons.stats.process_date,
+                    "process_start_time": payload.source_addons.stats.process_start_time,
+                    "process_end_time": payload.source_addons.stats.process_end_time,
+                    "transcription_time_sec": payload.source_addons.stats.transcription_time_sec,
+                    "plugin_application_time_sec": payload.source_addons.stats.plugin_application_time_sec,
+                    "output_time_sec": payload.source_addons.stats.output_time_sec
+                }},
             "data_files": data_files_info
         }
         self.io.write(save_path, data, True)

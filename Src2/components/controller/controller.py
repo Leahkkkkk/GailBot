@@ -2,13 +2,14 @@
 # @Author: Muhammad Umair
 # @Date:   2021-11-05 21:07:36
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-05 21:15:01
+# @Last Modified time: 2021-12-07 11:54:02
 # Standard imports
 from typing import List, Any, Dict
 
 # Local imports
 from ..organizer_service import OrganizerService
 from ..pipeline_service import PipelineService
+from ..shared_models import Settings, GailBotSettings
 
 
 class GailBotController:
@@ -87,7 +88,10 @@ class GailBotController:
         return self.organizer_service.create_new_settings_profile(
             new_settings_profile_name, data)
 
-    def save_settings_profile(self, settings_profile_name: str) -> bool:
+    def load_settings_profile(self, path: str) -> bool:
+        return self.organizer_service.load_settings_profile(path)
+
+    def save_settings_profile(self, settings_profile_name: str) -> str:
         """
         Save the specified settings profile.
         Note that the specified profile must exist.
@@ -276,18 +280,8 @@ class GailBotController:
         return self.organizer_service.is_settings_profile_saved(
             settings_profile_name)
 
-    def get_settings_profile_details(self, settings_profile_name: str):
-        """
-        Get the details for the specified settings profile.
-        The profile must exist.
-
-        Args:
-            settings_profile_name (str)
-
-        Returns:
-            (SettingsDetails)
-        """
-        pass
+    def get_settings_profile_names(self) -> List[str]:
+        return self.organizer_service.get_settings_profile_names()
 
     def get_source_settings_profile_name(self, source_name: str) -> str:
         """
@@ -300,7 +294,8 @@ class GailBotController:
         Returns:
             (str): Settings profile name, if any.
         """
-        pass
+        return self.organizer_service.get_source_settings_profile_name(
+            source_name)
 
     def get_source_names_using_settings_profile(
             self,  settings_profile_name: str) -> List[str]:
@@ -314,7 +309,8 @@ class GailBotController:
         Returns:
             (List[str]): Names of all sources using settings profile.
         """
-        pass
+        return self.organizer_service.get_source_names_using_settings_profile(
+            settings_profile_name)
 
     def get_plugin_names(self) -> List[str]:
         """
@@ -325,39 +321,12 @@ class GailBotController:
         """
         pass
 
+    def get_settings_profile(self, settings_profile_name) -> GailBotSettings:
+        return self.organizer_service.get_settings_profile(
+            settings_profile_name)
+
+    def get_source_settings_profile(self, source_name) -> GailBotSettings:
+        return self.organizer_service.get_source_settings_profile(
+            source_name)
+
     ############################## SETTERS ###################################
-
-    def set_settings_profile_attribute(self, settings_profile_name: str,
-                                       attr, value: Any) -> bool:
-        """
-        Set a value for the specified attribtue for the specified
-        settings profile.
-        Note that the profile must exist.
-
-        Args:
-            settings_profile_name (str)
-            attr (GbSettingAttrs)
-            value (Any)
-
-        Returns:
-            (bool): True if the attribute is set successfully, False otherwise.
-        """
-        pass
-
-    def set_source_settings_profile_attribute(
-            self, source_name: str,  attr, value: Any) -> bool:
-        """
-        Set a value for the specified attribute for the specified source.
-        Note that this sets the attribute for the source only, and not for the
-        entire settings profile associated with the source.
-        Note that the source must exist.
-
-        Args:
-            source_name (str)
-            attr (GBSettingAttrs)
-            value (Any)
-
-        Returns:
-            (bool): True if set successfully, False otherwise.
-        """
-        pass

@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-11-05 21:08:35
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-05 18:20:03
+# @Last Modified time: 2021-12-07 11:56:04
 # Standard imports
 from typing import Dict, Tuple, List
 
@@ -12,7 +12,7 @@ from ..utils.threads import ThreadPool
 from ..engines import Engines, WatsonEngine
 from ..io import IO
 from .payload import Payload
-from ..shared_models import DataFile, Utt
+from ..shared_models import DataFile, Utt, GailBotSettings
 
 
 class TranscriptionStage:
@@ -57,13 +57,13 @@ class TranscriptionStage:
         try:
             print("transcribing", data_file.identifier)
             engine: WatsonEngine = self.engines.engine("watson")
-            print(data_file.audio_path)
+            settings: GailBotSettings = payload.source.settings_profile.settings
             engine.configure(
-                "MSgOPTS9CvbADe49nEg4wm8_gxeRuf4FGUmlHS9QqAw3",
-                "dallas",
+                settings.engines.watson_engine.watson_api_key,
+                settings.engines.watson_engine.watson_region,
                 data_file.audio_path,
-                "en-US_BroadbandModel",
-                payload.source.hook.get_temp_directory_path(),
+                settings.engines.watson_engine.watson_base_language_model,
+                payload.source.hook.get_temp_directory_path()
             )
             utterances = engine.transcribe()
             print("utterances", len(utterances))

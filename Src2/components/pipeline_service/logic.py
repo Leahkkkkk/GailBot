@@ -2,9 +2,11 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:27:23
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-05 15:27:00
+# @Last Modified time: 2021-12-07 12:25:48
 # # Standard imports
 from typing import List, Tuple, Dict, Any
+from datetime import datetime
+import time
 # Local imports
 
 from ..pipeline import Pipeline, Logic, Stream
@@ -61,8 +63,13 @@ class GBPipelineLogic(Logic):
         return payloads
 
     def _transcription_stage_thread(self, stage: Any,
-                                    payload: Any) -> None:
+                                    payload: Payload) -> None:
+        payload.source_addons.stats.process_start_time = \
+            datetime.now().strftime("%H:%M:%S")
+        start_time = time.time()
         stage.generate_utterances(payload)
+        payload.source_addons.stats.transcription_time_sec = \
+            time.time() - start_time
 
     def _plugin_stage_processor(
             self, plugins_stage: Any,
@@ -82,8 +89,10 @@ class GBPipelineLogic(Logic):
 
     def _plugins_stage_thread(self, stage: Any,
                               payload: Payload) -> None:
-
+        start_time = time.time()
         stage.apply_plugins(payload)
+        payload.source_addons.stats.plugin_application_time_sec = \
+            time.time() - start_time
 
     def _output_stage_processor(self,
                                 output_stage: Any,

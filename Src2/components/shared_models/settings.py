@@ -2,22 +2,32 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:31:04
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-02 14:08:05
-
+# @Last Modified time: 2021-12-07 11:50:16
+from abc import ABC, abstractmethod
+import json
 from dataclasses import dataclass
 from typing import Dict, Any
 from ..io import IO
 
 
-@dataclass
-class Settings:
+class Settings(ABC):
     pass
+
+    @abstractmethod
+    def to_dict(self) -> Dict:
+        pass
+
+    @abstractmethod
+    def load_from_dict(self, data: Dict) -> bool:
+        pass
 
 
 class SettingsHook:
 
+    SAVE_EXTENSION = "json"
+
     def __init__(self, settings_profile_name: str,
-                 parent_dir_path: str) -> None:
+                 save_dir_path: str, settings: Settings) -> None:
         """
         Args:
             settings_profile_name(str)
@@ -25,69 +35,67 @@ class SettingsHook:
         """
         self.io = IO()
         self.settings_profile_name = settings_profile_name
-        self.parent_dir_path = parent_dir_path
+        self.save_dir_path = save_dir_path
+        self.save_path = "{}/{}.{}".format(
+            save_dir_path, settings_profile_name,
+            self.SAVE_EXTENSION)
+        self.settings = settings
 
     ################################## MODIFIERS #############################
 
-    def save(self, settings: Settings) -> bool:
+    def get_save_path(self) -> str:
         """
-        Save the given settings object to the hook.
-        Must have a settings.save_to_file method.
+        Obtain the save location for this profile.
+        """
+        return self.save_path
 
-        Args:
-            settings(Settings)
+    def set_settings_profile_name(self, name: str) -> None:
+        self.settings_profile_name = name
+        self.save_path = "{}/{}.{}".format(
+            self.save_dir_path, self.settings_profile_name, self.SAVE_EXTENSION)
 
-        Returns:
-            (bool): True if successfully saved. False otherwise.
+    def save(self, profile_name: str = None) -> bool:
+        """
+        Save the settings on disk.
         """
         try:
-            return settings.save_to_file(
-                "{}/{}".format(self.parent_dir_path, self.settings_profile_name))
-        except:
+            if profile_name != None:
+                self.save_path = "{}/{}.{}".format(
+                    self.save_dir_path, profile_name, self.SAVE_EXTENSION)
+            return self.io.write(self.save_path, self.settings.to_dict(), True)
+        except Exception as e:
+            print(e)
             return False
 
-    def load(self) -> Dict[str, Any]:
+    def load(self, path: str) -> bool:
         """
-        Load a settings profile data from the hook.
-
-        Returns:
-            (Dict[str, Any])
+        Load a settings profile data form disk.
         """
-        # Load the data from the hook path
-        paths = self.io.path_of_files_in_directory(
-            self.parent_dir_path, ["*"], False)[1]
-        for path in paths:
-            if self.io.get_name(path) == self.settings_profile_name:
-                success, data = self.io.read(path)
-                return data if success else {}
-        return {}
+        if not self.io.is_file(path):
+            return False
+        # Read and parse
+        success, data = self.io.read(path)
+        if not success:
+            return False
+        return self.settings.load_from_dict(data)
 
     def cleanup(self) -> None:
         """
         Cleanup the hook, removing all files inside the hook.
         """
-        paths = self.io.path_of_files_in_directory(
-            self.parent_dir_path, ["*"], False)[1]
-        for path in paths:
-            if self.io.get_name(path) == self.settings_profile_name:
-                self.io.delete(path)
+        # Delete the saved file
+        self.io.delete(self.save_path)
+
     ################################## GETTERS ###############################
 
     def is_saved(self) -> bool:
         """
-        Determine if the settings is saved to the hook.
-
-        Returns:
-            (bool): True if the settings is saved, False otherwise.
+        Determine if the settings is saved on disk.
         """
-        paths = self.io.path_of_files_in_directory(
-            self.parent_dir_path, ["*"], False)[1]
-        for path in paths:
-            if self.io.get_name(path) == self.settings_profile_name:
-                return True
+        return self.io.is_file(self.save_path)
 
 
-@dataclass
+@ dataclass
 class SettingsProfile:
     name: str
     settings: Settings
