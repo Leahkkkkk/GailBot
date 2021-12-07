@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 # @Author: Muhammad Umair
-# @Date:   2021-10-19 15:34:24
+# @Date:   2021-11-30 17:58:28
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-11-30 19:21:53
+# @Last Modified time: 2021-12-07 08:58:34
 # Standard library imports
-from typing import Any, Tuple, List, Dict
+from typing import Any, Callable, Tuple, List, Dict
 import os
 import glob
 import json
@@ -48,30 +48,22 @@ class GeneralIO:
     def is_directory(self, dir_path: str) -> bool:
         """
         Determine if the given path is a directory.
-
-        Args:
-            dir_path (str): Path to directory.
-
-        Returns:
-            (bool): True if path is a directory. False otherwise.
         """
         return os.path.isdir(dir_path)
 
     def is_file(self, file_path: str) -> bool:
         """
         Determine if the given path is a file.
-
-        Args:
-            file_path (str): Path to file.
-
-        Returns:
-            (bool): True if path is a file. False otherwise.
         """
-        return os.path.isfile(file_path)
+        try:
+            return os.path.isfile(file_path)
+        except:
+            return False
 
-    def number_of_files_in_directory(self, dir_path: str,
-                                     extensions: List[str] = ["*"],
-                                     check_subdirectories: bool = False) -> Tuple[bool, int]:
+    def number_of_files_in_directory(
+            self, dir_path: str,
+            extensions: List[str] = ["*"],
+            check_subdirectories: bool = False) -> Tuple[bool, int]:
         """
         Determine the number of files in the directory.
 
@@ -95,9 +87,10 @@ class GeneralIO:
         else:
             return (False, None)
 
-    def path_of_files_in_directory(self, dir_path: str,
-                                   extensions: List[str] = ["*"],
-                                   check_subdirectories: bool = False) -> Tuple[bool, List[str]]:
+    def path_of_files_in_directory(
+            self, dir_path: str,
+            extensions: List[str] = ["*"],
+            check_subdirectories: bool = False) -> Tuple[bool, List[str]]:
         """
         Determine the paths, relative to dir_path, of files in the directory.
 
@@ -308,12 +301,6 @@ class GeneralIO:
     def create_directory(self, dir_path: str) -> bool:
         """
         Create a new directory with the given path.
-
-        Args:
-            dir_path (str): Path of the new directory.
-
-        Returns:
-            (bool): True if successful. False otherwise.
         """
         try:
             os.makedirs(dir_path)
@@ -321,7 +308,8 @@ class GeneralIO:
         except:
             return False
 
-    def move_file(self, src_file_path: str, dst_dir_path: str) -> bool:
+    def move_file(self, src_file_path: str, dst_dir_path: str) \
+            -> Tuple[bool, str]:
         """
         Move a source file to the destination directory.
 
@@ -329,19 +317,24 @@ class GeneralIO:
             src_file_path (str): Source file or directory path
             dst_dir_path (str): Path to destination directory. Must be an
                                 existing directory.
-
-        Returns:
-            (bool): True if successful. False otherwise.
         """
         if not self.is_directory(dst_dir_path):
-            return False
+            return False, None
         try:
+            # Generate the moved path.
+            if self.is_file(src_file_path):
+                moved_file_path = "{}/{}.{}".format(
+                    dst_dir_path, self.get_name(
+                        src_file_path), self.get_file_extension(src_file_path))
+            else:
+                moved_file_path = "{}/{}".format(
+                    dst_dir_path, self.get_name(src_file_path))
             shutil.move(src_file_path, dst_dir_path)
-            return True
+            return True, moved_file_path
         except:
-            return False
+            return False, None
 
-    def copy(self, src_path: str, dst_path: str) -> bool:
+    def copy(self, src_path: str, dst_path: str) -> Tuple[bool, str]:
         """
         Copy the source file or directory to the destination file or directory.
 
@@ -354,20 +347,24 @@ class GeneralIO:
         """
         if self.is_file(src_path):
             try:
+                moved_path = "{}/{}.{}".format(dst_path, self.get_name(
+                    src_path), self.get_file_extension(src_path))
                 shutil.copy(src_path, dst_path)
             except:
-                return False
+                return False, None
         elif self.is_directory(src_path) \
                 and not self.is_directory(dst_path):
             try:
+                moved_path = "{}/{}".format(dst_path, self.get_name(src_path))
                 shutil.copytree(src_path, dst_path)
+
             except:
                 return False
         else:
             return False
-        return True
+        return True, moved_path
 
-    def rename(self, src_path: str, new_name: str) -> bool:
+    def rename(self, src_path: str, new_name: str) -> Tuple[bool, str]:
         """
         Rename the source file or directory.
 
@@ -381,7 +378,7 @@ class GeneralIO:
             (bool): True if successful. False otherwise.
         """
         if not self.is_file(src_path) and not self.is_directory(src_path):
-            return False
+            return False, None
         try:
             if self.is_file(src_path):
                 ext = self.get_file_extension(src_path)
@@ -391,20 +388,14 @@ class GeneralIO:
                 parent_dir_path = src_path[:src_path.rfind("/")]
                 new_path = "{}/{}".format(parent_dir_path, new_name)
             os.rename(src_path, new_path)
-            return self.is_file(new_path) or self.is_directory(new_path)
+            return self.is_file(new_path) or self.is_directory(new_path), new_path
         except:
-            return False
+            return False, None
 
     def delete(self, path: str) -> bool:
         """
         Delete the given file or directory. For a directory, deletes all
         sub-directories as well.
-
-        Args:
-            path (str): Path of file / directory to delete .
-
-        Returns:
-           (bool): True if successful. False otherwise
         """
         if self.is_file(path):
             try:
@@ -420,6 +411,12 @@ class GeneralIO:
             return False
         return True
 
+    def clear_directory(self, dir_path: str) -> bool:
+        if not self.is_directory(dir_path):
+            return False
+        return self.delete(dir_path) and \
+            self.create_directory(dir_path)
+
     ################################### PRIVATE METHODS ######################
 
     def _read_json(self, file_path: str) -> Tuple[bool, Any]:
@@ -427,9 +424,6 @@ class GeneralIO:
         Read a json file at the given path.
         Raises an exception if the file data cannot be converted to a
         dictionary.
-
-        Args:
-            file_path (str)
 
         Returns:
             (Tuple[bool,Any]): True + Data read from file is successful.
@@ -455,9 +449,6 @@ class GeneralIO:
             data (Dict): Data being written to file.
             overwrite (bool): If True, any existing file with the same name is
                             overwritten.
-
-        Returns:
-            (bool): True if successful. False otherwise
         """
         try:
             # Data must be convertable to a dictionary to be written to json
@@ -476,13 +467,6 @@ class GeneralIO:
     def _read_text(self, file_path: str) -> Tuple[bool, Any]:
         """
         Read a text file at the given path.
-
-        Args:
-            file_path (str)
-
-        Returns:
-            (Tuple[bool,Any]): True + data read from file if successful.
-                                False + None if unsuccessful.
         """
         try:
             return (True, open(file_path, "r").read())
@@ -499,9 +483,6 @@ class GeneralIO:
             data (str): Data being written to file.
             overwrite (bool): If True, any existing file with the same name is
                             overwritten.
-
-        Returns:
-            (bool): True if successful. False otherwise
         """
         try:
             # Anything written to a text file must be a string
@@ -519,12 +500,6 @@ class GeneralIO:
         Raises an exception if the file data cannot be converted to a
         dictionary.
 
-        Args:
-            file_path (str)
-
-        Returns:
-            (Tuple[bool,Any]): True + data read from file if successful.
-                                False + None if unsuccessful.
         """
         try:
             with open(file_path, 'r') as f:
@@ -546,9 +521,6 @@ class GeneralIO:
             data (Dict): Data being written to file.
             overwrite (bool): If True, any existing file with the same name is
                             overwritten.
-
-        Returns:
-            (bool): True if successful. False otherwise
         """
         try:
             data = dict(data)

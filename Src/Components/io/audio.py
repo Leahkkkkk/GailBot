@@ -2,72 +2,25 @@
 # @Author: Muhammad Umair
 # @Date:   2021-10-19 15:34:24
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-11-30 17:57:57
+# @Last Modified time: 2021-12-05 17:04:18
 # Standard library imports
 import os
 from typing import Dict, List, Any, Tuple
-from enum import Enum
+from dataclasses import dataclass
 # Local imports
-from ..utils.models import IDictModel
 # Third party imports
 from pydub import AudioSegment
 from copy import deepcopy
 import sounddevice as sd
 
 
-class AudioStreamAttr(Enum):
-    """
-    Defines the attributes of AudioStream.
-
-    Attributes:
-        input_file_path (str): Complete input file path, including filename
-                                and extension.
-        input_format (str): Extension of the input file.
-        audio_segment (AudioSegment): Read audio from the input_file_path.
-        output_dir_oath (str): Path to the output directory.
-        output_format (str): Output file extension.
-    """
-    input_file_path = "input_path"
-    input_format = "input_format"
-    audio_segment = "audio_segment"
-    output_dir_path = "output_path"
-    output_format = "output_format"
-
-
-class AudioStream(IDictModel):
-    """
-    Represents a single audio stream and is the basic unit of information
-    used by AudioIO.
-    """
-
-    def __init__(self, input_file_path: str, input_format: str,
-                 audio_segment: AudioSegment, output_dir_path: str = None,
-                 output_format: str = None) -> None:
-        """
-        Params:
-            input_file_path (str): Complete input file path, including filename
-                                and extension.
-            input_format (str): Extension of the input file.
-            audio_segment (AudioSegment): Read audio from the input_file_path.
-            output_dir_oath (str): Path to the output directory.
-            output_format (str): Output file extension.
-        """
-        super().__init__()
-        # Output format defaults to the input format if not specified.
-        if output_format == None:
-            output_format = input_format
-        # The output path defaults to the input path directory if not specified
-        if len(input_file_path) > 0 and \
-                output_dir_path == None and \
-                input_file_path.find("/") != -1:
-            output_dir_path = input_file_path[:input_file_path.rfind("/")]
-        # Storing the items
-        self.items = {
-            AudioStreamAttr.input_file_path: input_file_path,
-            AudioStreamAttr.input_format: input_format,
-            AudioStreamAttr.audio_segment: audio_segment,
-            AudioStreamAttr.output_dir_path: output_dir_path,
-            AudioStreamAttr.output_format: output_format}
+@dataclass
+class AudioStream:
+    input_file_path: str
+    input_format: str
+    audio_segment: AudioSegment
+    output_dir_path: str
+    output_format: str
 
 
 class AudioIO:
@@ -81,26 +34,13 @@ class AudioIO:
     OUTPUT_AUDIO_FORMATS = ("wav", "opus")
 
     def __init__(self) -> None:
-        """
-        Params:
-            streams (Dict[str, AudioStream]):
-                Mapping from unique identifier to AudioStream object.
-            default_input_audio_format (str):
-                Defalt format audio files are read in.
-            recording_sample_rate (float): Sampling rate for the recording.
-            recording_channels (int): Number of channels to be recorded.
-            recording_max_duration_seconds (int):
-                Maximum duration of audio file that can be recorded.
-        """
-        self.streams = dict()
+        self.streams: Dict[str, AudioStream] = dict()
         self.default_input_audio_format = "wav"
         # Recording parameters
         self.recording_sample_rate = 44100
         self.recording_channels = 2
         self.recording_max_duration_seconds = 60 * 5
         self.recording_sample_width_bytes = 2
-
-    ################################# SETTERS ###############################
 
     def read_streams(self, file_paths: Dict[str, str]) -> bool:
         """
@@ -112,9 +52,6 @@ class AudioIO:
         Args:
             file_paths (Dict[str,str]):
                 Mapping from unique file name to its path.
-
-        Returns:
-            (bool): True if all files are successfully read. False otherwise.
         """
         # Clears all the previous streams when reading new ones.
         self.streams.clear()
@@ -123,7 +60,7 @@ class AudioIO:
             return False
          # If all files exist, they are read as AudioSegment objects.
         for name, file_path in file_paths.items():
-            success, stream = self._initialize_audio_stream(
+            success, stream = self._initialize_audio_stream_from_file(
                 file_path, self.default_input_audio_format, None, None)
             # Verify that the stream is successfully created.
             if not success:
@@ -141,9 +78,6 @@ class AudioIO:
         Args:
             identifier (str): identifier for the audio recording.
             duration_seconds (float): Recording duration.
-
-        Returns:
-            (bool): True if successfully recorded. False otherwise.
         """
         if not 0 < duration_seconds <= self.recording_max_duration_seconds:
             return False
@@ -160,9 +94,12 @@ class AudioIO:
                 frame_rate=self.recording_sample_rate,
                 channels=self.recording_channels)
             self.streams.clear()
-            self.streams[identifier] = AudioStream(
+            success, stream = AudioSegment(
                 "", self.default_input_audio_format, audio_segment, None, None)
-            return True
+            if success:
+                self.streams[identifier] = stream
+                return True
+            return False
         except:
             return False
 
@@ -175,9 +112,6 @@ class AudioIO:
             output_dir_paths (Dict[str,str]):
                 Mapping from identifier to output directory path.
                 The path must be a valid directory path.
-
-        Returns:
-            (bool): True if path successfully set. False otherwise.
         """
         # Setting the output paths for each AudioStream
         for name, output_dir_path in output_dir_paths.items():
@@ -185,8 +119,7 @@ class AudioIO:
             if not name in self.streams or \
                     not self._is_directory(output_dir_path):
                 return False
-            self.streams[name].set(
-                AudioStreamAttr.output_dir_path, output_dir_path)
+            self.streams[name].output_dir_path = output_dir_path
         return True
 
     def set_output_formats(self, output_formats: Dict[str, str]) -> bool:
@@ -207,8 +140,7 @@ class AudioIO:
             if not name in self.streams or \
                     not output_format in self.OUTPUT_AUDIO_FORMATS:
                 return False
-            self.streams[name].set(
-                AudioStreamAttr.output_format, output_format)
+            self.streams[name].output_format = output_format
         return True
 
     ################################# GETTERS #############################
@@ -216,12 +148,6 @@ class AudioIO:
     def is_readable(self, file_path: str) -> bool:
         """
         Determine if the file at the given path is readable by AudioIO.
-
-        Args:
-            file_path (str)
-
-        Returns:
-            (bool): True if the file is readable. False otherwise.
         """
         return self._is_audio_file(file_path)
 
@@ -235,21 +161,10 @@ class AudioIO:
                 Dictionary containing mappings from the unique  identifier /
                 name of the file to a dictionary containing configuration
                 information.
-                Configuration information includes:
-                    1. decibels_relative_to_full_scale
-                    2. channels
-                    3. sample width
-                    4. frame rate
-                    5. frame width
-                    6. rms
-                    7. highest amplitude
-                    8. duration in seconds
-                    9. number of frames.
         """
         configs = dict()
         for name in self.streams.keys():
-            _, audio_segment = self.streams[name].get(
-                AudioStreamAttr.audio_segment)
+            audio_segment = self.streams[name].audio_segment
             configs[name] = {
                 "decibels_relative_to_full_scale": audio_segment.dBFS,
                 "channels": audio_segment.channels,
@@ -281,32 +196,24 @@ class AudioIO:
         """
         streams = dict()
         for name in self.streams.keys():
-            _, audio_segment = self.streams[name].get(
-                AudioStreamAttr.audio_segment)
-            streams[name] = audio_segment.raw_data
+            streams[name] = self.streams[name].audio_segment.raw_data
         return streams
 
-    def get_supported_input_formats(self) -> Tuple[str]:
+    def get_supported_input_formats(self) -> List[str]:
         """
         Get the input audio file formats that are supported.
-
-        Returns:
-            (Tuple[str]): Supported audio file formats
         """
-        return tuple(self.INPUT_AUDIO_FORMATS)
+        return list(self.INPUT_AUDIO_FORMATS)
 
-    def get_supported_output_formats(self) -> Tuple[str]:
+    def get_supported_output_formats(self) -> List[str]:
         """
         Get the output audio file formats that are supported.
-
-        Returns:
-            (Tuple[str]): Supported audio file formats
         """
-        return tuple(self.OUTPUT_AUDIO_FORMATS)
+        return list(self.OUTPUT_AUDIO_FORMATS)
 
     ############################### PUBLIC METHODS ########################
 
-    def write(self, identifiers: List[str]) -> bool:
+    def write(self, identifiers: List[str]) -> Tuple[bool, Dict]:
         """
         Write the audio stream associated with the given identifiers.
         If the output path and formats were not explicitly set, they default
@@ -318,24 +225,23 @@ class AudioIO:
         Returns:
             (bool): True if all files are successfully written. False otherwise.
         """
+        paths = dict()
         # List to store success values
         is_success_list = list()
         # Verify all identifiers
         if not all([identifier in self.streams.keys()
                     for identifier in identifiers]):
-            return False
+            return False, paths
         # Write all the output files
         for name in identifiers:
-            _, audio_segment = self.streams[name].get(
-                AudioStreamAttr.audio_segment)
-            _, output_dir_path = self.streams[name].get(
-                AudioStreamAttr.output_dir_path)
-            _, output_format = self.streams[name].get(
-                AudioStreamAttr.output_format)
-            is_success_list.append(
-                self._export_audio(audio_segment, output_dir_path, name,
-                                   output_format))
-        return all(is_success_list)
+            success, output_path = self._export_audio(
+                self.streams[name].audio_segment,
+                self.streams[name].output_dir_path,
+                name,
+                self.streams[name].output_format)
+            is_success_list.append(success)
+            paths[name] = output_path
+        return all(is_success_list), paths
 
     def mono_to_stereo(self) -> Tuple[bool, str]:
         """
@@ -356,16 +262,12 @@ class AudioIO:
             return (False, None)
         # Obtain the audio segments
         name_1, name_2 = self.streams.keys()
-        _, audio_segment_1 = self.streams[name_1].get(
-            AudioStreamAttr.audio_segment)
-        _, audio_segment_2 = self.streams[name_2].get(
-            AudioStreamAttr.audio_segment)
+        audio_segment_1 = self.streams[name_1].audio_segment
+        audio_segment_2 = self.streams[name_2].audio_segment
         # Generate new file name and data for new stream.
         stereo_name = "{}_{}_stereo".format(name_1, name_2)
-        _, output_dir_path = self.streams[name_1].get(
-            AudioStreamAttr.output_dir_path)
-        _, output_format = self.streams[name_1].get(
-            AudioStreamAttr.output_format)
+        output_dir_path = self.streams[name_1].output_dir_path
+        output_format = self.streams[name_1].output_format
         # Attempt to combine into stereo.
         try:
             stereo_segment = AudioSegment.from_mono_audiosegments(
@@ -403,12 +305,9 @@ class AudioIO:
         left_channel_name = name + "_left_channel_mono"
         right_channel_name = name + "_right_channel_mono"
         # Gathering data for new potential streams
-        _, audio_segment = self.streams[name].get(
-            AudioStreamAttr.audio_segment)
-        _, output_dir_path = self.streams[name].get(
-            AudioStreamAttr.output_dir_path)
-        _, output_format = self.streams[name].get(
-            AudioStreamAttr.output_format)
+        audio_segment = self.streams[name].audio_segment
+        output_dir_path = self.streams[name].output_dir_path
+        output_format = self.streams[name].output_format
         # Attempting to convert to mono.
         try:
             left_segment, right_segment = audio_segment.split_to_mono()
@@ -440,12 +339,10 @@ class AudioIO:
         # Do not do anything if no files have been read
         if len(self.streams.keys()) == 0:
             return (False, "")
-
         # Concat all existing segments
         combined_segment = AudioSegment.empty()
         for stream in self.streams.values():
-            _, segment = stream.get(AudioStreamAttr.audio_segment)
-            combined_segment += segment
+            combined_segment += stream.audio_segment
         # Generate name
         combined_name = "_".join([name for name in self.streams.keys()])
         combined_name += "_concatenated"
@@ -477,13 +374,12 @@ class AudioIO:
         if len(self.streams.keys()) != 2:
             return (False, "")
         # Determine the longer and shorted segments
-        segment_1, segment_2 = [stream.get(AudioStreamAttr.audio_segment)[1]
+        segment_1, segment_2 = [stream.audio_segment
                                 for stream in self.streams.values()]
         if segment_1.duration_seconds < segment_2.duration_seconds:
             longer_segment, shorter_segment = segment_2, segment_1
         else:
             longer_segment, shorter_segment = segment_1, segment_2
-
         # Combine the segments
         if loop_shorter_stream:
             overlaid_segment = longer_segment.overlay(
@@ -513,9 +409,6 @@ class AudioIO:
                 amount that the volume has to be changed in decibels.
                 Ex: 1 means no change, 2 means twice the volume, -2 means half
                 the original volume etc.
-
-        Returns:
-            (bool): True if successful. False otherwise.
         """
         # Ensure that the name is a stream that has been read.
         for name in change.keys():
@@ -523,11 +416,10 @@ class AudioIO:
                 return False
         # Applying the gain
         for name, db_change in change.items():
-            _, audio_segment = self.streams[name].get(
-                AudioStreamAttr.audio_segment)
+            audio_segment = self.streams[name].audio_segment
             # Apply db change to the audio stream
             new_segment = audio_segment.apply_gain(db_change)
-            self.streams[name].set(AudioStreamAttr.audio_segment, new_segment)
+            self.streams[name].audio_segment = new_segment
         return True
 
     def reverse(self, names: List[str]) -> bool:
@@ -537,9 +429,6 @@ class AudioIO:
         Args:
             names (List[str]): Names of the streams to reverse. Must have
                             been read before using this method.
-
-        Returns:
-            (bool): True if successful. False otherwise.
         """
         # Ensure name is present / has been read.
         for name in names:
@@ -547,12 +436,9 @@ class AudioIO:
                 return False
         # Reverse the appropriate streams
         for name in names:
-            _, audio_segment = self.streams[name].get(
-                AudioStreamAttr.audio_segment)
+            audio_segment = self.streams[name].audio_segment
             reversed_segment = audio_segment.reverse()
-            if not self.streams[name].set(AudioStreamAttr.audio_segment,
-                                          reversed_segment):
-                return False
+            self.streams[name].audio_segment = reversed_segment
         return True
 
     def chunk(self, chunks: Dict[str, int]) \
@@ -585,35 +471,37 @@ class AudioIO:
                 return (False, {})
         # Mappings to store the new stream names and their relationships with
         # original stream.
-        name_mappings = dict()
-        new_streams = dict()
-        for name, chunk_duration_seconds in chunks.items():
-            _, audio_segment = self.streams[name].get(
-                AudioStreamAttr.audio_segment)
-            # Chunk based on the duration given.
-            if audio_segment.duration_seconds <= chunk_duration_seconds:
-                name_mappings[name] = [name]
-                new_streams[name] = deepcopy(self.streams[name])
-            else:
-                chunk_names = list()
-                duration_ms = chunk_duration_seconds * 1000
-                for i, chunk_segment in enumerate(audio_segment[::duration_ms]):
-                    chunk_name = "{}_chunk_{}".format(name, i)
-                    new_streams[chunk_name] = AudioStream(
-                        "", self.default_input_audio_format, chunk_segment, None,
-                        None)
-                    chunk_names.append(chunk_name)
-                name_mappings[name] = chunk_names
-        self.streams.clear()
-        self.streams = new_streams
-        return (True, name_mappings)
+        try:
+            name_mappings = dict()
+            new_streams = dict()
+            for name, chunk_duration_seconds in chunks.items():
+                audio_segment = self.streams[name].audio_segment
+                # Chunk based on the duration given.
+                if audio_segment.duration_seconds <= chunk_duration_seconds:
+                    name_mappings[name] = [name]
+                    new_streams[name] = deepcopy(self.streams[name])
+                else:
+                    chunk_names = list()
+                    duration_ms = chunk_duration_seconds * 1000
+                    for i, chunk_segment in enumerate(audio_segment[::duration_ms]):
+                        chunk_name = "{}_chunk_{}".format(name, i)
+                        new_streams[chunk_name] = AudioStream(
+                            "", self.default_input_audio_format, chunk_segment, None,
+                            "wav")
+                        chunk_names.append(chunk_name)
+                    name_mappings[name] = chunk_names
+            self.streams.clear()
+            self.streams = new_streams
+            return (True, name_mappings)
+        except Exception as e:
+            print(e)
 
-    ############################# PRIVATE METHODS ##########################
+    # -------------------------- PRIVATE METHODS
 
-    # Audio functions
-
-    def _export_audio(self, audio_segment: AudioSegment,
-                      output_dir_path: str, name: str, output_format: str) -> bool:
+    def _export_audio(
+            self, audio_segment: AudioSegment,
+        output_dir_path: str, name: str, output_format: str) \
+            -> Tuple[bool, str]:
         """
         Export the audio stream.
 
@@ -624,69 +512,53 @@ class AudioIO:
             name (str): File name. Does not include extension.
             output_format (str): Format of the output file.
                             Must be a supported output format.
-
-        Returns:
-            (bool): True if successful. False otherwise.
         """
         try:
             if not self._is_directory(output_dir_path) or \
                     not output_format in self.OUTPUT_AUDIO_FORMATS:
-                return False
+                return False, None
+
             output_file_path = "{}/{}.{}".format(
                 output_dir_path, name, output_format)
             audio_segment.export(output_file_path, format=output_format)
-            return True
-        except:
-            return False
+            return True, output_file_path
+        except Exception as e:
+            return False, None
 
-    def _initialize_audio_stream(self, input_file_path, input_format,
-                                 output_dir_path, output_format) -> Tuple[bool, AudioStream]:
+    def _initialize_audio_stream_from_file(
+            self, input_file_path, input_format,
+            output_dir_path, output_format) -> AudioStream:
         """
         Initializes and returns an AudioStream object by reading from input path.
-
-        Args:
-            input_file_path (str): Path to the input audio file.
-            input_format (str): Format to read the file in.
-            output_dir_path (str): Path to the output directory for the file.
-            output_format (str): Format the file is to be output in.
-
-        Returns:
-            (Tuple[bool,AudioStream]):
-                True + stream object for file if successful.
-                False + None otherwise.
         """
         try:
             audio_segment = AudioSegment.from_file(input_file_path,
                                                    format=input_format)
-            return (True, AudioStream(
+            # Output format defaults to the input format if not specified.
+            if output_format == None:
+                output_format = input_format
+            # The output path defaults to the input path directory if not specified
+            if len(input_file_path) > 0 and \
+                    output_dir_path == None and \
+                    input_file_path.find("/") != -1:
+                output_dir_path = input_file_path[:input_file_path.rfind("/")]
+            stream = AudioStream(
                 input_file_path, input_format, audio_segment, output_dir_path,
-                output_format))
+                output_format)
+            return (True, stream)
+
         except:
             return (False, None)
-
-    # Others
 
     def _does_file_exist(self, file_path: str) -> bool:
         """
         Determines if the file exists.
-
-        Args:
-            file_path (str)
-
-        Returns:
-            (bool): True if file exists. False otherwise.
         """
         return os.path.exists(file_path) and os.path.isfile(file_path)
 
     def _is_audio_file(self, file_path: str) -> bool:
         """
         Determine if the file exists and is of a supported audio file format.
-
-        Args:
-            file_path (str)
-
-        Returns:
-            (bool): True if file exists and is audio file. False otherwise.
         """
         return self._does_file_exist(file_path) and \
             self._get_file_extension(file_path).lower() in \
@@ -695,12 +567,6 @@ class AudioIO:
     def _is_directory(self, dir_path: str) -> bool:
         """
         Determine if path is a directory.
-
-        Args:
-            dir_path (str): Path to the input directory.
-
-        Returns:
-            (bool): True if path is a directory. False otherwise.
         """
         return os.path.isdir(dir_path)
 
@@ -708,11 +574,5 @@ class AudioIO:
         """
         Obtain file extension /format, which is the substring after the right-
         most "." character.
-
-        Args:
-            file_path (str)
-
-        Returns:
-            (str): File extension / format.
         """
         return os.path.splitext(file_path.strip())[1][1:]

@@ -1,12 +1,17 @@
+# -*- coding: utf-8 -*-
+# @Author: Muhammad Umair
+# @Date:   2021-11-30 17:58:39
+# @Last Modified by:   Muhammad Umair
+# @Last Modified time: 2021-12-05 22:03:55
 # Standard library imports
 from typing import List, Any, Dict
 # Local imports
-from ...network import Network
 from ...io import IO
 # Third party imports
 from ibm_watson import SpeechToTextV1
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from ibm_watson.websocket import RecognizeCallback, AudioSource
+
 
 class WatsonCore:
     """
@@ -16,82 +21,82 @@ class WatsonCore:
     """
     # Mappings from region to the region url.
     regions = {
-        "dallas" : "https://api.us-south.speech-to-text.watson.cloud.ibm.com",
-        "washington" : "https://api.us-east.speech-to-text.watson.cloud.ibm.com",
-        "frankfurt" : "https://api.eu-de.speech-to-text.watson.cloud.ibm.com",
-        "sydney" : "https://api.au-syd.speech-to-text.watson.cloud.ibm.com",
-        "tokyo" : "https://api.jp-tok.speech-to-text.watson.cloud.ibm.com",
-        "london" : "https://api.eu-gb.speech-to-text.watson.cloud.ibm.com",
-        "seoul" : "https://api.kr-seo.speech-to-text.watson.cloud.ibm.com"}
+        "dallas": "https://api.us-south.speech-to-text.watson.cloud.ibm.com",
+        "washington": "https://api.us-east.speech-to-text.watson.cloud.ibm.com",
+        "frankfurt": "https://api.eu-de.speech-to-text.watson.cloud.ibm.com",
+        "sydney": "https://api.au-syd.speech-to-text.watson.cloud.ibm.com",
+        "tokyo": "https://api.jp-tok.speech-to-text.watson.cloud.ibm.com",
+        "london": "https://api.eu-gb.speech-to-text.watson.cloud.ibm.com",
+        "seoul": "https://api.kr-seo.speech-to-text.watson.cloud.ibm.com"}
 
     # Mappings from audio format to the watson content types for that format.
     format_to_content_types = {
-        #"alaw" : "audio/alaw",
-        #"basic" : "audio/basic",
-        "flac" : "audio/flac",
-        "ogg" : "audio/ogg",
-        #"l16" : "audio/l16",
-        "mp3" : "audio/mp3",
-        "mpeg" : "audio/mpeg",
-        #"mulaw" : "audio/mulaw",
-        "wav" : "audio/wav",
-        "webm" : "audio/webm",
-        "ogg" : "audio/ogg;codecs=opus",
+        # "alaw" : "audio/alaw",
+        # "basic" : "audio/basic",
+        "flac": "audio/flac",
+        "ogg": "audio/ogg",
+        # "l16" : "audio/l16",
+        "mp3": "audio/mp3",
+        "mpeg": "audio/mpeg",
+        # "mulaw" : "audio/mulaw",
+        "wav": "audio/wav",
+        "webm": "audio/webm",
+        "ogg": "audio/ogg;codecs=opus",
         "opus": "audio/ogg;codecs=opus"}
 
-    def __init__(self, io : IO) -> None:
+    def __init__(self, io: IO) -> None:
         """
         Args:
             network (Network): Instantiated network object.
             io (IO): Instantiated IO object.
         """
-        ## Vars.
+        # Vars.
         self.max_file_size_bytes = 7e7
         # Default parameters for watson
         self.watson_defaults = {
-            "ssl_verification" : True,
-            "headers" : {
-                "x-watson-learning-opt-out" : True },
-            "customization_weight" : 0.3,
-            "base_model_version" : None,
-            "inactivity_timeout" : 600,
-            "interim_results" : False,
-            "keywords" : None,
-            "keyword_threshold" : 0.8,
-            "max_alternatives" : 1,
-            "word_alternatives_threshold" : None,
-            "word_confidence" : True,
-            "timestamps" : False,
-            "profanity_filter" : False,
-            "smart_formatting" : False,
-            "speaker_labels" : True,
-            "http_proxy_host" : None,
-            "http_proxy_port" : None,
-            "grammar_name" : None,
-            "redaction" : False,
-            "processing_metrics" : False,
-            "processing_metrics_interval" : 1.0,
-            "audio_metrics" : False,
-            "end_of_phrase_silence_time" : 0.8,
-            "split_transcript_at_phrase_end" : False,
-            "speech_detector_sensitivity" : 0.5,
-            "background_audio_supression" : 0.0}
+            "ssl_verification": True,
+            "headers": {
+                "x-watson-learning-opt-out": True},
+            "customization_weight": 0.3,
+            "base_model_version": None,
+            "inactivity_timeout": 600,
+            "interim_results": False,
+            "keywords": None,
+            "keyword_threshold": 0.8,
+            "max_alternatives": 1,
+            "word_alternatives_threshold": None,
+            "word_confidence": True,
+            "timestamps": False,
+            "profanity_filter": False,
+            "smart_formatting": False,
+            "speaker_labels": True,
+            "http_proxy_host": None,
+            "http_proxy_port": None,
+            "grammar_name": None,
+            "redaction": False,
+            "processing_metrics": False,
+            "processing_metrics_interval": 1.0,
+            "audio_metrics": False,
+            "end_of_phrase_silence_time": 0.8,
+            "split_transcript_at_phrase_end": False,
+            "speech_detector_sensitivity": 0.5,
+            "background_audio_supression": 0.0}
         # User inputs.
         self.inputs = {
-            "api_key" : None,
-            "region" : None,
-            "audio_path" : None,
-            "recognize_callback" : None,
-            "base_model_name" : None,
-            "language_customization_id" : None,
-            "acoustic_customization_id" : None,
-            "workspace_directory_path" : None}
+            "api_key": None,
+            "region": None,
+            "audio_path": None,
+            "recognize_callback": None,
+            "base_model_name": None,
+            "language_customization_id": None,
+            "acoustic_customization_id": None,
+            "workspace_directory_path": None}
         # Objects
         self.io = io
 
-    ### SETTERS
+    # SETTERS
 
-    def set_api_key(self, api_key : str) -> bool:
+    def set_api_key(self, api_key: str) -> bool:
         """
         Set the api key for the STT service.
 
@@ -107,7 +112,7 @@ class WatsonCore:
         self.inputs["api_key"] = api_key
         return True
 
-    def set_service_region(self, region : str) -> bool:
+    def set_service_region(self, region: str) -> bool:
         """
         Set the region associated with the api key for the STT service.
 
@@ -121,8 +126,8 @@ class WatsonCore:
         self.inputs["region"] = region
         return True
 
-    def set_recognize_callback(self, recognize_callback : RecognizeCallback)\
-             -> bool:
+    def set_recognize_callback(self, recognize_callback: RecognizeCallback)\
+            -> bool:
         """
         Initialized object that handles callbacks during the websocket lifecycle.
         Inherits from and implements ibm_watson.websocket.RecognizeCallback.
@@ -136,7 +141,7 @@ class WatsonCore:
         self.inputs["recognize_callback"] = recognize_callback
         return True
 
-    def set_audio_source_path(self, audio_source_path : str) -> bool:
+    def set_audio_source_path(self, audio_source_path: str) -> bool:
         """
         Set the path to the audio file that is to be transcribed. This
         audio file format MUST be supported and the path MUST be a valid path.
@@ -153,7 +158,7 @@ class WatsonCore:
         self.inputs["audio_path"] = audio_source_path
         return True
 
-    def set_base_language_model(self, base_model_name : str) -> bool:
+    def set_base_language_model(self, base_model_name: str) -> bool:
         """
         Set the base language model to use for transcription.
         MUST be a supported model name.
@@ -167,7 +172,7 @@ class WatsonCore:
         self.inputs["base_model_name"] = base_model_name
         return True
 
-    def set_language_customization_id(self, customization_id : str) -> bool:
+    def set_language_customization_id(self, customization_id: str) -> bool:
         """
         Set the language customization id for a custom language model.
         The base model should be the same as the base model used for the
@@ -183,7 +188,7 @@ class WatsonCore:
         self.inputs["language_customization_id"] = customization_id
         return True
 
-    def set_acoustic_customization_id(self, customization_id : str) -> bool:
+    def set_acoustic_customization_id(self, customization_id: str) -> bool:
         """
         Set the acoustic customization id for a custom acoustic model.
         The ID should be validated beforehand.
@@ -197,15 +202,15 @@ class WatsonCore:
         self.inputs["acoustic_customization_id"] = customization_id
         return True
 
-    def set_workspace_directory_path(self, workspace_dir_path : str) -> bool:
+    def set_workspace_directory_path(self, workspace_dir_path: str) -> bool:
         if not self.io.is_directory(workspace_dir_path):
             return False
-        engine_workspace_dir = "{}/watson_engine_ws".format(
+        self.engine_workspace_dir = "{}/watson_engine_ws".format(
             workspace_dir_path)
-        self.inputs["workspace_directory_path"] = engine_workspace_dir
+        self.inputs["workspace_directory_path"] = self.engine_workspace_dir
         return True
 
-    ### GETTERS
+    # GETTERS
 
     def get_api_key(self) -> str:
         """
@@ -261,7 +266,6 @@ class WatsonCore:
         """
         return self.inputs["acoustic_customization_id"]
 
-
     def get_supported_regions(self) -> List[str]:
         """
         Obtain a list of the transcription regions available in the service.
@@ -283,7 +287,7 @@ class WatsonCore:
     def get_workspace_directory_path(self) -> str:
         return self.inputs["workspace_directory_path"]
 
-    ### Others
+    # Others
 
     def reset_configurations(self) -> bool:
         """
@@ -307,40 +311,51 @@ class WatsonCore:
         """
         if not self._is_ready_to_connect():
             return False
+        # Create ws dir
+        self.io.create_directory(self.engine_workspace_dir)
         # Creating STT object.
         stt = self._initialize_stt_service(self.inputs["api_key"])
         stt.set_service_url(self.regions[self.inputs["region"]])
         audio_path = self.inputs["audio_path"]
         workspace_dir_path = self.inputs["workspace_directory_path"]
         # If the audio file is larger than the max supported size, it needs to
-        # be chunked.
+        # convert to opus
         try:
-            # TODO: Test the chunk logic a bit more.
-            _, size_bytes = self.io.get_size(audio_path)
+            # TODO: Eventually add chunking logic instead of opus
+            # TODO: Does not work yet
+            size_bytes = self.io.get_size(audio_path)
             if size_bytes >= self.max_file_size_bytes:
-                # TODO: Add an IO method to chunk by size as well as duration.
-                if not self.io.chunk(audio_path,workspace_dir_path,120):
-                    return False
-                # Read all the chunks and transcribe one by one.
-                chunk_paths = self.io.path_of_files_in_directory(
-                    workspace_dir_path,["*"],False)
-                for chunk_path in chunk_paths:
-                    with open(chunk_path,"rb") as audio_file:
-                        stt.recognize_using_websocket(
-                            **self._prepare_websocket_args(audio_file))
-                    self.io.delete(chunk_path)
-                return True
-            else:
-                with open(audio_path,"rb") as audio_file:
+                # Convert to opus and run
+                out_path = "{}/{}.opus".format(
+                    workspace_dir_path, self.io.get_name(audio_path)
+                )
+                _, identifier = self.io.run_shell_command(
+                    "ffmpeg -y -i {} -strict -2  {}".format(
+                        audio_path, out_path), None, None)
+                while True:
+                    if self.io.get_shell_process_status(identifier) == "finished":
+                        break
+                    if self.io.get_shell_process_status(identifier) == "error":
+                        break
+                    if self.io.get_shell_process_status(identifier) == "":
+                        break
+                with open(audio_path, "rb") as audio_file:
                     stt.recognize_using_websocket(
                         **self._prepare_websocket_args(audio_file))
-                return True
-        except:
+            else:
+                with open(audio_path, "rb") as audio_file:
+                    stt.recognize_using_websocket(
+                        **self._prepare_websocket_args(audio_file))
+            # Remove the workspace directory
+            self.io.delete(self.engine_workspace_dir)
+            return True
+        except Exception as e:
+            print(e)
             return False
 
     ############################ PRIVATE METHODS ###########################
 
-    def _determine_content_type(self, file_path : str) -> str:
+    def _determine_content_type(self, file_path: str) -> str:
         """
         Given the path to an audio file, determines the watson content type.
 
@@ -350,11 +365,11 @@ class WatsonCore:
         Returns:
             (str): Watson content type for that file.
         """
-        _, extension = self.io.get_file_extension(file_path)
+        extension = self.io.get_file_extension(file_path)
         if extension in self.format_to_content_types.keys():
             return self.format_to_content_types[extension]
 
-    def _is_supported_audio_file(self, file_path : str) -> bool:
+    def _is_supported_audio_file(self, file_path: str) -> bool:
         """
         Determine if the audio file at the given path is supported.
 
@@ -380,7 +395,7 @@ class WatsonCore:
             self.inputs["recognize_callback"] != None and \
             self.inputs["region"] != None
 
-    def _is_api_key_valid(self, apikey : str) -> bool:
+    def _is_api_key_valid(self, apikey: str) -> bool:
         """
         Determine if the given apikey is valid.
 
@@ -397,7 +412,7 @@ class WatsonCore:
         except:
             return False
 
-    def _initialize_stt_service(self, apikey : str) -> SpeechToTextV1:
+    def _initialize_stt_service(self, apikey: str) -> SpeechToTextV1:
         """
         Initialize a SpeechToTextV1 object given an apikey.
 
@@ -411,8 +426,8 @@ class WatsonCore:
         stt = SpeechToTextV1(authenticator=authenticator)
         return stt
 
-    def _prepare_websocket_args(self, audio_file : Any) \
-            -> Dict[str,Any]:
+    def _prepare_websocket_args(self, audio_file: Any) \
+            -> Dict[str, Any]:
         """
         Prepare the final parameter dictionary for
         SpeechToTextV1.recognize_using_websocket.
@@ -425,42 +440,42 @@ class WatsonCore:
         """
         source = AudioSource(audio_file)
         return {
-            "audio" : source,
-            "content_type" : self._determine_content_type(
+            "audio": source,
+            "content_type": self._determine_content_type(
                 self.inputs["audio_path"]),
-            "recognize_callback" : self.inputs["recognize_callback"],
-            "model" : self.inputs["base_model_name"],
-            "language_customization_id" : self.inputs["language_customization_id"],
-            "acoustic_customization_id" : self.inputs["acoustic_customization_id"],
-            "customization_weight" : \
-                self.watson_defaults["customization_weight"] if \
-                    self.inputs["language_customization_id"] else None,
-            "base_model_version" : None,
-            "inactivity_timeout" : self.watson_defaults["inactivity_timeout"],
-            "interim_results" : self.watson_defaults["interim_results"],
-            "keywords" : self.watson_defaults["keywords"],
-            "keywords_threshold" : self.watson_defaults["keyword_threshold"] if \
-                self.watson_defaults["keywords"] else None,
-            "max_alternatives" : self.watson_defaults["max_alternatives"],
-            "word_alternatives_threshold" : \
-                self.watson_defaults["word_alternatives_threshold"],
-            "word_confidence" : self.watson_defaults["word_confidence"],
-            "timestamps" : self.watson_defaults["timestamps"],
-            "profanity_filter" : self.watson_defaults["profanity_filter"],
-            "smart_formatting" : self.watson_defaults["smart_formatting"],
-            "speaker_labels" : self.watson_defaults["speaker_labels"],
-            "http_proxy_host" : self.watson_defaults["http_proxy_host"],
-            "http_proxy_port" : self.watson_defaults["http_proxy_port"],
-            "grammar_name" : self.watson_defaults["grammar_name"],
-            "redaction" : self.watson_defaults["redaction"],
-            "processing_metrics" : self.watson_defaults["processing_metrics"],
-            "processing_metrics_interval" : None,
-            "audio_metrics" : self.watson_defaults["audio_metrics"],
-            "end_of_phrase_silence_time" : \
-                self.watson_defaults["end_of_phrase_silence_time"],
-            "split_transcript_at_phrase_end" : \
-                self.watson_defaults["split_transcript_at_phrase_end"],
-            "speech_detector_sensitivity" : \
-                self.watson_defaults["speech_detector_sensitivity"],
-            "background_audio_suppression" : \
-                self.watson_defaults["background_audio_supression"]}
+            "recognize_callback": self.inputs["recognize_callback"],
+            "model": self.inputs["base_model_name"],
+            "language_customization_id": self.inputs["language_customization_id"],
+            "acoustic_customization_id": self.inputs["acoustic_customization_id"],
+            "customization_weight":
+            self.watson_defaults["customization_weight"] if
+            self.inputs["language_customization_id"] else None,
+            "base_model_version": None,
+            "inactivity_timeout": self.watson_defaults["inactivity_timeout"],
+            "interim_results": self.watson_defaults["interim_results"],
+            "keywords": self.watson_defaults["keywords"],
+            "keywords_threshold": self.watson_defaults["keyword_threshold"] if
+            self.watson_defaults["keywords"] else None,
+            "max_alternatives": self.watson_defaults["max_alternatives"],
+            "word_alternatives_threshold":
+            self.watson_defaults["word_alternatives_threshold"],
+            "word_confidence": self.watson_defaults["word_confidence"],
+            "timestamps": self.watson_defaults["timestamps"],
+            "profanity_filter": self.watson_defaults["profanity_filter"],
+            "smart_formatting": self.watson_defaults["smart_formatting"],
+            "speaker_labels": self.watson_defaults["speaker_labels"],
+            "http_proxy_host": self.watson_defaults["http_proxy_host"],
+            "http_proxy_port": self.watson_defaults["http_proxy_port"],
+            "grammar_name": self.watson_defaults["grammar_name"],
+            "redaction": self.watson_defaults["redaction"],
+            "processing_metrics": self.watson_defaults["processing_metrics"],
+            "processing_metrics_interval": None,
+            "audio_metrics": self.watson_defaults["audio_metrics"],
+            "end_of_phrase_silence_time":
+            self.watson_defaults["end_of_phrase_silence_time"],
+            "split_transcript_at_phrase_end":
+            self.watson_defaults["split_transcript_at_phrase_end"],
+            "speech_detector_sensitivity":
+            self.watson_defaults["speech_detector_sensitivity"],
+            "background_audio_suppression":
+            self.watson_defaults["background_audio_supression"]}

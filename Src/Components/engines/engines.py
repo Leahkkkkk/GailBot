@@ -1,11 +1,14 @@
+# -*- coding: utf-8 -*-
+# @Author: Muhammad Umair
+# @Date:   2021-12-02 13:13:08
+# @Last Modified by:   Muhammad Umair
+# @Last Modified time: 2021-12-02 15:00:50
 # Standard library imports
 from typing import List, Dict
 # Local imports
 from .engine import Engine
 from .watson import WatsonEngine
 from ..io import IO
-from ..network import Network
-from ..utils.exceptions import ExceptionUnexpected
 # Third party imports
 
 
@@ -15,12 +18,12 @@ class Engines:
     to users.
     """
 
-    def __init__(self, io: IO, network: Network) -> None:
+    def __init__(self, io: IO) -> None:
         self.engines = {
             "watson": WatsonEngine
         }
         self.io = io
-        self.network = network
+        # self.network = network
 
     def get_supported_engines(self) -> List[str]:
         """
@@ -43,5 +46,5 @@ class Engines:
             (Engine)
         """
         if not engine_type in self.engines.keys():
-            raise ExceptionUnexpected
-        return self.engines[engine_type](self.io, self.network)
+            raise Exception()
+        return self.engines[engine_type](self.io)

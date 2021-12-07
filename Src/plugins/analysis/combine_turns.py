@@ -1,8 +1,13 @@
+# -*- coding: utf-8 -*-
+# @Author: Muhammad Umair
+# @Date:   2021-12-02 13:57:50
+# @Last Modified by:   Muhammad Umair
+# @Last Modified time: 2021-12-07 12:48:58
 # Standard imports
 from typing import Dict, Any, List, Tuple
 import re
 # Local imports
-from Src.components.controller import GBPlugin, PluginMethodSuite, Utt
+from Src.components import GBPlugin, PluginMethodSuite, Utt
 
 
 class CombineTurns(GBPlugin):

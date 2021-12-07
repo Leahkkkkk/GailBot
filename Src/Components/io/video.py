@@ -1,9 +1,14 @@
+# -*- coding: utf-8 -*-
+# @Author: Muhammad Umair
+# @Date:   2021-11-30 17:58:28
+# @Last Modified by:   Muhammad Umair
+# @Last Modified time: 2021-12-03 19:27:28
 # Standard library imports
 from typing import Dict, List, Any, Tuple
 from enum import IntEnum, Enum
 # Local imports
+from dataclasses import dataclass
 from ..utils.threads import ThreadPool
-from ..utils.models import IDictModel
 # Third party imports
 from moviepy.editor import *
 
@@ -23,45 +28,13 @@ class VideoWriteTypes(IntEnum):
     audio = 2
 
 
-class VideoStreamAttr(Enum):
-    """
-    Defines the attributes of a VideoStream
+@dataclass
+class VideoStream:
+    input_file_path: str
+    input_format: str
+    video_clip: VideoFileClip
+    output_dir_path: str = None
 
-    Attributes:
-        input_file_path (str): Path of the input file, including name and
-                            extension.
-        input_format (str): Extension of the input file/
-        video_clip (VideoFileClip)
-        output_dir_path (str): Path to the output directory.
-    """
-    input_file_path = "input_path"
-    input_format = "input_format"
-    video_clip = "video_clip"
-    output_dir_path = "output_dir_path"
-
-
-class VideoStream(IDictModel):
-
-    def __init__(self, input_file_path: str, input_format: str,
-                 video_clip: VideoFileClip, output_dir_path: str = None) -> None:
-        """
-        Params:
-            input_file_path (str): Path of the input file, including name and
-                            extension.
-            input_format (str): Extension of the input file/
-            video_clip (VideoFileClip)
-            output_dir_path (str): Path to the output directory.
-        """
-        super().__init__()
-        # The output path defaults to the input path directory if not specified
-        if len(input_file_path) > 0 and output_dir_path == None:
-            output_dir_path = input_file_path[:input_file_path.rfind("/")]
-        # Storing items
-        self.items = {
-            VideoStreamAttr.input_file_path: input_file_path,
-            VideoStreamAttr.input_format: input_format,
-            VideoStreamAttr.video_clip: video_clip,
-            VideoStreamAttr.output_dir_path: output_dir_path}
 
 # TODO: Add functionality to write in different video formats.
 
@@ -85,7 +58,7 @@ class VideoIO:
             thread_pool (ThreadPool): pool that manages all threads.
         """
         # Params
-        self.streams = dict()
+        self.streams: Dict[str, VideoStream] = dict()
         self.default_video_input_format = "mp4"
         self.default_audio_output_format = "wav"
         self.num_threads = 10
@@ -116,7 +89,7 @@ class VideoIO:
             return False
         # If all files exist, they are read as VideoClip objects.
         for name, file_path in file_paths.items():
-            success, stream = self._initialize_video_stream(
+            success, stream = self._initialize_video_stream_from_file(
                 file_path, self.default_video_input_format, None)
             if not success:
                 self.streams.clear()
@@ -143,8 +116,7 @@ class VideoIO:
             if not name in self.streams or \
                     not self._is_directory(output_dir_path):
                 return False
-            self.streams[name].set(
-                VideoStreamAttr.output_dir_path, output_dir_path)
+            self.streams[name].output_dir_path = output_dir_path
         return True
 
     ################################# GETTERS #############################
@@ -152,12 +124,6 @@ class VideoIO:
     def is_readable(self, file_path: str) -> bool:
         """
         Determine if the file at the given path is readable by VideoIO.
-
-        Args:
-            file_path (str)
-
-        Returns:
-            (bool): True if the file is readable. False otherwise.
         """
         return self._is_video_file(file_path)
 
@@ -182,33 +148,31 @@ class VideoIO:
 
     ############################### PUBLIC METHODS ########################
 
-    def write(self, identifiers: Dict[str, VideoWriteTypes]) -> bool:
+    def write(self, identifiers: Dict[str, VideoWriteTypes]) -> Tuple[bool, Dict]:
         """
         Write the video streams that were previously read as either a file
         containing both audio and video, only video, and only audio.
+        Returns a mapping from identifier to output paths
 
         Args:
             identifiers (Dict[str, VideoWriteTypes]):
                 Mapping from the unique identifier to the type of file to write,
                 defined by VideoWriteTypes.
 
-        Returns:
-            (bool): True if all files were successfully written.
-                    False otherwise.
         """
         # Create a closure to determine thread success
+        paths = dict()
         closure = dict()
         for name in identifiers.keys():
             closure[name] = False
         # Verify all identifiers
         if not all([identifier in self.streams.keys()
                     for identifier in identifiers.keys()]):
-            return False
+            return paths
         # Write all the output files
         for name in identifiers.keys():
             # Determine output type and file name
-            _, output_dir_path = self.streams[name].get(
-                VideoStreamAttr.output_dir_path)
+            output_dir_path = self.streams[name].output_dir_path
             # Write correct type by creating thread.
             output_type = identifiers[name]
             if output_type == VideoWriteTypes.video_audio:
@@ -226,14 +190,16 @@ class VideoIO:
                     output_dir_path, name, self.default_video_input_format)
                 self.thread_pool.add_task(
                     self._write_video, [name, output_file_name, closure])
+            paths[name] = output_file_name
         # Run and wait for all tasks in the pool to finish
         is_success = self.thread_pool.wait_completion()
-        return is_success and all(closure.values())
+        return is_success and all(closure.values()), paths
 
     ############################# PRIVATE METHODS ###########################
 
-    def _initialize_video_stream(self, input_file_path, input_format,
-                                 output_dir_path) -> Tuple[bool, VideoStream]:
+    def _initialize_video_stream_from_file(
+            self, input_file_path, input_format,
+            output_dir_path) -> Tuple[bool, VideoStream]:
         """
         Initializes and returns an VideoStream object by reading from input
         path.
@@ -242,19 +208,17 @@ class VideoIO:
             input_file_path (str): Path to the input video file.
             input_format (input_format): Format to read the input file in.
             output_dir_path (str): Path of the output directory.
-
-        Returns:
-            (Tuple[bool,VideoStream]):
-                True + VideoStream object if successful.
-                False + None otherwise.
         """
         try:
+            # The output path defaults to the input path directory if not specified
+            if len(input_file_path) > 0 and output_dir_path == None:
+                output_dir_path = input_file_path[:input_file_path.rfind("/")]
+            # Storing items
             video_clip = VideoFileClip(input_file_path)
-            video_stream = VideoStream(input_file_path, input_format, video_clip,
-                                       output_dir_path)
+            video_stream = VideoStream(
+                input_file_path, input_format, video_clip, output_dir_path)
             return (True, video_stream)
         except Exception as e:
-            print(e)
             return (False, None)
 
     # Write methods
@@ -272,8 +236,7 @@ class VideoIO:
                     if successfully written. False otherwise
         """
         try:
-            _, video_clip = self.streams[name].get(
-                VideoStreamAttr.video_clip)
+            video_clip = self.streams[name].video_clip
             video_clip.write_videofile(output_file_name)
             closure[name] = True
         except:
@@ -292,8 +255,7 @@ class VideoIO:
                     if successfully written. False otherwise
         """
         try:
-            _, video_clip = self.streams[name].get(
-                VideoStreamAttr.video_clip)
+            video_clip = self.streams[name].video_clip
             audio = video_clip.audio
             audio.write_audiofile(output_file_name)
             closure[name] = True
@@ -313,8 +275,7 @@ class VideoIO:
                     if successfully written. False otherwise
         """
         try:
-            _, video_clip = self.streams[name].get(
-                VideoStreamAttr.video_clip)
+            video_clip = self.streams[name].video_clip
             video_clip.write_videofile(output_file_name, audio=False)
             closure[name] = True
         except:
@@ -324,24 +285,12 @@ class VideoIO:
     def _does_file_exist(self, file_path: str) -> bool:
         """
         Determines if the file exists.
-
-        Args:
-            file_path (str)
-
-        Returns:
-            (bool): True if file exists. False otherwise.
         """
         return os.path.exists(file_path) and os.path.isfile(file_path)
 
     def _is_video_file(self, file_path: str) -> bool:
         """
         Determines if the is video file
-
-        Args:
-            file_path (str)
-
-        Returns:
-            (bool): True if video file. False otherwise.
         """
         return self._does_file_exist(file_path) and \
             self._get_file_extension(file_path).lower() in \
@@ -352,22 +301,11 @@ class VideoIO:
         Obtain file extension /format, which is the substring after the right-
         most "." character.
 
-        Args:
-            file_path (str)
-
-        Returns:
-            (str): File extension / format.
         """
         return os.path.splitext(file_path.strip())[1][1:]
 
     def _is_directory(self, dir_path: str) -> bool:
         """
         Determine if path is a directory.
-
-        Args:
-            (str): Path
-
-        Returns:
-            (bool): True if path is a directory. False otherwise.
         """
         return os.path.isdir(dir_path)

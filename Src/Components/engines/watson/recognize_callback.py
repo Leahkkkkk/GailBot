@@ -1,9 +1,15 @@
+# -*- coding: utf-8 -*-
+# @Author: Muhammad Umair
+# @Date:   2021-12-02 13:13:08
+# @Last Modified by:   Muhammad Umair
+# @Last Modified time: 2021-12-05 17:21:20
 # Standard imports
 from typing import Callable, Any, List, Dict
 import json
 # Local imports
 # Third party imports
 from ibm_watson.websocket import RecognizeCallback
+
 
 class customWatsonCallbacks(RecognizeCallback):
     """
@@ -13,7 +19,8 @@ class customWatsonCallbacks(RecognizeCallback):
     Inherits:
         (RecognizeCallback)
     """
-    def __init__(self, closure : List) -> None:
+
+    def __init__(self, closure: List) -> None:
         """
         Args:
             closure (List):
@@ -30,10 +37,10 @@ class customWatsonCallbacks(RecognizeCallback):
         self.on_data_callback = lambda *args: None
         self.on_close_callback = lambda *args: None
 
-    ### SETTERS
+    # SETTERS
 
     def set_on_transcription_callback(self,
-            callback : Callable[[List[Any], List],None]) -> None:
+                                      callback: Callable[[List[Any], List], None]) -> None:
         """
         Called after the service returns the final result for the transcription.
 
@@ -45,7 +52,7 @@ class customWatsonCallbacks(RecognizeCallback):
         self.on_transcription_callback = callback
 
     def set_on_connected_callback(self,
-            callback : Callable[[List[Any]],None]) -> None:
+                                  callback: Callable[[List[Any]], None]) -> None:
         """
         Called when a Websocket connection was made
 
@@ -55,7 +62,7 @@ class customWatsonCallbacks(RecognizeCallback):
         self.on_connected_callback = callback
 
     def set_on_error_callback(self,
-            callback : Callable[[List[Any],str], None]) -> None:
+                              callback: Callable[[List[Any], str], None]) -> None:
         """
         Called when there is an error in the Websocket connection.
 
@@ -66,7 +73,7 @@ class customWatsonCallbacks(RecognizeCallback):
         self.on_error_callback = callback
 
     def set_on_inactivity_timeout(self,
-            callback : Callable[[List[Any],str], None]) -> None:
+                                  callback: Callable[[List[Any], str], None]) -> None:
         """
         Called when there is an inactivity timeout.
 
@@ -77,7 +84,7 @@ class customWatsonCallbacks(RecognizeCallback):
         self.on_inactivity_timeout_callback = callback
 
     def set_on_listening_callback(self,
-            callback : Callable[[List[Any]], None]) -> None:
+                                  callback: Callable[[List[Any]], None]) -> None:
         """
         Called when the service is listening for audio.
 
@@ -87,7 +94,7 @@ class customWatsonCallbacks(RecognizeCallback):
         self.on_listening_callback = callback
 
     def set_on_hypothesis_callback(self,
-            callback : Callable[[List[Any], str], None]) -> None:
+                                   callback: Callable[[List[Any], str], None]) -> None:
         """
         Called when an interim result is received.
 
@@ -99,7 +106,7 @@ class customWatsonCallbacks(RecognizeCallback):
         self.on_hypothesis_callback = callback
 
     def set_on_data_callback(self,
-            callback : Callable[[List[Any], Dict], None]) -> None:
+                             callback: Callable[[List[Any], Dict], None]) -> None:
         """
         Called when the service returns results. The data is returned unparsed.
 
@@ -111,7 +118,7 @@ class customWatsonCallbacks(RecognizeCallback):
         self.on_data_callback = callback
 
     def set_on_close_callback(self,
-            callback : Callable[[List[Any]], None]) -> None:
+                              callback: Callable[[List[Any]], None]) -> None:
         """
         Called when the Websocket connection is closed
 
@@ -120,9 +127,9 @@ class customWatsonCallbacks(RecognizeCallback):
         """
         self.on_close_callback = callback
 
-    ### Others
+    # Others
 
-    def on_transcription(self, transcript : List) -> None:
+    def on_transcription(self, transcript: List) -> None:
         """
         Called after the service returns the final result for the transcription.
         """
@@ -140,7 +147,7 @@ class customWatsonCallbacks(RecognizeCallback):
         except:
             pass
 
-    def on_error(self, error : str) -> None:
+    def on_error(self, error: str) -> None:
         """
         Called when there is an error in the Websocket connection.
         """
@@ -149,7 +156,7 @@ class customWatsonCallbacks(RecognizeCallback):
         except:
             pass
 
-    def on_inactivity_timeout(self, error : str) -> None:
+    def on_inactivity_timeout(self, error: str) -> None:
         """
         Called when there is an inactivity timeout.
         """
@@ -167,7 +174,7 @@ class customWatsonCallbacks(RecognizeCallback):
         except:
             pass
 
-    def on_hypothesis(self, hypothesis : str) -> None:
+    def on_hypothesis(self, hypothesis: str) -> None:
         """
         Called when an interim result is received.
         """
@@ -176,7 +183,7 @@ class customWatsonCallbacks(RecognizeCallback):
         except:
             pass
 
-    def on_data(self, data : Dict) -> None:
+    def on_data(self, data: Dict) -> None:
         """
         Called when the service returns results. The data is returned unparsed.
         """

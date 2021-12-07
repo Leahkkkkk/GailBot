@@ -1,8 +1,0 @@
-API_KEY = "MSgOPTS9CvbADe49nEg4wm8_gxeRuf4FGUmlHS9QqAw3"
-LANG_CUSTOM_ID = "41e54a38-2175-45f4-ac6a-1c11e42a2d54"
-ACOUSTIC_CUSTOM_ID = "some_valid_id"
-WAV_FILE_PATH = "test_data/pipeline_data/media/test2b.wav"
-MP3_FILE_PATH = "test_data/pipeline_data/media/sample1.mp3"
-BASE_LANG_MODEL = "en-US_BroadbandModel"
-REGION = "dallas"
-WORKSPACE_DIR_PATH = "test_data/pipeline_data/workspace"

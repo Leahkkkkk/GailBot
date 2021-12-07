@@ -1,9 +1,14 @@
+# -*- coding: utf-8 -*-
+# @Author: Muhammad Umair
+# @Date:   2021-12-02 13:57:50
+# @Last Modified by:   Muhammad Umair
+# @Last Modified time: 2021-12-07 12:49:17
 # Standard imports
 from typing import Dict, Any, List, Tuple
 import re
 from copy import deepcopy
 # Local imports
-from Src.components.controller import GBPlugin, PluginMethodSuite, Utt
+from Src.components import GBPlugin, PluginMethodSuite, Utt
 
 
 class TurnConstruct(GBPlugin):
@@ -15,9 +20,9 @@ class TurnConstruct(GBPlugin):
     def apply_plugin(self, dependency_outputs: Dict[str, Any],
                      plugin_input: PluginMethodSuite) -> List[Utt]:
         # Obtain the utterance map
-        print("In turn construct!!!")
+
         try:
-            utterances_map = plugin_input.get_utterances()
+            utterances_map = dependency_outputs["laughter"]
             new_map = dict()
             # Check threshold and combine each utterance to the next, assuming
             # that the speaker is the same.
@@ -40,7 +45,6 @@ class TurnConstruct(GBPlugin):
                         i += 1
                 new_map[file_name] = combined_utterances
             self.successful = True
-            print("Done turn construct ")
             return new_map
         except Exception as e:
             print("turn construct", e)

@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-10-21 10:29:49
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-02 15:38:26
+# @Last Modified time: 2021-12-05 22:00:48
 
 """ DIRECTORIES """
 
@@ -16,7 +16,8 @@ EMPTY_DIR_PATH = "test_data/controller_data/workspaces/empty"
 SETTINGS_DIR_PATH = "test_data/controller_data/workspaces/temp_ws"
 SOURCE_DIR_PATH = "test_data/controller_data/workspaces/temp_ws"
 DIR_CONV_PATH = "test_data/controller_data/media/conversations/conversation"
-
+AUDIO_VIDEO_DIR_PATH = "test_data/controller_data/media/conversations/audio_video_conversation"
+TRANSCRIBED_DIR = "test_data/controller_data/media/conversations/mp3_medium"
 """ MEDIA FILES """
 
 
@@ -103,9 +104,11 @@ WATSON_LANG_CUSTOM_ID = "41e54a38-2175-45f4-ac6a-1c11e42a2d54"
 WATSON_BASE_LANG_MODEL = "en-US_BroadbandModel"
 WATSON_REGION = "dallas"
 PLUGINS_TO_APPLY = [
+    # "laughter"
     "turn_construct",
     "overlaps",
     "pauses",
     "combine_turns",
     "fto",
-    "gaps"]
+    "gaps",
+    "chat"]
