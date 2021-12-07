@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:33:48
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-07 13:00:54
+# @Last Modified time: 2021-12-07 13:48:55
 
 import pytest
 from typing import Dict
@@ -89,7 +89,7 @@ def test():
     controller.create_new_settings_profile(
         "settings", settings_data())
     controller.add_source(
-        "mp3_medium", MP3_FILE_PATH_MEDIUM, RESULT_DIR_PATH)
+        "mp3_medium", MP3_FILE_PATH_SHORT, RESULT_DIR_PATH)
     controller.apply_settings_profile_to_source("mp3_medium", "settings")
     print(controller.register_plugins(DEFAULT_ANALYSIS_PLUGIN_CONFIG))
     controller.transcribe()

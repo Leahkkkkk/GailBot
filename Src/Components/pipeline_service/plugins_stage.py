@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:48:19
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-07 11:57:28
+# @Last Modified time: 2021-12-07 17:27:10
 from typing import Dict, Any, List
 from abc import abstractmethod
 from copy import deepcopy
@@ -84,6 +84,14 @@ class PluginsStage:
         # Apply plugins
         manager_summary: PluginManagerSummary = \
             self.plugin_manager.apply_plugins(apply_configs)
+        # Add log statements
+        payload.source_addons.logger.info("Successful plugins {}".format(
+            manager_summary.successful_plugins))
+        if len(manager_summary.failed_plugins) > 0:
+            payload.source_addons.logger.warning("Failed plugins {}".format(
+                manager_summary.failed_plugins))
+        payload.source_addons.logger.info("Runtime {} seconds".format(
+            manager_summary.total_runtime_seconds))
 
         ######################## PRIVATE METHODS ################################
 

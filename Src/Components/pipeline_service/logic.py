@@ -2,11 +2,12 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:27:23
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-07 12:35:36
+# @Last Modified time: 2021-12-07 16:06:19
 # # Standard imports
 from typing import List, Tuple, Dict, Any
 from datetime import datetime
 import time
+import logging
 # Local imports
 
 from ..pipeline import Pipeline, Logic, Stream
@@ -52,23 +53,22 @@ class GBPipelineLogic(Logic):
         Executes the transcription stage for each payload object in a separate
         thread.
         """
-        print("Transcription stage processor")
         for payload_name, payload in payloads.items():
-            print("Transcribing", payload_name)
             self.thread_pool.add_task(
                 self._transcription_stage_thread,
                 [transcription_stage, payload], {})
         self.thread_pool.wait_completion()
-        print("Completed")
         return payloads
 
     def _transcription_stage_thread(self, stage: Any,
                                     payload: Payload) -> None:
+        payload.source_addons.logger.info("TRANSCRIPTION STAGE")
         payload.source_addons.stats.process_start_time = datetime.now()
         start_time = time.time()
         stage.generate_utterances(payload)
         payload.source_addons.stats.transcription_time_sec = \
             time.time() - start_time
+        payload.source_addons.logger.info("COMPLETED")
 
     def _plugin_stage_processor(
             self, plugins_stage: Any,
@@ -77,21 +77,21 @@ class GBPipelineLogic(Logic):
         Executes the analysis stage for each payload object in a separate
         thread.
         """
-        print("PLugins stage processor")
         for payload_name, payload in payloads.items():
             self.thread_pool.add_task(
                 self._plugins_stage_thread,
                 [plugins_stage, payload], {})
         self.thread_pool.wait_completion()
-        print("Completed ")
         return payloads
 
     def _plugins_stage_thread(self, stage: Any,
                               payload: Payload) -> None:
+        payload.source_addons.logger.info("PLUGIN STAGE")
         start_time = time.time()
         stage.apply_plugins(payload)
         payload.source_addons.stats.plugin_application_time_sec = \
             time.time() - start_time
+        payload.source_addons.logger.info("COMPLETED")
 
     def _output_stage_processor(self,
                                 output_stage: Any,
@@ -100,15 +100,15 @@ class GBPipelineLogic(Logic):
         Executes the output stage for each payload object in a separate
         thread.
         """
-        print("Output stage processor")
         for payload_name, payload in payloads.items():
             self.thread_pool.add_task(
                 self._output_stage_thread,
                 [output_stage, payload], {})
         self.thread_pool.wait_completion()
-        print("Completed")
         return payloads
 
     def _output_stage_thread(self, stage: Any,
                              payload: Payload) -> None:
+        payload.source_addons.logger.info("OUTPUT STAGE")
         stage.output(payload)
+        payload.source_addons.logger.info("COMPLETED")

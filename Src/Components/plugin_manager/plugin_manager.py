@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:13:08
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-07 13:00:17
+# @Last Modified time: 2021-12-07 17:26:17
 # Standard library imports
 from typing import Dict, Any, List, Tuple
 # Local imports
@@ -177,8 +177,8 @@ class PluginManager:
             print(e)
             return (False, None)
 
-    def _generate_execution_pipeline(self,
-                                     apply_configs: Dict[str, ApplyConfig]) -> Tuple[bool, Pipeline]:
+    def _generate_execution_pipeline(
+            self, apply_configs: Dict[str, ApplyConfig]) -> Tuple[bool, Pipeline]:
         """
         Generate a pipeline given a mapping from plugin name to ApplyConfig.
         All plugins must be loaded.
@@ -191,8 +191,9 @@ class PluginManager:
                 return (False, None)
         return (True, pipeline)
 
-    def _add_plugin_with_dependencies(self, pipeline: Pipeline,
-                                      plugin_name: str, apply_configs: Dict[str, ApplyConfig]) -> bool:
+    def _add_plugin_with_dependencies(
+            self, pipeline: Pipeline,
+            plugin_name: str, apply_configs: Dict[str, ApplyConfig]) -> bool:
         """
         Add a plugin and its required dependencies to the given pipeline using
         the given ApplyConfig's.
@@ -225,33 +226,38 @@ class PluginManager:
             execution_summary (Dict[str,Any]):
                 Summary obtained by executing a Pipeline
         """
-        # Initializing the plugin summaries.
-        total_time_seconds = 0
-        successful_plugins = list()
-        failed_plugins = list()
-        plugin_summaries = dict()
-        # Summary only generated for plugins that were selected.
-        plugin_names = list(apply_configs.keys())
-        for plugin_name in plugin_names:
-            # Means plugin was executed and we can get summary.
-            if plugin_name in execution_summary.keys():
-                summary = execution_summary[plugin_name]
-                stream: Stream = summary["result"]
-                # TODO: This keeps causing issues.
-                if stream != None:
-                    plugin_summary: PluginExecutionSummary = \
-                        stream.get_stream_data()
-                    plugin_summaries[plugin_name] = plugin_summary
-                    total_time_seconds += plugin_summary.runtime_seconds
-                    if plugin_summary.was_successful:
-                        successful_plugins.append(plugin_summary.plugin_name)
-                    else:
-                        failed_plugins.append(plugin_summary.plugin_name)
-            # Plugin was not executed.
-            else:
-                plugin_summaries[plugin_name] = PluginExecutionSummary(
-                    plugin_name, [], {}, None, 0, False)
-                failed_plugins.append(plugin_name)
-        return PluginManagerSummary(
-            total_time_seconds, successful_plugins, failed_plugins,
-            plugin_summaries)
+        try:
+            # Initializing the plugin summaries.
+            total_time_seconds = 0
+            successful_plugins = list()
+            failed_plugins = list()
+            plugin_summaries = dict()
+            # Summary only generated for plugins that were selected.
+            plugin_names = list(apply_configs.keys())
+            for plugin_name in plugin_names:
+                # Means plugin was executed and we can get summary.
+                if plugin_name in execution_summary.keys() and \
+                        execution_summary[plugin_name]["state"] == "successful":
+                    summary = execution_summary[plugin_name]
+                    stream: Stream = summary["result"]
+                    # TODO: This keeps causing issues.
+                    if stream != None:
+                        plugin_summary: PluginExecutionSummary = \
+                            stream.get_stream_data()
+                        plugin_summaries[plugin_name] = plugin_summary
+                        total_time_seconds += plugin_summary.runtime_seconds
+                        if plugin_summary.was_successful:
+                            successful_plugins.append(
+                                plugin_summary.plugin_name)
+                        else:
+                            failed_plugins.append(plugin_summary.plugin_name)
+                # Plugin was not executed.
+                else:
+                    plugin_summaries[plugin_name] = PluginExecutionSummary(
+                        plugin_name, [], {}, None, 0, False)
+                    failed_plugins.append(plugin_name)
+            return PluginManagerSummary(
+                total_time_seconds, successful_plugins, failed_plugins,
+                plugin_summaries)
+        except Exception as e:
+            print(e)

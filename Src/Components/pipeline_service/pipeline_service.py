@@ -2,10 +2,11 @@
 # @Author: Muhammad Umair
 # @Date:   2021-11-05 21:08:01
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-07 13:04:20
+# @Last Modified time: 2021-12-07 16:05:21
 
 # # Standard imports
 import collections
+import logging
 from typing import List, Tuple, Dict, Any, Callable
 from ..io import IO
 from ..shared_models import Source, SourceHook, Settings, SettingsHook,\
@@ -45,13 +46,18 @@ class PipelineService:
         return self.plugins_stage.register_plugins(configs) if success else []
 
     def execute(self, sources: List[Source]) -> Any:
-        payloads = dict()
-        for source in sources:
-            payloads[source.identifier] = \
-                Payload(source, SourceAddons(
-                    {}, collections.defaultdict(dict)))
-        self.pipeline.set_base_input(payloads)
-        self.pipeline.execute()
+        try:
+            payloads = dict()
+            for source in sources:
+                payloads[source.identifier] = \
+                    Payload(source, SourceAddons(
+                        {}, collections.defaultdict(dict),
+                        self._initialize_logger(source)))
+                payload: Payload = payloads[source.identifier]
+            self.pipeline.set_base_input(payloads)
+            self.pipeline.execute()
+        except Exception as e:
+            print(e)
 
     def _parse_plugins_config_file(self, config_path: str) \
             -> Tuple[bool, List[Dict]]:
@@ -61,3 +67,17 @@ class PipelineService:
         except Exception as e:
             print(e)
             return (False, None)
+
+    def _initialize_logger(self, source: Source) -> logging.Logger:
+        log_path = "{}/{}/{}.log".format(
+                   source.hook.get_temp_directory_path(), "logs",
+                   source.identifier)
+        self.io.create_directory("{}/logs".format(
+            source.hook.get_temp_directory_path()))
+        logger = logging.getLogger(source.identifier)
+        formatter = logging.Formatter('%(name)s | %(levelname)s | %(message)s')
+        fileHandler = logging.FileHandler(log_path, mode='w')
+        fileHandler.setFormatter(formatter)
+        logger.addHandler(fileHandler)
+        logger.setLevel(logging.INFO)
+        return logger

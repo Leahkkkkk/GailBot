@@ -1,9 +1,15 @@
+# -*- coding: utf-8 -*-
+# @Author: Muhammad Umair
+# @Date:   2021-12-02 13:13:08
+# @Last Modified by:   Muhammad Umair
+# @Last Modified time: 2021-12-07 16:24:35
 # Standard library imports
 from enum import Enum
 from typing import Any
 # Local imports
 from .stream import Stream
 # Third party imports
+
 
 class ComponentState(Enum):
     """
@@ -13,12 +19,13 @@ class ComponentState(Enum):
     failed = "failed"
     ready = "ready"
 
+
 class Component:
     """
     Represents an internal object that is used by the Pipeline.
     """
 
-    def __init__(self, name : str, instantiated_obj : object) -> None:
+    def __init__(self, name: str, instantiated_obj: object) -> None:
         """
         Args:
             name (str): Name of the component.
@@ -75,7 +82,7 @@ class Component:
         """
         return self.runtime
 
-    def set_state(self, state : ComponentState) -> bool:
+    def set_state(self, state: ComponentState) -> bool:
         """
         Set the state of the component
 
@@ -88,7 +95,7 @@ class Component:
         self.state = state
         return True
 
-    def set_result(self, result : Stream) -> bool:
+    def set_result(self, result: Stream) -> bool:
         """
         Set the result of executing the component
 
@@ -101,7 +108,7 @@ class Component:
         self.result = result
         return True
 
-    def set_runtime(self, runtime : float) -> None:
+    def set_runtime(self, runtime: float) -> None:
         """
         Set the runtime of the component
 
@@ -115,4 +122,3 @@ class Component:
             return False
         self.runtime = runtime
         return True
-

@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:57:50
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-07 12:49:17
+# @Last Modified time: 2021-12-07 17:34:04
 # Standard imports
 from typing import Dict, Any, List, Tuple
 import re
@@ -22,7 +22,7 @@ class TurnConstruct(GBPlugin):
         # Obtain the utterance map
 
         try:
-            utterances_map = dependency_outputs["laughter"]
+            utterances_map = plugin_input.get_utterances()
             new_map = dict()
             # Check threshold and combine each utterance to the next, assuming
             # that the speaker is the same.
@@ -47,7 +47,7 @@ class TurnConstruct(GBPlugin):
             self.successful = True
             return new_map
         except Exception as e:
-            print("turn construct", e)
+            self.successful = False
 
     ################################# GETTERS ###############################
 

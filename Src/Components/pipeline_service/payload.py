@@ -2,8 +2,9 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:32:23
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-07 12:40:08
+# @Last Modified time: 2021-12-07 14:05:30
 
+import logging
 from datetime import date, time
 from typing import Dict, List
 from dataclasses import dataclass, field
@@ -25,6 +26,7 @@ class SourceAddons:
 
     utterances_map: Dict[str, Utt]
     data_file_paths: Dict[str, Dict]
+    logger: logging.Logger
     stats: Stats = Stats()
 
 

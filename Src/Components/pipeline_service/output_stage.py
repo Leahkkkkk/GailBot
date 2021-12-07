@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:48:19
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-07 12:41:14
+# @Last Modified time: 2021-12-07 16:12:42
 from typing import Dict, Any, List
 from abc import abstractmethod
 import time
@@ -40,15 +40,17 @@ class OutputStage:
             self._write_metadata(payload)
             # Save the hook to the result directory.
             payload.source.hook.save()
+            payload.source_addons.logger.info("Results written to {}".format(
+                payload.source.hook.get_result_directory_path()))
         except Exception as e:
-            print(e)
+            payload.source_addons.logger.error("Output exception {}".format(e))
 
     ########################## PRIVATE METHODS ###############################
 
     def _create_plugin_results_dir(self, payload: Payload):
         temp_path = payload.source.hook.get_temp_directory_path()
         paths = self.io.path_of_files_in_directory(temp_path, ["*"], False)
-        paths.extend(self.io.paths_of_subdirectories(temp_path))
+        # paths.extend(self.io.paths_of_subdirectories(temp_path))
         # Save in the temp directory.
         dir_path = "{}/{}".format(
             payload.source.hook.get_temp_directory_path(), "plugin_results")

@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:13:08
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-02 19:09:11
+# @Last Modified time: 2021-12-07 17:10:55
 # Standard library imports
 from typing import Callable, Dict, Any
 from time import time
@@ -76,11 +76,16 @@ class PluginPipelineLogic(Logic):
         start_time = time()
         output = plugin.apply_plugin(parent_plugin_outputs,
                                      *apply_config.args, **apply_config.kwargs)
+        successful = plugin.was_successful()
+        if not successful:
+            raise Exception()
         total_time = time() - start_time
-        # Generating the plugin summary.
-        return PluginExecutionSummary(
+
+        summary = PluginExecutionSummary(
             plugin_source.plugin_name, apply_config.args,
-            apply_config.kwargs, output, total_time, plugin.was_successful())
+            apply_config.kwargs, output, total_time, successful)
+        # Generating the plugin summary.
+        return summary
 
     def _post_processor_plugin(self, summary: PluginExecutionSummary) -> Stream:
         """

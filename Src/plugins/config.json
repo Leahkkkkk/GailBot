@@ -2,7 +2,7 @@
   "plugin_configs": [
     {
       "plugin_name": "turn_construct",
-      "plugin_dependencies": ["laughter"],
+      "plugin_dependencies": [],
       "plugin_file_path": "Src/plugins//turn_construct.py",
       "plugin_source_name": "turn_construct",
       "plugin_class_name": "TurnConstruct"

@@ -2,9 +2,11 @@
 # @Author: Muhammad Umair
 # @Date:   2021-11-05 21:08:35
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-07 12:49:57
+# @Last Modified time: 2021-12-07 16:08:48
 # Standard imports
 from typing import Dict, Tuple, List
+
+from Src.components.shared_models import utt
 
 # Local imports
 from ..utils.threads import ThreadPool
@@ -37,12 +39,15 @@ class TranscriptionStage:
     ######################## PRIVATE METHODS ##################################
 
     def _transcribe(self, payload: Payload):
+
         self._execute_transcription_threads(payload)
 
     # --- Helpers
 
     def _execute_transcription_threads(self, payload: Payload) -> None:
         for data_file in payload.source.conversation.data_files:
+            payload.source_addons.logger.info("{} | Transcribing.".format(
+                data_file.identifier))
             if self.io.get_file_extension(data_file.path) == "gb":
                 self._load_from_raw_file(payload, data_file)
             else:
@@ -54,7 +59,8 @@ class TranscriptionStage:
     def _transcribe_watson_thread(
             self, payload: Payload, data_file: DataFile) -> None:
         try:
-            print("transcribing", data_file.identifier)
+            payload.source_addons.logger.info("{} | Using Watson engine".format(
+                data_file.identifier))
             engine: WatsonEngine = self.engines.engine("watson")
             settings: GailBotSettings = payload.source.settings_profile.settings
             engine.configure(
@@ -65,14 +71,19 @@ class TranscriptionStage:
                 payload.source.hook.get_temp_directory_path()
             )
             utterances = engine.transcribe()
-            print("utterances", len(utterances))
             payload.source_addons.utterances_map[data_file.identifier] =\
                 utterances
-            print("transcribed!", data_file.identifier)
+            payload.source_addons.logger.info(
+                "{} | {} utterances generated".format(
+                    data_file.identifier, len(utterances)))
         except Exception as e:
-            print(e)
+            payload.source_addons.logger.error(
+                "{} | Transcription error {}".format(
+                    data_file.identifier, e))
 
     def _load_from_raw_file(self, payload: Payload, data_file: DataFile):
+        payload.source_addons.logger.info("Loading from raw file {}".format(
+            data_file.identifier))
         _, data = self.io.read(data_file.path)
         data = data.split('\n')
         utts = list()
