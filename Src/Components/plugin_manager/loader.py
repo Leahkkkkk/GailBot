@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+# @Author: Muhammad Umair
+# @Date:   2021-12-02 13:13:08
+# @Last Modified by:   Muhammad Umair
+# @Last Modified time: 2021-12-07 13:00:26
 # Standard library imports
 from typing import Any, List, Dict
 import imp
@@ -46,8 +51,7 @@ class PluginLoader:
             plugin_source = PluginSource(
                 plugin_config.plugin_name, plugin, plugin_config.plugin_dependencies,
                 len(plugin_config.plugin_dependencies),
-                plugin_config.plugin_file_path, plugin_config.plugin_author,
-                plugin_config.plugin_input_type, plugin_config.plugin_output_type)
+                plugin_config.plugin_file_path)
             return self._add_plugin(plugin_config.plugin_name, plugin_source)
         except Exception as e:
             print(e)

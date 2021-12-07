@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-10-21 10:29:49
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-05 22:00:48
+# @Last Modified time: 2021-12-07 12:59:24
 
 """ DIRECTORIES """
 
@@ -89,7 +89,7 @@ CONFIG_FILE_PATH = "test_data/controller_data/configs/config.json"
 ANALYSIS_PLUGINS_CONFIG = "test_data/controller_data/configs/plugins/analysis_config.json"
 FORMAT_PLUGINS_CONFIG = "test_data/controller_data/configs/plugins/format_config.json"
 EMPTY_JSON = "test_data/controller_data/configs/empty_json.json"
-DEFAULT_ANALYSIS_PLUGIN_CONFIG = "Src2/plugins/analysis/config.json"
+DEFAULT_ANALYSIS_PLUGIN_CONFIG = "Src/plugins/config.json"
 
 
 """ OTHER FILES """

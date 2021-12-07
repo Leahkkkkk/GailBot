@@ -3,70 +3,49 @@
     {
       "plugin_name": "turn_construct",
       "plugin_dependencies": ["laughter"],
-      "plugin_file_path": "Src2/plugins/analysis/turn_construct.py",
-      "plugin_author": "Umair",
-      "plugin_input_type": "None",
-      "plugin_output_type": "None",
+      "plugin_file_path": "Src/plugins//turn_construct.py",
       "plugin_source_name": "turn_construct",
       "plugin_class_name": "TurnConstruct"
     },
     {
       "plugin_name": "combine_turns",
       "plugin_dependencies": ["turn_construct"],
-      "plugin_file_path": "Src2/plugins/analysis/combine_turns.py",
-      "plugin_author": "Umair",
-      "plugin_input_type": "None",
-      "plugin_output_type": "None",
+      "plugin_file_path": "Src/plugins/combine_turns.py",
       "plugin_source_name": "combine_turns",
       "plugin_class_name": "CombineTurns"
     },
     {
       "plugin_name": "overlaps",
       "plugin_dependencies": ["combine_turns"],
-      "plugin_file_path": "Src2/plugins/analysis/overlaps.py",
-      "plugin_author": "Umair",
-      "plugin_input_type": "None",
-      "plugin_output_type": "None",
+      "plugin_file_path": "Src/plugins/overlaps.py",
       "plugin_source_name": "overlaps",
       "plugin_class_name": "Overlaps"
     },
     {
       "plugin_name": "pauses",
       "plugin_dependencies": ["overlaps"],
-      "plugin_file_path": "Src2/plugins/analysis/pauses.py",
-      "plugin_author": "Umair",
-      "plugin_input_type": "None",
-      "plugin_output_type": "None",
+      "plugin_file_path": "Src/plugins/pauses.py",
       "plugin_source_name": "pauses",
       "plugin_class_name": "Pauses"
     },
     {
       "plugin_name": "fto",
       "plugin_dependencies": ["pauses"],
-      "plugin_file_path": "Src2/plugins/analysis/fto.py",
-      "plugin_author": "Umair",
-      "plugin_input_type": "None",
-      "plugin_output_type": "None",
+      "plugin_file_path": "Src/plugins/fto.py",
       "plugin_source_name": "fto",
       "plugin_class_name": "Fto"
     },
     {
       "plugin_name": "gaps",
       "plugin_dependencies": ["fto"],
-      "plugin_file_path": "Src2/plugins/analysis/gaps.py",
-      "plugin_author": "Umair",
-      "plugin_input_type": "None",
-      "plugin_output_type": "None",
+      "plugin_file_path": "Src/plugins/gaps.py",
       "plugin_source_name": "gaps",
       "plugin_class_name": "Gaps"
     },
     {
       "plugin_name": "chat",
       "plugin_dependencies": ["gaps"],
-      "plugin_file_path": "Src2/plugins/analysis/chat.py",
-      "plugin_author": "Umair",
-      "plugin_input_type": "None",
-      "plugin_output_type": "None",
+      "plugin_file_path": "Src/plugins/chat.py",
       "plugin_source_name": "chat",
       "plugin_class_name": "CHAT"
     }

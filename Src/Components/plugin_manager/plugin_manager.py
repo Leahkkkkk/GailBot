@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:13:08
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-05 22:02:17
+# @Last Modified time: 2021-12-07 13:00:17
 # Standard library imports
 from typing import Dict, Any, List, Tuple
 # Local imports
@@ -170,8 +170,7 @@ class PluginManager:
         try:
             config = PluginConfig(
                 data["plugin_name"], data["plugin_dependencies"],
-                data["plugin_file_path"], data["plugin_author"],
-                data["plugin_input_type"], data["plugin_output_type"],
+                data["plugin_file_path"],
                 data["plugin_source_name"], data["plugin_class_name"])
             return (True, config)
         except Exception as e:
