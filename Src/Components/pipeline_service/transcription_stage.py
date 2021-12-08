@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-11-05 21:08:35
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-07 16:08:48
+# @Last Modified time: 2021-12-08 15:12:19
 # Standard imports
 from typing import Dict, Tuple, List
 
@@ -82,8 +82,8 @@ class TranscriptionStage:
                     data_file.identifier, e))
 
     def _load_from_raw_file(self, payload: Payload, data_file: DataFile):
-        payload.source_addons.logger.info("Loading from raw file {}".format(
-            data_file.identifier))
+        payload.source_addons.logger.info("{} | Loading from raw file {}".format(
+            data_file.identifier, data_file.path))
         _, data = self.io.read(data_file.path)
         data = data.split('\n')
         utts = list()

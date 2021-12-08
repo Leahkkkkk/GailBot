@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:27:23
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-07 16:06:19
+# @Last Modified time: 2021-12-08 11:14:27
 # # Standard imports
 from typing import List, Tuple, Dict, Any
 from datetime import datetime
@@ -62,13 +62,17 @@ class GBPipelineLogic(Logic):
 
     def _transcription_stage_thread(self, stage: Any,
                                     payload: Payload) -> None:
-        payload.source_addons.logger.info("TRANSCRIPTION STAGE")
+        payload.source_addons.logger.info("{0} TRANSCRIPTION STAGE {0}".format(
+            "*" * 20))
         payload.source_addons.stats.process_start_time = datetime.now()
         start_time = time.time()
         stage.generate_utterances(payload)
         payload.source_addons.stats.transcription_time_sec = \
             time.time() - start_time
-        payload.source_addons.logger.info("COMPLETED")
+        payload.source_addons.logger.info(
+            "Runtime {} seconds ".format(payload.source_addons.stats.transcription_time_sec))
+        payload.source_addons.logger.info(
+            "{0} COMPLETED {0}".format("*" * 20))
 
     def _plugin_stage_processor(
             self, plugins_stage: Any,
@@ -86,12 +90,16 @@ class GBPipelineLogic(Logic):
 
     def _plugins_stage_thread(self, stage: Any,
                               payload: Payload) -> None:
-        payload.source_addons.logger.info("PLUGIN STAGE")
+        payload.source_addons.logger.info("{0} PLUGIN STAGE STAGE {0}".format(
+            "*" * 20))
         start_time = time.time()
         stage.apply_plugins(payload)
         payload.source_addons.stats.plugin_application_time_sec = \
             time.time() - start_time
-        payload.source_addons.logger.info("COMPLETED")
+        payload.source_addons.logger.info("Runtime {} seconds".format(
+            payload.source_addons.stats.plugin_application_time_sec))
+        payload.source_addons.logger.info("{0} COMPLETED {0}".format(
+            "*" * 20))
 
     def _output_stage_processor(self,
                                 output_stage: Any,
@@ -109,6 +117,8 @@ class GBPipelineLogic(Logic):
 
     def _output_stage_thread(self, stage: Any,
                              payload: Payload) -> None:
-        payload.source_addons.logger.info("OUTPUT STAGE")
+        payload.source_addons.logger.info("{0} OUTPUT STAGE {0}".format(
+            "*" * 20))
         stage.output(payload)
-        payload.source_addons.logger.info("COMPLETED")
+        payload.source_addons.logger.info(" {0} COMPLETED {0}".format(
+            "*" * 10))

@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 14:12:19
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-05 16:17:54
+# @Last Modified time: 2021-12-08 16:02:14
 from typing import List
 from ..io import IO
 from ..shared_models import Source, SourceHook, Conversation, DataFile
@@ -76,7 +76,7 @@ class VideoFileLoader:
         data_files = list()
         for path in [audio_path]:
             data_file = DataFile(
-                self.io.get_name(source_path), source_path, path, source_path)
+                self.io.get_name(path), source_path, path, source_path)
             data_files.append(data_file)
         conversation = Conversation(data_files)
 
@@ -96,21 +96,23 @@ class DirectoryLoader:
         paths = self.io.path_of_files_in_directory(
             source_path, ["*"], False)
         data_files = list()
+        # Create the hook
+        hook = SourceHook(
+            source_name, temp_ws_path, result_dir_path)
+        # Load the files
         for path in paths:
             if self.io.is_supported_audio_file(path):
                 data_files.append(
-                    DataFile(self.io.get_name(source_path), path, path, None))
+                    DataFile(self.io.get_name(path), path, path, None))
             elif self.io.is_supported_video_file(path):
                 audio_path = self.io.extract_audio_from_file(
-                    path, temp_ws_path)
+                    path,  hook.get_temp_directory_path())
                 if audio_path != None:
                     for audio in [audio_path]:
                         data_file = DataFile(
-                            self.io.get_name(path), path, audio, path)
+                            self.io.get_name(audio), path, audio, path)
                         data_files.append(data_file)
         conversation = Conversation(data_files)
-        hook = SourceHook(
-            source_name, temp_ws_path, result_dir_path)
         return Source(source_name, conversation, hook)
 
 

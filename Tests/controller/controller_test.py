@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:33:48
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-07 18:18:03
+# @Last Modified time: 2021-12-08 17:07:50
 
 import pytest
 from typing import Dict
@@ -88,9 +88,19 @@ def test():
     controller = GailBotController(WS_DIR_PATH)
     controller.create_new_settings_profile(
         "settings", settings_data())
+    # controller.add_source(
+    #     "audio_video", AUDIO_VIDEO_DIR_PATH, RESULT_DIR_PATH)
     controller.add_source(
-        "mp3_medium",MXF_FILE_PATH_SHORT, RESULT_DIR_PATH)
-    controller.apply_settings_profile_to_source("mp3_medium", "settings")
+        "conversation_1", MIXED_DIR_PATH, RESULT_DIR_PATH)
+    # controller.add_source(
+    #     "mp3_long", MP3_FILE_PATH_LONG, RESULT_DIR_PATH)
+    # controller.add_source(
+    #     "mxf_short", MXF_FILE_PATH_SHORT, RESULT_DIR_PATH)
+    #controller.apply_settings_profile_to_source("audio_video", "settings")
+    controller.apply_settings_profile_to_source("conversation_1", "settings")
+    # controller.apply_settings_profile_to_source("mp3_long", "settings")
+    # controller.apply_settings_profile_to_source("mxf_short", "settings")
+
     print(controller.register_plugins(DEFAULT_ANALYSIS_PLUGIN_CONFIG))
     controller.transcribe()
 

@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:48:19
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-08 09:40:29
+# @Last Modified time: 2021-12-08 16:04:02
 from typing import Dict, Any, List
 from abc import abstractmethod
 import time
@@ -36,11 +36,14 @@ class OutputStage:
             payload.source_addons.stats.elapsed_time_sec = \
                 payload.source_addons.stats.process_end_time - \
                 payload.source_addons.stats.process_start_time
+            # Nothing should be left outside the directory structure
+            self._clear_files(payload)
+            # Write metadata
             self._write_metadata(payload)
             # Save the hook to the result directory.
             payload.source.hook.save()
-            # Nothing should be left outside the directory structure
-            self._clear_files(payload)
+            # Cleanup
+            payload.source.hook.cleanup()
             # Write logs
             payload.source_addons.logger.info("Results written to {}".format(
                 payload.source.hook.get_result_directory_path()))
@@ -130,7 +133,7 @@ class OutputStage:
         self.io.write(save_path, data, True)
 
     def _clear_files(self, payload: Payload) -> None:
-        dir_path = payload.source.hook.get_result_directory_path()
+        dir_path = payload.source.hook.get_temp_directory_path()
         paths = self.io.path_of_files_in_directory(
             dir_path, ["*"], False)
         for path in paths:

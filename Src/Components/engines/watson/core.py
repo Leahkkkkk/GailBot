@@ -2,13 +2,14 @@
 # @Author: Muhammad Umair
 # @Date:   2021-11-30 17:58:39
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-05 22:03:55
+# @Last Modified time: 2021-12-08 14:32:26
 # Standard library imports
 from typing import List, Any, Dict
+import time
 # Local imports
 from ...io import IO
 # Third party imports
-from ibm_watson import SpeechToTextV1
+from ibm_watson import SpeechToTextV1, ApiException
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from ibm_watson.websocket import RecognizeCallback, AudioSource
 
@@ -59,7 +60,7 @@ class WatsonCore:
                 "x-watson-learning-opt-out": True},
             "customization_weight": 0.3,
             "base_model_version": None,
-            "inactivity_timeout": 600,
+            "inactivity_timeout": 1000,
             "interim_results": False,
             "keywords": None,
             "keyword_threshold": 0.8,
@@ -313,9 +314,6 @@ class WatsonCore:
             return False
         # Create ws dir
         self.io.create_directory(self.engine_workspace_dir)
-        # Creating STT object.
-        stt = self._initialize_stt_service(self.inputs["api_key"])
-        stt.set_service_url(self.regions[self.inputs["region"]])
         audio_path = self.inputs["audio_path"]
         workspace_dir_path = self.inputs["workspace_directory_path"]
         # If the audio file is larger than the max supported size, it needs to
@@ -339,13 +337,15 @@ class WatsonCore:
                         break
                     if self.io.get_shell_process_status(identifier) == "":
                         break
-                with open(audio_path, "rb") as audio_file:
-                    stt.recognize_using_websocket(
-                        **self._prepare_websocket_args(audio_file))
-            else:
-                with open(audio_path, "rb") as audio_file:
-                    stt.recognize_using_websocket(
-                        **self._prepare_websocket_args(audio_file))
+                audio_path = out_path
+            # Creating STT object.
+            # NOTE: This should be done right at the end to prevent a
+            # session timeout.
+            stt = self._initialize_stt_service(self.inputs["api_key"])
+            stt.set_service_url(self.regions[self.inputs["region"]])
+            with open(audio_path, "rb") as audio_file:
+                stt.recognize_using_websocket(
+                    **self._prepare_websocket_args(audio_path, audio_file))
             # Remove the workspace directory
             self.io.delete(self.engine_workspace_dir)
             return True
@@ -426,7 +426,7 @@ class WatsonCore:
         stt = SpeechToTextV1(authenticator=authenticator)
         return stt
 
-    def _prepare_websocket_args(self, audio_file: Any) \
+    def _prepare_websocket_args(self, audio_path, audio_file: Any) \
             -> Dict[str, Any]:
         """
         Prepare the final parameter dictionary for
@@ -442,7 +442,7 @@ class WatsonCore:
         return {
             "audio": source,
             "content_type": self._determine_content_type(
-                self.inputs["audio_path"]),
+                audio_path),
             "recognize_callback": self.inputs["recognize_callback"],
             "model": self.inputs["base_model_name"],
             "language_customization_id": self.inputs["language_customization_id"],

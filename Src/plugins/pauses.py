@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:57:50
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-07 17:40:25
+# @Last Modified time: 2021-12-08 15:19:35
 # Standard imports
 from typing import Dict, Any, List, Tuple
 import re
@@ -43,6 +43,7 @@ class Pauses(GBPlugin):
             nxt_utt = utterances[i+1]
             # Pauses only added for the same speaker.
             if curr_utt.speaker_label == nxt_utt.speaker_label:
+                new_utterances.append(curr_utt)
                 continue
             fto = round(nxt_utt.start_time_seconds -
                         curr_utt.end_time_seconds, 2)

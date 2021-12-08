@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-10-21 10:29:49
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-07 17:32:23
+# @Last Modified time: 2021-12-08 15:10:29
 
 """ DIRECTORIES """
 
@@ -18,6 +18,8 @@ SOURCE_DIR_PATH = "test_data/controller_data/workspaces/temp_ws"
 DIR_CONV_PATH = "test_data/controller_data/media/conversations/conversation"
 AUDIO_VIDEO_DIR_PATH = "test_data/controller_data/media/conversations/audio_video_conversation"
 TRANSCRIBED_DIR = "test_data/controller_data/media/conversations/mp3_medium"
+CALLHOME_CONVERSATION = "test_data/controller_data/media/conversations/callhome_conversation"
+
 """ MEDIA FILES """
 
 
@@ -82,6 +84,7 @@ WMV_FILE_PATH_LONG = ""
 """ PREVIOUS GAILBOT OUTPUT """
 PREV_AUDIO_MP3_SHORT = "test_data/controller_data/gb_output/mp3_short_0"
 PREV_MIXED_DIR_PATH = "test_data/controller_data/gb_output/conversation_1_dir_0"
+PREV_CALLHOME = "test_data/controller_data/gb_output/callhome"
 
 
 """ CONFIGURATION FILES """
@@ -101,7 +104,7 @@ NUM_THREADS = 4
 SETTINGS_PROFILE_EXTENSION = "json"
 WATSON_API_KEY = "MSgOPTS9CvbADe49nEg4wm8_gxeRuf4FGUmlHS9QqAw3"
 WATSON_LANG_CUSTOM_ID = "41e54a38-2175-45f4-ac6a-1c11e42a2d54"
-WATSON_BASE_LANG_MODEL = "en-US_BroadbandModel"
+WATSON_BASE_LANG_MODEL = "en-US_NarrowbandModel"
 WATSON_REGION = "dallas"
 PLUGINS_TO_APPLY = [
     # "laughter"

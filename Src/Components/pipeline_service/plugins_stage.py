@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:48:19
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-07 18:15:26
+# @Last Modified time: 2021-12-08 15:10:47
 from typing import Dict, Any, List
 from abc import abstractmethod
 from copy import deepcopy
@@ -100,10 +100,8 @@ class PluginsStage:
         if len(manager_summary.failed_plugins) > 0:
             payload.source_addons.logger.warning("Failed plugins {}".format(
                 manager_summary.failed_plugins))
-        payload.source_addons.logger.info("Runtime {} seconds".format(
-            manager_summary.total_runtime_seconds))
 
-        ######################## PRIVATE METHODS ################################
+    ######################## PRIVATE METHODS ################################
 
     def _can_apply_plugins(self, payload: Payload) -> bool:
         settings: GailBotSettings = payload.source.settings_profile.settings

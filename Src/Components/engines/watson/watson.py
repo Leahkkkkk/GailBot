@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:13:08
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-05 21:37:13
+# @Last Modified time: 2021-12-08 11:43:15
 
 
 # Standard library imports
@@ -181,9 +181,12 @@ class WatsonEngine(Engine):
             self.core.recognize_using_websockets()
             utterances = self._prepare_utterance(self.callback_closure)
             self.is_ready_for_transcription = False
+            if self.callback_closure["callback_status"]["on_error"]:
+                print(self.callback_closure["results"]["error"])
             return utterances
         except Exception as e:
             print(e)
+            return list()
 
     def get_supported_regions(self) -> List[str]:
         """
