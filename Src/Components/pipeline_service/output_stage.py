@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:48:19
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-07 16:12:42
+# @Last Modified time: 2021-12-08 09:40:29
 from typing import Dict, Any, List
 from abc import abstractmethod
 import time
@@ -26,7 +26,6 @@ class OutputStage:
         try:
             start_time = time.time()
             # Create the different output directories.
-            self._create_plugin_results_dir(payload)
             self._create_media_dir(payload)
             self._create_gb_results_dir(payload)
             # Write the metadata
@@ -40,24 +39,16 @@ class OutputStage:
             self._write_metadata(payload)
             # Save the hook to the result directory.
             payload.source.hook.save()
+            # Nothing should be left outside the directory structure
+            self._clear_files(payload)
+            # Write logs
             payload.source_addons.logger.info("Results written to {}".format(
                 payload.source.hook.get_result_directory_path()))
+
         except Exception as e:
             payload.source_addons.logger.error("Output exception {}".format(e))
 
     ########################## PRIVATE METHODS ###############################
-
-    def _create_plugin_results_dir(self, payload: Payload):
-        temp_path = payload.source.hook.get_temp_directory_path()
-        paths = self.io.path_of_files_in_directory(temp_path, ["*"], False)
-        # paths.extend(self.io.paths_of_subdirectories(temp_path))
-        # Save in the temp directory.
-        dir_path = "{}/{}".format(
-            payload.source.hook.get_temp_directory_path(), "plugin_results")
-        self.io.create_directory(dir_path)
-        # Take everything in the temp dir and move it
-        for path in paths:
-            self.io.move_file(path, dir_path)
 
     def _create_media_dir(self, payload: Payload):
         """
@@ -137,3 +128,10 @@ class OutputStage:
             "data_files": data_files_info
         }
         self.io.write(save_path, data, True)
+
+    def _clear_files(self, payload: Payload) -> None:
+        dir_path = payload.source.hook.get_result_directory_path()
+        paths = self.io.path_of_files_in_directory(
+            dir_path, ["*"], False)
+        for path in paths:
+            self.io.delete(path)

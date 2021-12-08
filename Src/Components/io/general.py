@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-11-30 17:58:28
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-07 08:58:34
+# @Last Modified time: 2021-12-07 18:05:53
 # Standard library imports
 from typing import Any, Callable, Tuple, List, Dict
 import os
@@ -345,24 +345,28 @@ class GeneralIO:
         Returns:
             (bool): True if successful. False otherwise.
         """
-        if self.is_file(src_path):
-            try:
-                moved_path = "{}/{}.{}".format(dst_path, self.get_name(
-                    src_path), self.get_file_extension(src_path))
-                shutil.copy(src_path, dst_path)
-            except:
-                return False, None
-        elif self.is_directory(src_path) \
-                and not self.is_directory(dst_path):
-            try:
-                moved_path = "{}/{}".format(dst_path, self.get_name(src_path))
-                shutil.copytree(src_path, dst_path)
+        try:
+            if self.is_file(src_path):
+                try:
+                    moved_path = "{}/{}.{}".format(dst_path, self.get_name(
+                        src_path), self.get_file_extension(src_path))
+                    shutil.copy(src_path, dst_path)
+                except:
+                    return False, None
+            elif self.is_directory(src_path) \
+                    and not self.is_directory(dst_path):
+                try:
+                    moved_path = "{}/{}".format(dst_path,
+                                                self.get_name(src_path))
+                    shutil.copytree(src_path, dst_path)
 
-            except:
-                return False
-        else:
-            return False
-        return True, moved_path
+                except:
+                    return False, None
+            else:
+                return False, None
+            return True, moved_path
+        except Exception as e:
+            print(e)
 
     def rename(self, src_path: str, new_name: str) -> Tuple[bool, str]:
         """

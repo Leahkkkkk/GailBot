@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:57:50
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-07 12:49:09
+# @Last Modified time: 2021-12-07 17:42:11
 # Standard imports
 from typing import Dict, Any, List, Tuple
 import re
@@ -20,36 +20,22 @@ class Laughter(GBPlugin):
     AUDIO_SAMPLE_RATE = 44100
 
     def __init__(self) -> None:
+        super().__init__()
         self.lb_gap = 0.3
         self.model = keras.models.load_model(self.MODEL_PATH)
-        self.successful = False
 
     def apply_plugin(self, dependency_outputs: Dict[str, Any],
                      plugin_input: PluginMethodSuite) -> List[Utt]:
-        try:
-            new_map = dict()
-            audio_paths = plugin_input.get_audio_paths()
-            utterances_map = plugin_input.get_utterances()
-            for identifier, utterances in utterances_map.items():
-                print("HERE")
-                print(audio_paths)
-                audio_path = audio_paths[identifier]
-                print(audio_path)
-                instances = self._segment_laugh(audio_path, 0.4, 0.05)
-                print(instances)
-                utterances = self._transcribe_laughter(utterances, instances)
-                new_map[identifier] = utterances
-            self.successful = True
-            print(new_map)
-            return new_map
-        except Exception as e:
-            self.successful = False
-            print("laughter", e)
-
-    ################################# GETTERS ###############################
-
-    def was_successful(self) -> bool:
-        return self.successful
+        new_map = dict()
+        audio_paths = plugin_input.get_audio_paths()
+        utterances_map = plugin_input.get_utterances()
+        for identifier, utterances in utterances_map.items():
+            audio_path = audio_paths[identifier]
+            instances = self._segment_laugh(audio_path, 0.4, 0.05)
+            utterances = self._transcribe_laughter(utterances, instances)
+            new_map[identifier] = utterances
+        self.successful = True
+        return new_map
 
     ################################# PRIVATE  ###############################
 

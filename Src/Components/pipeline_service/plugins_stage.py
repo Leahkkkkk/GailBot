@@ -2,12 +2,13 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:48:19
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-07 17:27:10
+# @Last Modified time: 2021-12-07 18:15:26
 from typing import Dict, Any, List
 from abc import abstractmethod
 from copy import deepcopy
 
 # Local imports
+from ..io import IO
 from .payload import Payload
 from ..plugin_manager import Plugin, PluginConfig, PluginManager, ApplyConfig, \
     PluginManagerSummary
@@ -17,13 +18,19 @@ from ..shared_models import Utt, GailBotSettings
 class PluginMethodSuite:
 
     def __init__(self, payload: Payload) -> None:
+        self.io = IO()
         self.payload = payload
+        self.result_dir = "{}/{}".format(
+            self.payload.source.hook.get_temp_directory_path(),
+            "plugins_results")
+        if not self.io.is_directory(self.result_dir):
+            self.io.create_directory(self.result_dir)
 
     def get_utterances(self) -> Dict:
         return self.payload.source_addons.utterances_map
 
     def get_result_directory_path(self) -> str:
-        return self.payload.source.hook.get_temp_directory_path()
+        return self.result_dir
 
     def get_audio_paths(self) -> Dict:
         audio_map = dict()
@@ -33,6 +40,10 @@ class PluginMethodSuite:
 
 
 class GBPlugin(Plugin):
+
+    def __init__(self):
+        self.successful = False
+
     @abstractmethod
     def apply_plugin(self, dependency_outputs: Dict[str, Any],
                      plugin_method_suite: PluginMethodSuite) -> Any:
@@ -50,7 +61,6 @@ class GBPlugin(Plugin):
         """
         pass
 
-    @abstractmethod
     def was_successful(self) -> bool:
         """
         Determine if the plugin executed successfully.
@@ -58,7 +68,7 @@ class GBPlugin(Plugin):
         Returns:
             (bool): True if the plugin was successful. False otherwise.
         """
-        pass
+        return self.successful
 
 
 class PluginsStage:

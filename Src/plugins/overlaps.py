@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:57:50
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-07 12:49:12
+# @Last Modified time: 2021-12-07 17:48:21
 # Standard imports
 from typing import Dict, Any, List, Tuple
 import re
@@ -16,53 +16,47 @@ from Src.components import GBPlugin, PluginMethodSuite, Utt
 class Overlaps(GBPlugin):
 
     def __init__(self) -> None:
+        super().__init__()
         self.marker_limit = 4
 
     def apply_plugin(self, dependency_outputs: Dict[str, Any],
                      plugin_input: PluginMethodSuite) -> List[Utt]:
         # Get the output of the previous plugin
-        try:
-            utterances: List[Utt] = dependency_outputs["combine_turns"]
-            new_utterances = list()
-            for i, curr_utt in enumerate(utterances[:-1]):
-                curr_utt = deepcopy(curr_utt)
-                nxt_utt = deepcopy(utterances[i+1])
-                # In this case there is some overlap
-                if curr_utt.end_time_seconds - nxt_utt.start_time_seconds:
-                    curr_x, curr_y, nxt_x, nxt_y = self._get_overlap_positions(
-                        curr_utt, nxt_utt)
-                    if (abs(curr_x - curr_y) <= self.marker_limit) or \
-                            (abs(nxt_x - nxt_y) <= self.marker_limit):
-                        new_utterances.append(curr_utt)
-                        continue
-                    # Not adding markers if there is no character within limit
-                    # Not adding markers encompassing comments.
-                    if (not re.search('[a-zA-Z]', curr_utt.text[curr_x:curr_y])) or \
-                            (not re.search('[a-zA-Z]', nxt_utt.text[nxt_x:nxt_y])):
-                        new_utterances.append(curr_utt)
-                        continue
-                    # Add the overlap markers
-                    curr_utt.text = "{} < {}".format(
-                        curr_utt.text[:curr_x],
-                        curr_utt.text[curr_x:])
-                    curr_utt.text = "{} > [>] {}".format(
-                        curr_utt.text[:curr_y],
-                        curr_utt.text[curr_y:]).rstrip()
-                    nxt_utt.text = "{} < {}".format(
-                        nxt_utt.text[:nxt_x], nxt_utt.text[nxt_x:])
-                    nxt_utt.text = "{} > [<] {}".format(
-                        nxt_utt.text[:nxt_y],
-                        nxt_utt.text[nxt_y:]).rstrip()
-                new_utterances.append(curr_utt)
-            new_utterances.append(utterances[-1])
-            return new_utterances
-        except Exception as e:
-            print("overlaps", e)
-
-        ################################# GETTERS ###############################
-
-    def was_successful(self) -> bool:
-        return True
+        utterances: List[Utt] = dependency_outputs["combine_turns"]
+        new_utterances = list()
+        for i, curr_utt in enumerate(utterances[:-1]):
+            curr_utt = deepcopy(curr_utt)
+            nxt_utt = deepcopy(utterances[i+1])
+            # In this case there is some overlap
+            if curr_utt.end_time_seconds - nxt_utt.start_time_seconds:
+                curr_x, curr_y, nxt_x, nxt_y = self._get_overlap_positions(
+                    curr_utt, nxt_utt)
+                if (abs(curr_x - curr_y) <= self.marker_limit) or \
+                        (abs(nxt_x - nxt_y) <= self.marker_limit):
+                    new_utterances.append(curr_utt)
+                    continue
+                # Not adding markers if there is no character within limit
+                # Not adding markers encompassing comments.
+                if (not re.search('[a-zA-Z]', curr_utt.text[curr_x:curr_y])) or \
+                        (not re.search('[a-zA-Z]', nxt_utt.text[nxt_x:nxt_y])):
+                    new_utterances.append(curr_utt)
+                    continue
+                # Add the overlap markers
+                curr_utt.text = "{} < {}".format(
+                    curr_utt.text[:curr_x],
+                    curr_utt.text[curr_x:])
+                curr_utt.text = "{} > [>] {}".format(
+                    curr_utt.text[:curr_y],
+                    curr_utt.text[curr_y:]).rstrip()
+                nxt_utt.text = "{} < {}".format(
+                    nxt_utt.text[:nxt_x], nxt_utt.text[nxt_x:])
+                nxt_utt.text = "{} > [<] {}".format(
+                    nxt_utt.text[:nxt_y],
+                    nxt_utt.text[nxt_y:]).rstrip()
+            new_utterances.append(curr_utt)
+        new_utterances.append(utterances[-1])
+        self.successful = True
+        return new_utterances
 
     def _get_overlap_positions(self, curr_utt: Utt, nxt_utt: Utt) -> Tuple:
         start_difference_secs = \
