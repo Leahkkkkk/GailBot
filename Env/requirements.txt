@@ -1,4 +1,4 @@
-requests==2.25.1absl-py==0.15.0
+
 appdirs==1.4.4
 appnope==0.1.2
 astroid==2.5.1

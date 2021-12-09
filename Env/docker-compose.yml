@@ -1,0 +1,15 @@
+version: "3.8"
+services:
+  app:
+    image: gb:latest
+    build: .
+    environment:
+      - DISPLAY=$IP:0
+    volumes:
+      - type: bind
+        source: ${PWD}/../
+        target: /root/gb_dev
+
+    network_mode: host
+    stdin_open: true
+    tty: true
