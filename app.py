@@ -1,22 +1,27 @@
-# Standard imports
+# -*- coding: utf-8 -*-
+# @Author: Muhammad Umair
+# @Date:   2021-12-09 17:52:42
+# @Last Modified by:   Muhammad Umair
+# @Last Modified time: 2021-12-09 18:04:30
+
+
 import sys
-# Local imports
-from Src.Interfaces import GailBotGUI
+from Src import Interface
 
 
 class App:
 
-    def __init__(self, enable_gui: bool = False) -> None:
-        self.interface = None
-        if enable_gui:
-            self.interface = GailBotGUI()
-        else:
-            raise Exception("Not yet implemented")
+    def __init__(self) -> None:
+        self.interface = Interface()
 
-    def run(self) -> None:
-        self.interface.run()
+    def run(self, interface: str) -> None:
+        self.interface.run(interface)
 
 
 if __name__ == "__main__":
-    app = App(enable_gui=True)
-    sys.exit(app.run())
+    pass
+
+
+if __name__ == "__main__":
+    app = App()
+    sys.exit(app.run(interface="cli_basic"))
