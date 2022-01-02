@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:48:19
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-08 15:10:47
+# @Last Modified time: 2022-01-01 18:23:38
 from typing import Dict, Any, List
 from abc import abstractmethod
 from copy import deepcopy
@@ -16,6 +16,9 @@ from ..shared_models import Utt, GailBotSettings
 
 
 class PluginMethodSuite:
+    """
+    Method suite provided to Plugins containing methods on a per-source level.
+    """
 
     def __init__(self, payload: Payload) -> None:
         self.io = IO()
@@ -26,13 +29,30 @@ class PluginMethodSuite:
         if not self.io.is_directory(self.result_dir):
             self.io.create_directory(self.result_dir)
 
-    def get_utterances(self) -> Dict:
+    def get_utterances(self) -> Dict[str, Utt]:
+        """
+        Obtain the utterances map generated for this source.
+
+        Returns:
+            (Dict[str,Utt]):
+                Map from each data file to utterances generated for that file.
+        """
         return self.payload.source_addons.utterances_map
 
     def get_result_directory_path(self) -> str:
+        """
+        Obtain the result directory path for this source.
+        """
         return self.result_dir
 
-    def get_audio_paths(self) -> Dict:
+    def get_audio_paths(self) -> Dict[str, str]:
+        """
+        Obtain a map from each data file in the source to its corresponding
+        audio file.
+
+        Returns:
+            (Dict[str,str])
+        """
         audio_map = dict()
         for data_file in self.payload.source.conversation.data_files:
             audio_map[data_file.identifier] = data_file.audio_path
@@ -85,6 +105,9 @@ class PluginsStage:
             self.plugin_manager.register_plugin_using_config_data(data)
         return [plugin_name for plugin_name in self.plugin_manager.get_plugin_names()
                 if plugin_name not in current_plugins]
+
+    def get_registered_plugin_names(self) -> List[str]:
+        return self.plugin_manager.get_plugin_names()
 
     def apply_plugins(self, payload: Payload) -> None:
         if not self._can_apply_plugins(payload):

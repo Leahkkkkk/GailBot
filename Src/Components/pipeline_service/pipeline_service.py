@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-11-05 21:08:01
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-07 16:05:21
+# @Last Modified time: 2022-01-01 18:17:33
 
 # # Standard imports
 import collections
@@ -44,6 +44,9 @@ class PipelineService:
     def register_plugins(self, config_path: str) -> List[str]:
         success, configs = self._parse_plugins_config_file(config_path)
         return self.plugins_stage.register_plugins(configs) if success else []
+
+    def get_registered_plugin_names(self) -> List[str]:
+        return self.plugins_stage.get_registered_plugin_names()
 
     def execute(self, sources: List[Source]) -> Any:
         try:
