@@ -14,3 +14,5 @@ __pycache__/
 # Test files
 test_data
 TestData
+# Tests not included in release
+./Tests
