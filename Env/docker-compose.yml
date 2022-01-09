@@ -1,14 +1,22 @@
+# @Author: Muhammad Umair
+# @Date:   2021-12-10 00:11:22
+# @Last Modified by:   Muhammad Umair
+# @Last Modified time: 2022-01-09 18:47:23
 version: "3.8"
 services:
   app:
     image: gb:latest
     build: .
+    container_name: gailbot
     environment:
       - DISPLAY=$IP:0
     volumes:
       - type: bind
-        source: ${PWD}/../
-        target: /root/gb_dev
+        source: ${PWD}/../Src
+        target: /root/gb/Src
+      - type: bind
+        source: ${PWD}/../Plugins
+        target: /root/gb/Plugins
 
     network_mode: host
     stdin_open: true

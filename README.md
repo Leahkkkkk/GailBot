@@ -43,8 +43,8 @@ Install and execute a docker container:
 ```
 - cd ./Env
 - docker-compose build
-- docker-compose up
-- docker exec -it env_app_1 /bin/bash
+- docker-compose up -d
+- docker exec -it gailbot /bin/bash
 ```
 
 Note that the above will build and execute a docker image before opening an interactive session with the docker container. It will also mount the root directory as a volume i.e., changes in the root directory will be reflected inside the docker container.
