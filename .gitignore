@@ -11,8 +11,6 @@ __pycache__/
 # editor / frameworks
 .devcontainer
 .vscode
-# Test files
-test_data
-TestData
 # Tests not included in release
 ./Tests
+data/**
