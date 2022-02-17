@@ -2,11 +2,9 @@
 # @Author: Muhammad Umair
 # @Date:   2021-11-05 21:08:35
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-08 15:12:19
+# @Last Modified time: 2022-02-17 09:31:08
 # Standard imports
 from typing import Dict, Tuple, List
-
-from Src.components.shared_models import utt
 
 # Local imports
 from ..utils.threads import ThreadPool
