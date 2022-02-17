@@ -2,15 +2,14 @@
 # @Author: Muhammad Umair
 # @Date:   2021-11-05 21:08:01
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-01-01 18:17:33
+# @Last Modified time: 2022-02-17 09:47:00
 
 # # Standard imports
 import collections
 import logging
-from typing import List, Tuple, Dict, Any, Callable
+from typing import List, Tuple, Dict, Any
 from ..io import IO
-from ..shared_models import Source, SourceHook, Settings, SettingsHook,\
-    SettingsProfile
+from ..shared_models import Source
 from ..pipeline import Pipeline
 from .logic import GBPipelineLogic
 from .transcription_stage import TranscriptionStage

@@ -1,9 +1,13 @@
+# -*- coding: utf-8 -*-
+# @Author: Muhammad Umair
+# @Date:   2022-02-17 09:41:58
+# @Last Modified by:   Muhammad Umair
+# @Last Modified time: 2022-02-17 09:47:40
 # Standard library imports
 from typing import Any, Dict
 from abc import ABC, abstractmethod
 # Local imports
-from .apply_config import ApplyConfig
-from .plugin_execution_summary import PluginExecutionSummary
+
 
 class Plugin(ABC):
     """
@@ -17,8 +21,8 @@ class Plugin(ABC):
     ############################ MODIFIERS ##################################
 
     @abstractmethod
-    def apply_plugin(self, dependency_outputs : Dict[str,Any],
-             *args, **kwargs) -> Any:
+    def apply_plugin(self, dependency_outputs: Dict[str, Any],
+                     *args, **kwargs) -> Any:
         """
         Apply this plugin using the given Applyconfig and return the execution
         summary.

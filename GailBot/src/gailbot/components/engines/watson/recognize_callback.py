@@ -5,7 +5,6 @@
 # @Last Modified time: 2021-12-05 17:21:20
 # Standard imports
 from typing import Callable, Any, List, Dict
-import json
 # Local imports
 # Third party imports
 from ibm_watson.websocket import RecognizeCallback

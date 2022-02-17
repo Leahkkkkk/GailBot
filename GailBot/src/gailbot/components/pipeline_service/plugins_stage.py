@@ -2,15 +2,14 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:48:19
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-01-01 18:23:38
+# @Last Modified time: 2022-02-17 09:47:10
 from typing import Dict, Any, List
 from abc import abstractmethod
-from copy import deepcopy
 
 # Local imports
 from ..io import IO
 from .payload import Payload
-from ..plugin_manager import Plugin, PluginConfig, PluginManager, ApplyConfig, \
+from ..plugin_manager import Plugin, PluginManager, ApplyConfig, \
     PluginManagerSummary
 from ..shared_models import Utt, GailBotSettings
 

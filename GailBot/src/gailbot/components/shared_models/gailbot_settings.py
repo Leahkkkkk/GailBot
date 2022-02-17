@@ -2,10 +2,9 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-06 11:10:05
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-06 15:43:22
+# @Last Modified time: 2022-02-17 09:47:50
 
 from typing import List, Dict, Any
-from dacite import from_dict
 from dataclasses import asdict, dataclass, asdict
 from .settings import Settings
 
