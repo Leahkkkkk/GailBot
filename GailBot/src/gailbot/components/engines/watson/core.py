@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-11-30 17:58:39
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-08 14:32:26
+# @Last Modified time: 2022-04-22 12:48:08
 # Standard library imports
 from typing import List, Any, Dict
 import time
@@ -107,9 +107,9 @@ class WatsonCore:
         Returns:
             (bool): True if successfully set. False otherwise.
         """
-        success = self._is_api_key_valid(api_key)
-        if not success:
-            return False
+        # success = self._is_api_key_valid(api_key)
+        # if not success:
+        #     return False
         self.inputs["api_key"] = api_key
         return True
 
@@ -395,7 +395,7 @@ class WatsonCore:
             self.inputs["recognize_callback"] != None and \
             self.inputs["region"] != None
 
-    def _is_api_key_valid(self, apikey: str) -> bool:
+    def _is_api_key_valid(self, apikey: str, url: str) -> bool:
         """
         Determine if the given apikey is valid.
 
@@ -407,6 +407,7 @@ class WatsonCore:
         """
         try:
             stt = self._initialize_stt_service(apikey)
+            stt.set_service_url(url)
             stt.list_models()
             return True
         except:

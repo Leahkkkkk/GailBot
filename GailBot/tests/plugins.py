@@ -2,12 +2,12 @@
 # @Author: Muhammad Umair
 # @Date:   2022-02-17 15:00:01
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-02-23 08:12:39
+# @Last Modified time: 2022-04-22 15:24:53
 
 import sys
 import os
 from typing import Dict, Any
-from gailbot.core import GailBotController, GailBotSettings
+from src.gailbot.core import GailBotController, GailBotSettings
 
 # ---- GLOBALS # TODO: Separate into another file later.
 
@@ -16,8 +16,9 @@ RESULT_DIR_PATH = "./tests/results"
 SETTINGS_PROFILE_EXTENSION = "json"
 WATSON_API_KEY = "MSgOPTS9CvbADe49nEg4wm8_gxeRuf4FGUmlHS9QqAw3"
 WATSON_LANG_CUSTOM_ID = "41e54a38-2175-45f4-ac6a-1c11e42a2d54"
-WATSON_BASE_LANG_MODEL = "en-US_NarrowbandModel"
 WATSON_REGION = "dallas"
+WATSON_BASE_LANG_MODEL = "en-US_NarrowbandModel"
+
 PROFILE_NAME = "afosr_settings"
 
 
@@ -51,6 +52,14 @@ def init_gb(ws_dir_path: str) -> Any:
 def run():
     print("Running main...")
     gb = init_gb(WORKSPACE_PATH)
+    print("Added source")
+    gb.add_source("test",
+                  "/Users/muhammadumair/Documents/Research/Projects/gailbot/test_data/controller_data/media/audio/mp3/sample1.mp3",
+                  RESULT_DIR_PATH)
+    gb.apply_settings_profile_to_source("test", PROFILE_NAME)
+    print("Transcribing")
+    gb.transcribe()
+    print("Transcription completed!")
 
 
 if __name__ == "__main__":

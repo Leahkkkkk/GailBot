@@ -431,8 +431,8 @@ class WatsonLanguageModel:
         Returns:
             (bool): True if connected successfully. False otherwise.
         """
-        if not self._is_api_key_valid(api_key) or \
-                not region in self.regions.keys():
+        if not region in self.regions.keys() or \
+                not self._is_api_key_valid(api_key, self.regions[region]):
             self.connected_to_service = False
             return False
         self.stt = self._initialize_stt_service(api_key)
@@ -442,7 +442,7 @@ class WatsonLanguageModel:
 
     ############################# PRIVATE METHODS ############################
 
-    def _is_api_key_valid(self, apikey: str) -> bool:
+    def _is_api_key_valid(self, apikey: str, url : str) -> bool:
         """
         Determine if the given apikey is valid.
 
@@ -454,6 +454,7 @@ class WatsonLanguageModel:
         """
         try:
             stt = self._initialize_stt_service(apikey)
+            stt.set_service_url(url)
             stt.list_models()
             return True
         except:

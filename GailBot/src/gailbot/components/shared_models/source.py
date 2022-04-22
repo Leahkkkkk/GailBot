@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:31:00
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-08 15:59:09
+# @Last Modified time: 2022-04-22 15:21:36
 from dataclasses import dataclass
 from typing import Dict, Any, List
 from ..io import IO
@@ -68,10 +68,12 @@ class SourceHook:
             -> str:
         result_dir_path = "{}/{}".format(dir_path, source_name)
         if self.io.is_directory(result_dir_path):
-            count = 0
-            while self.io.is_directory(result_dir_path):
-                result_dir_path = "{}_{}".format(
-                    result_dir_path, str(count))
+            count = 1
+            while True:
+                path = "{}_{}".format(result_dir_path, count)
+                if not self.io.is_directory(path):
+                    result_dir_path = path
+                    break
                 count += 1
         self.io.create_directory(result_dir_path)
         return result_dir_path
