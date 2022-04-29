@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-04-29 15:22:38
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-04-29 15:22:51
+# @Last Modified time: 2022-04-29 16:19:58
 
 from typing import Dict
 from .vardefs import *
@@ -25,5 +25,3 @@ def get_settings_dict() -> Dict:
             }
         }
     }
-
-
