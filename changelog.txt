@@ -1,0 +1,10 @@
+DATE: 4/29/22
+- Added pytest tests into the tests folder for all components.
+    - These are tests that were last updated 12/21 and may need to be
+    updated to support new components / file paths.
+    - Copied over most of the previous tests and initialized the frameworks.
+    - Only the transcription test module reliably works - all the rest of the
+    tests will need to be updated.
+- Added a pypi directory that will contain scripts that can be run directly when
+GailBit is installed using pypi.
+- Added fixtures to create test output directory.
