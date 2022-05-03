@@ -2,11 +2,12 @@
 # @Author: Muhammad Umair
 # @Date:   2021-11-05 21:08:01
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-05-03 12:20:03
+# @Last Modified time: 2022-05-03 18:29:31
 
 # # Standard imports
 import collections
 import logging
+import sys
 import os
 import glob
 from typing import List, Tuple, Dict, Any
@@ -44,6 +45,7 @@ class PipelineService:
 
     def register_plugins(self, plugins_dir_path: str) -> List[str]:
         success, configs = self._parse_plugins_directory(plugins_dir_path)
+        sys.path.append(plugins_dir_path)
         return self.plugins_stage.register_plugins(configs) if success else []
 
     def get_registered_plugin_names(self) -> List[str]:

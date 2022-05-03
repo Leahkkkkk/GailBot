@@ -25,3 +25,7 @@ configuration
     - Only released a method to download plugins from url until the plugin
     urls become a bit more stable.
 - Released the changes on pypi as version: 0.0.1a2
+- Loading plugins
+    - Added a system path append for the directory from where the plugins are
+    loaded. This is necessary to load inter-plugin module dependencies.
+    Released the changes on pypi as version: 0.0.1a3

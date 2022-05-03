@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-02-17 15:00:01
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-05-03 12:13:13
+# @Last Modified time: 2022-05-03 18:30:53
 
 from typing import Dict
 from typing import Dict, Any
@@ -48,7 +48,7 @@ def run():
     assert gb.apply_settings_profile_to_source(
         "test_audio_transcription_short", SETTINGS_PROFILE_NAME)
     assert gb.is_source_ready_to_transcribe("test_audio_transcription_short")
-    # gb.transcribe()
+    gb.transcribe()
 
 
 if __name__ == "__main__":
