@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-02-17 15:00:01
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-05-03 12:26:35
+# @Last Modified time: 2022-05-03 12:38:45
 
 from typing import Dict
 import pytest
@@ -27,7 +27,9 @@ def init_gb(ws_dir_path: str) -> GailBotController:
 def test_audio_transcription_short():
 
     gb = init_gb(TRANSCRIPTION_WORKSPACE)
-    plugin_suite_paths = gb.download_plugin_suites("./plugins")
+    plugin_suite_paths = gb.download_plugin_suite_from_url(
+        "https://sites.tufts.edu/hilab/files/2022/05/ca_pkg.zip", "./plugins")
+    # plugin_suite_paths = gb.download_plugin_suites("./plugins")
     import os
     print(plugin_suite_paths)
     path = os.path.join("/Users/muhammadumair/Documents/Repositories/mumair01-repos/GailBot-0.3/GailBot",

@@ -22,3 +22,6 @@ configuration
     links.
     - Utils/download.py --> Added this file, which contains methods to download and
     extract zip plugins. This also contains the urls as a global constant.
+    - Only released a method to download plugins from url until the plugin
+    urls become a bit more stable.
+- Released the changes as

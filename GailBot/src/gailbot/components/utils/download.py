@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-05-03 11:06:45
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-05-03 12:27:04
+# @Last Modified time: 2022-05-03 12:39:22
 
 import shutil
 from typing import List
@@ -59,6 +59,13 @@ def download_from_urls(urls, download_dir, unzip=True, chunkSize=8192):
 def download_all_plugins(download_dir: str) -> List[str]:
     return download_from_urls(
         urls=URLS,
+        download_dir=download_dir,
+        unzip=True)
+
+
+def download_plugin_from_url(url: str, download_dir: str) -> List[str]:
+    return download_from_urls(
+        urls=[url],
         download_dir=download_dir,
         unzip=True)
 
