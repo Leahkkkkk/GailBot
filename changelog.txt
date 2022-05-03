@@ -24,4 +24,4 @@ configuration
     extract zip plugins. This also contains the urls as a global constant.
     - Only released a method to download plugins from url until the plugin
     urls become a bit more stable.
-- Released the changes as
+- Released the changes on pypi as version: 0.0.1a2
