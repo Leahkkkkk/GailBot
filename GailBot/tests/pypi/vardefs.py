@@ -2,14 +2,14 @@
 # @Author: Muhammad Umair
 # @Date:   2022-04-29 13:45:19
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-04-29 15:55:55
+# @Last Modified time: 2022-04-29 16:30:35
 import os
 import sys
 
 # --------------------------- OUTPUT DIR STRUCTURE -----------------------------
 # --------------  Paths
 # Roots
-TESTING_FRAMEWORK_ROOT = "./tests/test_results"
+TESTING_FRAMEWORK_ROOT = "./test_results"
 RESULTS_ROOT_DIR = os.path.join(TESTING_FRAMEWORK_ROOT, "results")
 WORKSPACES_ROOT_DIR = os.path.join(TESTING_FRAMEWORK_ROOT, "workspaces")
 # Component results

@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-11-05 21:07:36
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-01-01 18:19:53
+# @Last Modified time: 2022-05-03 10:25:49
 # Standard imports
 from typing import List, Any, Dict
 
@@ -160,17 +160,19 @@ class GailBotController:
         return self.organizer_service.save_source_settings_profile(
             source_name, new_settings_profile_name)
 
-    def register_plugins(self, config_path: str) -> List[str]:
+    def register_plugins(self, plugins_dir_path: str) -> List[str]:
         """
-        Register plugins using the specified configuration file.
+        Register plugins using the path to the plugins directory containing
+        plugins. Note that a config.json file must be present.
 
         Args:
-            config_path (str): Path to the configuration file.
+            plugins_dir_path (str): Path to plugins directory containing config.json
 
         Returns:
             (List[str]): List of plugins loaded using the configuration file.
         """
-        return self.pipeline_service.register_plugins(config_path)
+        print("Registering")
+        return self.pipeline_service.register_plugins(plugins_dir_path)
 
     def transcribe(self) -> Any:
         """

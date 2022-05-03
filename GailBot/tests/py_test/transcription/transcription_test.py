@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-02-17 15:00:01
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-04-29 15:29:30
+# @Last Modified time: 2022-05-03 10:31:44
 
 from typing import Dict
 import pytest
@@ -27,6 +27,7 @@ def init_gb(ws_dir_path: str) -> GailBotController:
 def test_audio_transcription_short():
 
     gb = init_gb(TRANSCRIPTION_WORKSPACE)
+    print(gb.register_plugins("/Users/muhammadumair/Documents/ca_pkg"))
     assert gb.add_source("test_audio_transcription_short",
                          MP3_SAMPLE1_FILE, TRANSCRIPTION_RESULT)
     assert gb.apply_settings_profile_to_source(

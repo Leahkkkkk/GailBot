@@ -8,3 +8,12 @@ DATE: 4/29/22
 - Added a pypi directory that will contain scripts that can be run directly when
 GailBit is installed using pypi.
 - Added fixtures to create test output directory.
+- Loading plugins dynamically from anywhere:
+    - It seems that the best solution to install plugins is likely by
+    changing register plugins to expect a directory, appending the absolute path
+    to the relative path, and importing that way.
+    - Test this with the new plugin suite.
+
+DATE: 5/3/22
+- Changed controller.register_plugins to expect a plugin directory with a
+configuration

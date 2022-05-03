@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:13:08
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-07 13:00:26
+# @Last Modified time: 2022-05-03 10:15:33
 # Standard library imports
 from typing import Any, List, Dict
 import imp
@@ -117,6 +117,7 @@ class PluginLoader:
         Given a file path, load the specified class in the specified module
         from the path. The class is initialized with *args, **kwargs.
         """
+
         try:
             module_type = imp.load_source(module_name, file_path)
             clazz = getattr(module_type, class_name)
@@ -124,4 +125,3 @@ class PluginLoader:
             return instance
         except Exception as e:
             print(e)
-            pass
