@@ -17,3 +17,8 @@ GailBit is installed using pypi.
 DATE: 5/3/22
 - Changed controller.register_plugins to expect a plugin directory with a
 configuration
+- Downloading plugin folders:
+    - Folders will be hosted on the HI-lab website, which provides direct download
+    links.
+    - Utils/download.py --> Added this file, which contains methods to download and
+    extract zip plugins. This also contains the urls as a global constant.

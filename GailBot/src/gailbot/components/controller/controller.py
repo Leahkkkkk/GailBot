@@ -2,14 +2,14 @@
 # @Author: Muhammad Umair
 # @Date:   2021-11-05 21:07:36
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-05-03 10:25:49
+# @Last Modified time: 2022-05-03 12:08:00
 # Standard imports
 from typing import List, Any, Dict
-
 # Local imports
 from ..organizer_service import OrganizerService
 from ..pipeline_service import PipelineService
 from ..shared_models import Settings, GailBotSettings
+from ..utils.download import download_all_plugins
 
 
 class GailBotController:
@@ -171,7 +171,6 @@ class GailBotController:
         Returns:
             (List[str]): List of plugins loaded using the configuration file.
         """
-        print("Registering")
         return self.pipeline_service.register_plugins(plugins_dir_path)
 
     def transcribe(self) -> Any:
@@ -180,6 +179,12 @@ class GailBotController:
         """
         self.pipeline_service.execute(
             self.organizer_service.get_configured_sources())
+
+    def download_plugin_suites(self, download_dir: str) -> List[str]:
+        """
+        Download all officially supported plugin suites.
+        """
+        return download_all_plugins(download_dir)
 
     ############################### GETTERS #################################
 
