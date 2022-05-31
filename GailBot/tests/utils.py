@@ -2,17 +2,38 @@
 # @Author: Muhammad Umair
 # @Date:   2022-04-29 15:22:38
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-04-29 16:19:58
+# @Last Modified time: 2022-05-31 12:46:46
 
 from typing import Dict
 from .vardefs import *
 
+PLUGINS_TO_APPLY = [
+    "constructTree",
+    "utteranceDict",
+    "speakerDict",
+    "conversationDict",
+    "convModelPlugin",
+    # "testLayer00"
+    "overlaps",
+    "pauses",
+    "gaps",
+    "syllRate",
+    "layerPrint01",
+    "plainPrint",
+    "chat",
+    "txt",
+    "csvPlugin",
+    "csvWordLevel",
+    # "xmlPlugin",
+    "XMLtoCSV",
+    "xmlSchema"
+]
 
 def get_settings_dict() -> Dict:
     return {
         "core": {},
         "plugins": {
-            "plugins_to_apply": []
+            "plugins_to_apply": PLUGINS_TO_APPLY
         },
         "engines": {
             "engine_type": "watson",
