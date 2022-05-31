@@ -176,7 +176,10 @@ plugin_suite_paths = gb.download_plugin_suite_from_url(
     "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip", "./plugins")
 
 # Generate full path to the local directory on the current system
-path = os.path.join(<CURRENT DIRECTORY>,plugin_suite_paths[0])
+path = os.path.join(os.getcwd(),plugin_suite_paths[0])
+
+# Register the plugins - print to verify expected plugins are loaded.
+print(gb.register_plugins(path))
 
 # Add a source with <SOURCE NAME> from the <SOURCE PATH>, which produces
 # results in <RESULT DIRECTORY PATH>
