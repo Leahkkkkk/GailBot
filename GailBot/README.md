@@ -102,6 +102,107 @@ controller.transcribe()
 
 In the above code example, we first add an audio source to an instance of GailBotController, giving it a unique identifier, the path to the audio source, and a result directory. Next, we apply the settings profile created earlier to the audio source we added. We then verify that the settings profile has been correctly applied and that the audio source is ready to transcribe. Finally, we start the transcription process and wait for results in the  specified results directory.
 
+### Supported Plugin Suites
+
+A core GailBot feature is its ability to apply plugin suites during the transcription process. While different use cases may require custom plugins (See section below), the Human Interaction Lab maintains and distributes pre-developed custom suites.
+
+The GailBot API provides a method for downloading HI-Lab plugin suites as follows:
+
+```
+gb = init_gb(<TRANSCRIPTION_WORKSPACE>)
+plugin_suite_paths = gb.download_plugin_suite_from_url(
+    <PLUGIN_SUITE_URL>, <LOCAL DIRECTORY PATH>)
+```
+
+The above code downloads a plugin suite from the specified URL and saves the plugin suite in a local directory.
+
+Below is a detailed list of HI-Lab maintained plugin suites:
+
+#### HiLabSuite
+
+This is the main plugin suite that is maintained by the Human Interaction Lab. It uses a multi-layered approach to generate a tree-like structure to store transcription results, supports multiple data views (word level, utterance level etc.), and produces output in various formats.
+
+**SUITE URL:**  https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip
+
+The following code demonstrates how this plugin suite may be used with GailBot:
+
+```
+
+PLUGINS_TO_APPLY = [
+    "constructTree",
+    "utteranceDict",
+    "speakerDict",
+    "conversationDict",
+    "convModelPlugin",
+    "overlaps",
+    "pauses",
+    "gaps",
+    "syllRate",
+    "layerPrint01",
+    "plainPrint",
+    "chat",
+    "txt",
+    "csvPlugin",
+    "csvWordLevel",
+    "XMLtoCSV",
+    "xmlSchema"
+]
+
+def get_settings_dict() -> Dict:
+    return {
+        "core": {},
+        "plugins": {
+            "plugins_to_apply": PLUGINS_TO_APPLY
+        },
+        "engines": {
+            "engine_type": "watson",
+            "watson_engine": {
+                "watson_api_key": WATSON_API_KEY,
+                 "watson_language_customization_id": "",
+                "watson_base_language_model": WATSON_BASE_LANG_MODEL,
+                "watson_region": WATSON_REGION,
+
+            }
+        }
+    }
+
+
+
+# Initialize GailBot
+gb = init_gb(TRANSCRIPTION_WORKSPACE)
+
+# Download plugin suite into local directory'./plugins'
+plugin_suite_paths = gb.download_plugin_suite_from_url(
+    "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip", "./plugins")
+
+# Generate full path to the local directory on the current system
+path = os.path.join(<CURRENT DIRECTORY>,plugin_suite_paths[0])
+
+# Add a source with <SOURCE NAME> from the <SOURCE PATH>, which produces
+# results in <RESULT DIRECTORY PATH>
+assert gb.add_source(<SOURCE NAME>,
+                        <SOURCE PATH>, <RESULT DIRECTORY PATH>)
+
+# Create a settings profile for this plugin suite
+gb.create_new_settings_profile(<SETTINGS_PROFILE_NAME>, get_settings_dict())
+assert gb.is_settings_profile(<SETTINGS_PROFILE_NAME>)
+
+# Apply a settings profile with name <SETTINGS_PROFILE_NAME> to the source with
+# name <SOURCE NAME>
+assert gb.apply_settings_profile_to_source(
+    <SOURCE NAME>, <SETTINGS_PROFILE_NAME>)
+
+# Start the transcription process.
+assert gb.is_source_ready_to_transcribe(<SOURCE NAME>)
+gb.transcribe()
+```
+
+In the above code, we initialize GailBot, create a new settings profile that applies plugins for the HILabPlugin suite, add a source to transcribe, and produce results by applying the plugin suite.
+
+Note that in the get_settings_dict() method, users will have to enter their custom WATSON_API_KEY, WATSON_REGION, and WATSON_BASE_LANG_MODEL. These are generated from the [IBM Watson](https://cloud.ibm.com/login) service.
+
+
+
 ### Custom Plugins
 
 
