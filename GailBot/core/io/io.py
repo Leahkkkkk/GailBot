@@ -2,19 +2,23 @@
 # @Author: Muhammad Umair
 # @Date:   2021-11-30 17:58:28
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-07 18:05:22
+# @Last Modified time: 2022-08-23 10:11:47
 
 # Standard library imports
 from typing import List, Tuple, Any
 # Local imports
-from .audio import AudioIO
-from .video import VideoIO, VideoWriteTypes
-from .general import GeneralIO
-from .shell import ShellIO, ShellStatus
-# Third party imports
+from gailbot.core.io.audio import AudioIO
+from gailbot.core.io.video import (
+    VideoIO, VideoWriteTypes
+)
+from gailbot.core.io.general import GeneralIO
+from gailbot.core.io.shell import (
+    ShellIO,
+    ShellStatus
+)
 
 
-class IO:
+class GailBotIO:
     """
     Responsible for providing the main API for all input/operations.
     """

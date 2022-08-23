@@ -2,15 +2,15 @@
 # @Author: Muhammad Umair
 # @Date:   2021-11-30 17:58:28
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-03 19:27:28
+# @Last Modified time: 2022-08-23 10:09:41
 # Standard library imports
 from typing import Dict, List, Any, Tuple
 from enum import IntEnum, Enum
-# Local imports
-from dataclasses import dataclass
-from ..utils.threads import ThreadPool
 # Third party imports
 from moviepy.editor import *
+# Local imports
+from dataclasses import dataclass
+from gailbot.utils.threads import ThreadPool
 
 
 class VideoWriteTypes(IntEnum):

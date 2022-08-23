@@ -2,16 +2,15 @@
 # @Author: Muhammad Umair
 # @Date:   2021-11-30 17:58:28
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-11-30 18:12:49
+# @Last Modified time: 2022-08-23 10:08:14
 # Standard library imports
 import subprocess
 from copy import deepcopy
 from enum import Enum
 from typing import Tuple, Any, Dict, List
 # Local imports
-from ..utils.threads import ThreadPool
+from gailbot.utils.threads import ThreadPool
 # Third party imports
-
 
 class ShellStatus(Enum):
     """
