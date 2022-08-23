@@ -2,12 +2,12 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:31:00
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-04-22 15:21:36
+# @Last Modified time: 2022-08-23 11:34:05
 from dataclasses import dataclass
 from typing import Dict, Any, List
-from ..io import IO
 from .utt import Utt
 from .settings import SettingsProfile
+from gailbot.core.io import GailBotIO
 
 
 class SourceHook:
@@ -15,7 +15,7 @@ class SourceHook:
     def __init__(self, source_name: str, temp_ws_path: str,
                  result_dir_path: str) -> None:
         # Objects
-        self.io = IO()
+        self.io = GailBotIO()
         # Temp ws for this source
         self.temp_ws_path = "{}/{}".format(temp_ws_path, source_name)
         # Result will make sure there is no conflicting name

@@ -2,11 +2,11 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:31:04
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-02-17 09:47:56
+# @Last Modified time: 2022-08-23 11:33:49
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Dict, Any
-from ..io import IO
+from gailbot.core.io import GailBotIO
 
 
 class Settings(ABC):
@@ -32,7 +32,7 @@ class SettingsHook:
             settings_profile_name(str)
             parent_dir_path(str): Directory in which the hook is created.
         """
-        self.io = IO()
+        self.io = GailBotIO()
         self.settings_profile_name = settings_profile_name
         self.save_dir_path = save_dir_path
         self.save_path = "{}/{}.{}".format(
