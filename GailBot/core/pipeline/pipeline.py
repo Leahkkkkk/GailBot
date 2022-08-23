@@ -2,18 +2,18 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:13:08
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-02-17 09:46:18
+# @Last Modified time: 2022-08-23 10:59:28
 # Standard library imports
 from typing import List, Any, Dict, Tuple
 import time
-
+# Third party imports
+import networkx as nx
 # Local imports
 from .logic import Logic
 from .stream import Stream
 from .component import Component, ComponentState
-from ..utils.threads import ThreadPool
-# Third party imports
-import networkx as nx
+from gailbot.utils.threads import ThreadPool
+
 
 
 class Pipeline:
