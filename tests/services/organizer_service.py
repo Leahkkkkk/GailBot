@@ -2,12 +2,10 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-23 11:39:42
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-23 11:39:48
+# @Last Modified time: 2022-08-23 11:41:18
 
+import pytest
+from gailbot.services.organizer_service import OrganizerService
 
-def main():
-    print("Hello, World!")
-
-
-if __name__ == "__main__":
-    main()
+def test_initialize():
+    assert type(OrganizerService("./")) == OrganizerService

@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 14:12:19
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-23 11:39:22
+# @Last Modified time: 2022-08-23 11:41:56
 from typing import List
 from gailbot.core.io import GailBotIO
 from gailbot.services.objects import (
@@ -39,7 +39,7 @@ class SourceLoader:
 class AudioFileLoader:
 
     def __init__(self):
-        self.io = IO()
+        self.io = GailBotIO()
 
     def load(self, source_name: str, source_path: str,
              result_dir_path: str, temp_ws_path: str)\
@@ -63,7 +63,7 @@ class AudioFileLoader:
 class VideoFileLoader:
 
     def __init__(self):
-        self.io = IO()
+        self.io = GailBotIO()
 
     def load(self, source_name: str, source_path: str,
              result_dir_path: str,  temp_ws_path: str)\
@@ -93,7 +93,7 @@ class VideoFileLoader:
 class DirectoryLoader:
 
     def __init__(self):
-        self.io = IO()
+        self.io = GailBotIO()
 
     def load(self, source_name: str, source_path: str,
              result_dir_path: str,  temp_ws_path: str)\
@@ -126,7 +126,7 @@ class DirectoryLoader:
 class TranscribedDirectoryLoader:
 
     def __init__(self):
-        self.io = IO()
+        self.io = GailBotIO()
 
     def load(self, source_name: str, source_path: str,
              result_dir_path: str,  temp_ws_path: str) \
