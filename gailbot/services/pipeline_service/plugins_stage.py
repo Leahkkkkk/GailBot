@@ -2,16 +2,20 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:48:19
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-02-17 09:47:10
+# @Last Modified time: 2022-08-23 11:48:33
 from typing import Dict, Any, List
 from abc import abstractmethod
 
 # Local imports
-from ..io import IO
 from .payload import Payload
-from ..plugin_manager import Plugin, PluginManager, ApplyConfig, \
+from gailbot.core.io import GailBotIO
+from gailbot.plugin.plugin_manager import (
+    Plugin,
+    PluginManager,
+    ApplyConfig,
     PluginManagerSummary
-from ..shared_models import Utt, GailBotSettings
+)
+from gailbot.services.objects import Utt, GailBotSettings
 
 
 class PluginMethodSuite:
@@ -20,7 +24,7 @@ class PluginMethodSuite:
     """
 
     def __init__(self, payload: Payload) -> None:
-        self.io = IO()
+        self.io = GailBotIO()
         self.payload = payload
         self.result_dir = "{}/{}".format(
             self.payload.source.hook.get_temp_directory_path(),

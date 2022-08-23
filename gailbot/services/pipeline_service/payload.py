@@ -2,13 +2,13 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:32:23
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-02-17 09:46:51
+# @Last Modified time: 2022-08-23 11:46:39
 
 import logging
 from datetime import date, time
 from typing import Dict
 from dataclasses import dataclass
-from ..shared_models import Source, Utt
+from gailbot.services.objects import Source, Utt
 
 
 @dataclass

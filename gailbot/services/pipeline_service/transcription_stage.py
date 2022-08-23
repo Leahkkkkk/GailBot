@@ -2,16 +2,16 @@
 # @Author: Muhammad Umair
 # @Date:   2021-11-05 21:08:35
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-02-17 09:31:08
+# @Last Modified time: 2022-08-23 11:52:12
 # Standard imports
 from typing import Dict, Tuple, List
 
 # Local imports
-from ..utils.threads import ThreadPool
-from ..engines import Engines, WatsonEngine
-from ..io import IO
 from .payload import Payload
-from ..shared_models import DataFile, Utt, GailBotSettings
+from gailbot.utils.threads import ThreadPool
+from gailbot.core.engines import Engines, WatsonEngine
+from gailbot.core.io import GailBotIO
+from gailbot.services.objects import DataFile,Utt,GailBotSettings
 
 
 class TranscriptionStage:
@@ -19,8 +19,8 @@ class TranscriptionStage:
     NUM_THREADS = 10
 
     def __init__(self) -> None:
-        self.engines = Engines(IO())
-        self.io = IO()
+        self.engines = Engines()
+        self.io = GailBotIO()
         self.thread_pool = ThreadPool(
             self.NUM_THREADS)
         self.thread_pool.spawn_threads()

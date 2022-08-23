@@ -2,17 +2,21 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:27:23
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-08 11:14:27
+# @Last Modified time: 2022-08-23 11:45:55
 # # Standard imports
 from typing import List, Tuple, Dict, Any
 from datetime import datetime
 import time
 import logging
 # Local imports
-
-from ..pipeline import Pipeline, Logic, Stream
 from .payload import Payload
-from ..utils.threads import ThreadPool
+from gailbot.core.pipeline import (
+    Pipeline,
+    Logic,
+    Stream
+)
+from gailbot.utils.threads import ThreadPool
+
 
 
 class GBPipelineLogic(Logic):

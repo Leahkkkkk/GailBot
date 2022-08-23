@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-11-05 21:08:01
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-05-03 18:29:31
+# @Last Modified time: 2022-08-23 11:47:23
 
 # # Standard imports
 import collections
@@ -11,14 +11,15 @@ import sys
 import os
 import glob
 from typing import List, Tuple, Dict, Any
-from ..io import IO
-from ..shared_models import Source
-from ..pipeline import Pipeline
 from .logic import GBPipelineLogic
 from .transcription_stage import TranscriptionStage
 from .plugins_stage import PluginsStage
 from .output_stage import OutputStage
 from .payload import Payload, SourceAddons
+
+from gailbot.core.io import GailBotIO
+from gailbot.core.pipeline import Pipeline
+from gailbot.services.objects import Source
 
 # Local imports
 
@@ -29,7 +30,7 @@ class PipelineService:
         # Vars.
         self.pipeline_name = "transcription_pipeline_service"
         self.pipeline_num_threads = 4
-        self.io = IO()
+        self.io = GailBotIO()
         self.logic = GBPipelineLogic()
         self.pipeline = Pipeline(self.pipeline_name, self.pipeline_num_threads)
         self.pipeline.set_logic(self.logic)

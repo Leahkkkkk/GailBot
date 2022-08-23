@@ -2,20 +2,20 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:48:19
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-02-17 09:46:39
+# @Last Modified time: 2022-08-23 11:46:24
 import time
 from datetime import datetime
 import os
 # Local imports
-from ..io import IO
 from .payload import Payload
-from ..shared_models import Utt
+from gailbot.core.io import GailBotIO
+from gailbot.services.objects import Utt
 
 
 class OutputStage:
 
     def __init__(self) -> None:
-        self.io = IO()
+        self.io = GailBotIO()
 
     ############################# MODIFIERS ##################################
 
