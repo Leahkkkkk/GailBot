@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+# @Author: Muhammad Umair
+# @Date:   2022-08-23 10:02:56
+# @Last Modified by:   Muhammad Umair
+# @Last Modified time: 2022-08-23 10:45:07
 # Standard library imports
 from typing import Any, Dict, Tuple, Union
 from queue import Queue, Empty
@@ -134,7 +139,8 @@ class WSInterfaceProtocol(WebSocketClientProtocol):
         if not success:
             self._send_close("1000")
 
-    def onConnecting(self, response: websocket.types.TransportDetails) -> None:
+    # def onConnecting(self, response: websocket.types.TransportDetails) -> None:
+    def onConnecting(self, response) -> None:
         """
         Called when first connecting to the server.
         Sends close if the callback throws an uncaught exception.

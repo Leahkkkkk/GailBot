@@ -1,16 +1,20 @@
+# -*- coding: utf-8 -*-
+# @Author: Muhammad Umair
+# @Date:   2022-08-23 10:02:56
+# @Last Modified by:   Muhammad Umair
+# @Last Modified time: 2022-08-23 10:40:00
 # Standard library imports
 from threading import Thread
 from typing import Callable, Dict, List
-# Local imports
-from .WS_protocol import WSInterfaceProtocol
-from .WS_models import WebsocketProtocolModel
-from .WS_factory import WSInterfaceFactory
-from ..utils.threads import ThreadPool
 # Third party imports
 from queue import Queue
 from autobahn.twisted.websocket import connectWS
 from twisted.internet import reactor, ssl
-
+# Local imports
+from .WS_protocol import WSInterfaceProtocol
+from .WS_models import WebsocketProtocolModel
+from .WS_factory import WSInterfaceFactory
+from gailbot.utils.threads import ThreadPool
 
 class WSInterface:
     """
