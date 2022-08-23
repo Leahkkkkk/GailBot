@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-11-05 21:08:35
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-23 11:52:12
+# @Last Modified time: 2022-08-23 12:05:12
 # Standard imports
 from typing import Dict, Tuple, List
 
@@ -69,6 +69,14 @@ class TranscriptionStage:
                 payload.source.hook.get_temp_directory_path()
             )
             utterances = engine.transcribe()
+            # TODO: Needs to be fixed - manually creating Utt objects here
+            utterances = [Utt(
+                item["speaker"],
+                item["start_time"],
+                item["end_time"],
+                item["text"]
+            ) for item in utterances]
+            #-------
             payload.source_addons.utterances_map[data_file.identifier] =\
                 utterances
             payload.source_addons.logger.info(
