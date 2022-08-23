@@ -2,7 +2,11 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-31 13:52:10
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-23 09:45:49
+# @Last Modified time: 2022-08-23 13:50:33
+
+
+# Provide as separate sub-packages
+from .controller import GailBotController, GailBotSettings
 
 
 # Package version

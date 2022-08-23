@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2022-08-23 11:56:06
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-23 12:00:24
+# @Last Modified time: 2022-08-23 13:51:07
 
 # -*- coding: utf-8 -*-
 # @Author: Muhammad Umair
@@ -124,7 +124,8 @@ SETTINGS_PROFILE_EXTENSION = "json"
 
 
 import pytest
-from gailbot.controller import GailBotController
+
+from gailbot import GailBotController, GailBotSettings
 
 def test_initialize():
     controller = GailBotController("./")
@@ -153,5 +154,11 @@ def test_initialize():
         }
     )
     controller.apply_settings_profile_to_source("test","test_profile")
+
+    controller.register_plugins(
+        "/Users/muhammadumair/Documents/Repositories/mumair01-repos/GailBot/plugins/HiLabSuite/src"
+    )
+
+
     assert controller.is_source_ready_to_transcribe("test")
-    controller.transcribe()
+    # controller.transcribe()
