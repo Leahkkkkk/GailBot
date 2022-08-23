@@ -2,17 +2,24 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 14:12:19
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-08 16:02:14
+# @Last Modified time: 2022-08-23 11:39:22
 from typing import List
-from ..io import IO
-from ..shared_models import Source, SourceHook, Conversation, DataFile
-
-
+from gailbot.core.io import GailBotIO
+from gailbot.services.objects import (
+    Source,
+    SourceHook,
+    Settings,
+    SettingsHook,
+    SettingsProfile,
+    GailBotSettings,
+    DataFile,
+    Conversation
+)
 class SourceLoader:
 
     def __init__(self,) -> None:
 
-        self.io = IO()
+        self.io = GailBotIO()
         self.loaders = [AudioFileLoader(), VideoFileLoader(),
                         TranscribedDirectoryLoader(),
                         DirectoryLoader()]

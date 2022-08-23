@@ -2,28 +2,34 @@
 # @Author: Muhammad Umair
 # @Date:   2021-10-19 18:14:54
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-02-17 09:45:57
+# @Last Modified time: 2022-08-23 11:40:44
 
 # Standard imports
 from typing import List
-from ..io import IO
-from ..shared_models import Source, SourceHook, Settings, SettingsHook,\
-    SettingsProfile, GailBotSettings
-from ..utils.manager import ObjectManager
 from .source_loader import SourceLoader
+from gailbot.core.io import GailBotIO
+from gailbot.services.objects import (
+    Source,
+    SourceHook,
+    Settings,
+    SettingsHook,
+    SettingsProfile,
+    GailBotSettings,
+)
+from gailbot.utils.manager import ObjectManager
 
 
 class OrganizerService:
 
     def __init__(self, ws_dir_path: str) -> None:
-        self.ws_dir_path = ws_dir_path
+        self.ws_dir_path = f"{ws_dir_path}/gb_workspace"
         self.temp_ws_path = None
-        self.io = IO()
+        self.io = GailBotIO()
         self.sources: ObjectManager = ObjectManager()
         self.settings_profiles: ObjectManager = ObjectManager()
         self.source_loader = SourceLoader()
         #  Initialize the workspace
-        self._initialize_workspace(ws_dir_path)
+        self._initialize_workspace(self.ws_dir_path)
 
     ############################## MODIFIERS #################################
     # ---- Others
