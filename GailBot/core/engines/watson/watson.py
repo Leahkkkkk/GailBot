@@ -2,31 +2,30 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:13:08
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-08 11:43:15
+# @Last Modified time: 2022-08-23 10:35:49
 
 
 # Standard library imports
 from typing import Dict, List, Any, Union
 from itertools import chain
 # Local imports
-from ...io import IO
-from ..engine import Engine
+from gailbot.core.io import GailBotIO
+from gailbot.core.engines.engine import STTEngine
 from .core import WatsonCore
 from .recognition_results import RecognitionResult
 from .language_model import WatsonLanguageModel
 from .acoustic_model import WatsonAcousticModel
 from .recognize_callback import customWatsonCallbacks
-from ...shared_models import Utt
 # Third party imports
 
 
-class WatsonEngine(Engine):
+class WatsonEngine(STTEngine):
     """
     Engine that connects to the IBM Watson STT and provides methods to interact
     with it.
     """
 
-    def __init__(self, io: IO) -> None:
+    def __init__(self, io: GailBotIO) -> None:
         """
         Args:
             io (IO)
@@ -168,7 +167,7 @@ class WatsonEngine(Engine):
             self.io.get_file_extension(file_path) \
             in self.core.get_supported_audio_formats()
 
-    def transcribe(self) -> List[Utt]:
+    def transcribe(self) -> List:
         """
         Transcribe the audio file that can be added through the configure method
 
@@ -640,7 +639,7 @@ class WatsonEngine(Engine):
     def _on_close_callback(self, closure: List[Dict]) -> None:
         closure[0]["callback_status"]["on_close"] = True
 
-    def _prepare_utterance(self, closure: Dict[str, Any]) -> List[Utt]:
+    def _prepare_utterance(self, closure: Dict[str, Any]) -> List:
         try:
             utterances = list()
             # Mapping based on (start time, end time)
@@ -678,9 +677,15 @@ class WatsonEngine(Engine):
                     data[key]["utterance"] = timestamp[0]
             # Creating utterances
             for times, value in data.items():
-                utt = Utt(
-                    value["speaker"], times[0], times[1],  value["utterance"]
-                )
+                utt = {
+                    "speaker" : value["speaker"],
+                    "start_time" : times[0],
+                    "end_time" : times[1],
+                    "text" : value["utterance"]
+                }
+                # utt = Utt(
+                #     value["speaker"], times[0], times[1],  value["utterance"]
+                # )
                 utterances.append(utt)
             return utterances
         except Exception as e:

@@ -2,14 +2,14 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:13:08
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-02 15:00:50
+# @Last Modified time: 2022-08-23 10:34:47
 # Standard library imports
 from typing import List, Dict
 # Local imports
-from .engine import Engine
+from .engine import STTEngine
 from .watson import WatsonEngine
-from ..io import IO
 # Third party imports
+from gailbot.core.io import GailBotIO
 
 
 class Engines:
@@ -18,11 +18,11 @@ class Engines:
     to users.
     """
 
-    def __init__(self, io: IO) -> None:
+    def __init__(self) -> None:
         self.engines = {
             "watson": WatsonEngine
         }
-        self.io = io
+        self.io = GailBotIO()
         # self.network = network
 
     def get_supported_engines(self) -> List[str]:
@@ -34,7 +34,7 @@ class Engines:
         """
         return list(self.engines.keys())
 
-    def engine(self, engine_type: str) -> Engine:
+    def engine(self, engine_type: str) -> STTEngine:
         """
         Obtain an initialized engine of the specified type.
         Raises ExceptionUnexpected if the engine_type is not supported.

@@ -2,16 +2,16 @@
 # @Author: Muhammad Umair
 # @Date:   2021-11-30 17:58:39
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-04-22 12:48:08
+# @Last Modified time: 2022-08-23 10:27:43
 # Standard library imports
 from typing import List, Any, Dict
 import time
-# Local imports
-from ...io import IO
 # Third party imports
 from ibm_watson import SpeechToTextV1, ApiException
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from ibm_watson.websocket import RecognizeCallback, AudioSource
+# Local imports
+from gailbot.core.io import GailBotIO
 
 
 class WatsonCore:
@@ -45,11 +45,11 @@ class WatsonCore:
         "ogg": "audio/ogg;codecs=opus",
         "opus": "audio/ogg;codecs=opus"}
 
-    def __init__(self, io: IO) -> None:
+    def __init__(self, io: GailBotIO) -> None:
         """
         Args:
             network (Network): Instantiated network object.
-            io (IO): Instantiated IO object.
+            io (GailBotIO): Instantiated GailBotIO object.
         """
         # Vars.
         self.max_file_size_bytes = 7e7

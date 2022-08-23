@@ -2,17 +2,17 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:13:08
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-08 11:33:43
+# @Last Modified time: 2022-08-23 10:32:21
+
 # Standard library imports
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List
-# Local imports
-from ..shared_models import Utt
-from ..io import IO
 # Third party imports
+# Local imports
+from gailbot.core.io import GailBotIO
 
 
-class Engine(ABC):
+class STTEngine(ABC):
     """
     Template for all speech to text engines.
 
@@ -20,7 +20,7 @@ class Engine(ABC):
         (ABC)
     """
     @abstractmethod
-    def __init__(self, io: IO) -> None:
+    def __init__(self, io: GailBotIO) -> None:
         pass
 
     @abstractmethod
@@ -77,7 +77,8 @@ class Engine(ABC):
         pass
 
     @abstractmethod
-    def transcribe(self) -> List[Utt]:
+    # TODO: Needs to define what it returns.
+    def transcribe(self):
         """
         Transcribe the audio file that can be added through the configure method
         """

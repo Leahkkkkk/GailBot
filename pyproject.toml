@@ -49,8 +49,8 @@ source = "https://github.com/mumair01/GailBot"
 download = "https://github.com/mumair01/GailBot/releases"
 tracker = "https://github.com/mumair01/GailBot/issues"
 
-[options.packages.find]
-where = "gailbot"
+[tool.setuptools.packages.find]
+where = "."
 
 # pyproject.toml
 [tool.pytest.ini_options]
