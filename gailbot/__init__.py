@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-31 13:52:10
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-23 14:07:57
+# @Last Modified time: 2022-08-23 15:05:28
 
 
 # Provide as separate sub-packages
@@ -10,7 +10,7 @@ from .controller import GailBotController, GailBotSettings
 
 
 # Package version
-__version__ = '0.1.a6dev'
+__version__ = '0.1.a7'
 
 # pypi info
 __latest_version__ = None
