@@ -2,14 +2,14 @@
 # @Author: Muhammad Umair
 # @Date:   2021-11-05 21:07:36
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-05-03 12:37:44
+# @Last Modified time: 2022-08-23 11:55:28
 # Standard imports
 from typing import List, Any, Dict
 # Local imports
-from ..organizer_service import OrganizerService
-from ..pipeline_service import PipelineService
-from ..shared_models import Settings, GailBotSettings
-from ..utils.download import download_all_plugins, download_plugin_from_url
+from gailbot.services.organizer_service import OrganizerService
+from gailbot.services.pipeline_service import PipelineService
+from gailbot.services.objects import GailBotSettings
+from gailbot.utils.download import download_all_plugins, download_plugin_from_url
 
 
 class GailBotController:
