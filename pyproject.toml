@@ -19,7 +19,9 @@ dependencies = [
     "networkx",
     "ibm_watson",
     "scipy",
-    "syllables"
+    "syllables",
+    "pyyaml",
+    "lxml"
 ]
 
 readme="README.md"
@@ -33,6 +35,7 @@ classifiers=[
 ]
 
 dynamic = ["version"]
+
 
 
 [project.optional-dependencies]
@@ -49,8 +52,12 @@ source = "https://github.com/mumair01/GailBot"
 download = "https://github.com/mumair01/GailBot/releases"
 tracker = "https://github.com/mumair01/GailBot/issues"
 
+
 [tool.setuptools.packages.find]
-where = "."
+where =["."]
+
+[tool.setuptools.dynamic]
+version = {attr = "gailbot.__version__"}
 
 # pyproject.toml
 [tool.pytest.ini_options]
