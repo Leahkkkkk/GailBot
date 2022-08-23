@@ -2,15 +2,16 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:13:08
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-05-03 12:25:58
+# @Last Modified time: 2022-08-23 11:02:24
 # Standard library imports
 from typing import Any, List, Dict
 import imp
 # Local imports
 from .config import PluginConfig
 from .plugin_source import PluginSource
-from ..io import IO
-from ..utils.manager import ObjectManager
+
+from gailbot.core.io import GailBotIO
+from gailbot.utils.manager import ObjectManager
 
 # Third party imports
 
@@ -23,7 +24,7 @@ class PluginLoader:
     def __init__(self) -> None:
         # Objects
         self.manager = ObjectManager()
-        self.io = IO()
+        self.io = GailBotIO()
 
     ################################# MODIFIERS #############################
 

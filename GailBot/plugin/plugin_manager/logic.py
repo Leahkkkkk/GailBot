@@ -2,16 +2,16 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:13:08
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-07 17:10:55
+# @Last Modified time: 2022-08-23 11:02:55
 # Standard library imports
 from typing import Callable, Dict, Any
 from time import time
 # Local imports
-from ..pipeline import Stream, Logic
 from .plugin import Plugin
 from .plugin_source import PluginSource
 from .apply_config import ApplyConfig
 from .plugin_execution_summary import PluginExecutionSummary
+from gailbot.core.pipeline import Stream, Logic
 
 
 class PluginPipelineLogic(Logic):

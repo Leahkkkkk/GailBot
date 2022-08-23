@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2021-12-02 13:13:08
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-05-03 12:22:41
+# @Last Modified time: 2022-08-23 11:03:32
 # Standard library imports
 from typing import Dict, Any, List, Tuple
 # Local imports
@@ -14,8 +14,9 @@ from .plugin_source import PluginSource
 from .loader import PluginLoader
 from .logic import PluginPipelineLogic
 from .plugin_execution_summary import PluginExecutionSummary
-from ..pipeline import Pipeline, Stream
-from ..io import IO
+
+from gailbot.core.pipeline import Pipeline, Stream
+from gailbot.core.io import GailBotIO
 
 
 class PluginManager:
@@ -23,7 +24,7 @@ class PluginManager:
     def __init__(self) -> None:
         # Objects
         self.loader = PluginLoader()
-        self.io = IO()
+        self.io = GailBotIO()
         # Vars.
         self.config_file_extension = "json"
         self.pipeline_name = "plugin_pipeline"
