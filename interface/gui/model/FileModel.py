@@ -1,11 +1,22 @@
-""" Gailbot Model 
-Define the data structure of the data and how data 
-are displayed on user interface
-"""
+'''
+File: FileModel.py
+Project: GailBot GUI
+File Created: Wednesday, 5th October 2022 12:22:13 pm
+Author: Siara Small  & Vivian Li
+-----
+Last Modified: Thursday, 6th October 2022 9:47:56 am
+Modified By:  Siara Small  & Vivian Li
+-----
+'''
+
 from PyQt6 import QtCore
 from PyQt6.QtCore import Qt
 
 class FileModel(QtCore.QAbstractTableModel):
+    """ conatains the database that store data about file 
+        and functionality to reflect the changes in displaying the data
+        on the front-end 
+    """
     def __init__(self):
         super(FileModel, self).__init__()
         self._data = [["filename", "filepath", "filesize", "status"]]
@@ -20,11 +31,18 @@ class FileModel(QtCore.QAbstractTableModel):
     def columnCount(self, index):
         return len(self._data[0])
     
-    def getfile(self, rowidx):
+    def getFile(self, rowidx):
         print(self._data[rowidx])
         return {"name": self._data[rowidx][0], "path": self._data[rowidx][1]}
 
-    def addfilehandler(self, fileobj):
+    def addFileHandler(self, fileobj):
+        """public function for adding the file to the database and 
+           reflect the front-end changes on the file table
+
+        Args:
+            fileobj ([str]): a list of strings that contain the informatin 
+                             about the file
+        """
         self._data.append(fileobj)
         self.layoutChanged.emit()
     

@@ -1,10 +1,21 @@
-from PyQt6.QtWidgets import *
-from view.widgets import InputBox, OnOffSelect
+'''
+File: PostSetPage.py
+Project: GailBot GUI
+File Created: Wednesday, 5th October 2022 12:22:13 pm
+Author: Siara Small  & Vivian Li
+-----
+Last Modified: Thursday, 6th October 2022 11:08:27 am
+Modified By:  Siara Small  & Vivian Li
+-----
+'''
+
+from view.widgets import InputBox, Button, ToggleView
+
+from PyQt6.QtWidgets import QWidget, QLabel, QVBoxLayout
 
 
-""" class for post-transcription settings page """
 class PostSetPage(QWidget):
-    """ initialize class"""
+    """ post-transcription settings page """
     def __init__(self,data, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.data = data
@@ -14,22 +25,24 @@ class PostSetPage(QWidget):
         self.laghter = True
         self._initWidget()
         self._initLayout()
-    """initialize widgets"""
+        
     def _initWidget(self):
+        """initialize widgets"""
         self.header = QLabel("Post Transcription Setting")
         self.label0 = QLabel("General Setting")
         for item in self.data["General"]:
             newInput = InputBox.InputBox(item)
             self.generallist[item] = newInput
         self.label1 = QLabel("Laughter Settings")
-        self.l_settings = QWidget()
-        l_layout = QVBoxLayout()
-        self.l_settings.setLayout(l_layout)
-        self.l_probability= InputBox.InputBox("Laughter Probability - Lower Bound")
-        self.l_length = InputBox.InputBox("Laughter Length")
-        l_layout.addWidget(self.l_probability)
-        l_layout.addWidget(self.l_length)
-        self.l_toggle = OnOffSelect.OnOffSelect("Laughter Detection Mode", self.l_settings)
+        self.laughtherSetting = QWidget()
+        laughterSectionLayout = QVBoxLayout()
+        self.laughtherSetting.setLayout(laughterSectionLayout)
+        self.laughterProbability= InputBox.InputBox("Laughter Probability - Lower Bound")
+        self.laughterLength = InputBox.InputBox("Laughter Length")
+        laughterSectionLayout.addWidget(self.laughterProbability)
+        laughterSectionLayout.addWidget(self.laughterLength)
+        self.LaughterToggle = Button.onOffButton("Laughter Detection Mode",
+                                                self.laughtherSetting)
         self.label2 = QLabel("MicroPause Bound")
         for item in self.data["MicroPause Bound"]:
             newInput = InputBox.InputBox(item)
@@ -37,10 +50,12 @@ class PostSetPage(QWidget):
             
         self.label3 = QLabel("Transcription Module")
         for item in self.data["Transcription Model"]:
-            newOnandOff = OnOffSelect.OnOffSelect(item)
+            newOnandOff = Button.onOffButton(item)
             self.onandOfflist[item] = newOnandOff
-    """ initialize layout"""
+    
+    
     def _initLayout(self):
+        """ initialize layout"""
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
         """ add widget to layout """

@@ -1,9 +1,21 @@
+'''
+File: SettingModel.py
+Project: GailBot GUI
+File Created: Wednesday, 5th October 2022 12:22:13 pm
+Author: Siara Small  & Vivian Li
+-----
+Last Modified: Thursday, 6th October 2022 9:49:48 am
+Modified By:  Siara Small  & Vivian Li
+-----
+'''
+
+
 """ to storing setting data
 TODO: Create D.S to store user created setting profile
 """
 
-""" dummy setting data for testing setting page functionality """
 class SettingModel:
+    """ dummy setting data for testing setting page functionality """
     def __init__(self):
       self.data = {
         "engine": {"IBM": 

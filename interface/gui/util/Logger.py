@@ -1,25 +1,37 @@
-""" Logger.py 
-For manage logger
-"""
+'''
+File: Logger.py
+Project: GailBot GUI
+File Created: Wednesday, 5th October 2022 12:22:13 pm
+Author: Siara Small  & Vivian Li
+-----
+Last Modified: Thursday, 6th October 2022 3:09:55 pm
+Modified By:  Siara Small  & Vivian Li
+-----
+'''
 
-from distutils.log import WARN
+import datetime
 import logging
 import re
-from PyQt6.QtWidgets import *
+
 from PyQt6 import QtCore
-import datetime
+from PyQt6.QtWidgets import QLineEdit
 
 current_time = datetime.datetime.now()
 
-""" return a logger with source set as source:str """
 def makeLogger(source:str):
+    """ return a logger that specifies the source of the log information
+    
+    Args:
+        source(str): indicates the source of the log, 
+                     either "Backend" or "Frontend"
+    """
     logExtra = {"source": source}
     logger = logging.getLogger()
     logger = logging.LoggerAdapter(logger, logExtra)
     return logger
 
-""" formatter for log file """
 class CustomFileFormatter(logging.Formatter):
+    """ formatter for log file """
     def format(self, record: logging.LogRecord) -> str:
         arg_pattern = re.compile(r'%\((\w+)\)')
         arg_names = [x.group(1) for x in arg_pattern.finditer(self._fmt)]
@@ -28,8 +40,8 @@ class CustomFileFormatter(logging.Formatter):
                 record.__dict__[field] = "Backend"
         return super().format(record)
 
-""" formatter for console log """
 class ConsoleFormatter(logging.Formatter):
+    """ formatter for console log """
     def __init__(self, fmt):
         div = "</div>"
         grey = "<div style='color: grey'>"
@@ -51,8 +63,8 @@ class ConsoleFormatter(logging.Formatter):
         formatter = logging.Formatter(log_fmt)
         return formatter.format(record)
 
-""" formatter for status bar """
 class StatusBarFormatter(logging.Formatter):
+    """ formatter for status bar """
     def __init__(self, fmt):
         self.fmt = fmt
         self.warn = "⚠ "
@@ -67,12 +79,17 @@ class StatusBarFormatter(logging.Formatter):
         formatter = logging.Formatter(log_fmt)
         return formatter.format(record)
 
-""" 
-logging handler that shows the log message in a qt console and a file 
-"""
+
+
 class ConsoleHandler(logging.Handler, QtCore.QObject):
+    """ logging handler that shows the log message in a qt console and a file 
+    
+    Args:
+        TextWidget( QLineEdit ): 
+            the widget that the log message will be displayed 
+    """
     appendPlainText = QtCore.pyqtSignal(str)
-    def __init__(self, TextWidget):
+    def __init__(self, TextWidget:QLineEdit):
         super().__init__()
         QtCore.QObject.__init__(self)
         self.widget = TextWidget
@@ -82,21 +99,28 @@ class ConsoleHandler(logging.Handler, QtCore.QObject):
         self._initLogFile(fmt)
 
     def emit(self, record):
+        """ display log changes """
         msg = self.format(record)
         self.appendPlainText.emit(msg)
     
     def _initLogFile(self,fmt):
+        """ export all log information to a separate file """
         fh = logging.FileHandler(f"GailBot-GUI-Log-Report-{current_time}.log")
         fh.setLevel(logging.DEBUG)
         fh.setFormatter(CustomFileFormatter(fmt))
         logging.getLogger().addHandler(fh)
         
-"""
-logging handler that shows log message above warning level in status bar 
-"""       
+        
+      
 class StatusBarHandler(logging.Handler, QtCore.QObject):
+    """ logging handler that send log message above warning level 
+        
+    Args: 
+        showMsgFun: a handler function that takes in the log message 
+                    as argument
+    """ 
     addStatusMsg = QtCore.pyqtSignal(str)
-    def __init__(self, showMsgFun):
+    def __init__(self, showMsgFun:callable):
         super().__init__()
         QtCore.QObject.__init__(self)
         self.showMsg = showMsgFun

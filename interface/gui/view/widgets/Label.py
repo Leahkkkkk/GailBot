@@ -1,23 +1,44 @@
+'''
+File: Label.py
+Project: GailBot GUI
+File Created: Wednesday, 5th October 2022 12:22:13 pm
+Author: Siara Small  & Vivian Li
+-----
+Last Modified: Thursday, 6th October 2022 1:44:09 pm
+Modified By:  Siara Small  & Vivian Li
+-----
+'''
+import os
+import logging
+
+from view.style.styleValues import FontFamily
+
 from PyQt6.QtWidgets import QLabel
 from PyQt6.QtGui import QFont, QFontDatabase
 from util import Path
-import os
-import logging
-from view.style.style import FontFamily
 
-""" 
-Label widget 
-param:
-    @text: text content
-    @size: font size
-    @font: font family 
-    @color: font color
-"""
+
 class Label(QLabel):
-    def __init__(self, text:str, size:str, 
-                 font:str, color = "Black", 
-                 others = "",
-                 *args, **kwargs):
+    """ Label widget used to display text 
+    
+    Args:
+        text(str): text content
+        size(str): font size stored  in string, unit is pixel
+        font(str): font family 
+        color(str, optional): color of the font, Defaults to Black
+        others(str, optional): other styles, Defaults to None
+    """
+    def __init__(
+        self, 
+        text:str, 
+        size:str, 
+        font:str, 
+        color = "Black", 
+        others = None, 
+        *args, 
+        **kwargs
+    ): 
+        """initialize label class"""
         super().__init__(*args, **kwargs)
         self.setText(text)
         
@@ -26,11 +47,12 @@ class Label(QLabel):
                            f"color:{color};"
                            f"{others}")
         if font == FontFamily.MAIN:
-            self._load_header_font()
+            self.loadHeaderFont()
         
-    def _load_header_font(self):
+    def loadHeaderFont(self):
+        """load font for header label (since it's not default)"""
         id = QFontDatabase.addApplicationFont(os.path.join
-                                                   (Path.get_project_root(), 
+                                                   (Path.getProjectRoot(), 
                                                     "view/asset/Raleway.ttf"))
         if id < 0 : logging.warn("font cannot be loaded")
         Raleway =  QFontDatabase.applicationFontFamilies(id)

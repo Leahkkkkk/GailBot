@@ -1,18 +1,38 @@
-from PyQt6.QtWidgets import *
-from PyQt6.QtCore import Qt
+'''
+File: RequiredSetPage.py
+Project: GailBot GUI
+File Created: Wednesday, 5th October 2022 12:22:13 pm
+Author: Siara Small  & Vivian Li
+-----
+Last Modified: Thursday, 6th October 2022 11:08:43 am
+Modified By:  Siara Small  & Vivian Li
+-----
+'''
+
 from view.widgets import DynamicNDependentCombo, ToggleView
 from view.components import MsgBox
 
-""" class for required settings page"""
+from PyQt6.QtWidgets import (
+    QWidget, 
+    QLabel, 
+    QVBoxLayout, 
+    QGridLayout, 
+    QComboBox,
+    QLineEdit
+)
+from PyQt6.QtCore import Qt
+
 class RequiredSetPage(QWidget):
-    """initialize class"""
+    """ required settings page"""
+    
     def __init__(self, data, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.data = data
         self._initWidget()
         self._initLayout()
-    """initialize widgets"""
+        
     def _initWidget(self):
+        """initialize widgets"""
         self.label = QLabel("Required Setting")
         self.userForm = UserForm(self)
         self.header1 = QLabel("Speech to text settings")
@@ -22,8 +42,9 @@ class RequiredSetPage(QWidget):
         self.engineset = ToggleView.ToggleView("Speech to text engine", self.comboBox)
         self.outPut = OutPutFormat()
         self.outPutSet = ToggleView.ToggleView("Output File Format Settings", self.outPut)
-    """initialize layout"""
+        
     def _initLayout(self):
+        """initialize layout"""
         self.verticalLayout = QVBoxLayout()
         self.setLayout(self.verticalLayout)
         """ add widget to layout """
@@ -32,8 +53,9 @@ class RequiredSetPage(QWidget):
         self.verticalLayout.addWidget(self.basicSet)
         self.verticalLayout.addWidget(self.engineset)
         self.verticalLayout.addWidget(self.outPutSet)
-    """function to submit username and password form"""
+        
     def submitForm(self):
+        """function to submit username and password form"""
         res = dict()
         if self.userForm.nameInput.text() == "":
             self.msgbox = MsgBox.WarnBox("Please Enter User name")
@@ -46,8 +68,8 @@ class RequiredSetPage(QWidget):
             res["password"] = self.userForm.passwordInput.text()
         return res
             
-""" class for user form """
 class UserForm(QWidget):
+    """ class for user form """
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.layout = QGridLayout()
@@ -61,8 +83,8 @@ class UserForm(QWidget):
         self.layout.addWidget(self.passwordInput, 1,1)
         self.setLayout(self.layout)
 
-"""class for output form"""
 class OutPutFormat(QWidget):
+    """class for output form"""
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.layout = QVBoxLayout(self)
@@ -75,8 +97,8 @@ class OutPutFormat(QWidget):
         self.fileheader = ToggleView.ToggleView("File Header Views", self.headerForm)
         self.layout.addWidget(self.headerForm)
 
-"""class for header form"""
 class HeaderForm(QWidget):
+    """class for header form"""
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.layout = QVBoxLayout()

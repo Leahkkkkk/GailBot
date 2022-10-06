@@ -1,14 +1,27 @@
-# Console.py 
-# implementation of console window 
-#
-from asyncio.subprocess import DEVNULL
-from distutils.debug import DEBUG
-from distutils.log import ERROR, INFO, WARN
-from PyQt6.QtWidgets import *
+'''
+File: Console.py
+Project: GailBot GUI
+File Created: Wednesday, 5th October 2022 12:22:13 pm
+Author: Siara Small  & Vivian Li
+-----
+Last Modified: Thursday, 6th October 2022 9:54:20 am
+Modified By:  Siara Small  & Vivian Li
+-----
+'''
 import logging
+
 from util import Logger
+from view.style.styleValues import Dimension, Geometry
+
+from PyQt6.QtWidgets import (
+    QWidget, 
+    QVBoxLayout,
+    QLabel, 
+    QPlainTextEdit
+)
 
 class Console(QWidget):
+    """ A console window that display all log messages """
     def __init__(self):
         super().__init__()
         self.LogBox = QPlainTextEdit()
@@ -17,13 +30,9 @@ class Console(QWidget):
         
         logging.getLogger().addHandler(self.LogHandler)
         logging.getLogger().setLevel(logging.DEBUG)
-        self.resize(1000,300)
-        self.setGeometry(300, 700, 1000,300)
-        # self.setStyleSheet("background-color: black;")
+        self.resize(Dimension.CONSOLE)
+        self.setGeometry(Geometry.CONSOLE)
 
-
-        # setting the layout of the console window
-        # TODO: change the layout 
         self.label = QLabel("Console Window")
         layout = QVBoxLayout()
         layout.addWidget(self.label)

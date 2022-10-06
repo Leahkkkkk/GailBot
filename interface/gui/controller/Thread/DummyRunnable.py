@@ -1,14 +1,26 @@
-""" implenmentation of Worker class 
-a subclass of QRunnable class 
-used to run a function on separte thread 
-with the added feature of handling signals
-"""
-from PyQt6.QtCore import QRunnable, QObject, pyqtSlot, pyqtSignal
-import logging
+'''
+File: DummyRunnable.py
+Project: GailBot GUI
+File Created: Wednesday, 25th September 2022 12:22:13 pm
+Author: Siara Small  & Vivian Li
+-----
+Last Modified: Wednesday, 5th October 2022 5:04:05 pm
+Modified By:  Siara Small  & Vivian Li
+-----
+'''
 import time
+
+from PyQt6.QtCore import (
+    QRunnable, 
+    QObject, 
+    pyqtSlot, 
+    pyqtSignal)
 
 
 class Signals(QObject):
+    """ contain signals in order for Qrunnable object to communicate
+        with controller
+    """
     finished = pyqtSignal()
     start = pyqtSignal()
     progress = pyqtSignal(str)
@@ -17,6 +29,8 @@ class Signals(QObject):
     killed = pyqtSignal()
 
 class Worker(QRunnable):
+    """  contain dummy function that is able to run on a separate thread 
+    """
     def __init__(self):
         super(Worker, self).__init__()
         self.signals = Signals()

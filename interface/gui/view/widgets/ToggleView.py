@@ -1,17 +1,29 @@
+'''
+File: ToggleView.py
+Project: GailBot GUI
+File Created: Wednesday, 5th October 2022 12:22:13 pm
+Author: Siara Small  & Vivian Li
+-----
+Last Modified: Thursday, 6th October 2022 1:43:52 pm
+Modified By:  Siara Small  & Vivian Li
+-----
+'''
+from view.widgets import Button
+
 from PyQt6 import QtWidgets
 from PyQt6.QtCore import Qt
-from view.widgets import ToggleBtn
 
-""" 
-A toggle view widget that show and hide content,
-the content is passed in as a widget 
-
-param:
-    @label: 
-    @view: the content that will be toggled 
-"""
 class ToggleView(QtWidgets.QWidget):
+    """ 
+    A toggle view widget that show and hide content,
+    the content is passed in as a widget 
+
+    Args:
+        label(str): 
+        view(object): the content that will be toggled 
+    """
     def __init__(self, label:str, view: object, *args, **kwargs):
+        """initialize toggle view"""
         super().__init__(*args, **kwargs)
         self.layout = QtWidgets.QGridLayout()
         self.scroll = QtWidgets.QScrollArea()
@@ -20,7 +32,7 @@ class ToggleView(QtWidgets.QWidget):
         self.scroll.setWidgetResizable(False)
         
         self.setLayout(self.layout)
-        self.Btn = ToggleBtn.ToggleBtn()
+        self.Btn = Button.ToggleBtn()
         self.label = QtWidgets.QLabel(label)
         self.label.setAlignment( Qt.AlignmentFlag.AlignLeft)
         self.layout.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
@@ -34,9 +46,19 @@ class ToggleView(QtWidgets.QWidget):
         self.Btn.clicked.connect(self._toggleView)
   
     def _toggleView(self):
+        """set view for toggle class"""
         if self.hide:
             self.scroll.show()
             self.hide = False
         else:
             self.scroll.hide()
             self.hide = True
+
+
+class OnOffView(ToggleView):
+    """ A subclass of toggle button on which the text of the button is 
+        "on" or "off"
+    """
+    def __init__(self, label: str, view: object, *args, **kwargs):
+        super().__init__(label, view, *args, **kwargs)
+        self.Btn = Button.ToggleBtn(("on", "off"))

@@ -1,14 +1,25 @@
-""" implenmentation of Worker class 
-a subclass of QRunnable class 
-used to run a function on separte thread 
-with the added feature of handling signals
-"""
-from PyQt6.QtCore import QRunnable, QObject, pyqtSlot, pyqtSignal
-from gailbot import GailBotController, GailBotSettings
+'''
+File: GBRunnable.py
+Project: GailBot GUI
+File Created: Wednesday, 5th October 2022 12:22:13 pm
+Author: Siara Small  & Vivian Li
+-----
+Last Modified: Wednesday, 5th October 2022 5:04:58 pm
+Modified By:  Siara Small  & Vivian Li
+-----
+'''
+
 import os
 import logging
 import time
-from util import Logger
+
+from gailbot import GailBotController
+from PyQt6.QtCore import (
+    QRunnable, 
+    QObject, 
+    pyqtSlot, 
+    pyqtSignal
+)
 
 WATSON_API_KEY = "MSgOPTS9CvbADe49nEg4wm8_gxeRuf4FGUmlHS9QqAw3"
 WATSON_LANG_CUSTOM_ID = "41e54a38-2175-45f4-ac6a-1c11e42a2d54"
@@ -19,6 +30,8 @@ WORKSPACE_DIRECTORY_PATH = "/Users/yike/Desktop/GB-UI/workdir"
 SETTINGS_PROFILE_NAME = "test_profile"
 SETTINGS_PROFILE_EXTENSION = "json"
 
+""" Gailbot plugins from documentation  
+"""
 PLUGINS_TO_APPLY = [
         "constructTree",
         "utteranceDict",
@@ -40,6 +53,8 @@ PLUGINS_TO_APPLY = [
 ]
 
 def get_settings_dict():
+    """ returns a dictionary that contains the setting information
+    """
     return {
         "core": {},
         "plugins": {
@@ -58,6 +73,9 @@ def get_settings_dict():
     }
 
 class Signals(QObject):
+    """ contain signals in order for Qrunnable object to communicate
+        with controller
+    """
     finished = pyqtSignal(int)
     start = pyqtSignal()
     progress = pyqtSignal(str)
@@ -67,32 +85,43 @@ class Signals(QObject):
     endThread = pyqtSignal()
 
 class Worker(QRunnable):
+    """ a subclass of QRunnable class 
+        used to run GailBot function on separte thread 
+        with the added feature of handling signals
+    """
     def __init__(self, filename:str, filepath:str, key:int):
+        """constructor for Worker class
+
+        Args:
+            filename (str): filename 
+            filepath (str): absolute file path to the file
+            key (int): an index key that identify the file in file database
+        """
         super(Worker, self).__init__()
         self.signals = Signals()
         self.key = key
         self.is_killed = False
         self.filepath = filepath
         self.filename = filename
-        self.logger = Logger.makeLogger("Backend: ")
+        self._initLogger()
 
-    def makeLogger(self):
+    def _initLogger(self):
+        """ initialize the logger  """
         self.logExtra = {"source": "Backend"}
         self.logger = logging.getLogger()
         self.logger = logging.LoggerAdapter(self.logger, self.logExtra)
 
+
     @pyqtSlot()
     def run(self):
+        """ public function that can be called to run GailBot 
+        """
         self.logger.info("file ready to be transcribed" )
         
-        
-
         try:
-            # assert(0 == 1)
             self.signals.start.emit()
             gb = GailBotController(WORKSPACE_DIRECTORY_PATH)
             self.signals.progress.emit(str("GailBot controller Initialized"))
-            # time.sleep(10)
         
             if not self.is_killed:
                 plugin_suite_paths = gb.download_plugin_suite_from_url(
@@ -150,5 +179,8 @@ class Worker(QRunnable):
 
 
     def kill(self):
+        """ public function to kill current running thread, the thread 
+            will terminates after finishing the last function call 
+        """
         self.logger.info("User tring to cancel thread")
         self.is_killed = True
