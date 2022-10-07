@@ -12,7 +12,14 @@ Modified By:  Siara Small  & Vivian Li
 import os
 
 from util import Logger 
-from view.components import MainStack, StatusBar, MenuBar, Console, MsgBox
+from view.components import (
+    MainStack, 
+    StatusBar, 
+    MenuBar, 
+    Console, 
+    MsgBox
+)
+
 from controller. Controller import Controller
 from model.Model import Model
 
@@ -88,8 +95,6 @@ class MainWindow(QMainWindow):
         self.msgBox = MsgBox.WarnBox(f"Transcription Failed, error: {err}", 
                                      self.showFileUploadPage)
         self.MainStack.TranscribeProgressPage.IconImg.stop()
-        
-        
         
     """ private function """
     def _connectSignal(self):

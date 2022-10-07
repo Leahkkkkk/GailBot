@@ -104,6 +104,7 @@ class ToggleBtn(QPushButton):
             self.setText(self.label[0])
 
 
+
 class onOffButton(QWidget):
     """ a toggle button that displays "on" or "off" text while being toggled
     

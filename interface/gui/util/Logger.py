@@ -79,8 +79,6 @@ class StatusBarFormatter(logging.Formatter):
         formatter = logging.Formatter(log_fmt)
         return formatter.format(record)
 
-
-
 class ConsoleHandler(logging.Handler, QtCore.QObject):
     """ logging handler that shows the log message in a qt console and a file 
     
@@ -117,7 +115,7 @@ class StatusBarHandler(logging.Handler, QtCore.QObject):
         
     Args: 
         showMsgFun: a handler function that takes in the log message 
-                    as argument
+                    as argument 
     """ 
     addStatusMsg = QtCore.pyqtSignal(str)
     def __init__(self, showMsgFun:callable):
@@ -130,5 +128,6 @@ class StatusBarHandler(logging.Handler, QtCore.QObject):
         self.setLevel(logging.WARNING)
     
     def emit(self, record):
+        """ handling log message """
         msg = self.format(record)
         self.addStatusMsg.emit(msg)

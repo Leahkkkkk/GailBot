@@ -9,7 +9,6 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
-
 """ to storing setting data
 TODO: Create D.S to store user created setting profile
 """

@@ -38,6 +38,7 @@ class Worker(QRunnable):
 
     @pyqtSlot()
     def run(self):
+        """ public function to execute the dummy function """
         try:
             self.signals.start.emit()
             for i in range(30):
@@ -58,4 +59,5 @@ class Worker(QRunnable):
                 self.signals.finished.emit()
 
     def kill(self):
+        """ kill the thread"""
         self.is_killed = True
