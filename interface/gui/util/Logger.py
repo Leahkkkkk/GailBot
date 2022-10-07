@@ -52,10 +52,10 @@ class ConsoleFormatter(logging.Formatter):
         self.fmt = fmt
 
         self.FORMATS = {
-            logging.DEBUG: grey + self.fmt + div,
-            logging.INFO: blue + self.fmt + div,
-            logging.WARNING: orange + self.fmt + div,
-            logging.ERROR: red + self.fmt + div,
+            logging.DEBUG: f"{grey}{self.fmt}{div}",
+            logging.INFO: f"{blue}{self.fmt}{div}",
+            logging.WARNING: f"{orange}{self.fmt }{div}",
+            logging.ERROR: f"{red}{self.fmt}{div}",
         }
 
     def format(self, record):
@@ -70,8 +70,8 @@ class StatusBarFormatter(logging.Formatter):
         self.warn = "⚠ "
         self.error = "! "
         self.FORMATS = {
-            logging.WARNING: self.warn + self.fmt,
-            logging.ERROR: self.error + self.fmt,
+            logging.WARNING: f"{self.warn}{self.fmt}",
+            logging.ERROR: f"{self.error}{self.fmt}",
         }
 
     def format(self, record):
@@ -118,6 +118,7 @@ class StatusBarHandler(logging.Handler, QtCore.QObject):
                     as argument 
     """ 
     addStatusMsg = QtCore.pyqtSignal(str)
+    
     def __init__(self, showMsgFun:callable):
         super().__init__()
         QtCore.QObject.__init__(self)

@@ -114,8 +114,7 @@ class Worker(QRunnable):
 
     @pyqtSlot()
     def run(self):
-        """ public function that can be called to run GailBot 
-        """
+        """ public function that can be called to run GailBot """
         self.logger.info("file ready to be transcribed" )
         
         try:
