@@ -18,22 +18,42 @@ class FileModel(QtCore.QAbstractTableModel):
         and functionality to reflect the changes in displaying the data
         on the front-end 
     """
+    
+    def headerData(self, section: int, orientation: Qt.Orientation, role: int = ...):
+        if orientation == Qt.Orientation.Horizontal and role == Qt.ItemDataRole.DisplayRole:
+            return self.columns[section]
+        if orientation == Qt.Orientation.Vertical and role == Qt.ItemDataRole.DisplayRole:
+            return f"{section + 1}"
+        
     def __init__(self):
         super(FileModel, self).__init__()
-        self._data = [["Type", "Name", "Profile", "status", "date", "size", "action"]]
+        self._data = [["", "", "", 
+                       "", "", "", ""]]
         self._dataDict = dict()
+        self.columns = ["Type", "Name", "Profile", 
+                       "status", "date", "size", "action"]
+        self.setHeaderData(0, Qt.Orientation.Horizontal, "Type")
+        self.setHeaderData(1, Qt.Orientation.Horizontal, "Name")
+        self.setHeaderData(2, Qt.Orientation.Horizontal, "Profile")
+        self.empty = True
+        
+        
+        
 
     def data(self, index, role):
         if role == Qt.ItemDataRole.DisplayRole:
             return self._data[index.row()][index.column()]
         
     def rowCount(self, index):
+        """ return the row count """
         return len(self._data)
 
     def columnCount(self, index):
+        """ return the column count """
         return len(self._data[0])
     
     def getFile(self, rowidx):
+        """ return a dictionart with filename and filepath """
         print(self._dataDict[rowidx])
         return {"name": self._dataDict[rowidx].name, "path": self._dataDict[rowidx].path}
 
@@ -45,9 +65,16 @@ class FileModel(QtCore.QAbstractTableModel):
             fileobj ([str]): a list of strings that contain the informatin 
                              about the file
         """
+          
 
         fileData = fileObj.convertToData()
-        self._data.append(fileData)
+        
+        if self.empty:
+            self._data[0] = fileData
+            self.empty = False
+        else:
+            self._data.append(fileData)
+            
         print(fileData)
         self.layoutChanged.emit()
         key = len(self._data) - 1
@@ -55,6 +82,7 @@ class FileModel(QtCore.QAbstractTableModel):
         
     
     def changeToTranscribed(self, idx:int):
+        """ change the file status to be transcrbed """
         self._data[idx][3] = "transcribed"
         self.layoutChanged.emit()
 

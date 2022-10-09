@@ -24,6 +24,7 @@ from PyQt6.QtWidgets import (
     QPushButton, 
     QTableView, 
     QVBoxLayout,  
+    QHeaderView
 )
 from PyQt6.QtCore import Qt, QSize
 
@@ -53,6 +54,8 @@ class FileUploadPage(QWidget):
                                                FontSize.BTN)
         self.settingBtn = QPushButton("⚙")
         self.fileTable = QTableView()
+        # self.tableHeader = QHeaderView()
+        # self.fileTable.setHorizontalHeader(self.tableHeader)
         self.fileTable.setMinimumSize(QSize(700, 200))
         self.fileTable.setMaximumSize(QSize(1000, 300))
         self.uploadFileBtn.setFixedSize(Dimension.MEDIUMBUTTON)
