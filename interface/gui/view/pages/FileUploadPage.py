@@ -9,7 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
-from view.widgets import Label, Button
+from view.widgets import Label, Button, Table
 from view.style.styleValues import (
     FontFamily, 
     FontSize, 
@@ -17,14 +17,14 @@ from view.style.styleValues import (
     Dimension,
 )
 
+
 from view.style import Background
 
 from PyQt6.QtWidgets import (
     QWidget, 
     QPushButton, 
     QTableView, 
-    QVBoxLayout,  
-    QHeaderView
+    QVBoxLayout
 )
 from PyQt6.QtCore import Qt, QSize
 
@@ -53,7 +53,7 @@ class FileUploadPage(QWidget):
                                                Color.GREYMEDIUM1, 
                                                FontSize.BTN)
         self.settingBtn = QPushButton("⚙")
-        self.fileTable = QTableView()
+        self.fileTable = Table.Table()
         # self.tableHeader = QHeaderView()
         # self.fileTable.setHorizontalHeader(self.tableHeader)
         self.fileTable.setMinimumSize(QSize(700, 200))

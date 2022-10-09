@@ -10,12 +10,15 @@ Modified By:  Siara Small  & Vivian Li
 '''
 
 from PyQt6.QtWidgets import QTableView, QHeaderView
+from view.style.styleValues import Color
 
-class Table (QTableView):
+class Table(QTableView):
     """"""
     def __init__(self, *args, **kwargs) -> None:
         """initialize table model from QTableView"""
         super().__init__(*args, **kwargs)
+        self.setRowColor(0, Color.GREYLIGHT)
+        
     def setRowColor(self, rowIndex, color):
         for j in range(self.columnCount()):
             self.item(rowIndex, j).setBackground(color)
@@ -23,4 +26,3 @@ class Table (QTableView):
 class TableHeader(QHeaderView):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.set
