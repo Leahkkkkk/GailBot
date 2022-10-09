@@ -9,14 +9,13 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
-from view.widgets import Label, Button, Table
+from view.widgets import Label, Button
 from view.style.styleValues import (
     FontFamily, 
     FontSize, 
     Color, 
     Dimension,
 )
-
 
 from view.style import Background
 
@@ -53,7 +52,7 @@ class FileUploadPage(QWidget):
                                                Color.GREYMEDIUM1, 
                                                FontSize.BTN)
         self.settingBtn = QPushButton("⚙")
-        self.fileTable = Table.Table()
+        self.fileTable = QTableView()
         # self.tableHeader = QHeaderView()
         # self.fileTable.setHorizontalHeader(self.tableHeader)
         self.fileTable.setMinimumSize(QSize(700, 200))
