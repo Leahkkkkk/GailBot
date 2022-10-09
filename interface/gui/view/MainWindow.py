@@ -66,6 +66,7 @@ class MainWindow(QMainWindow):
     
     def setFileModel(self, fileModel: QAbstractTableModel):
         self.MainStack.FileUploadPage.fileTable.setModel(fileModel)
+        self.MainStack.FileUploadPage.addActionWidget(fileModel)
     
     def showTranscribeInProgress(self):
         """goes to transcribe in progress page"""

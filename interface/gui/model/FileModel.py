@@ -38,8 +38,6 @@ class FileModel(QtCore.QAbstractTableModel):
         self.empty = True
         
         
-        
-
     def data(self, index, role):
         if role == Qt.ItemDataRole.DisplayRole:
             return self._data[index.row()][index.column()]

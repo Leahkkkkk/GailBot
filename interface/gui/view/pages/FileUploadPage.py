@@ -9,7 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
-from view.widgets import Label, Button
+from view.widgets import Label, Button, Actions
 from view.style.styleValues import (
     FontFamily, 
     FontSize, 
@@ -23,9 +23,9 @@ from PyQt6.QtWidgets import (
     QWidget, 
     QPushButton, 
     QTableView, 
-    QVBoxLayout
+    QVBoxLayout,
 )
-from PyQt6.QtCore import Qt, QSize
+from PyQt6.QtCore import Qt, QSize, QAbstractTableModel
 
 
 class FileUploadPage(QWidget):
@@ -36,6 +36,10 @@ class FileUploadPage(QWidget):
         self._initWidget()
         self._initLayout()
         self._initStyle()
+        
+    def addActionWidget(self, filemodel:QAbstractTableModel):
+        action = Actions.Actions()
+        self.fileTable.setIndexWidget(filemodel.index(0,6), action)
         
     def _initWidget(self):
         """ initialzie widget """
@@ -53,8 +57,7 @@ class FileUploadPage(QWidget):
                                                FontSize.BTN)
         self.settingBtn = QPushButton("⚙")
         self.fileTable = QTableView()
-        # self.tableHeader = QHeaderView()
-        # self.fileTable.setHorizontalHeader(self.tableHeader)
+        
         self.fileTable.setMinimumSize(QSize(700, 200))
         self.fileTable.setMaximumSize(QSize(1000, 300))
         self.uploadFileBtn.setFixedSize(Dimension.MEDIUMBUTTON)
