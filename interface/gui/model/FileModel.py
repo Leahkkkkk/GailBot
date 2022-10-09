@@ -19,7 +19,7 @@ class FileModel(QtCore.QAbstractTableModel):
     """
     def __init__(self):
         super(FileModel, self).__init__()
-        self._data = [["filename", "filepath", "filesize", "status"]]
+        self._data = [["Type", "Name", "Profile", "status", "date", "size", "action"]]
 
     def data(self, index, role):
         if role == Qt.ItemDataRole.DisplayRole:

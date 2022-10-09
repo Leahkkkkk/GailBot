@@ -10,6 +10,7 @@ Modified By:  Siara Small  & Vivian Li
 '''
 
 import os
+import datetime
 
 from util import Logger 
 from view.components import (
@@ -21,7 +22,7 @@ from view.components import (
 )
 
 from controller. Controller import Controller
-from model.Model import Model
+from model.FileItem import FileItem
 
 from PyQt6.QtCore import QSize, QAbstractTableModel
 from PyQt6.QtWidgets import QMainWindow, QFileDialog
@@ -109,20 +110,15 @@ class MainWindow(QMainWindow):
     
     def _addfile(self):
         """ add file to file database """
-        filedialog = QFileDialog(self)
-        file_filter = "*.txt *.pdf *.wav *.png"
-        filedialog.setNameFilter(file_filter)
-        if filedialog.exec():
-            filenamefull = filedialog.selectedFiles()
-            if filenamefull:
-                path = filedialog.directoryUrl().toString()
-                path_arr = filenamefull[0].split("/")
-                filename = path_arr[- 1]
-                filepath = path[7:]
-                filesize = round(os.stat(filenamefull[0]).st_size /(1024**2),2)
-                fileObj = [[filename, filepath, f"{filesize}mb", 
-                                                "untranscribed"]]
-                self.controller.addFile(fileObj)
+        fileDialog = QFileDialog(self)
+        fileFilter = "*.txt *.wav *.png"
+        fileDialog.setNameFilter(fileFilter)
+        if fileDialog.exec():
+            file = fileDialog.selectedFiles()
+            if file:
+                fileObj = FileItem(file[0], "Default")
+                fileData = fileObj.convertToData()
+                self.controller.addFile(fileData)
             else:
                 return None
     
