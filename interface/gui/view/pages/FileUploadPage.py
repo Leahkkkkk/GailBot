@@ -23,7 +23,7 @@ from PyQt6.QtWidgets import (
     QWidget, 
     QPushButton, 
     QTableView, 
-    QVBoxLayout,  
+    QVBoxLayout,
 )
 from PyQt6.QtCore import Qt, QSize
 

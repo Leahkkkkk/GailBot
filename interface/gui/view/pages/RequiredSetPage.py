@@ -9,6 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
+from re import T
 from view.widgets import DynamicNDependentCombo, ToggleView
 from view.components import MsgBox
 
@@ -18,7 +19,8 @@ from PyQt6.QtWidgets import (
     QVBoxLayout, 
     QGridLayout, 
     QComboBox,
-    QLineEdit
+    QLineEdit,
+    QScrollArea
 )
 from PyQt6.QtCore import Qt
 
@@ -43,6 +45,7 @@ class RequiredSetPage(QWidget):
         self.outPut = OutPutFormat()
         self.outPutSet = ToggleView.ToggleView("Output File Format Settings", self.outPut)
         
+        
     def _initLayout(self):
         """initialize layout"""
         self.verticalLayout = QVBoxLayout()
@@ -52,7 +55,13 @@ class RequiredSetPage(QWidget):
         self.verticalLayout.addWidget(self.header1)
         self.verticalLayout.addWidget(self.basicSet)
         self.verticalLayout.addWidget(self.engineset)
-        self.verticalLayout.addWidget(self.outPutSet)
+        self.verticalLayout.addWidget(self.outPutSet)     
+        for i in range(10):
+            newLabel = QLabel(f"{i} label")
+            self.verticalLayout.addWidget(newLabel)
+        self.scroll = QScrollArea()
+        self.scroll.setWidget(self)
+        self.scroll.setWidgetResizable(True)
         
     def submitForm(self):
         """function to submit username and password form"""
@@ -110,7 +119,7 @@ class HeaderForm(QWidget):
         
         self.label1 = QLabel("language")
         self.layout.addWidget(self.label1)
-        
+            
         self.lanCombo = QComboBox(self)
         self.lanCombo.addItems(["English", "Spanish", "Gernman", "French"])
         self.layout.addWidget(self.lanCombo)
@@ -121,6 +130,7 @@ class HeaderForm(QWidget):
         self.numCombo.addItems(["1", "2", "3"])
         self.numCombo.currentIndexChanged.connect(self._updateNumCombo)
         self.layout.addWidget(self.numCombo)
+    
         
         for i in range(3):
             newLabel = QLabel(f"Speaker {i + 1} Gender")
