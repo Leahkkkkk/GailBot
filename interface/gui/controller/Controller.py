@@ -30,13 +30,13 @@ class Controller:
         self.ViewObj.show()
         
     
-    def addFile(self, fileinfo):
+    def addFile(self, fileObj):
         """ handle user request to add a file
         Args: 
             fileinfo: a list of file object 
         """
         self.logger.info("")
-        self.ModelObj.FileModel.addFileHandler(fileinfo[0])
+        self.ModelObj.FileModel.addFileHandler(fileObj)
         
     def runGailBot(self, key):
         """ wrapper function to run GailBot """
@@ -78,6 +78,7 @@ class Controller:
         self.logger.info("")
         file = self.ModelObj.FileModel.getFile(key)
         self.worker = GBRunnable.Worker(file["name"], file["path"],key)
+        print(file["name"], file["path"],key)
         self.worker.signals.start.connect(self._showInProgress)
         self.worker.signals.finished.connect(self._showFinished)
         self.worker.signals.finished.connect(chageTranscribeStatus)

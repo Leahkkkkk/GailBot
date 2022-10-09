@@ -116,9 +116,10 @@ class MainWindow(QMainWindow):
         if fileDialog.exec():
             file = fileDialog.selectedFiles()
             if file:
-                fileObj = FileItem(file[0], "Default")
-                fileData = fileObj.convertToData()
-                self.controller.addFile(fileData)
+                path = fileDialog.directoryUrl().toString()
+                filePath = path[7:]
+                fileObj = FileItem(file[0], filePath,"Default")
+                self.controller.addFile(fileObj)
             else:
                 return None
     

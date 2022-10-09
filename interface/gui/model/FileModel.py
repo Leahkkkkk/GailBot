@@ -8,6 +8,7 @@ Last Modified: Thursday, 6th October 2022 9:47:56 am
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
+from model.FileItem import FileItem
 
 from PyQt6 import QtCore
 from PyQt6.QtCore import Qt
@@ -20,6 +21,7 @@ class FileModel(QtCore.QAbstractTableModel):
     def __init__(self):
         super(FileModel, self).__init__()
         self._data = [["Type", "Name", "Profile", "status", "date", "size", "action"]]
+        self._dataDict = dict()
 
     def data(self, index, role):
         if role == Qt.ItemDataRole.DisplayRole:
@@ -32,10 +34,10 @@ class FileModel(QtCore.QAbstractTableModel):
         return len(self._data[0])
     
     def getFile(self, rowidx):
-        print(self._data[rowidx])
-        return {"name": self._data[rowidx][0], "path": self._data[rowidx][1]}
+        print(self._dataDict[rowidx])
+        return {"name": self._dataDict[rowidx].name, "path": self._dataDict[rowidx].path}
 
-    def addFileHandler(self, fileobj):
+    def addFileHandler(self, fileObj: FileItem):
         """public function for adding the file to the database and 
            reflect the front-end changes on the file table
 
@@ -43,8 +45,14 @@ class FileModel(QtCore.QAbstractTableModel):
             fileobj ([str]): a list of strings that contain the informatin 
                              about the file
         """
-        self._data.append(fileobj)
+
+        fileData = fileObj.convertToData()
+        self._data.append(fileData)
+        print(fileData)
         self.layoutChanged.emit()
+        key = len(self._data) - 1
+        self._dataDict[key] = fileObj
+        
     
     def changeToTranscribed(self, idx:int):
         self._data[idx][3] = "transcribed"
