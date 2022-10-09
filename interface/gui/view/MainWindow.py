@@ -23,7 +23,7 @@ from view.components import (
 from controller. Controller import Controller
 from model.Model import Model
 
-from PyQt6.QtCore import QSize
+from PyQt6.QtCore import QSize, QAbstractTableModel
 from PyQt6.QtWidgets import QMainWindow, QFileDialog
 
 
@@ -33,7 +33,6 @@ class MainWindow(QMainWindow):
         self, 
         controller: Controller, 
         settingdata: dict, 
-        modelObj:Model
     ):
         """initialzie mainwindow object 
         
@@ -51,7 +50,6 @@ class MainWindow(QMainWindow):
         self.settingdata = settingdata
         self.MainStack = MainStack.MainStack(self.settingdata, parent=self)
         self.setCentralWidget(self.MainStack)
-        self.model = modelObj
         self.controller = controller
         self.StatusBar = StatusBar.StatusBar()
         self.setStatusBar(self.StatusBar)
@@ -60,11 +58,13 @@ class MainWindow(QMainWindow):
         self.Console = Console.Console()
         self.logger = Logger.makeLogger("Frontend")
         
-        self._initFileModel()
         self._connectSignal()
         self._connectController()
 
     """ Functions provided to controller """
+    
+    def setFileModel(self, fileModel: QAbstractTableModel):
+        self.MainStack.FileUploadPage.fileTable.setModel(fileModel)
     
     def showTranscribeInProgress(self):
         """goes to transcribe in progress page"""
@@ -101,10 +101,6 @@ class MainWindow(QMainWindow):
         """ connect to signal """
         self.MenuBar.OpenConsole.triggered.connect(lambda: self.Console.show())
         self.MenuBar.CloseConsole.triggered.connect(lambda: self.Console.hide())
-        
-    def _initFileModel(self):
-        """ initialize file database """
-        self.MainStack.FileUploadPage.fileTable.setModel(self.model.FileModel)
         
     def _connectController(self):
         """ connect to controller """

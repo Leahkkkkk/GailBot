@@ -20,9 +20,8 @@ class Controller:
     """ Controller for Gailbot GUI """
     def __init__(self):
         self.ModelObj = Model.Model()
-        self.ViewObj = MainWindow.MainWindow(self, 
-                                             self.ModelObj.SettingModel.data,  
-                                             self.ModelObj)
+        self.ViewObj = MainWindow.MainWindow(self,self.ModelObj.SettingModel.data)
+        self.ViewObj.setFileModel(self.ModelObj.FileModel)
         self.ThreadPool = QThreadPool()
         self.logger = Logger.makeLogger("Backend")
     
