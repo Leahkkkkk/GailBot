@@ -16,9 +16,9 @@ class Table (QTableView):
     def __init__(self, *args, **kwargs) -> None:
         """initialize table model from QTableView"""
         super().__init__(*args, **kwargs)
-        
-
-
+    def setRowColor(self, rowIndex, color):
+        for j in range(self.columnCount()):
+            self.item(rowIndex, j).setBackground(color)
 
 class TableHeader(QHeaderView):
     def __init__(self, *args, **kwargs) -> None:
