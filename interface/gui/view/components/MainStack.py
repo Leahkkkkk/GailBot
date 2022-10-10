@@ -80,8 +80,8 @@ class MainStack(QStackedWidget):
                 self.setCurrentWidget(self.FileUploadPage))
         self.TranscribeSuccessPage.returnBtn.clicked.connect(lambda: 
                 self.setCurrentWidget(self.WelcomePage))
-        self.FileUploadPage.settingBtn.clicked.connect(lambda: 
-                self.setCurrentWidget(self.SettingPage))
+        # self.FileUploadPage.settingBtn.clicked.connect(lambda: 
+        #         self.setCurrentWidget(self.SettingPage))
         self.SettingPage.exitBtn.clicked.connect(lambda:    
                 self.setCurrentWidget(self.FileUploadPage))
         self.SettingPage.cancelBtn.clicked.connect(lambda:  

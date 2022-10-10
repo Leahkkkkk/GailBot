@@ -37,6 +37,7 @@ class ColoredBtn(QPushButton):
         label:str, 
         color:str, 
         fontsize=FontSize.BTN, 
+        other="",
         *args, 
         **kwargs
     ):
@@ -47,7 +48,8 @@ class ColoredBtn(QPushButton):
                            f"color:#fff;"
                            f"border-radius:5;"
                            f"padding:1;"
-                           f"font-size:{fontsize};")
+                           f"font-size:{fontsize};"
+                           f"{other}")
         self.setMaximumSize(Dimension.BGBUTTON)
       
         

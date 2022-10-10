@@ -9,7 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
-from view.style.styleValues import Color
+from view.style.styleValues import Color, FontSize
 from view.widgets import Actions
 from model.FileModel import FileModel
 from view.widgets.Button import ToggleBtn
@@ -20,7 +20,6 @@ from PyQt6.QtWidgets import (
     QAbstractItemView, 
     QCheckBox,
     QWidget,
-    QLabel,
     QHBoxLayout)
 from PyQt6.QtCore import QSize
 
@@ -38,12 +37,10 @@ class FileTable(QTableView):
         self.setColumnWidth(0,90)
         self.setColumnWidth(1,90)
         self.addActionWidget()
-    
-    def rowCountChanged(self, oldCount, newCount):
-        print("called")
-        self._addActionWidget(oldCount)
+        self._initStyle()
     
     def addActionWidget(self):
+        """ add acton buttons and checkbox to table cell """
         widgetContainer = QWidget()
         layout = QHBoxLayout(widgetContainer)
         layout.setContentsMargins(0,0,0,0)
@@ -63,4 +60,8 @@ class FileTable(QTableView):
     
     def _toggle(self):
         pass
+    
+    def _initStyle(self):
+        self.horizontalHeader().setStyleSheet(f"font-size:{FontSize.BODY};"
+                                               "font-weight:600")
      
