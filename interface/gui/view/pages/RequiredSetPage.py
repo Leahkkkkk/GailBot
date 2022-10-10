@@ -114,11 +114,11 @@ class HeaderForm(QWidget):
         self._updateNumCombo(self.numCombo.currentIndex())
     
     def _updateNumCombo(self,index):
-        for i in range(index):
+        for i in range(index + 1):
             self.speakerCombolist[i].show()
             self.speakerLabelList[i].show()
         
-        for i in range(index+1, 3):
+        for i in range(index + 1, 3):
             self.speakerCombolist[i].hide()
             self.speakerLabelList[i].hide()
 
