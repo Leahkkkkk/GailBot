@@ -11,6 +11,7 @@ Modified By:  Siara Small  & Vivian Li
 
 
 from view.style.styleValues import Color
+from view.style.Background import initBackground
 from view.pages import RequiredSetPage, PostSetPage
 from view.widgets import Button
 
@@ -34,8 +35,7 @@ class SettingPage(QWidget):
     def _initWidget(self):
         """ initialize widgets"""
         self.cancelBtn = Button.BorderBtn("Cancel", Color.ORANGE)
-        self.saveBtn = Button.ColoredBtn("save", Color.GREEN)
-        self.exitBtn = QPushButton("exit")
+        self.saveBtn = Button.ColoredBtn("save and exit", Color.GREEN)
         self.requiredSetBtn = QPushButton("required setting")
         self.postSetBtn = QPushButton("post transcription settings")
         
@@ -52,11 +52,11 @@ class SettingPage(QWidget):
         """ add widget to layout """
         self.layout.addWidget(self.requiredSetBtn, 0, 0)
         self.layout.addWidget(self.postSetBtn, 1, 0)
-        self.layout.addWidget(self.saveBtn,7,0)
-        self.layout.addWidget(self.exitBtn,8,0)
-        self.layout.addWidget(self.cancelBtn, 9, 0)
+        self.layout.addWidget(self.saveBtn,3,0)
+        self.layout.addWidget(self.cancelBtn, 4, 0)
         self.layout.addWidget(self.settingStack, 1, 1, 8, 4)
         self.settingStack.resize(QtCore.QSize(500,800))
+        initBackground(self)
    
    
     def _connectSignal(self):

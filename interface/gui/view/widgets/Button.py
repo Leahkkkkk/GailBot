@@ -74,7 +74,7 @@ class BorderBtn(QPushButton):
                            f"border-radius:5;"
                            f"padding:1;"
                            f"font-size:{fontsize}")
-        self.setMaximumSize(Dimension.RBUTTON)
+        self.setMaximumSize(Dimension.BGBUTTON)
 
 
 """ TODO: use a button icon instead of unicode, 

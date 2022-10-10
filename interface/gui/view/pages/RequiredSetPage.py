@@ -22,7 +22,7 @@ from PyQt6.QtWidgets import (
     QLineEdit,
     QScrollArea
 )
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QSize
 
 class RequiredSetPage(QWidget):
     """ required settings page"""
@@ -56,13 +56,7 @@ class RequiredSetPage(QWidget):
         self.verticalLayout.addWidget(self.basicSet)
         self.verticalLayout.addWidget(self.engineset)
         self.verticalLayout.addWidget(self.outPutSet)     
-        for i in range(10):
-            newLabel = QLabel(f"{i} label")
-            self.verticalLayout.addWidget(newLabel)
-        self.scroll = QScrollArea()
-        self.scroll.setWidget(self)
-        self.scroll.setWidgetResizable(True)
-        
+        self.verticalLayout.setSpacing(30)
     def submitForm(self):
         """function to submit username and password form"""
         res = dict()
@@ -91,6 +85,7 @@ class UserForm(QWidget):
         self.passwordInput = QLineEdit(self)
         self.layout.addWidget(self.passwordInput, 1,1)
         self.setLayout(self.layout)
+        self.setFixedHeight(100)
 
 class OutPutFormat(QWidget):
     """class for output form"""

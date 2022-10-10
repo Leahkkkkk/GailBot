@@ -16,7 +16,7 @@ from view.style.styleValues import (
     FontSize,
     Dimension,
     Geometry
-)
+) 
 
 from PyQt6.QtWidgets import QHBoxLayout, QWidget, QScrollArea, QVBoxLayout, QGridLayout
 from PyQt6.QtCore import Qt, pyqtSignal
@@ -42,10 +42,9 @@ class ToggleView(QWidget):
     
     def _configHeader(self):
         self.Btn = Button.ToggleBtn(text=self.labelStr)
-        self.Btn.setStyleSheet(f"color:{Color.BLUEMEDIUM};"
-                               "text-align:left;"
-                               "background-color: #fff;"
-                               "border:1px solid #000;"
+        self.Btn.setStyleSheet("text-align:left;"
+                               f"background-color: {Color.BLUELIGHT};"
+                               "border:0.5px solid #000;"
                                "padding-left: 5px;"
                                f"font-size: {FontSize.BODY}")
        
@@ -56,6 +55,11 @@ class ToggleView(QWidget):
         self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
         self.scroll.setWidgetResizable(True)
         self.scroll.setWidget(self.view)
+        self.setObjectName("viewWrapper")
+        self.scroll.setObjectName("view")
+        self.scroll.setStyleSheet(f"#viewWrapper, #view {{background-color:{Color.BLUEWHITE}}}")
+        self.view.setObjectName("viewContainer")
+        self.view.setStyleSheet(f"#viewContainer {{background-color:{Color.BLUEWHITE}}}")
         self.scroll.hide()
         self.hide = True
     
@@ -70,7 +74,6 @@ class ToggleView(QWidget):
     
     def _connectSignal(self):
         self.Btn.clicked.connect(self._toggleView)
-        # self.view.layoutChanged.connect(self._resizeToggleView)
         
     def _toggleView(self):
         """set view for toggle class"""
@@ -80,9 +83,6 @@ class ToggleView(QWidget):
         else:
             self.scroll.hide()
             self.hide = True
-            
-    def _resizeToggleView(self):
-        pass
 
 
 class OnOffView(ToggleView):

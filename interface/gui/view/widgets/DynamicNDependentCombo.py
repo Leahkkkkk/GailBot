@@ -8,7 +8,7 @@ Last Modified: Thursday, 6th October 2022 1:44:39 pm
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
-
+from view.widgets import ToggleView
 
 from PyQt6.QtWidgets import (
     QComboBox, 
