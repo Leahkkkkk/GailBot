@@ -28,9 +28,9 @@ class FileModel(QtCore.QAbstractTableModel):
     def __init__(self):
         super(FileModel, self).__init__()
         self._data = [["", "", "", 
-                       "", "", "", ""]]
+                       "", "", "", "", ""]]
         self._dataDict = dict()
-        self.columns = ["Type", "Name", "Profile", 
+        self.columns = [" ", "Type", "Name", "Profile", 
                        "status", "date", "size", "action"]
         self.setHeaderData(0, Qt.Orientation.Horizontal, "Type")
         self.setHeaderData(1, Qt.Orientation.Horizontal, "Name")
@@ -83,6 +83,7 @@ class FileModel(QtCore.QAbstractTableModel):
         """ change the file status to be transcrbed """
         self._data[idx][3] = "transcribed"
         self.layoutChanged.emit()
+        self.dataChanged.emit()
 
 # TODO: possible format on transcription page- checkbox, type, 
 # name, profile, transcription status, date, size, actions (3 clickable icons)

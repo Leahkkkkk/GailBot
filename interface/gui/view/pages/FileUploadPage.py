@@ -9,7 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
-from view.widgets import Label, Button, Actions
+from view.widgets import Label, Button, Actions, FileTable
 from view.style.styleValues import (
     FontFamily, 
     FontSize, 
@@ -24,6 +24,8 @@ from PyQt6.QtWidgets import (
     QPushButton, 
     QTableView, 
     QVBoxLayout,
+    QAbstractItemView,
+    QHeaderView
 )
 from PyQt6.QtCore import Qt, QSize, QAbstractTableModel
 
@@ -36,10 +38,6 @@ class FileUploadPage(QWidget):
         self._initWidget()
         self._initLayout()
         self._initStyle()
-        
-    def addActionWidget(self, filemodel:QAbstractTableModel):
-        action = Actions.Actions()
-        self.fileTable.setIndexWidget(filemodel.index(0,6), action)
         
     def _initWidget(self):
         """ initialzie widget """
@@ -56,13 +54,9 @@ class FileUploadPage(QWidget):
                                                Color.GREYMEDIUM1, 
                                                FontSize.BTN)
         self.settingBtn = QPushButton("⚙")
-        self.fileTable = QTableView()
-        
-        self.fileTable.setMinimumSize(QSize(700, 200))
-        self.fileTable.setMaximumSize(QSize(1000, 300))
         self.uploadFileBtn.setFixedSize(Dimension.MEDIUMBUTTON)
         self.transcribeBtn.setFixedSize(Dimension.BGBUTTON)
-  
+        
     def _initLayout(self):
         """ initialize layout """
         self.verticalLayout = QVBoxLayout()
@@ -71,7 +65,14 @@ class FileUploadPage(QWidget):
         self.verticalLayout.addWidget(self.gotoMainBtn)
         self.verticalLayout.addWidget(self.label, 
                                       alignment = Qt.AlignmentFlag.AlignHCenter)
-        self.verticalLayout.addWidget(self.fileTable, 
+        
+    def _initStyle(self):
+        """ initialize the style """
+        Background.initBackground(self)
+        
+    def initFileTable(self, model):
+        self.fileTable = FileTable.FileTable(model)
+        self.verticalLayout.addWidget(self.fileTable,
                                       alignment = Qt.AlignmentFlag.AlignHCenter)
         self.verticalLayout.addWidget(self.uploadFileBtn,
                                       alignment = Qt.AlignmentFlag.AlignHCenter)
@@ -79,9 +80,3 @@ class FileUploadPage(QWidget):
                                       alignment = Qt.AlignmentFlag.AlignHCenter)
         self.verticalLayout.addWidget(self.settingBtn,
                                       alignment = Qt.AlignmentFlag.AlignHCenter)
-        
-    def _initStyle(self):
-        """ initialize the style """
-        Background.initBackground(self)
-        
-    

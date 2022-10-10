@@ -65,8 +65,7 @@ class MainWindow(QMainWindow):
     """ Functions provided to controller """
     
     def setFileModel(self, fileModel: QAbstractTableModel):
-        self.MainStack.FileUploadPage.fileTable.setModel(fileModel)
-        self.MainStack.FileUploadPage.addActionWidget(fileModel)
+        self.MainStack.FileUploadPage.initFileTable(fileModel)
     
     def showTranscribeInProgress(self):
         """goes to transcribe in progress page"""
@@ -121,6 +120,7 @@ class MainWindow(QMainWindow):
                 filePath = path[7:]
                 fileObj = FileItem(file[0], filePath,"Default")
                 self.controller.addFile(fileObj)
+                self.MainStack.FileUploadPage.fileTable.addActionWidget()
             else:
                 return None
     
