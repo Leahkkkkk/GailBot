@@ -31,6 +31,7 @@ class SettingPage(QWidget):
         self._initWidget()
         self._initLayout()
         self._connectSignal()
+        self._initStyle()
     
     def _initWidget(self):
         """ initialize widgets"""
@@ -66,4 +67,8 @@ class SettingPage(QWidget):
         self.requiredSetBtn.clicked.connect(lambda: self.settingStack.
                                             setCurrentWidget(self.RequiredSetPage))
         self.saveBtn.clicked.connect(self.RequiredSetPage.submitForm)
+    
+    def _initStyle(self):
+        self.settingStack.setObjectName("settingStack")
+        self.settingStack.setStyleSheet("#settingStack {border-left: 1px solid black}")
         

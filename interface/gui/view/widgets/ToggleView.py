@@ -41,7 +41,7 @@ class ToggleView(QWidget):
         self._configViewField()
         self._initLayout()
         self._connectSignal()
- 
+    
     
     def _configHeader(self):
         self.Btn = Button.ToggleBtn(text=self.labelStr)
@@ -90,6 +90,9 @@ class ToggleView(QWidget):
         else:
             self.scroll.hide()
             self.hide = True
+    
+    def resizeViewHeight(self,size: int):
+        self.scroll.setMinimumHeight(size)
 
 
 class OnOffView(ToggleView):

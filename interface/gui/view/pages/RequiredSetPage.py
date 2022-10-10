@@ -43,6 +43,7 @@ class RequiredSetPage(QWidget):
         self.outPutSet = ToggleView.ToggleView("Output File Format Settings", 
                                                self.outPut,
                                                header = True)
+        self.outPutSet.resizeViewHeight(350)
         
         
     def _initLayout(self):
@@ -74,8 +75,9 @@ class OutPutFormat(QWidget):
         self.formatCombo.addItems([".TXT", ".CHAT", ".RTF"])
         self.layout.addWidget(self.formatCombo)
         self.headerForm = HeaderForm()
-        self.fileheader = ToggleView.ToggleView("File Header Views", self.headerForm)
-        self.layout.addWidget(self.fileheader)
+        self.fileHeader = ToggleView.ToggleView("File Header Views", self.headerForm)
+        self.fileHeader.resizeViewHeight(200)
+        self.layout.addWidget(self.fileHeader)
 
 class HeaderForm(QWidget):
     """class for header form"""
