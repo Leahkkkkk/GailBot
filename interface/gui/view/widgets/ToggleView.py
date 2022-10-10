@@ -8,6 +8,7 @@ Last Modified: Thursday, 6th October 2022 1:43:52 pm
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
+from email.header import Header
 from tkinter import Widget
 from view.widgets import Button, Label
 from view.style.styleValues import (
@@ -29,11 +30,13 @@ class ToggleView(QWidget):
     Args:
         label(str): 
         view(object): the content that will be toggled 
+        header(bool): if set to true, the width of the label will be wider
     """
-    def __init__(self, label:str, view: object, *args, **kwargs):
+    def __init__(self, label:str, view: object, header = False, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.labelStr = label
         self.view = view
+        self.header = header
         self._configHeader()
         self._configViewField()
         self._initLayout()
@@ -47,10 +50,14 @@ class ToggleView(QWidget):
                                "border:0.5px solid #000;"
                                "padding-left: 5px;"
                                f"font-size: {FontSize.BODY}")
+        if self.header:
+            self.Btn.setFixedWidth(600)
        
     def _configViewField(self):
         self.scroll = QScrollArea()
-        self.scroll.setFixedWidth(500)
+        self.scroll.setMinimumWidth(400)
+        self.scroll.setMaximumWidth(600)
+        self.scroll.setMinimumHeight(100)
         self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
         self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
         self.scroll.setWidgetResizable(True)

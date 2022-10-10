@@ -35,15 +35,14 @@ class RequiredSetPage(QWidget):
         
     def _initWidget(self):
         """initialize widgets"""
-        self.label = QLabel("Required Setting")
-        self.userForm = UserForm(self)
-        self.header1 = QLabel("Speech to text settings")
-        self.header1.setAlignment(Qt.AlignmentFlag.AlignTop)
-        self.basicSet = ToggleView.ToggleView("Basic Setting", self.userForm)
         self.comboBox = DynamicNDependentCombo.DynamicNDependentCombo(self.data,parent=self)
-        self.engineset = ToggleView.ToggleView("Speech to text engine", self.comboBox)
+        self.engineSet = ToggleView.ToggleView("Speech to text settings", 
+                                               self.comboBox, 
+                                               header = True)
         self.outPut = OutPutFormat()
-        self.outPutSet = ToggleView.ToggleView("Output File Format Settings", self.outPut)
+        self.outPutSet = ToggleView.ToggleView("Output File Format Settings", 
+                                               self.outPut,
+                                               header = True)
         
         
     def _initLayout(self):
@@ -51,41 +50,18 @@ class RequiredSetPage(QWidget):
         self.verticalLayout = QVBoxLayout()
         self.setLayout(self.verticalLayout)
         """ add widget to layout """
-        self.verticalLayout.addWidget(self.label)
-        self.verticalLayout.addWidget(self.header1)
-        self.verticalLayout.addWidget(self.basicSet)
-        self.verticalLayout.addWidget(self.engineset)
-        self.verticalLayout.addWidget(self.outPutSet)     
-        self.verticalLayout.setSpacing(30)
+        self.verticalLayout.addWidget(self.engineSet, 
+                                      alignment =Qt.AlignmentFlag.AlignTop
+                                                |Qt.AlignmentFlag.AlignAbsolute)
+        self.verticalLayout.addWidget(self.outPutSet, 
+                                      alignment =Qt.AlignmentFlag.AlignTop
+                                                |Qt.AlignmentFlag.AlignAbsolute)     
+    
     def submitForm(self):
+        """ TODO: add user validation """
+        pass
         """function to submit username and password form"""
-        res = dict()
-        if self.userForm.nameInput.text() == "":
-            self.msgbox = MsgBox.WarnBox("Please Enter User name")
-            return 
-        elif self.userForm.passwordInput.text() == "":
-            self.msgbox = MsgBox.WarnBox("Please Enter Passward")
-            return
-        else:
-            res["userName"] = self.userForm.nameInput.text()
-            res["password"] = self.userForm.passwordInput.text()
-        return res
-            
-class UserForm(QWidget):
-    """ class for user form """
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        self.layout = QGridLayout()
-        self.userlabel = QLabel("Username")
-        self.layout.addWidget(self.userlabel, 0,0)
-        self.nameInput = QLineEdit(self)
-        self.layout.addWidget(self.nameInput, 1,0)
-        self.passwordLabel = QLabel("Password")
-        self.layout.addWidget(self.passwordLabel, 0,1)
-        self.passwordInput = QLineEdit(self)
-        self.layout.addWidget(self.passwordInput, 1,1)
-        self.setLayout(self.layout)
-        self.setFixedHeight(100)
+
 
 class OutPutFormat(QWidget):
     """class for output form"""
@@ -99,7 +75,7 @@ class OutPutFormat(QWidget):
         self.layout.addWidget(self.formatCombo)
         self.headerForm = HeaderForm()
         self.fileheader = ToggleView.ToggleView("File Header Views", self.headerForm)
-        self.layout.addWidget(self.headerForm)
+        self.layout.addWidget(self.fileheader)
 
 class HeaderForm(QWidget):
     """class for header form"""
@@ -107,8 +83,6 @@ class HeaderForm(QWidget):
         super().__init__(*args, **kwargs)
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
-        self.header = QLabel("General")
-        self.layout.addWidget(self.header)
         self.speakerCombolist = []
         self.speakerLabelList = []
         
@@ -123,10 +97,8 @@ class HeaderForm(QWidget):
         self.layout.addWidget(self.label2)
         self.numCombo = QComboBox(self)
         self.numCombo.addItems(["1", "2", "3"])
-        self.numCombo.currentIndexChanged.connect(self._updateNumCombo)
         self.layout.addWidget(self.numCombo)
     
-        
         for i in range(3):
             newLabel = QLabel(f"Speaker {i + 1} Gender")
             self.speakerLabelList.append(newLabel)
@@ -135,11 +107,12 @@ class HeaderForm(QWidget):
             newCombo.addItems(["Female", "Male"])
             self.speakerCombolist.append(newCombo)
             self.layout.addWidget(newCombo)
-            
+        
+        self.numCombo.currentIndexChanged.connect(self._updateNumCombo)
         self._updateNumCombo(self.numCombo.currentIndex())
     
     def _updateNumCombo(self,index):
-        for i in range(index+1):
+        for i in range(index):
             self.speakerCombolist[i].show()
             self.speakerLabelList[i].show()
         
