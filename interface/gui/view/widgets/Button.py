@@ -8,8 +8,10 @@ Last Modified: Thursday, 6th October 2022 1:43:41 pm
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
+import os
 
 from view.style.styleValues import FontSize, Dimension
+from util import Path
 
 from PyQt6.QtWidgets import (
     QPushButton, 
@@ -17,7 +19,9 @@ from PyQt6.QtWidgets import (
     QGridLayout, 
     QLabel
 )
+
 from PyQt6.QtCore import QSize
+from PyQt6.QtGui import QIcon
 
 class ColoredBtn(QPushButton):
     """ a rusable button widget with colored background and white button text
@@ -33,6 +37,7 @@ class ColoredBtn(QPushButton):
         label:str, 
         color:str, 
         fontsize=FontSize.BTN, 
+        other="",
         *args, 
         **kwargs
     ):
@@ -43,7 +48,8 @@ class ColoredBtn(QPushButton):
                            f"color:#fff;"
                            f"border-radius:5;"
                            f"padding:1;"
-                           f"font-size:{fontsize};")
+                           f"font-size:{fontsize};"
+                           f"{other}")
         self.setMaximumSize(Dimension.BGBUTTON)
       
         
@@ -157,3 +163,13 @@ class onOffButton(QWidget):
     def value(self):
         """access state of on-off select"""
         return self.state
+
+
+class iconBtn(QPushButton):
+    def __init__(self, icon:str, *args, **kwargs):
+      super().__init__(*args, **kwargs)
+      icon = QIcon(os.path.join(Path.getProjectRoot(), f"view/asset/{icon}"))
+      self.setIcon(icon)
+      
+      
+      

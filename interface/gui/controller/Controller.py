@@ -20,9 +20,11 @@ class Controller:
     """ Controller for Gailbot GUI """
     def __init__(self):
         self.ModelObj = Model.Model()
-        self.ViewObj = MainWindow.MainWindow(self, 
-                                             self.ModelObj.SettingModel.data,  
-                                             self.ModelObj)
+        self.ViewObj = MainWindow.MainWindow(self,self.ModelObj.SettingModel.data)
+        self.ViewObj.setFileModel(self.ModelObj.FileModel, 
+                                  self.ModelObj.ConfirmFileModel,
+                                  self.ModelObj.ProcessingFileModel,
+                                  self.ModelObj.SuccessedFileMode)
         self.ThreadPool = QThreadPool()
         self.logger = Logger.makeLogger("Backend")
     
@@ -31,13 +33,13 @@ class Controller:
         self.ViewObj.show()
         
     
-    def addFile(self, fileinfo):
+    def addFile(self, fileObj):
         """ handle user request to add a file
         Args: 
             fileinfo: a list of file object 
         """
         self.logger.info("")
-        self.ModelObj.FileModel.addFileHandler(fileinfo[0])
+        self.ModelObj.FileModel.addFileHandler(fileObj)
         
     def runGailBot(self, key):
         """ wrapper function to run GailBot """
@@ -79,6 +81,7 @@ class Controller:
         self.logger.info("")
         file = self.ModelObj.FileModel.getFile(key)
         self.worker = GBRunnable.Worker(file["name"], file["path"],key)
+        print(file["name"], file["path"],key)
         self.worker.signals.start.connect(self._showInProgress)
         self.worker.signals.finished.connect(self._showFinished)
         self.worker.signals.finished.connect(chageTranscribeStatus)

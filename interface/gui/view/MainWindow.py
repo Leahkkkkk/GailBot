@@ -10,6 +10,7 @@ Modified By:  Siara Small  & Vivian Li
 '''
 
 import os
+import datetime
 
 from util import Logger 
 from view.components import (
@@ -21,9 +22,9 @@ from view.components import (
 )
 
 from controller. Controller import Controller
-from model.Model import Model
+from model.FileItem import FileItem
 
-from PyQt6.QtCore import QSize
+from PyQt6.QtCore import QSize, QAbstractTableModel
 from PyQt6.QtWidgets import QMainWindow, QFileDialog
 
 
@@ -33,7 +34,6 @@ class MainWindow(QMainWindow):
         self, 
         controller: Controller, 
         settingdata: dict, 
-        modelObj:Model
     ):
         """initialzie mainwindow object 
         
@@ -51,7 +51,6 @@ class MainWindow(QMainWindow):
         self.settingdata = settingdata
         self.MainStack = MainStack.MainStack(self.settingdata, parent=self)
         self.setCentralWidget(self.MainStack)
-        self.model = modelObj
         self.controller = controller
         self.StatusBar = StatusBar.StatusBar()
         self.setStatusBar(self.StatusBar)
@@ -60,12 +59,22 @@ class MainWindow(QMainWindow):
         self.Console = Console.Console()
         self.logger = Logger.makeLogger("Frontend")
         
-        self._initFileModel()
         self._connectSignal()
         self._connectController()
 
     """ Functions provided to controller """
     
+    def setFileModel(self, fileModelFull: QAbstractTableModel, 
+                           confirmModel: QAbstractTableModel,
+                           progressModel:QAbstractTableModel,
+                           successModel:QAbstractTableModel):
+        
+        # self.MainStack.FileUploadPage.initFileTable(fileModelFull)
+        self.MainStack.FileUploadPage.fileTable.setFileModel(fileModelFull)
+        self.MainStack.ConfirmTranscribePage.fileTable.setFileModel(confirmModel)
+        self.MainStack.TranscribeProgressPage.fileTable.setFileModel(progressModel)
+        self.MainStack.TranscribeSuccessPage.fileTable.setFileModel(successModel)
+
     def showTranscribeInProgress(self):
         """goes to transcribe in progress page"""
         self.MainStack.gotoTranscribeInProgress()
@@ -102,10 +111,6 @@ class MainWindow(QMainWindow):
         self.MenuBar.OpenConsole.triggered.connect(lambda: self.Console.show())
         self.MenuBar.CloseConsole.triggered.connect(lambda: self.Console.hide())
         
-    def _initFileModel(self):
-        """ initialize file database """
-        self.MainStack.FileUploadPage.fileTable.setModel(self.model.FileModel)
-        
     def _connectController(self):
         """ connect to controller """
         self.MainStack.FileUploadPage.uploadFileBtn.clicked.connect(self._addfile)
@@ -113,20 +118,17 @@ class MainWindow(QMainWindow):
     
     def _addfile(self):
         """ add file to file database """
-        filedialog = QFileDialog(self)
-        file_filter = "*.txt *.pdf *.wav *.png"
-        filedialog.setNameFilter(file_filter)
-        if filedialog.exec():
-            filenamefull = filedialog.selectedFiles()
-            if filenamefull:
-                path = filedialog.directoryUrl().toString()
-                path_arr = filenamefull[0].split("/")
-                filename = path_arr[- 1]
-                filepath = path[7:]
-                filesize = round(os.stat(filenamefull[0]).st_size /(1024**2),2)
-                fileObj = [[filename, filepath, f"{filesize}mb", 
-                                                "untranscribed"]]
+        fileDialog = QFileDialog(self)
+        fileFilter = "*.txt *.wav *.png"
+        fileDialog.setNameFilter(fileFilter)
+        if fileDialog.exec():
+            file = fileDialog.selectedFiles()
+            if file:
+                path = fileDialog.directoryUrl().toString()
+                filePath = path[7:]
+                fileObj = FileItem(file[0], filePath,"Default")
                 self.controller.addFile(fileObj)
+                self.MainStack.FileUploadPage.fileTable.addActionWidget()
             else:
                 return None
     

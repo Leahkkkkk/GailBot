@@ -9,7 +9,6 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
-
 from view.style.styleValues import Color
 from view.style.Background import initBackground
 from view.pages import RequiredSetPage, PostSetPage

@@ -8,6 +8,7 @@ Last Modified: Thursday, 6th October 2022 9:47:56 am
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
+from model.FileItem import FileItem
 
 from PyQt6 import QtCore
 from PyQt6.QtCore import Qt
@@ -20,25 +21,41 @@ class FileModel(QtCore.QAbstractTableModel):
         and functionality to reflect the changes in displaying the data
         on the front-end 
     """
+    
+    def headerData(self, section: int, orientation: Qt.Orientation, role: int = ...):
+        if orientation == Qt.Orientation.Horizontal and role == Qt.ItemDataRole.DisplayRole:
+            return self.columns[section]
+        if orientation == Qt.Orientation.Vertical and role == Qt.ItemDataRole.DisplayRole:
+            return f"{section + 1}"
+        
     def __init__(self):
         super(FileModel, self).__init__()
-        self._data = [["filename", "filepath", "filesize", "status"]]
-
+        self._data = [["", "", "", 
+                       "", "", "", "", ""]]
+        self._dataDict = dict()
+        self.columns = [" ", "Type", "Name", "Profile", 
+                       "Status", "Date", "Size", "Action"]
+        self.empty = True
+        
+        
     def data(self, index, role):
         if role == Qt.ItemDataRole.DisplayRole:
             return self._data[index.row()][index.column()]
         
     def rowCount(self, index):
+        """ return the row count """
         return len(self._data)
 
     def columnCount(self, index):
+        """ return the column count """
         return len(self._data[0])
     
     def getFile(self, rowidx):
-        print(self._data[rowidx])
-        return {"name": self._data[rowidx][0], "path": self._data[rowidx][1]}
+        """ return a dictionart with filename and filepath """
+        print(self._dataDict[rowidx])
+        return {"name": self._dataDict[rowidx].name, "path": self._dataDict[rowidx].path}
 
-    def addFileHandler(self, fileobj):
+    def addFileHandler(self, fileObj: FileItem):
         """public function for adding the file to the database and 
            reflect the front-end changes on the file table
 
@@ -46,10 +63,41 @@ class FileModel(QtCore.QAbstractTableModel):
             fileobj ([str]): a list of strings that contain the informatin 
                              about the file
         """
-        self._data.append(fileobj)
+        fileData = fileObj.convertToData()
+        
+        if self.empty:
+            self._data[0] = fileData
+            self.empty = False
+        else:
+            self._data.append(fileData)
+            
         self.layoutChanged.emit()
+        key = len(self._data) - 1
+        self._dataDict[key] = fileObj
+        
     
     def changeToTranscribed(self, idx:int):
+        """ change the file status to be transcrbed """
         self._data[idx][3] = "transcribed"
         self.layoutChanged.emit()
+        self.dataChanged.emit()
+
+class ConfirmFileModel(FileModel):
+    def __init__(self):
+        super(FileModel, self).__init__()
+        self.columns = [" ", "Type", "Name", "Profile", "Selected Action"]
+        self._data = [["","","","",""]]
+
+
+class ProgressFileMode(FileModel):
+    def __init__(self):
+        super(FileModel, self).__init__()
+        self.columns = [" ", "Type", "Name",  "Action in Progress"]
+        self._data = [["","","",""]]
+
+class SuccessFileModel(FileModel):
+    def __init__(self):
+        super(FileModel, self).__init__()
+        self.columns = [" ", "Type", "Name",  "Status", "Location", "Action"] 
+        self._data = [["","","","","",""]]
 

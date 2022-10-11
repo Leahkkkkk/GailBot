@@ -1,9 +1,14 @@
-import os 
+import os
 
 from view.components import MsgBox
+from view.widgets import (
+    Label, 
+    FileTable, 
+    ToggleView, 
+    Button)
 from util import Path
 from view.widgets import Button
-from view.style.styleValues import Color, FontSize, Dimension
+from view.style.styleValues import Color, FontSize, Dimension, FontFamily
 
 from PyQt6.QtWidgets import QLabel, QVBoxLayout, QWidget
 from PyQt6.QtGui import QMovie
@@ -31,18 +36,22 @@ class TranscribeProgressPage(QWidget):
         
     def _initWidget(self):
         """ initialize widgets """
-        self.label = QLabel("Transcribe in Progress")
+        self.label = Label.Label("Transcribe in Progress",
+                                 FontSize.HEADER2, 
+                                 FontFamily.MAIN)
         self.loadIcon = QLabel()
         self.IconImg = QMovie(os.path.join(Path.getProjectRoot(), "view/asset/gbloading.gif"))
         self.loadIcon.setMovie(self.IconImg)
         self.loadIcon.setLayoutDirection(QtCore.Qt.LayoutDirection.LeftToRight)
         self.loadStart()
-        self.Formatting = QLabel("Formatting file headers")
+       
+        self.Formatting = Label.Label("Formatting file headers",
+                                      FontSize.SMALL,
+                                      FontFamily.OTHER)
         self.Formatting.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         self.InProgress = QLabel("Files in progress:")
         self.InProgress.setAlignment(Qt.AlignmentFlag.AlignHCenter)
-        self.Placeholder = QLabel("Placeholder for table")
-        self.Placeholder.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+        self.fileTable = FileTable.progressTable()
         self.cancelBtn = Button.ColoredBtn("Cancel", Color.ORANGE, FontSize.BTN)
         
     def _initstyle(self):
@@ -61,7 +70,7 @@ class TranscribeProgressPage(QWidget):
         self.verticalLayout.addWidget(self.loadIcon)
         self.verticalLayout.addWidget(self.Formatting)
         self.verticalLayout.addWidget(self.InProgress)
-        self.verticalLayout.addWidget(self.Placeholder)
+        self.verticalLayout.addWidget(self.fileTable)
         self.verticalLayout.addWidget(self.cancelBtn, 4, 
                                       alignment = Qt.AlignmentFlag.AlignHCenter)
     def _initStyle(self):
