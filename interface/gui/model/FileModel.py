@@ -31,10 +31,7 @@ class FileModel(QtCore.QAbstractTableModel):
                        "", "", "", "", ""]]
         self._dataDict = dict()
         self.columns = [" ", "Type", "Name", "Profile", 
-                       "status", "date", "size", "action"]
-        self.setHeaderData(0, Qt.Orientation.Horizontal, "Type")
-        self.setHeaderData(1, Qt.Orientation.Horizontal, "Name")
-        self.setHeaderData(2, Qt.Orientation.Horizontal, "Profile")
+                       "Status", "Date", "Size", "Action"]
         self.empty = True
         
         
@@ -63,8 +60,6 @@ class FileModel(QtCore.QAbstractTableModel):
             fileobj ([str]): a list of strings that contain the informatin 
                              about the file
         """
-          
-
         fileData = fileObj.convertToData()
         
         if self.empty:
@@ -73,7 +68,6 @@ class FileModel(QtCore.QAbstractTableModel):
         else:
             self._data.append(fileData)
             
-        print(fileData)
         self.layoutChanged.emit()
         key = len(self._data) - 1
         self._dataDict[key] = fileObj
@@ -87,3 +81,23 @@ class FileModel(QtCore.QAbstractTableModel):
 
 # TODO: possible format on transcription page- checkbox, type, 
 # name, profile, transcription status, date, size, actions (3 clickable icons)
+
+
+class ConfirmFileModel(FileModel):
+    def __init__(self):
+        super(FileModel, self).__init__()
+        self.columns = [" ", "Type", "Name", "Profile", "Selected Action"]
+        self._data = [["","","","",""]]
+
+
+class ProgressFileMode(FileModel):
+    def __init__(self):
+        super(FileModel, self).__init__()
+        self.columns = [" ", "Type", "Name",  "Action in Progress"]
+        self._data = [["","","",""]]
+
+class SuccessFileModel(FileModel):
+    def __init__(self):
+        super(FileModel, self).__init__()
+        self.columns = [" ", "Type", "Name",  "Status", "Location", "Action"] 
+        self._data = [["","","","","",""]]

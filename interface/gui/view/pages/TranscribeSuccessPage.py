@@ -8,6 +8,11 @@ Last Modified: Thursday, 6th October 2022 11:11:31 am
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
+from view.widgets import (
+    FileTable,
+    Button,
+    Label
+)
 
 from PyQt6.QtWidgets import (
     QLabel,
@@ -27,6 +32,7 @@ class TranscribeSuccessPage(QWidget):
     def _initWidget(self):
         """ intialize widgets """
         self.label = QLabel("Transcribe Successful")
+        self.fileTable = FileTable.successTable()
         self.moreBtn = QPushButton("Transcribe More File")
         self.returnBtn = QPushButton("Return to Home")
         self.quitBtn = QPushButton("Quit Gailbot")
@@ -39,6 +45,7 @@ class TranscribeSuccessPage(QWidget):
         """ add widget to layout """
         self.verticalLayout.addWidget(self.postSetBtn)
         self.verticalLayout.addWidget(self.label)
+        self.verticalLayout.addWidget(self.fileTable)
         self.verticalLayout.addWidget(self.moreBtn)
         self.verticalLayout.addWidget(self.returnBtn)
         self.verticalLayout.addWidget(self.quitBtn)

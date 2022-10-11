@@ -98,6 +98,7 @@ class FileUploadPage(QWidget):
                                    "Create New Profile"])
         self.settingProfile = dropDownWidget("Settings Profile", 
                                              self.profiles)
+        self.fileTable = FileTable.FileTable()
         
         
     def _initLayout(self):
@@ -110,13 +111,6 @@ class FileUploadPage(QWidget):
                                       alignment = Qt.AlignmentFlag.AlignHCenter)
         self.verticalLayout.addWidget(self.settingProfile,
                                       alignment=Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignTop)
-        
-    def _initStyle(self):
-        """ initialize the style """
-        Background.initBackground(self)
-        
-    def initFileTable(self, model):
-        self.fileTable = FileTable.FileTable(model)
         self.verticalLayout.addWidget(self.fileTable,
                                       alignment = Qt.AlignmentFlag.AlignHCenter)
         self.verticalLayout.addWidget(self.uploadFileBtn,
@@ -125,5 +119,9 @@ class FileUploadPage(QWidget):
                                       alignment = Qt.AlignmentFlag.AlignHCenter)
     
 
-
-            
+        
+    def _initStyle(self):
+        """ initialize the style """
+        Background.initBackground(self)
+        
+   

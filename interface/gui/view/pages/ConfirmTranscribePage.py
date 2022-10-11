@@ -9,7 +9,11 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
+from stat import filemode
 from view.style import Background
+from view.widgets import ( Label, 
+                           Button, 
+                           FileTable ) 
 
 from PyQt6.QtWidgets import (
     QWidget, 
@@ -29,6 +33,7 @@ class ConfirmTranscribePage(QWidget):
     def _initWidget(self):
         """ initlialize widget """
         self.label = QLabel("Confirm Transcribe")
+        self.fileTable = FileTable.confirmTable(self)
         self.confirmBtn = QPushButton("Confirm")
         self.cancelBtn = QPushButton("Cancel")
     
@@ -38,6 +43,7 @@ class ConfirmTranscribePage(QWidget):
         self.setLayout(self.verticalLayout)
         """ add widget to layout """
         self.verticalLayout.addWidget(self.label)
+        self.verticalLayout.addWidget(self.fileTable)
         self.verticalLayout.addWidget(self.confirmBtn)
         self.verticalLayout.addWidget(self.cancelBtn)
     

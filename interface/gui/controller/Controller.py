@@ -21,7 +21,10 @@ class Controller:
     def __init__(self):
         self.ModelObj = Model.Model()
         self.ViewObj = MainWindow.MainWindow(self,self.ModelObj.SettingModel.data)
-        self.ViewObj.setFileModel(self.ModelObj.FileModel)
+        self.ViewObj.setFileModel(self.ModelObj.FileModel, 
+                                  self.ModelObj.ConfirmFileModel,
+                                  self.ModelObj.ProcessingFileModel,
+                                  self.ModelObj.SuccessedFileMode)
         self.ThreadPool = QThreadPool()
         self.logger = Logger.makeLogger("Backend")
     

@@ -64,9 +64,17 @@ class MainWindow(QMainWindow):
 
     """ Functions provided to controller """
     
-    def setFileModel(self, fileModel: QAbstractTableModel):
-        self.MainStack.FileUploadPage.initFileTable(fileModel)
-    
+    def setFileModel(self, fileModelFull: QAbstractTableModel, 
+                           confirmModel: QAbstractTableModel,
+                           progressModel:QAbstractTableModel,
+                           successModel:QAbstractTableModel):
+        
+        # self.MainStack.FileUploadPage.initFileTable(fileModelFull)
+        self.MainStack.FileUploadPage.fileTable.setFileModel(fileModelFull)
+        self.MainStack.ConfirmTranscribePage.fileTable.setFileModel(confirmModel)
+        self.MainStack.TranscribeProgressPage.fileTable.setFileModel(progressModel)
+        self.MainStack.TranscribeSuccessPage.fileTable.setFileModel(successModel)
+
     def showTranscribeInProgress(self):
         """goes to transcribe in progress page"""
         self.MainStack.gotoTranscribeInProgress()

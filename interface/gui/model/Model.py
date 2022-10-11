@@ -21,4 +21,7 @@ class Model():
     """
     def __init__(self):
       self.FileModel = FileModel.FileModel()
+      self.ConfirmFileModel = FileModel.ConfirmFileModel()
+      self.ProcessingFileModel = FileModel.ProgressFileMode()
+      self.SuccessedFileMode = FileModel.SuccessFileModel()
       self.SettingModel = SettingModel.SettingModel()
