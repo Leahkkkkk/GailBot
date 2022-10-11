@@ -9,20 +9,22 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
-from re import L
-from view.style.styleValues import Color, FontSize, Dimension
+from view.style.styleValues import Color, FontSize, Dimension, FontFamily
 from model.FileModel import FileModel
 from view.widgets.Button import ToggleBtn, iconBtn
+from view.widgets import InputBox, Label
+from view.style import Background
 
 from PyQt6.QtWidgets import (
     QTableView, 
     QHeaderView,
+    QDialog,
     QAbstractItemView, 
     QCheckBox,
     QWidget,
-    QHBoxLayout)
+    QHBoxLayout,
+    QGridLayout)
 from PyQt6.QtCore import QSize
-
 
 
 class Actions(QWidget):
@@ -54,6 +56,11 @@ class checkAndToggle(QWidget):
         layout.addWidget(toggle)
         layout.addWidget(checkBox)
         checkBox.setStyleSheet("margin-left: 10px")
+        toggle.clicked.connect(self._toggle)
+    
+    def _toggle(self):
+        Dialog = FileDetail()
+        Dialog.exec()
         
 class FileTable(QTableView):
     """ fie table widget """
@@ -82,11 +89,12 @@ class FileTable(QTableView):
         
     def addActionWidget(self):
         """ add acton buttons and checkbox to table cell """
-        checkToggle = checkAndToggle()
-        action = Actions()
+        firstCellWidget = checkAndToggle()
+        lastCellWidget = Actions()
         idx = self.model.rowCount(0) - 1
-        self.setIndexWidget(self.model.index(idx,0), checkToggle)
-        self.setIndexWidget(self.model.index(idx,self.columnCount - 1), action)
+        self.setIndexWidget(self.model.index(idx,0), firstCellWidget)
+        self.setIndexWidget(self.model.index(idx,self.columnCount - 1), 
+                            lastCellWidget)
     
     def _toggle(self):
         pass
@@ -94,7 +102,6 @@ class FileTable(QTableView):
     def _initStyle(self):
         self.horizontalHeader().setStyleSheet(f"font-size:{FontSize.BODY};"
                                                "font-weight:600")
-
 
 class confirmTable(FileTable):
     def __init__(self, *args, **kwargs) -> None:
@@ -132,3 +139,30 @@ class successTable(FileTable):
         
         
 
+class FileDetail(QDialog):
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.setWindowTitle("File Datails")
+        self.setFixedSize(Dimension.MEDIUMDIALOG)
+        self._initWidget()
+        self._initLayout()
+
+    def _initWidget(self):
+        self.transcriber = InputBox.InputBox("Transcribed by: ")
+        self.transcribeDate = InputBox.InputBox("Transcribed on: ")
+        self.inDirLabel = Label.Label("In this directory", FontSize.SMALL, 
+                                          FontFamily.OTHER)
+        self.aboutDirLabel = Label.Label("About this directory", FontSize.SMALL, 
+                                          FontFamily.OTHER)
+        
+    def _initLayout(self):
+        self.gridlayout = QGridLayout(self)
+        self.setLayout(self.gridlayout)
+        self.gridlayout.addWidget(self.inDirLabel, 0, 0, 2, 2)
+        self.gridlayout.addWidget(self.aboutDirLabel, 0, 2, 1, 2)
+        self.gridlayout.addWidget(self.transcriber, 1, 2)
+        self.gridlayout.addWidget(self.transcribeDate, 1, 3)
+        Background.initBackground(self)
+        
+        
+            
