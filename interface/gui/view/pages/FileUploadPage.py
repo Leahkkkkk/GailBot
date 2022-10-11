@@ -84,7 +84,7 @@ class FileUploadPage(QWidget):
         self.label = Label.Label("File to Transcribe", 
                                  FontSize.HEADER2, 
                                  FontFamily.MAIN)
-        self.gotoMainBtn = Button.BorderBtn("back to main", 
+        self.gotoMainBtn = Button.BorderBtn("Return to Main Menu", 
                                             Color.BLUEMEDIUM, 
                                             FontSize.BODY)
         self.uploadFileBtn = Button.ColoredBtn("Add File", 

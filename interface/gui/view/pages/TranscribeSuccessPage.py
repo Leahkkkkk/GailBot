@@ -13,30 +13,46 @@ from view.widgets import (
     Button,
     Label
 )
+from view.style.styleValues import Color, FontSize, Dimension, FontFamily
 
 from PyQt6.QtWidgets import (
     QLabel,
     QPushButton,
     QVBoxLayout,
+    QHBoxLayout,
     QWidget
 )
+
 from PyQt6 import QtCore
+
+from PyQt6.QtWidgets import QLabel, QVBoxLayout, QWidget
+from PyQt6.QtGui import QMovie
+from PyQt6 import QtCore
+from PyQt6.QtCore import Qt
 
 class TranscribeSuccessPage(QWidget):
     """ class for trancription success page """
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self._initWidget()
+        self._initStyle()
         self._initLayout()
         
     def _initWidget(self):
         """ intialize widgets """
-        self.label = QLabel("Transcribe Successful")
+        self.label = Label.Label("Transcription Successful",
+                                        FontSize.HEADER1,
+                                        FontFamily.MAIN)
+        self.label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+        self.transcribedFiles = Label.Label("Transcribed files and locations:",
+                                        FontSize.HEADER3,
+                                        FontFamily.OTHER)
         self.fileTable = FileTable.successTable()
-        self.moreBtn = QPushButton("Transcribe More File")
-        self.returnBtn = QPushButton("Return to Home")
-        self.quitBtn = QPushButton("Quit Gailbot")
-        self.postSetBtn = QPushButton("Post Transcribtion Setting")
+        self.moreBtn = Button.ColoredBtn("Process more files", Color.GREEN)
+        self.returnBtn = Button.ColoredBtn("Return to main menu", Color.BLUEMEDIUM)
+        self._initHorizontalLayout()
+        self.quitBtn = Button.ColoredBtn("Quit Gailbot", Color.ORANGE)
+        self.postSetBtn = QPushButton("Post Transcription Settings")
         
     def _initLayout(self):
         """ initialize page layout """
@@ -45,9 +61,21 @@ class TranscribeSuccessPage(QWidget):
         """ add widget to layout """
         self.verticalLayout.addWidget(self.postSetBtn)
         self.verticalLayout.addWidget(self.label)
+        self.verticalLayout.addWidget(self.transcribedFiles)
         self.verticalLayout.addWidget(self.fileTable)
-        self.verticalLayout.addWidget(self.moreBtn)
-        self.verticalLayout.addWidget(self.returnBtn)
-        self.verticalLayout.addWidget(self.quitBtn)
-        
-        
+        self.verticalLayout.addWidget(self.horizontal)
+        self.verticalLayout.addWidget(self.quitBtn, 4, 
+                                      alignment = Qt.AlignmentFlag.AlignHCenter)
+
+    def _initHorizontalLayout(self):
+        #TODO: make buttons closer together
+        self.horizontal = QWidget()
+        self.horizontalLayout = QHBoxLayout()
+        self.horizontal.setLayout(self.horizontalLayout)
+        self.horizontalLayout.addWidget(self.moreBtn)
+        self.horizontalLayout.addWidget(self.returnBtn)
+
+    def _initStyle(self):
+        self.moreBtn.setMinimumSize(QtCore.QSize(150,30))
+        self.returnBtn.setMinimumSize(QtCore.QSize(150,30))
+        self.quitBtn.setMinimumSize(QtCore.QSize(150,30))

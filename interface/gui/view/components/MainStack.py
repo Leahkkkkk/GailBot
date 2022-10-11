@@ -68,6 +68,7 @@ class MainStack(QStackedWidget):
         self.addWidget(self.SettingPage)
         self.addWidget(self.TranscribeProgressPage)
         self.addWidget(self.TranscribeSuccessPage)
+        # self.setCurrentWidget(self.WelcomePage)
         self.setCurrentWidget(self.WelcomePage)
         
     def _pageRedirect(self):

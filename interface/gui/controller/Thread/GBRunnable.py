@@ -117,64 +117,64 @@ class Worker(QRunnable):
         """ public function that can be called to run GailBot """
         self.logger.info("file ready to be transcribed" )
         
-        # try:
-        #     self.signals.start.emit()
-        #     gb = GailBotController(WORKSPACE_DIRECTORY_PATH)
-        #     self.signals.progress.emit(str("GailBot controller Initialized"))
+        try:
+            self.signals.start.emit()
+            gb = GailBotController(WORKSPACE_DIRECTORY_PATH)
+            self.signals.progress.emit(str("GailBot controller Initialized"))
         
-        #     if not self.is_killed:
-        #         plugin_suite_paths = gb.download_plugin_suite_from_url(
-        #     "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip", "./plugins")
-        #         self.signals.progress.emit(str("Plugins Downloaded"))
-        #         path = os.path.join(os.getcwd(), plugin_suite_paths[0])
-        #         self.signals.progress.emit(str("Plugins Applied"))
-        #         self.logger.info(gb.register_plugins(path))
+            if not self.is_killed:
+                plugin_suite_paths = gb.download_plugin_suite_from_url(
+            "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip", "./plugins")
+                self.signals.progress.emit(str("Plugins Downloaded"))
+                path = os.path.join(os.getcwd(), plugin_suite_paths[0])
+                self.signals.progress.emit(str("Plugins Applied"))
+                self.logger.info(gb.register_plugins(path))
 
-        #     if not self.is_killed:
-        #         assert gb.add_source(self.filename, 
-        #                              f"{self.filepath}/{self.filename}", 
-        #                              "/Users/yike/Desktop/output")
-        #         self.logger.info("Source Added")
-        #         self.signals.progress.emit(str("Source Added"))
+            if not self.is_killed:
+                assert gb.add_source(self.filename, 
+                                     f"{self.filepath}/{self.filename}", 
+                                     "/Users/yike/Desktop/output")
+                self.logger.info("Source Added")
+                self.signals.progress.emit(str("Source Added"))
                 
-        #     if not self.is_killed:
-        #         gb.create_new_settings_profile("test-settings", 
-        #                                        get_settings_dict())
-        #         assert gb.is_settings_profile("test-settings")
-        #         self.logger.info("Create Setting File")
-        #         self.signals.progress.emit(str("Create Setting File"))
+            if not self.is_killed:
+                gb.create_new_settings_profile("test-settings", 
+                                               get_settings_dict())
+                assert gb.is_settings_profile("test-settings")
+                self.logger.info("Create Setting File")
+                self.signals.progress.emit(str("Create Setting File"))
 
-        #     if not self.is_killed:
-        #         assert gb.apply_settings_profile_to_source(self.filename, 
-        #                                                    "test-settings")
-        #         self.logger.info("Apply Setting")
-        #         self.signals.progress.emit(str("Apply Setting"))
+            if not self.is_killed:
+                assert gb.apply_settings_profile_to_source(self.filename, 
+                                                           "test-settings")
+                self.logger.info("Apply Setting")
+                self.signals.progress.emit(str("Apply Setting"))
 
-        #     if not self.is_killed:
-        #         assert gb.is_source_ready_to_transcribe(self.filename)
-        #         self.logger.info("Ready to transcribe")
-        #         self.signals.progress.emit(str("Ready to transcribe"))
+            if not self.is_killed:
+                assert gb.is_source_ready_to_transcribe(self.filename)
+                self.logger.info("Ready to transcribe")
+                self.signals.progress.emit(str("Ready to transcribe"))
             
-        #     if not self.is_killed:
-        #         self.signals.progress.emit(str("Transcribing"))
-        #         self.logger.info("transcribing")
-        #         gb.transcribe()
+            if not self.is_killed:
+                self.signals.progress.emit(str("Transcribing"))
+                self.logger.info("transcribing")
+                gb.transcribe()
             
-        #     if self.is_killed:
-        #         self.logger.info("User killed the thread")
-        #         self.signals.killed.emit()
+            if self.is_killed:
+                self.logger.info("User killed the thread")
+                self.signals.killed.emit()
         
-        # except Exception as e:
-        #     self.signals.error.emit(f"${e.__class__}fails")
-        #     self.logger.error(f"{e.__class__}fails")
-        #     time.sleep(2)
-        # else:
-        #     if not self.is_killed:
-        #         self.signals.result.emit()
-        #         self.signals.finished.emit(self.key)
-        #     self.signals.endThread.emit()    
-        # finally:
-        #     self.signals.endThread.emit()
+        except Exception as e:
+            self.signals.error.emit(f"${e.__class__}fails")
+            self.logger.error(f"{e.__class__}fails")
+            time.sleep(2)
+        else:
+            if not self.is_killed:
+                self.signals.result.emit()
+                self.signals.finished.emit(self.key)
+            self.signals.endThread.emit()    
+        finally:
+            self.signals.endThread.emit()
 
 
     def kill(self):
