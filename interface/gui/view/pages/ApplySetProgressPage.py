@@ -13,7 +13,7 @@ from view.widgets import Label, Button
 from view.style.styleValues import Color, FontSize, FontFamily
 from view.style import Background
 
-from PyQt6.QtWidgets import QWidget, QLabel, QVBoxLayout
+from PyQt6.QtWidgets import QWidget, QLabel, QVBoxLayout, QScrollArea
 from PyQt6.QtCore import Qt
 
 
@@ -46,6 +46,7 @@ class ApplySetProgressPage(QWidget):
         self.verticalLayout.addWidget(self.InProgress)
         self.verticalLayout.addWidget(self.cancelBtn, 4, 
                                       alignment = Qt.AlignmentFlag.AlignHCenter)
+        
 
     def _initStyle(self):
         """ initialize style """

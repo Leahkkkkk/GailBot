@@ -19,6 +19,7 @@ class ApplySetSuccessPage(QWidget):
         self._initWidget()
         self._initLayout()
         self._initStyle()
+        
     def _initWidget(self):
         """ initialize widget """
         self.label = QLabel("Apply Settings Successful")

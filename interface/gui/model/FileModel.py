@@ -12,6 +12,9 @@ Modified By:  Siara Small  & Vivian Li
 from PyQt6 import QtCore
 from PyQt6.QtCore import Qt
 
+# TODO: possible format on transcription page- checkbox, type, 
+# name, profile, transcription status, date, size, actions (3 clickable icons)
+
 class FileModel(QtCore.QAbstractTableModel):
     """ conatains the database that store data about file 
         and functionality to reflect the changes in displaying the data
@@ -50,5 +53,3 @@ class FileModel(QtCore.QAbstractTableModel):
         self._data[idx][3] = "transcribed"
         self.layoutChanged.emit()
 
-# TODO: possible format on transcription page- checkbox, type, 
-# name, profile, transcription status, date, size, actions (3 clickable icons)

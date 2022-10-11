@@ -13,7 +13,6 @@ Modified By:  Siara Small  & Vivian Li
 from model import FileModel
 from model import SettingModel 
 
-
 class Model():
     """ stores the data, has two fields: 
         1.FileModel: stores file data 
