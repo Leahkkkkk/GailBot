@@ -3,6 +3,7 @@ import sys
 
 from view.widgets import ToggleView, Label, Table
 
+
 from PyQt6.QtCore import QSize, Qt, pyqtSignal
 from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QWidget, QVBoxLayout, QLabel
 
@@ -29,12 +30,17 @@ class MainWindow(QMainWindow):
         super().__init__()
 
         self.setWindowTitle("My App")
+
         table = Table.Table()
+        dummy = dummyWidget()
+        toggle = ToggleView.ToggleView("Toggle Me", dummy )
+
 
         self.setFixedSize(QSize(700, 200))
 
         # Set the central widget of the Window.
         self.setCentralWidget(table)
+
 
 
 app = QApplication(sys.argv)

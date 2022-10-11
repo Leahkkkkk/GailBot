@@ -13,6 +13,9 @@ from model.FileItem import FileItem
 from PyQt6 import QtCore
 from PyQt6.QtCore import Qt
 
+# TODO: possible format on transcription page- checkbox, type, 
+# name, profile, transcription status, date, size, actions (3 clickable icons)
+
 class FileModel(QtCore.QAbstractTableModel):
     """ conatains the database that store data about file 
         and functionality to reflect the changes in displaying the data
@@ -79,10 +82,6 @@ class FileModel(QtCore.QAbstractTableModel):
         self.layoutChanged.emit()
         self.dataChanged.emit()
 
-# TODO: possible format on transcription page- checkbox, type, 
-# name, profile, transcription status, date, size, actions (3 clickable icons)
-
-
 class ConfirmFileModel(FileModel):
     def __init__(self):
         super(FileModel, self).__init__()
@@ -101,3 +100,4 @@ class SuccessFileModel(FileModel):
         super(FileModel, self).__init__()
         self.columns = [" ", "Type", "Name",  "Status", "Location", "Action"] 
         self._data = [["","","","","",""]]
+

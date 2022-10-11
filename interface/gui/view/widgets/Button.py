@@ -80,7 +80,7 @@ class BorderBtn(QPushButton):
                            f"border-radius:5;"
                            f"padding:1;"
                            f"font-size:{fontsize}")
-        self.setMaximumSize(Dimension.RBUTTON)
+        self.setMaximumSize(Dimension.BGBUTTON)
 
 
 """ TODO: use a button icon instead of unicode, 
@@ -92,11 +92,13 @@ class ToggleBtn(QPushButton):
     Args:
         label(tuple(str), optional): text being displayed on button
     """
-    def __init__(self, label: tuple = ("▶", "▼"), *args, **kwargs):
+    def __init__(self, label: tuple = ("▶", "▼"), text = "", *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.label = label
-        self.setText(self.label[0])
-        self.setMaximumSize(QSize(30, 30))
+        self.text = text
+        self.setText(f"{self.label[0]}  {self.text}")
+        self.setMinimumSize(QSize(500, 30))
+        self.setMaximumSize(QSize(700, 30))
         self.setCheckable(True)
         self.clicked.connect(self._changeSymbol)
         self.update()
@@ -105,11 +107,10 @@ class ToggleBtn(QPushButton):
     def _changeSymbol(self):
         """ to change the button symbol """
         if self.isChecked():
-            self.setText(self.label[1])
+            self.setText(f"{self.label[1]}  {self.text}")
         else:
-            self.setText(self.label[0])
-
-
+            self.setText(f"{self.label[0]}  {self.text}")
+    
 
 class onOffButton(QWidget):
     """ a toggle button that displays "on" or "off" text while being toggled

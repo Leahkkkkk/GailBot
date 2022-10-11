@@ -24,7 +24,9 @@ from PyQt6.QtWidgets import (
     QWidget, 
     QPushButton, 
     QVBoxLayout,
-    
+    QTableView, 
+    QVBoxLayout,
+
 )
 from PyQt6.QtCore import Qt, QSize, QAbstractTableModel
 
