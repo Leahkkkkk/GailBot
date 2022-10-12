@@ -32,7 +32,7 @@ class Label(QLabel):
         self, 
         text:str, 
         size:str, 
-        font:str, 
+        font=FontFamily.OTHER, 
         color = "Black", 
         others = None, 
         *args, 

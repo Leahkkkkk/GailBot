@@ -170,6 +170,8 @@ class iconBtn(QPushButton):
       super().__init__(*args, **kwargs)
       icon = QIcon(os.path.join(Path.getProjectRoot(), f"view/asset/{icon}"))
       self.setIcon(icon)
+      self.setObjectName("iconButton")
+  
       
       
       

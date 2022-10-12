@@ -50,7 +50,27 @@ class SettingModel:
         
         
         
-          "Post Transcribe": { "General":["Gap Length", "Turn End Threshold", "Large Pause - Lower Bound"],
-                               "Transcription Model": ["Beat Transcription Mode", "FTO Transcription Mode", "Syllable Rate mode"],
-                               "MicroPause Bound": ["Upper Bound", "Lower Bound"]}
+          "Post Transcribe": 
+              { "General":
+                {"Gap Length": "0.3s", 
+                "Turn End Threshold": "0.1ms", 
+                "Large Pause - Lower Bound":"1.0ms"},
+                
+                "Laghter Settings":
+                {
+                "Laughter Detection Module bool": "ON",
+                "Laughter Probability - Lower Bound": "0.04ms",
+                "Laughter Length - Lower Bound": "0.05ms",
+                },
+                
+                "MicroPause Bound": 
+                {"Upper Bound": "1.0ms", 
+                 "Lower Bound": "0.02ms"},
+                
+                "Transcription Model":
+                {"Beat Transcription Mode bool":"ON", 
+                 "FTO (Floor Transfer offset)Transcription Mode bool": "ON", 
+                 "Syllable Rate mode bool": "ON"},
+                
+                }
         }

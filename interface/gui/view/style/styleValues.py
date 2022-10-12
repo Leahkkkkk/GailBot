@@ -47,19 +47,18 @@ dataclass
 class Dimension:
     """ store all dimention, unit px """
     WIN_MAXSIZE = QSize(1100, 900)
-    INPUTFIELD_HEIGHT = 12
-    INPUTFIELD_WIDTH = 200
     MARGIN_HORIZONTAL = "20px" 
     MARGIN_VERTICAL = "5px"
     BGBUTTON = QSize(140, 40)
     RBUTTON = QSize(130, 40)
     MEDIUMBUTTON = QSize(100, 30)
     ICONBUTTON = QSize(50, 50)
-    INPUTFIELD = QSize(200, 12)
+    SMALLICONBUTTON = QSize(30,30)
+    INPUTFIELD = QSize(200, 23)
     CONSOLE = QSize(1000, 300)
     STATUSBAR = QSize(900, 30)
-    ACTION = QSize(100,40)
-    MEDIUMDIALOG = QSize(800,150)
+    ACTION = QSize(100,35)
+    MEDIUMDIALOG = QSize(800,180)
 
 dataclass
 class Geometry:
