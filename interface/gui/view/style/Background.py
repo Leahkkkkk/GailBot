@@ -19,15 +19,15 @@ from PyQt6.QtWidgets import QWidget
 
 class Background(QBrush):
     """ a Qbrush object that craeates a white background """
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self,color, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.setColor(QColor("#FFFFFF"))
+        self.setColor(QColor(color))
         self.setStyle(Qt.BrushStyle.SolidPattern) 
 
-def initBackground(widget:QWidget):
+def initBackground(widget:QWidget, color="#FFFFFF"):
     """ make the widget background as white """
     widget.setAutoFillBackground(True)
-    bg = Background()
+    bg = Background(color)
     palette = widget.palette()
     palette.setBrush(QPalette.ColorRole.Window, bg)
     widget.setPalette(palette)

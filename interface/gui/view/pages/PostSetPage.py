@@ -9,60 +9,50 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
-from view.widgets import InputBox, Button, ToggleView
+from symbol import import_as_name
+from view.widgets import InputBox, Button, Label
+from view.components import PostSet
+from view.style.styleValues import FontFamily, FontSize
 
-from PyQt6.QtWidgets import QWidget, QLabel, QVBoxLayout
+from PyQt6.QtWidgets import QWidget, QLabel, QVBoxLayout,QScrollArea
+from PyQt6.QtCore import Qt
 
 
 class PostSetPage(QWidget):
     """ post-transcription settings page """
-    def __init__(self,data, *args, **kwargs) -> None:
+    def __init__(self, data, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.data = data
-        self.generallist = dict()
-        self.onandOfflist = dict()
-        self.microBoundlist = dict()
-        self.laghter = True
         self._initWidget()
         self._initLayout()
         
     def _initWidget(self):
         """initialize widgets"""
-        self.header = QLabel("Post Transcription Setting")
-        self.label0 = QLabel("General Setting")
-        for item in self.data["General"]:
-            newInput = InputBox.InputBox(item)
-            self.generallist[item] = newInput
-        self.label1 = QLabel("Laughter Settings")
-        self.laughtherSetting = QWidget()
-        laughterSectionLayout = QVBoxLayout()
-        self.laughtherSetting.setLayout(laughterSectionLayout)
-        self.laughterProbability= InputBox.InputBox("Laughter Probability - Lower Bound")
-        self.laughterLength = InputBox.InputBox("Laughter Length")
-        laughterSectionLayout.addWidget(self.laughterProbability)
-        laughterSectionLayout.addWidget(self.laughterLength)
-        self.LaughterToggle = Button.onOffButton("Laughter Detection Mode",
-                                                self.laughtherSetting)
-        self.label2 = QLabel("MicroPause Bound")
-        for item in self.data["MicroPause Bound"]:
-            newInput = InputBox.InputBox(item)
-            self.microBoundlist[item]= newInput
-            
-        self.label3 = QLabel("Transcription Module")
-        for item in self.data["Transcription Model"]:
-            newOnandOff = Button.onOffButton(item)
-            self.onandOfflist[item] = newOnandOff
-    
+        self.header = Label.Label("Post Transcription Setting",
+                                  FontSize.HEADER2,FontFamily.MAIN)
+        self.caption = Label.Label("These settings are applied after the file is created.",
+                                   FontSize.BODY)
+        self.PostSet = PostSet.PostSet(self.data)
+        self.scroll = QScrollArea()
+        self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
+        self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
+        self.scroll.setWidget( self.PostSet)
+        self.scroll.setFixedWidth(600)
+        self.PostSet.setFixedWidth(600)
+        self.scroll.setMaximumHeight(600)
+
+       
     
     def _initLayout(self):
         """ initialize layout"""
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
         """ add widget to layout """
-        self.layout.addWidget(self.header)
-        self.layout.addWidget(self.label0)
-        for item in self.generallist.values():
-            self.layout.addWidget(item)
-
-
+        self.layout.addWidget(self.header, stretch= 1, alignment=Qt.AlignmentFlag.AlignHCenter
+                                                    |Qt.AlignmentFlag.AlignTop)
+        self.layout.addWidget(self.caption,alignment=Qt.AlignmentFlag.AlignLeft)
+        self.layout.addWidget(self.scroll,stretch = 7, alignment=Qt.AlignmentFlag.AlignLeft
+                                                    |Qt.AlignmentFlag.AlignTop)
+        
+       
     
