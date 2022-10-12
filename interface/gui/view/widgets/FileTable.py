@@ -8,11 +8,14 @@ Last Modified: Sunday, 9th October 2022 6:57:12 pm
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
+
 from view.style.styleValues import Color, FontSize, Dimension, FontFamily
 from model.FileModel import FileModel
 from view.widgets.Button import ToggleBtn, iconBtn, ColoredBtn
-from view.widgets import InputBox, Label
+from view.widgets import InputBox, Label, Image, ToggleView
+from view.components import RequiredSet, PostSet
 from view.style import Background
+from model import SettingModel
 
 from PyQt6.QtWidgets import (
     QTableView, 
@@ -22,7 +25,9 @@ from PyQt6.QtWidgets import (
     QCheckBox,
     QWidget,
     QHBoxLayout,
-    QGridLayout)
+    QVBoxLayout,
+    QGridLayout
+)
 
 from PyQt6.QtCore import QSize, Qt
 
@@ -59,7 +64,7 @@ class selectAndCheck(QWidget):
         self.setFixedSize(Dimension.ACTION)
     
     def _showDetail(self):
-        Dialog = FileDetaial()
+        Dialog = FileDetail()
         Dialog.exec()
         
 class FileTable(QTableView):
@@ -114,7 +119,6 @@ class confirmTable(FileTable):
         self.setColumnWidth(3,130)
         self.setColumnWidth(4,180)
 
-
 class progressTable(FileTable):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
@@ -137,9 +141,7 @@ class successTable(FileTable):
         self.setColumnWidth(4,150)
         self.setColumnWidth(5,150)
         
-        
-
-class FileDetaial(QDialog):
+class FileDetail(QDialog):
     def __init__(
         self, 
         files=["file1", "file2", "file3", "file4", "file5", "file6"] , 
@@ -149,6 +151,41 @@ class FileDetaial(QDialog):
         **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.setWindowTitle("File Datails")
+        self.setMinimumSize(Dimension.MEDIUMDIALOG)
+        self.files = files 
+        self.transcriberStr = transcriber
+        self.dateStr = date
+        self._initWidget()
+        self._initLayout()
+
+    def _initWidget(self):
+        self.mainWidget = FileDetailWidget(self.files, 
+                                          self.transcriberStr, 
+                                          self.dateStr)
+        self.saveBtn = ColoredBtn("save",Color.BLUEDARK, FontSize.SMALL)
+        self.saveBtn.setFixedSize(QSize(50,35))
+        self.saveBtn.clicked.connect(self._close)
+        
+    def _initLayout(self):
+        self.layout = QVBoxLayout(self)
+        self.layout.addWidget(self.mainWidget)
+        self.layout.addWidget(self.saveBtn, 
+                              alignment=Qt.AlignmentFlag.AlignRight)
+        Background.initBackground(self, Color.BLUEWHITE)
+        
+    def _close(self):
+        self.close()
+
+
+class FileDetailWidget(QWidget):
+    def __init__(
+        self, 
+        files=["file1", "file2", "file3", "file4", "file5", "file6"] , 
+        transcriber="Dummy", 
+        date="2022/10/10",
+        *args, 
+        **kwargs) -> None:
+        super().__init__(*args, **kwargs)
         self.setMinimumSize(Dimension.MEDIUMDIALOG)
         self.files = files 
         self.transcriberStr = transcriber
@@ -169,10 +206,7 @@ class FileDetaial(QDialog):
         self.aboutDirLabel = Label.Label("About this directory", FontSize.BODY, 
                                           FontFamily.MAIN)
         self.fileList = DirectoryView(self.files)
-        self.saveBtn = ColoredBtn("save",Color.BLUEDARK, FontSize.SMALL)
-        self.saveBtn.setFixedSize(QSize(50,35))
-        self.saveBtn.clicked.connect(self._close)
-        
+
     def _initLayout(self):
         self.gridlayout = QGridLayout(self)
         self.setLayout(self.gridlayout)
@@ -183,16 +217,47 @@ class FileDetaial(QDialog):
                                   alignment=Qt.AlignmentFlag.AlignTop)
         self.gridlayout.addWidget(self.transcriber, 1, 2)
         self.gridlayout.addWidget(self.transcribeDate, 1, 3)
-        self.gridlayout.addWidget(self.saveBtn, 2,3, 
-                                  alignment=Qt.AlignmentFlag.AlignRight)
         Background.initBackground(self, Color.BLUEWHITE)
-        
-    
-    def _close(self):
-        self.close()
-    
-    
 
+
+
+class FullFileDetailWidget(QWidget):
+    def __init__(
+        self, 
+        files=["file1", "file2", "file3", "file4", "file5", "file6"] , 
+        transcriber="Dummy", 
+        date="2022/10/10",
+        *args, 
+        **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.setMinimumSize(Dimension.LARGEDIALOG)
+        self.files = files 
+        self.transcriberStr = transcriber
+        self.dateStr = date
+        self._initWidget()
+        self._initLayout()
+    
+    
+    def _initWidget(self):
+        self.briefDetail = FileDetailWidget(self.files, 
+                                            self.transcriberStr, 
+                                            self.dateStr)
+        
+        setData = SettingModel.SettingModel().data
+        self.requiredSetWidget = RequiredSet.RequiredSet(setData["Coffee Study"]["engine"])
+        self.requiredSetting = ToggleView.ToggleView("Required Setting", self.requiredSetWidget)
+        self.postSetWidget = PostSet.PostSet(setData["Coffee Study"]["Post Transcribe"])
+        self.postSetting = ToggleView.ToggleView("Post Transcribe Setting", self.postSetWidget)
+    
+    def _initLayout(self):
+        self.layout = QVBoxLayout()
+        self.layout.addWidget(self.briefDetail)
+        self.layout.addWidget(self.requiredSetting)
+        self.layout.addWidget(self.postSetting)
+        self.setLayout(self.layout)
+        Background.initBackground(self, Color.BLUEWHITE)
+            
+        
 
 class DirectoryView(QWidget):
     def __init__(self,files: list, *args, **kwargs) -> None:
@@ -200,10 +265,20 @@ class DirectoryView(QWidget):
         self.layout = QGridLayout()
         count = 0
         for file in files:
-            label = Label.Label(file,FontSize.SMALL, color=Color.GREYDARK)
-            self.layout.addWidget(label, count//2, count%2, 
+            fileIcon  = FileDisplay(file)
+            self.layout.addWidget(fileIcon, count//2, count%2, 
                                   alignment=Qt.AlignmentFlag.AlignTop)
             count += 1
         self.setLayout(self.layout)
         self.setMinimumSize(QSize(200, 140))
-        
+
+class FileDisplay(QWidget):
+     def __init__(self,filename: str, *args, **kwargs) -> None:
+        super().__init__( *args, **kwargs)
+        self.layout = QHBoxLayout(self)
+        self.icon = Image.Image("file.jpeg", size=20)
+        self.label = Label.Label(filename, 
+                                 FontSize.SMALL, 
+                                 color=Color.GREYDARK)
+        self.layout.addWidget(self.icon)
+        self.layout.addWidget(self.label)

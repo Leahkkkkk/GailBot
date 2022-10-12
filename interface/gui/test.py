@@ -37,7 +37,6 @@ class MainWindow(QMainWindow):
 
 
         self.setFixedSize(QSize(700, 200))
-
         # Set the central widget of the Window.
         self.setCentralWidget(table)
 

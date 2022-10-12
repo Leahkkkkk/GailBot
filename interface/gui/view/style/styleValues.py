@@ -59,6 +59,7 @@ class Dimension:
     STATUSBAR = QSize(900, 30)
     ACTION = QSize(100,35)
     MEDIUMDIALOG = QSize(800,180)
+    LARGEDIALOG = QSize(800, 450)
 
 dataclass
 class Geometry:

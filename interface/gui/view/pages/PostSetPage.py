@@ -40,8 +40,7 @@ class PostSetPage(QWidget):
         self.scroll.setFixedWidth(600)
         self.PostSet.setFixedWidth(600)
         self.scroll.setMaximumHeight(600)
-        # self.scroll.setMinimumWidth(400)
-        # self.PostSet.setMinimumWidth(500)
+
        
     
     def _initLayout(self):

@@ -18,7 +18,6 @@ from PyQt6.QtWidgets import (
     QVBoxLayout, 
 )
 
-
 from PyQt6.QtCore import Qt
 
 class RequiredSetPage(QWidget):
