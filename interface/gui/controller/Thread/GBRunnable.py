@@ -13,7 +13,7 @@ import os
 import logging
 import time
 
-from gailbot import GailBotController
+# from gailbot.core import GailBotController
 from PyQt6.QtCore import (
     QRunnable, 
     QObject, 

@@ -36,30 +36,34 @@ class TranscribeProgressPage(QWidget):
         
     def _initWidget(self):
         """ initialize widgets """
-        self.label = Label.Label("Transcribe in Progress",
-                                 FontSize.HEADER2, 
+        self.label = Label.Label("Transcription in Progress",
+                                 FontSize.HEADER1, 
                                  FontFamily.MAIN)
+        self.label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         self.loadIcon = QLabel()
         self.IconImg = QMovie(os.path.join(Path.getProjectRoot(), "view/asset/gbloading.gif"))
         self.loadIcon.setMovie(self.IconImg)
-        self.loadIcon.setLayoutDirection(QtCore.Qt.LayoutDirection.LeftToRight)
+        # self.loadIcon.setLayoutDirection(QtCore.Qt.LayoutDirection.LeftToRight)
         self.loadStart()
        
-        self.Formatting = Label.Label("Formatting file headers",
+        self.Formatting = Label.Label("Formatting file headers...",
                                       FontSize.SMALL,
                                       FontFamily.OTHER)
         self.Formatting.setAlignment(Qt.AlignmentFlag.AlignHCenter)
-        self.InProgress = QLabel("Files in progress:")
-        self.InProgress.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+        self.InProgress = Label.Label("Files in progress:",
+                                        FontSize.HEADER3,
+                                        FontFamily.OTHER)
         self.fileTable = FileTable.progressTable()
         self.cancelBtn = Button.ColoredBtn("Cancel", Color.ORANGE, FontSize.BTN)
         
     def _initstyle(self):
         """ styles loading icon movie """
+        #TODO: fix alignment of loading movie
+        self.loadIcon.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.loadIcon.setMinimumSize(QtCore.QSize(150, 150))
         self.loadIcon.setMaximumSize(QtCore.QSize(150, 150))
         self.loadIcon.setScaledContents(True)
-        self.loadIcon.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.cancelBtn.setMinimumSize(QtCore.QSize(130, 30))
         
     def _initLayout(self):
         """ intiializes layout """
@@ -67,7 +71,7 @@ class TranscribeProgressPage(QWidget):
         self.setLayout(self.verticalLayout)
         """ add widget to layout """
         self.verticalLayout.addWidget(self.label)
-        self.verticalLayout.addWidget(self.loadIcon)
+        self.verticalLayout.addWidget(self.loadIcon, alignment = Qt.AlignmentFlag.AlignHCenter)
         self.verticalLayout.addWidget(self.Formatting)
         self.verticalLayout.addWidget(self.InProgress)
         self.verticalLayout.addWidget(self.fileTable)
@@ -83,7 +87,7 @@ class TranscribeProgressPage(QWidget):
         
     def _confirm(self):
         """ handles confirm transcription message box """
-        self.confirmCancel = MsgBox.ConfirmBox("Confirm Cancel?", 
+        self.confirmCancel = MsgBox.ConfirmBox("Confirm cancel?", 
                                                self.parent.confirmCancel)
         
 
