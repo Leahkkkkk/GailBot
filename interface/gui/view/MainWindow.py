@@ -68,12 +68,12 @@ class MainWindow(QMainWindow):
                            confirmModel: QAbstractTableModel,
                            progressModel:QAbstractTableModel,
                            successModel:QAbstractTableModel):
-        
-        # self.MainStack.FileUploadPage.initFileTable(fileModelFull)
         self.MainStack.FileUploadPage.fileTable.setFileModel(fileModelFull)
         self.MainStack.ConfirmTranscribePage.fileTable.setFileModel(confirmModel)
         self.MainStack.TranscribeProgressPage.fileTable.setFileModel(progressModel)
         self.MainStack.TranscribeSuccessPage.fileTable.setFileModel(successModel)
+        self.MainStack.ApplySetProgressPage.fileTable.setFileModel(progressModel)
+        self.MainStack.ApplySetSuccessPage.fileTable.setFileModel(successModel)
 
     def showTranscribeInProgress(self):
         """goes to transcribe in progress page"""

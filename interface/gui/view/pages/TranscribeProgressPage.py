@@ -51,7 +51,7 @@ class TranscribeProgressPage(QWidget):
                                       FontFamily.OTHER)
         self.Formatting.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         self.InProgress = Label.Label("Files in progress:",
-                                        FontSize.HEADER3,
+                                        FontSize.BODY,
                                         FontFamily.OTHER)
         self.fileTable = FileTable.progressTable()
         self.cancelBtn = Button.ColoredBtn("Cancel", Color.ORANGE, FontSize.BTN)
@@ -60,8 +60,7 @@ class TranscribeProgressPage(QWidget):
         """ styles loading icon movie """
         #TODO: fix alignment of loading movie
         self.loadIcon.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-        self.loadIcon.setMinimumSize(QtCore.QSize(150, 150))
-        self.loadIcon.setMaximumSize(QtCore.QSize(150, 150))
+        self.loadIcon.setFixedSize(QtCore.QSize(80, 80))
         self.loadIcon.setScaledContents(True)
         self.cancelBtn.setMinimumSize(QtCore.QSize(130, 30))
         
@@ -71,11 +70,14 @@ class TranscribeProgressPage(QWidget):
         self.setLayout(self.verticalLayout)
         """ add widget to layout """
         self.verticalLayout.addWidget(self.label)
-        self.verticalLayout.addWidget(self.loadIcon, alignment = Qt.AlignmentFlag.AlignHCenter)
+        self.verticalLayout.addWidget(self.loadIcon, 
+                                      alignment = Qt.AlignmentFlag.AlignHCenter)
         self.verticalLayout.addWidget(self.Formatting)
         self.verticalLayout.addWidget(self.InProgress)
-        self.verticalLayout.addWidget(self.fileTable)
-        self.verticalLayout.addWidget(self.cancelBtn, 4, 
+        self.verticalLayout.addWidget(self.fileTable, stretch=5,
+                                      alignment=Qt.AlignmentFlag.AlignHCenter|
+                                      Qt.AlignmentFlag.AlignTop)
+        self.verticalLayout.addWidget(self.cancelBtn, 
                                       alignment = Qt.AlignmentFlag.AlignHCenter)
     def _initStyle(self):
         """ initialize style """

@@ -9,6 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
+from multiprocessing import parent_process
 from view.style.styleValues import Color, FontSize, Dimension, FontFamily
 from model.FileModel import FileModel
 from view.widgets.Button import ToggleBtn, iconBtn, ColoredBtn
@@ -48,9 +49,10 @@ class Actions(QWidget):
         self.layout.setContentsMargins(0,0,0,0)
 
 class selectAndCheck(QWidget):
-    def __init__(self, *args, **kwagrs):
+    def __init__(self, full=False, *args, **kwagrs):
         super().__init__(*args, **kwagrs)
         layout = QHBoxLayout(self)
+        self.full = full
         self.setLayout(layout)
         layout.setContentsMargins(0,0,0,0)
         directory = iconBtn("directory.png")
@@ -64,7 +66,7 @@ class selectAndCheck(QWidget):
         self.setFixedSize(Dimension.ACTION)
     
     def _showDetail(self):
-        Dialog = FileDetail()
+        Dialog = FileDetail(fullDetail=self.full)
         Dialog.exec()
         
 class FileTable(QTableView):
@@ -72,6 +74,7 @@ class FileTable(QTableView):
     def __init__(self, *args, **kwargs) -> None:
         """initialize table model from QTableView"""
         super().__init__(*args, **kwargs)
+        self.fullDetail = False
         self.setMinimumSize(QSize(800, 200))
         self.setMaximumSize(QSize(800, 300))
         self.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
@@ -94,7 +97,7 @@ class FileTable(QTableView):
         
     def addActionWidget(self):
         """ add acton buttons and checkbox to table cell """
-        firstCellWidget = selectAndCheck()
+        firstCellWidget = selectAndCheck(self.fullDetail)
         lastCellWidget = Actions()
         idx = self.model.rowCount(0) - 1
         self.setIndexWidget(self.model.index(idx,0), firstCellWidget)
@@ -111,6 +114,7 @@ class FileTable(QTableView):
 class confirmTable(FileTable):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
+        self.fullDetail = True
     
     def setTableLayout(self):
         self.setColumnWidth(0,80)
@@ -122,7 +126,8 @@ class confirmTable(FileTable):
 class progressTable(FileTable):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-    
+        self.fullDetail = True
+
     def setTableLayout(self):
         self.setColumnWidth(0,80)
         self.setColumnWidth(1,80)
@@ -132,7 +137,8 @@ class progressTable(FileTable):
 class successTable(FileTable):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-    
+        self.fullDetail = True
+
     def setTableLayout(self):
         self.setColumnWidth(0,80)
         self.setColumnWidth(1,80)
@@ -143,28 +149,33 @@ class successTable(FileTable):
         
 class FileDetail(QDialog):
     def __init__(
-        self, 
+        self,  
         files=["file1", "file2", "file3", "file4", "file5", "file6"] , 
         transcriber="Dummy", 
         date="2022/10/10",
+        fullDetail = False,
         *args, 
         **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.setWindowTitle("File Datails")
-        self.setMinimumSize(Dimension.MEDIUMDIALOG)
         self.files = files 
         self.transcriberStr = transcriber
         self.dateStr = date
-        self._initWidget()
-        self._initLayout()
-
-    def _initWidget(self):
-        self.mainWidget = FileDetailWidget(self.files, 
-                                          self.transcriberStr, 
-                                          self.dateStr)
+        if fullDetail:
+            self.mainWidget = FullFileDetailWidget(self.files, 
+                                         self.transcriberStr, 
+                                         self.dateStr)
+            self.setMinimumSize(Dimension.MEDIUMDIALOG)
+        else:
+            self.mainWidget = FileDetailWidget(self.files, 
+                                            self.transcriberStr, 
+                                            self.dateStr)
+            self.setMinimumSize(Dimension.MEDIUMDIALOG)
+            
         self.saveBtn = ColoredBtn("save",Color.BLUEDARK, FontSize.SMALL)
         self.saveBtn.setFixedSize(QSize(50,35))
         self.saveBtn.clicked.connect(self._close)
+        self._initLayout()
         
     def _initLayout(self):
         self.layout = QVBoxLayout(self)
@@ -176,6 +187,7 @@ class FileDetail(QDialog):
     def _close(self):
         self.close()
 
+       
 
 class FileDetailWidget(QWidget):
     def __init__(
@@ -219,8 +231,6 @@ class FileDetailWidget(QWidget):
         self.gridlayout.addWidget(self.transcribeDate, 1, 3)
         Background.initBackground(self, Color.BLUEWHITE)
 
-
-
 class FullFileDetailWidget(QWidget):
     def __init__(
         self, 
@@ -237,28 +247,26 @@ class FullFileDetailWidget(QWidget):
         self._initWidget()
         self._initLayout()
     
-    
     def _initWidget(self):
         self.briefDetail = FileDetailWidget(self.files, 
                                             self.transcriberStr, 
-                                            self.dateStr)
+                                            self.dateStr,parent=self)
         
         setData = SettingModel.SettingModel().data
         self.requiredSetWidget = RequiredSet.RequiredSet(setData["Coffee Study"]["engine"])
-        self.requiredSetting = ToggleView.ToggleView("Required Setting", self.requiredSetWidget)
+        self.requiredSetting = ToggleView.ToggleView("Required Setting", self.requiredSetWidget,parent=self)
         self.postSetWidget = PostSet.PostSet(setData["Coffee Study"]["Post Transcribe"])
-        self.postSetting = ToggleView.ToggleView("Post Transcribe Setting", self.postSetWidget)
+        self.postSetting = ToggleView.ToggleView("Post Transcribe Setting", self.postSetWidget,parent=self)
     
     def _initLayout(self):
-        self.layout = QVBoxLayout()
-        self.layout.addWidget(self.briefDetail)
-        self.layout.addWidget(self.requiredSetting)
-        self.layout.addWidget(self.postSetting)
+        self.layout = QVBoxLayout(self)
+        self.layout.addWidget(self.briefDetail, 1)
+        self.layout.addWidget(self.requiredSetting, 2, Qt.AlignmentFlag.AlignTop)
+        self.layout.addWidget(self.postSetting, 2,  Qt.AlignmentFlag.AlignTop)
         self.setLayout(self.layout)
         Background.initBackground(self, Color.BLUEWHITE)
             
-        
-
+    
 class DirectoryView(QWidget):
     def __init__(self,files: list, *args, **kwargs) -> None:
         super().__init__( *args, **kwargs)
