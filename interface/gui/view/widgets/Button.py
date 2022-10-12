@@ -16,11 +16,11 @@ from util import Path
 from PyQt6.QtWidgets import (
     QPushButton, 
     QWidget, 
-    QGridLayout, 
+    QHBoxLayout, 
     QLabel
 )
 
-from PyQt6.QtCore import QSize
+from PyQt6.QtCore import QSize, Qt
 from PyQt6.QtGui import QIcon
 
 class ColoredBtn(QPushButton):
@@ -123,12 +123,14 @@ class onOffButton(QWidget):
     def __init__(
         self, 
         label: str, 
+        state = True,
         *args, 
         **kwargs
     ) -> None:
+        
         super().__init__(*args, **kwargs)
         self.label = label
-        self.state = True
+        self.state = state
         self._initWidget()
         self._initLayout()
         self._connectSignal()
@@ -136,15 +138,18 @@ class onOffButton(QWidget):
     def _initWidget(self):
         """initialize widgets for on-off select"""
         self.label =  QLabel(self.label)
-        self.onOffBtn = QPushButton("ON")
+        if self.state:
+            self.onOffBtn = QPushButton("ON")
+        else:
+            self.onOffBtn = QPushButton("OFF")
         self.onOffBtn.setMaximumSize(40, 100)
     
     def _initLayout(self):
         """initialize layout for on-off select"""
-        self.layout = QGridLayout(self)
+        self.layout = QHBoxLayout(self)
         self.setLayout(self.layout)
-        self.layout.addWidget(self.label,0,0)
-        self.layout.addWidget(self.onOffBtn,0,1) 
+        self.layout.addWidget(self.label)
+        self.layout.addWidget(self.onOffBtn, alignment=Qt.AlignmentFlag.AlignLeft) 
         
     def _connectSignal(self):
         """marked signal as clicked"""
@@ -158,8 +163,7 @@ class onOffButton(QWidget):
         else:
             self.state = True 
             self.onOffBtn.setText("ON")
-           
-    
+
     def value(self):
         """access state of on-off select"""
         return self.state

@@ -1,5 +1,4 @@
-
-from view.widgets import Label, InputBox
+from view.widgets import Label, InputBox, Button
 from view.style.styleValues import FontFamily, FontSize, Color
 from view.style import Background
 
@@ -13,8 +12,6 @@ from PyQt6.QtWidgets import (
 )
 
 from PyQt6.QtCore import Qt, QSize
-
-
 
 class PostSet(QWidget):
     """ required settings page"""
@@ -37,7 +34,11 @@ class PostSet(QWidget):
             newLabel = Label.Label(key, FontSize.BTN, FontFamily.MAIN)
             self.layout.addWidget(newLabel)
             for key,value in items.items():
-                newInput = InputBox.InputBox(key,inputText=value)
+                if "bool" in key:
+                    key = key.replace("bool", "")
+                    newInput = Button.onOffButton(key, value=="ON")
+                else:
+                    newInput = InputBox.InputBox(key, inputText=value)
                 self.layout.addWidget(newInput)
                 self.inputDict[key] = newInput
             spacer = QSpacerItem(400, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
