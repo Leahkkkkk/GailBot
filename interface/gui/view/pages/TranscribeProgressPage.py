@@ -63,6 +63,8 @@ class TranscribeProgressPage(QWidget):
         self.loadIcon.setFixedSize(QtCore.QSize(80, 80))
         self.loadIcon.setScaledContents(True)
         self.cancelBtn.setMinimumSize(QtCore.QSize(130, 30))
+        self.cancelBtn.setMinimumSize(Dimension.BGBUTTON)
+        initImgBackground(self, "backgroundConfirmPage.png")
         
         
     def _initLayout(self):
@@ -82,17 +84,11 @@ class TranscribeProgressPage(QWidget):
         self.verticalLayout.addWidget(self.cancelBtn, 
                                       alignment = Qt.AlignmentFlag.AlignHCenter)
         self.verticalLayout.setSpacing(10)
-        self.InProgress.setContentsMargins(35,0,0,0)
+        self.InProgress.setContentsMargins(80,0,0,0)
         self.loadIcon.setContentsMargins(0,0,0,0)
         self.fileTable.setMaximumHeight(300)
-
-    
-    def _initStyle(self):
-        """ initialize style """
-        self.cancelBtn.setMinimumSize(Dimension.BGBUTTON)
-        initImgBackground(self)
         
-   
+
     def _connectSignal(self):
         """ connects signal """
         self.cancelBtn.clicked.connect(self._confirm)

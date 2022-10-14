@@ -63,6 +63,7 @@ class TranscribeSuccessPage(QWidget):
         """ add widget to layout """
         self.verticalLayout.addWidget(self.label)
         self.verticalLayout.addWidget(self.transcribedFiles)
+        self.transcribedFiles.setContentsMargins(80,0,0,0)
         self.verticalLayout.addWidget(self.fileTable,alignment = Qt.AlignmentFlag.AlignHCenter)
         self.verticalLayout.addStretch()
         self.verticalLayout.addWidget(self.horizontal)
@@ -82,4 +83,4 @@ class TranscribeSuccessPage(QWidget):
         self.moreBtn.setMinimumSize(QtCore.QSize(150,30))
         self.returnBtn.setMinimumSize(QtCore.QSize(150,30))
         self.quitBtn.setMinimumSize(QtCore.QSize(150,30))
-        initImgBackground(self)
+        initImgBackground(self, "backgroundConfirmPage.png")

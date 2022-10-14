@@ -32,9 +32,10 @@ class Label(QLabel):
         self, 
         text:str, 
         size:str, 
-        font=FontFamily.OTHER, 
+        font = FontFamily.OTHER, 
         color = "Black", 
         others = None, 
+        link = False,
         *args, 
         **kwargs
     ): 
@@ -48,6 +49,8 @@ class Label(QLabel):
                            f"{others}")
         if font == FontFamily.MAIN:
             self.loadHeaderFont()
+        if link:
+            self.setOpenExternalLinks(True)
         
     def loadHeaderFont(self):
         """load font for header label (since it's not default)"""

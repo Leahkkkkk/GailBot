@@ -3,6 +3,7 @@ from view.components import PostSet
 from view.style.styleValues import FontFamily, FontSize, Color, Dimension
 from view.style.Background import initBackground
 from view.widgets import InputBox, Button, Label, ToggleView
+from view.pages import RecordInProgress
 
 from PyQt6.QtWidgets import QWidget, QVBoxLayout,QSpacerItem, QComboBox
 from PyQt6.QtCore import Qt
@@ -26,6 +27,7 @@ class RecordPage(QWidget):
         self.testBtn = Button.BorderBtn("Test MicroPhone", "#000")
         self.startRecordBtn = Button.ColoredBtn("Start Recording", Color.GREEN)
         self.cancelBtn = Button.ColoredBtn("Cancel", Color.ORANGE)
+        self.startRecordBtn.clicked.connect(self._startRecord)
     
     def _initLayout(self):
         self.layout = QVBoxLayout()
@@ -49,6 +51,11 @@ class RecordPage(QWidget):
         self.layout.addItem(self.spacer)
         self.cancelBtn.setContentsMargins(0,10,0,150)
         initBackground(self)
+    
+    
+    def _startRecord(self):
+        self.recordDialog = RecordInProgress.RecordDialog()
+        self.recordDialog.exec()
         
         
 
@@ -77,6 +84,8 @@ class RecordForm(QWidget):
         self.layout.addWidget(self.advancedLabel)
         self.layout.addWidget(self.recordingRate)
         self.layout.addWidget(self.maxDuration)
+        
+    
         
         
         

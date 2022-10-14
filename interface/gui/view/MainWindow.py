@@ -80,6 +80,7 @@ class MainWindow(QMainWindow):
                                                              self.deleteFun)
         self.MainStack.ConfirmTranscribePage.fileTable.addFirstAction(
             self.MainStack.ConfirmTranscribePage.toggleFileDetail)
+        
         self.MainStack.TranscribeProgressPage.fileTable.setFileModel(progressModel,
                                                              self.showSettingPage, 
                                                              self.createSettingPage, 
@@ -191,4 +192,5 @@ class MainWindow(QMainWindow):
     def confirmCancel(self):
         """ handle event when user tries to cancel the thread """
         self.logger.info("")
-        self.controller.cancelGailBot()
+        self.MainStack.gotoFileUploadPage()
+        # self.controller.cancelGailBot()

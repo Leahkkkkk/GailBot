@@ -269,9 +269,17 @@ class FullFileDetailWidget(QWidget):
         setData = SettingModel.SettingModel().data
         self.settingHeader = Label.Label("settings applied", FontSize.BODY, FontFamily.MAIN)
         self.requiredSetWidget = RequiredSet.RequiredSet(setData["Coffee Study"]["engine"])
-        self.requiredSetting = ToggleView.ToggleView("Required Setting", self.requiredSetWidget,header=True)
+        self.requiredSetting = ToggleView.ToggleView("Required Setting", 
+                                                     self.requiredSetWidget,
+                                                     header=True, 
+                                                     headercolor="#fff", 
+                                                     viewcolor="#fff")
         self.postSetWidget = PostSet.PostSet(setData["Coffee Study"]["Post Transcribe"])
-        self.postSetting = ToggleView.ToggleView("Post Transcribe Setting", self.postSetWidget,header=True)
+        self.postSetting = ToggleView.ToggleView("Post Transcribe Setting", 
+                                                 self.postSetWidget,
+                                                 header=True,
+                                                 headercolor="#fff", 
+                                                 viewcolor="#fff")
         
     def _initLayout(self):
         self.briefDetail.setMaximumSize(Dimension.MEDIUMDIALOG)
@@ -300,6 +308,7 @@ class DirectoryView(QWidget):
             count += 1
         self.setLayout(self.layout)
         self.setMinimumSize(QSize(200, 140))
+        self.layout.setSpacing(0)
         
 
 """ TODO: make the file detail clickable  """

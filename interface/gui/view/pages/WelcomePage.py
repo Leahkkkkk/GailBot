@@ -122,10 +122,10 @@ class WelcomePage(QWidget):
 
         """ instruction icons """
         self.AudioIcon = Image.Image("sound.jpeg")
-        self.SettingsIcon = Image.Image("setting.jpeg")
+        self.SettingsIcon = Image.Image("settings.png")
         self.TranscribeIcon = Image.Image("loading.jpeg")
         self.FileIcon = Image.Image("file.jpeg")
-        self.EditIcon = Image.Image("file.jpeg")
+        self.EditIcon = Image.Image("edit.jpeg")
         
         
     def _initInstructionGrid(self):

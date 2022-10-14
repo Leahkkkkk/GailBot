@@ -104,8 +104,9 @@ class progressTable(FileTable):
         self.setRowHeight(0,40)
     
     def addActionWidget(self, setFun, createFun, deleteFun, key=0):
-        """ add acton buttons and checkbox to table cell """
-        pass
+        firstCellWidget = TableWidgets.selectAndCheck(self.fullDetail)
+        idx = self.model.rowCount(0) - 1
+        self.setIndexWidget(self.model.index(idx,0), firstCellWidget)
     
     
 class successTable(FileTable):

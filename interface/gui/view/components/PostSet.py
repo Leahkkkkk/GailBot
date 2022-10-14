@@ -47,9 +47,6 @@ class PostSet(QWidget):
         
     
     def _initStyle(self):
-        # self.setObjectName("PostSet")
-        # self.layout.setObjectName("Layout")
-        # self.setStyleSheet( "#PostSet{{border: 1px solid #000; padding: 30px;}}")
         Background.initBackground(self, Color.BLUEWHITE)
     
     

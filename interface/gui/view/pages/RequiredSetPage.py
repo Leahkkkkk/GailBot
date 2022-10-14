@@ -38,10 +38,10 @@ class RequiredSetPage(QWidget):
     def _initLayout(self):
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
-        self.layout.addWidget(self.label, stretch= 1, 
+        self.layout.addWidget(self.label,
                               alignment=Qt.AlignmentFlag.AlignTop 
                               | Qt.AlignmentFlag.AlignHCenter)
         self.layout.addWidget(self.form, stretch= 10)
-        self.layout.setSpacing(20)
+        self.layout.setSpacing(0)
         
 

@@ -82,7 +82,7 @@ class SettingPage(QWidget):
         self.settingStack.setObjectName("settingStack")
         # self.settingStack.setStyleSheet("#settingStack {border: none; border-left:0.5px solid grey;}")
     
-    
+    """ TODO: improve functions to dynamically change setting and fetch setting data """
     def _changeSettingProfile(self, index):
         self.settingStack.setCurrentWidget(self.placeHolder)
         key = self.selectSettings.itemText(index)

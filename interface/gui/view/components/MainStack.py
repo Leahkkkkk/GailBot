@@ -78,7 +78,7 @@ class MainStack(QStackedWidget):
         self.addWidget(self.TranscribeProgressPage)
         self.addWidget(self.TranscribeSuccessPage)
         self.addWidget(self.RecordPage)
-        self.setCurrentWidget(self.SettingPage)
+        self.setCurrentWidget(self.TranscribeSuccessPage)
         
     def _pageRedirect(self):
         """ initialize button click to page rediect functionality  """
@@ -94,6 +94,11 @@ class MainStack(QStackedWidget):
                 self.setCurrentWidget(self.FileUploadPage))
         self.FileUploadPage.gotoMainBtn.clicked.connect(lambda:
                 self.setCurrentWidget(self.WelcomePage))
-
+        self.FileUploadPage.recordBtn.clicked.connect(lambda:
+                self.setCurrentWidget(self.RecordPage))
+        self.RecordPage.cancelBtn.clicked.connect(lambda:
+                self.setCurrentWidget(self.FileUploadPage))
+        
+        self.FileUploadPage.signals.gotoSetting.connect(self.gotoSettingPage)
         
     
