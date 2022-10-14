@@ -9,10 +9,11 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
- 
+import os
+
+from util import Path  
 
 from view.style.styleValues import FontFamily, FontSize, Color
-from view.style.Background import initImgBackground
 from view.widgets import (
     Button, 
     Label, 
@@ -50,7 +51,6 @@ class WelcomePage(QWidget):
         self._initInstructionText()
         self._initLinkText()
         self._initInstructionGrid()
-        self._initLinkText()
         
     
     def _initLayout(self): 
@@ -72,7 +72,7 @@ class WelcomePage(QWidget):
         self.verticalLayout.addWidget(self.StartBtn, 4, 
                                       alignment = Qt.AlignmentFlag.AlignHCenter)
         
-        spacer = QSpacerItem(40, 50, QSizePolicy.Policy.Preferred, 
+        spacer = QSpacerItem(40, 20, QSizePolicy.Policy.Preferred, 
                              QSizePolicy.Policy.Preferred)
     
         self.verticalLayout.addItem(spacer)
@@ -89,7 +89,14 @@ class WelcomePage(QWidget):
         """ initialize style """
         self.HomeSetBtn.setFixedSize(QtCore.QSize(40,40))
         self.StartBtn.setMinimumSize(QtCore.QSize(150,30))
-        initImgBackground(self)
+        self.setAutoFillBackground(True)
+        palette = self.palette()
+        brush = QtGui.QBrush()
+        brush.setTextureImage(QtGui.QImage
+                              (os.path.join(Path.getProjectRoot(), 
+                                       "view/asset/background.png")))
+        palette.setBrush(QtGui.QPalette.ColorRole.Window, brush)
+        self.setPalette(palette)
 
 
     def _initInstructionText(self):
@@ -183,28 +190,6 @@ class WelcomePage(QWidget):
         self.InstructionText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
     
     
-    def _initLinkText(self):
-        """ initialize the link text on homepage """
-        self.ResourcesText = Label.Label("Resources",FontSize.HEADER2, FontFamily.OTHER)
-        self.ResourcesText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
-
-        self.TutorialText = Label.Label("GailBot Beginner Tutorial",FontSize.LINK,
-                                        FontFamily.OTHER, Color.BLUEMEDIUM,
-                                        "text-decoration: underline;")
-        self.GuideText = Label.Label("GailBot Settings Guide",FontSize.LINK, 
-                                        FontFamily.OTHER, Color.BLUEMEDIUM,
-                                        "text-decoration: underline;")
-        
-        self.GBLinkText = Label.Label("GailBot.com",FontSize.BODY, 
-                                      FontFamily.OTHER,Color.BLUEMEDIUM,)
-        
-        self.GBLinkText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
-
-        self.MoreInfoText = Label.Label("For more information visit", 
-                                        FontSize.SMALL, FontFamily.OTHER)
-        
-        self.MoreInfoText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
-
     def _initLinkText(self):
         """ initialize the link text on homepage """
         linkTemplate = "<a href={0}>{1}</a>"
