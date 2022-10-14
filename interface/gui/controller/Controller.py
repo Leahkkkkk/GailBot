@@ -83,8 +83,9 @@ class Controller:
             
         self.logger.info("")
         file = self.ModelObj.FileModel.getFile(key)
-        self.worker = GBRunnable.Worker(file["name"], file["path"],key)
-        print(file["name"], file["path"],key)
+        print(file["name"], file["path"], key)
+        
+        self.worker = GBRunnable.Worker(file["name"], file["path"], key)
         self.worker.signals.start.connect(self._showInProgress)
         self.worker.signals.finished.connect(self._showFinished)
         self.worker.signals.finished.connect(chageTranscribeStatus)

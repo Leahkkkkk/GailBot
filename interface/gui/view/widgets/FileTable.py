@@ -23,7 +23,6 @@ from PyQt6.QtWidgets import (
 
 from PyQt6.QtCore import QSize, Qt
 
-        
 class FileTable(QTableView):
     """ fie table widget """
     def __init__(
@@ -103,6 +102,10 @@ class progressTable(FileTable):
         self.setColumnWidth(2,400)
         self.setColumnWidth(3,220)
         self.setRowHeight(0,40)
+    
+    def addActionWidget(self, setFun, createFun, deleteFun, key=0):
+        """ add acton buttons and checkbox to table cell """
+        pass
     
     
 class successTable(FileTable):

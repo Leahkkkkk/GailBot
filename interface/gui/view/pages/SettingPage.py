@@ -80,7 +80,7 @@ class SettingPage(QWidget):
     
     def _initStyle(self):
         self.settingStack.setObjectName("settingStack")
-        self.settingStack.setStyleSheet("#settingStack {border-left: 1px solid black}")
+        # self.settingStack.setStyleSheet("#settingStack {border: none; border-left:0.5px solid grey;}")
     
     
     def _changeSettingProfile(self, index):

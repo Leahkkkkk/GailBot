@@ -9,12 +9,11 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
-from symbol import import_as_name
 from view.widgets import InputBox, Button, Label
 from view.components import PostSet
 from view.style.styleValues import FontFamily, FontSize
 
-from PyQt6.QtWidgets import QWidget, QLabel, QVBoxLayout,QScrollArea
+from PyQt6.QtWidgets import QWidget, QVBoxLayout,QScrollArea
 from PyQt6.QtCore import Qt
 
 
@@ -40,6 +39,8 @@ class PostSetPage(QWidget):
         self.scroll.setFixedWidth(600)
         self.PostSet.setFixedWidth(600)
         self.scroll.setMaximumHeight(600)
+        self.scroll.setMinimumHeight(430)
+        
 
        
     
@@ -51,7 +52,8 @@ class PostSetPage(QWidget):
         self.layout.addWidget(self.header, stretch= 1, alignment=Qt.AlignmentFlag.AlignHCenter
                                                     |Qt.AlignmentFlag.AlignTop)
         self.layout.addWidget(self.caption,alignment=Qt.AlignmentFlag.AlignLeft)
-        self.layout.addWidget(self.scroll,stretch = 7, alignment=Qt.AlignmentFlag.AlignLeft
+        self.caption.setContentsMargins(80,0,0,0)
+        self.layout.addWidget(self.scroll,stretch = 7, alignment=Qt.AlignmentFlag.AlignHCenter
                                                     |Qt.AlignmentFlag.AlignTop)
         
        

@@ -38,9 +38,10 @@ from PyQt6.QtCore import Qt, QSize
             
             
 class FileUploadPage(QWidget):
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, nextStep:callable, *args, **kwargs) -> None:
         """ file upload page """
         super().__init__(*args, **kwargs)
+        self.nextStep = nextStep
         self._initWidget()
         self._initLayout()
         self._initStyle()
@@ -72,7 +73,8 @@ class FileUploadPage(QWidget):
         self.verticalLayout = QVBoxLayout()
         self.setLayout(self.verticalLayout)
         """ add widget to layout """
-        self.verticalLayout.addWidget(self.gotoMainBtn,alignment = Qt.AlignmentFlag.AlignLeft)
+        self.verticalLayout.addWidget(self.gotoMainBtn,
+                                      alignment = Qt.AlignmentFlag.AlignLeft)
         self.verticalLayout.addWidget(self.label, 
                                       alignment = Qt.AlignmentFlag.AlignHCenter)
         self.verticalLayout.addWidget(self.settingProfile,
@@ -99,6 +101,6 @@ class FileUploadPage(QWidget):
     def transcribe(self):
         indices = self.fileTable.selectedIndexes()
         if indices:
-            self.parent.gotoConfirmPage()
+            self.nextStep()
         else:
             self.messageBox = MsgBox.WarnBox("No Files Selected")

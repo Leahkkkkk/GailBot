@@ -63,8 +63,7 @@ class FileModel(QtCore.QAbstractTableModel):
            reflect the front-end changes on the file table
 
         Args:
-            fileobj ([str]): a list of strings that contain the informatin 
-                             about the file
+            fileobj 
         """
         fileData = fileObj.convertToData()
         
@@ -89,7 +88,6 @@ class FileModel(QtCore.QAbstractTableModel):
         """ change the file status to be transcrbed """
         self._data[idx][3] = "transcribed"
         self.layoutChanged.emit()
-        self.dataChanged.emit()
 
 class ConfirmFileModel(FileModel):
     def __init__(self):

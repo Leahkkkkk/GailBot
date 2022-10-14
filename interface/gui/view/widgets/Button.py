@@ -77,7 +77,7 @@ class BorderBtn(QPushButton):
         super().__init__(*args, **kwargs)
     
         self.setText(label)
-        self.setStyleSheet(f"border: 2px solid {color};"
+        self.setStyleSheet(f"border: 1px solid {color};"
                            f"color:{color};"
                            f"border-radius:5;"
                            f"padding:1;"

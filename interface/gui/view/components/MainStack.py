@@ -17,7 +17,8 @@ from view.pages import (
         FileUploadPage,
         SettingPage,
         TranscribeProgressPage,
-        TranscribeSuccessPage
+        TranscribeSuccessPage,
+        RecordPage
 )
 from view.style.styleValues import Dimension
 
@@ -63,10 +64,11 @@ class MainStack(QStackedWidget):
         self.ApplySetProgressPage = ApplySetProgressPage.ApplySetProgressPage(self)
         self.ApplySetSuccessPage = ApplySetSuccessPage.ApplySetSuccessPage(self)
         self.ConfirmTranscribePage = ConfirmTranscribePage.ConfirmTranscribePage(self)
-        self.FileUploadPage = FileUploadPage.FileUploadPage(parent = self)
+        self.FileUploadPage = FileUploadPage.FileUploadPage(self.gotoConfirmPage)
         self.SettingPage = SettingPage.SettingPage(self.settingdata, self)
         self.TranscribeProgressPage = TranscribeProgressPage.TranscribeProgressPage(self)
         self.TranscribeSuccessPage = TranscribeSuccessPage.TranscribeSuccessPage(self)
+        self.RecordPage = RecordPage.RecordPage()
         self.addWidget(self.WelcomePage)
         self.addWidget(self.ApplySetProgressPage)
         self.addWidget(self.ApplySetSuccessPage)
@@ -75,7 +77,8 @@ class MainStack(QStackedWidget):
         self.addWidget(self.SettingPage)
         self.addWidget(self.TranscribeProgressPage)
         self.addWidget(self.TranscribeSuccessPage)
-        self.setCurrentWidget(self.WelcomePage)
+        self.addWidget(self.RecordPage)
+        self.setCurrentWidget(self.SettingPage)
         
     def _pageRedirect(self):
         """ initialize button click to page rediect functionality  """

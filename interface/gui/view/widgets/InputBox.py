@@ -8,8 +8,6 @@ Last Modified: Thursday, 6th October 2022 1:44:14 pm
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
-
-from pickle import TRUE
 from view.style.styleValues import (
     FontSize, 
     Dimension, 
@@ -20,7 +18,7 @@ from view.widgets import (
 )
 
 from PyQt6.QtWidgets import (
-    QLabel, 
+    QComboBox, 
     QWidget, 
     QHBoxLayout, 
     QLineEdit,
@@ -41,6 +39,7 @@ class InputBox(QWidget):
         vertical = False, 
         labelSize = FontSize.BODY, 
         inputText = None,
+        selections = None,
         *args, 
         **kwargs) -> None:
         """initialize input box"""
@@ -49,13 +48,14 @@ class InputBox(QWidget):
         self.vetical = vertical
         self.lableSize = labelSize
         self.inputText = inputText
+        self.selections = selections
         self._initWidget()
         self._initLayout()
         self._connectSignal()
 
     def value(self):
         """ public function to ge the value of the input """
-        return self.InputFeild.text()
+        return self.inputFeild.text()
     
     def setText(self,text:str):
         self.inputFeild.setText(text)
@@ -70,7 +70,7 @@ class InputBox(QWidget):
         self.inputFeild.setMaximumSize(Dimension.INPUTFIELD)
         if self.inputText:
             self.setText(self.inputText)
-        
+            
     def _initLayout(self):
         """initialize layouts for input box"""
         if self.vetical:
@@ -95,4 +95,45 @@ class InputField(QLineEdit):
                            f"padding:0;"
                            f"border: 1px solid {Color.BORDERGREY} ")
         self.setFixedSize(Dimension.INPUTFIELD)
+
+class InputCombo(InputBox):
+    def __init__(
+        self,
+        selections:list, 
+        label:str, 
+        vertical = False, 
+        labelSize = FontSize.BODY, 
+        inputText = None,
+        *args, **kwargs) -> None:
         
+        super().__init__(
+        label,
+        vertical,
+        labelSize,
+        inputText,
+        selections,
+        *args, **kwargs)
+        
+        self.selections = selections 
+    
+    def _initWidget(self):
+        """initialize widgets for input box"""
+        self.inputlabel = Label.Label(self.label, self.lableSize)
+        self.inputFeild = ComboSelection(self.selections)
+        self.inputFeild.setMaximumSize(Dimension.INPUTFIELD)
+
+
+    def value(self):
+        """ public function to ge the value of the input """
+        return self.inputFeild.currentText()
+    
+    def setText(self,text:str):
+        self.inputFeild.setCurrentText(text)
+    
+    def disableEdit(self):
+        self.inputFeild.setEditable(False)
+
+class ComboSelection(QComboBox):
+    def __init__(self,selections:list, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.addItems(selections)

@@ -27,9 +27,7 @@ class PostSet(QWidget):
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
         self.layout.setSpacing(0)
-        self.layout.setContentsMargins(0,0,0,0)
  
-        
         for key, items in self.data.items():
             newLabel = Label.Label(key, FontSize.BTN, FontFamily.MAIN)
             self.layout.addWidget(newLabel)
@@ -39,6 +37,7 @@ class PostSet(QWidget):
                     newInput = Button.onOffButton(key, value=="ON")
                 else:
                     newInput = InputBox.InputBox(key, inputText=value)
+                newInput.setContentsMargins(25,5,15,0)
                 self.layout.addWidget(newInput)
                 self.inputDict[key] = newInput
             spacer = QSpacerItem(400, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)

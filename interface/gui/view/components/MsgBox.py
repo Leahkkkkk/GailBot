@@ -8,6 +8,8 @@ Last Modified: Thursday, 6th October 2022 10:18:15 am
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
+from view.style.Background import initBackground
+from view.style.styleValues import Color
 
 from PyQt6.QtWidgets import QMessageBox
 
@@ -27,6 +29,7 @@ class ConfirmBox:
                                   QMessageBox.StandardButton.No)
         self.msgBox.buttonClicked.connect(self._confirm)
         self.confirm = confirm 
+        setMsgBoxStyle(self.msgBox)
         self.msgBox.exec()
     
     def _confirm(self, button):
@@ -56,6 +59,7 @@ class WarnBox:
         self.msgBox.setIcon(QMessageBox.Icon.Warning)
         self.msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
         self.msgBox.buttonClicked.connect(self._ok)
+        setMsgBoxStyle(self.msgBox)
         self.msgBox.exec()
     
     def _ok(self, button):
@@ -66,3 +70,7 @@ class WarnBox:
         """
         if self.ok:
             self.ok()
+
+
+def setMsgBoxStyle(widget:QMessageBox):
+    initBackground(widget, Color.BLUEWHITE)
