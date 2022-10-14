@@ -1,6 +1,6 @@
 from view.widgets import DynamicNDependentCombo, ToggleView, Label
 from view.components import MsgBox
-from view.style.styleValues import FontFamily, FontSize
+from view.style.styleValues import FontFamily, FontSize, Color
 
 from PyQt6.QtWidgets import (
     QWidget, 
@@ -23,11 +23,13 @@ class RequiredSet(QWidget):
         self.comboBox = DynamicNDependentCombo.DynamicNDependentCombo(self.data,parent=self)
         self.engineSet = ToggleView.ToggleView("Speech to text settings", 
                                                self.comboBox, 
-                                               header = True)
+                                               header = True, 
+                                               color=Color.GREYLIGHT)
         self.outPut = OutPutFormat()
         self.outPutSet = ToggleView.ToggleView("Output File Format Settings", 
                                                self.outPut,
-                                               header = True)
+                                               header = True,
+                                               color=Color.GREYLIGHT)
         self.outPutSet.resizeViewHeight(350)
         
     def _initLayout(self):

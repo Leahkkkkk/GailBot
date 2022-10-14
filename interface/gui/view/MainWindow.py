@@ -68,13 +68,51 @@ class MainWindow(QMainWindow):
                            confirmModel: QAbstractTableModel,
                            progressModel:QAbstractTableModel,
                            successModel:QAbstractTableModel):
-        self.MainStack.FileUploadPage.fileTable.setFileModel(fileModelFull)
-        self.MainStack.ConfirmTranscribePage.fileTable.setFileModel(confirmModel)
-        self.MainStack.TranscribeProgressPage.fileTable.setFileModel(progressModel)
-        self.MainStack.TranscribeSuccessPage.fileTable.setFileModel(successModel)
-        self.MainStack.ApplySetProgressPage.fileTable.setFileModel(progressModel)
-        self.MainStack.ApplySetSuccessPage.fileTable.setFileModel(successModel)
-
+        
+        self.MainStack.FileUploadPage.fileTable.setFileModel(fileModelFull, 
+                                                             self.showSettingPage, 
+                                                             self.createSettingPage, 
+                                                             self.deleteFun)
+        self.MainStack.ConfirmTranscribePage.fileTable.setFileModel(confirmModel,
+                                                             self.showSettingPage, 
+                                                             self.createSettingPage, 
+                                                             self.deleteFun)
+        self.MainStack.ConfirmTranscribePage.fileTable.addFirstAction(
+            self.MainStack.ConfirmTranscribePage.toggleFileDetail)
+        self.MainStack.TranscribeProgressPage.fileTable.setFileModel(progressModel,
+                                                             self.showSettingPage, 
+                                                             self.createSettingPage, 
+                                                             self.deleteFun)
+        self.MainStack.TranscribeSuccessPage.fileTable.setFileModel(successModel,
+                                                             self.showSettingPage, 
+                                                             self.createSettingPage, 
+                                                             self.deleteFun)
+        self.MainStack.ApplySetProgressPage.fileTable.setFileModel(progressModel,
+                                                             self.showSettingPage, 
+                                                             self.createSettingPage, 
+                                                             self.deleteFun)
+        self.MainStack.ApplySetSuccessPage.fileTable.setFileModel(successModel,
+                                                             self.showSettingPage, 
+                                                             self.createSettingPage, 
+                                                             self.deleteFun)
+    
+    def deleteFun(self,fileKey):
+        """ TODO: add function to delete file from file table """
+        print(1)
+    
+    def showSettingPage(self):
+        """ go to the  setting page 
+        TODO: add function to pass in setting data and reload the page dynamically 
+        """
+        self.MainStack.gotoSettingPage()
+   
+   
+    def createSettingPage(self):
+        """ got the setting page to create the new setting 
+        TODO: add function to load setting page as default setting page  
+        """
+        self.MainStack.gotoSettingPage()
+        
     def showTranscribeInProgress(self):
         """goes to transcribe in progress page"""
         self.MainStack.gotoTranscribeInProgress()
@@ -128,7 +166,9 @@ class MainWindow(QMainWindow):
                 filePath = path[7:]
                 fileObj = FileItem(file[0], filePath,"Default")
                 self.controller.addFile(fileObj)
-                self.MainStack.FileUploadPage.fileTable.addActionWidget()
+                self.MainStack.FileUploadPage.fileTable.addActionWidget( self.showSettingPage, 
+                                                             self.createSettingPage, 
+                                                             self.deleteFun)
             else:
                 return None
     

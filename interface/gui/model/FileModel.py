@@ -74,7 +74,6 @@ class FileModel(QtCore.QAbstractTableModel):
         self.layoutChanged.emit()
         key = len(self._data) - 1
         self._dataDict[key] = fileObj
-        
     
     def changeToTranscribed(self, idx:int):
         """ change the file status to be transcrbed """
@@ -85,8 +84,8 @@ class FileModel(QtCore.QAbstractTableModel):
 class ConfirmFileModel(FileModel):
     def __init__(self):
         super(FileModel, self).__init__()
-        self.columns = [" ", "Type", "Name", "Profile", "Selected Action"]
-        self._data = [["","","","",""]]
+        self.columns = [" ", "Type", "Name",  "Selected Action"]
+        self._data = [["","","",""]]
 
 
 class ProgressFileMode(FileModel):

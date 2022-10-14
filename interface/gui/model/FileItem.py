@@ -12,7 +12,6 @@ Modified By:  Siara Small  & Vivian Li
 import datetime 
 import os 
 
-from view.widgets.Actions import Actions
 
 class FileItem:
     """ represent a file object """
@@ -34,7 +33,6 @@ class FileItem:
         """ convert the file data to a list which can be stored in the file
             table
         """
-    
         return [ " ",
                 self.type, 
                  self.name, 

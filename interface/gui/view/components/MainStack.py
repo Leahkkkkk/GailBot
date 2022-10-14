@@ -50,6 +50,10 @@ class MainStack(QStackedWidget):
         """ redirect to confirm cancel page """
         self.parent.confirmCancel()
     
+    def gotoSettingPage(self):
+        self.setCurrentWidget(self.SettingPage)
+        self.SettingPage.settingStack.setCurrentIndex(1)
+    
     def _initPage(self):
         """ initialize all pages on stack widget  """
         self.WelcomePage = WelcomePage.WelcomePage(self)
@@ -68,7 +72,7 @@ class MainStack(QStackedWidget):
         self.addWidget(self.SettingPage)
         self.addWidget(self.TranscribeProgressPage)
         self.addWidget(self.TranscribeSuccessPage)
-        self.setCurrentWidget(self.TranscribeProgressPage)
+        self.setCurrentWidget(self.FileUploadPage)
         
     def _pageRedirect(self):
         """ initialize button click to page rediect functionality  """
@@ -88,6 +92,6 @@ class MainStack(QStackedWidget):
                 self.setCurrentWidget(self.SettingPage))
         self.FileUploadPage.gotoMainBtn.clicked.connect(lambda:
                 self.setCurrentWidget(self.WelcomePage))
-    
+
         
     

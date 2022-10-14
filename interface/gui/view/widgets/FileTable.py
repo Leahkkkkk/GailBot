@@ -12,81 +12,40 @@ Modified By:  Siara Small  & Vivian Li
 from multiprocessing import parent_process
 from view.style.styleValues import Color, FontSize, Dimension, FontFamily
 from model.FileModel import FileModel
-from view.widgets.Button import ToggleBtn, iconBtn, ColoredBtn
-from view.widgets import InputBox, Label, Image, ToggleView
-from view.components import RequiredSet, PostSet
-from view.style import Background
-from model import SettingModel
+from view.widgets import TableWidgets
 
 from PyQt6.QtWidgets import (
     QTableView, 
     QHeaderView,
-    QDialog,
     QAbstractItemView, 
-    QCheckBox,
-    QWidget,
-    QHBoxLayout,
-    QVBoxLayout,
-    QGridLayout
+  
 )
 
 from PyQt6.QtCore import QSize, Qt
 
-
-class Actions(QWidget):
-    def __init__(self, *args, **kwagrs):
-        super().__init__(*args, **kwagrs)
-        self.setFixedSize(Dimension.ACTION)
-        self.layout = QHBoxLayout(self)
-        self.layout
-        self.setLayout(self.layout)
-        self.setBtn  = iconBtn("settings.png")
-        self.deleteBtn = iconBtn("trash.png")
-        self.saveBtn = iconBtn("disk.png")
-        self.layout.addWidget(self.setBtn)
-        self.layout.addWidget(self.deleteBtn)
-        self.layout.addWidget(self.saveBtn)
-        self.layout.setContentsMargins(0,0,0,0)
-
-class selectAndCheck(QWidget):
-    def __init__(self, full=False, *args, **kwagrs):
-        super().__init__(*args, **kwagrs)
-        layout = QHBoxLayout(self)
-        self.full = full
-        self.setLayout(layout)
-        layout.setContentsMargins(0,0,0,0)
-        directory = iconBtn("directory.png")
-        directory.setStyleSheet("background-color:white;")
-        directory.setFixedSize(QSize(25,25))
-        checkBox = QCheckBox(self)
-        layout.addWidget(directory)
-        layout.addWidget(checkBox)
-        checkBox.setStyleSheet("margin-left: 10px")
-        directory.clicked.connect(self._showDetail)
-        self.setFixedSize(Dimension.ACTION)
-    
-    def _showDetail(self):
-        Dialog = FileDetail(fullDetail=self.full)
-        Dialog.exec()
         
 class FileTable(QTableView):
     """ fie table widget """
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(
+        self,   
+        *args, 
+        **kwargs) -> None:
         """initialize table model from QTableView"""
         super().__init__(*args, **kwargs)
-        self.fullDetail = False
+        self.fullDetail = False 
         self.setMinimumSize(QSize(800, 200))
         self.setMaximumSize(QSize(800, 300))
         self.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         self.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Fixed)
         self._initStyle()
     
-    def setFileModel(self, model:FileModel):
+    def setFileModel(self, model:FileModel, setFun, createFun, deleteFun):
         self.model = model
         self.setModel(model)
         self.columnCount = model.columnCount(0) 
-        self.addActionWidget()
+        self.addActionWidget(setFun, createFun, deleteFun)
         self.setTableLayout()
+        self.setLineWidth(100)
     
     def setTableLayout(self):
         self.setColumnWidth(0,80)
@@ -95,10 +54,10 @@ class FileTable(QTableView):
         self.setColumnWidth(6,70)
         self.setColumnWidth(8,160)
         
-    def addActionWidget(self):
+    def addActionWidget(self,setFun, createFun, deleteFun):
         """ add acton buttons and checkbox to table cell """
-        firstCellWidget = selectAndCheck(self.fullDetail)
-        lastCellWidget = Actions()
+        firstCellWidget = TableWidgets.selectAndCheck(self.fullDetail)
+        lastCellWidget = TableWidgets.Actions(setFun, createFun, deleteFun)
         idx = self.model.rowCount(0) - 1
         self.setIndexWidget(self.model.index(idx,0), firstCellWidget)
         self.setIndexWidget(self.model.index(idx,self.columnCount - 1), 
@@ -117,12 +76,21 @@ class confirmTable(FileTable):
         self.fullDetail = True
     
     def setTableLayout(self):
-        self.setColumnWidth(0,80)
-        self.setColumnWidth(1,120)
-        self.setColumnWidth(2,280)
-        self.setColumnWidth(3,130)
-        self.setColumnWidth(4,180)
-
+        self.setColumnWidth(0,60)
+        self.setColumnWidth(1,130)
+        self.setColumnWidth(2,365)
+        self.setColumnWidth(3,230)
+        self.setRowHeight(0,40)
+  
+    def addActionWidget(self, setFun, createFun, deleteFun):
+        """ add acton buttons and checkbox to table cell """
+        pass
+    
+    def addFirstAction(self, toggleFun):
+        firstCellWidget = TableWidgets.ConfirmAction(toggleFun)
+        # idx = self.model.rowCount(0) - 1
+        self.setIndexWidget(self.model.index(0,0), firstCellWidget)
+     
 class progressTable(FileTable):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
@@ -131,9 +99,18 @@ class progressTable(FileTable):
     def setTableLayout(self):
         self.setColumnWidth(0,80)
         self.setColumnWidth(1,80)
-        self.setColumnWidth(2,450)
-        self.setColumnWidth(3,170)
-
+        self.setColumnWidth(2,400)
+        self.setColumnWidth(3,220)
+    
+    def addActionWidget(self, setFun, createFun, deleteFun):
+        """ add acton buttons and checkbox to table cell """
+        firstCellWidget = TableWidgets.selectAndCheck(self.fullDetail)
+        lastCellWidget = TableWidgets.PosTranscribeAction(setFun, createFun, deleteFun)
+        idx = self.model.rowCount(0) - 1
+        self.setIndexWidget(self.model.index(idx,0), firstCellWidget)
+        self.setIndexWidget(self.model.index(idx,self.columnCount - 1), 
+                            lastCellWidget)
+        
 class successTable(FileTable):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
@@ -142,151 +119,21 @@ class successTable(FileTable):
     def setTableLayout(self):
         self.setColumnWidth(0,80)
         self.setColumnWidth(1,80)
-        self.setColumnWidth(2,210)
+        self.setColumnWidth(2,180)
         self.setColumnWidth(3,120)
-        self.setColumnWidth(4,150)
-        self.setColumnWidth(5,150)
-        
-class FileDetail(QDialog):
-    def __init__(
-        self,  
-        files=["file1", "file2", "file3", "file4", "file5", "file6"] , 
-        transcriber="Dummy", 
-        date="2022/10/10",
-        fullDetail = False,
-        *args, 
-        **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        self.setWindowTitle("File Datails")
-        self.files = files 
-        self.transcriberStr = transcriber
-        self.dateStr = date
-        if fullDetail:
-            self.mainWidget = FullFileDetailWidget(self.files, 
-                                         self.transcriberStr, 
-                                         self.dateStr)
-            self.setMinimumSize(Dimension.MEDIUMDIALOG)
-        else:
-            self.mainWidget = FileDetailWidget(self.files, 
-                                            self.transcriberStr, 
-                                            self.dateStr)
-            self.setMinimumSize(Dimension.MEDIUMDIALOG)
-            
-        self.saveBtn = ColoredBtn("save",Color.BLUEDARK, FontSize.SMALL)
-        self.saveBtn.setFixedSize(QSize(50,35))
-        self.saveBtn.clicked.connect(self._close)
-        self._initLayout()
-        
-    def _initLayout(self):
-        self.layout = QVBoxLayout(self)
-        self.layout.addWidget(self.mainWidget)
-        self.layout.addWidget(self.saveBtn, 
-                              alignment=Qt.AlignmentFlag.AlignRight)
-        Background.initBackground(self, Color.BLUEWHITE)
-        
-    def _close(self):
-        self.close()
-
-       
-
-class FileDetailWidget(QWidget):
-    def __init__(
-        self, 
-        files=["file1", "file2", "file3", "file4", "file5", "file6"] , 
-        transcriber="Dummy", 
-        date="2022/10/10",
-        *args, 
-        **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        self.setMinimumSize(Dimension.MEDIUMDIALOG)
-        self.files = files 
-        self.transcriberStr = transcriber
-        self.dateStr = date
-        self._initWidget()
-        self._initLayout()
-
-    def _initWidget(self):
-        self.transcriber = InputBox.InputBox("Transcribed by: ", True, FontSize.SMALL)
-        self.transcriber.setText(self.transcriberStr)
-        self.transcribeDate = InputBox.InputBox("Transcribed on: ", True, FontSize.SMALL)
-        self.transcribeDate.setText(self.dateStr)
-        self.transcribeDate.disableEdit()
-       
-        self.inDirLabel = Label.Label("In this directory", FontSize.BODY, 
-                                          FontFamily.MAIN)
-        self.inDirLabel.setMinimumWidth(200)
-        self.aboutDirLabel = Label.Label("About this directory", FontSize.BODY, 
-                                          FontFamily.MAIN)
-        self.fileList = DirectoryView(self.files)
-
-    def _initLayout(self):
-        self.gridlayout = QGridLayout(self)
-        self.setLayout(self.gridlayout)
-        self.gridlayout.addWidget(self.inDirLabel, 0, 0, 2, 2, 
-                                  alignment=Qt.AlignmentFlag.AlignTop)
-        self.gridlayout.addWidget(self.fileList, 1, 0,2,2)
-        self.gridlayout.addWidget(self.aboutDirLabel, 0, 2, 1, 2,
-                                  alignment=Qt.AlignmentFlag.AlignTop)
-        self.gridlayout.addWidget(self.transcriber, 1, 2)
-        self.gridlayout.addWidget(self.transcribeDate, 1, 3)
-        Background.initBackground(self, Color.BLUEWHITE)
-
-class FullFileDetailWidget(QWidget):
-    def __init__(
-        self, 
-        files=["file1", "file2", "file3", "file4", "file5", "file6"] , 
-        transcriber="Dummy", 
-        date="2022/10/10",
-        *args, 
-        **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        self.setMinimumSize(Dimension.LARGEDIALOG)
-        self.files = files 
-        self.transcriberStr = transcriber
-        self.dateStr = date
-        self._initWidget()
-        self._initLayout()
+        self.setColumnWidth(4,120)
+        self.setColumnWidth(5,200)
+        self.setRowHeight(0,40)
+     
     
-    def _initWidget(self):
-        self.briefDetail = FileDetailWidget(self.files, 
-                                            self.transcriberStr, 
-                                            self.dateStr,parent=self)
+    def addActionWidget(self, setFun, createFun, deleteFun):
+        """ add acton buttons and checkbox to table cell """
+        firstCellWidget = TableWidgets.selectAndCheck(self.fullDetail)
+        lastCellWidget = TableWidgets.PosTranscribeAction(setFun, createFun, deleteFun)
+        idx = self.model.rowCount(0) - 1
+        self.setIndexWidget(self.model.index(idx,0), firstCellWidget)
+        self.setIndexWidget(self.model.index(idx,self.columnCount - 1), 
+                            lastCellWidget)
         
-        setData = SettingModel.SettingModel().data
-        self.requiredSetWidget = RequiredSet.RequiredSet(setData["Coffee Study"]["engine"])
-        self.requiredSetting = ToggleView.ToggleView("Required Setting", self.requiredSetWidget,parent=self)
-        self.postSetWidget = PostSet.PostSet(setData["Coffee Study"]["Post Transcribe"])
-        self.postSetting = ToggleView.ToggleView("Post Transcribe Setting", self.postSetWidget,parent=self)
-    
-    def _initLayout(self):
-        self.layout = QVBoxLayout(self)
-        self.layout.addWidget(self.briefDetail, 1)
-        self.layout.addWidget(self.requiredSetting, 2, Qt.AlignmentFlag.AlignTop)
-        self.layout.addWidget(self.postSetting, 2,  Qt.AlignmentFlag.AlignTop)
-        self.setLayout(self.layout)
-        Background.initBackground(self, Color.BLUEWHITE)
-            
-    
-class DirectoryView(QWidget):
-    def __init__(self,files: list, *args, **kwargs) -> None:
-        super().__init__( *args, **kwargs)
-        self.layout = QGridLayout()
-        count = 0
-        for file in files:
-            fileIcon  = FileDisplay(file)
-            self.layout.addWidget(fileIcon, count//2, count%2, 
-                                  alignment=Qt.AlignmentFlag.AlignTop)
-            count += 1
-        self.setLayout(self.layout)
-        self.setMinimumSize(QSize(200, 140))
 
-class FileDisplay(QWidget):
-     def __init__(self,filename: str, *args, **kwargs) -> None:
-        super().__init__( *args, **kwargs)
-        self.layout = QHBoxLayout(self)
-        self.icon = Image.Image("file.jpeg", size=20)
-        self.label = Label.Label(filename, 
-                                 FontSize.SMALL, 
-                                 color=Color.GREYDARK)
-        self.layout.addWidget(self.icon)
-        self.layout.addWidget(self.label)
+

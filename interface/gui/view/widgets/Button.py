@@ -10,13 +10,14 @@ Modified By:  Siara Small  & Vivian Li
 '''
 import os
 
-from view.style.styleValues import FontSize, Dimension
+from view.style.styleValues import FontSize, Dimension, Color
 from util import Path
 
 from PyQt6.QtWidgets import (
     QPushButton, 
     QWidget, 
     QHBoxLayout, 
+    QVBoxLayout,
     QLabel
 )
 
@@ -38,6 +39,7 @@ class ColoredBtn(QPushButton):
         color:str, 
         fontsize=FontSize.BTN, 
         other="",
+        borderRadius=5,
         *args, 
         **kwargs
     ):
@@ -46,7 +48,7 @@ class ColoredBtn(QPushButton):
         self.setText(label)
         self.setStyleSheet(f"background-color:{color};"
                            f"color:#fff;"
-                           f"border-radius:5;"
+                           f"border-radius:{borderRadius};"
                            f"padding:1;"
                            f"font-size:{fontsize};"
                            f"{other}")
@@ -92,24 +94,37 @@ class ToggleBtn(QPushButton):
     Args:
         label(tuple(str), optional): text being displayed on button
     """
-    def __init__(self, label: tuple = ("▶", "▼"), text = "", *args, **kwargs):
+    def __init__(
+        self, 
+        label: tuple = ("right.png", "down.png"), 
+        text = "", 
+        state=False, 
+        *args, 
+        **kwargs):
         super().__init__(*args, **kwargs)
-        self.label = label
         self.text = text
-        self.setText(f"{self.label[0]}  {self.text}")
+        self.setText(self.text)
+        self.rightIcon = QIcon(os.path.join(Path.getProjectRoot(), f"view/asset/right.png"))
+        self.downIcon = QIcon(os.path.join(Path.getProjectRoot(), f"view/asset/down.png"))
         self.setMinimumSize(QSize(500, 30))
         self.setMaximumSize(QSize(700, 30))
         self.setCheckable(True)
+        self.state = state
         self.clicked.connect(self._changeSymbol)
+        self.setStyleSheet("background-color:#fff;border:none")
+        self.setContentsMargins(0,0,0,0)
+        self._changeSymbol()
         self.update()
         self.show()
 
     def _changeSymbol(self):
         """ to change the button symbol """
-        if self.isChecked():
-            self.setText(f"{self.label[1]}  {self.text}")
+        if self.state:
+            self.setIcon(self.downIcon)
         else:
-            self.setText(f"{self.label[0]}  {self.text}")
+            self.setIcon(self.rightIcon)
+        self.state = not self.state
+
     
 
 class onOffButton(QWidget):
@@ -170,6 +185,7 @@ class onOffButton(QWidget):
 
 
 class iconBtn(QPushButton):
+    """ A button with icon """
     def __init__(self, icon:str, *args, **kwargs):
       super().__init__(*args, **kwargs)
       icon = QIcon(os.path.join(Path.getProjectRoot(), f"view/asset/{icon}"))
@@ -177,5 +193,50 @@ class iconBtn(QPushButton):
       self.setObjectName("iconButton")
   
       
-      
-      
+class dropDownButton(QWidget):
+    def __init__(
+        self, 
+        label:str, 
+        buttons:list, 
+        *args, 
+        **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.buttonList = buttonList(buttons) 
+        self.btn = ColoredBtn(f"▶ {label}", 
+                              Color.BLUEMEDIUM,
+                              FontSize.SMALL, 
+                              "margin-top:0px;border-radius:0px;padding:5px")
+        self.label = label
+        self.hideView = True 
+        self.setFixedWidth(130)
+        self.layout = QVBoxLayout(self)
+        self.layout.setSpacing(0)
+        self.layout.addWidget(self.btn)
+        self.layout.addWidget(self.buttonList)
+        self.buttonList.hide()
+        self.btn.clicked.connect(self._toggle)
+
+    
+    def _toggle(self):
+        if self.hideView == True:
+            self.hideView = False
+            self.buttonList.show()
+            self.btn.setText(f"▼ {self.label}")
+        else:
+            self.hideView = True 
+            self.buttonList.hide()
+            self.btn.setText(f"▶ {self.label}")
+
+
+class buttonList(QWidget):
+    def __init__(self, labels: list,  *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.layout  = QVBoxLayout(self)
+        self.layout.setContentsMargins(0,0,0,0)
+        self.layout.setSpacing(0)
+        for label in labels:
+            newButton = ColoredBtn(label,
+                                   Color.BLUEMEDIUM, 
+                                   FontSize.SMALL,
+                                    "margin-top:0px;border-radius:0px;border:1px solid #fff; padding:3px 0px")
+            self.layout.addWidget(newButton)

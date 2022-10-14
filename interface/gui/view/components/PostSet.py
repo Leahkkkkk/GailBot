@@ -28,8 +28,8 @@ class PostSet(QWidget):
         self.setLayout(self.layout)
         self.layout.setSpacing(0)
         self.layout.setContentsMargins(0,0,0,0)
-        spacer = QSpacerItem(400, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
-        self.layout.addItem(spacer)
+ 
+        
         for key, items in self.data.items():
             newLabel = Label.Label(key, FontSize.BTN, FontFamily.MAIN)
             self.layout.addWidget(newLabel)
@@ -43,7 +43,7 @@ class PostSet(QWidget):
                 self.inputDict[key] = newInput
             spacer = QSpacerItem(400, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
             self.layout.addItem(spacer)
-        self.layout.addItem(spacer)
+
         
         
     
