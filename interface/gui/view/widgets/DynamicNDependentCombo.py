@@ -8,6 +8,7 @@ Last Modified: Thursday, 6th October 2022 1:44:39 pm
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
+from view.style.styleValues import Color
 from view.widgets import ToggleView, Label, Button
 
 from PyQt6.QtWidgets import (
@@ -46,6 +47,7 @@ class DynamicNDependentCombo(QWidget):
     def _initLayout(self):
         """ initialize the layout """
         self.layout = QVBoxLayout()
+        self.layout.setSpacing(0)
         self.setLayout(self.layout)
         self.layout.addWidget(self.label)
         self.layout.addWidget(self.mainCombo)
@@ -61,7 +63,10 @@ class DynamicNDependentCombo(QWidget):
             self.toggleList.deleteLater()
             
         self.toggleList = ToggleList(data)
+        self.toggleList.setContentsMargins(0,0,0,0)
         self.layout.addWidget(self.toggleList)
+        self.layout.setSpacing(0)
+        self.layout.addStretch()
         
         
 class ToggleList(QWidget):
@@ -80,20 +85,28 @@ class ToggleList(QWidget):
     def _initWidget(self):
         """ initialize the widget """
         self.userForm = UserForm()
-        self.basicSet = ToggleView.ToggleView("basic setting", self.userForm)
+        self.basicSet = ToggleView.ToggleView("basic setting", 
+                                              self.userForm, 
+                                              headercolor="#fff", 
+                                              viewcolor=Color.GREYLIGHT)
         self.toggleList = []
         for key, item in self.data.items():
             newCombo = ComboList(item)
-            newToggle = ToggleView.ToggleView(key, newCombo)
+            newToggle = ToggleView.ToggleView(key, 
+                                              newCombo, 
+                                              headercolor="#fff",
+                                              viewcolor=Color.GREYLIGHT)
             self.toggleList.append(newToggle)
 
     def _initLayout(self):
         """ initialize layout """
         self.layout = QVBoxLayout()
+        self.layout.setSpacing(0)
         self.setLayout(self.layout)
         self.layout.addWidget(self.basicSet)
         for toggleView in self.toggleList:
             self.layout.addWidget(toggleView)
+        self.layout.addStretch()
             
 class UserForm(QWidget):
     """ class for user form """
@@ -142,10 +155,12 @@ class ComboList(QWidget):
     def _initLayout(self):
         """ initialize layout """
         self.layout = QVBoxLayout()
+        self.layout.setSpacing(0)
         self.setLayout(self.layout)
         for i in range(len(self.comboList)):
             self.layout.addWidget(self.labelList[i]) 
             self.layout.addWidget(self.comboList[i])
+        self.layout.addStretch()
 
 
 

@@ -14,7 +14,8 @@ from view.widgets import (
     Button,
     Label
 )
-from view.style import Background
+from view.style.Background import initImgBackground
+
 
 from view.style.styleValues import FontFamily, FontSize, Color
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout
@@ -66,7 +67,7 @@ class ApplySetSuccessPage(QWidget):
 
     def _initStyle(self):
         """ initalize style """   
-        Background.initBackground(self)
+        initImgBackground(self,"backgroundSubPages.png")
         self.moreBtn.setMinimumSize(QtCore.QSize(150,30))
         self.returnBtn.setMinimumSize(QtCore.QSize(150,30))
         self.quitBtn.setMinimumSize(QtCore.QSize(150,30))

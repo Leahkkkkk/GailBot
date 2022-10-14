@@ -35,7 +35,7 @@ class FileModel(QtCore.QAbstractTableModel):
         self._dataDict = dict()
         self.columns = [" ", "Type", "Name", "Profile", 
                        "Status", "Date", "Size", "Action"]
-        self.empty = True
+        self.placeHolder = True
         
         
     def data(self, index, role):
@@ -48,7 +48,10 @@ class FileModel(QtCore.QAbstractTableModel):
 
     def columnCount(self, index):
         """ return the column count """
-        return len(self._data[0])
+        if self.rowCount(0) > 0:
+            return len(self._data[0])
+        else:
+            return 0
     
     def getFile(self, rowidx):
         """ return a dictionart with filename and filepath """
@@ -65,15 +68,22 @@ class FileModel(QtCore.QAbstractTableModel):
         """
         fileData = fileObj.convertToData()
         
-        if self.empty:
+        if self.placeHolder:
             self._data[0] = fileData
-            self.empty = False
+            self.placeHolder = False
         else:
             self._data.append(fileData)
             
         self.layoutChanged.emit()
         key = len(self._data) - 1
         self._dataDict[key] = fileObj
+        return key
+
+    def deleteFileHandler(self, key: int):
+        del self._data[key]
+        self.layoutChanged.emit()
+        self.placeHolder = False
+        
     
     def changeToTranscribed(self, idx:int):
         """ change the file status to be transcrbed """
@@ -84,19 +94,19 @@ class FileModel(QtCore.QAbstractTableModel):
 class ConfirmFileModel(FileModel):
     def __init__(self):
         super(FileModel, self).__init__()
-        self.columns = [" ", "Type", "Name",  "Selected Action"]
-        self._data = [["","","",""]]
+        self.columns = [" ", "Type", "Name",  "profile", "Selected Action"]
+        self._data = [["","📁","Dummy.wav","Default", "Transcribe"]]
 
 
 class ProgressFileMode(FileModel):
     def __init__(self):
         super(FileModel, self).__init__()
         self.columns = [" ", "Type", "Name",  "Action in Progress"]
-        self._data = [["","","",""]]
+        self._data = [["","📁","Dummy.wav","Transcribing"]]
 
 class SuccessFileModel(FileModel):
     def __init__(self):
         super(FileModel, self).__init__()
         self.columns = [" ", "Type", "Name",  "Status", "Location", "Action"] 
-        self._data = [["","","","","",""]]
+        self._data = [["","📁","Dummy.wav","Transcribed","Desktop/output",""]]
 

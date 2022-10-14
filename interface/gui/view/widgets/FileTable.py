@@ -54,10 +54,10 @@ class FileTable(QTableView):
         self.setColumnWidth(6,70)
         self.setColumnWidth(8,160)
         
-    def addActionWidget(self,setFun, createFun, deleteFun):
+    def addActionWidget(self,setFun, createFun, deleteFun, key=0):
         """ add acton buttons and checkbox to table cell """
         firstCellWidget = TableWidgets.selectAndCheck(self.fullDetail)
-        lastCellWidget = TableWidgets.Actions(setFun, createFun, deleteFun)
+        lastCellWidget = TableWidgets.Actions(setFun, createFun, deleteFun,key)
         idx = self.model.rowCount(0) - 1
         self.setIndexWidget(self.model.index(idx,0), firstCellWidget)
         self.setIndexWidget(self.model.index(idx,self.columnCount - 1), 
@@ -78,18 +78,19 @@ class confirmTable(FileTable):
     def setTableLayout(self):
         self.setColumnWidth(0,60)
         self.setColumnWidth(1,130)
-        self.setColumnWidth(2,365)
-        self.setColumnWidth(3,230)
+        self.setColumnWidth(2,300)
+        self.setColumnWidth(3,100)
+        self.setColumnWidth(4,150)
         self.setRowHeight(0,40)
   
-    def addActionWidget(self, setFun, createFun, deleteFun):
+    def addActionWidget(self, setFun, createFun, deleteFun, key=0):
         """ add acton buttons and checkbox to table cell """
         pass
     
     def addFirstAction(self, toggleFun):
         firstCellWidget = TableWidgets.ConfirmAction(toggleFun)
-        # idx = self.model.rowCount(0) - 1
-        self.setIndexWidget(self.model.index(0,0), firstCellWidget)
+        idx = self.model.rowCount(0) - 1
+        self.setIndexWidget(self.model.index(idx,0), firstCellWidget)
      
 class progressTable(FileTable):
     def __init__(self, *args, **kwargs) -> None:
@@ -101,16 +102,9 @@ class progressTable(FileTable):
         self.setColumnWidth(1,80)
         self.setColumnWidth(2,400)
         self.setColumnWidth(3,220)
+        self.setRowHeight(0,40)
     
-    def addActionWidget(self, setFun, createFun, deleteFun):
-        """ add acton buttons and checkbox to table cell """
-        firstCellWidget = TableWidgets.selectAndCheck(self.fullDetail)
-        lastCellWidget = TableWidgets.PosTranscribeAction(setFun, createFun, deleteFun)
-        idx = self.model.rowCount(0) - 1
-        self.setIndexWidget(self.model.index(idx,0), firstCellWidget)
-        self.setIndexWidget(self.model.index(idx,self.columnCount - 1), 
-                            lastCellWidget)
-        
+    
 class successTable(FileTable):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
@@ -125,8 +119,7 @@ class successTable(FileTable):
         self.setColumnWidth(5,200)
         self.setRowHeight(0,40)
      
-    
-    def addActionWidget(self, setFun, createFun, deleteFun):
+    def addActionWidget(self, setFun, createFun, deleteFun, key=0):
         """ add acton buttons and checkbox to table cell """
         firstCellWidget = TableWidgets.selectAndCheck(self.fullDetail)
         lastCellWidget = TableWidgets.PosTranscribeAction(setFun, createFun, deleteFun)
@@ -134,6 +127,11 @@ class successTable(FileTable):
         self.setIndexWidget(self.model.index(idx,0), firstCellWidget)
         self.setIndexWidget(self.model.index(idx,self.columnCount - 1), 
                             lastCellWidget)
+        
+    def addFirstAction(self, toggleFun):
+        firstCellWidget = TableWidgets.ConfirmAction(toggleFun)
+        idx = self.model.rowCount(0) - 1
+        self.setIndexWidget(self.model.index(idx,0), firstCellWidget)
         
 
 

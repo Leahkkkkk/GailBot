@@ -8,12 +8,15 @@ Last Modified: Thursday, 6th October 2022 12:59:28 pm
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
+import os
 
+from util import Path
 from PyQt6.QtCore import  Qt
 from PyQt6.QtGui import (
     QBrush, 
     QColor, 
-    QPalette
+    QPalette,
+    QImage
 )
 from PyQt6.QtWidgets import QWidget
 
@@ -30,4 +33,14 @@ def initBackground(widget:QWidget, color="#FFFFFF"):
     bg = Background(color)
     palette = widget.palette()
     palette.setBrush(QPalette.ColorRole.Window, bg)
+    widget.setPalette(palette)
+
+
+def initImgBackground(widget:QWidget, background: str = "background.png"):
+    widget.setAutoFillBackground(True)
+    palette = widget.palette()
+    brush = QBrush()
+    brush.setTextureImage(QImage(os.path.join(Path.getProjectRoot(), 
+                                      f"view/asset/{background}")))
+    palette.setBrush(QPalette.ColorRole.Window, brush) 
     widget.setPalette(palette)

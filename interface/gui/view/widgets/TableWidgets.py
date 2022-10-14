@@ -71,15 +71,14 @@ class selectAndCheck(QWidget):
         layout = QHBoxLayout(self)
         self.full = full
         self.setLayout(layout)
-        layout.setContentsMargins(0,0,0,0)
-        directory = iconBtn("directory.png")
-        directory.setStyleSheet("background-color:white;")
-        directory.setFixedSize(QSize(20,20))
+        layout.setContentsMargins(5,0,10,0)
+        file = iconBtn("file.jpeg")
+        file.setFixedWidth(25)
         checkBox = QCheckBox(self)
-        layout.addWidget(directory)
+        layout.addWidget(file)
         layout.addWidget(checkBox)
         checkBox.setStyleSheet("margin-left: 10px")
-        directory.clicked.connect(self._showDetail)
+        file.clicked.connect(self._showDetail)
         self.setFixedSize(Dimension.ACTION)
         
     
@@ -279,8 +278,12 @@ class FullFileDetailWidget(QWidget):
         self.layout = QVBoxLayout(self)
         self.layout.addWidget(self.briefDetail)
         self.layout.addWidget(self.settingHeader)
-        self.layout.addWidget(self.requiredSetting,2)
-        self.layout.addWidget(self.postSetting, 2)
+        self.layout.addWidget(self.requiredSetting,alignment=Qt.AlignmentFlag.AlignTop)
+        self.layout.addWidget(self.postSetting, alignment=Qt.AlignmentFlag.AlignTop)
+        self.layout.setSpacing(0)
+        self.layout.addStretch()
+        self.requiredSetting.setContentsMargins(0,0,0,0)
+        self.postSetting.setContentsMargins(0,0,0,0)
         Background.initBackground(self, Color.BLUEWHITE)
             
     

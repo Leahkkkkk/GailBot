@@ -4,11 +4,13 @@ from view.components import MsgBox
 from view.widgets import (
     Label, 
     FileTable, 
-    ToggleView, 
+    TableWidgets, 
     Button)
 from util import Path
 from view.widgets import Button
 from view.style.styleValues import Color, FontSize, Dimension, FontFamily
+from view.style.Background import initImgBackground
+
 
 from PyQt6.QtWidgets import QLabel, QVBoxLayout, QWidget
 from PyQt6.QtGui import QMovie
@@ -25,7 +27,7 @@ class TranscribeProgressPage(QWidget):
         self._initLayout()
         self._connectSignal()
         self.parent = parent
-        
+      
     def loadStart(self):
         """ start loading icon movie """
         self.IconImg.start()
@@ -43,7 +45,6 @@ class TranscribeProgressPage(QWidget):
         self.loadIcon = QLabel()
         self.IconImg = QMovie(os.path.join(Path.getProjectRoot(), "view/asset/gbloading.gif"))
         self.loadIcon.setMovie(self.IconImg)
-        # self.loadIcon.setLayoutDirection(QtCore.Qt.LayoutDirection.LeftToRight)
         self.loadStart()
        
         self.Formatting = Label.Label("Formatting file headers...",
@@ -58,11 +59,11 @@ class TranscribeProgressPage(QWidget):
         
     def _initstyle(self):
         """ styles loading icon movie """
-        #TODO: fix alignment of loading movie
         self.loadIcon.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.loadIcon.setFixedSize(QtCore.QSize(80, 80))
         self.loadIcon.setScaledContents(True)
         self.cancelBtn.setMinimumSize(QtCore.QSize(130, 30))
+        
         
     def _initLayout(self):
         """ intiializes layout """
@@ -70,19 +71,28 @@ class TranscribeProgressPage(QWidget):
         self.setLayout(self.verticalLayout)
         """ add widget to layout """
         self.verticalLayout.addWidget(self.label)
+        self.label.setContentsMargins(0,20,0,0)
         self.verticalLayout.addWidget(self.loadIcon, 
-                                      alignment = Qt.AlignmentFlag.AlignHCenter)
-        self.verticalLayout.addWidget(self.Formatting)
-        self.verticalLayout.addWidget(self.InProgress)
-        self.verticalLayout.addWidget(self.fileTable, stretch=5,
-                                      alignment=Qt.AlignmentFlag.AlignHCenter|
-                                      Qt.AlignmentFlag.AlignTop)
+                                      alignment = Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignTop)
+        self.verticalLayout.addWidget(self.Formatting, alignment =Qt.AlignmentFlag.AlignTop)
+        self.verticalLayout.addWidget(self.InProgress, alignment =Qt.AlignmentFlag.AlignTop)
+        self.verticalLayout.addWidget(self.fileTable, 
+                                      alignment= Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignTop)
+        self.verticalLayout.addStretch()
         self.verticalLayout.addWidget(self.cancelBtn, 
                                       alignment = Qt.AlignmentFlag.AlignHCenter)
+        self.verticalLayout.setSpacing(10)
+        self.InProgress.setContentsMargins(35,0,0,0)
+        self.loadIcon.setContentsMargins(0,0,0,0)
+        self.fileTable.setMaximumHeight(300)
+
+    
     def _initStyle(self):
         """ initialize style """
         self.cancelBtn.setMinimumSize(Dimension.BGBUTTON)
+        initImgBackground(self)
         
+   
     def _connectSignal(self):
         """ connects signal """
         self.cancelBtn.clicked.connect(self._confirm)

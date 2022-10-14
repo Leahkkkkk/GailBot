@@ -23,13 +23,11 @@ class RequiredSet(QWidget):
         self.comboBox = DynamicNDependentCombo.DynamicNDependentCombo(self.data,parent=self)
         self.engineSet = ToggleView.ToggleView("Speech to text settings", 
                                                self.comboBox, 
-                                               header = True, 
-                                               color=Color.GREYLIGHT)
+                                               header = True)
         self.outPut = OutPutFormat()
         self.outPutSet = ToggleView.ToggleView("Output File Format Settings", 
                                                self.outPut,
-                                               header = True,
-                                               color=Color.GREYLIGHT)
+                                               header = True)
         self.outPutSet.resizeViewHeight(350)
         
     def _initLayout(self):
@@ -57,7 +55,9 @@ class OutPutFormat(QWidget):
         self.formatCombo.addItems([".TXT", ".CHAT", ".RTF"])
         self.layout.addWidget(self.formatCombo)
         self.headerForm = HeaderForm()
-        self.fileHeader = ToggleView.ToggleView("File Header Views", self.headerForm)
+        self.fileHeader = ToggleView.ToggleView("File Header Views", 
+                                                self.headerForm, 
+                                                headercolor="#fff")
         self.fileHeader.resizeViewHeight(200)
         self.layout.addWidget(self.fileHeader)
 

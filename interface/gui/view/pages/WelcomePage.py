@@ -9,11 +9,10 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
-import os
-
-from util import Path  
+ 
 
 from view.style.styleValues import FontFamily, FontSize, Color
+from view.style.Background import initImgBackground
 from view.widgets import (
     Button, 
     Label, 
@@ -72,7 +71,7 @@ class WelcomePage(QWidget):
         self.verticalLayout.addWidget(self.StartBtn, 4, 
                                       alignment = Qt.AlignmentFlag.AlignHCenter)
         
-        spacer = QSpacerItem(40, 20, QSizePolicy.Policy.Preferred, 
+        spacer = QSpacerItem(40, 50, QSizePolicy.Policy.Preferred, 
                              QSizePolicy.Policy.Preferred)
     
         self.verticalLayout.addItem(spacer)
@@ -89,14 +88,7 @@ class WelcomePage(QWidget):
         """ initialize style """
         self.HomeSetBtn.setFixedSize(QtCore.QSize(40,40))
         self.StartBtn.setMinimumSize(QtCore.QSize(150,30))
-        self.setAutoFillBackground(True)
-        palette = self.palette()
-        brush = QtGui.QBrush()
-        brush.setTextureImage(QtGui.QImage
-                              (os.path.join(Path.getProjectRoot(), 
-                                       "view/asset/background.png")))
-        palette.setBrush(QtGui.QPalette.ColorRole.Window, brush)
-        self.setPalette(palette)
+        initImgBackground(self)
 
 
     def _initInstructionText(self):

@@ -14,7 +14,7 @@ from util import Path
 
 from view.widgets import Label, Button, FileTable
 from view.style.styleValues import Color, FontSize, FontFamily
-from view.style import Background
+from view.style.Background import initImgBackground
 
 from PyQt6.QtWidgets import QWidget, QLabel, QVBoxLayout, QScrollArea
 from PyQt6.QtGui import QMovie
@@ -80,7 +80,7 @@ class ApplySetProgressPage(QWidget):
         self.loadIcon.setFixedSize(QtCore.QSize(80, 80))
         self.loadIcon.setScaledContents(True)
         """styles other"""
-        Background.initBackground(self)
+        initImgBackground(self, "backgroundSubPages.png")
         self.cancelBtn.setMinimumSize(QtCore.QSize(150,30))
         
 

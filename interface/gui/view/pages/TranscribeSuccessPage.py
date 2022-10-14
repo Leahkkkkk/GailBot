@@ -14,6 +14,7 @@ from view.widgets import (
     Label
 )
 from view.style.styleValues import Color, FontSize, Dimension, FontFamily
+from view.style.Background import initImgBackground
 
 from PyQt6.QtWidgets import (
     QLabel,
@@ -45,27 +46,29 @@ class TranscribeSuccessPage(QWidget):
                                         FontFamily.MAIN)
         self.label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         self.transcribedFiles = Label.Label("Transcribed files and locations:",
-                                        FontSize.HEADER3,
+                                        FontSize.BODY,
                                         FontFamily.OTHER)
+        self.transcribedFiles.setContentsMargins(30,0,0,0)
         self.fileTable = FileTable.successTable()
         self.moreBtn = Button.ColoredBtn("Process more files", Color.GREEN)
         self.returnBtn = Button.ColoredBtn("Return to main menu", Color.BLUEMEDIUM)
         self._initHorizontalLayout()
         self.quitBtn = Button.ColoredBtn("Quit Gailbot", Color.ORANGE)
-        self.postSetBtn = QPushButton("Post Transcription Settings")
         
     def _initLayout(self):
         """ initialize page layout """
         self.verticalLayout = QVBoxLayout()
         self.setLayout(self.verticalLayout)
+        self.label.setContentsMargins(0,30,0,20)
         """ add widget to layout """
-        self.verticalLayout.addWidget(self.postSetBtn)
         self.verticalLayout.addWidget(self.label)
         self.verticalLayout.addWidget(self.transcribedFiles)
-        self.verticalLayout.addWidget(self.fileTable)
+        self.verticalLayout.addWidget(self.fileTable,alignment = Qt.AlignmentFlag.AlignHCenter)
+        self.verticalLayout.addStretch()
         self.verticalLayout.addWidget(self.horizontal)
-        self.verticalLayout.addWidget(self.quitBtn, 4, 
+        self.verticalLayout.addWidget(self.quitBtn,
                                       alignment = Qt.AlignmentFlag.AlignHCenter)
+        self.verticalLayout.setSpacing(20)
 
     def _initHorizontalLayout(self):
         #TODO: make buttons closer together
@@ -79,3 +82,4 @@ class TranscribeSuccessPage(QWidget):
         self.moreBtn.setMinimumSize(QtCore.QSize(150,30))
         self.returnBtn.setMinimumSize(QtCore.QSize(150,30))
         self.quitBtn.setMinimumSize(QtCore.QSize(150,30))
+        initImgBackground(self)

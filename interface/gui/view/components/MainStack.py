@@ -53,6 +53,9 @@ class MainStack(QStackedWidget):
     def gotoSettingPage(self):
         self.setCurrentWidget(self.SettingPage)
         self.SettingPage.settingStack.setCurrentIndex(1)
+        
+    def gotoConfirmPage(self):
+        self.setCurrentWidget(self.ConfirmTranscribePage)
     
     def _initPage(self):
         """ initialize all pages on stack widget  """
@@ -60,7 +63,7 @@ class MainStack(QStackedWidget):
         self.ApplySetProgressPage = ApplySetProgressPage.ApplySetProgressPage(self)
         self.ApplySetSuccessPage = ApplySetSuccessPage.ApplySetSuccessPage(self)
         self.ConfirmTranscribePage = ConfirmTranscribePage.ConfirmTranscribePage(self)
-        self.FileUploadPage = FileUploadPage.FileUploadPage(self)
+        self.FileUploadPage = FileUploadPage.FileUploadPage(parent = self)
         self.SettingPage = SettingPage.SettingPage(self.settingdata, self)
         self.TranscribeProgressPage = TranscribeProgressPage.TranscribeProgressPage(self)
         self.TranscribeSuccessPage = TranscribeSuccessPage.TranscribeSuccessPage(self)
@@ -72,7 +75,7 @@ class MainStack(QStackedWidget):
         self.addWidget(self.SettingPage)
         self.addWidget(self.TranscribeProgressPage)
         self.addWidget(self.TranscribeSuccessPage)
-        self.setCurrentWidget(self.FileUploadPage)
+        self.setCurrentWidget(self.WelcomePage)
         
     def _pageRedirect(self):
         """ initialize button click to page rediect functionality  """
@@ -86,10 +89,6 @@ class MainStack(QStackedWidget):
                 self.setCurrentWidget(self.WelcomePage))
         self.SettingPage.cancelBtn.clicked.connect(lambda:  
                 self.setCurrentWidget(self.FileUploadPage))
-        self.FileUploadPage.transcribeBtn.clicked.connect(lambda:
-                self.setCurrentWidget(self.ConfirmTranscribePage))
-        self.TranscribeSuccessPage.postSetBtn.clicked.connect(lambda:
-                self.setCurrentWidget(self.SettingPage))
         self.FileUploadPage.gotoMainBtn.clicked.connect(lambda:
                 self.setCurrentWidget(self.WelcomePage))
 

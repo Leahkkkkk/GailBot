@@ -186,11 +186,13 @@ class onOffButton(QWidget):
 
 class iconBtn(QPushButton):
     """ A button with icon """
-    def __init__(self, icon:str, *args, **kwargs):
+    def __init__(self, icon:str, label:str=None,*args, **kwargs):
       super().__init__(*args, **kwargs)
       icon = QIcon(os.path.join(Path.getProjectRoot(), f"view/asset/{icon}"))
       self.setIcon(icon)
       self.setObjectName("iconButton")
+      if label:
+          self.setText(label)
   
       
 class dropDownButton(QWidget):

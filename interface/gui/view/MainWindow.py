@@ -47,7 +47,8 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("My App")
         self.resize(900, 700)
         self.setMinimumSize(QSize(700, 600))
-        self.setMaximumSize(QSize(1000, 800))
+        self.setMaximumSize(QSize(1200, 900))
+        self.resize(QSize(1000, 750))
         self.settingdata = settingdata
         self.MainStack = MainStack.MainStack(self.settingdata, parent=self)
         self.setCentralWidget(self.MainStack)
@@ -83,14 +84,17 @@ class MainWindow(QMainWindow):
                                                              self.showSettingPage, 
                                                              self.createSettingPage, 
                                                              self.deleteFun)
+        
         self.MainStack.TranscribeSuccessPage.fileTable.setFileModel(successModel,
                                                              self.showSettingPage, 
                                                              self.createSettingPage, 
                                                              self.deleteFun)
+      
         self.MainStack.ApplySetProgressPage.fileTable.setFileModel(progressModel,
                                                              self.showSettingPage, 
                                                              self.createSettingPage, 
                                                              self.deleteFun)
+        
         self.MainStack.ApplySetSuccessPage.fileTable.setFileModel(successModel,
                                                              self.showSettingPage, 
                                                              self.createSettingPage, 
@@ -98,7 +102,8 @@ class MainWindow(QMainWindow):
     
     def deleteFun(self,fileKey):
         """ TODO: add function to delete file from file table """
-        print(1)
+        self.controller.deleteFile(fileKey)
+        print(fileKey)
     
     def showSettingPage(self):
         """ go to the  setting page 
@@ -165,10 +170,12 @@ class MainWindow(QMainWindow):
                 path = fileDialog.directoryUrl().toString()
                 filePath = path[7:]
                 fileObj = FileItem(file[0], filePath,"Default")
-                self.controller.addFile(fileObj)
-                self.MainStack.FileUploadPage.fileTable.addActionWidget( self.showSettingPage, 
-                                                             self.createSettingPage, 
-                                                             self.deleteFun)
+                key = self.controller.addFile(fileObj)
+                self.MainStack.FileUploadPage.fileTable.addActionWidget( 
+                                                            self.showSettingPage, 
+                                                            self.createSettingPage, 
+                                                            self.deleteFun,
+                                                            key = key)
             else:
                 return None
     

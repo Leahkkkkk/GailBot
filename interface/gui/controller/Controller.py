@@ -39,7 +39,10 @@ class Controller:
             fileinfo: a list of file object 
         """
         self.logger.info("")
-        self.ModelObj.FileModel.addFileHandler(fileObj)
+        return self.ModelObj.FileModel.addFileHandler(fileObj)
+    
+    def deleteFile(self, key):
+        self.ModelObj.FileModel.deleteFileHandler(key)
         
     def runGailBot(self, key):
         """ wrapper function to run GailBot """

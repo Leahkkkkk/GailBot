@@ -11,7 +11,7 @@ Modified By:  Siara Small  & Vivian Li
 
 from stat import filemode
 from view.style.styleValues import FontFamily, FontSize, Color
-from view.style import Background
+from view.style.Background import initImgBackground
 from view.widgets import ( Label, 
                            Button, 
                            FileTable,
@@ -38,8 +38,15 @@ class ConfirmTranscribePage(QWidget):
         self._initLayout()
         self._initStyle()
         self.showFileDetail = True
-        
     
+    def toggleFileDetail(self):
+        if self.showFileDetail:
+            self.fileInfo.hide()
+        else:
+            self.fileInfo.show()
+        
+        self.showFileDetail = not self.showFileDetail
+        
     def _initWidget(self):
         """ initlialize widget """
         self.label = Label.Label("Confirm Files and Settings", 
@@ -62,7 +69,7 @@ class ConfirmTranscribePage(QWidget):
         self.setLayout(self.verticalLayout)
         """ add widget to layout """
         self.verticalLayout.addWidget(self.label)
-        self.label.setContentsMargins(0,20,0,20)
+        self.label.setContentsMargins(0,20,0,50)
         self.verticalLayout.addWidget(self.fileTable,
                                       alignment = Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignTop)
         
@@ -76,23 +83,15 @@ class ConfirmTranscribePage(QWidget):
         
         self.verticalLayout.addWidget(self.fileInfo, 8,
                                       alignment = Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignTop)
+        self.verticalLayout.addStretch()
         
         self.verticalLayout.addWidget(self.bottomButton,
                                       alignment=Qt.AlignmentFlag.AlignHCenter)
     
     def _initStyle(self):
-        Background.initBackground(self)
+        initImgBackground(self,"backgroundConfirmPage.png")
         self.confirmBtn.setMinimumSize(QtCore.QSize(150,30))
         self.cancelBtn.setMinimumSize(QtCore.QSize(150,30))
     
-    def toggleFileDetail(self):
-        if self.showFileDetail:
-            self.fileInfo.hide()
-        else:
-            self.fileInfo.show()
-        
-        self.showFileDetail = not self.showFileDetail
-        
- 
-        
-    
+  
+   

@@ -30,12 +30,21 @@ class ToggleView(QWidget):
         view(object): the content that will be toggled 
         header(bool): if set to true, the width of the label will be wider
     """
-    def __init__(self, label:str, view: object, header = False, color =Color.BLUELIGHT, *args, **kwargs):
+    def __init__(
+        self, 
+        label:str, 
+        view: object, 
+        header = False, 
+        headercolor =Color.BLUEWHITE, 
+        viewcolor = Color.BLUEWHITE,
+        *args, 
+        **kwargs):
         super().__init__(*args, **kwargs)
         self.labelStr = label
         self.view = view
         self.header = header
-        self.color = color
+        self.headercolor = headercolor
+        self.viewcolor = viewcolor
         self._configHeader()
         self._configViewField()
         self._initLayout()
@@ -45,7 +54,7 @@ class ToggleView(QWidget):
     def _configHeader(self):
         self.Btn = Button.ToggleBtn(text=self.labelStr)
         self.Btn.setStyleSheet("text-align:left;"
-                               f"background-color: {self.color};"
+                               f"background-color: {self.headercolor};"
                                "border:0.5px solid #000;"
                                "padding-left: 5px;"
                                f"font-size: {FontSize.BODY}")
@@ -63,9 +72,9 @@ class ToggleView(QWidget):
         self.scroll.setWidget(self.view)
         self.setObjectName("viewWrapper")
         self.scroll.setObjectName("view")
-        self.scroll.setStyleSheet(f"#viewWrapper, #view {{background-color:{Color.BLUEWHITE}}}")
+        self.scroll.setStyleSheet(f"#viewWrapper, #view {{background-color:{self.viewcolor}}}")
         self.view.setObjectName("viewContainer")
-        self.view.setStyleSheet(f"#viewContainer {{background-color:{Color.BLUEWHITE}}}")
+        self.view.setStyleSheet(f"#viewContainer {{background-color:{self.viewcolor}}}")
         self.scroll.hide()
         self.hide = True
     
