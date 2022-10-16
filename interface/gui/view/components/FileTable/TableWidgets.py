@@ -13,8 +13,6 @@ Modified By:  Siara Small  & Vivian Li
 # from view.widgets import (Label, Button)
 # from view.style.styleValues import Color, FontFamily, FontSize
 
-
-
 import logging
 from typing import Dict, List, TypedDict
 
@@ -49,8 +47,8 @@ class DisplayFile(QObject):
     def __init__(
         self, 
         table: QTableWidget,
-        pin:QTableWidgetItem, 
-        key:str,
+        pin: QTableWidgetItem, 
+        key: str,
         deleteFun:callable, 
         setFun:callable, 
         selectFun:callable, 
@@ -239,12 +237,13 @@ class FileTabel(QTableWidget):
         """
         newFileWidget = DisplayFile( 
                             self,
-                            pin, # The table passes a pin to connect the widget
+                            pin, 
                             key,
                             self.deleteFile, 
                             self.goToSetting, 
                             self.addToTranscribe, 
                             self.removeFromTranscribe)
+        
         newFileWidget.addWidgetToTable(row)
         self.fileWidgets[key] = newFileWidget
          
@@ -296,7 +295,6 @@ class FileTabel(QTableWidget):
             logging.error(err)
         else:
             return
-
         
             
     def transcribe(self):
@@ -311,8 +309,9 @@ class FileTabel(QTableWidget):
         """
         if key in self.filedata:
             print(self.filedata[key]["Profile"])
+            
     
-
+""" for testing """
 class Table(QWidget):
     def __init__(self):
         super().__init__()
