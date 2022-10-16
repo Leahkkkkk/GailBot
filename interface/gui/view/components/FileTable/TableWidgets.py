@@ -13,26 +13,24 @@ Modified By:  Siara Small  & Vivian Li
 # from view.widgets import (Label, Button)
 # from view.style.styleValues import Color, FontFamily, FontSize
 
+
 import logging
 from typing import Dict, List, TypedDict
 
+from FileTab.MainTab import ChooseFileTab
 
-import sys
-from types import new_class
 from PyQt6.QtWidgets import (
     QTableWidget, 
     QTableWidgetItem, 
     QWidget, 
-    QVBoxLayout,
-    QApplication,
     QAbstractItemView,
     QHeaderView,
-    QLabel,
     QCheckBox,
     QPushButton,
     QHBoxLayout)
 
-from PyQt6.QtCore import QSize, QObject, Qt
+from PyQt6.QtCore import QObject, Qt, QSize
+from PyQt6.QtGui import QColor
 
 class fileObject(TypedDict):
     Name: str
@@ -40,8 +38,9 @@ class fileObject(TypedDict):
     Profile: str
     Status: str
     Date: str
-    Size: str
+    Size: int
     Output: str
+    FullPath: str
     
 class DisplayFile(QObject):
     def __init__(
@@ -87,6 +86,7 @@ class DisplayFile(QObject):
         self.deleteBtn.clicked.connect(lambda: deleteFun(self.pin, self.key))
         self.setBtn.clicked.connect(lambda: setFun(self.key))
         self.checkBox.stateChanged.connect(self.checkStateChanged)
+        
     
     def checkStateChanged(self, state:bool):
         if state:
@@ -105,8 +105,6 @@ class DisplayFile(QObject):
         self.table.setCellWidget(row, self.table.columnCount()- 1, self.Action)
         
     
-    
-
 class FileTabel(QTableWidget):
     def __init__(self, 
                  headers: List[str], 
@@ -124,7 +122,7 @@ class FileTabel(QTableWidget):
         
         self.headers = headers          # stores the file header, 
                                         # dictate what data in file data will 
-                                        # be displayed in the table
+                                        # be displayed on the table
         
         self.filedata = filedata        # stores the file data
         
@@ -143,13 +141,29 @@ class FileTabel(QTableWidget):
     
         self.initializeTable()
     
+    def resizeCol(self, widths:List[int]) -> None:
+        """ takes in a list of width and resize the width of the each 
+            column to the width
+        """
+        if len(widths) != self.columnCount():
+            logging.error("cannot resize column")
+        else:
+            for i in range(len(widths)):
+                self.setColumnWidth(i, widths[i])
+    
     def initializeTable(self) -> None:
         """ Initialize the table """
         self._setFileHeader(self.headers)     # set file header 
-        self._setFileData()              # set initial file data
-        self.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
-        self.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
-        self.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
+        self._setFileData()                   # set initial file data
+        self._initStyle()
+        self.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)   # TODO: set the selection color of the file table 
+        
+        
+    def _initStyle(self) -> None:
+        self.horizontalHeader().setFixedHeight(50)
+        self.horizontalHeader().setStyleSheet("font-size:14px;")
+        self.setStyleSheet("selection-background-color: #f0f9f6;"
+                           "selection-color:black")  # TODO: change to color to var
 
     def _setFileHeader(self,headers) -> None:
         """ initialize file headers
@@ -162,8 +176,7 @@ class FileTabel(QTableWidget):
             headerItem = QTableWidgetItem(headers[i])
             self.headerList.append(headerItem)
             self.setHorizontalHeaderItem(i, headerItem)
-        self.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
-        self.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
+        
         self.horizontalHeader().sectionClicked.connect(self._headerClickedHandler)
     
     def _setFileData(self):
@@ -191,8 +204,14 @@ class FileTabel(QTableWidget):
         
         self.allSelected = not self.allSelected
     
-    
-    def addFile(self, file: fileObject):
+    def getFile(self):
+        print("get file")
+        addFileWindow = ChooseFileTab(["Default", "Coffee Study"])
+        addFileWindow.signals.sendFile.connect(self.addFile)
+        addFileWindow.exec()
+        
+        
+    def addFile(self, file: dict):
         """ Add a file 
         
         """
@@ -205,11 +224,11 @@ class FileTabel(QTableWidget):
             self.addFiletoData(file, f"{self.nextkey}")
             self.addFiletoTable(file, f"{self.nextkey}")
         except:  
-            print("errr")  
+            logging.error("cannot add file to data")
         else:
             self.nextkey += 1 
-            print("file added")
-    
+            logging.info("file added successfully")
+        
     
     def addFiletoData(self, file: fileObject, key:str):
         """ add one file to the file data """
@@ -223,10 +242,11 @@ class FileTabel(QTableWidget):
         self.setItem(newRowIdx, 1, filePin)
         for col in range(2, len(self.headers)):
             if self.headers[col] in file.keys():
-                newItem = QTableWidgetItem(file[self.headers[col]])
+                newItem = QTableWidgetItem(str(file[self.headers[col]]))
                 self.setItem(newRowIdx, col, newItem)
         
-        self.addFileWidgetToTable(filePin, newRowIdx, key)          
+        self.addFileWidgetToTable(filePin, newRowIdx, key)
+        self.resizeRowsToContents()          
                 
     def addFileWidgetToTable(self, pin: QTableWidgetItem, row:int, key:str):
         """ Add the widget that manipulates each file in a certain row 
@@ -247,7 +267,6 @@ class FileTabel(QTableWidget):
         newFileWidget.addWidgetToTable(row)
         self.fileWidgets[key] = newFileWidget
          
-         
     def deleteFile(self, pin: QTableWidgetItem, key):
         """ delete a file from the table
 
@@ -259,9 +278,8 @@ class FileTabel(QTableWidget):
         if rowIdx >= 0:
             self.removeRow(rowIdx)
             del self.fileWidgets[key]
-    
 
-    def addToTranscribe(self, key:str):
+    def addToTranscribe(self, key:str) -> None:
         """ add the file to transcribe list
 
         Args:
@@ -279,7 +297,7 @@ class FileTabel(QTableWidget):
             return
         
             
-    def removeFromTranscribe(self, key:str):
+    def removeFromTranscribe(self, key:str) -> None:
         """ remove the file from the transcribe list 
 
         Args:
@@ -297,11 +315,15 @@ class FileTabel(QTableWidget):
             return
         
             
-    def transcribe(self):
+    def transcribe(self, redirect:callable, transcribe:callable) -> None:
+        """ 
+        redirect to the transcribe page and transcribe all the selected 
+        file
+        """
         print(self.transcribeList)
         
-    
-    def goToSetting(self, key:str):
+        
+    def goToSetting(self, key:str) -> None:
         """ configure the setting of one file identified by key
 
         Args:
@@ -310,61 +332,4 @@ class FileTabel(QTableWidget):
         if key in self.filedata:
             print(self.filedata[key]["Profile"])
             
-    
-""" for testing """
-class Table(QWidget):
-    def __init__(self):
-        super().__init__()
-        headers =["Select All","Type", "Name", "Profile", "Status", "Date", "Size", "Actions"]
-        data = {
-                   "1": {
-                        "Type": ".wav",
-                        "Name": "hello.wav",
-                        "Profile": "Coffee Study",
-                        "Status": "Not Transcribed",
-                        "Date": "10/13/2020",
-                        "Size": "85mb",
-                        "Output": "Desktop",
-                    },
-                    "2": {
-                        "Type": ".wav",
-                        "Name": "hello.wav",
-                        "Profile": "Coffee Study",
-                        "Status": "Not Transcribed",
-                        "Date": "10/13/2020",
-                        "Size": "85mb",
-                        "Output": "Desktop",
-                    },
-                    "3": {
-                        "Type": ".wav",
-                        "Name": "hello.wav",
-                        "Profile": "Coffee Study",
-                        "Status": "Not Transcribed",
-                        "Date": "10/13/2020",
-                        "Size": "85mb",
-                        "Output": "Desktop",
-                    }
-                 }
-       
-        self.Table =FileTabel(headers, data, parent=self)
-        self.Table.addFile({
-                        "Type": ".wav",
-                        "Name": "morning.wav",
-                        "Profile": "Coffee Study",
-                        "Status": "Not Transcribed",
-                        "Date": "10/13/2020",
-                        "Size": "85mb",
-                        "Output": "Desktop",
-                    })
-        self.Table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-        self.layout = QVBoxLayout(self)
-        self.setLayout(self.layout)
-        self.layout.addWidget(self.Table)
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    example = Table()
-    example.show()
-    sys.exit(app.exec())
-    
     
