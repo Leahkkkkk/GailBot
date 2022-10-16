@@ -23,11 +23,14 @@ class Color:
     BLUELIGHT = "#D2E4EE"
     BLUEMEDIUM = "#3D4A80"
     BLUEDARK = "#293241"
+    GREYEXTRALIGHT = "#F0F6F9"
     GREYLIGHT = "#EBEBEB"
     GREYMEDIUM1 = "#91969D" 
     GREYMEDIUM2 = "#767C85"
     GREYDARK = "#545B67"
     BORDERGREY ="#797979"
+    WHITE = "FFFFFF"
+    BLACK = "#000000"
 
 dataclass
 class FontSize:

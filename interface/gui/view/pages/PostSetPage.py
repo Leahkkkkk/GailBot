@@ -27,10 +27,10 @@ class PostSetPage(QWidget):
         
     def _initWidget(self):
         """initialize widgets"""
-        self.header = Label.Label("Post Transcription Setting",
+        self.header = Label.Label("Post Transcription Settings",
                                   FontSize.HEADER2,FontFamily.MAIN)
         self.caption = Label.Label("These settings are applied after the file is created.",
-                                   FontSize.BODY)
+                                   FontSize.DESCRIPTION, FontFamily.MAIN)
         self.PostSet = PostSet.PostSet(self.data)
         self.scroll = QScrollArea()
         self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
@@ -52,7 +52,7 @@ class PostSetPage(QWidget):
         self.layout.addWidget(self.header, stretch= 1, alignment=Qt.AlignmentFlag.AlignHCenter
                                                     |Qt.AlignmentFlag.AlignTop)
         self.layout.addWidget(self.caption,alignment=Qt.AlignmentFlag.AlignLeft)
-        self.caption.setContentsMargins(80,0,0,0)
+        #self.caption.setContentsMargins(80,0,0,0)
         self.layout.addWidget(self.scroll,stretch = 7, alignment=Qt.AlignmentFlag.AlignHCenter
                                                     |Qt.AlignmentFlag.AlignTop)
         

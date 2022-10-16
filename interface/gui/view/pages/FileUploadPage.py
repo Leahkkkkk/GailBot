@@ -55,7 +55,7 @@ class FileUploadPage(QWidget):
         
     def _initWidget(self):
         """ initialzie widget """
-        self.label = Label.Label("File to Transcribe", 
+        self.label = Label.Label("Files to Transcribe", 
                                  FontSize.HEADER2, 
                                  FontFamily.MAIN)
         self.gotoMainBtn = Button.iconBtn("arrow.png"," Return to Main Menu")

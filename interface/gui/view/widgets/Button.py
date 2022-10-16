@@ -37,6 +37,7 @@ class ColoredBtn(QPushButton):
         self,
         label:str, 
         color:str, 
+        textColor = "fff",
         fontsize=FontSize.BTN, 
         other="",
         borderRadius=5,
@@ -47,13 +48,18 @@ class ColoredBtn(QPushButton):
         super().__init__(*args, **kwargs)
         self.setText(label)
         self.setStyleSheet(f"background-color:{color};"
-                           f"color:#fff;"
+                           f"color:{textColor};"
                            f"border-radius:{borderRadius};"
                            f"padding:1;"
                            f"font-size:{fontsize};"
                            f"{other}")
         self.setMaximumSize(Dimension.BGBUTTON)
-      
+
+    def changeColor(self, color:str):
+        self.setStyleSheet(f"background-color:{color};")
+   
+    def changeTextColor(self, color:str):
+        self.setStyleSheet(f"color:{color};")
         
 class BorderBtn(QPushButton):
     """ a rusable button widget with colored border and text 

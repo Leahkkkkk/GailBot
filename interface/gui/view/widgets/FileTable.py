@@ -87,6 +87,7 @@ class confirmTable(FileTable):
         pass
     
     def addFirstAction(self, toggleFun):
+
         firstCellWidget = TableWidgets.ConfirmAction(toggleFun)
         idx = self.model.rowCount(0) - 1
         self.setIndexWidget(self.model.index(idx,0), firstCellWidget)
@@ -136,6 +137,5 @@ class successTable(FileTable):
         firstCellWidget = TableWidgets.ConfirmAction(toggleFun)
         idx = self.model.rowCount(0) - 1
         self.setIndexWidget(self.model.index(idx,0), firstCellWidget)
-        
 
 

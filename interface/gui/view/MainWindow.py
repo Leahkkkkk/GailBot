@@ -44,7 +44,7 @@ class MainWindow(QMainWindow):
         """
         
         super().__init__()
-        self.setWindowTitle("My App")
+        self.setWindowTitle("GailBot")
         self.resize(900, 700)
         self.setMinimumSize(QSize(700, 600))
         self.setMaximumSize(QSize(1200, 900))

@@ -46,7 +46,7 @@ class TranscribeSuccessPage(QWidget):
                                         FontFamily.MAIN)
         self.label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         self.transcribedFiles = Label.Label("Transcribed files and locations:",
-                                        FontSize.BODY,
+                                        FontSize.HEADER3,
                                         FontFamily.OTHER)
         self.transcribedFiles.setContentsMargins(30,0,0,0)
         self.fileTable = FileTable.successTable()

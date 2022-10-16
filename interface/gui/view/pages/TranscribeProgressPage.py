@@ -47,13 +47,11 @@ class TranscribeProgressPage(QWidget):
         self.loadIcon.setMovie(self.IconImg)
         self.loadStart()
        
-        self.Formatting = Label.Label("Formatting file headers...",
-                                      FontSize.SMALL,
-                                      FontFamily.OTHER)
-        self.Formatting.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+        self.setLoadingText("Formatting file headers...")
+        self.loadingText.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         self.InProgress = Label.Label("Files in progress:",
-                                        FontSize.BODY,
-                                        FontFamily.OTHER)
+                                        FontSize.HEADER3,
+                                        FontFamily.MAIN)
         self.fileTable = FileTable.progressTable()
         self.cancelBtn = Button.ColoredBtn("Cancel", Color.ORANGE, FontSize.BTN)
         
@@ -73,17 +71,18 @@ class TranscribeProgressPage(QWidget):
         self.setLayout(self.verticalLayout)
         """ add widget to layout """
         self.verticalLayout.addWidget(self.label)
+        self.verticalLayout.addStretch(1)
         self.label.setContentsMargins(0,20,0,0)
         self.verticalLayout.addWidget(self.loadIcon, 
                                       alignment = Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignTop)
-        self.verticalLayout.addWidget(self.Formatting, alignment =Qt.AlignmentFlag.AlignTop)
+        self.verticalLayout.addWidget(self.loadingText, alignment =Qt.AlignmentFlag.AlignTop)
         self.verticalLayout.addWidget(self.InProgress, alignment =Qt.AlignmentFlag.AlignTop)
         self.verticalLayout.addWidget(self.fileTable, 
                                       alignment= Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignTop)
-        self.verticalLayout.addStretch()
+        self.verticalLayout.addStretch(2)
         self.verticalLayout.addWidget(self.cancelBtn, 
                                       alignment = Qt.AlignmentFlag.AlignHCenter)
-        self.verticalLayout.setSpacing(10)
+        self.verticalLayout.setSpacing(20)
         self.InProgress.setContentsMargins(80,0,0,0)
         self.loadIcon.setContentsMargins(0,0,0,0)
         self.fileTable.setMaximumHeight(300)
@@ -95,8 +94,11 @@ class TranscribeProgressPage(QWidget):
         
     def _confirm(self):
         """ handles confirm transcription message box """
-        self.confirmCancel = MsgBox.ConfirmBox("Confirm cancel?", 
+        self.confirmCancel = MsgBox.ConfirmBox("Confirm cancellation?", 
                                                self.parent.confirmCancel)
         
-
+    def setLoadingText(self, text):
+        self.loadingText = Label.Label(text,
+                                      FontSize.SMALL,
+                                      FontFamily.OTHER)
     

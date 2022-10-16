@@ -28,6 +28,7 @@ from PyQt6.QtWidgets import (
     QSizePolicy,
     QVBoxLayout
 )
+
 from PyQt6 import QtCore, QtGui
 from PyQt6.QtCore import Qt
 
@@ -171,7 +172,7 @@ class WelcomePage(QWidget):
         
         self.captionText = Label.Label("GailBot is the world's first application"
                                        " that lets you convert audio and\n"
-                                       " video file into customizd transcript.",
+                                       " video file into customized transcripts.",
                                        FontSize.BODY, FontFamily.OTHER,Color.GREYMEDIUM2)
         self.captionText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
         
@@ -218,7 +219,7 @@ class WelcomePage(QWidget):
         self.GuideText = Label.Label(guideLink,FontSize.LINK, 
                                         FontFamily.OTHER, Color.BLUEMEDIUM,
                                         "text-decoration: underline;")
-        gbWebLink = linkTemplate.format("https://hrilab.tufts.edu", "GailBot.com")
+        gbWebLink = linkTemplate.format("https://sites.tufts.edu/hilab/", "GailBot.com")
         self.GBLinkText = Label.Label(gbWebLink,FontSize.BODY, 
                                       FontFamily.OTHER,Color.BLUEMEDIUM,)
         

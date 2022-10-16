@@ -55,7 +55,7 @@ class WarnBox:
                                      okay button
         """
         self.ok = ok
-        self.msgBox = QMessageBox(text=msg)
+        self.msgBox = QMessageBox(text="WARNING: " + msg)
         self.msgBox.setIcon(QMessageBox.Icon.Warning)
         self.msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
         self.msgBox.buttonClicked.connect(self._ok)

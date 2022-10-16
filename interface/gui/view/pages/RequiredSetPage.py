@@ -31,7 +31,11 @@ class RequiredSetPage(QWidget):
         self.form.submitForm()
     
     def _initWidget(self):
-        self.label = Label.Label("Required Setting",FontSize.HEADER2, 
+        self.label = Label.Label("Required Settings",FontSize.HEADER2, 
+                                 FontFamily.MAIN )
+        self.description = Label.Label("\n"
+                                "These settings are required before transcription and cannot be edited after transcription.",
+                                 FontSize.DESCRIPTION, 
                                  FontFamily.MAIN )
         self.form = RequiredSet.RequiredSet(self.data)
     
@@ -41,6 +45,8 @@ class RequiredSetPage(QWidget):
         self.layout.addWidget(self.label,
                               alignment=Qt.AlignmentFlag.AlignTop 
                               | Qt.AlignmentFlag.AlignHCenter)
+        self.layout.addWidget(self.description,
+                              alignment=Qt.AlignmentFlag.AlignHCenter)
         self.layout.addWidget(self.form, stretch= 10)
         self.layout.setSpacing(0)
         
