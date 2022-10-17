@@ -15,9 +15,10 @@ Modified By:  Siara Small  & Vivian Li
 
 import logging
 
-from typing import Dict, List, Set, TypedDict
+from typing import Dict, List, Set, TypedDict, Tuple
 
 from view.widgets.FileTab import ChooseFileTab
+from view.widgets.TabPages import ChooseSet
 
 from PyQt6.QtWidgets import (
     QTableWidget, 
@@ -27,9 +28,12 @@ from PyQt6.QtWidgets import (
     QHeaderView,
     QCheckBox,
     QPushButton,
-    QHBoxLayout)
+    QVBoxLayout, 
+    QHBoxLayout, 
+    QDialog
+)
 
-from PyQt6.QtCore import QObject, Qt, QSize
+from PyQt6.QtCore import QObject, Qt, QSize, pyqtSignal
 from PyQt6.QtGui import QColor
 
 class fileObject(TypedDict):
@@ -52,6 +56,7 @@ class DisplayFile(QObject):
         setFun:callable, 
         selectFun:callable, 
         unselectFun:callable, 
+        gosetFun:callable,
         *args, 
         **kwargs):
         """ A wrapper class that contains all widgets in one row of filetable
@@ -62,29 +67,34 @@ class DisplayFile(QObject):
                                     file on the table
             key (str): a key that identify the file in the data 
             deleteFun (callable): function to delete the file
-            setFun (callable): function to change or view the setting
+            setFun (callable): function to change 
             selectFun (callable): function to select the file
             unselectFun (callable): function to unselect the file
+            gosetFun:callable: function to view the setting
         """
         super().__init__(*args, **kwargs)
-
         self.pin = pin
         self.key = key
         self.table = table
         self.selectFun = selectFun
         self.unselectFun = unselectFun
+        self.gosetFule = gosetFun
         self.checkBox = QCheckBox()
         self.Action = QWidget()
-        self.ActionLayout = QHBoxLayout()
+        self.ActionLayout = QVBoxLayout()
         self.Action.setLayout(self.ActionLayout)
         self.deleteBtn = QPushButton("Delete")
-        self.setBtn = QPushButton("Set")
+        self.setBtn = QPushButton("Change Setting")
+        self.profileBtn = QPushButton("Profile Details")
         
         self.ActionLayout.addWidget(self.deleteBtn)
         self.ActionLayout.addWidget(self.setBtn)
-        
+        self.ActionLayout.addWidget(self.profileBtn)
+        self.ActionLayout.setSpacing(1)
+        self.ActionLayout.addStretch()
         self.deleteBtn.clicked.connect(lambda: deleteFun(self.pin, self.key))
         self.setBtn.clicked.connect(lambda: setFun(self.key))
+        self.profileBtn.clicked.connect(lambda: gosetFun(self.key))
         self.checkBox.stateChanged.connect(self.checkStateChanged)
     
     def checkStateChanged(self, state:bool):
@@ -106,15 +116,41 @@ class DisplayFile(QObject):
             self.table.setCellWidget(row, self.table.columnCount()- 1, self.Action)
         if "delete" not in rowWidgets:
             self.deleteBtn.hide()
-        if "setting" not in rowWidgets:
             self.setBtn.hide()
+        if "setting" not in rowWidgets:
+            self.profileBtn.hide()
+ 
         
+class Signals(QObject):
+    goSetting = pyqtSignal(str)
+    changeSetting = pyqtSignal(list)
+
+
+class changeProfileDialog(QDialog):
+    def __init__(self, settings: List[str], fileKey:str, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.signals = Signals()
+        self.fileKey = fileKey
+        self.selectSetting = ChooseSet(settings)
+        self.layout = QVBoxLayout()
+        self.setLayout(self.layout)
+        self.layout.addWidget(self.selectSetting)
+        self.selectSetting.confirmBtn.clicked.connect(self.updateProfile)
+        self.setFixedSize(QSize(200, 200))
+    
+    def updateProfile(self):
+        print("update signal send")
+        newSetting = self.selectSetting.getProfile()["Profile"]
+        print([self.fileKey, newSetting])
+        self.signals.changeSetting.emit([self.fileKey,newSetting])
+        self.close()
     
 class FileTable(QTableWidget):
     def __init__(self, 
                  headers: List[str], 
-                 filedata: Dict[str, fileObject],  
+                 filedata: Dict[str, fileObject], 
                  rowWidgets: Set[str]  = {"delete", "setting", "select"},
+                 settings: List[str] = ["default"],  
                  *args, 
                  **kwargs):
         """_summary_
@@ -131,7 +167,9 @@ class FileTable(QTableWidget):
                                         # be displayed on the table
         
         self.filedata = filedata        # stores the file data
-        
+        self.settings = settings
+        self.pinFileData = dict()       # used to track file's position on 
+                                        # table by pin
         self.transcribeList: List[str] = []   
                                         # a list of keys of the file that will
                                         #  be transcribed, 
@@ -146,6 +184,8 @@ class FileTable(QTableWidget):
                                         # the key of the next added file
         
         self.rowWidgets = rowWidgets
+        
+        self.signals = Signals()
     
         self._initializeTable()
     
@@ -159,16 +199,24 @@ class FileTable(QTableWidget):
             for i in range(len(widths)):
                 self.setColumnWidth(i, widths[i])
     
+    def clearAll(self):
+        self.clearContents()
+        for i in range(self.rowCount()):
+            self.removeRow(i)
+    
     def addFilesToTable(self, fileData: Dict[str, fileObject])->None:
         """ take fileData with multiple files and add to the table
         """
         self.clearContents()
         for key, item in fileData.items():
             self._addFiletoTable(item, key)
+            self.filedata[key] = item
+        self.resizeRowsToContents()          
+        
     
     def _initializeTable(self) -> None:
         """ Initialize the table """
-        self._setFileHeader(self.headers)     # set file header 
+        self._setFileHeader()     # set file header 
         self._setFileData()                   # set initial file data
         self._initStyle()
         self.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)   # TODO: set the selection color of the file table 
@@ -185,16 +233,14 @@ class FileTable(QTableWidget):
         self.setFixedWidth(900)
         self.setMaximumHeight(300)
         
-    def _setFileHeader(self,headers) -> None:
+    def _setFileHeader(self) -> None:
         """ initialize file headers
         
         Args: 
             headers: (List[str]) a list of header names
         """
-        self.headerList = []
-        for i in range(len(headers)):
-            headerItem = QTableWidgetItem(headers[i])
-            self.headerList.append(headerItem)
+        for i in range(len(self.headers)):
+            headerItem = QTableWidgetItem(self.headers[i])
             self.setHorizontalHeaderItem(i, headerItem)
         self.horizontalHeader().sectionClicked.connect(self._headerClickedHandler)
     
@@ -225,7 +271,7 @@ class FileTable(QTableWidget):
         self.allSelected = not self.allSelected
     
     def getFile(self):
-        addFileWindow = ChooseFileTab(["Default", "Coffee Study"])
+        addFileWindow = ChooseFileTab(self.settings)
         addFileWindow.signals.sendFile.connect(self._addFile)
         addFileWindow.exec()
         
@@ -255,12 +301,14 @@ class FileTable(QTableWidget):
         """ display one file on the  table"""
         newRowIdx = self.rowCount()
         self.insertRow(newRowIdx)
-        filePin = QTableWidgetItem(file[self.headers[1]])
-        self.setItem(newRowIdx, 1, filePin)
         for col in range(len(self.headers)):
             if self.headers[col] in file.keys():
                 newItem = QTableWidgetItem(str(file[self.headers[col]]))
+                if col == 1: 
+                    filePin = newItem
+                    self.pinFileData[key] = filePin
                 self.setItem(newRowIdx, col, newItem)
+        
         
         self._addFileWidgetToTable(filePin, newRowIdx, key)
         self.resizeRowsToContents()          
@@ -277,9 +325,10 @@ class FileTable(QTableWidget):
                             pin, 
                             key,
                             self.deleteFile, 
-                            self.goToSetting, 
+                            self.changeSetting, 
                             self.addToTranscribe, 
-                            self.removeFromTranscribe)
+                            self.removeFromTranscribe,
+                            self.settingDetails)
         
         newFileWidget.addWidgetToTable(row, self.rowWidgets)
         self.fileWidgets[key] = newFileWidget
@@ -291,10 +340,13 @@ class FileTable(QTableWidget):
             pin (QTableWidgetItem): a pin to identify file on the table
             key (_type_): file key in database
         """
+        print("Try to delete")
         rowIdx = self.indexFromItem(pin).row()
         if rowIdx >= 0:
             self.removeRow(rowIdx)
             del self.fileWidgets[key]
+        if key in self.transcribeList:
+            self.transcribeList.remove(key)
 
     def addToTranscribe(self, key:str) -> None:
         """ add the file to transcribe list
@@ -337,21 +389,41 @@ class FileTable(QTableWidget):
         """
         transcribeData = dict()
         for i in self.transcribeList:
-            fileData = {**self.filedata[i], **{"Selected Action": "Transcribe"}}
+            fileData = {**self.filedata[i], 
+                        **{"Selected Action": "Transcribe"}, 
+                        **{"Action in Progress":"Transcribing"}}
             transcribeData[i] = fileData
         
         return transcribeData
        
         
-        
-    def goToSetting(self, key:str) -> None:
+    def changeSetting(self, key:str) -> None:
         """ configure the setting of one file identified by key
 
         Args:
             key (str): a key to identify file
         """
+        selectSetting = changeProfileDialog(self.settings, key)
+        selectSetting.signals.changeSetting.connect(self.updateSetting)
+        selectSetting.exec()
+        selectSetting.setFixedSize(QSize(200,200))
+    
+    def settingDetails(self, key:str)->None:
+        print(key)
+        print(self.filedata)
         if key in self.filedata:
-            print(self.filedata[key]["Profile"])
+            self.signals.goSetting.emit(self.filedata[key]["Profile"])
+    
+    def updateSetting(self, newSetting:List[str]) -> None:
+        # logging.DEBUG(newSetting)
+        # print("we get the new setting", newSetting)
+        print("we reached the update seting")
+        self.filedata[newSetting[0]]["Profile"] = newSetting[1]
+        rowIdx = self.indexFromItem(self.pinFileData[newSetting[0]]).row()
+        newSettingText = QTableWidgetItem(newSetting[1])
+        self.setItem(rowIdx, 3, newSettingText)
+        
+            
             
     
 MainTableHeader = ["Select All", 
@@ -370,16 +442,16 @@ ConfirmHeader = ["Type",
                  "Profile",
                  "Selected Action", 
                  " "]
-ConfirmHeaderDimension = [85,300,200,200,100]
+ConfirmHeaderDimension = [85,300,200,130,170]
 
 ProgressHeader = ["Type",
                   "Name",
                   "Action in Progress"]
 
-ProgressDimension = [150, 400, 250]
+ProgressDimension = [170, 450, 265]
 
 SuccessHeader = ["Type",
                  "Name",
                  "Status",
-                 "Location",
-                 "Actions"]
+                 "Output"]
+SuccessDimension = [120, 300, 250, 215]

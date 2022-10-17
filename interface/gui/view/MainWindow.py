@@ -106,19 +106,21 @@ class MainWindow(QMainWindow):
         
     def _connectController(self):
         """ connect to controller """
-        self.MainStack.ConfirmTranscribePage.confirmBtn.clicked.connect(self._transcribe)
+        self.MainStack.ConfirmTranscribePage.signal.transcribeFile.connect(self._transcribe)
     
-    def _transcribe(self):
+    """ TODO: add transcribing multiplef file """
+    def _transcribe(self, fileData: dict):
         """ call controller to transcribe audio file"""
-        indices = self.MainStack.FileUploadPage.fileTable.selectedIndexes()
-        if indices:
-            key = indices[0].row()
-            self.controller.runGailBot(key)
-        self.logger.info("")
+        firstKey = list(fileData.keys())[0]
+        self.controller.runGailBot(fileData[firstKey]["Name"], 
+                                    fileData[firstKey]["FullPath"], 
+                                    fileData[firstKey]["Output"], 
+                                       firstKey)
+        
 
     """ functions provided to child elements"""
     def confirmCancel(self):
         """ handle event when user tries to cancel the thread """
         self.logger.info("")
         self.MainStack.gotoFileUploadPage()
-        # self.controller.cancelGailBot()
+        self.controller.cancelGailBot()

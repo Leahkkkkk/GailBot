@@ -6,6 +6,9 @@ from view.widgets.TabPages import (
     OpenFile, 
     ChooseOutPut, 
     ChooseSet)
+from view.style.Background import initBackground
+from view.style.styleValues import Color
+
 
 from PyQt6.QtWidgets import (
     QTabWidget, 
@@ -13,7 +16,7 @@ from PyQt6.QtWidgets import (
     QVBoxLayout, 
     QDialog)
 
-from PyQt6.QtCore import QObject, pyqtSignal
+from PyQt6.QtCore import QObject, pyqtSignal, QSize
 
 class Signals(QObject):
     sendFile = pyqtSignal(dict)
@@ -41,11 +44,11 @@ class Tab(QTabWidget):
         super().__init__(*args, **kwargs)
         self.tabsList = []
         self.curPage = 0
-        
+        self.setFixedSize(QSize(300,300))
         for label, tab in tabs.items():
             self.addTab(tab, label)
             self.tabsList.append(tab)
-            
+            initBackground(tab,Color.BLUEWHITE )
             tab.signals.nextPage.connect(self._toNextPage)
             tab.signals.close.connect(self.close)
             

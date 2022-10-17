@@ -88,6 +88,7 @@ class WelcomePage(QWidget):
     def _initStyle(self):
         """ initialize style """
         self.HomeSetBtn.setFixedSize(QtCore.QSize(40,40))
+        self.HomeSetBtn.hide()
         self.StartBtn.setMinimumSize(QtCore.QSize(150,30))
         initImgBackground(self)
 
@@ -217,10 +218,10 @@ class WelcomePage(QWidget):
         guideLink = linkTemplate.format("https://hrilab.tufts.edu", "GailBot Settings Guide")
         self.GuideText = Label.Label(guideLink,FontSize.LINK, 
                                         FontFamily.OTHER, Color.BLUEMEDIUM,
-                                        "text-decoration: underline;")
+                                        "text-decoration: underline;", link=True)
         gbWebLink = linkTemplate.format("https://hrilab.tufts.edu", "GailBot.com")
         self.GBLinkText = Label.Label(gbWebLink,FontSize.BODY, 
-                                      FontFamily.OTHER,Color.BLUEMEDIUM,)
+                                      FontFamily.OTHER,Color.BLUEMEDIUM,link=True)
         
         self.GBLinkText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
 

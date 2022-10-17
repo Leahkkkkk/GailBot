@@ -89,20 +89,21 @@ class Worker(QRunnable):
         used to run GailBot function on separte thread 
         with the added feature of handling signals
     """
-    def __init__(self, filename:str, filepath:str, key:int):
+    def __init__(self, fileName:str, fullPath:str, output:str, key:int):
         """constructor for Worker class
 
         Args:
-            filename (str): filename 
-            filepath (str): absolute file path to the file
+            fileName (str): fileName 
+            fullPath (str): absolute file path to the file
             key (int): an index key that identify the file in file database
         """
         super(Worker, self).__init__()
         self.signals = Signals()
         self.key = key
         self.is_killed = False
-        self.filepath = filepath
-        self.filename = filename
+        self.fullPath = fullPath
+        self.fileName = fileName
+        self.output = output
         self._initLogger()
 
     def _initLogger(self):
@@ -131,9 +132,9 @@ class Worker(QRunnable):
                 self.logger.info(gb.register_plugins(path))
 
             if not self.is_killed:
-                assert gb.add_source(self.filename, 
-                                     f"{self.filepath}/{self.filename}", 
-                                     "/Users/yike/Desktop/output")
+                assert gb.add_source(self.fileName, 
+                                     self.fullPath, 
+                                     self.output)
                 self.logger.info("Source Added")
                 self.signals.progress.emit(str("Source Added"))
                 
@@ -145,13 +146,13 @@ class Worker(QRunnable):
                 self.signals.progress.emit(str("Create Setting File"))
 
             if not self.is_killed:
-                assert gb.apply_settings_profile_to_source(self.filename, 
+                assert gb.apply_settings_profile_to_source(self.fileName, 
                                                            "test-settings")
                 self.logger.info("Apply Setting")
                 self.signals.progress.emit(str("Apply Setting"))
 
             if not self.is_killed:
-                assert gb.is_source_ready_to_transcribe(self.filename)
+                assert gb.is_source_ready_to_transcribe(self.fileName)
                 self.logger.info("Ready to transcribe")
                 self.signals.progress.emit(str("Ready to transcribe"))
             

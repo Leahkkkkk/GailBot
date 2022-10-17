@@ -12,7 +12,7 @@ import os
 
 from util import Path
 
-from view.widgets import Label, Button
+from view.widgets import Label, Button, FileTable
 from view.style.styleValues import Color, FontSize, FontFamily
 from view.style.Background import initImgBackground
 
@@ -47,7 +47,6 @@ class ApplySetProgressPage(QWidget):
         self.loadIcon = QLabel()
         self.IconImg = QMovie(os.path.join(Path.getProjectRoot(), "view/asset/gbloading.gif"))
         self.loadIcon.setMovie(self.IconImg)
-        # self.loadIcon.setLayoutDirection(QtCore.Qt.LayoutDirection.LeftToRight)
         self.loadStart()
         self.Formatting = QLabel("Formatting file headers...")
         self.Formatting.setAlignment(Qt.AlignmentFlag.AlignHCenter)
@@ -55,6 +54,8 @@ class ApplySetProgressPage(QWidget):
                                         FontSize.HEADER3,
                                         FontFamily.OTHER)
         self.cancelBtn = Button.ColoredBtn("Cancel", Color.ORANGE, FontSize.BTN)
+        self.fileTable = FileTable.FileTable(FileTable.ProgressHeader, {}, {})
+        self.fileTable.resizeCol(FileTable.ProgressDimension)
         
     def _initLayout(self):
         """ initialize vertical layout """
@@ -65,8 +66,8 @@ class ApplySetProgressPage(QWidget):
         self.verticalLayout.addWidget(self.loadIcon, alignment = Qt.AlignmentFlag.AlignHCenter)
         self.verticalLayout.addWidget(self.Formatting)
         self.verticalLayout.addWidget(self.InProgress)
-        # self.verticalLayout.addWidget(self.fileTable, stretch=5,
-        #                               alignment= Qt.AlignmentFlag.AlignCenter|Qt.AlignmentFlag.AlignTop)
+        self.verticalLayout.addWidget(self.fileTable, stretch=5,
+                                      alignment= Qt.AlignmentFlag.AlignCenter|Qt.AlignmentFlag.AlignTop)
         self.verticalLayout.addWidget(self.cancelBtn,
                                       alignment = Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignTop)
         

@@ -55,7 +55,7 @@ class FileModel(QtCore.QAbstractTableModel):
     
     def getFile(self, rowidx):
         """ return a dictionart with filename and filepath """
-        print(self._dataDict[rowidx])
+        # print(self._dataDict[rowidx])
         return {"name": self._dataDict[rowidx].name, "path": self._dataDict[rowidx].path}
 
     def addFileHandler(self, fileObj: FileItem):

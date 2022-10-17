@@ -33,7 +33,8 @@ class Model():
                 "Status": "Not Transcribed",
                 "Date": "10/13/2020",
                 "Size":"85mb",
-                "Output": "Desktop",
+                "Output": "/Users/yike/Desktop/",
+                "FullPath": "/Users/yike/Desktop/hello.wav",
             },
         }
       

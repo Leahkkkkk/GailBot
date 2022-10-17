@@ -11,7 +11,8 @@ Modified By:  Siara Small  & Vivian Li
 
 from view.widgets import (
     Button,
-    Label
+    Label,
+    FileTable
 )
 
 from view.style.Background import initImgBackground
@@ -43,6 +44,8 @@ class ApplySetSuccessPage(QWidget):
         self.moreBtn = Button.ColoredBtn("Process more files", Color.GREEN)
         self.returnBtn = Button.ColoredBtn("Return to main menu", Color.BLUEMEDIUM)
         self.quitBtn = Button.ColoredBtn("Quit Gailbot", Color.ORANGE)
+        self.fileTable = FileTable.FileTable(FileTable.SuccessHeader, {}, {})
+        self.fileTable.resizeCol(FileTable.SuccessDimension)
 
     def _initLayout(self):
         """ initalize layout """
@@ -51,7 +54,7 @@ class ApplySetSuccessPage(QWidget):
         """ add widget to layout """
         self.verticalLayout.addWidget(self.label)
         self.verticalLayout.addWidget(self.filesAndLocations)
-        # self.verticalLayout.addWidget(self.fileTable)
+        self.verticalLayout.addWidget(self.fileTable)
         self.verticalLayout.addWidget(self.horizontal)
         self.verticalLayout.addWidget(self.quitBtn, 4, 
                                       alignment = Qt.AlignmentFlag.AlignHCenter)

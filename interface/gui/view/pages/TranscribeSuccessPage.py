@@ -10,7 +10,8 @@ Modified By:  Siara Small  & Vivian Li
 '''
 from view.widgets import (
     Button,
-    Label
+    Label,
+    FileTable
 )
 from view.style.styleValues import Color, FontSize, Dimension, FontFamily
 from view.style.Background import initImgBackground
@@ -53,6 +54,8 @@ class TranscribeSuccessPage(QWidget):
         self.returnBtn = Button.ColoredBtn("Return to main menu", Color.BLUEMEDIUM)
         self._initHorizontalLayout()
         self.quitBtn = Button.ColoredBtn("Quit Gailbot", Color.ORANGE)
+        self.fileTable = FileTable.FileTable(FileTable.SuccessHeader, {}, {})
+        self.fileTable.resizeCol(FileTable.SuccessDimension)
         
     def _initLayout(self):
         """ initialize page layout """
@@ -63,7 +66,7 @@ class TranscribeSuccessPage(QWidget):
         self.verticalLayout.addWidget(self.label)
         self.verticalLayout.addWidget(self.transcribedFiles)
         self.transcribedFiles.setContentsMargins(80,0,0,0)
-        # self.verticalLayout.addWidget(self.fileTable,alignment = Qt.AlignmentFlag.AlignHCenter)
+        self.verticalLayout.addWidget(self.fileTable,alignment = Qt.AlignmentFlag.AlignHCenter)
         self.verticalLayout.addStretch()
         self.verticalLayout.addWidget(self.horizontal)
         self.verticalLayout.addWidget(self.quitBtn,

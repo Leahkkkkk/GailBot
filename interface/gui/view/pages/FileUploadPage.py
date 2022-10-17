@@ -8,8 +8,9 @@ Last Modified: Thursday, 6th October 2022 11:08:37 am
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
+from typing import List, Dict
 
-from view.widgets import Label, Button, FileTable
+from view.widgets import Label, Button, FileTable, TabPages
 from view.components import MsgBox
 from view.style.styleValues import (
     FontFamily, 
@@ -28,7 +29,8 @@ from PyQt6.QtWidgets import (
     QTableView, 
     QVBoxLayout,
     QSpacerItem,
-    QSizePolicy
+    QSizePolicy,
+    QDialog
 )
 from PyQt6.QtCore import Qt, QSize, pyqtSignal,QObject
 
@@ -39,11 +41,16 @@ class Signals(QObject):
     gotoSetting = pyqtSignal()
     
 class FileUploadPage(QWidget):
-    def __init__(self, nextStep:callable, filedata:dict, *args, **kwargs) -> None:
+    def __init__(self, 
+                 nextStep:callable, 
+                 fileDate: Dict[str, dict], 
+                 settingData: List[str],
+                 *args, **kwargs) -> None:
         """ file upload page """
         super().__init__(*args, **kwargs)
         self.nextStep = nextStep
-        self.filedata = filedata
+        self.fileDate = fileDate
+        self.settingData = settingData
         self._initWidget()
         self._initLayout()
         self._initStyle()
@@ -73,16 +80,15 @@ class FileUploadPage(QWidget):
         self.uploadFileBtn.setFixedSize(Dimension.RBUTTON)
         self.transcribeBtn.setFixedSize(Dimension.BGBUTTON)
         
-        self.settingProfile = Button.dropDownButton("Settings Profile", 
-                                                    ["Default Settings",
-                                                     "Coffee Setting", 
-                                                     "Create New Profile"], 
-                                                    [self.goToSettingFun, 
-                                                     self.goToSettingFun,
-                                                     self.goToSettingFun])
+        self.settingProfile = Button.ColoredBtn("⚙", Color.BLUEMEDIUM,"35px")
+        self.settingProfile.setFixedSize(QSize(40,40))
       
       
-        self.fileTable = FileTable.FileTable(FileTable.MainTableHeader, self.filedata)
+        self.fileTable = FileTable.FileTable(FileTable.MainTableHeader, 
+                                             self.fileDate, 
+                                             {"delete", "setting", "select"}, 
+                                             self.settingData)
+        
         self.fileTable.resizeCol(FileTable.MainTableDimension)
         self.transcribeBtn.clicked.connect(self.transcribe)
         self.uploadFileBtn.clicked.connect(self.fileTable.getFile)

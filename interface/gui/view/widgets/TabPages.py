@@ -12,6 +12,10 @@ import logging
 import datetime
 from typing import List, TypedDict
 from os import stat
+from view.style.Background import initBackground
+
+from view.style.Background import Background 
+from view.style.styleValues import Color
 
 from PyQt6.QtWidgets import (
     QWidget, 
@@ -20,7 +24,7 @@ from PyQt6.QtWidgets import (
     QVBoxLayout, 
     QLabel,
     QComboBox)
-from PyQt6.QtCore import pyqtSignal, QObject
+from PyQt6.QtCore import pyqtSignal, QObject, QSize
 
 class FileData(TypedDict):
     Name: str
@@ -110,6 +114,8 @@ class ChooseSet(QWidget):
     """ for user to choose setting profile """
     def __init__(self, settings: List[str], *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
+        print(settings)
+        self.setFixedSize(QSize(250,250))
         self.profile = settings[0]
         self.settings = settings
         self.signals = Signals()

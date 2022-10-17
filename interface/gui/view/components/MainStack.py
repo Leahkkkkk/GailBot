@@ -22,7 +22,8 @@ from view.pages import (
 )
 from view.style.styleValues import Dimension
 
-from PyQt6.QtWidgets import QStackedWidget
+from PyQt6.QtWidgets import QStackedWidget 
+
 
 class MainStack(QStackedWidget):
     """ implementation of the page stack """
@@ -52,12 +53,22 @@ class MainStack(QStackedWidget):
         """ redirect to confirm cancel page """
         self.parent.confirmCancel()
     
-    def gotoSettingPage(self):
+    def gotoSettingPage(self, setting:str = None):
         self.setCurrentWidget(self.SettingPage)
         self.SettingPage.settingStack.setCurrentIndex(1)
+        if setting:
+            self.SettingPage.selectSettings.setCurrentText(setting)
         
     def gotoConfirmPage(self, fileData):
+        self.ConfirmTranscribePage.fileTable.clearAll()
         self.ConfirmTranscribePage.fileTable.addFilesToTable(fileData)
+        self.TranscribeProgressPage.fileTable.clearAll()
+        self.TranscribeProgressPage.fileTable.addFilesToTable(fileData)
+        successData = dict(fileData)
+        for items in successData.values():
+            items["Status"] = "Transcribed"
+        self.TranscribeSuccessPage.fileTable.clearAll()
+        self.TranscribeSuccessPage.fileTable.addFilesToTable(successData)
         self.setCurrentWidget(self.ConfirmTranscribePage)
     
     def _initPage(self):
@@ -66,7 +77,9 @@ class MainStack(QStackedWidget):
         self.ApplySetProgressPage = ApplySetProgressPage.ApplySetProgressPage(self)
         self.ApplySetSuccessPage = ApplySetSuccessPage.ApplySetSuccessPage(self)
         self.ConfirmTranscribePage = ConfirmTranscribePage.ConfirmTranscribePage(self)
-        self.FileUploadPage = FileUploadPage.FileUploadPage(self.gotoConfirmPage, self.filedata)
+        self.FileUploadPage = FileUploadPage.FileUploadPage(self.gotoConfirmPage, 
+                                                            self.filedata, 
+                                                            list(self.settingdata.keys()))
         self.SettingPage = SettingPage.SettingPage(self.settingdata, self)
         self.TranscribeProgressPage = TranscribeProgressPage.TranscribeProgressPage(self)
         self.TranscribeSuccessPage = TranscribeSuccessPage.TranscribeSuccessPage(self)
@@ -86,7 +99,7 @@ class MainStack(QStackedWidget):
         """ initialize button click to page rediect functionality  """
         self.WelcomePage.StartBtn.clicked.connect(lambda: 
                 self.setCurrentWidget(self.FileUploadPage))
-        self.WelcomePage.HomeSetBtn.clicked.connect(lambda: 
+        self.FileUploadPage.settingProfile.clicked.connect(lambda: 
                 self.setCurrentWidget(self.SettingPage))
         self.TranscribeSuccessPage.moreBtn.clicked.connect(lambda: 
                 self.setCurrentWidget(self.FileUploadPage))
@@ -100,6 +113,10 @@ class MainStack(QStackedWidget):
                 self.setCurrentWidget(self.RecordPage))
         self.RecordPage.cancelBtn.clicked.connect(lambda:
                 self.setCurrentWidget(self.FileUploadPage))
+        self.ConfirmTranscribePage.cancelBtn.clicked.connect(lambda:
+            self.setCurrentWidget(self.FileUploadPage))
+        self.FileUploadPage.fileTable.signals.goSetting.connect(self.gotoSettingPage)
+        self.ConfirmTranscribePage.fileTable.signals.goSetting.connect(self.gotoSettingPage)
         
         self.FileUploadPage.signals.gotoSetting.connect(self.gotoSettingPage)
         

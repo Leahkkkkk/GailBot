@@ -42,7 +42,7 @@ class Controller:
     def deleteFile(self, key):
         self.ModelObj.FileModel.deleteFileHandler(key)
         
-    def runGailBot(self, key):
+    def runGailBot(self, name, path, output, key):
         """ wrapper function to run GailBot """
         self.logger.info("")
         
@@ -50,7 +50,7 @@ class Controller:
             self.logger.warn("Thread Busy")
             self.ViewObj.busyThreadPool()
         else: 
-            self._runGailBotFun(key)
+            self._runGailBotFun(name, path, output, key)
 
 
     def cancelGailBot(self):
@@ -68,25 +68,16 @@ class Controller:
         self.worker.signals.killed.connect(self._showUploadFile)
         self.ThreadPool.start(self.worker)
    
-    def _runGailBotFun(self, key:int):
+    def _runGailBotFun(self, name, path, output, key):
         """run gailbot on a separate thread 
 
         Args:
             key (int): an index key that identify the file from the file 
                        dataabse
         """
-        def chageTranscribeStatus():
-            self.logger.info("")
-            self.ModelObj.FileModel.changeToTranscribed(key)
-            
-        self.logger.info("")
-        file = self.ModelObj.FileModel.getFile(key)
-        print(file["name"], file["path"], key)
-        
-        self.worker = GBRunnable.Worker(file["name"], file["path"], key)
+        self.worker = GBRunnable.Worker(name, path, output, key)
         self.worker.signals.start.connect(self._showInProgress)
         self.worker.signals.finished.connect(self._showFinished)
-        self.worker.signals.finished.connect(chageTranscribeStatus)
         self.worker.signals.progress.connect(self._sendTranscribeProgressMsg)
         self.worker.signals.error.connect(self.ViewObj.TranscribeFailed)
         self.ThreadPool.start(self.worker)

@@ -26,7 +26,10 @@ from PyQt6.QtWidgets import (
 )
 
 from PyQt6 import QtCore
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QObject, pyqtSignal
+
+class Signal(QObject):
+    transcribeFile = pyqtSignal(dict)
 
 
 class ConfirmTranscribePage(QWidget):
@@ -37,6 +40,7 @@ class ConfirmTranscribePage(QWidget):
         self._initLayout()
         self._initStyle()
         self.showFileDetail = True
+        self.signal = Signal()
     
     def toggleFileDetail(self):
         if self.showFileDetail:
@@ -59,6 +63,7 @@ class ConfirmTranscribePage(QWidget):
         self.bottomButton = QWidget()
         self.confirmBtn = Button.ColoredBtn("Confirm", Color.GREEN)
         self.cancelBtn = Button.ColoredBtn("Cancel", Color.ORANGE)
+        self.confirmBtn.clicked.connect(self._sendTranscribeSignal)
     
     def _initLayout(self):
         """ initialize layout"""
@@ -93,4 +98,6 @@ class ConfirmTranscribePage(QWidget):
         self.cancelBtn.setMinimumSize(QtCore.QSize(150,30))
     
   
+    def _sendTranscribeSignal(self):
+        self.signal.transcribeFile.emit(self.fileTable.filedata)
    
