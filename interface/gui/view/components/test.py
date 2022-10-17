@@ -38,9 +38,9 @@ class Table(QWidget):
         self.layout.addWidget(self.button)
         self.button.clicked.connect(self.Table.getFile)
         
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    example = Table()
-    example.resize(QSize(800, 500))
-    example.show()
-    sys.exit(app.exec())
+# if __name__ == "__main__":
+#     app = QApplication(sys.argv)
+#     example = Table()
+#     example.resize(QSize(800, 500))
+#     example.show()
+#     sys.exit(app.exec())

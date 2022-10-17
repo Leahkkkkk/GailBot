@@ -10,10 +10,10 @@ Modified By:  Siara Small  & Vivian Li
 '''
 
 from view.widgets import (
-    FileTable,
     Button,
     Label
 )
+
 from view.style.Background import initImgBackground
 
 
@@ -40,7 +40,6 @@ class ApplySetSuccessPage(QWidget):
         self.filesAndLocations = Label.Label("Files and locations:",
                                 FontSize.HEADER3,
                                 FontFamily.OTHER)
-        self.fileTable = FileTable.successTable()
         self.moreBtn = Button.ColoredBtn("Process more files", Color.GREEN)
         self.returnBtn = Button.ColoredBtn("Return to main menu", Color.BLUEMEDIUM)
         self.quitBtn = Button.ColoredBtn("Quit Gailbot", Color.ORANGE)
@@ -52,7 +51,7 @@ class ApplySetSuccessPage(QWidget):
         """ add widget to layout """
         self.verticalLayout.addWidget(self.label)
         self.verticalLayout.addWidget(self.filesAndLocations)
-        self.verticalLayout.addWidget(self.fileTable)
+        # self.verticalLayout.addWidget(self.fileTable)
         self.verticalLayout.addWidget(self.horizontal)
         self.verticalLayout.addWidget(self.quitBtn, 4, 
                                       alignment = Qt.AlignmentFlag.AlignHCenter)

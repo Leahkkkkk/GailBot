@@ -26,9 +26,10 @@ from PyQt6.QtWidgets import QStackedWidget
 
 class MainStack(QStackedWidget):
     """ implementation of the page stack """
-    def __init__(self, settingdata, parent, *args, **kwargs) -> None:
+    def __init__(self, data, parent, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.settingdata = settingdata
+        self.settingdata = data["setting"]
+        self.filedata = data["file"]
         self.parent = parent 
         self.setMaximumSize(Dimension.WIN_MAXSIZE)
         self._initPage()
@@ -55,7 +56,8 @@ class MainStack(QStackedWidget):
         self.setCurrentWidget(self.SettingPage)
         self.SettingPage.settingStack.setCurrentIndex(1)
         
-    def gotoConfirmPage(self):
+    def gotoConfirmPage(self, fileData):
+        self.ConfirmTranscribePage.fileTable.addFilesToTable(fileData)
         self.setCurrentWidget(self.ConfirmTranscribePage)
     
     def _initPage(self):
@@ -64,7 +66,7 @@ class MainStack(QStackedWidget):
         self.ApplySetProgressPage = ApplySetProgressPage.ApplySetProgressPage(self)
         self.ApplySetSuccessPage = ApplySetSuccessPage.ApplySetSuccessPage(self)
         self.ConfirmTranscribePage = ConfirmTranscribePage.ConfirmTranscribePage(self)
-        self.FileUploadPage = FileUploadPage.FileUploadPage(self.gotoConfirmPage)
+        self.FileUploadPage = FileUploadPage.FileUploadPage(self.gotoConfirmPage, self.filedata)
         self.SettingPage = SettingPage.SettingPage(self.settingdata, self)
         self.TranscribeProgressPage = TranscribeProgressPage.TranscribeProgressPage(self)
         self.TranscribeSuccessPage = TranscribeSuccessPage.TranscribeSuccessPage(self)
@@ -78,7 +80,7 @@ class MainStack(QStackedWidget):
         self.addWidget(self.TranscribeProgressPage)
         self.addWidget(self.TranscribeSuccessPage)
         self.addWidget(self.RecordPage)
-        self.setCurrentWidget(self.TranscribeSuccessPage)
+        self.setCurrentWidget(self.FileUploadPage)
         
     def _pageRedirect(self):
         """ initialize button click to page rediect functionality  """

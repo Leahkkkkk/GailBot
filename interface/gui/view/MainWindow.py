@@ -34,6 +34,7 @@ class MainWindow(QMainWindow):
         self, 
         controller: Controller, 
         settingdata: dict, 
+        filedata: dict
     ):
         """initialzie mainwindow object 
         
@@ -42,15 +43,17 @@ class MainWindow(QMainWindow):
             settingdata (dict)
             modelObj (Model)
         """
-        
         super().__init__()
-        self.setWindowTitle("My App")
+        self.setWindowTitle("GailBot")
         self.resize(900, 700)
         self.setMinimumSize(QSize(700, 600))
         self.setMaximumSize(QSize(1200, 900))
         self.resize(QSize(1000, 750))
         self.settingdata = settingdata
-        self.MainStack = MainStack.MainStack(self.settingdata, parent=self)
+        self.filedata = filedata
+        self.MainStack = MainStack.MainStack({"setting":self.settingdata, 
+                                              "file": self.filedata}, 
+                                             parent=self)
         self.setCentralWidget(self.MainStack)
         self.controller = controller
         self.StatusBar = StatusBar.StatusBar()
@@ -64,61 +67,7 @@ class MainWindow(QMainWindow):
         self._connectController()
 
     """ Functions provided to controller """
-    
-    def setFileModel(self, fileModelFull: QAbstractTableModel, 
-                           confirmModel: QAbstractTableModel,
-                           progressModel:QAbstractTableModel,
-                           successModel:QAbstractTableModel):
-        
-        self.MainStack.FileUploadPage.fileTable.setFileModel(fileModelFull, 
-                                                             self.showSettingPage, 
-                                                             self.createSettingPage, 
-                                                             self.deleteFun)
-        self.MainStack.ConfirmTranscribePage.fileTable.setFileModel(confirmModel,
-                                                             self.showSettingPage, 
-                                                             self.createSettingPage, 
-                                                             self.deleteFun)
-        self.MainStack.ConfirmTranscribePage.fileTable.addFirstAction(
-            self.MainStack.ConfirmTranscribePage.toggleFileDetail)
-        
-        self.MainStack.TranscribeProgressPage.fileTable.setFileModel(progressModel,
-                                                             self.showSettingPage, 
-                                                             self.createSettingPage, 
-                                                             self.deleteFun)
-        
-        self.MainStack.TranscribeSuccessPage.fileTable.setFileModel(successModel,
-                                                             self.showSettingPage, 
-                                                             self.createSettingPage, 
-                                                             self.deleteFun)
-      
-        self.MainStack.ApplySetProgressPage.fileTable.setFileModel(progressModel,
-                                                             self.showSettingPage, 
-                                                             self.createSettingPage, 
-                                                             self.deleteFun)
-        
-        self.MainStack.ApplySetSuccessPage.fileTable.setFileModel(successModel,
-                                                             self.showSettingPage, 
-                                                             self.createSettingPage, 
-                                                             self.deleteFun)
-    
-    def deleteFun(self,fileKey):
-        """ TODO: add function to delete file from file table """
-        self.controller.deleteFile(fileKey)
-        print(fileKey)
-    
-    def showSettingPage(self):
-        """ go to the  setting page 
-        TODO: add function to pass in setting data and reload the page dynamically 
-        """
-        self.MainStack.gotoSettingPage()
-   
-   
-    def createSettingPage(self):
-        """ got the setting page to create the new setting 
-        TODO: add function to load setting page as default setting page  
-        """
-        self.MainStack.gotoSettingPage()
-        
+
     def showTranscribeInProgress(self):
         """goes to transcribe in progress page"""
         self.MainStack.gotoTranscribeInProgress()
@@ -157,28 +106,7 @@ class MainWindow(QMainWindow):
         
     def _connectController(self):
         """ connect to controller """
-        self.MainStack.FileUploadPage.uploadFileBtn.clicked.connect(self._addfile)
         self.MainStack.ConfirmTranscribePage.confirmBtn.clicked.connect(self._transcribe)
-    
-    def _addfile(self):
-        """ add file to file database """
-        fileDialog = QFileDialog(self)
-        fileFilter = "*.txt *.wav *.png"
-        fileDialog.setNameFilter(fileFilter)
-        if fileDialog.exec():
-            file = fileDialog.selectedFiles()
-            if file:
-                path = fileDialog.directoryUrl().toString()
-                filePath = path[7:]
-                fileObj = FileItem(file[0], filePath,"Default")
-                key = self.controller.addFile(fileObj)
-                self.MainStack.FileUploadPage.fileTable.addActionWidget( 
-                                                            self.showSettingPage, 
-                                                            self.createSettingPage, 
-                                                            self.deleteFun,
-                                                            key = key)
-            else:
-                return None
     
     def _transcribe(self):
         """ call controller to transcribe audio file"""

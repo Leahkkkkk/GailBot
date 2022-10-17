@@ -9,13 +9,12 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
-from stat import filemode
 from view.style.styleValues import FontFamily, FontSize, Color
 from view.style.Background import initImgBackground
 from view.widgets import ( Label, 
                            Button, 
-                           FileTable,
-                           TableWidgets) 
+                           TableWidgets,
+                           FileTable) 
 
 
 from PyQt6.QtWidgets import (
@@ -53,8 +52,8 @@ class ConfirmTranscribePage(QWidget):
                                  FontSize.HEADER2, 
                                  FontFamily.MAIN)
         self.label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
-        self.fileTable = FileTable.confirmTable(self)
-        self.fileTable.setFixedHeight(65)
+        self.fileTable = FileTable.FileTable(FileTable.ConfirmHeader, {}, {"setting"})
+        self.fileTable.resizeCol(FileTable.ConfirmHeaderDimension)
         self.fileInfo = TableWidgets.FullFileDetailWidget()
         self.fileInfo.setMaximumHeight(700)
         self.bottomButton = QWidget()

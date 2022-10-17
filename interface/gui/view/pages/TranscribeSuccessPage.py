@@ -9,7 +9,6 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 from view.widgets import (
-    FileTable,
     Button,
     Label
 )
@@ -49,7 +48,7 @@ class TranscribeSuccessPage(QWidget):
                                         FontSize.BODY,
                                         FontFamily.OTHER)
         self.transcribedFiles.setContentsMargins(30,0,0,0)
-        self.fileTable = FileTable.successTable()
+        # self.fileTable = FileTable.successTable()
         self.moreBtn = Button.ColoredBtn("Process more files", Color.GREEN)
         self.returnBtn = Button.ColoredBtn("Return to main menu", Color.BLUEMEDIUM)
         self._initHorizontalLayout()
@@ -64,7 +63,7 @@ class TranscribeSuccessPage(QWidget):
         self.verticalLayout.addWidget(self.label)
         self.verticalLayout.addWidget(self.transcribedFiles)
         self.transcribedFiles.setContentsMargins(80,0,0,0)
-        self.verticalLayout.addWidget(self.fileTable,alignment = Qt.AlignmentFlag.AlignHCenter)
+        # self.verticalLayout.addWidget(self.fileTable,alignment = Qt.AlignmentFlag.AlignHCenter)
         self.verticalLayout.addStretch()
         self.verticalLayout.addWidget(self.horizontal)
         self.verticalLayout.addWidget(self.quitBtn,

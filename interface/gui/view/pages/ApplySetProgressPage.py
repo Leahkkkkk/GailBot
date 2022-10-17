@@ -12,7 +12,7 @@ import os
 
 from util import Path
 
-from view.widgets import Label, Button, FileTable
+from view.widgets import Label, Button
 from view.style.styleValues import Color, FontSize, FontFamily
 from view.style.Background import initImgBackground
 
@@ -54,7 +54,6 @@ class ApplySetProgressPage(QWidget):
         self.InProgress = Label.Label("Files in progress:", 
                                         FontSize.HEADER3,
                                         FontFamily.OTHER)
-        self.fileTable = FileTable.progressTable()
         self.cancelBtn = Button.ColoredBtn("Cancel", Color.ORANGE, FontSize.BTN)
         
     def _initLayout(self):
@@ -66,8 +65,8 @@ class ApplySetProgressPage(QWidget):
         self.verticalLayout.addWidget(self.loadIcon, alignment = Qt.AlignmentFlag.AlignHCenter)
         self.verticalLayout.addWidget(self.Formatting)
         self.verticalLayout.addWidget(self.InProgress)
-        self.verticalLayout.addWidget(self.fileTable, stretch=5,
-                                      alignment= Qt.AlignmentFlag.AlignCenter|Qt.AlignmentFlag.AlignTop)
+        # self.verticalLayout.addWidget(self.fileTable, stretch=5,
+        #                               alignment= Qt.AlignmentFlag.AlignCenter|Qt.AlignmentFlag.AlignTop)
         self.verticalLayout.addWidget(self.cancelBtn,
                                       alignment = Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignTop)
         
@@ -75,7 +74,6 @@ class ApplySetProgressPage(QWidget):
     def _initStyle(self):
         """ initialize style """
         """ styles loading icon movie """
-        #TODO: fix alignment of loading movie
         self.loadIcon.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.loadIcon.setFixedSize(QtCore.QSize(80, 80))
         self.loadIcon.setScaledContents(True)

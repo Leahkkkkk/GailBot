@@ -2,9 +2,7 @@ import os
 
 from view.components import MsgBox
 from view.widgets import (
-    Label, 
-    FileTable, 
-    TableWidgets, 
+    Label,   
     Button)
 from util import Path
 from view.widgets import Button
@@ -54,7 +52,7 @@ class TranscribeProgressPage(QWidget):
         self.InProgress = Label.Label("Files in progress:",
                                         FontSize.BODY,
                                         FontFamily.OTHER)
-        self.fileTable = FileTable.progressTable()
+        # self.fileTable = FileTable.progressTable()
         self.cancelBtn = Button.ColoredBtn("Cancel", Color.ORANGE, FontSize.BTN)
         
     def _initstyle(self):
@@ -78,15 +76,15 @@ class TranscribeProgressPage(QWidget):
                                       alignment = Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignTop)
         self.verticalLayout.addWidget(self.Formatting, alignment =Qt.AlignmentFlag.AlignTop)
         self.verticalLayout.addWidget(self.InProgress, alignment =Qt.AlignmentFlag.AlignTop)
-        self.verticalLayout.addWidget(self.fileTable, 
-                                      alignment= Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignTop)
+        # self.verticalLayout.addWidget(self.fileTable, 
+        #                               alignment= Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignTop)
         self.verticalLayout.addStretch()
         self.verticalLayout.addWidget(self.cancelBtn, 
                                       alignment = Qt.AlignmentFlag.AlignHCenter)
         self.verticalLayout.setSpacing(10)
         self.InProgress.setContentsMargins(80,0,0,0)
         self.loadIcon.setContentsMargins(0,0,0,0)
-        self.fileTable.setMaximumHeight(300)
+        # self.fileTable.setMaximumHeight(300)
         
 
     def _connectSignal(self):

@@ -25,8 +25,7 @@ class Model():
       self.SuccessedFileMode = FileModel.SuccessFileModel()
       self.SettingModel = SettingModel.SettingModel()
       
-      self.data = dict()
-      self.data = {
+      self.FileData = {
             "1": {
                 "Name": "hello.wav",
                 "Type": ".wav",

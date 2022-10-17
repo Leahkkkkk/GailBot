@@ -9,8 +9,6 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
-from this import d
-from xml.etree.ElementTree import TreeBuilder
 from view.widgets import Label, Button, FileTable
 from view.components import MsgBox
 from view.style.styleValues import (
@@ -26,6 +24,7 @@ from PyQt6.QtWidgets import (
     QWidget, 
     QPushButton, 
     QVBoxLayout,
+    QHBoxLayout,
     QTableView, 
     QVBoxLayout,
     QSpacerItem,
@@ -39,15 +38,12 @@ class Signals(QObject):
     """
     gotoSetting = pyqtSignal()
     
-
-            
-            
 class FileUploadPage(QWidget):
-    def __init__(self, nextStep:callable, *args, **kwargs) -> None:
+    def __init__(self, nextStep:callable, filedata:dict, *args, **kwargs) -> None:
         """ file upload page """
         super().__init__(*args, **kwargs)
         self.nextStep = nextStep
-        self.hideBtn = True
+        self.filedata = filedata
         self._initWidget()
         self._initLayout()
         self._initStyle()
@@ -59,26 +55,24 @@ class FileUploadPage(QWidget):
                                  FontSize.HEADER2, 
                                  FontFamily.MAIN)
         self.gotoMainBtn = Button.iconBtn("arrow.png"," Return to Main Menu")
-        self.addFileBtn = Button.ColoredBtn("Add File", 
-                                            Color.BLUEMEDIUM,
-                                            FontSize.SMALL)
         
         self.recordBtn = Button.ColoredBtn("Record live", 
                                            Color.BLUEMEDIUM,
-                                           FontSize.SMALL)
+                                           FontSize.BTN)
         
         self.uploadFileBtn = Button.ColoredBtn("Add From Device", 
                                                Color.BLUEMEDIUM, 
-                                               FontSize.SMALL)
-        self.recordBtn.hide()
-        self.uploadFileBtn.hide()
+                                               FontSize.BTN)
+                               
+
         self.transcribeBtn = Button.ColoredBtn("Transcribe", 
                                                Color.GREYMEDIUM1, 
                                                FontSize.BTN)
-        self.addFileBtn.setFixedSize(Dimension.MEDIUMBUTTON)
-        self.recordBtn.setFixedSize(Dimension.MEDIUMBUTTON)
-        self.uploadFileBtn.setFixedSize(Dimension.MEDIUMBUTTON)
+       
+        self.recordBtn.setFixedSize(Dimension.RBUTTON)
+        self.uploadFileBtn.setFixedSize(Dimension.RBUTTON)
         self.transcribeBtn.setFixedSize(Dimension.BGBUTTON)
+        
         self.settingProfile = Button.dropDownButton("Settings Profile", 
                                                     ["Default Settings",
                                                      "Coffee Setting", 
@@ -86,9 +80,13 @@ class FileUploadPage(QWidget):
                                                     [self.goToSettingFun, 
                                                      self.goToSettingFun,
                                                      self.goToSettingFun])
-        self.fileTable = FileTable.FileTable()
+      
+      
+        self.fileTable = FileTable.FileTable(FileTable.MainTableHeader, self.filedata)
+        self.fileTable.resizeCol(FileTable.MainTableDimension)
         self.transcribeBtn.clicked.connect(self.transcribe)
-        self.addFileBtn.clicked.connect(self._toggleBtn)
+        self.uploadFileBtn.clicked.connect(self.fileTable.getFile)
+        
     
     def goToSettingFun(self):
         self.signals.gotoSetting.emit()
@@ -102,26 +100,25 @@ class FileUploadPage(QWidget):
                                       alignment = Qt.AlignmentFlag.AlignLeft)
         self.verticalLayout.addWidget(self.label, 
                                       alignment = Qt.AlignmentFlag.AlignHCenter)
+        
         self.verticalLayout.addWidget(self.settingProfile,
                                       alignment=Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignTop)
-        self.verticalLayout.addWidget(self.fileTable,4,
+        self.verticalLayout.addWidget(self.fileTable, 4,
                                       alignment = Qt.AlignmentFlag.AlignHCenter)
         self.spacer = QSpacerItem(500,70)
         self.verticalLayout.addItem(self.spacer)
         
         self.addFileBtnContainer = QWidget(self)
-        self.containerLayout = QVBoxLayout()
+        self.containerLayout = QHBoxLayout()
         self.addFileBtnContainer.setLayout(self.containerLayout)
-        self.containerLayout.setSpacing(2)
+        self.containerLayout.setSpacing(60)
         
         
-        self.containerLayout.addWidget(self.addFileBtn,
-                                      alignment = Qt.AlignmentFlag.AlignHCenter)
         self.containerLayout.addWidget(self.uploadFileBtn,
                                       alignment = Qt.AlignmentFlag.AlignHCenter)
+        
         self.containerLayout.addWidget(self.recordBtn,
                                        alignment = Qt.AlignmentFlag.AlignHCenter)
-        self.containerLayout.addStretch()
         
         self.verticalLayout.addWidget(self.addFileBtnContainer,
                                        alignment = Qt.AlignmentFlag.AlignHCenter)
@@ -136,18 +133,7 @@ class FileUploadPage(QWidget):
         self.gotoMainBtn.setFixedSize(QSize(200,40))
         self.gotoMainBtn.setStyleSheet(f"border:none; color:{Color.BLUEMEDIUM}")
     
-    def _toggleBtn(self):
-        if self.hideBtn:
-            self.recordBtn.show()
-            self.uploadFileBtn.show()
-        else:
-            self.recordBtn.hide()
-            self.uploadFileBtn.hide()
-        self.hideBtn = not self.hideBtn
    
     def transcribe(self):
-        indices = self.fileTable.selectedIndexes()
-        if indices:
-            self.nextStep()
-        else:
-            self.messageBox = MsgBox.WarnBox("No Files Selected")
+        self.nextStep(self.fileTable.transcribe())
+       
