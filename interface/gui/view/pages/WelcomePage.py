@@ -211,11 +211,11 @@ class WelcomePage(QWidget):
         linkTemplate = "<a href={0}>{1}</a>"
         self.ResourcesText = Label.Label("Resources",FontSize.HEADER2, FontFamily.OTHER)
         self.ResourcesText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
-        tutorialLink = linkTemplate.format("https://hrilab.tufts.edu", "GailBot Beginner Tutorial")
+        tutorialLink = linkTemplate.format("https://sites.tufts.edu/hilab/", "GailBot Beginner Tutorial")
         self.TutorialText = Label.Label(tutorialLink, FontSize.LINK,
                                         FontFamily.OTHER, Color.BLUEMEDIUM,
                                         "text-decoration: underline;", link=True)
-        guideLink = linkTemplate.format("https://hrilab.tufts.edu", "GailBot Settings Guide")
+        guideLink = linkTemplate.format("https://sites.tufts.edu/hilab/", "GailBot Settings Guide")
         self.GuideText = Label.Label(guideLink,FontSize.LINK, 
                                         FontFamily.OTHER, Color.BLUEMEDIUM,
                                         "text-decoration: underline;")

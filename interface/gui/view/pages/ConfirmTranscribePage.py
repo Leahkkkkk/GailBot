@@ -16,7 +16,7 @@ from view.widgets import ( Label,
                            Button, 
                            FileTable,
                            TableWidgets) 
-
+from view.components import MsgBox
 
 from PyQt6.QtWidgets import (
     QWidget, 
@@ -32,12 +32,14 @@ from PyQt6.QtCore import Qt
 
 class ConfirmTranscribePage(QWidget):
     """ Confirm transcription page """
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, parent, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self._initWidget()
         self._initLayout()
         self._initStyle()
         self.showFileDetail = True
+        self._connectSignal()
+        self.parent = parent
     
     def toggleFileDetail(self):
         if self.showFileDetail:
@@ -94,4 +96,11 @@ class ConfirmTranscribePage(QWidget):
         self.cancelBtn.setMinimumSize(QtCore.QSize(150,30))
     
   
-   
+    def _connectSignal(self):
+        """ connects signal """
+        self.cancelBtn.clicked.connect(self._confirm)
+        
+    def _confirm(self):
+        """ handles confirm transcription message box """
+        self.confirmCancel = MsgBox.ConfirmBox("Confirm cancellation?", 
+                                               self.parent.confirmCancel)
