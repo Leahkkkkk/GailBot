@@ -59,6 +59,7 @@ class ConfirmTranscribePage(QWidget):
         self.fileTable = FileTable.FileTable(FileTable.ConfirmHeader, {}, {"setting"})
         self.fileTable.resizeCol(FileTable.ConfirmHeaderDimension)
         self.fileInfo = TableWidgets.FullFileDetailWidget()
+        self.fileInfo.hide() #TODO: delete this eventually
         self.fileInfo.setMaximumHeight(700)
         self.bottomButton = QWidget()
         self.confirmBtn = Button.ColoredBtn("Confirm", Color.GREEN)

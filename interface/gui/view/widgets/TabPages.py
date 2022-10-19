@@ -12,16 +12,20 @@ import logging
 import datetime
 from typing import List, TypedDict
 from os import stat
-from view.style.Background import initBackground
 
-from view.style.Background import Background 
-from view.style.styleValues import Color
+from view.widgets.Button import ColoredBtn, BorderBtn
+from view.widgets.Label import Label
+from view.style.Background import initBackground
+from view.style.styleValues import Color, FontFamily, FontSize
+from view.style.widgetStyleSheet import buttonStyle
 
 from PyQt6.QtWidgets import (
     QWidget, 
     QFileDialog, 
     QPushButton, 
+    QLineEdit,
     QVBoxLayout, 
+    QHBoxLayout,
     QLabel,
     QComboBox)
 from PyQt6.QtCore import pyqtSignal, QObject, QSize
@@ -42,8 +46,10 @@ class Profile(TypedDict):
 
 class Signals(QObject):
     """ contain signals to communicate with the parent tab """
-    nextPage = pyqtSignal(int)
+    nextPage = pyqtSignal()
+    previousPage = pyqtSignal()
     close = pyqtSignal()
+
 
 class OpenFile(QWidget):
     """  for user to select file from their directory """
@@ -51,11 +57,11 @@ class OpenFile(QWidget):
         super().__init__(*args, **kwargs)
         self.fullName = None 
         self.fileType = None
-        self.fileBtn = QPushButton("Choose File")
-        self.dirBtn = QPushButton("Choose Directory")
+        self.filePathDisplay = QLineEdit(self)
+        self.filePathDisplay.setReadOnly(True)
+        self.fileBtn = ColoredBtn("choose file", Color.BLUEMEDIUM)
         self.signals = Signals()
         self.fileBtn.clicked.connect(self._addFile)
-        self.dirBtn.clicked.connect(self._addDir)
         self._initLayout()
     
     def _addFile(self):
@@ -63,34 +69,24 @@ class OpenFile(QWidget):
         fileDialog = QFileDialog(self)
         fileFilter = "*.txt *.wav *.png"
         fileDialog.setNameFilter(fileFilter)
+        fileDialog.setFileMode(QFileDialog.FileMode.AnyFile)
         filename = fileDialog.getOpenFileName()
-        print(filename)
         if filename[0] != "":
-            self.signals.nextPage.emit(1)
             self.fullName = filename[0]
             print(filename[0])
             self.fileType = "🔈"
+            self.filePathDisplay.setText(filename[0])
+            self.signals.nextPage.emit()
         else:
             logging.warn("No File Chosen")
-    
-    def _addDir(self):
-        """ open a file dialog for user to select a folder """
-        fileDialog = QFileDialog()
-        outPath = fileDialog.getExistingDirectory(None, "Select Folder")
-        if outPath != "":
-            self.signals.nextPage.emit(1)
-            self.fullName = outPath
-            self.fileType = "📁"
-        else:
-            logging.warn("No File Chosen")
-            
 
     def _initLayout(self):
-        self.layout = QVBoxLayout(self)
+        self.layout = QHBoxLayout(self)
         self.setLayout(self.layout)
+        self.layout.addWidget(self.filePathDisplay)
         self.layout.addWidget(self.fileBtn)
-        self.layout.addWidget(self.dirBtn)
-    
+        self.fileBtn.setFixedSize(QSize(100,30))
+        
     def getFile(self) -> FileData:
         if not self.fullName or not self.fileType:
             logging.error("File is not found")
@@ -115,26 +111,28 @@ class ChooseSet(QWidget):
     def __init__(self, settings: List[str], *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         print(settings)
-        self.setFixedSize(QSize(250,250))
         self.profile = settings[0]
         self.settings = settings
         self.signals = Signals()
         self._initWidget()
         self._initLayout()
+        self.setAutoFillBackground(True)
         
     def _initWidget(self):
-        self.label = QLabel("select setting profile", self)
+        self.label = Label("select setting profile", FontSize.HEADER3 )
         self.selectSettings = QComboBox(self)
         self.selectSettings.addItems(self.settings)
-        self.confirmBtn = QPushButton("confirm", self)
+        self.selectSettings.setCurrentText("None")
+        self.confirmBtn = ColoredBtn("confirm", Color.GREEN)
         self.selectSettings.currentTextChanged.connect(self._updateSettings)
         self.confirmBtn.clicked.connect(self._updatePageState)
     
     def _initLayout(self):
-        self.layout = QVBoxLayout()
+        self.layout = QHBoxLayout()
         self.setLayout(self.layout)
         self.layout.addWidget(self.label)
         self.layout.addWidget(self.selectSettings)
+        self.layout.addWidget(self.confirmBtn)
         
     def _updateSettings(self, setting):
         if setting:
@@ -142,7 +140,7 @@ class ChooseSet(QWidget):
             
     def _updatePageState(self):
         if self.profile:
-            self.signals.nextPage.emit(2)
+            self.signals.nextPage.emit()
         else:
             logging.warn("the profile is not chosen")
             
@@ -164,34 +162,36 @@ class ChooseOutPut(QWidget):
         self._initLayout()
         
     def _iniWidget(self):
-        self.chooseDirBtn = QPushButton("choose output directory")
-        self.submitBtn = QPushButton("confirm to add")
+        self.chooseDirBtn = ColoredBtn("choose output directory", Color.BLUEMEDIUM)
+        self.dirPathText = QLineEdit(self)
+        self.dirPathText.setReadOnly(True)
         self.chooseDirBtn.clicked.connect(self._addDir)
-        self.submitBtn.clicked.connect(self._confirm)
         
-    
     def _initLayout(self):
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
+        self.layout.addWidget(self.dirPathText)
         self.layout.addWidget(self.chooseDirBtn)
-        self.layout.addWidget(self.submitBtn)
     
     def _addDir(self):
         fileDialog = QFileDialog()
         outPath = fileDialog.getExistingDirectory(None, "Select Folder")
         if outPath:
             self.outPath = outPath
+            self.signals.close.emit()
+            self.dirPathText.setText(outPath)
         else: 
             logging.warn("No ouput directory is chosen")
     
-    def _confirm(self):
-        if not self.outPath:
-            logging.error("No output path is choosen")
-        else:
-            self.signals.close.emit()
     
     def getOutputPath(self) -> OutputPath:
         """ return the selected output path """
         if not self.outPath:
             logging.error("No output direcory was chosen")
         return {"Output": self.outPath}
+
+
+
+
+
+        

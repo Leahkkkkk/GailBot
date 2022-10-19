@@ -8,8 +8,15 @@ Last Modified: Thursday, 6th October 2022 1:44:39 pm
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
+
+""" TODO: create functions to load the form values
+    TODO: create functions to disable editing 
+    TODO: create functiosn to retrieve form data
+"""
+from typing import Dict
+
 from view.style.styleValues import Color
-from view.widgets import ToggleView, Label, Button
+from view.widgets import ToggleView
 
 from PyQt6.QtWidgets import (
     QComboBox, 
@@ -24,11 +31,10 @@ class DynamicNDependentCombo(QWidget):
     """ Generate a dynamic list of combobox
     
     Args:
-        data (dict): a dictionary that stores settings with depended logic 
-                     between key setting and values 
+        data (dict): a dictionary that stores the dependent logic 
     
     """
-    def __init__(self, data:dict, *args, **kwargs) -> None:
+    def __init__(self, data:Dict[str, dict], *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.data = data
         self._initWidget()
@@ -67,7 +73,7 @@ class DynamicNDependentCombo(QWidget):
         self.layout.addWidget(self.toggleList)
         self.layout.setSpacing(0)
         self.layout.addStretch()
-        
+    
         
 class ToggleList(QWidget):
     """ generate a list of toggle view, 
@@ -76,7 +82,7 @@ class ToggleList(QWidget):
                         the key is the label, the value is another dictionay
                         that will be used to construct a combolist
     """
-    def __init__(self, data:dict, *args, **kwargs) -> None:
+    def __init__(self, data:Dict[str, dict], *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.data = data 
         self._initWidget()
@@ -108,6 +114,9 @@ class ToggleList(QWidget):
             self.layout.addWidget(toggleView)
         self.layout.addStretch()
             
+
+
+
 class UserForm(QWidget):
     """ class for user form """
     def __init__(self, *args, **kwargs) -> None:
@@ -134,7 +143,7 @@ class ComboList(QWidget):
                     the value is a list of string that stores combobox items
     
     """
-    def __init__(self, data:dict, *args, **kwargs) -> None:
+    def __init__(self, data:Dict[str, str], *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.data = data
         self._initWidget()

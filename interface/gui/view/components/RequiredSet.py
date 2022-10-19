@@ -35,8 +35,9 @@ class RequiredSet(QWidget):
         self.verticalLayout = QVBoxLayout()
         self.setLayout(self.verticalLayout)
         """ add widget to layout """
-        self.verticalLayout.addWidget(self.engineSet, alignment=Qt.AlignmentFlag.AlignAbsolute)
-        self.verticalLayout.addWidget(self.outPutSet, alignment=Qt.AlignmentFlag.AlignAbsolute)  
+        self.verticalLayout.addWidget(self.engineSet, alignment=Qt.AlignmentFlag.AlignTop)
+        self.verticalLayout.addWidget(self.outPutSet, alignment=Qt.AlignmentFlag.AlignTop)  
+        self.verticalLayout.addStretch()
     
     def submitForm(self):
         """ TODO: add user validation """

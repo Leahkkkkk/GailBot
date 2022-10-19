@@ -67,7 +67,6 @@ class ToggleView(QWidget):
         self.scroll.setMaximumWidth(650)
         self.scroll.setMinimumHeight(100)
         self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
-        self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
         self.scroll.setWidgetResizable(True)
         self.scroll.setWidget(self.view)
         self.setObjectName("viewWrapper")

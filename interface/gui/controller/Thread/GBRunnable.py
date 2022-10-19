@@ -67,7 +67,6 @@ def get_settings_dict():
                 "watson_language_customization_id": "",
                 "watson_base_language_model": WATSON_BASE_LANG_MODEL,
                 "watson_region": WATSON_REGION,
-
             }
         }
     }

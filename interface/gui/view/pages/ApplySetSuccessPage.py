@@ -43,7 +43,6 @@ class ApplySetSuccessPage(QWidget):
                                 FontFamily.OTHER)
         self.moreBtn = Button.ColoredBtn("Process more files", Color.GREEN)
         self.returnBtn = Button.ColoredBtn("Return to main menu", Color.BLUEMEDIUM)
-        self.quitBtn = Button.ColoredBtn("Quit Gailbot", Color.ORANGE)
         self.fileTable = FileTable.FileTable(FileTable.SuccessHeader, {}, {})
         self.fileTable.resizeCol(FileTable.SuccessDimension)
 
@@ -56,8 +55,6 @@ class ApplySetSuccessPage(QWidget):
         self.verticalLayout.addWidget(self.filesAndLocations)
         self.verticalLayout.addWidget(self.fileTable)
         self.verticalLayout.addWidget(self.horizontal)
-        self.verticalLayout.addWidget(self.quitBtn, 4, 
-                                      alignment = Qt.AlignmentFlag.AlignHCenter)
 
     def _initHorizontalLayout(self):
         #TODO: make buttons closer together
@@ -72,4 +69,3 @@ class ApplySetSuccessPage(QWidget):
         initImgBackground(self,"backgroundSubPages.png")
         self.moreBtn.setMinimumSize(QtCore.QSize(150,30))
         self.returnBtn.setMinimumSize(QtCore.QSize(150,30))
-        self.quitBtn.setMinimumSize(QtCore.QSize(150,30))

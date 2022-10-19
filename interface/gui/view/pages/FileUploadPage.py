@@ -8,10 +8,21 @@ Last Modified: Thursday, 6th October 2022 11:08:37 am
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
+
+""" 
+TODO: add file summary widget 
+TODO: add search bar 
+TODO: add "NO files added" text
+
+"""
 from typing import List, Dict
 
-from view.widgets import Label, Button, FileTable, TabPages
+from view.widgets import Label, Button, FileTable
+from view.style.styleValues import Color
+from view.style.widgetStyleSheet import buttonStyle
+
 from view.components import MsgBox
+
 from view.style.styleValues import (
     FontFamily, 
     FontSize, 
@@ -20,18 +31,14 @@ from view.style.styleValues import (
 )
 
 from view.style.Background import initImgBackground
-
 from PyQt6.QtWidgets import (
     QWidget, 
-    QPushButton, 
     QVBoxLayout,
     QHBoxLayout,
-    QTableView, 
     QVBoxLayout,
     QSpacerItem,
-    QSizePolicy,
-    QDialog
 )
+
 from PyQt6.QtCore import Qt, QSize, pyqtSignal,QObject
 
 class Signals(QObject):
@@ -42,13 +49,11 @@ class Signals(QObject):
     
 class FileUploadPage(QWidget):
     def __init__(self, 
-                 nextStep:callable, 
                  fileDate: Dict[str, dict], 
                  settingData: List[str],
                  *args, **kwargs) -> None:
         """ file upload page """
         super().__init__(*args, **kwargs)
-        self.nextStep = nextStep
         self.fileDate = fileDate
         self.settingData = settingData
         self._initWidget()
@@ -61,8 +66,7 @@ class FileUploadPage(QWidget):
         self.label = Label.Label("File to Transcribe", 
                                  FontSize.HEADER2, 
                                  FontFamily.MAIN)
-        self.gotoMainBtn = Button.iconBtn("arrow.png"," Return to Main Menu")
-        
+        self.gotoMainBtn = Button.iconBtn("arrow.png"," Return to Main Menu") 
         self.recordBtn = Button.ColoredBtn("Record live", 
                                            Color.BLUEMEDIUM,
                                            FontSize.BTN)
@@ -90,10 +94,12 @@ class FileUploadPage(QWidget):
                                              self.settingData)
         
         self.fileTable.resizeCol(FileTable.MainTableDimension)
-        self.transcribeBtn.clicked.connect(self.transcribe)
+        self.transcribeBtn.clicked.connect(lambda: self.fileTable.getTransferData())
         self.uploadFileBtn.clicked.connect(self.fileTable.getFile)
+        self.fileTable.signals.nonZeroFile.connect(self._allowTranscribe)
+        self.fileTable.signals.ZeroFile.connect(self._disallowTranscribe)
+        self._disallowTranscribe()
         
-    
     def goToSettingFun(self):
         self.signals.gotoSetting.emit()
         
@@ -108,7 +114,8 @@ class FileUploadPage(QWidget):
                                       alignment = Qt.AlignmentFlag.AlignHCenter)
         
         self.verticalLayout.addWidget(self.settingProfile,
-                                      alignment=Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignTop)
+                                      alignment=Qt.AlignmentFlag.AlignRight|
+                                      Qt.AlignmentFlag.AlignTop)
         self.verticalLayout.addWidget(self.fileTable, 4,
                                       alignment = Qt.AlignmentFlag.AlignHCenter)
         self.spacer = QSpacerItem(500,70)
@@ -139,7 +146,16 @@ class FileUploadPage(QWidget):
         self.gotoMainBtn.setFixedSize(QSize(200,40))
         self.gotoMainBtn.setStyleSheet(f"border:none; color:{Color.BLUEMEDIUM}")
     
+    def _allowTranscribe(self):
+        self.transcribeBtn.setEnabled(True)
+        """ TODO : add stylesheet data to separate file """
+        self.transcribeBtn.setStyleSheet(buttonStyle.ButtonActive)
+        
+    
+    def _disallowTranscribe(self):
+        self.transcribeBtn.setDisabled(True)
+        self.transcribeBtn.setStyleSheet(buttonStyle.ButtonInactive)
+        
    
-    def transcribe(self):
-        self.nextStep(self.fileTable.transcribe())
-       
+    
+    

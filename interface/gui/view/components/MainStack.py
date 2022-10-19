@@ -20,9 +20,12 @@ from view.pages import (
         TranscribeSuccessPage,
         RecordPage
 )
+from view.widgets.FileTable import (
+    FileTable
+)
 from view.style.styleValues import Dimension
 
-from PyQt6.QtWidgets import QStackedWidget 
+from PyQt6.QtWidgets import QStackedWidget
 
 
 class MainStack(QStackedWidget):
@@ -36,14 +39,20 @@ class MainStack(QStackedWidget):
         self._initPage()
         self._pageRedirect()
     
-    def gotoTranscribeInProgress(self):
+    
+    def gotoTranscribeInProgress(self, fileData : dict = None):
         """ redirect to transcribe in progress page """
         self.TranscribeProgressPage.IconImg.start()
         self.setCurrentWidget(self.TranscribeProgressPage)
+        if fileData:
+            self._setTable(self.TranscribeProgressPage.fileTable, fileData)
+            
     
-    def gotoTranscribeSuccess(self):
+    def gotoTranscribeSuccess(self, fileData: dict = None):
         """ redirect to transcribe success page """
         self.setCurrentWidget(self.TranscribeSuccessPage)
+        if fileData:
+            self._setTable(self.TranscribeSuccessPage.fileTable, fileData)
         
     def gotoFileUploadPage(self):
         """ redirect to go to file upload page """
@@ -54,22 +63,26 @@ class MainStack(QStackedWidget):
         self.parent.confirmCancel()
     
     def gotoSettingPage(self, setting:str = None):
+        """ go to setting page with the setting data """
         self.setCurrentWidget(self.SettingPage)
         self.SettingPage.settingStack.setCurrentIndex(1)
         if setting:
             self.SettingPage.selectSettings.setCurrentText(setting)
         
     def gotoConfirmPage(self, fileData):
-        self.ConfirmTranscribePage.fileTable.clearAll()
-        self.ConfirmTranscribePage.fileTable.addFilesToTable(fileData)
-        self.TranscribeProgressPage.fileTable.clearAll()
-        self.TranscribeProgressPage.fileTable.addFilesToTable(fileData)
+        """ TODO: make separate function to transcribe data to different table """
+        self._setTable(self.ConfirmTranscribePage.fileTable, fileData)
+        self._setTable(self.TranscribeProgressPage.fileTable, fileData)
         successData = dict(fileData)
         for items in successData.values():
             items["Status"] = "Transcribed"
-        self.TranscribeSuccessPage.fileTable.clearAll()
-        self.TranscribeSuccessPage.fileTable.addFilesToTable(successData)
+            
+        self._setTable(self.TranscribeSuccessPage.fileTable, fileData)
         self.setCurrentWidget(self.ConfirmTranscribePage)
+    
+    def _setTable(self, table:FileTable, fileData: dict):
+        table.clearAll()
+        table.addFilesToTable(fileData)
     
     def _initPage(self):
         """ initialize all pages on stack widget  """
@@ -77,8 +90,7 @@ class MainStack(QStackedWidget):
         self.ApplySetProgressPage = ApplySetProgressPage.ApplySetProgressPage(self)
         self.ApplySetSuccessPage = ApplySetSuccessPage.ApplySetSuccessPage(self)
         self.ConfirmTranscribePage = ConfirmTranscribePage.ConfirmTranscribePage(self)
-        self.FileUploadPage = FileUploadPage.FileUploadPage(self.gotoConfirmPage, 
-                                                            self.filedata, 
+        self.FileUploadPage = FileUploadPage.FileUploadPage(self.filedata, 
                                                             list(self.settingdata.keys()))
         self.SettingPage = SettingPage.SettingPage(self.settingdata, self)
         self.TranscribeProgressPage = TranscribeProgressPage.TranscribeProgressPage(self)
@@ -116,8 +128,13 @@ class MainStack(QStackedWidget):
         self.ConfirmTranscribePage.cancelBtn.clicked.connect(lambda:
             self.setCurrentWidget(self.FileUploadPage))
         self.FileUploadPage.fileTable.signals.goSetting.connect(self.gotoSettingPage)
+        self.FileUploadPage.fileTable.signals.sendFile.connect(self.gotoConfirmPage)
+        self.ConfirmTranscribePage.fileTable.signals.sendFile.connect(self.gotoTranscribeInProgress)
+        self.TranscribeProgressPage.fileTable.signals.sendFile.connect(self.gotoTranscribeSuccess)
         self.ConfirmTranscribePage.fileTable.signals.goSetting.connect(self.gotoSettingPage)
         
+        
+        """ TODO: change this to a pop up instead of redirect """
         self.FileUploadPage.signals.gotoSetting.connect(self.gotoSettingPage)
         
     

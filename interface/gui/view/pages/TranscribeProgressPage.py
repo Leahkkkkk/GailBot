@@ -9,6 +9,7 @@ from util import Path
 from view.widgets import Button
 from view.style.styleValues import Color, FontSize, Dimension, FontFamily
 from view.style.Background import initImgBackground
+from view.Text.TranscribeProgressPageText import TranscribeProgressText
 
 
 from PyQt6.QtWidgets import QLabel, QVBoxLayout, QWidget
@@ -37,7 +38,7 @@ class TranscribeProgressPage(QWidget):
         
     def _initWidget(self):
         """ initialize widgets """
-        self.label = Label.Label("Transcription in Progress",
+        self.label = Label.Label(TranscribeProgressText.mainLabelText,
                                  FontSize.HEADER1, 
                                  FontFamily.MAIN)
         self.label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
@@ -46,14 +47,14 @@ class TranscribeProgressPage(QWidget):
         self.loadIcon.setMovie(self.IconImg)
         self.loadStart()
        
-        self.Formatting = Label.Label("Formatting file headers...",
+        self.loadingText = Label.Label(TranscribeProgressText.loadingText,
                                       FontSize.SMALL,
                                       FontFamily.OTHER)
-        self.Formatting.setAlignment(Qt.AlignmentFlag.AlignHCenter)
-        self.InProgress = Label.Label("Files in progress:",
+        self.loadingText.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+        self.InProgress = Label.Label(TranscribeProgressText.inProgressText,
                                         FontSize.BODY,
                                         FontFamily.OTHER)
-        self.cancelBtn = Button.ColoredBtn("Cancel", Color.ORANGE, FontSize.BTN)
+        self.cancelBtn = Button.ColoredBtn(TranscribeProgressText.cancelText, Color.ORANGE, FontSize.BTN)
         self.fileTable = FileTable.FileTable(FileTable.ProgressHeader, {}, {})
         self.fileTable.resizeCol(FileTable.ProgressDimension)
         
@@ -76,7 +77,7 @@ class TranscribeProgressPage(QWidget):
         self.label.setContentsMargins(0,20,0,0)
         self.verticalLayout.addWidget(self.loadIcon, 
                                       alignment = Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignTop)
-        self.verticalLayout.addWidget(self.Formatting, alignment =Qt.AlignmentFlag.AlignTop)
+        self.verticalLayout.addWidget(self.loadingText, alignment =Qt.AlignmentFlag.AlignTop)
         self.verticalLayout.addWidget(self.InProgress, alignment =Qt.AlignmentFlag.AlignTop)
         self.verticalLayout.addWidget(self.fileTable, 
                                       alignment= Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignTop)

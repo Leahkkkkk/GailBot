@@ -9,16 +9,25 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
+""" TODO: add function to change data on the table by cell; 
+    TODO: change transribe status, pass a file key and change the transcribe status
+    TODO: change the type value to be displayed as icons 
+    TODO: pop up window for setting details
+    TODO: **sorting function
+    TODO: **searching function 
+    TODO: **
+"""
 
 # from view.widgets import (Label, Button)
 # from view.style.styleValues import Color, FontFamily, FontSize
 
 import logging
 
-from typing import Dict, List, Set, TypedDict, Tuple
+from typing import Dict, List, Set, TypedDict
 
 from view.widgets.FileTab import ChooseFileTab
 from view.widgets.TabPages import ChooseSet
+from view.style.styleValues import Color
 
 from PyQt6.QtWidgets import (
     QTableWidget, 
@@ -29,7 +38,6 @@ from PyQt6.QtWidgets import (
     QCheckBox,
     QPushButton,
     QVBoxLayout, 
-    QHBoxLayout, 
     QDialog
 )
 
@@ -73,8 +81,8 @@ class DisplayFile(QObject):
             gosetFun:callable: function to view the setting
         """
         super().__init__(*args, **kwargs)
-        self.pin = pin
-        self.key = key
+        self.pin = pin  # to localize the file on the table
+        self.key = key  # to localize the flle on the actual data base 
         self.table = table
         self.selectFun = selectFun
         self.unselectFun = unselectFun
@@ -99,9 +107,9 @@ class DisplayFile(QObject):
     
     def checkStateChanged(self, state:bool):
         if state:
-            self.selectFun(self.key)
+            self.selectFun(self.key, self.pin)
         else:
-            self.unselectFun(self.key)
+            self.unselectFun(self.key, self.pin)
             
     def setCheckState(self, state):
         if state:
@@ -111,8 +119,13 @@ class DisplayFile(QObject):
             
     def addWidgetToTable(self, row, rowWidgets: Set[str]):
         if "select" in rowWidgets:
+            firstCell = QTableWidgetItem()
+            self.table.setItem(row, 0, firstCell, )
             self.table.setCellWidget(row, 0, self.checkBox)
         if "setting" in rowWidgets or "delete" in rowWidgets:
+            lastCell = QTableWidgetItem()
+            self.table.setItem(row,self.table.columnCount() - 1, lastCell)
+            
             self.table.setCellWidget(row, self.table.columnCount()- 1, self.Action)
         if "delete" not in rowWidgets:
             self.deleteBtn.hide()
@@ -124,6 +137,9 @@ class DisplayFile(QObject):
 class Signals(QObject):
     goSetting = pyqtSignal(str)
     changeSetting = pyqtSignal(list)
+    nonZeroFile = pyqtSignal()
+    ZeroFile = pyqtSignal()
+    sendFile = pyqtSignal(object)
 
 
 class changeProfileDialog(QDialog):
@@ -146,10 +162,11 @@ class changeProfileDialog(QDialog):
         self.close()
     
 class FileTable(QTableWidget):
+    """ TODO: update setting keys """
     def __init__(self, 
                  headers: List[str], 
                  filedata: Dict[str, fileObject], 
-                 rowWidgets: Set[str]  = {"delete", "setting", "select"},
+                 rowWidgets: Set[str]  = {"delete", "setting", "select"}, # TODO: improve 
                  settings: List[str] = ["default"],  
                  *args, 
                  **kwargs):
@@ -170,9 +187,9 @@ class FileTable(QTableWidget):
         self.settings = settings
         self.pinFileData = dict()       # used to track file's position on 
                                         # table by pin
-        self.transcribeList: List[str] = []   
+        self.transferList: List[str] = []   
                                         # a list of keys of the file that will
-                                        #  be transcribed, 
+                                        #  be transferred to the next state, 
                                    
         self.fileWidgets: Dict[str, DisplayFile] = dict()      
                                         # a dictionary to keep track of current
@@ -189,6 +206,7 @@ class FileTable(QTableWidget):
     
         self._initializeTable()
     
+    
     def resizeCol(self, widths:List[int]) -> None:
         """ takes in a list of width and resize the width of the each 
             column to the width
@@ -204,6 +222,7 @@ class FileTable(QTableWidget):
         for i in range(self.rowCount()):
             self.removeRow(i)
     
+    
     def addFilesToTable(self, fileData: Dict[str, fileObject])->None:
         """ take fileData with multiple files and add to the table
         """
@@ -213,23 +232,18 @@ class FileTable(QTableWidget):
             self.filedata[key] = item
         self.resizeRowsToContents()          
         
-    
+        
     def _initializeTable(self) -> None:
         """ Initialize the table """
         self._setFileHeader()     # set file header 
         self._setFileData()                   # set initial file data
         self._initStyle()
-        self.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)   # TODO: set the selection color of the file table 
-        
-        
+        self.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)   # TODO: set the selection color of the file table 
+       
     def _initStyle(self) -> None:
         self.horizontalHeader().setFixedHeight(45)
         for i in range(self.columnCount()):
             self.horizontalHeader().setSectionResizeMode(i,QHeaderView.ResizeMode.Fixed)
-        self.horizontalHeader().setStyleSheet("font-size:14px;")
-        self.setStyleSheet("selection-background-color: #f0f9f6;"
-                           "selection-color:black")  # TODO: change to color to var
-        self.verticalHeader().setStyleSheet("background-color: #f0f9f6 ")
         self.setFixedWidth(900)
         self.setMaximumHeight(300)
         
@@ -243,7 +257,6 @@ class FileTable(QTableWidget):
             headerItem = QTableWidgetItem(self.headers[i])
             self.setHorizontalHeaderItem(i, headerItem)
         self.horizontalHeader().sectionClicked.connect(self._headerClickedHandler)
-    
     
     def _setFileData(self):
         """ display initial file data on to the table """
@@ -260,17 +273,18 @@ class FileTable(QTableWidget):
         if self.allSelected:
             for key,widget in self.fileWidgets.items():
                 widget.setCheckState(False)
-                if key in self.transcribeList:
-                    self.transcribeList.remove(key) 
+                if key in self.transferList:
+                    self.transferList.remove(key) 
         else:
             for key,widget in self.fileWidgets.items():
                 widget.setCheckState(True)
-                if not key in self.transcribeList:
-                    self.transcribeList.append(key)
+                if not key in self.transferList:
+                    self.transferList.append(key)
         
         self.allSelected = not self.allSelected
     
     def getFile(self):
+        """ TODO: improve the tab widget implementation """
         addFileWindow = ChooseFileTab(self.settings)
         addFileWindow.signals.sendFile.connect(self._addFile)
         addFileWindow.exec()
@@ -326,8 +340,8 @@ class FileTable(QTableWidget):
                             key,
                             self.deleteFile, 
                             self.changeSetting, 
-                            self.addToTranscribe, 
-                            self.removeFromTranscribe,
+                            self.addToNextState, 
+                            self.removeFromNextState,
                             self.settingDetails)
         
         newFileWidget.addWidgetToTable(row, self.rowWidgets)
@@ -345,10 +359,10 @@ class FileTable(QTableWidget):
         if rowIdx >= 0:
             self.removeRow(rowIdx)
             del self.fileWidgets[key]
-        if key in self.transcribeList:
-            self.transcribeList.remove(key)
+        if key in self.transferList:
+            self.transferList.remove(key)
 
-    def addToTranscribe(self, key:str) -> None:
+    def addToNextState(self, key:str, pin: QAbstractItemView) -> None:
         """ add the file to transcribe list
 
         Args:
@@ -356,7 +370,10 @@ class FileTable(QTableWidget):
         """
         try:
             if key in self.filedata:
-                self.transcribeList.append(key)
+                self.transferList.append(key)
+                self._setColorRow(self.indexFromItem(pin).row(), Color.BLUEWHITE)
+                self.signals.nonZeroFile.emit()
+                
             else: 
                 raise Exception("file is not found in the data")
         except Exception as err:
@@ -365,15 +382,19 @@ class FileTable(QTableWidget):
             return
         
             
-    def removeFromTranscribe(self, key:str) -> None:
+    def removeFromNextState(self, key:str, pin: QAbstractItemView) -> None:
         """ remove the file from the transcribe list 
 
         Args:
             key (str): the key to identify the file 
         """
         try:
-            if key in self.transcribeList:
-                self.transcribeList.remove(key)
+            if key in self.transferList:
+                self.transferList.remove(key)
+                self._setColorRow(self.indexFromItem(pin).row(), "#fff")
+                self.clearSelection()
+                if len(self.transferList) == 0:
+                    self.signals.ZeroFile.emit()
             else:
                 raise Exception("file is not added to transcribe list")
         except Exception as err:
@@ -382,19 +403,17 @@ class FileTable(QTableWidget):
             return
         
             
-    def transcribe(self) -> Dict[str, fileObject]:
+    def getTransferData(self) -> None:
         """ 
-        redirect to the transcribe page and transcribe all the selected 
-        file
+        get the file data that will be transfered to the next state
         """
-        transcribeData = dict()
-        for i in self.transcribeList:
+        transferData = dict()
+        for i in self.transferList:
             fileData = {**self.filedata[i], 
                         **{"Selected Action": "Transcribe"}, 
                         **{"Action in Progress":"Transcribing"}}
-            transcribeData[i] = fileData
-        
-        return transcribeData
+            transferData[i] = fileData
+        self.signals.sendFile.emit(transferData)
        
         
     def changeSetting(self, key:str) -> None:
@@ -408,6 +427,7 @@ class FileTable(QTableWidget):
         selectSetting.exec()
         selectSetting.setFixedSize(QSize(200,200))
     
+    """ TODO: change to a pop up """
     def settingDetails(self, key:str)->None:
         print(key)
         print(self.filedata)
@@ -415,25 +435,30 @@ class FileTable(QTableWidget):
             self.signals.goSetting.emit(self.filedata[key]["Profile"])
     
     def updateSetting(self, newSetting:List[str]) -> None:
-        # logging.DEBUG(newSetting)
-        # print("we get the new setting", newSetting)
         print("we reached the update seting")
         self.filedata[newSetting[0]]["Profile"] = newSetting[1]
         rowIdx = self.indexFromItem(self.pinFileData[newSetting[0]]).row()
         newSettingText = QTableWidgetItem(newSetting[1])
         self.setItem(rowIdx, 3, newSettingText)
-        
-            
-            
     
+    def _setColorRow(self, rowIdx, color):
+        print(self.rowAt(rowIdx))
+        for i in range(self.columnCount()):
+            if self.item(rowIdx, i):
+                self.item(rowIdx, i).setBackground(QColor(color))
+            else:
+                print("no")
+       
+        
+""" TODO: add responsive handling feature """            
 MainTableHeader = ["Select All", 
-                  "Type", 
-                  "Name", 
-                  "Profile", 
-                  "Status", 
-                  "Date", 
-                  "Size", 
-                  "Actions"]
+                    "Type", 
+                    "Name", 
+                    "Profile", 
+                    "Status", 
+                    "Date", 
+                    "Size", 
+                    "Actions"]
 MainTableDimension = [70,70,140,140,140,70,80,175]
 
 
@@ -447,7 +472,6 @@ ConfirmHeaderDimension = [85,300,200,130,170]
 ProgressHeader = ["Type",
                   "Name",
                   "Action in Progress"]
-
 ProgressDimension = [170, 450, 265]
 
 SuccessHeader = ["Type",

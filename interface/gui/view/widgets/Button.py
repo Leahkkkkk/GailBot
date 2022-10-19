@@ -9,7 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 import os
-
+import typing
 from view.style.styleValues import FontSize, Dimension, Color
 from util import Path
 
@@ -37,9 +37,9 @@ class ColoredBtn(QPushButton):
         self,
         label:str, 
         color:str, 
-        fontsize=FontSize.BTN, 
-        other="",
-        borderRadius=5,
+        fontsize:str = FontSize.BTN , 
+        other:str = None,
+        borderRadius:int =5,
         *args, 
         **kwargs
     ):
@@ -69,7 +69,8 @@ class BorderBtn(QPushButton):
         self, 
         label:str, 
         color:str,
-        fontsize=FontSize.BTN, 
+        fontsize:str = FontSize.BTN, 
+        borderradius:int = 5,
         *args, 
         **kwargs
     ):
@@ -79,41 +80,41 @@ class BorderBtn(QPushButton):
         self.setText(label)
         self.setStyleSheet(f"border: 1px solid {color};"
                            f"color:{color};"
-                           f"border-radius:5;"
+                           f"border-radius:{borderradius};"
                            f"padding:1;"
                            f"font-size:{fontsize}")
         self.setMaximumSize(Dimension.BGBUTTON)
 
 
-""" TODO: use a button icon instead of unicode, 
-          add style 
-"""
 class ToggleBtn(QPushButton):
     """ A toggle button that display different lable when being toggled 
     
     Args:
-        label(tuple(str), optional): text being displayed on button
+        label(tuple(str), optional): the name of the icon image being displayed
+        text: the text next to the icon on the toggle lable
+        sate: the initial state of the toggle bar, default to False
     """
     def __init__(
         self, 
         label: tuple = ("right.png", "down.png"), 
-        text = "", 
-        state= False, 
-        minHeight = 30,
+        text:str = "", 
+        state:bool = False, 
+        minHeight:int = 30,
         *args, 
         **kwargs):
         super().__init__(*args, **kwargs)
         self.text = text
         self.setText(self.text)
-        self.rightIcon = QIcon(os.path.join(Path.getProjectRoot(), f"view/asset/{label[0]}"))
-        self.downIcon = QIcon(os.path.join(Path.getProjectRoot(), f"view/asset/{label[1]}"))
+        self.rightIcon = QIcon(os.path.join(Path.getProjectRoot(), 
+                                            f"view/asset/{label[0]}"))
+        self.downIcon = QIcon(os.path.join(Path.getProjectRoot(), 
+                                           f"view/asset/{label[1]}"))
         self.setMinimumSize(QSize(500, minHeight))
         self.setMaximumSize(QSize(700, minHeight))
         self.setCheckable(True)
         self.state = state
         self.clicked.connect(self._changeSymbol)
         self.setStyleSheet("background-color:#fff;border:none")
-        # self.setContentsMargins(0,0,0,0)
         self._changeSymbol()
         self.update()
         self.show()
@@ -197,6 +198,9 @@ class iconBtn(QPushButton):
   
       
 class dropDownButton(QWidget):
+    """ a dropdown button widget, when the button is clicked,
+        there is a dropdown of a list of buttons
+    """
     def __init__(
         self, 
         label:str, 
@@ -244,7 +248,7 @@ class buttonList(QWidget):
             newButton = ColoredBtn(labels[i],
                                    Color.BLUEMEDIUM, 
                                    FontSize.SMALL,
-                                    "margin-top:0px;border-radius:0px;border:1px solid #fff; padding:3px 0px")
+                                    "margin-top:0px; border-radius:0px; border:1px solid #fff; padding:3px 0px")
             self.btnList.append(newButton)
             if btnFuns:
                 self.btnList[i].clicked.connect(btnFuns[i])

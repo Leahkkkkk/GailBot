@@ -13,6 +13,10 @@ from PyQt6.QtWidgets import (
 
 from PyQt6.QtCore import Qt, QSize
 
+""" TODO: create functions to load the form values
+    TODO: create functions to disable editing 
+    TODO: create functiosn to retrieve form data
+"""
 class PostSet(QWidget):
     """ required settings page"""
     def __init__(self, data, *args, **kwargs) -> None:

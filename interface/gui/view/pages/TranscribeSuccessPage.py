@@ -16,6 +16,8 @@ from view.widgets import (
 from view.style.styleValues import Color, FontSize, Dimension, FontFamily
 from view.style.Background import initImgBackground
 
+from view.Text.TranscribeSuccessPageText import TranscribeSuccessText
+
 from PyQt6.QtWidgets import (
     QLabel,
     QPushButton,
@@ -41,19 +43,18 @@ class TranscribeSuccessPage(QWidget):
         
     def _initWidget(self):
         """ intialize widgets """
-        self.label = Label.Label("Transcription Successful",
+        self.label = Label.Label(TranscribeSuccessText.mainLabelText,
                                         FontSize.HEADER1,
                                         FontFamily.MAIN)
         self.label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
-        self.transcribedFiles = Label.Label("Transcribed files and locations:",
+        self.transcribedFiles = Label.Label(TranscribeSuccessText.transcribedFilesText,
                                         FontSize.BODY,
                                         FontFamily.OTHER)
         self.transcribedFiles.setContentsMargins(30,0,0,0)
         # self.fileTable = FileTable.successTable()
-        self.moreBtn = Button.ColoredBtn("Process more files", Color.GREEN)
-        self.returnBtn = Button.ColoredBtn("Return to main menu", Color.BLUEMEDIUM)
+        self.moreBtn = Button.ColoredBtn(TranscribeSuccessText.moreBtnText, Color.GREEN)
+        self.returnBtn = Button.ColoredBtn(TranscribeSuccessText.returnBtnText, Color.BLUEMEDIUM)
         self._initHorizontalLayout()
-        self.quitBtn = Button.ColoredBtn("Quit Gailbot", Color.ORANGE)
         self.fileTable = FileTable.FileTable(FileTable.SuccessHeader, {}, {})
         self.fileTable.resizeCol(FileTable.SuccessDimension)
         
@@ -69,8 +70,6 @@ class TranscribeSuccessPage(QWidget):
         self.verticalLayout.addWidget(self.fileTable,alignment = Qt.AlignmentFlag.AlignHCenter)
         self.verticalLayout.addStretch()
         self.verticalLayout.addWidget(self.horizontal)
-        self.verticalLayout.addWidget(self.quitBtn,
-                                      alignment = Qt.AlignmentFlag.AlignHCenter)
         self.verticalLayout.setSpacing(20)
 
     def _initHorizontalLayout(self):
@@ -84,5 +83,4 @@ class TranscribeSuccessPage(QWidget):
     def _initStyle(self):
         self.moreBtn.setMinimumSize(QtCore.QSize(150,30))
         self.returnBtn.setMinimumSize(QtCore.QSize(150,30))
-        self.quitBtn.setMinimumSize(QtCore.QSize(150,30))
         initImgBackground(self, "backgroundConfirmPage.png")

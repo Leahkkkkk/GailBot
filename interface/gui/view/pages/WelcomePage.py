@@ -20,6 +20,10 @@ from view.widgets import (
     Button
 )
 
+from view.Text.WelcomePageText import WelcomePageText
+
+from view.Text.LinkText import Links
+
 from PyQt6.QtWidgets import (
     QWidget, 
     QGridLayout, 
@@ -28,6 +32,7 @@ from PyQt6.QtWidgets import (
     QSizePolicy,
     QVBoxLayout
 )
+
 from PyQt6 import QtCore, QtGui
 from PyQt6.QtCore import Qt
 
@@ -67,7 +72,7 @@ class WelcomePage(QWidget):
         self.setLayout(self.verticalLayout)
         self.verticalLayout.addWidget(self.HomeSetBtn)
         self.verticalLayout.addWidget(self.WelcomeText)
-        self.verticalLayout.addWidget(self.captionText, 
+        self.verticalLayout.addWidget(self.CaptionText, 
                                       alignment = Qt.AlignmentFlag.AlignHCenter)
         self.verticalLayout.addWidget(self.StartBtn, 4, 
                                       alignment = Qt.AlignmentFlag.AlignHCenter)
@@ -92,30 +97,30 @@ class WelcomePage(QWidget):
         self.StartBtn.setMinimumSize(QtCore.QSize(150,30))
         initImgBackground(self)
 
-
+    
+    """ TODO: separate to a different file """   
     def _initInstructionText(self):
         """ add widgets for the instructions text and icon """
         """ instruction text """
-        self.AudioInstruction = Label.Label("1. Select audio and video files" 
-                                            "\n or record live in Gailbot", 
+        self.AudioInstruction = Label.Label(WelcomePageText.audioInstructionText, 
                                             FontSize.INSTRUCTION_CAPTION, 
                                             FontFamily.OTHER,Color.GREYMEDIUM2)
         
-        self.SettingsInstruction = Label.Label("2. Apply settings",
+        self.SettingsInstruction = Label.Label(WelcomePageText.settingsInstructionText,
                                                FontSize.INSTRUCTION_CAPTION, 
                                                FontFamily.OTHER,Color.GREYMEDIUM2)
         
-        self.TranscribeInstruction = Label.Label("3. Transcribe", 
+        self.TranscribeInstruction = Label.Label(WelcomePageText.transcribeInstructionText, 
                                                  FontSize.INSTRUCTION_CAPTION, 
                                                  FontFamily.OTHER,
                                                  Color.GREYMEDIUM2)
         
-        self.FileInstruction = Label.Label("4. Get a transcribed file", 
+        self.FileInstruction = Label.Label(WelcomePageText.fileInstructionText, 
                                            FontSize.INSTRUCTION_CAPTION, 
                                            FontFamily.OTHER,
                                            Color.GREYMEDIUM2)
         
-        self.EditInstruction = Label.Label("5. Edit settings \n or retranscribe",
+        self.EditInstruction = Label.Label(WelcomePageText.editInstructionText,
                                            FontSize.INSTRUCTION_CAPTION, 
                                            FontFamily.OTHER,
                                            Color.GREYMEDIUM2)
@@ -128,7 +133,8 @@ class WelcomePage(QWidget):
         self.FileIcon = Image.Image("file.jpeg")
         self.EditIcon = Image.Image("edit.jpeg")
         
-        
+      
+ 
     def _initInstructionGrid(self):
         """ add a gird layout for the instruction """
         self.gridBox = QWidget()
@@ -165,67 +171,49 @@ class WelcomePage(QWidget):
 
     def _initMainText(self):
         """ initialize the main text on home page  """
-        self.WelcomeText = Label.Label("Welcome to \n GailBot", 
+        self.WelcomeText = Label.Label(WelcomePageText.welcomeText, 
                                         FontSize.HEADER1, 
                                         FontFamily.MAIN)
         self.WelcomeText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
         
-        self.captionText = Label.Label("GailBot is the world's first application"
-                                       " that lets you convert audio and\n"
-                                       " video file into customizd transcript.",
-                                       FontSize.BODY, FontFamily.OTHER,Color.GREYMEDIUM2)
-        self.captionText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
+        self.CaptionText = Label.Label(WelcomePageText.captionText,
+                                       FontSize.BODY, 
+                                       FontFamily.OTHER,
+                                       Color.GREYMEDIUM2)
+        
+        self.CaptionText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
         
         self.HomeSetBtn = Button.ColoredBtn("⚙", Color.BLUEMEDIUM,"35px")
-        self.StartBtn = Button.ColoredBtn("Get Started", Color.GREEN)
+        self.StartBtn = Button.ColoredBtn(WelcomePageText.startBtnText, Color.GREEN)
         
-        self.InstructionText = Label.Label("How GailBot Works", FontSize.HEADER2, 
+        self.InstructionText = Label.Label(WelcomePageText.instructionText, FontSize.HEADER2, 
                                            FontFamily.MAIN)
         self.InstructionText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
     
-    
-    def _initLinkText(self):
-        """ initialize the link text on homepage """
-        self.ResourcesText = Label.Label("Resources",FontSize.HEADER2, FontFamily.OTHER)
-        self.ResourcesText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
-
-        self.TutorialText = Label.Label("GailBot Beginner Tutorial",FontSize.LINK,
-                                        FontFamily.OTHER, Color.BLUEMEDIUM,
-                                        "text-decoration: underline;")
-        self.GuideText = Label.Label("GailBot Settings Guide",FontSize.LINK, 
-                                        FontFamily.OTHER, Color.BLUEMEDIUM,
-                                        "text-decoration: underline;")
         
-        self.GBLinkText = Label.Label("GailBot.com",FontSize.BODY, 
-                                      FontFamily.OTHER,Color.BLUEMEDIUM,)
-        
-        self.GBLinkText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
-
-        self.MoreInfoText = Label.Label("For more information visit", 
-                                        FontSize.SMALL, FontFamily.OTHER)
-        
-        self.MoreInfoText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
-
+    """ TODO: put the link onto separate file """
     def _initLinkText(self):
         """ initialize the link text on homepage """
         linkTemplate = "<a href={0}>{1}</a>"
-        self.ResourcesText = Label.Label("Resources",FontSize.HEADER2, FontFamily.OTHER)
+        self.ResourcesText = Label.Label(WelcomePageText.resourcesText, 
+                                         FontSize.HEADER2, 
+                                         FontFamily.OTHER)
         self.ResourcesText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
-        tutorialLink = linkTemplate.format("https://hrilab.tufts.edu", "GailBot Beginner Tutorial")
-        self.TutorialText = Label.Label(tutorialLink, FontSize.LINK,
+        
+        
+        self.TutorialText = Label.Label(Links.tutorialLink, FontSize.LINK,
                                         FontFamily.OTHER, Color.BLUEMEDIUM,
                                         "text-decoration: underline;", link=True)
-        guideLink = linkTemplate.format("https://hrilab.tufts.edu", "GailBot Settings Guide")
-        self.GuideText = Label.Label(guideLink,FontSize.LINK, 
+        
+        self.GuideText = Label.Label(Links.guideLink,FontSize.LINK, 
                                         FontFamily.OTHER, Color.BLUEMEDIUM,
                                         "text-decoration: underline;", link=True)
-        gbWebLink = linkTemplate.format("https://hrilab.tufts.edu", "GailBot.com")
-        self.GBLinkText = Label.Label(gbWebLink,FontSize.BODY, 
+        self.GBLinkText = Label.Label(Links.gbWebLink, FontSize.BODY, 
                                       FontFamily.OTHER,Color.BLUEMEDIUM,link=True)
         
         self.GBLinkText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
 
-        self.MoreInfoText = Label.Label("For more information visit", 
+        self.MoreInfoText = Label.Label(WelcomePageText.moreInfoText, 
                                         FontSize.SMALL, FontFamily.OTHER)
         
         self.MoreInfoText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
