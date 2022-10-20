@@ -75,7 +75,7 @@ class Signals(QObject):
     """ contain signals in order for Qrunnable object to communicate
         with controller
     """
-    finished = pyqtSignal(int)
+    finished = pyqtSignal(str)
     start = pyqtSignal()
     progress = pyqtSignal(str)
     error = pyqtSignal(str)
@@ -133,9 +133,10 @@ class Worker(QRunnable):
             if not self.is_killed:
                 assert gb.add_source(self.fileName, 
                                      self.fullPath, 
-                                     self.output)
+                                     f"{self.output}/output")
                 self.logger.info("Source Added")
                 self.signals.progress.emit(str("Source Added"))
+                print("The output path gailbot receieved is", self.output)
                 
             if not self.is_killed:
                 gb.create_new_settings_profile("test-settings", 
@@ -175,6 +176,7 @@ class Worker(QRunnable):
             self.signals.endThread.emit()    
         finally:
             self.signals.endThread.emit()
+            self.setAutoDelete(True)
 
 
     def kill(self):

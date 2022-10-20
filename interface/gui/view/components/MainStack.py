@@ -23,6 +23,10 @@ from view.pages import (
 from view.widgets.FileTable import (
     FileTable
 )
+from view.widgets.FileTab import (
+    FileDetails
+)
+
 from view.style.styleValues import Dimension
 
 from PyQt6.QtWidgets import QStackedWidget
@@ -38,6 +42,7 @@ class MainStack(QStackedWidget):
         self.setMaximumSize(Dimension.WIN_MAXSIZE)
         self._initPage()
         self._pageRedirect()
+        
     
     
     def gotoTranscribeInProgress(self, fileData : dict = None):
@@ -107,6 +112,7 @@ class MainStack(QStackedWidget):
         self.addWidget(self.RecordPage)
         self.setCurrentWidget(self.FileUploadPage)
         
+        
     def _pageRedirect(self):
         """ initialize button click to page rediect functionality  """
         self.WelcomePage.StartBtn.clicked.connect(lambda: 
@@ -127,14 +133,15 @@ class MainStack(QStackedWidget):
                 self.setCurrentWidget(self.FileUploadPage))
         self.ConfirmTranscribePage.cancelBtn.clicked.connect(lambda:
             self.setCurrentWidget(self.FileUploadPage))
-        self.FileUploadPage.fileTable.signals.goSetting.connect(self.gotoSettingPage)
+        self.FileUploadPage.fileTable.signals.goSetting.connect(self._OpenFileDetails)
+        self.ConfirmTranscribePage.fileTable.signals.goSetting.connect(self._OpenFileDetails)
         self.FileUploadPage.fileTable.signals.sendFile.connect(self.gotoConfirmPage)
         self.ConfirmTranscribePage.fileTable.signals.sendFile.connect(self.gotoTranscribeInProgress)
         self.TranscribeProgressPage.fileTable.signals.sendFile.connect(self.gotoTranscribeSuccess)
-        self.ConfirmTranscribePage.fileTable.signals.goSetting.connect(self.gotoSettingPage)
-        
         
         """ TODO: change this to a pop up instead of redirect """
         self.FileUploadPage.signals.gotoSetting.connect(self.gotoSettingPage)
         
-    
+    def _OpenFileDetails(self, profileKey:str):
+        fileDetailDialog = FileDetails(self.settingdata[profileKey])
+        fileDetailDialog.exec()

@@ -16,7 +16,8 @@ from PyQt6.QtGui import (
     QBrush, 
     QColor, 
     QPalette,
-    QImage
+    QImage,
+    QTransform
 )
 from PyQt6.QtWidgets import QWidget
 
@@ -26,6 +27,8 @@ class Background(QBrush):
         super().__init__(*args, **kwargs)
         self.setColor(QColor(color))
         self.setStyle(Qt.BrushStyle.SolidPattern) 
+
+
 
 def initBackground(widget:QWidget, color="#FFFFFF"):
     """ make the widget background as white """
@@ -40,7 +43,10 @@ def initImgBackground(widget:QWidget, background: str = "background.png"):
     widget.setAutoFillBackground(True)
     palette = widget.palette()
     brush = QBrush()
+    
     brush.setTextureImage(QImage(os.path.join(Path.getProjectRoot(), 
                                       f"view/asset/{background}")))
+    backgroundTransform = QTransform()
+    brush.setTransform(backgroundTransform.scale(1,1))
     palette.setBrush(QPalette.ColorRole.Window, brush) 
     widget.setPalette(palette)

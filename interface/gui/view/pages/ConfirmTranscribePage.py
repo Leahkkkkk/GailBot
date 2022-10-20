@@ -9,13 +9,14 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
+
 from view.style.styleValues import FontFamily, FontSize, Color
 from view.style.Background import initImgBackground
 from view.widgets import ( Label, 
                            Button, 
                            TableWidgets,
                            FileTable) 
-
+from util.Logger import makeLogger
 
 from PyQt6.QtWidgets import (
     QWidget, 
@@ -27,6 +28,8 @@ from PyQt6.QtWidgets import (
 
 from PyQt6 import QtCore
 from PyQt6.QtCore import Qt, QObject, pyqtSignal
+
+logger = makeLogger("Frontend")
 
 class Signal(QObject):
     transcribeFile = pyqtSignal(dict)
@@ -100,5 +103,6 @@ class ConfirmTranscribePage(QWidget):
     
   
     def _sendTranscribeSignal(self):
+        logger.info("_sendTranscribeSignal", self.fileTable.filedata)
         self.signal.transcribeFile.emit(self.fileTable.filedata)
    

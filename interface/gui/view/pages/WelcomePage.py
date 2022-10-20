@@ -68,18 +68,19 @@ class WelcomePage(QWidget):
         self.horizontalLayout.addWidget(self.GuideText)
         
         """ vertical layout """
+        spacer = QSpacerItem(40, 50, QSizePolicy.Policy.Preferred, 
+                             QSizePolicy.Policy.Preferred)
         self.verticalLayout = QVBoxLayout()
         self.setLayout(self.verticalLayout)
         self.verticalLayout.addWidget(self.HomeSetBtn)
+        self.verticalLayout.addItem(spacer)
         self.verticalLayout.addWidget(self.WelcomeText)
         self.verticalLayout.addWidget(self.CaptionText, 
                                       alignment = Qt.AlignmentFlag.AlignHCenter)
         self.verticalLayout.addWidget(self.StartBtn, 4, 
                                       alignment = Qt.AlignmentFlag.AlignHCenter)
-        
-        spacer = QSpacerItem(40, 50, QSizePolicy.Policy.Preferred, 
-                             QSizePolicy.Policy.Preferred)
     
+        self.verticalLayout.addItem(spacer)
         self.verticalLayout.addItem(spacer)
         self.verticalLayout.addWidget(self.InstructionText)
         self.verticalLayout.addWidget(self.gridBox)
@@ -194,16 +195,15 @@ class WelcomePage(QWidget):
     """ TODO: put the link onto separate file """
     def _initLinkText(self):
         """ initialize the link text on homepage """
-        linkTemplate = "<a href={0}>{1}</a>"
         self.ResourcesText = Label.Label(WelcomePageText.resourcesText, 
                                          FontSize.HEADER2, 
                                          FontFamily.OTHER)
         self.ResourcesText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
         
-        
         self.TutorialText = Label.Label(Links.tutorialLink, FontSize.LINK,
                                         FontFamily.OTHER, Color.BLUEMEDIUM,
                                         "text-decoration: underline;", link=True)
+        print(Links.tutorialLink)
         
         self.GuideText = Label.Label(Links.guideLink,FontSize.LINK, 
                                         FontFamily.OTHER, Color.BLUEMEDIUM,

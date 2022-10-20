@@ -1,14 +1,14 @@
-from heapq import merge
-from pickle import FALSE
 from typing import Dict, List, TypedDict
 import sys
+from typing_extensions import Required
 
 
-from view.widgets import Button
+from view.widgets import Button, TableWidgets
 from view.widgets.TabPages import (
     OpenFile, 
     ChooseOutPut, 
     ChooseSet)
+from view.components import PostSet, RequiredSet
 from view.widgets.Button import ColoredBtn
 from view.style.widgetStyleSheet import buttonStyle
 from view.style.Background import initBackground
@@ -21,7 +21,10 @@ from PyQt6.QtWidgets import (
     QVBoxLayout, 
     QDialog,
     QHBoxLayout,
-    QGridLayout)
+    QGridLayout,
+    QScrollArea,
+    QSizePolicy,
+    QScrollBar)
 
 from PyQt6.QtCore import QObject, pyqtSignal, QSize, Qt
 
@@ -59,10 +62,11 @@ class Tab(QWidget):
         self._initWidget()
         self._initLayout()
         initBackground(self,Color.BLUEWHITE)
-
+    
         
     def _initWidget(self):
         self.MainTab = QTabWidget(self)
+        initBackground(self.MainTab,Color.BLUEWHITE)
         self.MainTab.setTabPosition(QTabWidget.TabPosition.West)
         
         """ iintialiale the control button """
@@ -83,8 +87,6 @@ class Tab(QWidget):
         
         for i in range (1 , self.MainTab.count()):
             self.MainTab.setTabEnabled(i, False)
-            
-    
         
         self.setWindowTitle(self.header)
         self.MainTab.currentChanged.connect(self._setButtonState)
@@ -129,23 +131,6 @@ class Tab(QWidget):
             self.MainTab.setCurrentIndex(self.curPageIdx)
 
             
-            
-class TabWindow(QWidget):
-    def __init__(self) -> None:
-        super().__init__()
-          
-        tab1 = OpenFile()
-        tab2 = ChooseSet(["coffee study", "default"])
-        tab3 = ChooseOutPut()
-        
-        mainTab = Tab("Add New File", {"add file": tab1,
-                                       "choose setting": tab2,
-                                       "select output": tab3})
-        self.layout = QVBoxLayout()
-        self.setLayout(self.layout)
-        self.layout.addWidget(mainTab) 
-    
-
 class ChooseFileTab(QDialog):
     def __init__(self, settings:List[str], *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
@@ -153,7 +138,7 @@ class ChooseFileTab(QDialog):
         self.chooseFileTab = OpenFile()
         self.chooseSetTab = ChooseSet(settings)
         self.chooseOutPutTab = ChooseOutPut()
-        
+        self.setWindowTitle("Upload File")
         mainTab = Tab("Add New File", 
                       {"add file": self.chooseFileTab,
                        "choose setting": self.chooseSetTab,
@@ -215,4 +200,57 @@ class changePageBtn(QWidget):
         self.prevBtn.setEnabled(False)
         self.prevBtn.setStyleSheet(buttonStyle.ButtonInactive)
     
-   
+
+class NoControlTab(QWidget):
+    def __init__(
+        self, 
+        header:str,
+        tabs: Dict[str, QWidget],
+        *args,
+        **kwargs
+        ):
+        super().__init__(*args, **kwargs)
+        self.tabs = tabs
+        self.header = header 
+        self.setMinimumHeight(700)
+        self.setMinimumWidth(850)
+        self._initWidget()
+        initBackground(self)
+
+    def _initWidget(self):
+        self.MainTab = QTabWidget(self)
+        initBackground(self.MainTab)
+        self.MainTab.setTabPosition(QTabWidget.TabPosition.North)
+        """ initialize the pages on the tab """
+        for label, tab in self.tabs.items():
+            container  = QWidget()
+            layout = QVBoxLayout()
+            container.setLayout(layout)
+            scroll = QScrollArea()
+            scroll.setWidgetResizable(True)
+            scroll.setWidget(tab)
+            scroll.setFixedSize(QSize(800,650))
+            scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
+            layout.addWidget(scroll)
+            self.MainTab.addTab(container, label)
+            initBackground(tab)
+        self.setWindowTitle(self.header)
+    
+class FileDetails(QDialog):
+    def __init__(self, settingData, *args, **kwargs) -> None:
+        super().__init__( *args, **kwargs)
+        
+        Directory = TableWidgets.DirectoryDetails() 
+        RequiredSetting = RequiredSet.RequiredSet(settingData["engine"])  #TODO: get the dynamic data
+        PostSetting = PostSet.PostSet(settingData["Post Transcribe"]) #TODO: get the dynamic data
+        self.Maintab = NoControlTab("File Info", 
+                                    {"Directory": Directory, 
+                                    "Required Setting":RequiredSetting,
+                                    "Post Transcribe Setting": PostSetting})
+        self.setWindowTitle("File Info")
+        self.layout = QVBoxLayout()
+        self.setLayout(self.layout)
+        self.layout.addWidget(self.Maintab)        
+        
+        
+            

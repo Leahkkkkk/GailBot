@@ -21,7 +21,7 @@ TODO: make a combobox widget
 from typing import Dict, TypedDict
 
 from view.style.styleValues import Color, FontSize, Dimension
-from view.style.Background import initBackground
+from view.style.Background import initImgBackground
 from view.Text.LinkText import Links
 from view.pages import RequiredSetPage, PostSetPage
 from view.widgets import Button, Label, ComboBox
@@ -69,6 +69,8 @@ class SettingPage(QWidget):
         self.settingStack.addWidget(self.RequiredSetPage)
         self.settingStack.addWidget(self.PostSetPage)
         self.settingStack.setCurrentWidget(self.RequiredSetPage)
+        
+        initImgBackground(self,"settingBackground.png")
     
     def _initLayout(self):
         """initialize layout"""
@@ -95,7 +97,6 @@ class SettingPage(QWidget):
         self.saveBtn.setFixedSize(Dimension.BGBUTTON)
         self.cancelBtn.setFixedSize(Dimension.RBUTTON)
         
-        initBackground(self)
    
    
     def _connectSignal(self):

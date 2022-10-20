@@ -14,7 +14,8 @@ from view import MainWindow
 from util import Logger
 from controller.Thread import DummyRunnable, GBRunnable
 
-from PyQt6.QtCore import QThreadPool
+from PyQt6.QtCore import QThreadPool, pyqtSignal, QObject
+
 
 class Controller:
     """ Controller for Gailbot GUI """
@@ -45,6 +46,7 @@ class Controller:
     def runGailBot(self, name, path, output, key):
         """ wrapper function to run GailBot """
         self.logger.info("")
+        print(self.ThreadPool.activeThreadCount())
         
         if self.ThreadPool.activeThreadCount() > 1:
             self.logger.warn("Thread Busy")
@@ -75,6 +77,7 @@ class Controller:
             key (int): an index key that identify the file from the file 
                        dataabse
         """
+        print(name, path,output,key)
         self.worker = GBRunnable.Worker(name, path, output, key)
         self.worker.signals.start.connect(self._showInProgress)
         self.worker.signals.finished.connect(self._showFinished)
@@ -89,10 +92,11 @@ class Controller:
         self.ViewObj.showTranscribeInProgress()
 
 
-    def _showFinished(self):
+    def _showFinished(self, key):
         """ change to finished page """
         self.logger.info("")
         self.ViewObj.showTranscribeSuccess()
+        self.ViewObj.changeFileStatusToTranscribed(key)
     
     def _sendTranscribeProgressMsg(self, msg:str):
         """ display progress message from the GailBot thread on statusbar

@@ -164,7 +164,7 @@ class FileDetailDialog(QDialog):
                                          self.dateStr)
             self.setMinimumSize(Dimension.LARGEDIALOG)
         else:
-            self.mainWidget = FileDetailWidget(self.files, 
+            self.mainWidget = DirectoryDetails(self.files, 
                                             self.transcriberStr, 
                                             self.dateStr)
             self.setMaximumSize(Dimension.MEDIUMDIALOG)
@@ -188,7 +188,7 @@ class FileDetailDialog(QDialog):
     
 
 """ TODO: add functionality to change the transcriber data  """
-class FileDetailWidget(QWidget):
+class DirectoryDetails(QWidget):
     """ 
         A widget that display the file directory details, transcriber and 
         transcribeDate
@@ -211,9 +211,7 @@ class FileDetailWidget(QWidget):
     def _initWidget(self):
         self.transcriber = InputBox.InputBox("Transcribed by: ", True, FontSize.SMALL)
         self.transcriber.setText(self.transcriberStr)
-        self.transcribeDate = InputBox.InputBox("Transcribed on: ", True, FontSize.SMALL)
-        self.transcribeDate.setText(self.dateStr)
-        self.transcribeDate.disableEdit()
+        self.transcribeDate =Label.Label(f"Transcribed on: \n {self.dateStr}", True, FontSize.SMALL)
         self.inDirLabel = Label.Label("In this directory", FontSize.BODY, 
                                           FontFamily.MAIN)
         self.inDirLabel.setMinimumWidth(200)
@@ -224,16 +222,29 @@ class FileDetailWidget(QWidget):
         self.fileLsitScroll.setWidget(self.fileList)
 
     def _initLayout(self):
-        self.gridlayout = QGridLayout(self)
-        self.setLayout(self.gridlayout)
-        self.gridlayout.addWidget(self.inDirLabel, 0, 0, 2, 2, 
-                                  alignment=Qt.AlignmentFlag.AlignTop)
-        self.gridlayout.addWidget(self.fileLsitScroll, 1, 0,2,2)
-        self.gridlayout.addWidget(self.aboutDirLabel, 0, 2, 1, 2,
-                                  alignment=Qt.AlignmentFlag.AlignTop)
-        self.gridlayout.addWidget(self.transcriber, 1, 2,2,1)
-        self.gridlayout.addWidget(self.transcribeDate, 1, 3,2,1)
         Background.initBackground(self, Color.BLUEWHITE)
+        self.leftVLayout  = QVBoxLayout()
+        self.rightVLayout = QVBoxLayout()
+        self.mainLayout = QHBoxLayout()
+        self.leftContainer = QWidget()
+        self.rightContainer = QWidget()
+        self.leftContainer.setLayout(self.leftVLayout)
+        self.rightContainer.setLayout(self.rightVLayout)
+        self.setLayout(self.mainLayout)
+        self.mainLayout.addWidget(self.leftContainer)
+        self.mainLayout.addWidget(self.rightContainer)
+        self.leftVLayout.addWidget(self.inDirLabel)
+        self.leftVLayout.addWidget(self.fileLsitScroll)
+        self.leftVLayout.addStretch()
+        self.leftVLayout.setSpacing(20)
+        self.rightVLayout.addWidget(self.aboutDirLabel)
+        self.rightVLayout.addWidget(self.transcriber)
+        self.rightVLayout.addWidget(self.transcribeDate)
+        self.rightVLayout.addStretch()
+        self.rightVLayout.setSpacing(20)
+        
+        
+        
 
 """ TODO:1. add function to accept setting data, 
          2. disable all editing for setting data 
@@ -263,7 +274,7 @@ class FullFileDetailWidget(QWidget):
         self._initLayout()
     
     def _initWidget(self):
-        self.briefDetail = FileDetailWidget(self.files, 
+        self.briefDetail = DirectoryDetails(self.files, 
                                             self.transcriberStr, 
                                             self.dateStr)
         setData = SettingModel.SettingModel().data
@@ -299,16 +310,13 @@ class DirectoryView(QWidget):
     """ a widget to display a list of file  """
     def __init__(self, files: list, *args, **kwargs) -> None:
         super().__init__( *args, **kwargs)
-        self.layout = QGridLayout()
-        count = 0
+        self.layout = QVBoxLayout()
         for file in files:
             fileIcon  = FileDisplay(file)
-            self.layout.addWidget(fileIcon, count//2, count%2, 
-                                  alignment=Qt.AlignmentFlag.AlignTop)
-            count += 1
+            self.layout.addWidget(fileIcon, alignment=Qt.AlignmentFlag.AlignTop)
         self.setLayout(self.layout)
         self.setMinimumSize(QSize(200, 140))
-        self.layout.setSpacing(0)
+        self.layout.setSpacing(5)
         
 
 """ TODO: make the file detail clickable  """

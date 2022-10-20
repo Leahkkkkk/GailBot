@@ -24,19 +24,19 @@ class Model():
       self.ProcessingFileModel = FileModel.ProgressFileMode()
       self.SuccessedFileMode = FileModel.SuccessFileModel()
       self.SettingModel = SettingModel.SettingModel()
-      
-      self.FileData = {
-            "1": {
-                "Name": "hello.wav",
-                "Type": ".wav",
-                "Profile":"Coffee Study",
-                "Status": "Not Transcribed",
-                "Date": "10/13/2020",
-                "Size":"85mb",
-                "Output": "/Users/yike/Desktop/",
-                "FullPath": "/Users/yike/Desktop/hello.wav",
-            },
-        }
+      self.FileData = dict()
+    #   self.FileData = {
+    #         "1": {
+    #             "Name": "hello.wav",
+    #             "Type": "🔈",
+    #             "Profile":"Coffee Study",
+    #             "Status": "Not Transcribed",
+    #             "Date": "10-13-22",
+    #             "Size":"135.26kb",
+    #             "Output": "/Users/yike/Desktop/",
+    #             "FullPath": "/Users/yike/Desktop/hello.wav",
+    #         },
+    #     }
       
       
       

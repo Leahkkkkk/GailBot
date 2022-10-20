@@ -13,6 +13,8 @@ Modified By:  Siara Small  & Vivian Li
     TODO: change transribe status, pass a file key and change the transcribe status
     TODO: change the type value to be displayed as icons 
     TODO: pop up window for setting details
+    TODO: file summary section 
+    TODO: set sorting icon 
     TODO: **sorting function
     TODO: **searching function 
     TODO: **
@@ -20,14 +22,15 @@ Modified By:  Siara Small  & Vivian Li
 
 # from view.widgets import (Label, Button)
 # from view.style.styleValues import Color, FontFamily, FontSize
-
-import logging
-
+import os
 from typing import Dict, List, Set, TypedDict
 
 from view.widgets.FileTab import ChooseFileTab
 from view.widgets.TabPages import ChooseSet
 from view.style.styleValues import Color
+from view.style.Background import initBackground
+from util import Path
+from util.Logger import makeLogger
 
 from PyQt6.QtWidgets import (
     QTableWidget, 
@@ -42,7 +45,9 @@ from PyQt6.QtWidgets import (
 )
 
 from PyQt6.QtCore import QObject, Qt, QSize, pyqtSignal
-from PyQt6.QtGui import QColor
+from PyQt6.QtGui import QColor, QIcon
+
+logger = makeLogger("Frontend")
 
 class fileObject(TypedDict):
     Name: str
@@ -50,7 +55,7 @@ class fileObject(TypedDict):
     Profile: str
     Status: str
     Date: str
-    Size: int
+    Size: str
     Output: str
     FullPath: str
     
@@ -87,7 +92,12 @@ class DisplayFile(QObject):
         self.selectFun = selectFun
         self.unselectFun = unselectFun
         self.gosetFule = gosetFun
+        self.checkBoxContainer = QWidget()
+        self.checkBoxLayout = QVBoxLayout()
+        self.checkBoxContainer.setLayout(self.checkBoxLayout)
         self.checkBox = QCheckBox()
+        self.checkBoxLayout.addWidget(self.checkBox, 
+                                      alignment=Qt.AlignmentFlag.AlignCenter)
         self.Action = QWidget()
         self.ActionLayout = QVBoxLayout()
         self.Action.setLayout(self.ActionLayout)
@@ -104,6 +114,7 @@ class DisplayFile(QObject):
         self.setBtn.clicked.connect(lambda: setFun(self.key))
         self.profileBtn.clicked.connect(lambda: gosetFun(self.key))
         self.checkBox.stateChanged.connect(self.checkStateChanged)
+
     
     def checkStateChanged(self, state:bool):
         if state:
@@ -121,11 +132,10 @@ class DisplayFile(QObject):
         if "select" in rowWidgets:
             firstCell = QTableWidgetItem()
             self.table.setItem(row, 0, firstCell, )
-            self.table.setCellWidget(row, 0, self.checkBox)
+            self.table.setCellWidget(row, 0, self.checkBoxContainer)
         if "setting" in rowWidgets or "delete" in rowWidgets:
             lastCell = QTableWidgetItem()
             self.table.setItem(row,self.table.columnCount() - 1, lastCell)
-            
             self.table.setCellWidget(row, self.table.columnCount()- 1, self.Action)
         if "delete" not in rowWidgets:
             self.deleteBtn.hide()
@@ -152,12 +162,13 @@ class changeProfileDialog(QDialog):
         self.setLayout(self.layout)
         self.layout.addWidget(self.selectSetting)
         self.selectSetting.confirmBtn.clicked.connect(self.updateProfile)
-        self.setFixedSize(QSize(200, 200))
+        initBackground(self, Color.BLUEWHITE)
+        self.setFixedSize(QSize(450, 300))
     
     def updateProfile(self):
-        print("update signal send")
+        logger.info("update signal send")
         newSetting = self.selectSetting.getProfile()["Profile"]
-        print([self.fileKey, newSetting])
+        logger.info([self.fileKey, newSetting])
         self.signals.changeSetting.emit([self.fileKey,newSetting])
         self.close()
     
@@ -203,6 +214,8 @@ class FileTable(QTableWidget):
         self.rowWidgets = rowWidgets
         
         self.signals = Signals()
+        self.setMidLineWidth(500)
+        self.setMaximumWidth(1000)
     
         self._initializeTable()
     
@@ -211,16 +224,21 @@ class FileTable(QTableWidget):
         """ takes in a list of width and resize the width of the each 
             column to the width
         """
+        widthSum = self.width()
         if len(widths) != self.columnCount():
-            logging.error("cannot resize column")
+            logger.error("cannot resize column")
         else:
             for i in range(len(widths)):
-                self.setColumnWidth(i, widths[i])
+                self.setColumnWidth(i, widths[i] * widthSum)
     
     def clearAll(self):
         self.clearContents()
+        for i in range(len(self.transferList)):
+            del self.transferList[i]
         for i in range(self.rowCount()):
             self.removeRow(i)
+        self.filedata.clear()
+        logger.info(self.transferList)
     
     
     def addFilesToTable(self, fileData: Dict[str, fileObject])->None:
@@ -254,9 +272,16 @@ class FileTable(QTableWidget):
             headers: (List[str]) a list of header names
         """
         for i in range(len(self.headers)):
+            # code for using non-default icon
+            # headerItem = QTableWidgetItem(QIcon(os.path.join(Path.getProjectRoot(), 
+            #                                                  f"view/asset/sort.png")),
+            #                               self.headers[i])
             headerItem = QTableWidgetItem(self.headers[i])
             self.setHorizontalHeaderItem(i, headerItem)
+            # self.horizontalHeader().setSortIndicator(i, Qt.SortOrder.AscendingOrder)
+                
         self.horizontalHeader().sectionClicked.connect(self._headerClickedHandler)
+        self.verticalHeader().hide()
     
     def _setFileData(self):
         """ display initial file data on to the table """
@@ -268,9 +293,9 @@ class FileTable(QTableWidget):
         if idx == 0:
             self._toggleAllSelect()
    
-    def _toggleAllSelect(self):
+    def _toggleAllSelect(self, clear=False):
         """ select or unselect all items in the table """
-        if self.allSelected:
+        if self.allSelected or clear:
             for key,widget in self.fileWidgets.items():
                 widget.setCheckState(False)
                 if key in self.transferList:
@@ -283,12 +308,17 @@ class FileTable(QTableWidget):
         
         self.allSelected = not self.allSelected
     
+    def changeToTranscribed(self, key):
+        self.filedata[key]["Status"] = "Transcribed"
+        row = self.indexFromItem(self.pinFileData[key]).row()
+        newitem = QTableWidgetItem("Transcribed")
+        self.setItem(row, 4, newitem)
+    
     def getFile(self):
         """ TODO: improve the tab widget implementation """
         addFileWindow = ChooseFileTab(self.settings)
         addFileWindow.signals.sendFile.connect(self._addFile)
         addFileWindow.exec()
-        
         
     def _addFile(self, file: dict):
         """ Add a file 
@@ -302,10 +332,10 @@ class FileTable(QTableWidget):
             self._addFiletoData(file, f"{self.nextkey}")
             self._addFiletoTable(file, f"{self.nextkey}")
         except:  
-            logging.error("cannot add file to data")
+            logger.error("cannot add file to data")
         else:
             self.nextkey += 1 
-            logging.info("file added successfully")
+            logger.info("file added successfully")
         
     def _addFiletoData(self, file: fileObject, key:str):
         """ add one file to the file data """
@@ -322,7 +352,6 @@ class FileTable(QTableWidget):
                     filePin = newItem
                     self.pinFileData[key] = filePin
                 self.setItem(newRowIdx, col, newItem)
-        
         
         self._addFileWidgetToTable(filePin, newRowIdx, key)
         self.resizeRowsToContents()          
@@ -354,7 +383,7 @@ class FileTable(QTableWidget):
             pin (QTableWidgetItem): a pin to identify file on the table
             key (_type_): file key in database
         """
-        print("Try to delete")
+        logger.info("Delete the file from table")
         rowIdx = self.indexFromItem(pin).row()
         if rowIdx >= 0:
             self.removeRow(rowIdx)
@@ -377,7 +406,7 @@ class FileTable(QTableWidget):
             else: 
                 raise Exception("file is not found in the data")
         except Exception as err:
-            logging.error(err)
+            logger.error(err)
         else:
             return
         
@@ -398,7 +427,7 @@ class FileTable(QTableWidget):
             else:
                 raise Exception("file is not added to transcribe list")
         except Exception as err:
-            logging.error(err)
+            logger.error(err)
         else:
             return
         
@@ -414,6 +443,7 @@ class FileTable(QTableWidget):
                         **{"Action in Progress":"Transcribing"}}
             transferData[i] = fileData
         self.signals.sendFile.emit(transferData)
+        self._toggleAllSelect(clear=True)
        
         
     def changeSetting(self, key:str) -> None:
@@ -429,27 +459,33 @@ class FileTable(QTableWidget):
     
     """ TODO: change to a pop up """
     def settingDetails(self, key:str)->None:
-        print(key)
-        print(self.filedata)
+        logger.info(key)
+        logger.info(self.filedata)
         if key in self.filedata:
             self.signals.goSetting.emit(self.filedata[key]["Profile"])
     
     def updateSetting(self, newSetting:List[str]) -> None:
-        print("we reached the update seting")
+        logger.info("we reached the update seting")
         self.filedata[newSetting[0]]["Profile"] = newSetting[1]
         rowIdx = self.indexFromItem(self.pinFileData[newSetting[0]]).row()
         newSettingText = QTableWidgetItem(newSetting[1])
         self.setItem(rowIdx, 3, newSettingText)
     
     def _setColorRow(self, rowIdx, color):
-        print(self.rowAt(rowIdx))
+        logger.info(self.rowAt(rowIdx))
         for i in range(self.columnCount()):
             if self.item(rowIdx, i):
                 self.item(rowIdx, i).setBackground(QColor(color))
             else:
-                print("no")
-       
-        
+                logger.info("cannot set row color")
+    
+    def _resizeTable(self):
+        logger.info("resized")
+    
+    def resizeEvent(self, e) -> None:
+        self._resizeTable()
+    
+               
 """ TODO: add responsive handling feature """            
 MainTableHeader = ["Select All", 
                     "Type", 
@@ -459,7 +495,7 @@ MainTableHeader = ["Select All",
                     "Date", 
                     "Size", 
                     "Actions"]
-MainTableDimension = [70,70,140,140,140,70,80,175]
+MainTableDimension = [0.07,0.07,0.2,0.15,0.15,0.08,0.08,0.2]
 
 
 ConfirmHeader = ["Type",
@@ -467,15 +503,15 @@ ConfirmHeader = ["Type",
                  "Profile",
                  "Selected Action", 
                  " "]
-ConfirmHeaderDimension = [85,300,200,130,170]
+ConfirmHeaderDimension = [0.1,0.35,0.25,0.13,0.17]
 
 ProgressHeader = ["Type",
                   "Name",
                   "Action in Progress"]
-ProgressDimension = [170, 450, 265]
+ProgressDimension = [0.2, 0.55, 0.25]
 
 SuccessHeader = ["Type",
                  "Name",
                  "Status",
                  "Output"]
-SuccessDimension = [120, 300, 250, 215]
+SuccessDimension = [0.17, 0.35, 0.25, 0.23]

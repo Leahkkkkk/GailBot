@@ -34,7 +34,7 @@ class FileData(TypedDict):
     Name: str
     Type: str
     Date: str 
-    Size: int 
+    Size: str 
     Output: str 
     FullPath: str
 
@@ -58,8 +58,11 @@ class OpenFile(QWidget):
         self.fullName = None 
         self.fileType = None
         self.filePathDisplay = QLineEdit(self)
+        self.filePathDisplay.setPlaceholderText("Choose file to be transcribed")
+        self.filePathDisplay.setMinimumHeight(40)
         self.filePathDisplay.setReadOnly(True)
-        self.fileBtn = ColoredBtn("choose file", Color.BLUEMEDIUM)
+        self.fileBtn = ColoredBtn("...", Color.BLUEMEDIUM,FontSize.HEADER3)
+        self.fileBtn.setFixedWidth(70)
         self.signals = Signals()
         self.fileBtn.clicked.connect(self._addFile)
         self._initLayout()
@@ -97,12 +100,12 @@ class OpenFile(QWidget):
         temp = str(fullPath)
         patharr = temp.split("/")
         fileName = patharr[-1]
-        size = round(stat(fullPath).st_size, 2)
+        size = round(stat(fullPath).st_size/1000, 2)
        
         return {"Name": fileName, 
                 "Type": fileType, 
                 "Date": date, 
-                "Size": size, 
+                "Size": f"{size}kb", 
                 "FullPath": fullPath}
 
 
@@ -162,13 +165,17 @@ class ChooseOutPut(QWidget):
         self._initLayout()
         
     def _iniWidget(self):
-        self.chooseDirBtn = ColoredBtn("choose output directory", Color.BLUEMEDIUM)
+        self.chooseDirBtn = ColoredBtn("...", Color.BLUEMEDIUM, FontSize.HEADER2)
+        self.chooseDirBtn.setFixedWidth(70)
         self.dirPathText = QLineEdit(self)
+        self.dirPathText.setPlaceholderText("Choose Output Directory")
+        self.dirPathText.setMinimumHeight(40)
+        
         self.dirPathText.setReadOnly(True)
         self.chooseDirBtn.clicked.connect(self._addDir)
         
     def _initLayout(self):
-        self.layout = QVBoxLayout()
+        self.layout = QHBoxLayout()
         self.setLayout(self.layout)
         self.layout.addWidget(self.dirPathText)
         self.layout.addWidget(self.chooseDirBtn)

@@ -10,9 +10,9 @@ class buttonStyle:
     ButtonActive = f"background-color:{Color.GREEN};\
                     color:white;\
                     border-radius:5;\
-                    fontsize:{FontSize.BTN}"
+                    font-size:{FontSize.BTN}"
                     
     ButtonInactive = f"background-color:{Color.GREYMEDIUM1};\
                     color:white;\
                     border-radius:5;\
-                    fontsize:{FontSize.BTN}"
+                    font-size:{FontSize.BTN}"

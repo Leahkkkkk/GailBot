@@ -62,7 +62,6 @@ class MainWindow(QMainWindow):
         self.setMenuBar(self.MenuBar)
         self.Console = Console.Console()
         self.logger = Logger.makeLogger("Frontend")
-        
         self._connectSignal()
         self._connectController()
 
@@ -112,10 +111,11 @@ class MainWindow(QMainWindow):
     def _transcribe(self, fileData: dict):
         """ call controller to transcribe audio file"""
         firstKey = list(fileData.keys())[0]
-        self.controller.runGailBot(fileData[firstKey]["Name"], 
+        print("_tanscribe under maiwnWindow", fileData)
+        self.controller.runGailBot( fileData[firstKey]["Name"], 
                                     fileData[firstKey]["FullPath"], 
                                     fileData[firstKey]["Output"], 
-                                       firstKey)
+                                    firstKey)
         
 
     """ functions provided to child elements"""
@@ -124,3 +124,6 @@ class MainWindow(QMainWindow):
         self.logger.info("")
         self.MainStack.gotoFileUploadPage()
         self.controller.cancelGailBot()
+    
+    def changeFileStatusToTranscribed(self,key):
+        self.MainStack.FileUploadPage.fileTable.changeToTranscribed(key)

@@ -63,7 +63,7 @@ class FileUploadPage(QWidget):
         
     def _initWidget(self):
         """ initialzie widget """
-        self.label = Label.Label("File to Transcribe", 
+        self.label = Label.Label("Files to Transcribe", 
                                  FontSize.HEADER2, 
                                  FontFamily.MAIN)
         self.gotoMainBtn = Button.iconBtn("arrow.png"," Return to Main Menu") 
@@ -125,7 +125,6 @@ class FileUploadPage(QWidget):
         self.containerLayout = QHBoxLayout()
         self.addFileBtnContainer.setLayout(self.containerLayout)
         self.containerLayout.setSpacing(60)
-        
         
         self.containerLayout.addWidget(self.uploadFileBtn,
                                       alignment = Qt.AlignmentFlag.AlignHCenter)

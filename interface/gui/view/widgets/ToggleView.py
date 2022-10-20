@@ -59,12 +59,12 @@ class ToggleView(QWidget):
                                "padding-left: 5px;"
                                f"font-size: {FontSize.BODY}")
         if self.header:
-            self.Btn.setMinimumWidth(600)
+            self.Btn.setMinimumWidth(700)
        
     def _configViewField(self):
         self.scroll = QScrollArea()
         self.scroll.setMinimumWidth(400)
-        self.scroll.setMaximumWidth(650)
+        self.scroll.setMaximumWidth(self.Btn.width())
         self.scroll.setMinimumHeight(100)
         self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
         self.scroll.setWidgetResizable(True)
