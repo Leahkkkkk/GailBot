@@ -25,6 +25,8 @@ from view.style.Background import initImgBackground
 from view.Text.LinkText import Links
 from view.pages import RequiredSetPage, PostSetPage
 from view.widgets import Button, Label, ComboBox
+from view.components.CreateNewSettingTab import CreateNewSetting
+from model.dummySettingData import dummySettingForms
 
 from PyQt6.QtWidgets import (
     QWidget, 
@@ -52,6 +54,7 @@ class SettingPage(QWidget):
         self.selectSettings.addItems(self.profileKeys)
         self.cancelBtn = Button.BorderBtn("Cancel", Color.ORANGE)
         self.saveBtn = Button.ColoredBtn("Save and Exit", Color.GREEN)
+        self.newProfileBtn = Button.ColoredBtn("Create New Profile", Color.BLUEMEDIUM)
         self.requiredSetBtn = Button.BorderBtn("Required Settings", 
                                                Color.GREYDARK,FontSize.BTN, 0)
         self.requiredSetBtn.setFixedWidth(190)
@@ -85,7 +88,9 @@ class SettingPage(QWidget):
                               alignment=QtCore.Qt.AlignmentFlag.AlignHCenter)
         self.layout.addWidget(self.saveBtn,5,0,
                               alignment=QtCore.Qt.AlignmentFlag.AlignHCenter)
-        self.layout.addWidget(self.cancelBtn, 6, 0,
+        self.layout.addWidget(self.newProfileBtn, 6, 0, 
+                              alignment=QtCore.Qt.AlignmentFlag.AlignHCenter)
+        self.layout.addWidget(self.cancelBtn, 7, 0,
                               alignment=QtCore.Qt.AlignmentFlag.AlignHCenter)
         self.layout.addWidget(self.GuideLink, 8, 0,
                               alignment=QtCore.Qt.AlignmentFlag.AlignHCenter)
@@ -108,6 +113,8 @@ class SettingPage(QWidget):
         self.saveBtn.clicked.connect(self.RequiredSetPage.submitForm)
         
         self.selectSettings.currentIndexChanged.connect(self._changeSettingProfile)
+
+        self.newProfileBtn.clicked.connect(self.createNewSetting)
     
     def _initStyle(self):
         self.settingStack.setObjectName("settingStack")
@@ -122,12 +129,23 @@ class SettingPage(QWidget):
         self.RequiredSetPage = RequiredSetPage.RequiredSetPage(self.settingdata[key]["engine"])
         self.settingStack.addWidget(self.RequiredSetPage)
         self.settingStack.removeWidget(self.PostSetPage)
- 
         self.PostSetPage = PostSetPage.PostSetPage(self.settingdata[key]["Post Transcribe"])     
         self.settingStack.addWidget(self.PostSetPage)
         self.settingStack.setCurrentWidget(self.RequiredSetPage)
    
+   
+    def updateSettingProfileOptions(self, keys:str):
+       pass
+
+    def loadSettingProfile(self, profilekey:str):
+        # send a profile key 
+        # get the profile from the backend 
+        pass
         
-
-
+    def createNewSetting(self):
+        createNewSettingTab = CreateNewSetting(
+                        list(dummySettingForms["Required Setting"]),
+                             dummySettingForms["Required Setting"],
+                             dummySettingForms["Post Transcribe"])
+        createNewSettingTab.exec()
         

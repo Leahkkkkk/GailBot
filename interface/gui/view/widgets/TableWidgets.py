@@ -61,7 +61,6 @@ class Actions(QWidget):
 """
 class selectAndCheck(QWidget):
     """
-
     Args:
        full(bool, defaults to False): 
             if true, shows the full file details with setting data 

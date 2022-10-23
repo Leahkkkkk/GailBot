@@ -12,221 +12,49 @@ Modified By:  Siara Small  & Vivian Li
 """ to storing setting data
 TODO: Create D.S to store user created setting profile
 """
+from typing import Dict 
+from model.dummySettingData import dummySettingValues
 
+from PyQt6.QtCore import pyqtSignal, QObject
+
+class Signals (QObject):
+    error = pyqtSignal(str)
+    newSetting = pyqtSignal(object)
+    updateSetting = pyqtSignal(object)
+    sendSetting = pyqtSignal(object)
+    
+    
 class SettingModel:
     """ dummy setting data for testing setting page functionality """
-    def __init__(self):
-      self.data ={
-    "Coffee Study": {
-        "engine": {
-            "IBM": {
-                "1.language model setting": {
-                    "1. language model": [
-                        "IBM language",
-                        "English",
-                        "Spanish"
-                    ],
-                    "2. costum language model": [
-                        "HRI lab",
-                        "None",
-                        "Air Force Study"
-                    ]
-                },
-                "2.Acuoustic Model Setting": {
-                    "1. acoustic model setting": [
-                        "acoustic1",
-                        "acoustic2",
-                        "acoustic3"
-                    ],
-                    "2. acoustic model setting(optional)": [
-                        "1",
-                        "2",
-                        "3"
-                    ]
-                },
-                "3.advanced setting": {
-                    "1. Advanced Setting Option 1": [
-                        "advanced 1",
-                        "advanced 2",
-                        "advanced 3"
-                    ],
-                    "2. plugins": [
-                        "puglins 1",
-                        "plugins 2"
-                    ]
-                },
-                "4.IBM specialised setting": {
-                    "IBM dummy setting": [
-                        "dummy setting1",
-                        "dummy setting2",
-                        "dummy setting3"
-                    ]
-                }
-            },
-            "CMU": {
-                "1.language model setting": {
-                    "1. language model": [
-                        "CMU language",
-                        "English",
-                        "Spanish"
-                    ],
-                    "2. costum language model": [
-                        "CMU costum",
-                        "None",
-                        "Air Force Study"
-                    ]
-                },
-                "2.Acuoustic Model Setting": {
-                    "1. acoustic model setting": [
-                        "acoustic1",
-                        "acoustic2",
-                        "acoustic3"
-                    ],
-                    "2. acoustic model setting(optional)": [
-                        "1",
-                        "2",
-                        "3"
-                    ],
-                    "3. plugins": [
-                        "puglins 1",
-                        "plugins 2"
-                    ]
-                },
-                "3.CMU specialised setting": {
-                    "CMU dummy setting": [
-                        "dummy setting1",
-                        "dummy setting2",
-                        "dummy setting3"
-                    ]
-                }
-            }
-        },
-        "Post Transcribe": {
-            "General": {
-                "Gap Length": "0.3s",
-                "Turn End Threshold": "0.1ms",
-                "Large Pause - Lower Bound": "1.0ms"
-            },
-            "Laghter Settings": {
-                "Laughter Detection Module bool": "ON",
-                "Laughter Probability - Lower Bound": "0.04ms",
-                "Laughter Length - Lower Bound": "0.05ms",
-            },
-            "MicroPause Bound": {
-                "Upper Bound": "1.0ms",
-                "Lower Bound": "0.02ms"
-            },
-            "Transcription Model": {
-                "Beat Transcription Mode bool": "ON",
-                "FTO (Floor Transfer offset)Transcription Mode bool": "ON",
-                "Syllable Rate mode bool": "ON"
-            },
-        }
-    },
-    "HRI lab study": {
-        "engine": {
-            "IBM": {
-                "1.language model setting": {
-                    "1. language model": [
-                        "IBM language",
-                        "English",
-                        "Spanish"
-                    ],
-                    "2. costum language model": [
-                        "HRI lab",
-                        "None",
-                        "Air Force Study"
-                    ]
-                },
-                "2.Acuoustic Model Setting": {
-                    "1. acoustic model setting": [
-                        "acoustic1",
-                        "acoustic2",
-                        "acoustic3"
-                    ],
-                    "2. acoustic model setting(optional)": [
-                        "1",
-                        "2",
-                        "3"
-                    ]
-                },
-                "3.advanced setting": {
-                    "1. Advanced Setting Option 1": [
-                        "advanced 1",
-                        "advanced 2",
-                        "advanced 3"
-                    ],
-                    "2. plugins": [
-                        "puglins 1",
-                        "plugins 2"
-                    ]
-                },
-                "4.IBM specialised setting": {
-                    "IBM dummy setting": [
-                        "dummy setting1",
-                        "dummy setting2",
-                        "dummy setting3"
-                    ]
-                }
-            },
-            "CMU": {
-                "1.language model setting": {
-                    "1. language model": [
-                        "CMU language",
-                        "English",
-                        "Spanish"
-                    ],
-                    "2. costum language model": [
-                        "CMU costum",
-                        "None",
-                        "Air Force Study"
-                    ]
-                },
-                "2.Acuoustic Model Setting": {
-                    "1. acoustic model setting": [
-                        "acoustic1",
-                        "acoustic2",
-                        "acoustic3"
-                    ],
-                    "2. acoustic model setting(optional)": [
-                        "1",
-                        "2",
-                        "3"
-                    ],
-                    "3. plugins": [
-                        "puglins 1",
-                        "plugins 2"
-                    ]
-                },
-                "3.CMU specialised setting": {
-                    "CMU dummy setting": [
-                        "dummy setting1",
-                        "dummy setting2",
-                        "dummy setting3"
-                    ]
-                }
-            }
-        },
-        "Post Transcribe": {
-            "General": {
-                "Gap Length": "0.10s",
-                "Turn End Threshold": "0.2ms",
-                "Large Pause - Lower Bound": "3.0ms"
-            },
-            "Laghter Settings": {
-                "Laughter Detection Module bool": "ON",
-                "Laughter Probability - Lower Bound": "0.04ms",
-                "Laughter Length - Lower Bound": "0.05ms",
-            },
-            "MicroPause Bound": {
-                "Upper Bound": "1.0ms",
-                "Lower Bound": "0.02ms"
-            },
-            "Transcription Model": {
-                "Beat Transcription Mode bool": "OFF",
-                "FTO (Floor Transfer offset)Transcription Mode bool": "OFF",
-                "Syllable Rate mode bool": "OFF"
-            },
-        }
-    }
-}
+    def __init__(self, settingOptions=None, settingForm=None):
+      self.data = dummySettingValues # stores the user's setting data 
+      self.keys = [] # stores a list of keys 
+      self.signals = Signals()
+
+    
+    def addUserSetting(self, settingkey:str, settingValues:Dict[str, dict]):
+        if not settingkey in self.data:
+            self.data[settingkey] == settingValues
+            self.signals.newSetting.emit({settingkey:settingValues})
+        else: 
+            self.signals.error.emit("the profile name has been taken")
+      
+    def updateSetting(self, settingkey:str, settingValues:Dict[str, dict]):
+        try:
+            if settingkey not in self.data:
+                raise KeyError
+            else:
+                self.data[settingkey] = settingValues
+        except KeyError:
+            self.signals.error("Profile is not found in the database")
+        else: 
+            self.signals.updateSetting.emit({settingkey:settingValues})
+            
+    def getSettings(self, settingkey:str):
+        try:
+            if settingkey not in self.data:
+                raise KeyError
+        except KeyError:
+            self.signals.error("Profile is not found in the database")
+        else:
+            self.signals.sendSetting.emit(self.data[settingkey])

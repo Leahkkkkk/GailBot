@@ -1,6 +1,6 @@
 import os
 
-from view.components import MsgBox
+from view.widgets import MsgBox
 from view.widgets import (
     Label,   
     Button,

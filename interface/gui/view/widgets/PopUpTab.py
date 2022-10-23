@@ -4,15 +4,11 @@ from typing_extensions import Required
 
 
 from view.widgets import Button, TableWidgets
-from view.widgets.TabPages import (
-    OpenFile, 
-    ChooseOutPut, 
-    ChooseSet)
+from view.widgets.TabPage import TabPage
 from view.components import PostSet, RequiredSet
-from view.widgets.Button import ColoredBtn
 from view.style.widgetStyleSheet import buttonStyle
 from view.style.Background import initBackground
-from view.style.styleValues import Color, FontFamily, FontSize
+from view.style.styleValues import Color
 
 
 from PyQt6.QtWidgets import (
@@ -21,44 +17,35 @@ from PyQt6.QtWidgets import (
     QVBoxLayout, 
     QDialog,
     QHBoxLayout,
-    QGridLayout,
-    QScrollArea,
-    QSizePolicy,
-    QScrollBar)
+    QScrollArea)
 
 from PyQt6.QtCore import QObject, pyqtSignal, QSize, Qt
 
 class Signals(QObject):
-    sendFile = pyqtSignal(dict)
-    sendStatus = pyqtSignal(int)
     closeTab = pyqtSignal()
 
-class fileObject(TypedDict):
-    Name: str
-    Type: str
-    Profile: str
-    Status: str
-    Date: str
-    Size: int
-    Output: str
-    FullPath: str
-    
 class Tab(QWidget):
     def __init__(
         self, 
         header:str,
-        tabs: Dict[str, QWidget],
+        tabs: Dict[str, TabPage],
+        size: QSize = QSize(600,300),
         *args,
         **kwargs
         ):
-    
+        """  A pop up tab 
+
+        Args:
+            header (str): _description_
+            tabs (Dict[str, TabPage]): _description_
+        """
         super().__init__(*args, **kwargs)
         self.tabsState = []
         self.curPageIdx = 0
         self.header = header 
         self.tabs = tabs
         self.signals = Signals()
-        self.setFixedSize(QSize(600,300))
+        self.setFixedSize(size)
         self._initWidget()
         self._initLayout()
         initBackground(self,Color.BLUEWHITE)
@@ -69,7 +56,7 @@ class Tab(QWidget):
         initBackground(self.MainTab,Color.BLUEWHITE)
         self.MainTab.setTabPosition(QTabWidget.TabPosition.West)
         
-        """ iintialiale the control button """
+        """ initialize the control button """
         self.changePageBtn = changePageBtn()
         self.changePageBtn.nextBtn.clicked.connect(self._toNextPage)
         self.changePageBtn.prevBtn.clicked.connect(self._toPreviousPage)
@@ -90,6 +77,7 @@ class Tab(QWidget):
         
         self.setWindowTitle(self.header)
         self.MainTab.currentChanged.connect(self._setButtonState)
+        self.MainTab.currentChanged.connect(self._setCurrentIdx)
         
     def _setButtonState(self, index):
         if self.tabsState[index]:
@@ -129,38 +117,11 @@ class Tab(QWidget):
         if self.curPageIdx > 0 :
             self.curPageIdx -= 1
             self.MainTab.setCurrentIndex(self.curPageIdx)
-
-            
-class ChooseFileTab(QDialog):
-    def __init__(self, settings:List[str], *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        self.signals = Signals()
-        self.chooseFileTab = OpenFile()
-        self.chooseSetTab = ChooseSet(settings)
-        self.chooseOutPutTab = ChooseOutPut()
-        self.setWindowTitle("Upload File")
-        mainTab = Tab("Add New File", 
-                      {"add file": self.chooseFileTab,
-                       "choose setting": self.chooseSetTab,
-                       "select output": self.chooseOutPutTab}
-                      )
-        mainTab.signals.closeTab.connect(self.addFile)
-        self.layout = QVBoxLayout()
-        self.setLayout(self.layout)
-        self.layout.addWidget(mainTab) 
     
-    def addFile(self) -> None: 
-        fileObj = self.chooseFileTab.getFile()
-        profileObj = self.chooseSetTab.getProfile()
-        print("file profile", profileObj)
-        outputPathObj = self.chooseOutPutTab.getOutputPath()
-        statusObj = {"Status": "Not Transcribed"}
-        fileData = {**fileObj, **profileObj, **outputPathObj, **statusObj}
-        self.signals.sendFile.emit(fileData)
-        self.signals.sendStatus.emit(200)
-        self.close()
+    def _setCurrentIdx(self, idx):
+        self.curPageIdx = idx
 
-
+        
 class changePageBtn(QWidget):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
@@ -241,8 +202,10 @@ class FileDetails(QDialog):
         super().__init__( *args, **kwargs)
         
         Directory = TableWidgets.DirectoryDetails() 
-        RequiredSetting = RequiredSet.RequiredSet(settingData["engine"])  #TODO: get the dynamic data
-        PostSetting = PostSet.PostSet(settingData["Post Transcribe"]) #TODO: get the dynamic data
+        RequiredSetting = RequiredSet.RequiredSet(settingData["engine"])  
+                          #TODO: get the dynamic data
+        PostSetting = PostSet.PostSet(settingData["Post Transcribe"]) 
+                         #TODO: get the dynamic data
         self.Maintab = NoControlTab("File Info", 
                                     {"Directory": Directory, 
                                     "Required Setting":RequiredSetting,

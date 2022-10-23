@@ -15,20 +15,17 @@ from os import stat
 
 from view.widgets.Button import ColoredBtn, BorderBtn
 from view.widgets.Label import Label
+from view.widgets.TabPage import TabPage
 from view.style.Background import initBackground
-from view.style.styleValues import Color, FontFamily, FontSize
+from view.style.styleValues import Color, FontSize
 from view.style.widgetStyleSheet import buttonStyle
 
 from PyQt6.QtWidgets import (
-    QWidget, 
     QFileDialog, 
-    QPushButton, 
     QLineEdit,
-    QVBoxLayout, 
     QHBoxLayout,
-    QLabel,
     QComboBox)
-from PyQt6.QtCore import pyqtSignal, QObject, QSize
+from PyQt6.QtCore import QSize
 
 class FileData(TypedDict):
     Name: str
@@ -44,14 +41,7 @@ class OutputPath(TypedDict):
 class Profile(TypedDict):
     Profile:str
 
-class Signals(QObject):
-    """ contain signals to communicate with the parent tab """
-    nextPage = pyqtSignal()
-    previousPage = pyqtSignal()
-    close = pyqtSignal()
-
-
-class OpenFile(QWidget):
+class OpenFile(TabPage):
     """  for user to select file from their directory """
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
@@ -63,7 +53,6 @@ class OpenFile(QWidget):
         self.filePathDisplay.setReadOnly(True)
         self.fileBtn = ColoredBtn("...", Color.BLUEMEDIUM,FontSize.HEADER3)
         self.fileBtn.setFixedWidth(70)
-        self.signals = Signals()
         self.fileBtn.clicked.connect(self._addFile)
         self._initLayout()
     
@@ -109,14 +98,13 @@ class OpenFile(QWidget):
                 "FullPath": fullPath}
 
 
-class ChooseSet(QWidget):
+class ChooseSet(TabPage):
     """ for user to choose setting profile """
     def __init__(self, settings: List[str], *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         print(settings)
         self.profile = settings[0]
         self.settings = settings
-        self.signals = Signals()
         self._initWidget()
         self._initLayout()
         self.setAutoFillBackground(True)
@@ -155,12 +143,11 @@ class ChooseSet(QWidget):
             logging.warn("the profile is not chosen")
         
 
-class ChooseOutPut(QWidget):
+class ChooseOutPut(TabPage):
     """ for user to choose output directory  """
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.outPath = None
-        self.signals = Signals()
         self._iniWidget()
         self._initLayout()
         

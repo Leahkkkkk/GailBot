@@ -19,24 +19,9 @@ class Model():
         2.SettingModel: stores the setting data
     """
     def __init__(self):
-      self.FileModel = FileModel.FileModel()
-      self.ConfirmFileModel = FileModel.ConfirmFileModel()
-      self.ProcessingFileModel = FileModel.ProgressFileMode()
-      self.SuccessedFileMode = FileModel.SuccessFileModel()
       self.SettingModel = SettingModel.SettingModel()
       self.FileData = dict()
-    #   self.FileData = {
-    #         "1": {
-    #             "Name": "hello.wav",
-    #             "Type": "🔈",
-    #             "Profile":"Coffee Study",
-    #             "Status": "Not Transcribed",
-    #             "Date": "10-13-22",
-    #             "Size":"135.26kb",
-    #             "Output": "/Users/yike/Desktop/",
-    #             "FullPath": "/Users/yike/Desktop/hello.wav",
-    #         },
-    #     }
+
       
       
       

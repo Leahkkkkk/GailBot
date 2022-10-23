@@ -1,0 +1,94 @@
+'''
+File: DynamicNDependentCombo.py
+Project: GailBot GUI
+File Created: Wednesday, 5th October 2022 12:22:13 pm
+Author: Siara Small  & Vivian Li
+-----
+Last Modified: Thursday, 6th October 2022 1:44:39 pm
+Modified By:  Siara Small  & Vivian Li
+-----
+'''
+
+""" TODO: create functions to load the form values
+    TODO: create functions to disable editing 
+    TODO: create functiosn to retrieve form data
+"""
+from typing import Dict
+
+from view.style.styleValues import Color
+from view.widgets import ToggleView
+from view.widgets.MultipleCombo import ToggleCombo
+
+from PyQt6.QtWidgets import (
+    QComboBox, 
+    QWidget, 
+    QVBoxLayout, 
+    QGridLayout,
+    QLineEdit,
+    QLabel, 
+)
+
+class SettingEngineForm(QWidget):
+    """ Generate a dynamic list of combobox
+    
+    Args:
+        data (dict): a dictionary that stores the dependent logic 
+    
+    """
+    def __init__(self, data:Dict[str, dict], *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.data = data
+        self._initWidget()
+        self._initLayout()
+        self._connectSignal()
+        self._updateCombo(self.mainCombo.currentIndex())
+        
+    def _initWidget(self):
+        """ initialize the widget """
+        self.label = QLabel("Speech to Text Engine")
+        self.mainCombo = QComboBox(self)
+        self.toggleList = None
+        for key, value in self.data.items():
+            self.mainCombo.addItem(key, value)
+    
+    def _initLayout(self):
+        """ initialize the layout """
+        self.layout = QVBoxLayout()
+        self.layout.setSpacing(0)
+        self.setLayout(self.layout)
+        self.layout.addWidget(self.label)
+        self.layout.addWidget(self.mainCombo)
+         
+    def _connectSignal(self):
+        """ connect the signal  """
+        self.mainCombo.currentIndexChanged.connect(self._updateCombo)
+    
+    def _updateCombo(self, index):
+        """ function to update the combobox """
+        data = self.mainCombo.itemData(index)
+        if self.toggleList:
+            self.toggleList.deleteLater()
+            
+        self.toggleList = ToggleCombo(data)
+        self.toggleList.setContentsMargins(0,0,0,0)
+        self.layout.addWidget(self.toggleList)
+        self.layout.setSpacing(0)
+        self.layout.addStretch()
+
+class UserForm(QWidget):
+    """ class for user form """
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.layout = QGridLayout()
+        self.userlabel = QLabel("Username")
+        self.layout.addWidget(self.userlabel, 0,0)
+        self.nameInput = QLineEdit(self)
+        self.layout.addWidget(self.nameInput, 1,0)
+        self.passwordLabel = QLabel("Password")
+        self.layout.addWidget(self.passwordLabel, 0,1)
+        self.passwordInput = QLineEdit(self)
+        self.layout.addWidget(self.passwordInput, 1,1)
+        self.setLayout(self.layout)
+        self.setFixedHeight(100)
+    
+        

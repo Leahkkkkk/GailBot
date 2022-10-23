@@ -22,11 +22,10 @@ Modified By:  Siara Small  & Vivian Li
 
 # from view.widgets import (Label, Button)
 # from view.style.styleValues import Color, FontFamily, FontSize
-import os
 from typing import Dict, List, Set, TypedDict
 
-from view.widgets.FileTab import ChooseFileTab
-from view.widgets.TabPages import ChooseSet
+from view.components.ChooseFileTab import ChooseFileTab
+from view.pages.FileUploadTabPages import ChooseSet
 from view.style.styleValues import Color
 from view.style.Background import initBackground
 from util import Path
@@ -59,98 +58,12 @@ class fileObject(TypedDict):
     Output: str
     FullPath: str
     
-class DisplayFile(QObject):
-    def __init__(
-        self, 
-        table: QTableWidget,
-        pin: QTableWidgetItem, 
-        key: str,
-        deleteFun:callable, 
-        setFun:callable, 
-        selectFun:callable, 
-        unselectFun:callable, 
-        gosetFun:callable,
-        *args, 
-        **kwargs):
-        """ A wrapper class that contains all widgets in one row of filetable
-
-        Args:
-            table (QTableWidget): the parent table of the widget
-            pin (QTableWidgetItem): used to pin the position of the 
-                                    file on the table
-            key (str): a key that identify the file in the data 
-            deleteFun (callable): function to delete the file
-            setFun (callable): function to change 
-            selectFun (callable): function to select the file
-            unselectFun (callable): function to unselect the file
-            gosetFun:callable: function to view the setting
-        """
-        super().__init__(*args, **kwargs)
-        self.pin = pin  # to localize the file on the table
-        self.key = key  # to localize the flle on the actual data base 
-        self.table = table
-        self.selectFun = selectFun
-        self.unselectFun = unselectFun
-        self.gosetFule = gosetFun
-        self.checkBoxContainer = QWidget()
-        self.checkBoxLayout = QVBoxLayout()
-        self.checkBoxContainer.setLayout(self.checkBoxLayout)
-        self.checkBox = QCheckBox()
-        self.checkBoxLayout.addWidget(self.checkBox, 
-                                      alignment=Qt.AlignmentFlag.AlignCenter)
-        self.Action = QWidget()
-        self.ActionLayout = QVBoxLayout()
-        self.Action.setLayout(self.ActionLayout)
-        self.deleteBtn = QPushButton("Delete")
-        self.setBtn = QPushButton("Change Setting")
-        self.profileBtn = QPushButton("Profile Details")
-        
-        self.ActionLayout.addWidget(self.deleteBtn)
-        self.ActionLayout.addWidget(self.setBtn)
-        self.ActionLayout.addWidget(self.profileBtn)
-        self.ActionLayout.setSpacing(1)
-        self.ActionLayout.addStretch()
-        self.deleteBtn.clicked.connect(lambda: deleteFun(self.pin, self.key))
-        self.setBtn.clicked.connect(lambda: setFun(self.key))
-        self.profileBtn.clicked.connect(lambda: gosetFun(self.key))
-        self.checkBox.stateChanged.connect(self.checkStateChanged)
-
-    
-    def checkStateChanged(self, state:bool):
-        if state:
-            self.selectFun(self.key, self.pin)
-        else:
-            self.unselectFun(self.key, self.pin)
-            
-    def setCheckState(self, state):
-        if state:
-            self.checkBox.setCheckState(Qt.CheckState.Checked)
-        else: 
-            self.checkBox.setCheckState(Qt.CheckState.Unchecked)
-            
-    def addWidgetToTable(self, row, rowWidgets: Set[str]):
-        if "select" in rowWidgets:
-            firstCell = QTableWidgetItem()
-            self.table.setItem(row, 0, firstCell, )
-            self.table.setCellWidget(row, 0, self.checkBoxContainer)
-        if "setting" in rowWidgets or "delete" in rowWidgets:
-            lastCell = QTableWidgetItem()
-            self.table.setItem(row,self.table.columnCount() - 1, lastCell)
-            self.table.setCellWidget(row, self.table.columnCount()- 1, self.Action)
-        if "delete" not in rowWidgets:
-            self.deleteBtn.hide()
-            self.setBtn.hide()
-        if "setting" not in rowWidgets:
-            self.profileBtn.hide()
- 
-        
 class Signals(QObject):
     goSetting = pyqtSignal(str)
     changeSetting = pyqtSignal(list)
     nonZeroFile = pyqtSignal()
     ZeroFile = pyqtSignal()
     sendFile = pyqtSignal(object)
-
 
 class changeProfileDialog(QDialog):
     def __init__(self, settings: List[str], fileKey:str, *args, **kwargs) -> None:
@@ -485,7 +398,13 @@ class FileTable(QTableWidget):
     def resizeEvent(self, e) -> None:
         self._resizeTable()
     
-               
+    
+    def deleteAll(self)->None:
+        for key, pin in self.pinFileData.items():
+            self.deleteFile(pin, key)
+            self.transferList.clear()
+
+        
 """ TODO: add responsive handling feature """            
 MainTableHeader = ["Select All", 
                     "Type", 
@@ -515,3 +434,89 @@ SuccessHeader = ["Type",
                  "Status",
                  "Output"]
 SuccessDimension = [0.17, 0.35, 0.25, 0.23]
+
+
+
+class DisplayFile(QObject):
+    def __init__(
+        self, 
+        table: QTableWidget,
+        pin: QTableWidgetItem, 
+        key: str,
+        deleteFun:callable, 
+        setFun:callable, 
+        selectFun:callable, 
+        unselectFun:callable, 
+        gosetFun:callable,
+        *args, 
+        **kwargs):
+        """ A wrapper class that contains all widgets in one row of filetable
+
+        Args:
+            table (QTableWidget): the parent table of the widget
+            pin (QTableWidgetItem): used to pin the position of the 
+                                    file on the table
+            key (str): a key that identify the file in the data 
+            deleteFun (callable): function to delete the file
+            setFun (callable): function to change 
+            selectFun (callable): function to select the file
+            unselectFun (callable): function to unselect the file
+            gosetFun:callable: function to view the setting
+        """
+        super().__init__(*args, **kwargs)
+        self.pin = pin  # to localize the file on the table
+        self.key = key  # to localize the flle on the actual data base 
+        self.table = table
+        self.selectFun = selectFun
+        self.unselectFun = unselectFun
+        self.gosetFule = gosetFun
+        self.checkBoxContainer = QWidget()
+        self.checkBoxLayout = QVBoxLayout()
+        self.checkBoxContainer.setLayout(self.checkBoxLayout)
+        self.checkBox = QCheckBox()
+        self.checkBoxLayout.addWidget(self.checkBox, 
+                                      alignment=Qt.AlignmentFlag.AlignCenter)
+        self.Action = QWidget()
+        self.ActionLayout = QVBoxLayout()
+        self.Action.setLayout(self.ActionLayout)
+        self.deleteBtn = QPushButton("Delete")
+        self.setBtn = QPushButton("Change Setting")
+        self.profileBtn = QPushButton("Profile Details")
+        
+        self.ActionLayout.addWidget(self.deleteBtn)
+        self.ActionLayout.addWidget(self.setBtn)
+        self.ActionLayout.addWidget(self.profileBtn)
+        self.ActionLayout.setSpacing(1)
+        self.ActionLayout.addStretch()
+        self.deleteBtn.clicked.connect(lambda: deleteFun(self.pin, self.key))
+        self.setBtn.clicked.connect(lambda: setFun(self.key))
+        self.profileBtn.clicked.connect(lambda: gosetFun(self.key))
+        self.checkBox.stateChanged.connect(self.checkStateChanged)
+
+    
+    def checkStateChanged(self, state:bool):
+        if state:
+            self.selectFun(self.key, self.pin)
+        else:
+            self.unselectFun(self.key, self.pin)
+            
+    def setCheckState(self, state):
+        if state:
+            self.checkBox.setCheckState(Qt.CheckState.Checked)
+        else: 
+            self.checkBox.setCheckState(Qt.CheckState.Unchecked)
+            
+    def addWidgetToTable(self, row, rowWidgets: Set[str]):
+        if "select" in rowWidgets:
+            firstCell = QTableWidgetItem()
+            self.table.setItem(row, 0, firstCell, )
+            self.table.setCellWidget(row, 0, self.checkBoxContainer)
+        if "setting" in rowWidgets or "delete" in rowWidgets:
+            lastCell = QTableWidgetItem()
+            self.table.setItem(row,self.table.columnCount() - 1, lastCell)
+            self.table.setCellWidget(row, self.table.columnCount()- 1, self.Action)
+        if "delete" not in rowWidgets:
+            self.deleteBtn.hide()
+            self.setBtn.hide()
+        if "setting" not in rowWidgets:
+            self.profileBtn.hide()

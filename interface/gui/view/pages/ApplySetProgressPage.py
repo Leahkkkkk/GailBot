@@ -16,7 +16,7 @@ from view.widgets import Label, Button, FileTable
 from view.style.styleValues import Color, FontSize, FontFamily
 from view.style.Background import initImgBackground
 from view.style.styleValues import Color, FontSize, FontFamily, Dimension
-from view.components import MsgBox
+from view.widgets import MsgBox
 
 from PyQt6 import QtCore, QtGui, QtWidgets
 from PyQt6.QtWidgets import QWidget, QLabel, QVBoxLayout, QScrollArea

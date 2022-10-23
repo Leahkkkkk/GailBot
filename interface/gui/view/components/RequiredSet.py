@@ -1,5 +1,5 @@
-from view.widgets import DynamicNDependentCombo, ToggleView, Label
-from view.components import MsgBox
+from view.widgets import ToggleView, Label
+from view.components.SettingEngineForm import SettingEngineForm
 from view.style.styleValues import FontFamily, FontSize, Color
 
 from PyQt6.QtWidgets import (
@@ -20,7 +20,7 @@ class RequiredSet(QWidget):
          
     def _initWidget(self):
         """initialize widgets"""
-        self.comboBox = DynamicNDependentCombo.DynamicNDependentCombo(self.data,parent=self)
+        self.comboBox = SettingEngineForm(self.data,parent=self)
         self.engineSet = ToggleView.ToggleView("Speech to text settings", 
                                                self.comboBox, 
                                                header = True)

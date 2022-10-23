@@ -40,10 +40,7 @@ class PostSetPage(QWidget):
         self.PostSet.setFixedWidth(600)
         self.scroll.setMaximumHeight(600)
         self.scroll.setMinimumHeight(430)
-        
-
-       
-    
+ 
     def _initLayout(self):
         """ initialize layout"""
         self.layout = QVBoxLayout()

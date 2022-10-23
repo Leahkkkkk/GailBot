@@ -23,7 +23,7 @@ from view.pages import (
 from view.widgets.FileTable import (
     FileTable
 )
-from view.widgets.FileTab import (
+from view.widgets.PopUpTab import (
     FileDetails
 )
 
@@ -135,7 +135,7 @@ class MainStack(QStackedWidget):
             self.setCurrentWidget(self.FileUploadPage))
         self.SettingPage.saveBtn.clicked.connect(lambda:
             self.setCurrentWidget(self.FileUploadPage))
-        self.FileUploadPage.fileTable.signals.goSetting.connect(self._OpenFileDetails)
+        self.FileUploadPage.fileTable.signals.goSetting.connect(self.gotoSettingPage)
         self.ConfirmTranscribePage.fileTable.signals.goSetting.connect(self._OpenFileDetails)
         self.FileUploadPage.fileTable.signals.sendFile.connect(self.gotoConfirmPage)
         self.ConfirmTranscribePage.fileTable.signals.sendFile.connect(self.gotoTranscribeInProgress)

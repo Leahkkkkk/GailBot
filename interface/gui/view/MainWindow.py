@@ -18,8 +18,9 @@ from view.components import (
     StatusBar, 
     MenuBar, 
     Console, 
-    MsgBox
 )
+from view.widgets import MsgBox
+
 
 from controller. Controller import Controller
 from model.FileItem import FileItem
@@ -66,7 +67,6 @@ class MainWindow(QMainWindow):
         self._connectController()
 
     """ Functions provided to controller """
-
     def showTranscribeInProgress(self):
         """goes to transcribe in progress page"""
         self.MainStack.gotoTranscribeInProgress()

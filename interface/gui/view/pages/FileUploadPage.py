@@ -21,7 +21,7 @@ from view.widgets import Label, Button, FileTable
 from view.style.styleValues import Color
 from view.style.widgetStyleSheet import buttonStyle
 
-from view.components import MsgBox
+from view.widgets import MsgBox
 
 from view.style.styleValues import (
     FontFamily, 
@@ -83,10 +83,11 @@ class FileUploadPage(QWidget):
         self.recordBtn.setFixedSize(Dimension.RBUTTON)
         self.uploadFileBtn.setFixedSize(Dimension.RBUTTON)
         self.transcribeBtn.setFixedSize(Dimension.BGBUTTON)
-        
         self.settingProfile = Button.ColoredBtn("⚙", Color.BLUEMEDIUM,"35px")
         self.settingProfile.setFixedSize(QSize(40,40))
-      
+        self.deleteAll = Button.ColoredBtn("Delete all",
+                                            Color.BLUEMEDIUM,
+                                            FontSize.BTN)
       
         self.fileTable = FileTable.FileTable(FileTable.MainTableHeader, 
                                              self.fileDate, 
@@ -96,6 +97,7 @@ class FileUploadPage(QWidget):
         self.fileTable.resizeCol(FileTable.MainTableDimension)
         self.transcribeBtn.clicked.connect(lambda: self.fileTable.getTransferData())
         self.uploadFileBtn.clicked.connect(self.fileTable.getFile)
+        self.deleteAll.clicked.connect(self._confirmDelete)
         self.fileTable.signals.nonZeroFile.connect(self._allowTranscribe)
         self.fileTable.signals.ZeroFile.connect(self._disallowTranscribe)
         self._disallowTranscribe()
@@ -116,6 +118,8 @@ class FileUploadPage(QWidget):
         self.verticalLayout.addWidget(self.settingProfile,
                                       alignment=Qt.AlignmentFlag.AlignRight|
                                       Qt.AlignmentFlag.AlignTop)
+        self.verticalLayout.addWidget(self.deleteAll,
+                                      alignment = Qt.AlignmentFlag.AlignLeft)
         self.verticalLayout.addWidget(self.fileTable, 4,
                                       alignment = Qt.AlignmentFlag.AlignHCenter)
         self.spacer = QSpacerItem(500,70)
@@ -144,6 +148,7 @@ class FileUploadPage(QWidget):
         initImgBackground(self,"backgroundConfirmPage.png")
         self.gotoMainBtn.setFixedSize(QSize(200,40))
         self.gotoMainBtn.setStyleSheet(f"border:none; color:{Color.BLUEMEDIUM}")
+        self.deleteAll.setFixedSize(130,30)
     
     def _allowTranscribe(self):
         self.transcribeBtn.setEnabled(True)
@@ -154,6 +159,9 @@ class FileUploadPage(QWidget):
     def _disallowTranscribe(self):
         self.transcribeBtn.setDisabled(True)
         self.transcribeBtn.setStyleSheet(buttonStyle.ButtonInactive)
+        
+    def _confirmDelete(self):
+        confirmPopUp = MsgBox.ConfirmBox("Delete all file?", self.fileTable.deleteAll)
         
    
     
