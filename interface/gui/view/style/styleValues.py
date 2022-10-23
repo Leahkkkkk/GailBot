@@ -28,6 +28,9 @@ class Color:
     GREYMEDIUM2 = "#767C85"
     GREYDARK = "#545B67"
     BORDERGREY ="#797979"
+    BLACK = "#000000"
+    WHITE = "#FFFFFF"
+    GREYEXTRALIGHT = "#F0F6F9"
 
 dataclass
 class FontSize:

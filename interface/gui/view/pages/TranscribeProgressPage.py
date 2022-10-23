@@ -52,8 +52,8 @@ class TranscribeProgressPage(QWidget):
                                       FontFamily.OTHER)
         self.loadingText.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         self.InProgress = Label.Label(TranscribeProgressText.inProgressText,
-                                        FontSize.BODY,
-                                        FontFamily.OTHER)
+                                        FontSize.HEADER3,
+                                        FontFamily.MAIN)
         self.cancelBtn = Button.ColoredBtn(TranscribeProgressText.cancelText, Color.ORANGE, FontSize.BTN)
         self.fileTable = FileTable.FileTable(FileTable.ProgressHeader, {}, {})
         self.fileTable.resizeCol(FileTable.ProgressDimension)
@@ -65,7 +65,7 @@ class TranscribeProgressPage(QWidget):
         self.loadIcon.setScaledContents(True)
         self.cancelBtn.setMinimumSize(QtCore.QSize(130, 30))
         self.cancelBtn.setMinimumSize(Dimension.BGBUTTON)
-        initImgBackground(self, "backgroundConfirmPage.png")
+        initImgBackground(self, "backgroundSubPages.png")
         
         
     def _initLayout(self):
@@ -74,6 +74,9 @@ class TranscribeProgressPage(QWidget):
         self.setLayout(self.verticalLayout)
         """ add widget to layout """
         self.verticalLayout.addWidget(self.label)
+        
+        
+        # self.verticalLayout.addStretch(2)
         self.label.setContentsMargins(0,20,0,0)
         self.verticalLayout.addWidget(self.loadIcon, 
                                       alignment = Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignTop)
@@ -84,7 +87,7 @@ class TranscribeProgressPage(QWidget):
         self.verticalLayout.addStretch()
         self.verticalLayout.addWidget(self.cancelBtn, 
                                       alignment = Qt.AlignmentFlag.AlignHCenter)
-        self.verticalLayout.setSpacing(10)
+        self.verticalLayout.setSpacing(30)
         self.InProgress.setContentsMargins(80,0,0,0)
         self.loadIcon.setContentsMargins(0,0,0,0)
         self.fileTable.setMaximumHeight(300)
@@ -96,8 +99,12 @@ class TranscribeProgressPage(QWidget):
         
     def _confirm(self):
         """ handles confirm transcription message box """
-        self.confirmCancel = MsgBox.ConfirmBox("Confirm cancel?", 
+        self.confirmCancel = MsgBox.ConfirmBox("Confirm cancellation?", 
                                                self.parent.confirmCancel)
-        
+    
+    def setLoadingText(self, text):
+        self.loadingText = Label.Label(text,
+                                      FontSize.SMALL,
+                                      FontFamily.OTHER)
 
     

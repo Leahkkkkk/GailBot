@@ -110,7 +110,7 @@ class MainStack(QStackedWidget):
         self.addWidget(self.TranscribeProgressPage)
         self.addWidget(self.TranscribeSuccessPage)
         self.addWidget(self.RecordPage)
-        self.setCurrentWidget(self.FileUploadPage)
+        self.setCurrentWidget(self.WelcomePage)
         
         
     def _pageRedirect(self):
@@ -132,6 +132,8 @@ class MainStack(QStackedWidget):
         self.RecordPage.cancelBtn.clicked.connect(lambda:
                 self.setCurrentWidget(self.FileUploadPage))
         self.ConfirmTranscribePage.cancelBtn.clicked.connect(lambda:
+            self.setCurrentWidget(self.FileUploadPage))
+        self.SettingPage.saveBtn.clicked.connect(lambda:
             self.setCurrentWidget(self.FileUploadPage))
         self.FileUploadPage.fileTable.signals.goSetting.connect(self._OpenFileDetails)
         self.ConfirmTranscribePage.fileTable.signals.goSetting.connect(self._OpenFileDetails)

@@ -60,3 +60,6 @@ class Label(QLabel):
         if id < 0 : logging.warn("font cannot be loaded")
         Raleway =  QFontDatabase.applicationFontFamilies(id)
         self.setFont(QFont(Raleway[0], weight=800))
+
+    def changeText(self, text):
+        self.setText(text)

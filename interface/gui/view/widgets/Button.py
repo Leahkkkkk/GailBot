@@ -47,12 +47,13 @@ class ColoredBtn(QPushButton):
         super().__init__(*args, **kwargs)
         self.setText(label)
         self.setStyleSheet(f"background-color:{color};"
-                           f"color:#fff;"
                            f"border-radius:{borderRadius};"
                            f"padding:1;"
+                           f"color:#fff;"
                            f"font-size:{fontsize};"
                            f"{other}")
         self.setMaximumSize(Dimension.BGBUTTON)
+    
       
         
 class BorderBtn(QPushButton):

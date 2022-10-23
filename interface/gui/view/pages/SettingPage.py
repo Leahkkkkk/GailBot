@@ -51,11 +51,11 @@ class SettingPage(QWidget):
         self.selectSettings = ComboBox.ComboBox()
         self.selectSettings.addItems(self.profileKeys)
         self.cancelBtn = Button.BorderBtn("Cancel", Color.ORANGE)
-        self.saveBtn = Button.ColoredBtn("save and exit", Color.GREEN)
-        self.requiredSetBtn = Button.BorderBtn("required setting", 
+        self.saveBtn = Button.ColoredBtn("Save and Exit", Color.GREEN)
+        self.requiredSetBtn = Button.BorderBtn("Required Settings", 
                                                Color.GREYDARK,FontSize.BTN, 0)
         self.requiredSetBtn.setFixedWidth(190)
-        self.postSetBtn = Button.BorderBtn("post transcription settings",Color.GREYDARK,FontSize.BTN,0)
+        self.postSetBtn = Button.BorderBtn("Post-Transcription Settings",Color.GREYDARK,FontSize.BTN,0)
         self.postSetBtn.setFixedWidth(190)
         self.GuideLink = Label.Label(Links.guideLink, FontSize.LINK, link=True)
 

@@ -25,7 +25,7 @@ class RecordDialog(QDialog):
         self.endBtn = Button.ColoredBtn("End Recording", Color.ORANGE)
         self.endBtn.setFixedSize(Dimension.BGBUTTON)
         self.iconBtn = Button.ToggleBtn(("stop.png", "play.png"), minHeight=200)
-        self.iconBtn.setFixedSize(QSize(200,200))
+        # self.iconBtn.setFixedSize(QSize(200,200))
         self.iconBtn.setMinimumHeight(80)
         self.iconBtn.hide()
         self.endBtn.hide()
@@ -52,7 +52,7 @@ class RecordDialog(QDialog):
     
 
     def _initStyle(self):
-        initBackground(self, color=Color.BLUEWHITE)
+        initBackground(self)
         # initImgBackground(self)
         
         # self.setStyleSheet("border: 1px solid black")
