@@ -113,7 +113,7 @@ class MainStack(QStackedWidget):
         self.addWidget(self.TranscribeProgressPage)
         self.addWidget(self.TranscribeSuccessPage)
         self.addWidget(self.RecordPage)
-        self.setCurrentWidget(self.WelcomePage)
+        self.setCurrentWidget(self.SettingPage)
         
         
     def _pageRedirect(self):
@@ -143,6 +143,7 @@ class MainStack(QStackedWidget):
         self.FileUploadPage.fileTable.signals.sendFile.connect(self.gotoConfirmPage)
         self.ConfirmTranscribePage.fileTable.signals.sendFile.connect(self.gotoTranscribeInProgress)
         self.TranscribeProgressPage.fileTable.signals.sendFile.connect(self.gotoTranscribeSuccess)
+        self.SettingPage.signals.newProfile.connect(self.FileUploadPage.addNewProfile)
         
         """ TODO: change this to a pop up instead of redirect """
         self.FileUploadPage.signals.gotoSetting.connect(self.gotoSettingPage)

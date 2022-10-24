@@ -20,8 +20,7 @@ class FileModel(QtCore.QAbstractTableModel):
     """ conatains the database that store data about file 
         and functionality to reflect the changes in displaying the data
         on the front-end 
-    """
-    
+    """  
     def headerData(self, section: int, orientation: Qt.Orientation, role: int = ...):
         if orientation == Qt.Orientation.Horizontal and role == Qt.ItemDataRole.DisplayRole:
             return self.columns[section]

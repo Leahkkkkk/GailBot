@@ -90,7 +90,7 @@ class FileTable(QTableWidget):
     def __init__(self, 
                  headers: List[str], 
                  filedata: Dict[str, fileObject], 
-                 rowWidgets: Set[str]  = {"delete", "setting", "select"}, # TODO: improve 
+                 rowWidgets: Set[str]  = {"delete", "setting", "select"}, 
                  settings: List[str] = ["default"],  
                  *args, 
                  **kwargs):
@@ -133,6 +133,9 @@ class FileTable(QTableWidget):
         self._initializeTable()
     
     
+    def addProfileKeys(self, profileName:str)->None:
+        self.settings.append(profileName)
+        
     def resizeCol(self, widths:List[int]) -> None:
         """ takes in a list of width and resize the width of the each 
             column to the width
@@ -403,6 +406,9 @@ class FileTable(QTableWidget):
         for key, pin in self.pinFileData.items():
             self.deleteFile(pin, key)
             self.transferList.clear()
+        
+        self.pinFileData.clear()
+        self.filedata.clear()
 
         
 """ TODO: add responsive handling feature """            

@@ -9,9 +9,8 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
-""" TODO: create functions to load the form values
+"""
     TODO: create functions to disable editing 
-    TODO: create functiosn to retrieve form data
 """
 from typing import Dict
 
@@ -75,10 +74,11 @@ class SettingEngineForm(QWidget):
         self.layout.addStretch()
         
     def setValue(self, data: Dict[str, Dict[str, dict]]):
-        profielname = list(data)[0]
-        myLogger.info(profielname)
-        self.mainCombo.setCurrentText(profielname)
-        self.toggleList.setValue(data[profielname])
+        engineName = list(data)[0]
+        print(engineName)
+        myLogger.info(engineName)
+        self.mainCombo.setCurrentText(engineName)
+        self.toggleList.setValue(data[engineName])
         
         
 

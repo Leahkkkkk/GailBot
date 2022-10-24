@@ -160,7 +160,7 @@ class onOffButton(QWidget):
             self.onOffBtn = QPushButton("ON")
         else:
             self.onOffBtn = QPushButton("OFF")
-        self.onOffBtn.setMaximumSize(40, 100)
+        self.onOffBtn.setMaximumSize(40, 30)
     
     def _initLayout(self):
         """initialize layout for on-off select"""

@@ -8,10 +8,12 @@ Last Modified: Sunday, 16th October 2022 1:49:44 pm
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
+from genericpath import isdir
 import logging 
 import datetime
+import pathlib
 from typing import List, TypedDict
-from os import stat
+import os
 
 from view.widgets.Button import ColoredBtn, BorderBtn
 from view.widgets.Label import Label
@@ -24,8 +26,10 @@ from PyQt6.QtWidgets import (
     QFileDialog, 
     QLineEdit,
     QHBoxLayout,
-    QComboBox)
-from PyQt6.QtCore import QSize
+    QVBoxLayout,
+    QComboBox,
+    QListWidget)
+from PyQt6.QtCore import QSize,Qt
 
 class FileData(TypedDict):
     Name: str
@@ -41,7 +45,7 @@ class OutputPath(TypedDict):
 class Profile(TypedDict):
     Profile:str
 
-class OpenFile(TabPage):
+class OpenFile_De(TabPage):
     """  for user to select file from their directory """
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
@@ -65,7 +69,6 @@ class OpenFile(TabPage):
         filename = fileDialog.getOpenFileName()
         if filename[0] != "":
             self.fullName = filename[0]
-            print(filename[0])
             self.fileType = "🔈"
             self.filePathDisplay.setText(filename[0])
             self.signals.nextPage.emit()
@@ -82,14 +85,13 @@ class OpenFile(TabPage):
     def getFile(self) -> FileData:
         if not self.fullName or not self.fileType:
             logging.error("File is not found")
-        
         fullPath = self.fullName
         fileType = self.fileType
         date = datetime.date.today().strftime("%m-%d-%y")    
         temp = str(fullPath)
         patharr = temp.split("/")
         fileName = patharr[-1]
-        size = round(stat(fullPath).st_size/1000, 2)
+        size = round(os.stat(fullPath).st_size/1000, 2)
        
         return {"Name": fileName, 
                 "Type": fileType, 
@@ -97,6 +99,79 @@ class OpenFile(TabPage):
                 "Size": f"{size}kb", 
                 "FullPath": fullPath}
 
+
+class OpenFile(TabPage):
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.layout = QVBoxLayout()
+        self.setLayout(self.layout)
+        self.dropLabel = Label("Drop File Here to Upload", FontSize.BODY)
+        self.fileDisplayList = QListWidget()
+        self.filePaths = []
+        self.setAcceptDrops(True)
+        self.layout.addWidget(self.dropLabel)
+        self.layout.addWidget(self.fileDisplayList)
+        self.fileDisplayList.setStyleSheet(f"border: 1px solid {Color.BLUEDARK}; background-color:white;")
+        
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasUrls:
+            event.accept()
+        else:
+            event.ignore()
+
+    def dragMoveEvent(self, event):
+        if event.mimeData().hasUrls():
+            event.setDropAction(Qt.DropAction.CopyAction)
+            event.accept()
+        else:
+            event.ignore()
+
+    def dropEvent(self, event):
+        if event.mimeData().hasUrls():
+            event.setDropAction(Qt.DropAction.CopyAction)
+            event.accept()
+            for url in event.mimeData().urls():
+                # https://doc.qt.io/qt-5/qurl.html
+                if url.isLocalFile():
+                    self.filePaths.append(str(url.toLocalFile()))
+                else:
+                    self.filePaths.append(str(url.toString()))
+            self.fileDisplayList.addItems(self.filePaths)
+            """ TODO: validate the file path first """
+            self.signals.nextPage.emit()
+        else:
+            event.ignore()
+    
+    def getFile(self) -> List[FileData]:
+        fileList = []
+        for file in self.filePaths:
+            fileObj = self.pathToFileObj(file)
+            fileList.append(fileObj)
+        return fileList
+    
+    def pathToFileObj(self, path):    
+        fullPath = path
+        date = datetime.date.today().strftime("%m-%d-%y")    
+        temp = str(fullPath)
+        patharr = temp.split("/")
+        size = round(os.stat(fullPath).st_size/1000, 2)
+        
+        if os.path.isdir(path):
+            fileType = "📁"
+            fileName = patharr[-2]
+        else:
+            fileType = pathlib.Path(path).suffix
+            if fileType == ".wav" or fileType == ".mp4":
+                fileType = "🔈"
+            fileName = patharr[-1]
+            
+        return {"Name": fileName, 
+                "Type": fileType, 
+                "Date": date, 
+                "Size": f"{size}kb", 
+                "FullPath": fullPath}
+        
+        
 
 class ChooseSet(TabPage):
     """ for user to choose setting profile """
@@ -112,25 +187,26 @@ class ChooseSet(TabPage):
     def _initWidget(self):
         self.label = Label("select setting profile", FontSize.HEADER3 )
         self.selectSettings = QComboBox(self)
+        self.selectSettings.addItem("select settings")
         self.selectSettings.addItems(self.settings)
         self.selectSettings.setCurrentText("None")
-        self.confirmBtn = ColoredBtn("confirm", Color.GREEN)
         self.selectSettings.currentTextChanged.connect(self._updateSettings)
-        self.confirmBtn.clicked.connect(self._updatePageState)
+        self.selectSettings.currentIndexChanged.connect(self._toNextPage)
+   
     
     def _initLayout(self):
         self.layout = QHBoxLayout()
         self.setLayout(self.layout)
         self.layout.addWidget(self.label)
         self.layout.addWidget(self.selectSettings)
-        self.layout.addWidget(self.confirmBtn)
+
         
     def _updateSettings(self, setting):
         if setting:
             self.profile = setting
             
-    def _updatePageState(self):
-        if self.profile:
+    def _toNextPage(self, idx):
+        if idx != 0:
             self.signals.nextPage.emit()
         else:
             logging.warn("the profile is not chosen")
@@ -142,7 +218,6 @@ class ChooseSet(TabPage):
         else:
             logging.warn("the profile is not chosen")
         
-
 class ChooseOutPut(TabPage):
     """ for user to choose output directory  """
     def __init__(self, *args, **kwargs) -> None:
@@ -176,8 +251,7 @@ class ChooseOutPut(TabPage):
             self.dirPathText.setText(outPath)
         else: 
             logging.warn("No ouput directory is chosen")
-    
-    
+      
     def getOutputPath(self) -> OutputPath:
         """ return the selected output path """
         if not self.outPath:

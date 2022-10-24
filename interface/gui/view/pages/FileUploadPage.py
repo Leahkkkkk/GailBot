@@ -105,6 +105,9 @@ class FileUploadPage(QWidget):
         
     def goToSettingFun(self):
         self.signals.gotoSetting.emit()
+    
+    def addNewProfile(self,profileName:str):
+        self.fileTable.addProfileKeys(profileName)
         
     def _initLayout(self):
         """ initialize layout """

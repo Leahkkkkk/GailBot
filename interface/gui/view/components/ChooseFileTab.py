@@ -52,12 +52,14 @@ class ChooseFileTab(QDialog):
         self.layout.addWidget(mainTab) 
     
     def addFile(self) -> None: 
-        fileObj = self.chooseFileTab.getFile()
+        fileObjList = self.chooseFileTab.getFile()
         profileObj = self.chooseSetTab.getProfile()
         print("file profile", profileObj)
         outputPathObj = self.chooseOutPutTab.getOutputPath()
         statusObj = {"Status": "Not Transcribed"}
-        fileData = {**fileObj, **profileObj, **outputPathObj, **statusObj}
-        self.signals.sendFile.emit(fileData)
-        self.signals.sendStatus.emit(200)
+        for fileObj in fileObjList:
+            fileData = {**fileObj, **profileObj, **outputPathObj, **statusObj}
+            self.signals.sendFile.emit(fileData)
+            self.signals.sendStatus.emit(200)
         self.close()
+

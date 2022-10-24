@@ -1,6 +1,6 @@
 from typing import Dict, Tuple, TypedDict
 
-from view.style.styleValues import Color
+from view.style.styleValues import Color, Dimension
 from view.widgets import ToggleView
 
 from PyQt6.QtWidgets import (
@@ -118,10 +118,13 @@ class UserForm(QWidget):
         self.userlabel = QLabel("Username")
         self.layout.addWidget(self.userlabel, 0,0)
         self.nameInput = QLineEdit(self)
+        self.nameInput.setFixedSize(Dimension.INPUTFIELD)
         self.layout.addWidget(self.nameInput, 1,0)
         self.passwordLabel = QLabel("Password")
         self.layout.addWidget(self.passwordLabel, 0,1)
         self.passwordInput = QLineEdit(self)
+        self.passwordInput.setFixedSize(Dimension.INPUTFIELD)
+        
         self.layout.addWidget(self.passwordInput, 1,1)
         self.setLayout(self.layout)
         self.setFixedHeight(100)

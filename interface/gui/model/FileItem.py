@@ -12,7 +12,6 @@ Modified By:  Siara Small  & Vivian Li
 import datetime 
 import os 
 
-
 class FileItem:
     """ represent a file object """
     def __init__(self,fullPath:str, path:str, profile:str):

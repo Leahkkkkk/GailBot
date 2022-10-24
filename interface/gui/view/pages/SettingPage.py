@@ -18,7 +18,7 @@ TODO: change name settingdata to settingFormData
                   the counter part is settingValueData
 TODO: make a combobox widget
 """
-from asyncio.log import logger
+
 from typing import Dict, TypedDict
 
 from util.Logger import makeLogger
@@ -36,7 +36,11 @@ from PyQt6.QtWidgets import (
     QGridLayout, 
     QComboBox
 )
+from PyQt6.QtCore import QObject, pyqtSignal
 from PyQt6 import QtCore
+
+class Signals(QObject):
+    newProfile = pyqtSignal(str)
 
 myLogger = makeLogger("Frontend")
 
@@ -48,6 +52,7 @@ class SettingPage(QWidget):
         self.settingForm = settingForm
         self.settingdata = settingdata
         self.profileKeys = list(settingdata)  # stores all the keys of the setting data 
+        self.signals = Signals()
         self._initWidget()
         self._initLayout()
         self._connectSignal()
@@ -134,15 +139,18 @@ class SettingPage(QWidget):
    
     def _postNewProfile(self, profile:dict):
         profileName = list(profile)[0]
-        self.selectSettings.addItem(list(profile)[0])
+        self.selectSettings.addItem(profileName)
+        self.signals.newProfile.emit(profileName)
         self.settingdata.update(profile)
         myLogger.info(profile)
         
     def createNewSetting(self):
         createNewSettingTab = CreateNewSetting(
-                        list(dummySettingForms["Required Setting"]),
-                             dummySettingForms["Required Setting"],
+                        list(dummySettingForms["Required Setting"]["Engine"]),
+                             dummySettingForms["Required Setting"]["Engine"],
+                             dummySettingForms["Required Setting"]["OutPut Format"],
                              dummySettingForms["Post Transcribe"])
+        print
         createNewSettingTab.signals.newSetting.connect(self._postNewProfile)
         createNewSettingTab.exec()
     

@@ -32,7 +32,6 @@ class SettingModel:
       self.keys = [] # stores a list of keys 
       self.signals = Signals()
 
-    
     def addUserSetting(self, settingkey:str, settingValues:Dict[str, dict]):
         if not settingkey in self.data:
             self.data[settingkey] == settingValues
