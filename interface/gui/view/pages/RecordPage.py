@@ -1,5 +1,4 @@
-from cProfile import label
-from view.components import PostSet
+
 from view.style.styleValues import FontFamily, FontSize, Color, Dimension
 from view.style.Background import initBackground
 from view.widgets import InputBox, Button, Label, ToggleView

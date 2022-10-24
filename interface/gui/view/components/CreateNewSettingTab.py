@@ -16,7 +16,8 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import QObject, pyqtSignal, QSize
 
 class Signals(QObject):
-    newSetting = pyqtSignal(dict)
+    newSetting = pyqtSignal(object)
+    
 
 class CreateNewSetting(QDialog):
     def __init__(self, 
@@ -33,6 +34,7 @@ class CreateNewSetting(QDialog):
         self.EngineSetting = EngineSetting(engineFormData[engineKey[0]])
         self.OutPutFormSetting = OutPutFormatSetting()
         self.PostTranscribeSetting = PostTranscribeSetting(postTranscribeFormData)
+        self.newSettingData = dict()
         
         self.setWindowTitle("Create New Profile")
         
@@ -48,10 +50,29 @@ class CreateNewSetting(QDialog):
             },
             QSize(800,800)
         )
-        mainTab.changePageBtn.finishBtn.clicked.connect(lambda: self.close())
+        mainTab.changePageBtn.finishBtn.clicked.connect(self.postSetting)
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
         self.layout.addWidget(mainTab)
+    
+    def postSetting(self):
+        settingData = dict()
+        
+        profileName = self.profilename.getData()
+        basicData = self.BasicSetting.getData()
+        engine = self.ChooseEngine.getData()
+        engineData = self.EngineSetting.getData()
+        outputFormData = self.OutPutFormSetting.getData()
+        postFormData = self.PostTranscribeSetting.getData()
+        
+        settingData["engine"] = {engine:engineData}
+        settingData["Post Transcribe"] = postFormData
+        settingData["Output Form Data"] = outputFormData
+        settingData["User Info"] = basicData
+        
+        self.signals.newSetting.emit({profileName: settingData})
+        self.close()
+        
         
         
         

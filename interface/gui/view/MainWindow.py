@@ -34,6 +34,7 @@ class MainWindow(QMainWindow):
     def __init__(
         self, 
         controller: Controller, 
+        settingform:dict, 
         settingdata: dict, 
         filedata: dict
     ):
@@ -50,9 +51,11 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(QSize(700, 600))
         self.setMaximumSize(QSize(1200, 900))
         self.resize(QSize(1000, 750))
+        self.settingform = settingform
         self.settingdata = settingdata
         self.filedata = filedata
-        self.MainStack = MainStack.MainStack({"setting":self.settingdata, 
+        self.MainStack = MainStack.MainStack({"setting form": self.settingform,
+                                              "setting":self.settingdata, 
                                               "file": self.filedata}, 
                                              parent=self)
         self.setCentralWidget(self.MainStack)

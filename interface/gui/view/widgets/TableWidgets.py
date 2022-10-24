@@ -10,8 +10,8 @@ Modified By:  Siara Small  & Vivian Li
 '''
 
 from view.widgets.Button import iconBtn, ColoredBtn, dropDownButton, ToggleBtn
-from view.widgets import InputBox, Label, ToggleView, Image
-from view.components import PostSet, RequiredSet
+from view.widgets import InputBox, Label, ToggleView, Image, TextForm
+from view.components import RequiredSet
 from view.style.styleValues import (
     Dimension, Color, FontFamily, FontSize)
 from view.style import Background
@@ -284,7 +284,7 @@ class FullFileDetailWidget(QWidget):
                                                      header=True, 
                                                      headercolor="#fff", 
                                                      viewcolor="#fff")
-        self.postSetWidget = PostSet.PostSet(setData["Coffee Study"]["Post Transcribe"])
+        self.postSetWidget = TextForm.TextForm(setData["Coffee Study"]["Post Transcribe"])
         self.postSetting = ToggleView.ToggleView("Post Transcribe Setting", 
                                                  self.postSetWidget,
                                                  header=True,

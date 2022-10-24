@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Tuple, TypedDict
 
 from view.style.styleValues import Color
 from view.widgets import ToggleView
@@ -11,6 +11,7 @@ from PyQt6.QtWidgets import (
     QGridLayout,
     QLineEdit
 )
+
 
 
 class ToggleCombo(QWidget):
@@ -29,36 +30,41 @@ class ToggleCombo(QWidget):
         
         self.data = data 
         self.showBasicSet = showBasicSet
+        self.comboListDict = dict()
         self._initWidget()
-        self._initLayout()
 
     def _initWidget(self):
         """ initialize the widget """
-        self.userForm = UserForm()
-        self.basicSet = ToggleView.ToggleView("basic setting", 
-                                              self.userForm, 
-                                              headercolor="#fff", 
-                                              viewcolor=Color.GREYLIGHT)
-        self.toggleList = []
+        self.layout = QVBoxLayout()
+        self.layout.setSpacing(0)
+        self.setLayout(self.layout)
+        if self.showBasicSet:
+            self.userForm = UserForm()
+            self.basicSet = ToggleView.ToggleView("basic setting", 
+                                                self.userForm, 
+                                                headercolor="#fff", 
+                                                viewcolor=Color.GREYLIGHT)
+            self.layout.addWidget(self.basicSet)
         for key, item in self.data.items():
             newCombo = ComboList(item)
             newToggle = ToggleView.ToggleView(key, 
                                               newCombo, 
                                               headercolor="#fff",
                                               viewcolor=Color.GREYLIGHT)
-            self.toggleList.append(newToggle)
-
-    def _initLayout(self):
-        """ initialize layout """
-        self.layout = QVBoxLayout()
-        self.layout.setSpacing(0)
-        self.setLayout(self.layout)
-        if self.showBasicSet:
-            self.layout.addWidget(self.basicSet)
-        for toggleView in self.toggleList:
-            self.layout.addWidget(toggleView)
+            self.layout.addWidget(newToggle)
+            self.comboListDict[key] = newCombo
         self.layout.addStretch()
+    
+    def getValue(self) -> Dict[str, dict]:
+        value = dict()
+        for key, comboList in self.comboListDict.items():
+            value[key] = comboList.getValue()
+        return value
 
+    def setValue(self, data : Dict[str, dict]):
+        for key, values in data.items():
+            self.comboListDict[key].setValue(values)
+    
 class ComboList(QWidget):
     """ generalise a list of combobox
     
@@ -72,31 +78,38 @@ class ComboList(QWidget):
         super().__init__(*args, **kwargs)
         self.data = data
         self._initWidget()
-        self._initLayout()
     
     def _initWidget(self):
         """ initialize the widget """
-        self.comboList = []
-        self.labelList = []
-        for key, items in self.data.items():
-            newlabel = QLabel(key)
-            self.labelList.append(newlabel)
-            newCombo = QComboBox(self)
-            newCombo.addItems(items)
-            newCombo.setCurrentIndex(0)
-            self.comboList.append(newCombo)
-
-    def _initLayout(self):
-        """ initialize layout """
         self.layout = QVBoxLayout()
         self.layout.setSpacing(0)
         self.setLayout(self.layout)
-        for i in range(len(self.comboList)):
-            self.layout.addWidget(self.labelList[i]) 
-            self.layout.addWidget(self.comboList[i])
+        self.comboBoxes = dict()
+        self.labels = dict()
+        
+        for key, items in self.data.items():
+            newlabel = QLabel(key)
+            newCombo = QComboBox(self)
+            newCombo.addItems(items)
+            newCombo.setCurrentIndex(0)
+            self.labels[key] = newlabel
+            self.comboBoxes[key] = newCombo
+            self.layout.addWidget(newlabel)
+            self.layout.addWidget(newCombo)
         self.layout.addStretch()
 
-
+    def getValue(self) -> dict:
+        values = dict() 
+        for key, combo in self.comboBoxes.items():
+            values[key] = combo.currentText()
+        return values
+    
+    def setValue(self, data:Dict[str,str]) -> None:
+        for key, value in data.items():
+            print(value)
+            self.comboBoxes[key].setCurrentText(value)
+            
+        
 class UserForm(QWidget):
     """ class for user form """
     def __init__(self, *args, **kwargs) -> None:
@@ -112,3 +125,13 @@ class UserForm(QWidget):
         self.layout.addWidget(self.passwordInput, 1,1)
         self.setLayout(self.layout)
         self.setFixedHeight(100)
+    
+            
+    def getValue(self)-> Tuple[str, str]:
+        return (self.nameInput.text(), self.passwordInput.text())
+    
+    def setValue(self, data:dict):
+        self.nameInput.setText(data["username"])
+        self.passwordInput.setText(data["password"])
+    
+    

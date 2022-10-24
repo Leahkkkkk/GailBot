@@ -15,6 +15,7 @@ from PyQt6.QtCore import pyqtSignal, QObject
 class Signals(QObject):
     """ contain signals to communicate with the parent tab widget"""
     nextPage = pyqtSignal()
+    goToNextPage = pyqtSignal()
     previousPage = pyqtSignal()
     close = pyqtSignal()
     

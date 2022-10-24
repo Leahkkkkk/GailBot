@@ -58,7 +58,7 @@ class Dimension:
     MEDIUMBUTTON = QSize(100, 30)
     ICONBUTTON = QSize(50, 50)
     SMALLICONBUTTON = QSize(30,30)
-    INPUTFIELD = QSize(200, 23)
+    INPUTFIELD = QSize(200, 30)
     CONSOLE = QSize(1000, 300)
     STATUSBAR = QSize(900, 30)
     ACTION = QSize(100,35)

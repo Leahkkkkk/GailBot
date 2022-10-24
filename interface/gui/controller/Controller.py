@@ -22,7 +22,8 @@ class Controller:
     def __init__(self):
         self.ModelObj = Model.Model()
         self.ViewObj = MainWindow.MainWindow(self,
-                                             self.ModelObj.SettingModel.data, 
+                                             self.ModelObj.SettingModel.form, 
+                                             self.ModelObj.SettingModel.data,
                                              self.ModelObj.FileData)
         self.ThreadPool = QThreadPool()
         self.logger = Logger.makeLogger("Backend")

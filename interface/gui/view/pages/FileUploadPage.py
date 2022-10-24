@@ -88,6 +88,7 @@ class FileUploadPage(QWidget):
         self.deleteAll = Button.ColoredBtn("Delete all",
                                             Color.BLUEMEDIUM,
                                             FontSize.BTN)
+        self.deleteAll.setContentsMargins(200,0,0,0)
       
         self.fileTable = FileTable.FileTable(FileTable.MainTableHeader, 
                                              self.fileDate, 

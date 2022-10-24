@@ -9,8 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
-from view.widgets import InputBox, Button, Label
-from view.components import PostSet
+from view.widgets import InputBox, Button, Label,TextForm
 from view.style.styleValues import FontFamily, FontSize
 
 from PyQt6.QtWidgets import QWidget, QVBoxLayout,QScrollArea
@@ -31,7 +30,7 @@ class PostSetPage(QWidget):
                                   FontSize.HEADER2,FontFamily.MAIN)
         self.caption = Label.Label("These settings are applied after the file is created.",
                                    FontSize.DESCRIPTION, FontFamily.MAIN)
-        self.PostSet = PostSet.PostSet(self.data)
+        self.PostSet = TextForm.TextForm(self.data)
         self.scroll = QScrollArea()
         self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
         self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
@@ -52,6 +51,10 @@ class PostSetPage(QWidget):
         self.caption.setContentsMargins(80,0,0,0)
         self.layout.addWidget(self.scroll,stretch = 7, alignment=Qt.AlignmentFlag.AlignHCenter
                                                     |Qt.AlignmentFlag.AlignTop)
+    
+    def setValue(self, values:dict):
+        self.PostSet.updateValues(values)
+        
         
        
     

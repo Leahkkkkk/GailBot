@@ -1,3 +1,5 @@
+from typing import Dict 
+
 from view.widgets import ToggleView, Label
 from view.components.SettingEngineForm import SettingEngineForm
 from view.style.styleValues import FontFamily, FontSize, Color
@@ -20,9 +22,9 @@ class RequiredSet(QWidget):
          
     def _initWidget(self):
         """initialize widgets"""
-        self.comboBox = SettingEngineForm(self.data,parent=self)
+        self.engineForm = SettingEngineForm(self.data,parent=self)
         self.engineSet = ToggleView.ToggleView("Speech to text settings", 
-                                               self.comboBox, 
+                                               self.engineForm, 
                                                header = True)
         self.outPut = OutPutFormat()
         self.outPutSet = ToggleView.ToggleView("Output File Format Settings", 
@@ -43,6 +45,9 @@ class RequiredSet(QWidget):
         """ TODO: add user validation """
         pass
         """function to submit username and password form"""
+    
+    def setValue(self, data: Dict[str, Dict[str, dict]]):
+        self.engineForm.setValue(data)
 
 
 class OutPutFormat(QWidget):
@@ -61,6 +66,13 @@ class OutPutFormat(QWidget):
                                                 headercolor="#fff")
         self.fileHeader.resizeViewHeight(200)
         self.layout.addWidget(self.fileHeader)
+        
+    def getValue(self):
+        value = self.headerForm.getValue()
+        value["Output File Format"] = self.formatCombo.currentText()
+        return value
+        
+
 
 class HeaderForm(QWidget):
     """class for header form"""
@@ -104,6 +116,15 @@ class HeaderForm(QWidget):
         for i in range(index + 1, 3):
             self.speakerCombolist[i].hide()
             self.speakerLabelList[i].hide()
+    
+    def getValue(self):
+        value = dict()
+        value["language"] = self.lanCombo.currentText()
+        value["Number of speaker"] = self.numCombo.currentText()
+        for i in range(len(self.speakerCombolist)):
+            value[f"gender{i}"] = self.speakerCombolist[i].currentText()
+        
+        return value 
 
         
             

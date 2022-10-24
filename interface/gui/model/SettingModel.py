@@ -13,7 +13,7 @@ Modified By:  Siara Small  & Vivian Li
 TODO: Create D.S to store user created setting profile
 """
 from typing import Dict 
-from model.dummySettingData import dummySettingValues
+from model.dummySettingData import dummySettingValues, dummySettingForms
 
 from PyQt6.QtCore import pyqtSignal, QObject
 
@@ -28,6 +28,7 @@ class SettingModel:
     """ dummy setting data for testing setting page functionality """
     def __init__(self, settingOptions=None, settingForm=None):
       self.data = dummySettingValues # stores the user's setting data 
+      self.form = dummySettingForms
       self.keys = [] # stores a list of keys 
       self.signals = Signals()
 

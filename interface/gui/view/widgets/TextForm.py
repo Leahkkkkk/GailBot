@@ -17,7 +17,7 @@ from PyQt6.QtCore import Qt, QSize
     TODO: create functions to disable editing 
     TODO: create functiosn to retrieve form data
 """
-class PostSet(QWidget):
+class TextForm(QWidget):
     """ required settings page"""
     def __init__(self, data, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
@@ -36,6 +36,7 @@ class PostSet(QWidget):
             newLabel = Label.Label(key, FontSize.BTN, FontFamily.MAIN)
             self.layout.addWidget(newLabel)
             for key,value in items.items():
+                keyCopy = key
                 if "bool" in key:
                     key = key.replace("bool", "")
                     newInput = Button.onOffButton(key, value=="ON")
@@ -43,14 +44,22 @@ class PostSet(QWidget):
                     newInput = InputBox.InputBox(key, inputText=value)
                 newInput.setContentsMargins(25,5,15,0)
                 self.layout.addWidget(newInput)
-                self.inputDict[key] = newInput
+                self.inputDict[keyCopy] = newInput
             spacer = QSpacerItem(400, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
             self.layout.addItem(spacer)
 
-        
-        
-    
+    def getValue(self) -> dict:
+        value = dict()
+        for key, input in self.inputDict.items():
+            value[key] = input.value()
+        return value
+            
     def _initStyle(self):
         Background.initBackground(self, Color.BLUEWHITE)
+    
+    def updateValues(self, data:dict):
+        for key, input in self.inputDict.items():
+            input.setText(data[key])
+        
     
     

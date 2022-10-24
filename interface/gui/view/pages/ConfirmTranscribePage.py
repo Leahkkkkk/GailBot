@@ -42,16 +42,7 @@ class ConfirmTranscribePage(QWidget):
         self._initWidget()
         self._initLayout()
         self._initStyle()
-        self.showFileDetail = True
         self.signal = Signal()
-    
-    def toggleFileDetail(self):
-        if self.showFileDetail:
-            self.fileInfo.hide()
-        else:
-            self.fileInfo.show()
-        
-        self.showFileDetail = not self.showFileDetail
         
     def _initWidget(self):
         """ initlialize widget """
@@ -61,9 +52,6 @@ class ConfirmTranscribePage(QWidget):
         self.label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         self.fileTable = FileTable.FileTable(FileTable.ConfirmHeader, {}, {"setting"})
         self.fileTable.resizeCol(FileTable.ConfirmHeaderDimension)
-        self.fileInfo = TableWidgets.FullFileDetailWidget()
-        self.fileInfo.hide() #TODO: delete this eventually
-        self.fileInfo.setMaximumHeight(700)
         self.bottomButton = QWidget()
         self.confirmBtn = Button.ColoredBtn("Confirm", Color.GREEN)
         self.cancelBtn = Button.ColoredBtn("Cancel", Color.ORANGE)
@@ -88,9 +76,6 @@ class ConfirmTranscribePage(QWidget):
                                       alignment = Qt.AlignmentFlag.AlignHCenter)
         
         self.bottomButton.setContentsMargins(0,0,0,0)
-        
-        self.verticalLayout.addWidget(self.fileInfo, 8,
-                                      alignment = Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignTop)
         self.verticalLayout.addStretch()
         
         self.verticalLayout.addWidget(self.bottomButton,
@@ -100,7 +85,6 @@ class ConfirmTranscribePage(QWidget):
         initImgBackground(self,"backgroundConfirmPage.png")
         self.confirmBtn.setMinimumSize(QtCore.QSize(150,30))
         self.cancelBtn.setMinimumSize(QtCore.QSize(150,30))
-    
   
     def _sendTranscribeSignal(self):
         logger.info("_sendTranscribeSignal", self.fileTable.filedata)

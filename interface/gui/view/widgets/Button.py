@@ -184,7 +184,15 @@ class onOffButton(QWidget):
 
     def value(self):
         """access state of on-off select"""
-        return self.state
+        return self.onOffBtn.text()
+    
+    def setText(self, text):
+        if text == "ON":
+            self.state = True 
+            self.onOffBtn.setText("ON")
+        else:
+            self.state = False 
+            self.onOffBtn.setText("OFF")
 
 
 class iconBtn(QPushButton):

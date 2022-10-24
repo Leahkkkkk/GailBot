@@ -5,11 +5,11 @@ from typing_extensions import Required
 
 from view.widgets import Button, TableWidgets
 from view.widgets.TabPage import TabPage
-from view.components import PostSet, RequiredSet
+from view.widgets.TextForm import TextForm
+from view.components import  RequiredSet
 from view.style.widgetStyleSheet import buttonStyle
 from view.style.Background import initBackground
 from view.style.styleValues import Color
-
 
 from PyQt6.QtWidgets import (
     QTabWidget, 
@@ -70,6 +70,7 @@ class Tab(QWidget):
             initBackground(tab,Color.BLUEWHITE)
             """ setting the page logic """
             tab.signals.nextPage.connect(self._enableBtn)
+            tab.signals.goToNextPage.connect(self._toNextPage)
             tab.signals.close.connect(lambda: self.changePageBtn.finishBtn.show())
         
         for i in range (1 , self.MainTab.count()):
@@ -204,7 +205,7 @@ class FileDetails(QDialog):
         Directory = TableWidgets.DirectoryDetails() 
         RequiredSetting = RequiredSet.RequiredSet(settingData["engine"])  
                           #TODO: get the dynamic data
-        PostSetting = PostSet.PostSet(settingData["Post Transcribe"]) 
+        PostSetting = TextForm(settingData["Post Transcribe"]) 
                          #TODO: get the dynamic data
         self.Maintab = NoControlTab("File Info", 
                                     {"Directory": Directory, 

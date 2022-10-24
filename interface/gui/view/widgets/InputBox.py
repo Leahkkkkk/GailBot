@@ -26,7 +26,6 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import QSize, Qt
 
-
 class InputBox(QWidget):
     """ an input box widget
 
@@ -53,7 +52,7 @@ class InputBox(QWidget):
         self._initLayout()
         self._connectSignal()
 
-    def value(self):
+    def value(self) -> str: 
         """ public function to ge the value of the input """
         return self.inputFeild.text()
     

@@ -15,18 +15,16 @@ Modified By:  Siara Small  & Vivian Li
 """
 from typing import Dict
 
-from view.style.styleValues import Color
-from view.widgets import ToggleView
+from util.Logger import makeLogger
 from view.widgets.MultipleCombo import ToggleCombo
-
 from PyQt6.QtWidgets import (
     QComboBox, 
     QWidget, 
     QVBoxLayout, 
-    QGridLayout,
-    QLineEdit,
     QLabel, 
 )
+
+myLogger = makeLogger("Frontend")
 
 class SettingEngineForm(QWidget):
     """ Generate a dynamic list of combobox
@@ -67,6 +65,7 @@ class SettingEngineForm(QWidget):
         """ function to update the combobox """
         data = self.mainCombo.itemData(index)
         if self.toggleList:
+            self.layout.removeWidget(self.toggleList)
             self.toggleList.deleteLater()
             
         self.toggleList = ToggleCombo(data)
@@ -74,21 +73,15 @@ class SettingEngineForm(QWidget):
         self.layout.addWidget(self.toggleList)
         self.layout.setSpacing(0)
         self.layout.addStretch()
+        
+    def setValue(self, data: Dict[str, Dict[str, dict]]):
+        profielname = list(data)[0]
+        myLogger.info(profielname)
+        self.mainCombo.setCurrentText(profielname)
+        self.toggleList.setValue(data[profielname])
+        
+        
 
-class UserForm(QWidget):
-    """ class for user form """
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        self.layout = QGridLayout()
-        self.userlabel = QLabel("Username")
-        self.layout.addWidget(self.userlabel, 0,0)
-        self.nameInput = QLineEdit(self)
-        self.layout.addWidget(self.nameInput, 1,0)
-        self.passwordLabel = QLabel("Password")
-        self.layout.addWidget(self.passwordLabel, 0,1)
-        self.passwordInput = QLineEdit(self)
-        self.layout.addWidget(self.passwordInput, 1,1)
-        self.setLayout(self.layout)
-        self.setFixedHeight(100)
-    
+
+
         

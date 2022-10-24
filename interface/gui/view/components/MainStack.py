@@ -36,6 +36,7 @@ class MainStack(QStackedWidget):
     """ implementation of the page stack """
     def __init__(self, data, parent, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
+        self.settingForm = data["setting form"]
         self.settingdata = data["setting"]
         self.filedata = data["file"]
         self.parent = parent 
@@ -97,7 +98,9 @@ class MainStack(QStackedWidget):
         self.ConfirmTranscribePage = ConfirmTranscribePage.ConfirmTranscribePage(self)
         self.FileUploadPage = FileUploadPage.FileUploadPage(self.filedata, 
                                                             list(self.settingdata.keys()))
-        self.SettingPage = SettingPage.SettingPage(self.settingdata, self)
+        self.SettingPage = SettingPage.SettingPage(self.settingForm, 
+                                                   self.settingdata,
+                                                   parent = self)
         self.TranscribeProgressPage = TranscribeProgressPage.TranscribeProgressPage(self)
         self.TranscribeSuccessPage = TranscribeSuccessPage.TranscribeSuccessPage(self)
         self.RecordPage = RecordPage.RecordPage()

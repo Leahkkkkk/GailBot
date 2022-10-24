@@ -30,6 +30,9 @@ class RequiredSetPage(QWidget):
     def submitForm(self):
         self.form.submitForm()
     
+    def setValue(self, data:dict):
+        self.form.setValue(data)
+    
     def _initWidget(self):
         self.label = Label.Label("Required Settings",FontSize.HEADER2, 
                                  FontFamily.MAIN )
