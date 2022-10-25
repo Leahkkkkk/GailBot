@@ -74,7 +74,7 @@ class changeProfileDialog(QDialog):
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
         self.layout.addWidget(self.selectSetting)
-        self.selectSetting.confirmBtn.clicked.connect(self.updateProfile)
+        self.selectSetting.selectSettings.currentTextChanged.connect(self.updateProfile)
         initBackground(self, Color.BLUEWHITE)
         self.setFixedSize(QSize(450, 300))
     
