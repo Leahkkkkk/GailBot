@@ -48,4 +48,5 @@ class fileModel:
             self.signals.error.emit("file key not found")
     
     
-    def editFile (self, )
+    def editFile (self, ):
+        pass 
