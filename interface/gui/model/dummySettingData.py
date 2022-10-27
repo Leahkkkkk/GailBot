@@ -106,7 +106,7 @@ dummySettingValues={
     }
 }
 
-dummySettingForms={
+dummySettingForms= {
     "Required Setting": {
         "Engine": {
             "IBM": {
@@ -200,6 +200,7 @@ dummySettingForms={
             }
         }
     },
+    
     "Post Transcribe": {
         "General": {
             "Gap Length": "0s",
@@ -271,4 +272,18 @@ testSet = {
             'password': 'ad'
         }
     }
+}
+
+dummySystemSettingForm={
+    "General Setting": {
+        "Font Size combo": ["small", "medium", "big"],
+        "Color Mode combo": ["default", "dark", "light"],
+        "Large Pause - Lower Bound": "0s"
+    },
+   
+    "Dummy Setting Options": {
+        "Dummy on and off bool": "ON",
+        "Dummy input": "dummy",
+        "Dummy selection mode combo": ["selection1", "selection2", "selection3"]
+    }, 
 }

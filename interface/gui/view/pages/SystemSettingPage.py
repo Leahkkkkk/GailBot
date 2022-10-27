@@ -1,34 +1,28 @@
-'''
-File: PostSetPage.py
-Project: GailBot GUI
-File Created: Wednesday, 5th October 2022 12:22:13 pm
-Author: Siara Small  & Vivian Li
------
-Last Modified: Thursday, 6th October 2022 11:08:27 am
-Modified By:  Siara Small  & Vivian Li
------
-'''
 
-from view.widgets import InputBox, Button, Label,TextForm
+
+from view.widgets import Label,TextForm
+from view.style.Background import initBackground
+from model.dummySettingData import dummySystemSettingForm
 from view.style.styleValues import FontFamily, FontSize
 
 from PyQt6.QtWidgets import QWidget, QVBoxLayout,QScrollArea
 from PyQt6.QtCore import Qt
 
 
-class PostSetPage(QWidget):
+class SystemSettingPage(QWidget):
     """ post-transcription settings page """
-    def __init__(self, data, *args, **kwargs) -> None:
+    def __init__(self, data=dummySystemSettingForm, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.data = data
+        initBackground(self)
         self._initWidget()
         self._initLayout()
         
     def _initWidget(self):
         """initialize widgets"""
-        self.header = Label.Label("Post-Transcription Settings",
+        self.header = Label.Label("System Setting",
                                   FontSize.HEADER2,FontFamily.MAIN)
-        self.caption = Label.Label("These settings are applied after the file is created.",
+        self.caption = Label.Label("These settings are applied for system setting",
                                    FontSize.DESCRIPTION, FontFamily.MAIN)
         self.PostSet = TextForm.TextForm(self.data)
         self.scroll = QScrollArea()
@@ -47,7 +41,7 @@ class PostSetPage(QWidget):
         """ add widget to layout """
         self.layout.addWidget(self.header, stretch= 1, alignment=Qt.AlignmentFlag.AlignHCenter
                                                     |Qt.AlignmentFlag.AlignTop)
-        self.layout.addWidget(self.caption,alignment=Qt.AlignmentFlag.AlignLeft)
+        # self.layout.addWidget(self.caption,alignment=Qt.AlignmentFlag.AlignCenter)
         self.caption.setContentsMargins(80,0,0,0)
         self.layout.addWidget(self.scroll,stretch = 7, alignment=Qt.AlignmentFlag.AlignHCenter
                                                     |Qt.AlignmentFlag.AlignTop)

@@ -17,7 +17,8 @@ from view.pages import (
         SettingPage,
         TranscribeProgressPage,
         TranscribeSuccessPage,
-        RecordPage
+        RecordPage, 
+        SystemSettingPage
 )
 from view.widgets.FileTable import (
     FileTable
@@ -28,7 +29,7 @@ from view.widgets.PopUpTab import (
 
 from view.style.styleValues import Dimension
 
-from PyQt6.QtWidgets import QStackedWidget
+from PyQt6.QtWidgets import QStackedWidget, QTabWidget
 
 
 class MainStack(QStackedWidget):
@@ -103,14 +104,27 @@ class MainStack(QStackedWidget):
         self.TranscribeProgressPage = TranscribeProgressPage.TranscribeProgressPage(self.fileSignal)
         self.TranscribeSuccessPage = TranscribeSuccessPage.TranscribeSuccessPage(self.fileSignal)
         self.RecordPage = RecordPage.RecordPage()
+        self.SystemSettingPage = SystemSettingPage.SystemSettingPage()
+        self.MainSetting = QTabWidget()
+        self.SettingPage2 = SettingPage.SettingPage(
+            self.profileForm, 
+            self.profilekeys,
+            self.profileSignals)
+        
+        self.MainSetting.addTab(self.SettingPage, "Porfile Setting")
+        self.MainSetting.addTab(self.SystemSettingPage, "System Setting")
         self.addWidget(self.WelcomePage)
         self.addWidget(self.ConfirmTranscribePage)
         self.addWidget(self.FileUploadPage)
-        self.addWidget(self.SettingPage)
+        # self.addWidget(self.SettingPage)
         self.addWidget(self.TranscribeProgressPage)
         self.addWidget(self.TranscribeSuccessPage)
         self.addWidget(self.RecordPage)
-        self.setCurrentWidget(self.SettingPage)
+        self.addWidget(self.MainSetting)
+        
+        
+        self.setCurrentWidget(self.MainSetting)
+    
         
         
     def _pageRedirect(self):
@@ -118,7 +132,7 @@ class MainStack(QStackedWidget):
         self.WelcomePage.StartBtn.clicked.connect(lambda: 
                 self.setCurrentWidget(self.FileUploadPage))
         self.FileUploadPage.settingProfile.clicked.connect(lambda: 
-                self.setCurrentWidget(self.SettingPage))
+                self.setCurrentWidget(self.MainSetting))
         self.TranscribeSuccessPage.moreBtn.clicked.connect(lambda: 
                 self.setCurrentWidget(self.FileUploadPage))
         self.TranscribeSuccessPage.returnBtn.clicked.connect(lambda: 
