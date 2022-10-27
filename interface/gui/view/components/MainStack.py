@@ -9,7 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 from util.Logger import makeLogger
-
+from typing import Tuple
 from view.pages import (
         WelcomePage, 
         ConfirmTranscribePage,
@@ -143,3 +143,9 @@ class MainStack(QStackedWidget):
         self.ConfirmTranscribePage.fileTable.addFile(file)
         self.TranscribeProgressPage.fileTable.addFile(file)
         self.TranscribeSuccessPage.fileTable.addFile(file)
+    
+    def updateFile(self, data:Tuple[str,str,str]):
+        self.FileUploadPage.fileTable.updateFileContent(data)
+        self.ConfirmTranscribePage.fileTable.updateFileContent(data)
+        self.TranscribeProgressPage.fileTable.updateFileContent(data)
+        self.TranscribeSuccessPage.fileTable.updateFileContent(data)

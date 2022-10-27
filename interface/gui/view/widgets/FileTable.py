@@ -20,8 +20,7 @@ Modified By:  Siara Small  & Vivian Li
     TODO: **
 """
 KEYERROR = "File key not found"
-# from view.widgets import (Label, Button)
-# from view.style.styleValues import Color, FontFamily, FontSize
+
 from typing import Dict, List, Set, Tuple, TypedDict
 import logging
 
@@ -48,7 +47,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import QObject, Qt, QSize, pyqtSignal
 from PyQt6.QtGui import QColor, QIcon
 
-logger = makeLogger("Frontend")
+
 
 class fileObject(TypedDict):
     Name: str
@@ -71,7 +70,6 @@ class Signals(QObject):
 
 
 class FileTable(QTableWidget):
-    """ TODO: update setting keys """
     def __init__(self, 
                  headers: List[str], 
                  dbSignal: FileSignals,
@@ -108,6 +106,7 @@ class FileTable(QTableWidget):
         
         
         self.rowWidgets = rowWidgets
+        self.logger =  makeLogger("Frontend")
         
         self.signals = Signals()
         self.dbSignal = dbSignal
@@ -137,8 +136,8 @@ class FileTable(QTableWidget):
         Args:
             file (Tuple[key, fileObject]): a file object
         """
-        logger.info(file[0])
-        logger.info(file[1])
+        self.logger.info(file[0])
+        self.logger.info(file[1])
         key, data = file
         newRowIdx = self.rowCount()
         self.insertRow(newRowIdx)
@@ -152,7 +151,7 @@ class FileTable(QTableWidget):
         
         self._addFileWidgetToTable(newRowIdx, key) #TODO:improve addwidget
         self.resizeRowsToContents()  
-     
+    
     def addFiles(self, files: List[Tuple]):
         """ adding a list of files to file table
 
@@ -190,6 +189,7 @@ class FileTable(QTableWidget):
     def settingDetails(self, key:str):
         """ send a reqeust to see file details
             *** connected to setting details page
+            
         Args: ket(str): a file key 
         """
         self.dbSignal.requestprofile.emit(key) # make request to load profile data 
@@ -230,9 +230,28 @@ class FileTable(QTableWidget):
             row = self.indexFromItem(self.filePins[key]).row()
             newitem = QTableWidgetItem(profilekey)
             self.setItem(row, 3, newitem)
+            if key in self.transferList: 
+                newitem.setBackground(QColor(Color.BLUEWHITE))
         else:
             self.signals.error.emit(KEYERROR)
+            
+            
+    def updateFileContent(self, file: Tuple[str, str, str]):
+        """ update the file content on the table
 
+        Args:
+            file (Tuple[key, field, value]): _description_
+        """
+        key, field, value = file 
+        if key in self.filePins:
+            if field in self.headers:
+                row = self.indexFromItem(self.filePins[key]).row()
+                col = self.headers.index(field)
+                newitem = QTableWidgetItem(value)
+                self.setItem(row, col, newitem)
+        else:
+            self.logger.error("file is not found")
+            
     def addProfile(self, profileName:str)->None:
         """ add profile keys 
         """
@@ -268,7 +287,7 @@ class FileTable(QTableWidget):
         """
         widthSum = self.width()
         if len(widths) != self.columnCount():
-            logger.error("cannot resize column")
+            self.logger.error("cannot resize column")
         else:
             for i in range(len(widths)):
                 self.setColumnWidth(i, widths[i] * widthSum)
@@ -276,12 +295,12 @@ class FileTable(QTableWidget):
     
     def _setColorRow(self, rowIdx, color):
         """ change the color of the row at rowIdx """
-        logger.info(self.rowAt(rowIdx))
+        self.logger.info(self.rowAt(rowIdx))
         for i in range(self.columnCount()):
             if self.item(rowIdx, i):
                 self.item(rowIdx, i).setBackground(QColor(color))
             else:
-                logger.info("cannot set row color")
+                self.logger.info("cannot set row color")
 
     
     def addToNextState(self, key:str) -> None:
@@ -290,8 +309,8 @@ class FileTable(QTableWidget):
         Args:
             key (str): the key to identify the file
         """
-        logger.info(key)
-        logger.info(self.transferList)
+        self.logger.info(key)
+        self.logger.info(self.transferList)
         try:
             if key in self.filePins:
                 self.transferList.add(key)
@@ -302,7 +321,7 @@ class FileTable(QTableWidget):
             else: 
                 raise Exception("file is not found in the data")
         except Exception as err:
-            logger.error(err)
+            self.logger.error(err)
         else:
             return
         
@@ -313,8 +332,8 @@ class FileTable(QTableWidget):
         Args:
             key (str): the key that identifies the file to be removed
         """
-        logger.info(key)
-        logger.info(self.transferList)
+        self.logger.info(key)
+        self.logger.info(self.transferList)
         try:
             if key in self.transferList:
                 self.transferList.remove(key)
@@ -326,7 +345,7 @@ class FileTable(QTableWidget):
             else:
                 raise Exception("file is not added to transcribe list")
         except Exception as err:
-            logger.error(err)
+            self.logger.error(err)
         else:
             return
         
@@ -337,7 +356,6 @@ class FileTable(QTableWidget):
         logging.info(self.transferList)
         self.signals.transferState.emit(self.transferList)
 
-        
     def _initializeTable(self) -> None:
         """ Initialize the table """
         self._setFileHeader()     # set file header 
@@ -407,7 +425,7 @@ class FileTable(QTableWidget):
          
     
     def _resizeTable(self):
-        logger.info("resized")
+        self.logger.info("resized")
     
     def resizeEvent(self, e) -> None:
         self._resizeTable()
@@ -532,6 +550,7 @@ class changeProfileDialog(QDialog):
     def __init__(self, settings: List[str], fileKey:str, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.signals = Signals()
+        self.logger = makeLogger("Frontend")
         self.fileKey = fileKey
         self.selectSetting = ChooseSet(settings)
         self.layout = QVBoxLayout()
@@ -542,9 +561,9 @@ class changeProfileDialog(QDialog):
         self.setFixedSize(QSize(450, 300))
     
     def updateProfile(self):
-        logger.info("update signal send")
+        self.logger.info("update signal send")
         newSetting = self.selectSetting.getProfile()["Profile"]
-        logger.info((self.fileKey, newSetting))
+        self.logger.info((self.fileKey, newSetting))
         self.signals.changeSetting.emit((self.fileKey,newSetting))
         self.close()
     

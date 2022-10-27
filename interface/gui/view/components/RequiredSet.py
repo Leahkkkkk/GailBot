@@ -50,11 +50,12 @@ class RequiredSet(QWidget):
     def setValue(self, data: Dict[str, Dict[str, dict]]):
         self.engineForm.setValue(data["Engine"])
     
-    def getValue(self):
+    def getValue(self)->dict:
         profile = dict() 
         profile["Engine"] = self.engineForm.getValue()
         profile["Output Form Data"] = self.outPutForm.getValue()
-
+        return profile
+    
 class OutPutFormat(QWidget):
     """class for output form"""
     def __init__(self, data, *args, **kwargs) -> None:

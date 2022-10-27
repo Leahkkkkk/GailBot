@@ -7,9 +7,9 @@ from PyQt6.QtCore import QObject, pyqtSignal
 
 KEYERROR = "profile not found"
 
-
 class Signals(QObject):
-    send = pyqtSignal(object)
+    """ signals sent by profile model """
+    send = pyqtSignal(tuple)
     deleted  = pyqtSignal(str)  
     error = pyqtSignal(str)
     success = pyqtSignal(str)
@@ -17,6 +17,7 @@ class Signals(QObject):
     
     
 class ProfileModel:
+    """ database for profile  """
     def __init__(self) -> None:
         self.form = dummySettingForms
         self.data = dummySettingValues              #TODO: for testing delete 
@@ -24,6 +25,11 @@ class ProfileModel:
         self.signals = Signals()
     
     def post(self, profile: Tuple[str, dict]):
+        """ post a new profile to profile database
+
+        Args:
+            profile (Tuple[profile key, dict]): _description_
+        """
         key, data = profile 
         if key not in self.data: 
             self.data[key] = data
@@ -34,12 +40,23 @@ class ProfileModel:
     
 
     def delete(self, profilekey:str):
+        """ delete a file from database 
+
+        Args:
+            profilekey (str): the profile key that identified the profile  
+                              to be deleted
+        """
         if profilekey not in self.data:
             self.signals.error.emit(KEYERROR) 
         else:
             del self.data[profilekey]
     
     def edit(self, profile: Tuple[str, dict]):
+        """ update a file
+        Args:
+            profile (Tuple[key, dict]): a key that identified the profile 
+                                        and new profile
+        """
         key, data = profile
         if key not in self.data:
             self.signals.error.emit(KEYERROR)
@@ -48,7 +65,11 @@ class ProfileModel:
     
     
     def get(self, profilekey:str):
+        """ 
+        Args:
+            profilekey (str): _description_
+        """
         if profilekey not in self.data:
             self.signals.error.emit(KEYERROR)
         else:
-            self.signals.send.emit(self.data[profilekey])
+            self.signals.send.emit((profilekey,self.data[profilekey]))

@@ -24,6 +24,7 @@ class Signals(QObject):
     requestprofile = pyqtSignal(str)
     profileRequest = pyqtSignal(str)
     fileAdded = pyqtSignal(tuple)
+    fileUpdated = pyqtSignal(tuple)
     transcribeRequest = pyqtSignal(tuple)
     
 
@@ -86,11 +87,13 @@ class FileModel:
         Args:
             data (Tuple[key, new profile]): _description_
         """
-        if data[0] not in self.data:
+        key, profile = data
+        if key not in self.data:
             self.signals.error.emit(KEYERROR)
         else:
-            self.data[data[0]]["Porfile"] = data[1]
-        pass 
+            self.data[key]["Porfile"] = profile
+            self.signals.fileUpdated.emit((key, "Profile", profile))
+            
 
 
     def editFileStatus(self, data: Tuple[str, str]) -> None:
@@ -98,12 +101,13 @@ class FileModel:
         Args:
             data (Tuple[key, new status]): _description_
         """
-        if data[0] not in self.data:
+        key, status = data
+        if key not in self.data:
             self.signals.error.emit(KEYERROR)
         else:
-            self.data[data[0]]["Status"] = data[1]
-        pass
-    
+            self.data[key]["Status"] = status
+            self.signals.fileUpdated((key, "Status", status))
+            
     def get(self, filekey:str) -> None:
         if filekey not in self.data:
             self.signals.error.emit(KEYERROR)

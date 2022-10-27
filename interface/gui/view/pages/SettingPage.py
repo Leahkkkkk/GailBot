@@ -122,6 +122,7 @@ class SettingPage(QWidget):
         self.selectSettings.currentTextChanged.connect(self._getProfile)
 
         self.newProfileBtn.clicked.connect(self.createNewSetting)
+        self.saveBtn.clicked.connect(self.updateProfile)
     
     def _initStyle(self):
         self.settingStack.setObjectName("settingStack")
@@ -148,18 +149,28 @@ class SettingPage(QWidget):
         createNewSettingTab.signals.newSetting.connect(self._postNewProfile)
         createNewSettingTab.exec()
         
-    def loadProfile(self, profile: Dict[str,dict]):
-        """ load the profile data to be presented onto the table """
-        self.PostSetPage.setValue(profile["Post Transcribe"])
-        self.RequiredSetPage.setValue(profile["Required Setting"])
-    
-    def addProfile (self, prfileName:str):
-        self.selectSettings.addItem(prfileName)
         
-    def updateSettingProfileOptions(self):
+    def loadProfile(self, profile:tuple):
+        """ load the profile data to be presented onto the table """
+        key, data = profile 
+        self.selectSettings.setCurrentText(key)
+        self.PostSetPage.setValue(data["Post Transcribe"])
+        self.RequiredSetPage.setValue(data["Required Setting"])
+    
+    def addProfile (self, profileName:str):
+        """ adding a new profile optin to the setting page 
+        Arg:
+            profileName
+        
+        """
+        self.selectSettings.addItem(profileName)
+        
+    def updateProfile(self):
+        """ update the new profile setting """
         newSetting = dict()
         newSetting["Required Setting"] = self.RequiredSetPage.getValue()
         newSetting["Post Transcribe"]  = self.PostSetPage.getValue()
+        self.logger.info(newSetting)
         profileKey = self.selectSettings.currentText()
-        self.signals.edit.emit(profileKey, newSetting)
+        self.signals.edit.emit((profileKey, newSetting))
     

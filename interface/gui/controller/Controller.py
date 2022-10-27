@@ -72,6 +72,7 @@ class Controller:
         view = self.ViewObj
         dbSignal.fileAdded.connect(view.addFileToTables)
         dbSignal.profileRequest.connect(profile.get)
+        dbSignal.fileUpdated.connect(view.updateFile)
         
     def _connectViewToFileDB(self):
         viewSignal = self.ViewObj.fileTableSignals

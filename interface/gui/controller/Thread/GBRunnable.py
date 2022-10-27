@@ -124,7 +124,8 @@ class Worker(QRunnable):
         
             if not self.is_killed:
                 plugin_suite_paths = gb.download_plugin_suite_from_url(
-            "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip", "./plugins")
+                "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip", 
+                "./plugins")
                 self.signals.progress.emit(str("Plugins Downloaded"))
                 path = os.path.join(os.getcwd(), plugin_suite_paths[0])
                 self.signals.progress.emit(str("Plugins Applied"))

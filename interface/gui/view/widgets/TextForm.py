@@ -8,7 +8,8 @@ from PyQt6.QtWidgets import (
     QVBoxLayout, 
     QSpacerItem,
     QSizePolicy,
-    QScrollArea
+    QScrollArea,
+    QComboBox
 )
 
 from PyQt6.QtCore import Qt, QSize
@@ -40,6 +41,9 @@ class TextForm(QWidget):
                 if "bool" in key:
                     key = key.replace("bool", "")
                     newInput = Button.onOffButton(key, value=="ON")
+                if "combo" in key:
+                    key = key.replace("combo","")
+                    newInput = InputBox.InputCombo(label=key, selections=value)
                 else:
                     newInput = InputBox.InputBox(key, inputText=value)
                 newInput.setContentsMargins(25,5,15,0)
@@ -61,5 +65,4 @@ class TextForm(QWidget):
         for key, input in self.inputDict.items():
             input.setText(data[key])
         
-    
     

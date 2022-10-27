@@ -28,7 +28,10 @@ from PyQt6.QtWidgets import (
     QHBoxLayout,
     QVBoxLayout,
     QComboBox,
-    QListWidget)
+    QListWidget,
+    QStackedWidget,
+    QDialog,
+    QListView)
 from PyQt6.QtCore import QSize,Qt
 
 class FileData(TypedDict):
@@ -108,10 +111,15 @@ class OpenFile(TabPage):
         self.dropLabel = Label("Drop File Here to Upload", FontSize.BODY)
         self.fileDisplayList = QListWidget()
         self.filePaths = []
+        self.uploadFileBtn = ColoredBtn("Upload File",Color.BLUEMEDIUM)
+        self.uploadFileBtn.clicked.connect(lambda: self.getOpenFilesAndDirs())
         self.setAcceptDrops(True)
         self.layout.addWidget(self.dropLabel)
         self.layout.addWidget(self.fileDisplayList)
-        self.fileDisplayList.setStyleSheet(f"border: 1px solid {Color.BLUEDARK}; background-color:white;")
+        self.layout.addWidget(self.uploadFileBtn)
+        self.fileDisplayList.setStyleSheet(
+            f"border: 1px solid {Color.BLUEDARK};"
+            "background-color:white;")
         
     def dragEnterEvent(self, event):
         if event.mimeData().hasUrls:
@@ -170,9 +178,42 @@ class OpenFile(TabPage):
                 "Date": date, 
                 "Size": f"{size}kb", 
                 "FullPath": fullPath}
-        
-        
 
+    def getOpenFilesAndDirs(self, caption='', directory='', 
+                           filter='', initialFilter=''):
+        def updateText():
+                # update the contents of the line edit widget with the selected files
+            selected = []
+            for index in view.selectionModel().selectedRows():
+                 selected.append('"{}"'.format(index.data()))
+            lineEdit.setText(' '.join(selected))
+
+        dialog = QFileDialog()
+        dialog.setFileMode(dialog.FileMode.ExistingFiles)
+        dialog.setOption(dialog.Option.DontUseNativeDialog, True)
+        
+        if directory:
+            dialog.setDirectory(directory)
+        if filter:
+            dialog.setNameFilter(filter)
+        if initialFilter:
+            dialog.selectNameFilter(initialFilter)
+        
+        dialog.accept = lambda: QDialog.accept(dialog)
+        stackedWidget = dialog.findChild(QStackedWidget)
+        view = stackedWidget.findChild(QListView)
+        view.selectionModel().selectionChanged.connect(updateText)
+
+        lineEdit = dialog.findChild(QLineEdit)
+        dialog.directoryEntered.connect(lambda: lineEdit.setText(''))
+        dialog.exec() 
+        selectedFiles = dialog.selectedFiles()
+        if selectedFiles: 
+            self.signals.nextPage.emit()  
+            self.filePaths = self.filePaths + selectedFiles
+            self.fileDisplayList.addItems(self.filePaths)
+
+    
 class ChooseSet(TabPage):
     """ for user to choose setting profile """
     def __init__(self, settings: List[str], *args, **kwargs) -> None:

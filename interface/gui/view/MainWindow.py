@@ -119,3 +119,6 @@ class MainWindow(QMainWindow):
     
     def addFileToTables(self, file:dict):
         self.MainStack.addFileToTables(file)
+        
+    def updateFile(self, data:tuple):
+        self.MainStack.updateFile(data)
