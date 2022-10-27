@@ -15,7 +15,10 @@ from view.style.styleValues import Color, FontSize,Dimension, FontFamily
 
 
 from PyQt6.QtWidgets import (
-    QComboBox, QVBoxLayout, QHBoxLayout, QWidget)
+    QComboBox, 
+    QVBoxLayout, 
+    QHBoxLayout, 
+    QWidget)
 from PyQt6.QtCore import QSize, Qt, pyqtSignal, QObject
 
 mylogger = makeLogger("Frontend")
@@ -23,13 +26,14 @@ mylogger = makeLogger("Frontend")
 class settingSignals(QObject):
     engineSet = pyqtSignal()
     
-
 class ProfileName (TabPage):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.verticalLayout = QVBoxLayout()
         self.setLayout(self.verticalLayout)
-        self.profileName = InputBox("Profile Name",False, labelSize=FontSize.HEADER3)
+        self.profileName = InputBox("Profile Name", 
+                                    False, 
+                                    labelSize = FontSize.HEADER3)
         self.confirmBtn = ColoredBtn("Start", Color.GREEN)
         self.verticalLayout.addStretch()
         self.verticalLayout.addWidget(self.profileName,alignment=Qt.AlignmentFlag.AlignHCenter)
@@ -129,7 +133,6 @@ class EngineSetting(TabPage):
         self.verticallayout.addWidget(self.confirmBtn, alignment=Qt.AlignmentFlag.AlignRight)
         
     def getData(self) -> Dict[str, dict]:
-        print (self.mainForm.getValue())
         return self.mainForm.getValue()
     
 

@@ -13,9 +13,10 @@ from view.widgets import (
     Label,
     FileTable
 )
+
+from view.Signals import FileSignals
 from view.style.styleValues import Color, FontSize, Dimension, FontFamily
 from view.style.Background import initImgBackground
-
 from view.Text.TranscribeSuccessPageText import TranscribeSuccessText
 
 from PyQt6.QtWidgets import (
@@ -35,8 +36,9 @@ from PyQt6.QtCore import Qt
 
 class TranscribeSuccessPage(QWidget):
     """ class for trancription success page """
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, signal:FileSignals, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
+        self.signal = signal
         self._initWidget()
         self._initStyle()
         self._initLayout()
@@ -51,11 +53,14 @@ class TranscribeSuccessPage(QWidget):
                                         FontSize.HEADER3,
                                         FontFamily.OTHER)
         self.transcribedFiles.setContentsMargins(30,0,0,0)
-        # self.fileTable = FileTable.successTable()
         self.moreBtn = Button.ColoredBtn(TranscribeSuccessText.moreBtnText, Color.GREEN)
         self.returnBtn = Button.ColoredBtn(TranscribeSuccessText.returnBtnText, Color.BLUEMEDIUM)
         self._initHorizontalLayout()
-        self.fileTable = FileTable.FileTable(FileTable.SuccessHeader, {}, {})
+        self.fileTable = FileTable.FileTable(
+            FileTable.SuccessHeader, 
+            self.signal,
+            {}, 
+            {})
         self.fileTable.resizeCol(FileTable.SuccessDimension)
         
     def _initLayout(self):

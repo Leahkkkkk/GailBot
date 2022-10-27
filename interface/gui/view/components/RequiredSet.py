@@ -27,9 +27,9 @@ class RequiredSet(QWidget):
         self.engineSet = ToggleView.ToggleView("Speech to text settings", 
                                                self.engineForm, 
                                                header = True)
-        self.outPut = OutPutFormat(self.data["OutPut Format"])
+        self.outPutForm = OutPutFormat(self.data["OutPut Format"])
         self.outPutSet = ToggleView.ToggleView("Output File Format Settings", 
-                                               self.outPut,
+                                               self.outPutForm,
                                                header = True)
         self.outPutSet.resizeViewHeight(350)
         
@@ -48,8 +48,12 @@ class RequiredSet(QWidget):
         """function to submit username and password form"""
     
     def setValue(self, data: Dict[str, Dict[str, dict]]):
-        self.engineForm.setValue(data)
-
+        self.engineForm.setValue(data["Engine"])
+    
+    def getValue(self):
+        profile = dict() 
+        profile["Engine"] = self.engineForm.getValue()
+        profile["Output Form Data"] = self.outPutForm.getValue()
 
 class OutPutFormat(QWidget):
     """class for output form"""
@@ -78,6 +82,9 @@ class OutPutFormat(QWidget):
         value = self.headerForm.getValue()
         value["Output File Format"] = self.formatCombo.currentText()
         return value
+    
+    def setValue(self, data:dict):
+        self.formatCombo.setCurrentText(data["Output File Format"])
         
 class HeaderForm(QWidget):
     """class for header form"""

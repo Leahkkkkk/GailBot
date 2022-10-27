@@ -9,8 +9,6 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
-import os
-import datetime
 
 from util import Logger 
 from view.components import (
@@ -19,14 +17,14 @@ from view.components import (
     MenuBar, 
     Console, 
 )
+
+from view import Signals
 from view.widgets import MsgBox
-
-
 from controller. Controller import Controller
 from model.FileItem import FileItem
-
 from PyQt6.QtCore import QSize, QAbstractTableModel
 from PyQt6.QtWidgets import QMainWindow, QFileDialog
+
 
 
 class MainWindow(QMainWindow):
@@ -34,30 +32,33 @@ class MainWindow(QMainWindow):
     def __init__(
         self, 
         controller: Controller, 
-        settingform:dict, 
-        settingdata: dict, 
-        filedata: dict
+        settingform:dict,
+        settingkey: list
     ):
         """initialzie mainwindow object 
         
         Args:
             controller (Controller)
-            settingdata (dict)
-            modelObj (Model)
+            settingform (dict)
         """
         super().__init__()
+        self.fileTableSignals = Signals.FileSignals()
+        self.profileSignals = Signals.ProfileSignals()
+        
         self.setWindowTitle("GailBot")
         self.resize(900, 700)
         self.setMinimumSize(QSize(700, 600))
         self.setMaximumSize(QSize(1200, 900))
         self.resize(QSize(1000, 750))
-        self.settingform = settingform
-        self.settingdata = settingdata
-        self.filedata = filedata
-        self.MainStack = MainStack.MainStack({"setting form": self.settingform,
-                                              "setting":self.settingdata, 
-                                              "file": self.filedata}, 
-                                             parent=self)
+    
+        self.MainStack = MainStack.MainStack(
+            settingform, 
+            settingkey,
+            self.fileTableSignals, 
+            self.profileSignals,
+            parent=self)
+        
+        
         self.setCentralWidget(self.MainStack)
         self.controller = controller
         self.StatusBar = StatusBar.StatusBar()
@@ -67,7 +68,6 @@ class MainWindow(QMainWindow):
         self.Console = Console.Console()
         self.logger = Logger.makeLogger("Frontend")
         self._connectSignal()
-        self._connectController()
 
     """ Functions provided to controller """
     def showTranscribeInProgress(self):
@@ -105,21 +105,6 @@ class MainWindow(QMainWindow):
         """ connect to signal """
         self.MenuBar.OpenConsole.triggered.connect(lambda: self.Console.show())
         self.MenuBar.CloseConsole.triggered.connect(lambda: self.Console.hide())
-        
-    def _connectController(self):
-        """ connect to controller """
-        self.MainStack.ConfirmTranscribePage.signal.transcribeFile.connect(self._transcribe)
-    
-    """ TODO: add transcribing multiplef file """
-    def _transcribe(self, fileData: dict):
-        """ call controller to transcribe audio file"""
-        firstKey = list(fileData.keys())[0]
-        print("_tanscribe under maiwnWindow", fileData)
-        self.controller.runGailBot( fileData[firstKey]["Name"], 
-                                    fileData[firstKey]["FullPath"], 
-                                    fileData[firstKey]["Output"], 
-                                    firstKey)
-        
 
     """ functions provided to child elements"""
     def confirmCancel(self):
@@ -129,4 +114,8 @@ class MainWindow(QMainWindow):
         self.controller.cancelGailBot()
     
     def changeFileStatusToTranscribed(self,key):
-        self.MainStack.FileUploadPage.fileTable.changeToTranscribed(key)
+        pass
+        # self.MainStack.FileUploadPage.fileTable.changeToTranscribed(key)
+    
+    def addFileToTables(self, file:dict):
+        self.MainStack.addFileToTables(file)

@@ -1,18 +1,20 @@
 dummySettingValues={
     "Default": {
-        'engine': {
-            "CMU": {
-                '1.language model setting': {
-                    '1. language model': 'English',
-                    '2. costum language model': 'Air Force Study'
-                },
-                '2.Acoustic Model Setting': {
-                    '1. acoustic model setting': 'acoustic2',
-                    '2. acoustic model setting(optional)': '3',
-                    '3. plugin': 'plugin 1'
-                },
-                '3.CMU specialised setting': {
-                    'CMU dummy setting': 'dummy setting1'
+        "Required Setting": {
+            'Engine': {
+                "CMU": {
+                    '1.language model setting': {
+                        '1. language model': 'English',
+                        '2. costum language model': 'Air Force Study'
+                    },
+                    '2.Acoustic Model Setting': {
+                        '1. acoustic model setting': 'acoustic2',
+                        '2. acoustic model setting(optional)': '3',
+                        '3. plugin': 'plugin 1'
+                    },
+                    '3.CMU specialised setting': {
+                        'CMU dummy setting': 'dummy setting1'
+                    }
                 }
             }
         },
@@ -31,22 +33,24 @@ dummySettingValues={
         },
     },
     "Coffee Study": {
-        "engine": {
-            "IBM": {
-                '1.language model setting': {
-                    '1. language model': 'Spanish',
-                    '2. costum language model': 'Air Force Study'
-                },
-                '2.Acoustic Model Setting': {
-                    '1. acoustic model setting': 'acoustic2',
-                    '2. acoustic model setting(optional)': '3'
-                },
-                '3.advanced setting': {
-                    '1. Advanced Setting Option 1': 'advanced 1',
-                    '2. plugin': 'plugin 1'
-                },
-                '4.IBM specialised setting': {
-                    'IBM dummy setting': 'dummy setting1'
+        "Required Setting": {
+            "Engine": {
+                "IBM": {
+                    '1.language model setting': {
+                        '1. language model': 'Spanish',
+                        '2. costum language model': 'Air Force Study'
+                    },
+                    '2.Acoustic Model Setting': {
+                        '1. acoustic model setting': 'acoustic2',
+                        '2. acoustic model setting(optional)': '3'
+                    },
+                    '3.advanced setting': {
+                        '1. Advanced Setting Option 1': 'advanced 1',
+                        '2. plugin': 'plugin 1'
+                    },
+                    '4.IBM specialised setting': {
+                        'IBM dummy setting': 'dummy setting1'
+                    }
                 }
             }
         },
@@ -65,22 +69,24 @@ dummySettingValues={
         },
     },
     "HRI lab study": {
-        'engine': {
-            "IBM": {
-                '1.language model setting': {
-                    '1. language model': 'IBM language',
-                    '2. costum language model': 'Air Force Study'
-                },
-                '2.Acoustic Model Setting': {
-                    '1. acoustic model setting': 'acoustic2',
-                    '2. acoustic model setting(optional)': '3'
-                },
-                '3.advanced setting': {
-                    '1. Advanced Setting Option 1': 'advanced 1',
-                    '2. plugin': 'plugin 1'
-                },
-                '4.IBM specialised setting': {
-                    'IBM dummy setting': 'dummy setting1'
+        "Required Setting": {
+            'Engine': {
+                "IBM": {
+                    '1.language model setting': {
+                        '1. language model': 'IBM language',
+                        '2. costum language model': 'Air Force Study'
+                    },
+                    '2.Acoustic Model Setting': {
+                        '1. acoustic model setting': 'acoustic2',
+                        '2. acoustic model setting(optional)': '3'
+                    },
+                    '3.advanced setting': {
+                        '1. Advanced Setting Option 1': 'advanced 1',
+                        '2. plugin': 'plugin 1'
+                    },
+                    '4.IBM specialised setting': {
+                        'IBM dummy setting': 'dummy setting1'
+                    }
                 }
             }
         },
@@ -102,94 +108,95 @@ dummySettingValues={
 
 dummySettingForms={
     "Required Setting": {
-        "Engine":{"IBM": {
-            "1.language model setting": {
-                "1. language model": [
-                    "IBM language",
-                    "English",
-                    "Spanish"
-                ],
-                "2. costum language model": [
-                    "HRI lab",
-                    "None",
-                    "Air Force Study"
-                ]
+        "Engine": {
+            "IBM": {
+                "1.language model setting": {
+                    "1. language model": [
+                        "IBM language",
+                        "English",
+                        "Spanish"
+                    ],
+                    "2. costum language model": [
+                        "HRI lab",
+                        "None",
+                        "Air Force Study"
+                    ]
+                },
+                "2.Acoustic Model Setting": {
+                    "1. acoustic model setting": [
+                        "acoustic1",
+                        "acoustic2",
+                        "acoustic3"
+                    ],
+                    "2. acoustic model setting(optional)": [
+                        "1",
+                        "2",
+                        "3"
+                    ]
+                },
+                "3.advanced setting": {
+                    "1. Advanced Setting Option 1": [
+                        "advanced 1",
+                        "advanced 2",
+                        "advanced 3"
+                    ],
+                    "2. plugin": [
+                        "plugin 1",
+                        "plugin 2"
+                    ]
+                },
+                "4.IBM specialised setting": {
+                    "IBM dummy setting": [
+                        "dummy setting1",
+                        "dummy setting2",
+                        "dummy setting3"
+                    ]
+                }
             },
-            "2.Acoustic Model Setting": {
-                "1. acoustic model setting": [
-                    "acoustic1",
-                    "acoustic2",
-                    "acoustic3"
-                ],
-                "2. acoustic model setting(optional)": [
-                    "1",
-                    "2",
-                    "3"
-                ]
-            },
-            "3.advanced setting": {
-                "1. Advanced Setting Option 1": [
-                    "advanced 1",
-                    "advanced 2",
-                    "advanced 3"
-                ],
-                "2. plugin": [
-                    "plugin 1",
-                    "plugin 2"
-                ]
-            },
-            "4.IBM specialised setting": {
-                "IBM dummy setting": [
-                    "dummy setting1",
-                    "dummy setting2",
-                    "dummy setting3"
-                ]
+            "CMU": {
+                "1.language model setting": {
+                    "1. language model": [
+                        "CMU language",
+                        "English",
+                        "Spanish"
+                    ],
+                    "2. costum language model": [
+                        "CMU costum",
+                        "None",
+                        "Air Force Study"
+                    ]
+                },
+                "2.Acoustic Model Setting": {
+                    "1. acoustic model setting": [
+                        "acoustic1",
+                        "acoustic2",
+                        "acoustic3"
+                    ],
+                    "2. acoustic model setting(optional)": [
+                        "1",
+                        "2",
+                        "3"
+                    ],
+                    "3. plugin": [
+                        "plugin 1",
+                        "plugin 2"
+                    ]
+                },
+                "3.CMU specialised setting": {
+                    "CMU dummy setting": [
+                        "dummy setting1",
+                        "dummy setting2",
+                        "dummy setting3"
+                    ]
+                }
             }
         },
-        "CMU": {
-            "1.language model setting": {
-                "1. language model": [
-                    "CMU language",
-                    "English",
-                    "Spanish"
-                ],
-                "2. costum language model": [
-                    "CMU costum",
-                    "None",
-                    "Air Force Study"
-                ]
-            },
-            "2.Acoustic Model Setting": {
-                "1. acoustic model setting": [
-                    "acoustic1",
-                    "acoustic2",
-                    "acoustic3"
-                ],
-                "2. acoustic model setting(optional)": [
-                    "1",
-                    "2",
-                    "3"
-                ],
-                "3. plugin": [
-                    "plugin 1",
-                    "plugin 2"
-                ]
-            },
-            "3.CMU specialised setting": {
-                "CMU dummy setting": [
-                    "dummy setting1",
-                    "dummy setting2",
-                    "dummy setting3"
-                ]
-            }
-        }},
-        
         "OutPut Format": {
-            "Corpus Settings":{
+            "Corpus Settings": {
                 "Corpus aame": "enter corpus name",
                 "Corpus location": "enter corpus location",
                 "Corpus room layout": "enter corous room layout",
-                "Corpus situation":"enter situation"
+                "Corpus situation": "enter situation"
             }
         }
     },
@@ -216,9 +223,10 @@ dummySettingForms={
     }
 }
 
+
 testSet = {
     'a': {
-        'engine': {
+        'Engine': {
             "IBM": {
                 '1.language model setting': {
                     '1. language model': 'English',

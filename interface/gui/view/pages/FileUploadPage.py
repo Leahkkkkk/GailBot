@@ -15,13 +15,15 @@ TODO: add search bar
 TODO: add "NO files added" text
 
 """
-from typing import List, Dict
 
+from view.Signals import FileSignals
+from typing import List, Dict
 from view.widgets import Label, Button, FileTable
 from view.style.styleValues import Color
 from view.style.widgetStyleSheet import buttonStyle
-
 from view.widgets import MsgBox
+
+
 
 from view.style.styleValues import (
     FontFamily, 
@@ -41,44 +43,43 @@ from PyQt6.QtWidgets import (
 
 from PyQt6.QtCore import Qt, QSize, pyqtSignal,QObject
 
-class Signals(QObject):
-    """ contain signals in order for Qrunnable object to communicate
-        with controller
-    """
-    gotoSetting = pyqtSignal()
     
 class FileUploadPage(QWidget):
-    def __init__(self, 
-                 fileDate: Dict[str, dict], 
-                 settingData: List[str],
-                 *args, **kwargs) -> None:
+    def __init__(
+        self, 
+        profilekeys: List[str],
+        signal: FileSignals, 
+        *args, 
+        **kwargs) -> None:
         """ file upload page """
         super().__init__(*args, **kwargs)
-        self.fileDate = fileDate
-        self.settingData = settingData
+        self.signal = signal
+        self.profilekeys = profilekeys
         self._initWidget()
         self._initLayout()
         self._initStyle()
-        self.signals = Signals()
+        self._connectSignal()
+        
+    def _connectSignal(self):
+        """ connect signals to different functions """
+        # uploading file
+        self.uploadFileBtn.clicked.connect(self.fileTable.uploadFile)
+        # load confirm page table with selected file 
+        self.transcribeBtn.clicked.connect(self.fileTable.transferState) 
+        # delete all file 
+        self.deleteAll.clicked.connect(self._confirmDelete)
+        # change transcribe button color
+        self.fileTable.signals.nonZeroFile.connect(self._allowTranscribe)
+        self.fileTable.signals.ZeroFile.connect(self._disallowTranscribe)
+        self._disallowTranscribe()
         
     def _initWidget(self):
         """ initialzie widget """
-        self.label = Label.Label("Files to Transcribe", 
-                                 FontSize.HEADER2, 
-                                 FontFamily.MAIN)
+        self.label = Label.Label("Files to Transcribe", FontSize.HEADER2, FontFamily.MAIN)
         self.gotoMainBtn = Button.iconBtn("arrow.png"," Return to Main Menu") 
-        self.recordBtn = Button.ColoredBtn("Record live", 
-                                           Color.BLUEMEDIUM,
-                                           FontSize.BTN)
-        
-        self.uploadFileBtn = Button.ColoredBtn("Add From Device", 
-                                               Color.BLUEMEDIUM, 
-                                               FontSize.BTN)
-                               
-
-        self.transcribeBtn = Button.ColoredBtn("Transcribe", 
-                                               Color.GREYMEDIUM1, 
-                                               FontSize.BTN)
+        self.recordBtn = Button.ColoredBtn("Record live",  Color.BLUEMEDIUM, FontSize.BTN)
+        self.uploadFileBtn = Button.ColoredBtn("Add From Device", Color.BLUEMEDIUM, FontSize.BTN)
+        self.transcribeBtn = Button.ColoredBtn("Transcribe",Color.GREYMEDIUM1, FontSize.BTN)
        
         self.recordBtn.setFixedSize(Dimension.RBUTTON)
         self.uploadFileBtn.setFixedSize(Dimension.RBUTTON)
@@ -89,25 +90,12 @@ class FileUploadPage(QWidget):
                                             Color.BLUEMEDIUM,
                                             FontSize.BTN)
         self.deleteAll.setContentsMargins(200,0,0,0)
-      
-        self.fileTable = FileTable.FileTable(FileTable.MainTableHeader, 
-                                             self.fileDate, 
-                                             {"delete", "setting", "select"}, 
-                                             self.settingData)
-        
+        self.fileTable = FileTable.FileTable(
+            FileTable.MainTableHeader, 
+            self.signal,
+            settings=self.profilekeys)
         self.fileTable.resizeCol(FileTable.MainTableDimension)
-        self.transcribeBtn.clicked.connect(lambda: self.fileTable.getTransferData())
-        self.uploadFileBtn.clicked.connect(self.fileTable.getFile)
-        self.deleteAll.clicked.connect(self._confirmDelete)
-        self.fileTable.signals.nonZeroFile.connect(self._allowTranscribe)
-        self.fileTable.signals.ZeroFile.connect(self._disallowTranscribe)
-        self._disallowTranscribe()
         
-    def goToSettingFun(self):
-        self.signals.gotoSetting.emit()
-    
-    def addNewProfile(self,profileName:str):
-        self.fileTable.addProfileKeys(profileName)
         
     def _initLayout(self):
         """ initialize layout """
@@ -165,7 +153,8 @@ class FileUploadPage(QWidget):
         self.transcribeBtn.setStyleSheet(buttonStyle.ButtonInactive)
         
     def _confirmDelete(self):
-        confirmPopUp = MsgBox.ConfirmBox("Delete all file?", self.fileTable.deleteAll)
+        confirmPopUp = MsgBox.ConfirmBox("Delete all file?", 
+                                         self.fileTable.deleteAll)
         
    
     

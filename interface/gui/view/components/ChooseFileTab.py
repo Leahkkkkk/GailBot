@@ -25,7 +25,7 @@ from PyQt6.QtCore import QObject, pyqtSignal
 
 
 class Signals(QObject):
-    sendFile = pyqtSignal(dict)
+    postFile = pyqtSignal(dict)
     sendStatus = pyqtSignal(int)
    
 class ChooseFileTab(QDialog):
@@ -56,10 +56,12 @@ class ChooseFileTab(QDialog):
         profileObj = self.chooseSetTab.getProfile()
         print("file profile", profileObj)
         outputPathObj = self.chooseOutPutTab.getOutputPath()
-        statusObj = {"Status": "Not Transcribed"}
+        statusObj = {"Status": "Not Transcribed", 
+                               "Progress": "None", 
+                               "SelectedAction":"Transcribe"}
         for fileObj in fileObjList:
             fileData = {**fileObj, **profileObj, **outputPathObj, **statusObj}
-            self.signals.sendFile.emit(fileData)
+            self.signals.postFile.emit(fileData)
             self.signals.sendStatus.emit(200)
         self.close()
 

@@ -10,6 +10,7 @@ Modified By:  Siara Small  & Vivian Li
 '''
 
 
+from cProfile import run
 from view.pages.CreatNewSettingPages import (
     ProfileName,
     ChooseEngine,
@@ -77,8 +78,8 @@ class CreateNewSetting(QDialog):
             self.EngineSetting.newForm(self.engineForm[engine])
         
     def postSetting(self):
-        settingData = dict()
-        
+        profileData = dict()
+        requiredData = dict()
         profileName = self.profilename.getData()
         basicData = self.BasicSetting.getData()
         engine = self.ChooseEngine.getData()
@@ -86,12 +87,13 @@ class CreateNewSetting(QDialog):
         outputFormData = self.OutPutFormSetting.getData()
         postFormData = self.PostTranscribeSetting.getData()
         
-        settingData["engine"] = {engine:engineData}
-        settingData["Post Transcribe"] = postFormData
-        settingData["Output Form Data"] = outputFormData
-        settingData["User Info"] = basicData
+        requiredData["User Info"] = basicData
+        requiredData["Engine"] = {engine:engineData}
+        requiredData["Output Form Data"] = outputFormData
+        profileData ["Post Transcribe"] = postFormData
+        profileData ["Required Setting"] = requiredData
         
-        self.signals.newSetting.emit({profileName: settingData})
+        self.signals.newSetting.emit((profileName, profileData))
         self.close()
         
         

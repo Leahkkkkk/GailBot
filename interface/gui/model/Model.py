@@ -13,14 +13,17 @@ Modified By:  Siara Small  & Vivian Li
 from model import FileModel
 from model import SettingModel 
 
+from database.fileDB import FileModel
+from database.profileDB import ProfileModel
+
 class Model():
     """ stores the data, has two fields: 
         1.FileModel: stores file data 
         2.SettingModel: stores the setting data
     """
     def __init__(self):
-      self.SettingModel = SettingModel.SettingModel()
-      self.FileData = dict()
+      self.ProfileData = ProfileModel()
+      self.FileData = FileModel()
 
       
       

@@ -94,7 +94,6 @@ class ConfirmFileModel(FileModel):
         self.columns = [" ", "Type", "Name",  "profile", "Selected Action"]
         self._data = [["","📁","Dummy.wav","Default", "Transcribe"]]
 
-
 class ProgressFileMode(FileModel):
     def __init__(self):
         super(FileModel, self).__init__()

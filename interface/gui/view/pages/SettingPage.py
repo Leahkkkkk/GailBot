@@ -18,11 +18,10 @@ TODO: change name settingdata to settingFormData
                   the counter part is settingValueData
 TODO: make a combobox widget
 """
-
-from typing import Dict, TypedDict
-
+from typing import Dict, List
 from util.Logger import makeLogger
 from view.style.styleValues import Color, FontSize, Dimension
+from view.Signals import ProfileSignals
 from view.style.Background import initImgBackground
 from view.Text.LinkText import Links
 from view.pages import RequiredSetPage, PostSetPage
@@ -33,26 +32,26 @@ from model.dummySettingData import dummySettingForms
 from PyQt6.QtWidgets import (
     QWidget, 
     QStackedWidget, 
-    QGridLayout, 
-    QComboBox
+    QGridLayout
 )
-from PyQt6.QtCore import QObject, pyqtSignal
 from PyQt6 import QtCore
 
-class Signals(QObject):
-    newProfile = pyqtSignal(str)
-
-myLogger = makeLogger("Frontend")
 
 class SettingPage(QWidget):
     """ class for settings page"""
-    def __init__(self, settingForm:Dict[str, dict], settingdata:Dict[str, dict], *args, **kwargs) -> None:
+    def __init__(
+        self, 
+        settingForm:Dict[str, dict], 
+        profilekeys:List[str],
+        signals:ProfileSignals,
+        *args, 
+        **kwargs) -> None:
         
         super().__init__(*args, **kwargs)
         self.settingForm = settingForm
-        self.settingdata = settingdata
-        self.profileKeys = list(settingdata)  # stores all the keys of the setting data 
-        self.signals = Signals()
+        self.signals = signals
+        self.profilekeys = profilekeys
+        self.logger = makeLogger("Frontend")
         self._initWidget()
         self._initLayout()
         self._connectSignal()
@@ -61,7 +60,8 @@ class SettingPage(QWidget):
     def _initWidget(self):
         """ initialize widgets"""
         self.selectSettings = ComboBox.ComboBox()
-        self.selectSettings.addItems(self.profileKeys)
+        self.selectSettings.addItems(self.profilekeys)
+        
         self.cancelBtn = Button.BorderBtn("Cancel", Color.ORANGE)
         self.saveBtn = Button.ColoredBtn("Save and Exit", Color.GREEN)
         self.newProfileBtn = Button.ColoredBtn("Create New Profile", Color.BLUEMEDIUM)
@@ -71,18 +71,15 @@ class SettingPage(QWidget):
         self.postSetBtn = Button.BorderBtn("Post-Transcription Settings",Color.GREYDARK,FontSize.BTN,0)
         self.postSetBtn.setFixedWidth(190)
         self.GuideLink = Label.Label(Links.guideLink, FontSize.LINK, link=True)
-
         self.settingStack = QStackedWidget(self)
         self.RequiredSetPage = RequiredSetPage.RequiredSetPage(self.settingForm["Required Setting"])
         self.PostSetPage = PostSetPage.PostSetPage(self.settingForm["Post Transcribe"])   
         self.selectSettings.setCurrentIndex(0)     
-        
         self.placeHolder = QWidget()
         self.settingStack.addWidget(self.placeHolder)
         self.settingStack.addWidget(self.RequiredSetPage)
         self.settingStack.addWidget(self.PostSetPage)
         self.settingStack.setCurrentWidget(self.RequiredSetPage)
-        
         initImgBackground(self,"settingBackground.png")
     
     def _initLayout(self):
@@ -122,7 +119,7 @@ class SettingPage(QWidget):
                                             setCurrentWidget(self.RequiredSetPage))
         self.saveBtn.clicked.connect(self.RequiredSetPage.submitForm)
         
-        self.selectSettings.currentTextChanged.connect(self._changeSettingProfile)
+        self.selectSettings.currentTextChanged.connect(self._getProfile)
 
         self.newProfileBtn.clicked.connect(self.createNewSetting)
     
@@ -130,34 +127,39 @@ class SettingPage(QWidget):
         self.settingStack.setObjectName("settingStack")
         """ add this to an external stylesheet"""
         self.settingStack.setStyleSheet("#settingStack {border: none; border-left:0.5px solid grey;}")
-    
-    """ TODO: improve functions to dynamically change setting and fetch setting data """
-    def _changeSettingProfile(self, profileName:str):
-        myLogger.info(profileName)
-        self.PostSetPage.setValue(self.settingdata[profileName]["Post Transcribe"])
-        self.RequiredSetPage.setValue(self.settingdata[profileName]["engine"])
    
-    def _postNewProfile(self, profile:dict):
-        profileName = list(profile)[0]
-        self.selectSettings.addItem(profileName)
-        self.signals.newProfile.emit(profileName)
-        self.settingdata.update(profile)
-        myLogger.info(profile)
+    def _getProfile(self, profileName:str):
+        """ send the request to database to get profile data  """
+        self.signals.get.emit(profileName)
         
+    def _postNewProfile(self, profile: tuple):
+        """ send the request to database to post a new profile data """
+        profileName = profile[0]
+        # self.selectSettings.addItem(profileName)
+        self.signals.post.emit(profile)
+    
     def createNewSetting(self):
+        """ open a pop up window for user to create new setting profile """
         createNewSettingTab = CreateNewSetting(
                         list(dummySettingForms["Required Setting"]["Engine"]),
                              dummySettingForms["Required Setting"]["Engine"],
                              dummySettingForms["Required Setting"]["OutPut Format"],
                              dummySettingForms["Post Transcribe"])
-        print
         createNewSettingTab.signals.newSetting.connect(self._postNewProfile)
         createNewSettingTab.exec()
+        
+    def loadProfile(self, profile: Dict[str,dict]):
+        """ load the profile data to be presented onto the table """
+        self.PostSetPage.setValue(profile["Post Transcribe"])
+        self.RequiredSetPage.setValue(profile["Required Setting"])
     
-    def updateSettingProfileOptions(self, profileName:str):
-        pass        
+    def addProfile (self, prfileName:str):
+        self.selectSettings.addItem(prfileName)
         
-
-    def loadSettingProfile(self, profilekey:str):
-        pass
-        
+    def updateSettingProfileOptions(self):
+        newSetting = dict()
+        newSetting["Required Setting"] = self.RequiredSetPage.getValue()
+        newSetting["Post Transcribe"]  = self.PostSetPage.getValue()
+        profileKey = self.selectSettings.currentText()
+        self.signals.edit.emit(profileKey, newSetting)
+    

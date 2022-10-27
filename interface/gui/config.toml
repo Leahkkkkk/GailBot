@@ -1,0 +1,10 @@
+[light mode] 
+        [colors]
+        colors = { continueBtn = "#6E9B87", cancelBtn = "#EE6C4D", lightSelection = "#F0F6F9", 
+        medSelection = "#D2E4EE", actionBtn = "#3D4A80", contrastAction = "#293241", 
+        greyLowContrast = "#EBEBEB", nonEditable = "#91969D", outline = "#767C85", 
+        greyHighContrast = "#545B67", border ="#797979", greyExtraLowContrast = "#F0F6F9", 
+        backgroundColor = "#FFFFFF", mainTextColor = "#000000" }
+        
+[dark mode]
+        [colors]

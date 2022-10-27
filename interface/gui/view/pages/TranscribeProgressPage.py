@@ -1,5 +1,6 @@
 import os
 
+from view.Signals import FileSignals
 from view.widgets import MsgBox
 from view.widgets import (
     Label,   
@@ -20,13 +21,17 @@ from PyQt6.QtCore import Qt
 """ class for transcription in progress page """
 class TranscribeProgressPage(QWidget):
     """ initialize class """
-    def __init__(self, parent, *args, **kwargs) -> None:
+    def __init__(
+        self, 
+        signal: FileSignals, 
+        * args, 
+        **kwargs) -> None:
         super().__init__(*args, **kwargs)
+        self.signals = signal
         self._initWidget()
         self._initstyle()
         self._initLayout()
         self._connectSignal()
-        self.parent = parent
       
     def loadStart(self):
         """ start loading icon movie """
@@ -67,16 +72,12 @@ class TranscribeProgressPage(QWidget):
         self.cancelBtn.setMinimumSize(Dimension.BGBUTTON)
         initImgBackground(self, "backgroundSubPages.png")
         
-        
     def _initLayout(self):
         """ intiializes layout """
         self.verticalLayout = QVBoxLayout()
         self.setLayout(self.verticalLayout)
         """ add widget to layout """
         self.verticalLayout.addWidget(self.label)
-        
-        
-        # self.verticalLayout.addStretch(2)
         self.label.setContentsMargins(0,20,0,0)
         self.verticalLayout.addWidget(self.loadIcon, 
                                       alignment = Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignTop)
@@ -92,15 +93,13 @@ class TranscribeProgressPage(QWidget):
         self.loadIcon.setContentsMargins(0,0,0,0)
         self.fileTable.setMaximumHeight(300)
         
-
     def _connectSignal(self):
         """ connects signal """
         self.cancelBtn.clicked.connect(self._confirm)
         
     def _confirm(self):
-        """ handles confirm transcription message box """
         self.confirmCancel = MsgBox.ConfirmBox("Confirm cancellation?", 
-                                               self.parent.confirmCancel)
+                                               lambda: self.signals.cancel.emit())
     
     def setLoadingText(self, text):
         self.loadingText = Label.Label(text,

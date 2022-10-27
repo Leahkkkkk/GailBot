@@ -54,7 +54,9 @@ class PostSetPage(QWidget):
     
     def setValue(self, values:dict):
         self.PostSet.updateValues(values)
-        
+    
+    def getValue(self) -> dict:
+        return self.PostSet.getValue()
         
        
     

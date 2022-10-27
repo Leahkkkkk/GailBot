@@ -9,7 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
-
+from view.Signals import FileSignals
 from view.style.styleValues import FontFamily, FontSize, Color
 from view.style.Background import initImgBackground
 from view.widgets import ( Label, 
@@ -20,43 +20,47 @@ from util.Logger import makeLogger
 
 from PyQt6.QtWidgets import (
     QWidget, 
-    QLabel, 
-    QPushButton, 
     QVBoxLayout,
     QHBoxLayout
 )
 
 from PyQt6 import QtCore
-from PyQt6.QtCore import Qt, QObject, pyqtSignal
+from PyQt6.QtCore import Qt 
 
-logger = makeLogger("Frontend")
-
-class Signal(QObject):
-    transcribeFile = pyqtSignal(dict)
 
 
 class ConfirmTranscribePage(QWidget):
     """ Confirm transcription page """
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, signal:FileSignals, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
+        self.signal = signal
+        self.logger = makeLogger("Frontend")
         self._initWidget()
         self._initLayout()
         self._initStyle()
-        self.signal = Signal()
-        
+        self._connectSignal()
+    
+    def _connectSignal(self):
+        self.confirmBtn.clicked.connect(self._sendTranscribeSignal)
+
     def _initWidget(self):
         """ initlialize widget """
         self.label = Label.Label("Confirm Files and Settings", 
                                  FontSize.HEADER2, 
                                  FontFamily.MAIN)
         self.label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
-        self.fileTable = FileTable.FileTable(FileTable.ConfirmHeader, {}, {"setting"})
+        
+        self.fileTable = FileTable.FileTable(
+            FileTable.ConfirmHeader, 
+            self.signal,
+            {"setting"}, 
+            {})
+        
         self.fileTable.resizeCol(FileTable.ConfirmHeaderDimension)
         self.bottomButton = QWidget()
         self.confirmBtn = Button.ColoredBtn("Confirm", Color.GREEN)
         self.cancelBtn = Button.ColoredBtn("Cancel", Color.ORANGE)
-        self.confirmBtn.clicked.connect(self._sendTranscribeSignal)
-    
+        
     def _initLayout(self):
         """ initialize layout"""
         self.verticalLayout = QVBoxLayout()
@@ -87,6 +91,8 @@ class ConfirmTranscribePage(QWidget):
         self.cancelBtn.setMinimumSize(QtCore.QSize(150,30))
   
     def _sendTranscribeSignal(self):
-        logger.info("_sendTranscribeSignal", self.fileTable.filedata)
-        self.signal.transcribeFile.emit(self.fileTable.filedata)
-   
+        """send a signal with a set of file keys that will be transcribed """
+        self.logger.info("here")
+        self.logger.info(self.fileTable.transferList)
+        self.signal.transcribe.emit(self.fileTable.transferList)
+        self.fileTable.transferState()

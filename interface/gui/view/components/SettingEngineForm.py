@@ -72,7 +72,11 @@ class SettingEngineForm(QWidget):
         self.layout.addWidget(self.toggleList)
         self.layout.setSpacing(0)
         self.layout.addStretch()
-        
+    
+    def getValue(self) -> dict:
+        engine = self.mainCombo.currentText()
+        return {engine: self.toggleList.getValue()}
+    
     def setValue(self, data: Dict[str, Dict[str, dict]]):
         engineName = list(data)[0]
         print(engineName)
