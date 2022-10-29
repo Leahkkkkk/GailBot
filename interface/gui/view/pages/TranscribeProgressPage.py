@@ -1,4 +1,5 @@
 import os
+import tomli
 
 from view.Signals import FileSignals
 from view.widgets import MsgBox
@@ -28,6 +29,7 @@ class TranscribeProgressPage(QWidget):
         **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.signals = signal
+        self._initConfig()
         self._initWidget()
         self._initstyle()
         self._initLayout()
@@ -44,7 +46,7 @@ class TranscribeProgressPage(QWidget):
     def _initWidget(self):
         """ initialize widgets """
         self.label = Label.Label(TranscribeProgressText.mainLabelText,
-                                 FontSize.HEADER1, 
+                                 self.config["fontSizes"]["HEADER1"], 
                                  FontFamily.MAIN)
         self.label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         self.loadIcon = QLabel()
@@ -53,13 +55,13 @@ class TranscribeProgressPage(QWidget):
         self.loadStart()
        
         self.loadingText = Label.Label(TranscribeProgressText.loadingText,
-                                      FontSize.SMALL,
+                                      self.config["fontSizes"]["SMALL"],
                                       FontFamily.OTHER)
         self.loadingText.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         self.InProgress = Label.Label(TranscribeProgressText.inProgressText,
-                                        FontSize.HEADER3,
+                                        self.config["fontSizes"]["HEADER3"],
                                         FontFamily.MAIN)
-        self.cancelBtn = Button.ColoredBtn(TranscribeProgressText.cancelText, Color.ORANGE, FontSize.BTN)
+        self.cancelBtn = Button.ColoredBtn(TranscribeProgressText.cancelText, self.config["colors"]["ORANGE"], self.config["fontSizes"]["BTN"])
         self.fileTable = FileTable.FileTable(FileTable.ProgressHeader, {}, {})
         self.fileTable.resizeCol(FileTable.ProgressDimension)
         
@@ -103,7 +105,9 @@ class TranscribeProgressPage(QWidget):
     
     def setLoadingText(self, text):
         self.loadingText = Label.Label(text,
-                                      FontSize.SMALL,
+                                      self.config["fontSizes"]["SMALL"],
                                       FontFamily.OTHER)
 
-    
+    def _initConfig(self):
+        with open("controller/interface.toml", mode="rb") as fp:
+            self.config = tomli.load(fp)

@@ -8,6 +8,7 @@ Last Modified: Thursday, 6th October 2022 11:05:38 am
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
+import tomli
 
 from view.Signals import FileSignals
 from view.style.styleValues import FontFamily, FontSize, Color
@@ -35,6 +36,7 @@ class ConfirmTranscribePage(QWidget):
         super().__init__(*args, **kwargs)
         self.signal = signal
         self.logger = makeLogger("Frontend")
+        self._initConfig()
         self._initWidget()
         self._initLayout()
         self._initStyle()
@@ -46,7 +48,7 @@ class ConfirmTranscribePage(QWidget):
     def _initWidget(self):
         """ initlialize widget """
         self.label = Label.Label("Confirm Files and Settings", 
-                                 FontSize.HEADER2, 
+                                 self.config["fontSizes"]["HEADER2"], 
                                  FontFamily.MAIN)
         self.label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         
@@ -58,8 +60,8 @@ class ConfirmTranscribePage(QWidget):
         
         self.fileTable.resizeCol(FileTable.ConfirmHeaderDimension)
         self.bottomButton = QWidget()
-        self.confirmBtn = Button.ColoredBtn("Confirm", Color.GREEN)
-        self.cancelBtn = Button.ColoredBtn("Cancel", Color.ORANGE)
+        self.confirmBtn = Button.ColoredBtn("Confirm", self.config["colors"]["GREEN"])
+        self.cancelBtn = Button.ColoredBtn("Cancel", self.config["colors"]["ORANGE"])
         
     def _initLayout(self):
         """ initialize layout"""
@@ -96,3 +98,7 @@ class ConfirmTranscribePage(QWidget):
         self.logger.info(self.fileTable.transferList)
         self.signal.transcribe.emit(self.fileTable.transferList)
         self.fileTable.transferState()
+
+    def _initConfig(self):
+        with open("controller/interface.toml", mode="rb") as fp:
+            self.config = tomli.load(fp)

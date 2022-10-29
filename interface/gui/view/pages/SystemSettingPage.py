@@ -1,4 +1,4 @@
-
+import tomli
 
 from view.widgets import Label,TextForm
 from view.style.Background import initBackground
@@ -15,15 +15,16 @@ class SystemSettingPage(QWidget):
         super().__init__(*args, **kwargs)
         self.data = data
         initBackground(self)
+        self._initConfig()
         self._initWidget()
         self._initLayout()
         
     def _initWidget(self):
         """initialize widgets"""
         self.header = Label.Label("System Setting",
-                                  FontSize.HEADER2,FontFamily.MAIN)
+                                  self.config["fontSizes"]["HEADER2"],FontFamily.MAIN)
         self.caption = Label.Label("These settings are applied for system setting",
-                                   FontSize.DESCRIPTION, FontFamily.MAIN)
+                                   self.config["fontSizes"]["DESCRIPTION"], FontFamily.MAIN)
         self.PostSet = TextForm.TextForm(self.data)
         self.scroll = QScrollArea()
         self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
@@ -52,5 +53,7 @@ class SystemSettingPage(QWidget):
     def getValue(self) -> dict:
         return self.PostSet.getValue()
         
-       
+    def _initConfig(self):
+        with open("controller/interface.toml", mode="rb") as fp:
+            self.config = tomli.load(fp)
     

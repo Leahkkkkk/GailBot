@@ -8,6 +8,7 @@ Last Modified: Thursday, 6th October 2022 11:08:27 am
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
+import tomli 
 
 from view.widgets import InputBox, Button, Label,TextForm
 from view.style.styleValues import FontFamily, FontSize
@@ -21,15 +22,16 @@ class PostSetPage(QWidget):
     def __init__(self, data, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.data = data
+        self._initConfig()
         self._initWidget()
         self._initLayout()
         
     def _initWidget(self):
         """initialize widgets"""
         self.header = Label.Label("Post-Transcription Settings",
-                                  FontSize.HEADER2,FontFamily.MAIN)
+                                  self.config["fontSizes"]["HEADER2"],FontFamily.MAIN)
         self.caption = Label.Label("These settings are applied after the file is created.",
-                                   FontSize.DESCRIPTION, FontFamily.MAIN)
+                                   self.config["fontSizes"]["DESCRIPTION"], FontFamily.MAIN)
         self.PostSet = TextForm.TextForm(self.data)
         self.scroll = QScrollArea()
         self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
@@ -58,5 +60,7 @@ class PostSetPage(QWidget):
     def getValue(self) -> dict:
         return self.PostSet.getValue()
         
-       
+    def _initConfig(self):
+        with open("controller/interface.toml", mode="rb") as fp:
+            self.config = tomli.load(fp)
     

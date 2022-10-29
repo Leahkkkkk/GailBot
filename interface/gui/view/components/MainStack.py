@@ -111,7 +111,7 @@ class MainStack(QStackedWidget):
             self.profilekeys,
             self.profileSignals)
         
-        self.MainSetting.addTab(self.SettingPage, "Porfile Setting")
+        self.MainSetting.addTab(self.SettingPage, "Profile Setting")
         self.MainSetting.addTab(self.SystemSettingPage, "System Setting")
         self.addWidget(self.WelcomePage)
         self.addWidget(self.ConfirmTranscribePage)
@@ -123,7 +123,7 @@ class MainStack(QStackedWidget):
         self.addWidget(self.MainSetting)
         
         
-        self.setCurrentWidget(self.MainSetting)
+        self.setCurrentWidget(self.FileUploadPage)
     
         
         

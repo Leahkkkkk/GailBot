@@ -8,6 +8,7 @@ Last Modified: Thursday, 6th October 2022 11:08:43 am
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
+import tomli
 
 from view.widgets import  Label
 from view.style.styleValues import FontFamily, FontSize
@@ -24,6 +25,7 @@ class RequiredSetPage(QWidget):
     def __init__(self, data, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.data = data
+        self._initConfig()
         self._initWidget()
         self._initLayout()
     
@@ -37,11 +39,11 @@ class RequiredSetPage(QWidget):
         return self.form.getValue()
         
     def _initWidget(self):
-        self.label = Label.Label("Required Settings",FontSize.HEADER2, 
+        self.label = Label.Label("Required Settings", self.config["fontSizes"]["HEADER2"], 
                                  FontFamily.MAIN )
         self.description = Label.Label("\n"
                                 "These settings are required before transcription and cannot be edited after transcription.",
-                                 FontSize.DESCRIPTION, 
+                                 self.config["fontSizes"]["DESCRIPTION"], 
                                  FontFamily.MAIN )
         self.form = RequiredSet.RequiredSet(self.data)
     
@@ -56,4 +58,6 @@ class RequiredSetPage(QWidget):
         self.layout.addWidget(self.form, stretch= 10)
         self.layout.setSpacing(0)
         
-
+    def _initConfig(self):
+        with open("controller/interface.toml", mode="rb") as fp:
+            self.config = tomli.load(fp)
