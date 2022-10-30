@@ -9,7 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
- 
+import tomli
 
 from view.style.styleValues import FontFamily, FontSize, Color
 from view.style.Background import initImgBackground
@@ -43,6 +43,7 @@ class WelcomePage(QWidget):
     """ class for welcome page """
     def __init__(self, config=None, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
+        self._initConfig()
         self._initWidget()
         self._initLayout()
         self._initStyle()
@@ -102,26 +103,27 @@ class WelcomePage(QWidget):
         """ add widgets for the instructions text and icon """
         """ instruction text """
         self.AudioInstruction = Label.Label(WelcomePageText.audioInstructionText, 
-                                            FontSize.INSTRUCTION_CAPTION, 
-                                            FontFamily.OTHER,Color.GREYMEDIUM2)
+                                            self.config["fontSizes"]["INSTRUCTION_CAPTION"], 
+                                            FontFamily.OTHER, self.config["colors"]["GREYMEDIUM2"])
+        
         self.SettingsInstruction = Label.Label(WelcomePageText.settingsInstructionText,
-                                               FontSize.INSTRUCTION_CAPTION, 
-                                               FontFamily.OTHER,Color.GREYMEDIUM2)
+                                               self.config["fontSizes"]["INSTRUCTION_CAPTION"], 
+                                               FontFamily.OTHER, self.config["colors"]["GREYMEDIUM2"])
         
         self.TranscribeInstruction = Label.Label(WelcomePageText.transcribeInstructionText, 
-                                                 FontSize.INSTRUCTION_CAPTION, 
+                                                 self.config["fontSizes"]["INSTRUCTION_CAPTION"], 
                                                  FontFamily.OTHER,
-                                                 Color.GREYMEDIUM2)
+                                                 self.config["colors"]["GREYMEDIUM2"])
         
         self.FileInstruction = Label.Label(WelcomePageText.fileInstructionText, 
-                                           FontSize.INSTRUCTION_CAPTION, 
+                                           self.config["fontSizes"]["INSTRUCTION_CAPTION"], 
                                            FontFamily.OTHER,
-                                           Color.GREYMEDIUM2)
+                                           self.config["colors"]["GREYMEDIUM2"])
         
         self.EditInstruction = Label.Label(WelcomePageText.editInstructionText,
-                                           FontSize.INSTRUCTION_CAPTION, 
+                                           self.config["fontSizes"]["INSTRUCTION_CAPTION"], 
                                            FontFamily.OTHER,
-                                           Color.GREYMEDIUM2)
+                                           self.config["colors"]["GREYMEDIUM2"])
 
 
         """ instruction icons """
@@ -170,21 +172,21 @@ class WelcomePage(QWidget):
     def _initMainText(self):
         """ initialize the main text on home page  """
         self.WelcomeText = Label.Label(WelcomePageText.welcomeText, 
-                                        FontSize.HEADER1, 
+                                        self.config["fontSizes"]["HEADER1"], 
                                         FontFamily.MAIN)
         self.WelcomeText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
         
         self.CaptionText = Label.Label(WelcomePageText.captionText,
-                                       FontSize.BODY, 
+                                       self.config["fontSizes"]["BODY"], 
                                        FontFamily.OTHER,
-                                       Color.GREYMEDIUM2)
+                                       self.config["colors"]["GREYMEDIUM2"])
         
         self.CaptionText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
         
-        self.HomeSetBtn = Button.ColoredBtn("⚙", Color.BLUEMEDIUM,"35px")
-        self.StartBtn = Button.ColoredBtn(WelcomePageText.startBtnText, Color.GREEN)
+        self.HomeSetBtn = Button.ColoredBtn("⚙", self.config["colors"]["BLUEMEDIUM"],"35px")
+        self.StartBtn = Button.ColoredBtn(WelcomePageText.startBtnText, self.config["colors"]["GREEN"])
         
-        self.InstructionText = Label.Label(WelcomePageText.instructionText, FontSize.HEADER2, 
+        self.InstructionText = Label.Label(WelcomePageText.instructionText, self.config["fontSizes"]["HEADER2"], 
                                            FontFamily.MAIN)
         self.InstructionText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
     
@@ -193,24 +195,28 @@ class WelcomePage(QWidget):
     def _initLinkText(self):
         """ initialize the link text on homepage """
         self.ResourcesText = Label.Label(WelcomePageText.resourcesText, 
-                                         FontSize.HEADER2, 
+                                         self.config["fontSizes"]["HEADER2"], 
                                          FontFamily.OTHER)
         self.ResourcesText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
         
-        self.TutorialText = Label.Label(Links.tutorialLink, FontSize.LINK,
-                                        FontFamily.OTHER, Color.BLUEMEDIUM,
+        self.TutorialText = Label.Label(Links.tutorialLink, self.config["fontSizes"]["LINK"],
+                                        FontFamily.OTHER, self.config["colors"]["BLUEMEDIUM"],
                                         "text-decoration: underline;", link=True)
         print(Links.tutorialLink)
         
-        self.GuideText = Label.Label(Links.guideLink,FontSize.LINK, 
-                                        FontFamily.OTHER, Color.BLUEMEDIUM,
+        self.GuideText = Label.Label(Links.guideLink, self.config["fontSizes"]["LINK"], 
+                                        FontFamily.OTHER, self.config["colors"]["BLUEMEDIUM"],
                                         "text-decoration: underline;", link=True)
-        self.GBLinkText = Label.Label(Links.gbWebLink, FontSize.BODY, 
-                                      FontFamily.OTHER,Color.BLUEMEDIUM,link=True)
+        self.GBLinkText = Label.Label(Links.gbWebLink, self.config["fontSizes"]["BODY"], 
+                                      FontFamily.OTHER, self.config["colors"]["BLUEMEDIUM"], link=True)
         
         self.GBLinkText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
 
         self.MoreInfoText = Label.Label(WelcomePageText.moreInfoText, 
-                                        FontSize.SMALL, FontFamily.OTHER)
+                                        self.config["fontSizes"]["SMALL"], FontFamily.OTHER)
         
         self.MoreInfoText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
+
+    def _initConfig(self):
+        with open("controller/interface.toml", mode="rb") as fp:
+                self.config = tomli.load(fp)

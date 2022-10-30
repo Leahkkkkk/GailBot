@@ -8,6 +8,9 @@ Last Modified: Thursday, 6th October 2022 11:11:31 am
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
+
+import tomli
+
 from view.widgets import (
     Button,
     Label,
@@ -46,6 +49,7 @@ class TranscribeSuccessPage(QWidget):
     def __init__(self, signal:FileSignals, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.signal = signal
+        self._initConfig()
         self._initWidget()
         self._initStyle()
         self._initLayout()
@@ -54,20 +58,20 @@ class TranscribeSuccessPage(QWidget):
         """ intialize widgets """
         self.label = Label.Label(
             TranscribeSuccessText.mainLabelText,
-            FontSize.HEADER1,
+            self.config["fontSizes"]["HEADER1"],
             FontFamily.MAIN)
         self.label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         self.transcribedFiles = Label.Label(
             TranscribeSuccessText.transcribedFilesText,
-            FontSize.HEADER3,
+            self.config["fontSizes"]["HEADER3"],
             FontFamily.OTHER)
         self.transcribedFiles.setContentsMargins(30,0,0,0)
         self.moreBtn = Button.ColoredBtn(
             TranscribeSuccessText.moreBtnText, 
-            Color.GREEN)
+            self.config["colors"]["GREEN"])
         self.returnBtn = Button.ColoredBtn(
             TranscribeSuccessText.returnBtnText, 
-            Color.BLUEMEDIUM)
+            self.config["colors"]["BLUEMEDIUM"])
         self._initHorizontalLayout()
         self.fileTable = FileTable.FileTable(
             SuccessHeader, 
@@ -100,3 +104,7 @@ class TranscribeSuccessPage(QWidget):
         self.moreBtn.setMinimumSize(QtCore.QSize(150,30))
         self.returnBtn.setMinimumSize(QtCore.QSize(150,30))
         initImgBackground(self, "backgroundConfirmPage.png")
+
+    def _initConfig(self):
+        with open("controller/interface.toml", mode="rb") as fp:
+            self.config = tomli.load(fp)

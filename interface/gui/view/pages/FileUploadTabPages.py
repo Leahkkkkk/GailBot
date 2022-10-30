@@ -8,6 +8,8 @@ Last Modified: Sunday, 16th October 2022 1:49:44 pm
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
+import tomli 
+
 from genericpath import isdir
 import logging 
 import datetime
@@ -52,13 +54,14 @@ class OpenFile_De(TabPage):
     """  for user to select file from their directory """
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
+        self._initConfig()
         self.fullName = None 
         self.fileType = None
         self.filePathDisplay = QLineEdit(self)
         self.filePathDisplay.setPlaceholderText("Choose file to be transcribed")
         self.filePathDisplay.setMinimumHeight(40)
         self.filePathDisplay.setReadOnly(True)
-        self.fileBtn = ColoredBtn("...", Color.BLUEMEDIUM,FontSize.HEADER3)
+        self.fileBtn = ColoredBtn("...", self.config["colors"]["BLUEMEDIUM"], self.config["fontSizes"]["HEADER3"])
         self.fileBtn.setFixedWidth(70)
         self.fileBtn.clicked.connect(self._addFile)
         self._initLayout()
@@ -106,12 +109,13 @@ class OpenFile_De(TabPage):
 class OpenFile(TabPage):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
+        self._initConfig()
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
-        self.dropLabel = Label("Drop File Here to Upload", FontSize.BODY)
+        self.dropLabel = Label("Drop File Here to Upload", self.config["fontSizes"]["BODY"])
         self.fileDisplayList = QListWidget()
         self.filePaths = []
-        self.uploadFileBtn = ColoredBtn("Upload File",Color.BLUEMEDIUM)
+        self.uploadFileBtn = ColoredBtn("Upload File", self.config["colors"]["BLUEMEDIUM"])
         self.uploadFileBtn.clicked.connect(lambda: self.getOpenFilesAndDirs())
         self.setAcceptDrops(True)
         self.layout.addWidget(self.dropLabel)
@@ -213,6 +217,10 @@ class OpenFile(TabPage):
             self.filePaths = self.filePaths + selectedFiles
             self.fileDisplayList.addItems(self.filePaths)
 
+    def _initConfig(self):
+        with open("controller/interface.toml", mode="rb") as fp:
+            self.config = tomli.load(fp)
+
     
 class ChooseSet(TabPage):
     """ for user to choose setting profile """
@@ -221,12 +229,13 @@ class ChooseSet(TabPage):
         print(settings)
         self.profile = settings[0]
         self.settings = settings
+        self._initConfig()
         self._initWidget()
         self._initLayout()
         self.setAutoFillBackground(True)
         
     def _initWidget(self):
-        self.label = Label("select setting profile", FontSize.HEADER3 )
+        self.label = Label("select setting profile", self.config["fontSizes"]["HEADER3"] )
         self.selectSettings = QComboBox(self)
         self.selectSettings.addItem("select settings")
         self.selectSettings.addItems(self.settings)
@@ -258,17 +267,22 @@ class ChooseSet(TabPage):
             return {"Profile": self.profile}
         else:
             logging.warn("the profile is not chosen")
+
+    def _initConfig(self):
+        with open("controller/interface.toml", mode="rb") as fp:
+            self.config = tomli.load(fp)
         
 class ChooseOutPut(TabPage):
     """ for user to choose output directory  """
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.outPath = None
+        self._initConfig()
         self._iniWidget()
         self._initLayout()
         
     def _iniWidget(self):
-        self.chooseDirBtn = ColoredBtn("...", Color.BLUEMEDIUM, FontSize.HEADER2)
+        self.chooseDirBtn = ColoredBtn("...", self.config["colors"]["BLUEMEDIUM"], self.config["fontSizes"]["HEADER2"])
         self.chooseDirBtn.setFixedWidth(70)
         self.dirPathText = QLineEdit(self)
         self.dirPathText.setPlaceholderText("Choose Output Directory")
@@ -299,7 +313,9 @@ class ChooseOutPut(TabPage):
             logging.error("No output direcory was chosen")
         return {"Output": self.outPath}
 
-
+    def _initConfig(self):
+        with open("controller/interface.toml", mode="rb") as fp:
+            self.config = tomli.load(fp)
 
 
 

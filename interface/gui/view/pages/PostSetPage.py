@@ -8,6 +8,7 @@ Last Modified: Thursday, 6th October 2022 11:08:27 am
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
+import tomli 
 
 from view.widgets import InputBox, Button, Label,TextForm, SettingForm
 from view.style.styleValues import FontFamily, FontSize, Color
@@ -36,5 +37,7 @@ class PostSetPage(QWidget):
     def getValue(self) -> dict:
         return self.setForm.getValue()
         
-       
+    def _initConfig(self):
+        with open("controller/interface.toml", mode="rb") as fp:
+            self.config = tomli.load(fp)
     

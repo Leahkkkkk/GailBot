@@ -1,4 +1,6 @@
-from view.widgets import Label,TextForm, Image, SideBar, SettingForm
+import tomli
+
+from view.widgets import Label,TextForm, SideBar, SettingForm
 from view.style.Background import initBackground
 from view.style.styleValues import FontFamily, FontSize
 from model.dummySettingData import dummySystemSettingForm
@@ -12,6 +14,7 @@ class SystemSettingPage(QWidget):
         super().__init__(*args, **kwargs)
         self.data = dummySystemSettingForm
         initBackground(self)
+        self._initConfig()
         self._initWidget()
         self._initLayout()
         self._initStyle()
@@ -46,5 +49,7 @@ class SystemSettingPage(QWidget):
         return self.SysSet.getValue()
 
         
-       
+    def _initConfig(self):
+        with open("controller/interface.toml", mode="rb") as fp:
+            self.config = tomli.load(fp)
     

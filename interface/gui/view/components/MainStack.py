@@ -121,7 +121,7 @@ class MainStack(QStackedWidget):
         self.addWidget(self.MainSetting)
         
         
-        self.setCurrentWidget(self.ConfirmTranscribePage)
+        self.setCurrentWidget(self.FileUploadPage)
     
         
         

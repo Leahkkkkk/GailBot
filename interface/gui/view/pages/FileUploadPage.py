@@ -15,6 +15,7 @@ TODO: add search bar
 TODO: add "NO files added" text
 
 """
+import tomli 
 
 from view.Signals import FileSignals
 from typing import List, Dict
@@ -64,6 +65,7 @@ class FileUploadPage(QWidget):
         super().__init__(*args, **kwargs)
         self.signal = signal
         self.profilekeys = profilekeys
+        self._initConfig()
         self._initWidget()
         self._initLayout()
         self._initStyle()
@@ -84,20 +86,20 @@ class FileUploadPage(QWidget):
         
     def _initWidget(self):
         """ initialzie widget """
-        self.label = Label.Label("Files to Transcribe", FontSize.HEADER2, FontFamily.MAIN)
+        self.label = Label.Label("Files to Transcribe", self.config["fontSizes"]["HEADER2"], FontFamily.MAIN)
         self.gotoMainBtn = Button.iconBtn("arrow.png"," Return to Main Menu") 
-        self.recordBtn = Button.ColoredBtn("Record live",  Color.BLUEMEDIUM, FontSize.BTN)
-        self.uploadFileBtn = Button.ColoredBtn("Add From Device", Color.BLUEMEDIUM, FontSize.BTN)
-        self.transcribeBtn = Button.ColoredBtn("Transcribe",Color.GREYMEDIUM1, FontSize.BTN)
+        self.recordBtn = Button.ColoredBtn("Record live",  self.config["colors"]["BLUEMEDIUM"], self.config["fontSizes"]["BTN"])
+        self.uploadFileBtn = Button.ColoredBtn("Add From Device", self.config["colors"]["BLUEMEDIUM"], self.config["fontSizes"]["BTN"])
+        self.transcribeBtn = Button.ColoredBtn("Transcribe", self.config["colors"]["GREYMEDIUM1"], self.config["fontSizes"]["BTN"])
        
         self.recordBtn.setFixedSize(Dimension.RBUTTON)
         self.uploadFileBtn.setFixedSize(Dimension.RBUTTON)
         self.transcribeBtn.setFixedSize(Dimension.BGBUTTON)
-        self.settingProfile = Button.ColoredBtn("⚙", Color.BLUEMEDIUM,"35px")
+        self.settingProfile = Button.ColoredBtn("⚙", self.config["colors"]["BLUEMEDIUM"], "35px")
         self.settingProfile.setFixedSize(QSize(40,40))
         self.deleteAll = Button.ColoredBtn("Delete all",
-                                            Color.BLUEMEDIUM,
-                                            FontSize.BTN)
+                                            self.config["colors"]["BLUEMEDIUM"],
+                                            self.config["fontSizes"]["BTN"])
         self.deleteAll.setContentsMargins(200,0,0,0)
         self.fileTable = FileTable.FileTable(
             MainTableHeader, 
@@ -163,9 +165,10 @@ class FileUploadPage(QWidget):
         self.transcribeBtn.setStyleSheet(buttonStyle.ButtonInactive)
         
     def _confirmDelete(self):
-        confirmPopUp = MsgBox.ConfirmBox("Delete all file?", 
+        confirmPopUp = MsgBox.ConfirmBox("Delete all files?", 
                                          self.fileTable.deleteAll)
         
-   
-    
+    def _initConfig(self):
+        with open("controller/interface.toml", mode="rb") as fp:
+            self.config = tomli.load(fp)
     

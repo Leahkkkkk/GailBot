@@ -1,3 +1,4 @@
+import tomli
 from asyncio.log import logger
 from typing import Dict, List
 
@@ -32,12 +33,13 @@ class settingSignals(QObject):
 class ProfileName (TabPage):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
+        self._initConfig()
         self.verticalLayout = QVBoxLayout()
         self.setLayout(self.verticalLayout)
         self.profileName = InputBox("Profile Name", 
                                     False, 
-                                    labelSize = FontSize.HEADER3)
-        self.confirmBtn = ColoredBtn("Start", Color.GREEN)
+                                    labelSize = self.config["fontSizes"]["HEADER3"])
+        self.confirmBtn = ColoredBtn("Start", self.config["colors"]["GREEN"])
         self.verticalLayout.addStretch()
         self.verticalLayout.addWidget(
             self.profileName,
@@ -58,16 +60,18 @@ class ProfileName (TabPage):
         
     def getData(self):
         return self.profileName.value()
+
+    def _initConfig(self):
+        with open("controller/interface.toml", mode="rb") as fp:
+            self.config = tomli.load(fp)
     
 class ChooseEngine(TabPage):
     def __init__(self, engines:List[str], *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
+        self._initConfig()
         self.verticallayout = QVBoxLayout()
         self.setLayout(self.verticallayout)
-        self.title = Label(
-            "Select Speech-to-text Engine", 
-            FontSize.HEADER3, 
-            FontFamily.MAIN)
+        self.title = Label("Select Speech-to-text Engine", self.config["fontSizes"]["HEADER3"], FontFamily.MAIN)
         self.mainCombo = QComboBox(self)
         self.mainCombo.setFixedSize(QSize(400,70))
         self.mainCombo.addItem("select speech engine")
@@ -90,26 +94,26 @@ class ChooseEngine(TabPage):
     
     def getData(self) -> str:
         return self.mainCombo.currentText()
+
+    def _initConfig(self):
+        with open("controller/interface.toml", mode="rb") as fp:
+            self.config = tomli.load(fp)
          
 
 class BasicSetting(TabPage):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
+        self._initConfig()
         self.mainWidget = UserForm()
-        self.header = Label(
-            "Basic settings", 
-            FontSize.HEADER3, 
-            FontFamily.MAIN)
+        self.header = Label("Basic settings", self.config["fontSizes"]["HEADER3"], FontFamily.MAIN)
         self.verticallayout = QVBoxLayout()
         self.verticallayout.addWidget(
             self.header, 
             alignment=Qt.AlignmentFlag.AlignHCenter)
         self.setLayout(self.verticallayout)
         self.verticallayout.addStretch()
-        self.verticallayout.addWidget(
-            self.mainWidget, 
-            alignment=Qt.AlignmentFlag.AlignHCenter)
-        self.confirmBtn = ColoredBtn("confirm", Color.GREEN)
+        self.verticallayout.addWidget(self.mainWidget, alignment=Qt.AlignmentFlag.AlignHCenter)
+        self.confirmBtn = ColoredBtn("confirm", self.config["colors"]["GREEN"])
         self.confirmBtn.setFixedSize(Dimension.BGBUTTON)
         self.confirmBtn.clicked.connect(self._confirm)
         self.verticallayout.addWidget(
@@ -129,16 +133,21 @@ class BasicSetting(TabPage):
         info = self.mainWidget.getValue()
         return {"username": info[0], "password":info[1]}
 
+    def _initConfig(self):
+        with open("controller/interface.toml", mode="rb") as fp:
+            self.config = tomli.load(fp)
+
 class EngineSetting(TabPage):
     def __init__(self, data, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
+        self._initConfig()
         self.verticallayout = QVBoxLayout()
         self.setLayout(self.verticallayout)
-        self.header = Label("Speech to text settings", FontSize.HEADER3, FontFamily.MAIN)
+        self.header = Label("Speech to text settings", self.config["fontSizes"]["HEADER3"], FontFamily.MAIN)
         self.verticallayout.addWidget(self.header, alignment=Qt.AlignmentFlag.AlignHCenter)
         self.mainForm = ToggleCombo(data, showBasicSet=False)
         self.verticallayout.addWidget(self.mainForm)
-        self.confirmBtn = ColoredBtn("confirm", Color.GREEN)
+        self.confirmBtn = ColoredBtn("confirm", self.config["colors"]["GREEN"])
         self.confirmBtn.clicked.connect(self._confirm)
         self.confirmBtn.setFixedSize(Dimension.BGBUTTON)
         self.verticallayout.addWidget(self.confirmBtn, alignment=Qt.AlignmentFlag.AlignRight)
@@ -157,18 +166,23 @@ class EngineSetting(TabPage):
         
     def getData(self) -> Dict[str, dict]:
         return self.mainForm.getValue()
+
+    def _initConfig(self):
+        with open("controller/interface.toml", mode="rb") as fp:
+            self.config = tomli.load(fp)
     
 
 class OutPutFormatSetting(TabPage):
     def __init__(self, data:dict, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
+        self._initConfig()
         self.mainForm = OutPutFormat(data)
         self.verticallayout = QVBoxLayout()
         self.setLayout(self.verticallayout)
-        self.header = Label("Output format settings", FontSize.HEADER3, FontFamily.MAIN)
+        self.header = Label("Output format settings", self.config["fontSizes"]["HEADER2"], FontFamily.MAIN)
         self.verticallayout.addWidget(self.header, alignment=Qt.AlignmentFlag.AlignHCenter)
         self.verticallayout.addWidget(self.mainForm)
-        self.confirmBtn = ColoredBtn("confirm", Color.GREEN)
+        self.confirmBtn = ColoredBtn("confirm", self.config["colors"]["GREEN"])
         self.confirmBtn.setFixedSize(Dimension.BGBUTTON)
         self.confirmBtn.clicked.connect(lambda: self.signals.nextPage.emit())
         self.verticallayout.addStretch()
@@ -176,6 +190,10 @@ class OutPutFormatSetting(TabPage):
         
     def getData(self):
         return self.mainForm.getValue()
+
+    def _initConfig(self):
+        with open("controller/interface.toml", mode="rb") as fp:
+            self.config = tomli.load(fp)
      
 
 class PostTranscribeSetting(TabPage):
@@ -198,6 +216,9 @@ class PostTranscribeSetting(TabPage):
         mylogger.info(self.mainForm.getValue())
         return self.mainForm.getValue() 
 
+    def _initConfig(self):
+        with open("controller/interface.toml", mode="rb") as fp:
+            self.config = tomli.load(fp)
 class PluginSetting(TabPage):
     def __init__(self, data =["plugin1", "plugin2"], *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)

@@ -18,6 +18,7 @@ TODO: change name settingdata to settingFormData
                   the counter part is settingValueData
 TODO: make a combobox widget
 """
+import tomli 
 from typing import Dict, List, Set
 
 
@@ -60,6 +61,7 @@ class ProfileSettingPage(QWidget):
         self.profilekeys = profilekeys
         self.plugins = plugins
         self.logger = makeLogger("Frontend")
+        self._initConfig()
         self._initWidget()
         self._initLayout()
         self._connectSignal()
@@ -71,18 +73,17 @@ class ProfileSettingPage(QWidget):
         self.sideBar = SideBar.SideBar()
         self.selectSettings = ComboBox.ComboBox()
         self.selectSettings.addItems(self.profilekeys)
-        self.newPluginBtn = Button.ColoredBtn("Add New Plugin", Color.BLUEMEDIUM)
-        self.cancelBtn = Button.BorderBtn("Cancel", Color.ORANGE)
-        self.saveBtn = Button.ColoredBtn("Save and Exit", Color.GREEN)
-        self.newProfileBtn = Button.ColoredBtn("Create New Profile", Color.BLUEMEDIUM)
-        self.requiredSetBtn = Button.BorderBtn(
-            "Required Settings", 
-            Color.GREYDARK,FontSize.BTN, 0)
+        
+        self.cancelBtn = Button.BorderBtn("Cancel", self.config["colors"]["ORANGE"])
+        self.saveBtn = Button.ColoredBtn("Save and Exit", self.config["colors"]["GREEN"])
+        self.newProfileBtn = Button.ColoredBtn("Create New Profile", self.config["colors"]["BLUEMEDIUM"])
+        self.requiredSetBtn = Button.BorderBtn("Required Settings", 
+                                               self.config["colors"]["GREYDARK"], self.config["fontSizes"]["BTN"], 0)
         self.requiredSetBtn.setFixedWidth(190)
-        self.postSetBtn = Button.BorderBtn(
-            "Post-Transcription Settings",
-            Color.GREYDARK,FontSize.BTN,0)
+        self.postSetBtn = Button.BorderBtn("Post-Transcription Settings", self.config["colors"]["GREYDARK"], self.config["fontSizes"]["BTN"], 0)
         self.postSetBtn.setFixedWidth(190)
+        self.GuideLink = Label.Label(Links.guideLink, self.config["fontSizes"]["LINK"], link=True)
+        self.newPluginBtn = Button.ColoredBtn("Add New Plugin", Color.BLUEMEDIUM)
         self.pluginBtn = Button.BorderBtn(
             "Plugin Setting",
             Color.GREYDARK,FontSize.BTN,0
@@ -90,10 +91,6 @@ class ProfileSettingPage(QWidget):
         self.logoImage = Image.Image("hillogo.png")
         self.logoImage.setFixedSize(QtCore.QSize(130,60))
         self.pluginBtn.setFixedWidth(190)
-        self.GuideLink = Label.Label(
-            Links.guideLink, 
-            FontSize.LINK, 
-            link=True)
         self.settingStack = QStackedWidget(self)
         self.RequiredSetPage = RequiredSetPage.RequiredSetPage(
             self.settingForm["Required Setting"])
@@ -214,3 +211,6 @@ class ProfileSettingPage(QWidget):
         profileKey = self.selectSettings.currentText()
         self.signals.edit.emit((profileKey, newSetting))
     
+    def _initConfig(self):
+        with open("controller/interface.toml", mode="rb") as fp:
+            self.config = tomli.load(fp)
