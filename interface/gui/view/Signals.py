@@ -19,4 +19,4 @@ class ProfileSignals(QObject):
     edit = pyqtSignal(tuple)
     get  = pyqtSignal(object)
     delete = pyqtSignal(object)
-    
+    addPlugin = pyqtSignal(tuple)

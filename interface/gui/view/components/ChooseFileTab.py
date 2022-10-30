@@ -56,9 +56,12 @@ class ChooseFileTab(QDialog):
         profileObj = self.chooseSetTab.getProfile()
         print("file profile", profileObj)
         outputPathObj = self.chooseOutPutTab.getOutputPath()
-        statusObj = {"Status": "Not Transcribed", 
-                               "Progress": "None", 
-                               "SelectedAction":"Transcribe"}
+        
+        statusObj = {
+            "Status": "Not Transcribed", 
+            "Progress": "None", 
+            "SelectedAction":"Transcribe"}
+        
         for fileObj in fileObjList:
             fileData = {**fileObj, **profileObj, **outputPathObj, **statusObj}
             self.signals.postFile.emit(fileData)

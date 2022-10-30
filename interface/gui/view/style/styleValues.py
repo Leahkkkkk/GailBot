@@ -35,7 +35,7 @@ class Color:
 dataclass
 class FontSize:
     """ store all font size, unit px, type string"""
-    BODY = "13px"
+    BODY = "14px"
     TEXT_FIELD = "12px"
     SMALL="11px"
     LINK = "15px"
@@ -53,6 +53,7 @@ class Dimension:
     WIN_MAXSIZE = QSize(1100, 900)
     MARGIN_HORIZONTAL = "20px" 
     MARGIN_VERTICAL = "5px"
+    BLACKBUTTON = QSize(120, 30)
     BGBUTTON = QSize(140, 40)
     RBUTTON = QSize(130, 40)
     MEDIUMBUTTON = QSize(100, 30)

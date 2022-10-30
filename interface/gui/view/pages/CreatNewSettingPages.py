@@ -11,8 +11,11 @@ from view.widgets.InputBox import InputBox
 from view.widgets.MsgBox import WarnBox
 from view.components.RequiredSet import OutPutFormat
 from view.widgets.TextForm import TextForm
+from view.pages.PluginPage import PluginPage
+from view.pages.PostSetPage import PostSetPage
 from view.style.Background import initBackground
 from view.style.styleValues import Color, FontSize,Dimension, FontFamily
+
 
 
 from PyQt6.QtWidgets import (
@@ -38,8 +41,12 @@ class ProfileName (TabPage):
                                     labelSize = self.config["fontSizes"]["HEADER3"])
         self.confirmBtn = ColoredBtn("Start", self.config["colors"]["GREEN"])
         self.verticalLayout.addStretch()
-        self.verticalLayout.addWidget(self.profileName,alignment=Qt.AlignmentFlag.AlignHCenter)
-        self.verticalLayout.addWidget(self.confirmBtn,alignment=Qt.AlignmentFlag.AlignHCenter)
+        self.verticalLayout.addWidget(
+            self.profileName,
+            alignment=Qt.AlignmentFlag.AlignHCenter)
+        self.verticalLayout.addWidget(
+            self.confirmBtn,
+            alignment=Qt.AlignmentFlag.AlignHCenter)
         self.verticalLayout.addStretch()
         self.confirmBtn.clicked.connect(self._confirm)
         self.confirmBtn.setFixedSize(Dimension.BGBUTTON)
@@ -70,8 +77,12 @@ class ChooseEngine(TabPage):
         self.mainCombo.addItem("select speech engine")
         self.mainCombo.addItems(engines)
         self.verticallayout.addStretch()
-        self.verticallayout.addWidget(self.title, alignment=Qt.AlignmentFlag.AlignHCenter)
-        self.verticallayout.addWidget(self.mainCombo,alignment=Qt.AlignmentFlag.AlignHCenter)
+        self.verticallayout.addWidget(
+            self.title, 
+            alignment=Qt.AlignmentFlag.AlignHCenter)
+        self.verticallayout.addWidget(
+            self.mainCombo,
+            alignment=Qt.AlignmentFlag.AlignHCenter)
         self.verticallayout.addStretch()
         self.signals.nextPage.emit()
         self.mainCombo.currentIndexChanged.connect(self._nextPage)
@@ -96,14 +107,18 @@ class BasicSetting(TabPage):
         self.mainWidget = UserForm()
         self.header = Label("Basic settings", self.config["fontSizes"]["HEADER3"], FontFamily.MAIN)
         self.verticallayout = QVBoxLayout()
-        self.verticallayout.addWidget(self.header, alignment=Qt.AlignmentFlag.AlignHCenter)
+        self.verticallayout.addWidget(
+            self.header, 
+            alignment=Qt.AlignmentFlag.AlignHCenter)
         self.setLayout(self.verticallayout)
         self.verticallayout.addStretch()
         self.verticallayout.addWidget(self.mainWidget, alignment=Qt.AlignmentFlag.AlignHCenter)
         self.confirmBtn = ColoredBtn("confirm", self.config["colors"]["GREEN"])
         self.confirmBtn.setFixedSize(Dimension.BGBUTTON)
         self.confirmBtn.clicked.connect(self._confirm)
-        self.verticallayout.addWidget(self.confirmBtn,alignment=Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignBottom)
+        self.verticallayout.addWidget(
+            self.confirmBtn,
+            alignment=Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignBottom)
         self.verticallayout.addStretch()
     
     def _confirm(self):
@@ -169,14 +184,10 @@ class OutPutFormatSetting(TabPage):
         self.verticallayout.addWidget(self.mainForm)
         self.confirmBtn = ColoredBtn("confirm", self.config["colors"]["GREEN"])
         self.confirmBtn.setFixedSize(Dimension.BGBUTTON)
-        self.confirmBtn.clicked.connect(self._confirm)
+        self.confirmBtn.clicked.connect(lambda: self.signals.nextPage.emit())
         self.verticallayout.addStretch()
         self.verticallayout.addWidget(self.confirmBtn, alignment=Qt.AlignmentFlag.AlignRight)
         
-    
-    def _confirm(self):
-        self.signals.nextPage.emit()
-
     def getData(self):
         return self.mainForm.getValue()
 
@@ -188,22 +199,19 @@ class OutPutFormatSetting(TabPage):
 class PostTranscribeSetting(TabPage):
     def __init__(self, data:dict, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self._initConfig()
-        self.mainForm = TextForm(data)
+        self.mainForm = PostSetPage(data)
+        self.confirmBtn = ColoredBtn("confirm", Color.GREEN)
+        self.confirmBtn.clicked.connect(lambda: self.signals.nextPage.emit())
+        self.confirmBtn.setFixedSize(Dimension.BGBUTTON)
+
+        
         self.verticallayout = QVBoxLayout()
         self.setLayout(self.verticallayout)
-        self.header = Label("Post transcription setting", self.config["fontSizes"]["HEADER3"],  FontFamily.MAIN)
-        self.verticallayout.addWidget(self.header, alignment=Qt.AlignmentFlag.AlignHCenter)
         self.verticallayout.addWidget(self.mainForm)
-        self.signals.nextPage.emit()
-        self.confirmBtn = ColoredBtn("confirm", self.config["colors"]["GREEN"])
-        self.confirmBtn.clicked.connect(self._confirm)
-        self.confirmBtn.setFixedSize(Dimension.BGBUTTON)
-        self.verticallayout.addWidget(self.confirmBtn, alignment=Qt.AlignmentFlag.AlignRight)
-               
-    def _confirm(self):
-        self.signals.close.emit()
-       
+        self.verticallayout.addWidget(
+            self.confirmBtn, 
+            alignment=Qt.AlignmentFlag.AlignRight)
+        
     def getData(self):
         mylogger.info(self.mainForm.getValue())
         return self.mainForm.getValue() 
@@ -211,3 +219,22 @@ class PostTranscribeSetting(TabPage):
     def _initConfig(self):
         with open("controller/interface.toml", mode="rb") as fp:
             self.config = tomli.load(fp)
+class PluginSetting(TabPage):
+    def __init__(self, data =["plugin1", "plugin2"], *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.mainForm = PluginPage(data)
+        self.confirmBtn = ColoredBtn("confirm", Color.GREEN)
+        self.confirmBtn.clicked.connect(lambda: self.signals.close.emit())
+        
+        self.verticalLayout = QVBoxLayout()
+        self.setLayout(self.verticalLayout)
+        self.verticalLayout.addWidget(self.mainForm)
+        self.verticalLayout.addWidget(
+            self.confirmBtn,
+            alignment=Qt.AlignmentFlag.AlignRight)
+        
+    def getData(self):
+        return self.mainForm.getValue()
+
+        
+        

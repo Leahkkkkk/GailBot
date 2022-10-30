@@ -19,6 +19,12 @@ from PyQt6.QtGui import QMovie
 from PyQt6 import QtCore
 from PyQt6.QtCore import Qt
 
+
+ProgressHeader = ["Type",
+                  "Name",
+                  "Progress"]
+ProgressDimension = [0.2, 0.55, 0.25]
+
 """ class for transcription in progress page """
 class TranscribeProgressPage(QWidget):
     """ initialize class """
@@ -61,9 +67,12 @@ class TranscribeProgressPage(QWidget):
         self.InProgress = Label.Label(TranscribeProgressText.inProgressText,
                                         self.config["fontSizes"]["HEADER3"],
                                         FontFamily.MAIN)
-        self.cancelBtn = Button.ColoredBtn(TranscribeProgressText.cancelText, self.config["colors"]["ORANGE"], self.config["fontSizes"]["BTN"])
-        self.fileTable = FileTable.FileTable(FileTable.ProgressHeader, {}, {})
-        self.fileTable.resizeCol(FileTable.ProgressDimension)
+        self.cancelBtn = Button.ColoredBtn(
+            TranscribeProgressText.cancelText, 
+            self.config["colors"]["ORANGE"], 
+            self.config["fontSizes"]["BTN"])
+        self.fileTable = FileTable.FileTable(ProgressHeader, self.signals)
+        self.fileTable.resizeCol(ProgressDimension)
         
     def _initstyle(self):
         """ styles loading icon movie """
@@ -100,8 +109,9 @@ class TranscribeProgressPage(QWidget):
         self.cancelBtn.clicked.connect(self._confirm)
         
     def _confirm(self):
-        self.confirmCancel = MsgBox.ConfirmBox("Confirm cancellation?", 
-                                               lambda: self.signals.cancel.emit())
+        self.confirmCancel = MsgBox.ConfirmBox(
+            "Confirm cancellation?", 
+            lambda: self.signals.cancel.emit())
     
     def setLoadingText(self, text):
         self.loadingText = Label.Label(text,

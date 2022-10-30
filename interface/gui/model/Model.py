@@ -10,11 +10,9 @@ Modified By:  Siara Small  & Vivian Li
 '''
 
 
-from model import FileModel
-from model import SettingModel 
-
-from database.fileDB import FileModel
-from database.profileDB import ProfileModel
+from model.dataBase.fileDB import FileModel
+from model.dataBase.profileDB import ProfileModel
+from model.dataBase.pluginDB import PluginModel
 
 class Model():
     """ stores the data, has two fields: 
@@ -24,6 +22,7 @@ class Model():
     def __init__(self):
       self.ProfileData = ProfileModel()
       self.FileData = FileModel()
+      self.PluginData = PluginModel()
 
       
       

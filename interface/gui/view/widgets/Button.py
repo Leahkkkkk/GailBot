@@ -11,6 +11,7 @@ Modified By:  Siara Small  & Vivian Li
 import os
 import typing
 from view.style.styleValues import FontSize, Dimension, Color
+from view.style.Background import initBackground
 from util import Path
 
 from PyQt6.QtWidgets import (
@@ -25,7 +26,7 @@ from PyQt6.QtCore import QSize, Qt
 from PyQt6.QtGui import QIcon
 
 class ColoredBtn(QPushButton):
-    """ a rusable button widget with colored background and white button text
+    """ a button widget with colored background and white button text
 
     Args:
         label (str): button text
@@ -52,12 +53,12 @@ class ColoredBtn(QPushButton):
                            f"color:#fff;"
                            f"font-size:{fontsize};"
                            f"{other}")
+        self.setMinimumSize(Dimension.RBUTTON)
         self.setMaximumSize(Dimension.BGBUTTON)
     
       
-        
 class BorderBtn(QPushButton):
-    """ a rusable button widget with colored border and text 
+    """ a button widget with colored border and text 
         and white background
 
     Args:
@@ -84,6 +85,7 @@ class BorderBtn(QPushButton):
                            f"border-radius:{borderradius};"
                            f"padding:1;"
                            f"font-size:{fontsize}")
+        self.setMinimumSize(Dimension.BLACKBUTTON)
         self.setMaximumSize(Dimension.BGBUTTON)
 
 
@@ -106,16 +108,19 @@ class ToggleBtn(QPushButton):
         super().__init__(*args, **kwargs)
         self.text = text
         self.setText(self.text)
-        self.rightIcon = QIcon(os.path.join(Path.getProjectRoot(), 
-                                            f"view/asset/{label[0]}"))
-        self.downIcon = QIcon(os.path.join(Path.getProjectRoot(), 
-                                           f"view/asset/{label[1]}"))
+        self.rightIcon = QIcon(os.path.join(
+            Path.getProjectRoot(), 
+            f"view/asset/{label[0]}"))
+        self.downIcon = QIcon(os.path.join(
+            Path.getProjectRoot(), 
+            f"view/asset/{label[1]}"))
         self.setMinimumSize(QSize(500, minHeight))
         self.setMaximumSize(QSize(700, minHeight))
+        initBackground(self)
         self.setCheckable(True)
-        self.state = state
         self.clicked.connect(self._changeSymbol)
-        self.setStyleSheet("background-color:#fff;border:none")
+        self.state = state
+        
         self._changeSymbol()
         self.update()
         self.show()
@@ -160,6 +165,7 @@ class onOffButton(QWidget):
             self.onOffBtn = QPushButton("ON")
         else:
             self.onOffBtn = QPushButton("OFF")
+        self.onOffBtn.setMinimumSize(35, 25)
         self.onOffBtn.setMaximumSize(40, 30)
     
     def _initLayout(self):
@@ -205,7 +211,8 @@ class iconBtn(QPushButton):
       if label:
           self.setText(label)
   
-      
+   
+#TODO:depreacted ##   
 class dropDownButton(QWidget):
     """ a dropdown button widget, when the button is clicked,
         there is a dropdown of a list of buttons
@@ -244,9 +251,14 @@ class dropDownButton(QWidget):
             self.buttonList.hide()
             self.btn.setText(f"▶ {self.label}")
 
-
+#TODO:depreacted#
 class buttonList(QWidget):
-    def __init__(self, labels: list, btnFuns:list = None, *args, **kwargs) -> None:
+    def __init__(
+        self, 
+        labels: list, 
+        btnFuns:list = None, 
+        *args, 
+        **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.btnList = []
         self.layout  = QVBoxLayout(self)
@@ -254,10 +266,11 @@ class buttonList(QWidget):
         self.layout.setSpacing(0)
         
         for i in range(len(labels)):
-            newButton = ColoredBtn(labels[i],
-                                   Color.BLUEMEDIUM, 
-                                   FontSize.SMALL,
-                                    "margin-top:0px; border-radius:0px; border:1px solid #fff; padding:3px 0px")
+            newButton = ColoredBtn(
+                labels[i],
+                Color.BLUEMEDIUM, 
+                FontSize.SMALL,
+                "margin-top:0px; border-radius:0px; border:1px solid #fff; padding:3px 0px")
             self.btnList.append(newButton)
             if btnFuns:
                 self.btnList[i].clicked.connect(btnFuns[i])

@@ -31,6 +31,7 @@ dummySettingValues={
             'FTO (Floor Transfer offset)Transcription Mode bool': 'OFF',
             'Syllable Rate mode bool': 'OFF'
         },
+        "Plugins": {"constructTree"}
     },
     "Coffee Study": {
         "Required Setting": {
@@ -67,6 +68,7 @@ dummySettingValues={
             'FTO (Floor Transfer offset)Transcription Mode bool': 'ON',
             'Syllable Rate mode bool': 'ON'
         },
+        "Plugins": {"constructTree", "utteranceDict", "conversationDict"}
     },
     "HRI lab study": {
         "Required Setting": {
@@ -102,8 +104,10 @@ dummySettingValues={
             'Beat Transcription Mode bool': 'OFF',
             'FTO (Floor Transfer offset)Transcription Mode bool': 'OFF',
             'Syllable Rate mode bool': 'OFF'
-        }
-    }
+        },
+        "Plugins": {"constructTree", "XMLtoCSV", "overlaps"}
+    },
+    
 }
 
 dummySettingForms= {
@@ -221,6 +225,26 @@ dummySettingForms= {
             "FTO (Floor Transfer offset)Transcription Mode bool": "ON",
             "Syllable Rate mode bool": "ON"
         },
+    },
+    
+    "Plugins": {
+        "constructTree": "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip",
+        "utteranceDict": "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip",
+        "speakerDict": "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip",
+        "conversationDict": "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip",
+        "convModelPlugin": "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip",
+        "overlaps": "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip",
+        "pauses": "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip",
+        "gaps": "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip",
+        "syllRate": "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip",
+        "layerPrint01": "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip",
+        "plainPrint": "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip",
+        "chat": "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip",
+        "txt": "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip",
+        "csvPlugin": "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip",
+        "csvWordLevel": "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip",
+        "XMLtoCSV":"https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip",
+        "xmlSchema": "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
     }
 }
 
