@@ -34,6 +34,13 @@ from PyQt6.QtGui import QMovie
 from PyQt6 import QtCore
 from PyQt6.QtCore import Qt
 
+
+SuccessHeader = ["Type",
+                 "Name",
+                 "Status",
+                 "Output"]
+SuccessDimension = [0.17, 0.35, 0.25, 0.23]
+
 class TranscribeSuccessPage(QWidget):
     """ class for trancription success page """
     def __init__(self, signal:FileSignals, *args, **kwargs) -> None:
@@ -45,23 +52,27 @@ class TranscribeSuccessPage(QWidget):
         
     def _initWidget(self):
         """ intialize widgets """
-        self.label = Label.Label(TranscribeSuccessText.mainLabelText,
-                                        FontSize.HEADER1,
-                                        FontFamily.MAIN)
+        self.label = Label.Label(
+            TranscribeSuccessText.mainLabelText,
+            FontSize.HEADER1,
+            FontFamily.MAIN)
         self.label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
-        self.transcribedFiles = Label.Label(TranscribeSuccessText.transcribedFilesText,
-                                        FontSize.HEADER3,
-                                        FontFamily.OTHER)
+        self.transcribedFiles = Label.Label(
+            TranscribeSuccessText.transcribedFilesText,
+            FontSize.HEADER3,
+            FontFamily.OTHER)
         self.transcribedFiles.setContentsMargins(30,0,0,0)
-        self.moreBtn = Button.ColoredBtn(TranscribeSuccessText.moreBtnText, Color.GREEN)
-        self.returnBtn = Button.ColoredBtn(TranscribeSuccessText.returnBtnText, Color.BLUEMEDIUM)
+        self.moreBtn = Button.ColoredBtn(
+            TranscribeSuccessText.moreBtnText, 
+            Color.GREEN)
+        self.returnBtn = Button.ColoredBtn(
+            TranscribeSuccessText.returnBtnText, 
+            Color.BLUEMEDIUM)
         self._initHorizontalLayout()
         self.fileTable = FileTable.FileTable(
-            FileTable.SuccessHeader, 
-            self.signal,
-            {}, 
-            {})
-        self.fileTable.resizeCol(FileTable.SuccessDimension)
+            SuccessHeader, 
+            self.signal)
+        self.fileTable.resizeCol(SuccessDimension)
         
     def _initLayout(self):
         """ initialize page layout """

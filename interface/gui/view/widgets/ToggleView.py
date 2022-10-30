@@ -39,6 +39,7 @@ class ToggleView(QWidget):
         viewcolor = Color.BLUEWHITE,
         *args, 
         **kwargs):
+        
         super().__init__(*args, **kwargs)
         self.labelStr = label
         self.view = view

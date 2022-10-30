@@ -39,11 +39,9 @@ from PyQt6.QtCore import Qt
 """ TODO: 1. current background is not responsive ;
           2. Links are not clickable
 """
-
-
 class WelcomePage(QWidget):
     """ class for welcome page """
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, config=None, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self._initWidget()
         self._initLayout()
@@ -106,7 +104,6 @@ class WelcomePage(QWidget):
         self.AudioInstruction = Label.Label(WelcomePageText.audioInstructionText, 
                                             FontSize.INSTRUCTION_CAPTION, 
                                             FontFamily.OTHER,Color.GREYMEDIUM2)
-        
         self.SettingsInstruction = Label.Label(WelcomePageText.settingsInstructionText,
                                                FontSize.INSTRUCTION_CAPTION, 
                                                FontFamily.OTHER,Color.GREYMEDIUM2)

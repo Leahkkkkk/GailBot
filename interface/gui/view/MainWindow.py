@@ -17,14 +17,12 @@ from view.components import (
     MenuBar, 
     Console, 
 )
-
 from view import Signals
 from view.widgets import MsgBox
 from controller. Controller import Controller
-from model.FileItem import FileItem
-from PyQt6.QtCore import QSize, QAbstractTableModel
-from PyQt6.QtWidgets import QMainWindow, QFileDialog
 
+from PyQt6.QtCore import QSize
+from PyQt6.QtWidgets import QMainWindow
 
 
 class MainWindow(QMainWindow):
@@ -44,12 +42,11 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.fileTableSignals = Signals.FileSignals()
         self.profileSignals = Signals.ProfileSignals()
-        
+        self.controller = controller
         self.setWindowTitle("GailBot")
-        self.resize(900, 700)
-        self.setMinimumSize(QSize(700, 600))
+        self.setMinimumSize(QSize(800, 650))
         self.setMaximumSize(QSize(1200, 900))
-        self.resize(QSize(1000, 750))
+        self.resize(QSize(1100, 750))
     
         self.MainStack = MainStack.MainStack(
             settingform, 
@@ -60,7 +57,6 @@ class MainWindow(QMainWindow):
         
         
         self.setCentralWidget(self.MainStack)
-        self.controller = controller
         self.StatusBar = StatusBar.StatusBar()
         self.setStatusBar(self.StatusBar)
         self.MenuBar = MenuBar.ManuBar()
@@ -100,25 +96,22 @@ class MainWindow(QMainWindow):
                                      self.showFileUploadPage)
         self.MainStack.TranscribeProgressPage.IconImg.stop()
         
-    """ private function """
-    def _connectSignal(self):
-        """ connect to signal """
-        self.MenuBar.OpenConsole.triggered.connect(lambda: self.Console.show())
-        self.MenuBar.CloseConsole.triggered.connect(lambda: self.Console.hide())
-
-    """ functions provided to child elements"""
     def confirmCancel(self):
         """ handle event when user tries to cancel the thread """
         self.logger.info("")
         self.MainStack.gotoFileUploadPage()
         self.controller.cancelGailBot()
     
-    def changeFileStatusToTranscribed(self,key):
-        pass
-        # self.MainStack.FileUploadPage.fileTable.changeToTranscribed(key)
     
     def addFileToTables(self, file:dict):
         self.MainStack.addFileToTables(file)
         
     def updateFile(self, data:tuple):
         self.MainStack.updateFile(data)
+    
+    
+    """ private function """
+    def _connectSignal(self):
+        """ connect to signal """
+        self.MenuBar.OpenConsole.triggered.connect(lambda: self.Console.show())
+        self.MenuBar.CloseConsole.triggered.connect(lambda: self.Console.hide())

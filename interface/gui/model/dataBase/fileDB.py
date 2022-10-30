@@ -94,8 +94,6 @@ class FileModel:
             self.data[key]["Porfile"] = profile
             self.signals.fileUpdated.emit((key, "Profile", profile))
             
-
-
     def editFileStatus(self, data: Tuple[str, str]) -> None:
         """change the status information of the file 
         Args:
@@ -106,15 +104,25 @@ class FileModel:
             self.signals.error.emit(KEYERROR)
         else:
             self.data[key]["Status"] = status
-            self.signals.fileUpdated((key, "Status", status))
+            self.signals.fileUpdated.emit((key, "Status", status))
             
     def get(self, filekey:str) -> None:
+        """ send the signal to get file data 
+
+        Args:
+            filekey (str): 
+        """
         if filekey not in self.data:
             self.signals.error.emit(KEYERROR)
         else:
             self.signals.send.emit(self.data[filekey])
     
     def prepareTranscribe(self, filekey:str) -> None: 
+        """ send signal to prepare to transcribe file 
+
+        Args:
+            filekey (str): _description_
+        """
         if filekey not in self.data:
             self.signals.error.emit(KEYERROR)
         else:
@@ -124,7 +132,12 @@ class FileModel:
     
     
     def getTranscribeData(self, filekey:str) -> Tuple:
-        return (filekey, 
-                self.data[filekey]["Name"], 
-                self.data[filekey]["FullPath"],
-                self.data[filekey]["Output"])
+        """ send the file data that will be transcribed
+
+        Args:
+            filekey (str): _description_
+
+        Returns:
+            Tuple: (filekey, fileobject)
+        """
+        return (filekey, self.data[filekey])

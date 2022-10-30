@@ -18,31 +18,38 @@ TODO: change name settingdata to settingFormData
                   the counter part is settingValueData
 TODO: make a combobox widget
 """
-from typing import Dict, List
+from typing import Dict, List, Set
+
+
+
 from util.Logger import makeLogger
 from view.style.styleValues import Color, FontSize, Dimension
 from view.Signals import ProfileSignals
-from view.style.Background import initImgBackground
+from view.style.Background import initBackground
 from view.Text.LinkText import Links
-from view.pages import RequiredSetPage, PostSetPage
-from view.widgets import Button, Label, ComboBox
+from view.pages import RequiredSetPage, PostSetPage, PluginPage
+from view.widgets import Button, Label, ComboBox, SideBar, Image
 from view.components.CreateNewSettingTab import CreateNewSetting
+from view.components.PluginDialog import PluginDialog
 from model.dummySettingData import dummySettingForms
 
 from PyQt6.QtWidgets import (
     QWidget, 
     QStackedWidget, 
-    QGridLayout
+    QGridLayout,
+    QHBoxLayout,
+    QVBoxLayout
 )
 from PyQt6 import QtCore
 
 
-class SettingPage(QWidget):
+class ProfileSettingPage(QWidget):
     """ class for settings page"""
     def __init__(
         self, 
         settingForm:Dict[str, dict], 
         profilekeys:List[str],
+        plugins:Set[str],
         signals:ProfileSignals,
         *args, 
         **kwargs) -> None:
@@ -51,6 +58,7 @@ class SettingPage(QWidget):
         self.settingForm = settingForm
         self.signals = signals
         self.profilekeys = profilekeys
+        self.plugins = plugins
         self.logger = makeLogger("Frontend")
         self._initWidget()
         self._initLayout()
@@ -59,70 +67,91 @@ class SettingPage(QWidget):
     
     def _initWidget(self):
         """ initialize widgets"""
+        initBackground(self)
+        self.sideBar = SideBar.SideBar()
         self.selectSettings = ComboBox.ComboBox()
         self.selectSettings.addItems(self.profilekeys)
-        
+        self.newPluginBtn = Button.ColoredBtn("Add New Plugin", Color.BLUEMEDIUM)
         self.cancelBtn = Button.BorderBtn("Cancel", Color.ORANGE)
         self.saveBtn = Button.ColoredBtn("Save and Exit", Color.GREEN)
         self.newProfileBtn = Button.ColoredBtn("Create New Profile", Color.BLUEMEDIUM)
-        self.requiredSetBtn = Button.BorderBtn("Required Settings", 
-                                               Color.GREYDARK,FontSize.BTN, 0)
+        self.requiredSetBtn = Button.BorderBtn(
+            "Required Settings", 
+            Color.GREYDARK,FontSize.BTN, 0)
         self.requiredSetBtn.setFixedWidth(190)
-        self.postSetBtn = Button.BorderBtn("Post-Transcription Settings",Color.GREYDARK,FontSize.BTN,0)
+        self.postSetBtn = Button.BorderBtn(
+            "Post-Transcription Settings",
+            Color.GREYDARK,FontSize.BTN,0)
         self.postSetBtn.setFixedWidth(190)
-        self.GuideLink = Label.Label(Links.guideLink, FontSize.LINK, link=True)
+        self.pluginBtn = Button.BorderBtn(
+            "Plugin Setting",
+            Color.GREYDARK,FontSize.BTN,0
+        )
+        self.logoImage = Image.Image("hillogo.png")
+        self.logoImage.setFixedSize(QtCore.QSize(130,60))
+        self.pluginBtn.setFixedWidth(190)
+        self.GuideLink = Label.Label(
+            Links.guideLink, 
+            FontSize.LINK, 
+            link=True)
         self.settingStack = QStackedWidget(self)
-        self.RequiredSetPage = RequiredSetPage.RequiredSetPage(self.settingForm["Required Setting"])
-        self.PostSetPage = PostSetPage.PostSetPage(self.settingForm["Post Transcribe"])   
+        self.RequiredSetPage = RequiredSetPage.RequiredSetPage(
+            self.settingForm["Required Setting"])
+        self.PostSetPage = PostSetPage.PostSetPage(
+            self.settingForm["Post Transcribe"])   
+        self.PluginPage = PluginPage.PluginPage(self.plugins)
+        
         self.selectSettings.setCurrentIndex(0)     
         self.placeHolder = QWidget()
         self.settingStack.addWidget(self.placeHolder)
         self.settingStack.addWidget(self.RequiredSetPage)
         self.settingStack.addWidget(self.PostSetPage)
+        self.settingStack.addWidget(self.PluginPage)
         self.settingStack.setCurrentWidget(self.RequiredSetPage)
-        initImgBackground(self,"settingBackground.png")
+
     
     def _initLayout(self):
         """initialize layout"""
-        self.layout = QGridLayout()
-        self.setLayout(self.layout)
+        self.horizontalLayout = QHBoxLayout()
+        self.setLayout(self.horizontalLayout)
+        
         """ add widget to layout """
-        self.layout.addWidget(self.selectSettings, 0, 0, 
-                              alignment=QtCore.Qt.AlignmentFlag.AlignHCenter)
-        self.layout.addWidget(self.requiredSetBtn, 1, 0,
-                              alignment=QtCore.Qt.AlignmentFlag.AlignHCenter)
-        self.layout.addWidget(self.postSetBtn, 2, 0,
-                              alignment=QtCore.Qt.AlignmentFlag.AlignHCenter)
-        self.layout.addWidget(self.saveBtn,5,0,
-                              alignment=QtCore.Qt.AlignmentFlag.AlignHCenter)
-        self.layout.addWidget(self.newProfileBtn, 6, 0, 
-                              alignment=QtCore.Qt.AlignmentFlag.AlignHCenter)
-        self.layout.addWidget(self.cancelBtn, 7, 0,
-                              alignment=QtCore.Qt.AlignmentFlag.AlignHCenter)
-        self.layout.addWidget(self.GuideLink, 8, 0,
-                              alignment=QtCore.Qt.AlignmentFlag.AlignHCenter)
-        self.layout.addWidget(self.settingStack, 0, 1, 10, 4)
-        self.layout.setContentsMargins(0,0,0,0)
-
+        self.sideBar.addWidget(self.selectSettings)
+        self.sideBar.addWidget(self.requiredSetBtn)
+        self.sideBar.addWidget(self.postSetBtn)
+        self.sideBar.addWidget(self.pluginBtn)
+        self.sideBar.addWidget(self.saveBtn)
+        self.sideBar.addWidget(self.newPluginBtn)
+        self.sideBar.addWidget(self.newProfileBtn)
+        self.sideBar.addWidget(self.cancelBtn)
+        self.sideBar.addWidget(self.logoImage)
+        self.sideBar.addWidget(self.GuideLink)
+        self.horizontalLayout.addWidget(self.sideBar)
+        self.horizontalLayout.addWidget(self.settingStack)
         self.settingStack.resize(QtCore.QSize(500,800))
         self.settingStack.setContentsMargins(0,0,0,0)
         self.saveBtn.setFixedSize(Dimension.BGBUTTON)
         self.cancelBtn.setFixedSize(Dimension.RBUTTON)
         self.newProfileBtn.setFixedSize(Dimension.BGBUTTON)
+        self.newPluginBtn.setFixedSize(Dimension.BGBUTTON)
    
    
     def _connectSignal(self):
         """handles signals"""
-        self.postSetBtn.clicked.connect(lambda: self.settingStack.
-                                        setCurrentWidget(self.PostSetPage))
-        self.requiredSetBtn.clicked.connect(lambda: self.settingStack.
-                                            setCurrentWidget(self.RequiredSetPage))
+        self.postSetBtn.clicked.connect(
+            lambda: self.settingStack.setCurrentWidget(self.PostSetPage))
+        self.requiredSetBtn.clicked.connect(
+            lambda: self.settingStack.setCurrentWidget(self.RequiredSetPage))
+        self.pluginBtn.clicked.connect(
+            lambda: self.settingStack.setCurrentWidget(self.PluginPage))
+        
         self.saveBtn.clicked.connect(self.RequiredSetPage.submitForm)
         
         self.selectSettings.currentTextChanged.connect(self._getProfile)
 
         self.newProfileBtn.clicked.connect(self.createNewSetting)
         self.saveBtn.clicked.connect(self.updateProfile)
+        self.newPluginBtn.clicked.connect(self.addPluginRequest)
     
     def _initStyle(self):
         self.settingStack.setObjectName("settingStack")
@@ -135,17 +164,16 @@ class SettingPage(QWidget):
         
     def _postNewProfile(self, profile: tuple):
         """ send the request to database to post a new profile data """
-        profileName = profile[0]
-        # self.selectSettings.addItem(profileName)
         self.signals.post.emit(profile)
     
     def createNewSetting(self):
         """ open a pop up window for user to create new setting profile """
         createNewSettingTab = CreateNewSetting(
-                        list(dummySettingForms["Required Setting"]["Engine"]),
-                             dummySettingForms["Required Setting"]["Engine"],
-                             dummySettingForms["Required Setting"]["OutPut Format"],
-                             dummySettingForms["Post Transcribe"])
+                        list(self.settingForm["Required Setting"]["Engine"]),
+                             self.settingForm["Required Setting"]["Engine"],
+                             self.settingForm["Required Setting"]["OutPut Format"],
+                             self.settingForm["Post Transcribe"],
+                             self.plugins)
         createNewSettingTab.signals.newSetting.connect(self._postNewProfile)
         createNewSettingTab.exec()
         
@@ -156,6 +184,7 @@ class SettingPage(QWidget):
         self.selectSettings.setCurrentText(key)
         self.PostSetPage.setValue(data["Post Transcribe"])
         self.RequiredSetPage.setValue(data["Required Setting"])
+        self.PluginPage.setValue(data["Plugins"])
     
     def addProfile (self, profileName:str):
         """ adding a new profile optin to the setting page 
@@ -164,12 +193,23 @@ class SettingPage(QWidget):
         
         """
         self.selectSettings.addItem(profileName)
+    
+    def addPluginRequest(self):
+        """ open a pop up window to add plugin
+        """
+        pluginDialog = PluginDialog(self.signals)
+        pluginDialog.exec()
+    
+    def addPluginHandler(self, plugin:str):
+        self.plugins.add(plugin)
+        self.PluginPage.addNewPlugin(plugin)
         
     def updateProfile(self):
         """ update the new profile setting """
         newSetting = dict()
         newSetting["Required Setting"] = self.RequiredSetPage.getValue()
         newSetting["Post Transcribe"]  = self.PostSetPage.getValue()
+        newSetting["Plugins"] = self.PluginPage.getValue()
         self.logger.info(newSetting)
         profileKey = self.selectSettings.currentText()
         self.signals.edit.emit((profileKey, newSetting))

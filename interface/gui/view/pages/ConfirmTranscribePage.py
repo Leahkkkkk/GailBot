@@ -14,7 +14,6 @@ from view.style.styleValues import FontFamily, FontSize, Color
 from view.style.Background import initImgBackground
 from view.widgets import ( Label, 
                            Button, 
-                           TableWidgets,
                            FileTable) 
 from util.Logger import makeLogger
 
@@ -27,7 +26,12 @@ from PyQt6.QtWidgets import (
 from PyQt6 import QtCore
 from PyQt6.QtCore import Qt 
 
-
+ConfirmHeader = ["Type",
+                 "Name",
+                 "Profile",
+                 "SelectedAction", 
+                 " "]
+ConfirmHeaderDimension = [0.1,0.35,0.25,0.13,0.17]
 
 class ConfirmTranscribePage(QWidget):
     """ Confirm transcription page """
@@ -51,12 +55,11 @@ class ConfirmTranscribePage(QWidget):
         self.label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         
         self.fileTable = FileTable.FileTable(
-            FileTable.ConfirmHeader, 
+            ConfirmHeader,
             self.signal,
-            {"setting"}, 
-            {})
+            rowWidgets={"details"})
         
-        self.fileTable.resizeCol(FileTable.ConfirmHeaderDimension)
+        self.fileTable.resizeCol(ConfirmHeaderDimension)
         self.bottomButton = QWidget()
         self.confirmBtn = Button.ColoredBtn("Confirm", Color.GREEN)
         self.cancelBtn = Button.ColoredBtn("Cancel", Color.ORANGE)
@@ -70,14 +73,17 @@ class ConfirmTranscribePage(QWidget):
         """ add widget to layout """
         self.verticalLayout.addWidget(self.label)
         self.label.setContentsMargins(0,20,0,50)
-        self.verticalLayout.addWidget(self.fileTable,
-                                      alignment = Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignTop)
+        self.verticalLayout.addWidget(
+            self.fileTable,
+            alignment = Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignTop)
         
-        self.horizontalLayout.addWidget(self.confirmBtn, 
-                                      alignment = Qt.AlignmentFlag.AlignRight)
+        self.horizontalLayout.addWidget(
+            self.confirmBtn, 
+            alignment = Qt.AlignmentFlag.AlignRight)
         
-        self.horizontalLayout.addWidget(self.cancelBtn, 
-                                      alignment = Qt.AlignmentFlag.AlignHCenter)
+        self.horizontalLayout.addWidget(
+            self.cancelBtn, 
+            alignment = Qt.AlignmentFlag.AlignHCenter)
         
         self.bottomButton.setContentsMargins(0,0,0,0)
         self.verticalLayout.addStretch()

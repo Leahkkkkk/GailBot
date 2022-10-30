@@ -43,7 +43,16 @@ from PyQt6.QtWidgets import (
 
 from PyQt6.QtCore import Qt, QSize, pyqtSignal,QObject
 
-    
+MainTableHeader = ["Select All", 
+                    "Type", 
+                    "Name", 
+                    "Profile", 
+                    "Status", 
+                    "Date", 
+                    "Size", 
+                    "Actions"]
+MainTableDimension = [0.07,0.07,0.2,0.15,0.15,0.08,0.08,0.2]
+
 class FileUploadPage(QWidget):
     def __init__(
         self, 
@@ -69,8 +78,8 @@ class FileUploadPage(QWidget):
         # delete all file 
         self.deleteAll.clicked.connect(self._confirmDelete)
         # change transcribe button color
-        self.fileTable.signals.nonZeroFile.connect(self._allowTranscribe)
-        self.fileTable.signals.ZeroFile.connect(self._disallowTranscribe)
+        self.fileTable.viewSignal.nonZeroFile.connect(self._allowTranscribe)
+        self.fileTable.viewSignal.ZeroFile.connect(self._disallowTranscribe)
         self._disallowTranscribe()
         
     def _initWidget(self):
@@ -91,10 +100,11 @@ class FileUploadPage(QWidget):
                                             FontSize.BTN)
         self.deleteAll.setContentsMargins(200,0,0,0)
         self.fileTable = FileTable.FileTable(
-            FileTable.MainTableHeader, 
+            MainTableHeader, 
             self.signal,
-            settings=self.profilekeys)
-        self.fileTable.resizeCol(FileTable.MainTableDimension)
+            self.profilekeys,
+            {"check", "delete", "details", "edit"})
+        self.fileTable.resizeCol(MainTableDimension)
         
         
     def _initLayout(self):

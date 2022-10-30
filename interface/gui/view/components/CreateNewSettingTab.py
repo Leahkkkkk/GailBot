@@ -17,7 +17,8 @@ from view.pages.CreatNewSettingPages import (
     BasicSetting, 
     EngineSetting, 
     OutPutFormatSetting,
-    PostTranscribeSetting
+    PostTranscribeSetting,
+    PluginSetting
 )
 from view.widgets.PopUpTab import Tab
 from PyQt6.QtWidgets import (
@@ -37,6 +38,7 @@ class CreateNewSetting(QDialog):
                  engineFormData:dict, 
                  outputFormData:dict,
                  postTranscribeFormData:dict,
+                 pluginData:set,
                  *agrs, 
                  **kwargs) -> None:
         super().__init__(*agrs, **kwargs)
@@ -49,6 +51,7 @@ class CreateNewSetting(QDialog):
         self.EngineSetting = EngineSetting(self.engineForm[engineKey[0]])
         self.OutPutFormSetting = OutPutFormatSetting(outputFormData)
         self.PostTranscribeSetting = PostTranscribeSetting(postTranscribeFormData)
+        self.PluginSetting = PluginSetting(pluginData)
         self.newSettingData = dict()
         
         self.setWindowTitle("Create New Profile")
@@ -61,7 +64,8 @@ class CreateNewSetting(QDialog):
                 "Basic Settings": self.BasicSetting,
                 "Optional Settings": self.EngineSetting,
                 "Output File Format Setting": self.OutPutFormSetting,
-                "Post Transcribtion Settion": self.PostTranscribeSetting
+                "Post Transcribtion Settion": self.PostTranscribeSetting,
+                "Plugin Setting" : self.PluginSetting
             },
             QSize(800,800)
         )
@@ -86,12 +90,14 @@ class CreateNewSetting(QDialog):
         engineData = self.EngineSetting.getData()
         outputFormData = self.OutPutFormSetting.getData()
         postFormData = self.PostTranscribeSetting.getData()
+        plugins = self.PluginSetting.getData()
         
         requiredData["User Info"] = basicData
         requiredData["Engine"] = {engine:engineData}
         requiredData["Output Form Data"] = outputFormData
         profileData ["Post Transcribe"] = postFormData
         profileData ["Required Setting"] = requiredData
+        profileData ["Plugins"] = plugins
         
         self.signals.newSetting.emit((profileName, profileData))
         self.close()

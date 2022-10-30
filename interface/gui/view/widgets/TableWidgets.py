@@ -15,7 +15,7 @@ from view.components import RequiredSet
 from view.style.styleValues import (
     Dimension, Color, FontFamily, FontSize)
 from view.style import Background
-from model import SettingModel
+
 
 from PyQt6.QtWidgets import (
     QWidget, 

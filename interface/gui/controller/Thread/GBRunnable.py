@@ -8,10 +8,12 @@ Last Modified: Wednesday, 5th October 2022 5:04:58 pm
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
-
+from typing import List, Tuple, Dict
 import os
 import logging
 import time
+
+from controller.Signals import Signal
 
 from gailbot import GailBotController
 from PyQt6.QtCore import (
@@ -21,6 +23,7 @@ from PyQt6.QtCore import (
     pyqtSignal
 )
 
+# TODO: move this to a config file 
 WATSON_API_KEY = "MSgOPTS9CvbADe49nEg4wm8_gxeRuf4FGUmlHS9QqAw3"
 WATSON_LANG_CUSTOM_ID = "41e54a38-2175-45f4-ac6a-1c11e42a2d54"
 WATSON_REGION = "dallas"
@@ -52,7 +55,9 @@ PLUGINS_TO_APPLY = [
         "xmlSchema"
 ]
 
-def get_settings_dict():
+def get_settings_dict(): #TODO: get the actual setting dictionary for the 
+                         #      profile database
+                         
     """ returns a dictionary that contains the setting information
     """
     return {
@@ -88,21 +93,18 @@ class Worker(QRunnable):
         used to run GailBot function on separte thread 
         with the added feature of handling signals
     """
-    def __init__(self, fileName:str, fullPath:str, output:str, key:int):
+    def __init__(self, files: List [Tuple [str, Dict]], signal:Signal):
         """constructor for Worker class
 
         Args:
-            fileName (str): fileName 
-            fullPath (str): absolute file path to the file
-            key (int): an index key that identify the file in file database
+            files List[Tuple (filekey, file data)]: a list of tuples that 
+            stores the file data, the first element of tuple is filekey 
+            and the second is the file object
         """
         super(Worker, self).__init__()
-        self.signals = Signals()
-        self.key = key
-        self.is_killed = False
-        self.fullPath = fullPath
-        self.fileName = fileName
-        self.output = output
+        self.signals = signal
+        self.killed = False
+        self.files = files 
         self._initLogger()
 
     def _initLogger(self):
@@ -110,19 +112,19 @@ class Worker(QRunnable):
         self.logExtra = {"source": "Backend"}
         self.logger = logging.getLogger()
         self.logger = logging.LoggerAdapter(self.logger, self.logExtra)
-
-
+        
     @pyqtSlot()
     def run(self):
         """ public function that can be called to run GailBot """
         self.logger.info("file ready to be transcribed" )
+        profiles = set()
         
         try:
             self.signals.start.emit()
             gb = GailBotController(WORKSPACE_DIRECTORY_PATH)
             self.signals.progress.emit(str("GailBot controller Initialized"))
         
-            if not self.is_killed:
+            if not self.killed:
                 plugin_suite_paths = gb.download_plugin_suite_from_url(
                 "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip", 
                 "./plugins")
@@ -131,52 +133,64 @@ class Worker(QRunnable):
                 self.signals.progress.emit(str("Plugins Applied"))
                 self.logger.info(gb.register_plugins(path))
 
-            if not self.is_killed:
-                assert gb.add_source(self.fileName, 
-                                     self.fullPath, 
-                                     f"{self.output}/output")
-                self.logger.info("Source Added")
-                self.signals.progress.emit(str("Source Added"))
-                print("The output path gailbot receieved is", self.output)
+            for file in self.files:
+                #iterate through the list of the file
+                key, filedata = file 
+                filename = filedata["Name"]
+                filePath = filedata["FullPath"]
+                outPath = f"{filedata['Output']}/output/"
+                profile = filedata["Profile"]  
+                self.logger.info(key)
+                self.logger.info(filename)
+                self.logger.info(filePath)
+                self.logger.info(outPath)
                 
-            if not self.is_killed:
-                gb.create_new_settings_profile("test-settings", 
-                                               get_settings_dict())
-                assert gb.is_settings_profile("test-settings")
-                self.logger.info("Create Setting File")
-                self.signals.progress.emit(str("Create Setting File"))
+                
+                
+                if not self.killed:
+                    assert gb.add_source(filename, filePath, outPath)
+                    self.logger.info(filedata)
+                    self.logger.info("Source Added")
+                    self.signals.progress.emit(f"Source{filename} Added")
+                
+                if not self.killed and not gb.is_settings_profile(profile):
+                    # if the profile is not already created
+                    gb.create_new_settings_profile(profile, get_settings_dict())
+                    profiles.add(profile)
+                    assert gb.is_settings_profile(profile)
+                    self.logger.info("Create Setting File")
+                    self.signals.progress.emit("Setting created")
 
-            if not self.is_killed:
-                assert gb.apply_settings_profile_to_source(self.fileName, 
-                                                           "test-settings")
-                self.logger.info("Apply Setting")
-                self.signals.progress.emit(str("Apply Setting"))
+                if not self.killed:
+                    assert gb.apply_settings_profile_to_source(
+                        filename, profile)
+                    self.logger.info("Apply Setting")
+                    self.signals.progress.emit(str("Apply Setting"))
 
-            if not self.is_killed:
-                assert gb.is_source_ready_to_transcribe(self.fileName)
-                self.logger.info("Ready to transcribe")
-                self.signals.progress.emit(str("Ready to transcribe"))
-            
-            if not self.is_killed:
+                    assert gb.is_source_ready_to_transcribe(filename)
+                    self.logger.info("Ready to transcribe")
+                    self.signals.progress.emit(f"{filename} Ready to transcribe")
+                
+            if not self.killed:
                 self.signals.progress.emit(str("Transcribing"))
                 self.logger.info("transcribing")
                 gb.transcribe()
             
-            if self.is_killed:
+            if self.killed:
                 self.logger.info("User killed the thread")
                 self.signals.killed.emit()
-        
+                
         except Exception as e:
             self.signals.error.emit(f"${e.__class__}fails")
             self.logger.error(f"{e.__class__}fails")
             time.sleep(2)
         else:
-            if not self.is_killed:
-                self.signals.result.emit()
-                self.signals.finished.emit(self.key)
-            self.signals.endThread.emit()    
+            if not self.killed:
+                for file in self.files:
+                    key, filedata = file 
+                    self.signals.fileTranscribed.emit((key, "Transcribed"))
+            self.signals.finish.emit()
         finally:
-            self.signals.endThread.emit()
             self.setAutoDelete(True)
 
 
@@ -185,4 +199,5 @@ class Worker(QRunnable):
             will terminates after finishing the last function call 
         """
         self.logger.info("User tring to cancel thread")
-        self.is_killed = True
+        self.killed = True
+        self.signals.killed.emit()
