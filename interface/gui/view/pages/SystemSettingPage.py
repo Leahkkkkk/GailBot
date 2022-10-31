@@ -1,13 +1,15 @@
 import tomli
 
-from view.widgets import Label,TextForm, SideBar, SettingForm
+
+from view.widgets import SideBar, SettingForm,  Label, Button
 from view.style.Background import initBackground
 from view.style.styleValues import FontFamily, FontSize
 from model.dummySettingData import dummySystemSettingForm
-from PyQt6.QtWidgets import QWidget, QHBoxLayout, QStackedWidget
-from PyQt6.QtCore import Qt
+from view.Text.LinkText import Links
+from PyQt6.QtWidgets import QWidget, QHBoxLayout, QStackedWidget, QSpacerItem
+from PyQt6.QtCore import QSize, Qt
 
-
+bottom = Qt.AlignmentFlag.AlignBottom
 class SystemSettingPage(QWidget):
     """ post-transcription settings page """
     def __init__(self, *args, **kwargs) -> None:
@@ -27,11 +29,28 @@ class SystemSettingPage(QWidget):
         self.Mainstack = QStackedWidget()
         self.SysSet = SettingForm.SettingForm(header, self.data, caption)
         self.Mainstack.addWidget(self.SysSet)
+        self.GuideLink = Label.Label(Links.guideLink, FontSize.LINK, link=True)
+        self.cancelBtn = Button.BorderBtn(
+            "Cancel", 
+            self.config["colors"]["ORANGE"])
+        self.saveBtn = Button.ColoredBtn(
+            "Save and Exit", 
+            self.config["colors"]["GREEN"])
+        
+        self.sidebar.addStretch()
+        self.sidebar.addWidget(self.saveBtn)
+        self.sidebar.addWidget(self.cancelBtn)
+        self.sidebar.addStretch()
+        self.sidebar.addWidget(self.GuideLink, alignment=bottom)
+        
         
     def _initLayout(self):
         """ initialize layout"""
 
         self.horizontalLayout = QHBoxLayout()
+        self.horizontalLayout.setContentsMargins(0,0,0,0)
+        self.horizontalLayout.setSpacing(0)
+        
         self.setLayout(self.horizontalLayout)
         """ add widget to layout """
         self.horizontalLayout.addWidget(self.sidebar)

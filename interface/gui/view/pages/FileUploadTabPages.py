@@ -36,6 +36,8 @@ from PyQt6.QtWidgets import (
     QListView)
 from PyQt6.QtCore import QSize,Qt
 
+center = Qt.AlignmentFlag.AlignHCenter
+
 class FileData(TypedDict):
     Name: str
     Type: str
@@ -50,61 +52,6 @@ class OutputPath(TypedDict):
 class Profile(TypedDict):
     Profile:str
 
-class OpenFile_De(TabPage):
-    """  for user to select file from their directory """
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        self._initConfig()
-        self.fullName = None 
-        self.fileType = None
-        self.filePathDisplay = QLineEdit(self)
-        self.filePathDisplay.setPlaceholderText("Choose file to be transcribed")
-        self.filePathDisplay.setMinimumHeight(40)
-        self.filePathDisplay.setReadOnly(True)
-        self.fileBtn = ColoredBtn("...", self.config["colors"]["BLUEMEDIUM"], self.config["fontSizes"]["HEADER3"])
-        self.fileBtn.setFixedWidth(70)
-        self.fileBtn.clicked.connect(self._addFile)
-        self._initLayout()
-    
-    def _addFile(self):
-        """ open a fle dialog for user to select a file  """
-        fileDialog = QFileDialog(self)
-        fileFilter = "*.txt *.wav *.png"
-        fileDialog.setNameFilter(fileFilter)
-        fileDialog.setFileMode(QFileDialog.FileMode.AnyFile)
-        filename = fileDialog.getOpenFileName()
-        if filename[0] != "":
-            self.fullName = filename[0]
-            self.fileType = "🔈"
-            self.filePathDisplay.setText(filename[0])
-            self.signals.nextPage.emit()
-        else:
-            logging.warn("No File Chosen")
-
-    def _initLayout(self):
-        self.layout = QHBoxLayout(self)
-        self.setLayout(self.layout)
-        self.layout.addWidget(self.filePathDisplay)
-        self.layout.addWidget(self.fileBtn)
-        self.fileBtn.setFixedSize(QSize(100,30))
-        
-    def getFile(self) -> FileData:
-        if not self.fullName or not self.fileType:
-            logging.error("File is not found")
-        fullPath = self.fullName
-        fileType = self.fileType
-        date = datetime.date.today().strftime("%m-%d-%y")    
-        temp = str(fullPath)
-        patharr = temp.split("/")
-        fileName = patharr[-1]
-        size = round(os.stat(fullPath).st_size/1000, 2)
-       
-        return {"Name": fileName, 
-                "Type": fileType, 
-                "Date": date, 
-                "Size": f"{size}kb", 
-                "FullPath": fullPath}
-
 
 class OpenFile(TabPage):
     def __init__(self, *args, **kwargs) -> None:
@@ -112,15 +59,19 @@ class OpenFile(TabPage):
         self._initConfig()
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
-        self.dropLabel = Label("Drop File Here to Upload", self.config["fontSizes"]["BODY"])
+        self.dropLabel = Label(
+            "Drop File Here to Upload", 
+            self.config["fontSizes"]["BODY"])
         self.fileDisplayList = QListWidget()
         self.filePaths = []
-        self.uploadFileBtn = ColoredBtn("Upload File", self.config["colors"]["BLUEMEDIUM"])
+        self.uploadFileBtn = ColoredBtn(
+            "Choose From Local", 
+            self.config["colors"]["BLUEMEDIUM"])
         self.uploadFileBtn.clicked.connect(lambda: self.getOpenFilesAndDirs())
         self.setAcceptDrops(True)
-        self.layout.addWidget(self.dropLabel)
-        self.layout.addWidget(self.fileDisplayList)
-        self.layout.addWidget(self.uploadFileBtn)
+        self.layout.addWidget(self.dropLabel, alignment=center)
+        self.layout.addWidget(self.fileDisplayList, alignment=center)
+        self.layout.addWidget(self.uploadFileBtn,alignment=center)
         self.fileDisplayList.setStyleSheet(
             f"border: 1px solid {Color.BLUEDARK};"
             "background-color:white;")
@@ -143,7 +94,6 @@ class OpenFile(TabPage):
             event.setDropAction(Qt.DropAction.CopyAction)
             event.accept()
             for url in event.mimeData().urls():
-                # https://doc.qt.io/qt-5/qurl.html
                 if url.isLocalFile():
                     self.filePaths.append(str(url.toLocalFile()))
                 else:
@@ -173,7 +123,7 @@ class OpenFile(TabPage):
             fileName = patharr[-2]
         else:
             fileType = pathlib.Path(path).suffix
-            if fileType == ".wav" or fileType == ".mp4":
+            if fileType == ".wav":
                 fileType = "🔈"
             fileName = patharr[-1]
             
@@ -184,7 +134,7 @@ class OpenFile(TabPage):
                 "FullPath": fullPath}
 
     def getOpenFilesAndDirs(self, caption='', directory='', 
-                           filter='', initialFilter=''):
+                           filter='audio file (*.wav) directory (/)', initialFilter=''):
         def updateText():
                 # update the contents of the line edit widget with the selected files
             selected = []

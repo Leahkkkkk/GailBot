@@ -17,8 +17,10 @@ class SideBar(QWidget):
         
 
         
-    def addWidget(self, widget: QWidget):
+    def addWidget(self, widget: QWidget, alignment = None):
         center = Qt.AlignmentFlag.AlignHCenter
+        if alignment:
+            center = center | alignment
         self.verticalLayout.addWidget(widget, alignment = center)
         
     

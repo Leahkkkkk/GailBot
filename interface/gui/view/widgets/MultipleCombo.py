@@ -82,7 +82,7 @@ class ComboList(QWidget):
     def _initWidget(self):
         """ initialize the widget """
         self.layout = QVBoxLayout()
-        self.layout.setSpacing(0)
+        self.layout.setSpacing(5)
         self.setLayout(self.layout)
         self.comboBoxes = dict()
         self.labels = dict()

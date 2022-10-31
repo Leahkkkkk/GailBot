@@ -9,6 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 from typing import Set
+import toml 
 
 from model import Model
 from view import MainWindow
@@ -21,16 +22,17 @@ from PyQt6.QtCore import QThreadPool
 class Controller:
     """ Controller for Gailbot GUI """
     def __init__(self):
+        
+        config = toml.load("controller/interface.toml")
         self.ModelObj = Model.Model()
         self.FileData = self.ModelObj.FileData
         self.ProfileData = self.ModelObj.ProfileData
         self.PluginData = self.ModelObj.PluginData
         self.ViewObj = MainWindow.MainWindow(
             self, 
-            self.ModelObj.ProfileData.form,
-            self.ModelObj.ProfileData.profilekeys)
+            config["profile form"],
+            list(config["profile form"]["Plugins"]))
         self.signal = Signal()
-        
         self.ThreadPool = QThreadPool()
         self.logger = Logger.makeLogger("Backend")
         self._connectControllerToView()
@@ -67,7 +69,7 @@ class Controller:
             self.FileData.editFileStatus)
 
     
-    ################### connecting file database to file table ################ 
+    ################ connecting file database to file table ################ 
     def _connectFileDBToView(self):
         dbSignal = self.ModelObj.FileData.signals
         profile = self.ModelObj.ProfileData
@@ -86,7 +88,7 @@ class Controller:
         viewSignal.changeStatus.connect(db.editFileStatus)
         viewSignal.requestprofile.connect(db.requestSetting)
 
-    ################### connecting plugin database to profole table ###########
+    ################ connecting plugin database to profole table ###########
     def _connectViewToPluginDB(self):
         viewSignal = self.ViewObj.profileSignals
         db = self.ModelObj.PluginData
@@ -113,9 +115,8 @@ class Controller:
         dbSignal.profileAdded.connect(profileView.addProfile)
         dbSignal.profileAdded.connect(fileView.addProfile)
         
-
         
-    ##########   gailbot running hendler #################################    
+    ###################   gailbot running hendler #############################   
     def _handleTanscribeSignal(self):
         self.ViewObj.fileTableSignals.transcribe.connect(self._transcribeFiles)
     

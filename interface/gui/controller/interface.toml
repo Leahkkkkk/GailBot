@@ -28,3 +28,86 @@ TABLE_ROW = "13px"
 DESCRIPTION = "12px"
 INSTRUCTION_CAPTION = "14px"
 BTN = "14px" 
+
+
+["profile form".Plugins]
+constructTree = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
+utteranceDict = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
+speakerDict = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
+conversationDict = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
+convModelPlugin = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
+overlaps = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
+pauses = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
+gaps = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
+syllRate = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
+layerPrint01 = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
+plainPrint = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
+chat = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
+txt = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
+csvPlugin = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
+csvWordLevel = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
+XMLtoCSV = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
+xmlSchema = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
+
+["profile form"."Post Transcribe".General]
+"Gap Length" = "0s"
+"Turn End Threshold" = "0s"
+"Large Pause - Lower Bound" = "0s"
+
+["profile form"."Post Transcribe"."Laghter Settings"]
+"Laughter Detection Module bool" = "ON"
+"Laughter Probability - Lower Bound" = "0s"
+"Laughter Length - Lower Bound" = "0s"
+
+["profile form"."Post Transcribe"."MicroPause Bound"]
+"Upper Bound" = "0s"
+"Lower Bound" = "0s"
+
+["profile form"."Post Transcribe"."Transcription Model"]
+"Beat Transcription Mode bool" = "ON"
+"FTO (Floor Transfer offset)Transcription Mode bool" = "ON"
+"Syllable Rate mode bool" = "ON"
+
+["profile form"."Required Setting"."OutPut Format"."Corpus Settings"]
+"Corpus aame" = "enter corpus name"
+"Corpus location" = "enter corpus location"
+"Corpus room layout" = "enter corous room layout"
+"Corpus situation" = "enter situation"
+
+["profile form"."Required Setting".Engine.IBM."1.language model setting"]
+"1. language model" = [ "IBM language", "English", "Spanish",]
+"2. costum language model" = [ "HRI lab", "None", "Air Force Study",]
+
+["profile form"."Required Setting".Engine.IBM."2.Acoustic Model Setting"]
+"1. acoustic model setting" = [ "acoustic1", "acoustic2", "acoustic3",]
+"2. acoustic model setting(optional)" = [ "1", "2", "3",]
+
+["profile form"."Required Setting".Engine.IBM."3.advanced setting"]
+"1. Advanced Setting Option 1" = [ "advanced 1", "advanced 2", "advanced 3",]
+"2. plugin" = [ "plugin 1", "plugin 2",]
+
+["profile form"."Required Setting".Engine.IBM."4.IBM specialised setting"]
+"IBM dummy setting" = [ "dummy setting1", "dummy setting2", "dummy setting3",]
+
+["profile form"."Required Setting".Engine.CMU."1.language model setting"]
+"1. language model" = [ "CMU language", "English", "Spanish",]
+"2. costum language model" = [ "CMU costum", "None", "Air Force Study",]
+
+["profile form"."Required Setting".Engine.CMU."2.Acoustic Model Setting"]
+"1. acoustic model setting" = [ "acoustic1", "acoustic2", "acoustic3",]
+"2. acoustic model setting(optional)" = [ "1", "2", "3",]
+"3. plugin" = [ "plugin 1", "plugin 2",]
+
+["profile form"."Required Setting".Engine.CMU."3.CMU specialised setting"]
+"CMU dummy setting" = [ "dummy setting1", "dummy setting2", "dummy setting3",]
+
+["system setting form"."General Setting"]
+"Font Size combo" = [ "small", "medium", "big",]
+"Color Mode combo" = [ "default", "dark", "light",]
+"Large Pause - Lower Bound" = "0s"
+
+["system setting form"."Dummy Setting Options"]
+"Dummy on and off bool" = "ON"
+"Dummy input" = "dummy"
+"Dummy selection mode combo" = [ "selection1", "selection2", "selection3",]
+

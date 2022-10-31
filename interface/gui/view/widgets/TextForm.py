@@ -9,9 +9,10 @@ from PyQt6.QtWidgets import (
 
 class TextForm(QWidget):
     """ required settings page"""
-    def __init__(self, data, *args, **kwargs) -> None:
+    def __init__(self, data, backgroundColor=Color.BLUEWHITE, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.data = data
+        self.backgroundColor = backgroundColor 
         self.inputDict = dict()
         self._initWidget()
         self._initStyle()
@@ -47,7 +48,7 @@ class TextForm(QWidget):
         return value
             
     def _initStyle(self):
-        initBackground(self, Color.BLUEWHITE)
+        initBackground(self, self.backgroundColor)
     
     def updateValues(self, data:dict):
         for key, input in self.inputDict.items():

@@ -18,6 +18,7 @@ TODO: change name settingdata to settingFormData
                   the counter part is settingValueData
 TODO: make a combobox widget
 """
+from ctypes import alignment
 import tomli 
 from typing import Dict, List, Set
 
@@ -43,7 +44,8 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6 import QtCore
 
-
+center = QtCore.Qt.AlignmentFlag.AlignHCenter
+bottom = QtCore.Qt.AlignmentFlag.AlignBottom
 class ProfileSettingPage(QWidget):
     """ class for settings page"""
     def __init__(
@@ -74,22 +76,37 @@ class ProfileSettingPage(QWidget):
         self.selectSettings = ComboBox.ComboBox()
         self.selectSettings.addItems(self.profilekeys)
         
-        self.cancelBtn = Button.BorderBtn("Cancel", self.config["colors"]["ORANGE"])
-        self.saveBtn = Button.ColoredBtn("Save and Exit", self.config["colors"]["GREEN"])
-        self.newProfileBtn = Button.ColoredBtn("Create New Profile", self.config["colors"]["BLUEMEDIUM"])
-        self.requiredSetBtn = Button.BorderBtn("Required Settings", 
-                                               self.config["colors"]["GREYDARK"], self.config["fontSizes"]["BTN"], 0)
+        self.cancelBtn = Button.BorderBtn(
+            "Cancel", 
+            self.config["colors"]["ORANGE"])
+        self.saveBtn = Button.ColoredBtn(
+            "Save and Exit", 
+            self.config["colors"]["GREEN"])
+        self.newProfileBtn = Button.ColoredBtn(
+            "Create New Profile", 
+            self.config["colors"]["BLUEMEDIUM"])
+        self.requiredSetBtn = Button.BorderBtn(
+            "Required Settings", 
+            self.config["colors"]["GREYDARK"], 
+            self.config["fontSizes"]["BTN"], 0)
         self.requiredSetBtn.setFixedWidth(190)
-        self.postSetBtn = Button.BorderBtn("Post-Transcription Settings", self.config["colors"]["GREYDARK"], self.config["fontSizes"]["BTN"], 0)
+        self.postSetBtn = Button.BorderBtn(
+            "Post-Transcription Settings", 
+            self.config["colors"]["GREYDARK"], 
+            self.config["fontSizes"]["BTN"], 0)
         self.postSetBtn.setFixedWidth(190)
-        self.GuideLink = Label.Label(Links.guideLink, self.config["fontSizes"]["LINK"], link=True)
-        self.newPluginBtn = Button.ColoredBtn("Add New Plugin", Color.BLUEMEDIUM)
+        self.GuideLink = Label.Label(
+            Links.guideLink, 
+            self.config["fontSizes"]["LINK"], 
+            link=True)
+        self.newPluginBtn = Button.ColoredBtn(
+            "Add New Plugin",
+            Color.BLUEMEDIUM)
         self.pluginBtn = Button.BorderBtn(
             "Plugin Setting",
             Color.GREYDARK,FontSize.BTN,0
         )
-        self.logoImage = Image.Image("hillogo.png")
-        self.logoImage.setFixedSize(QtCore.QSize(130,60))
+       
         self.pluginBtn.setFixedWidth(190)
         self.settingStack = QStackedWidget(self)
         self.RequiredSetPage = RequiredSetPage.RequiredSetPage(
@@ -110,6 +127,8 @@ class ProfileSettingPage(QWidget):
     def _initLayout(self):
         """initialize layout"""
         self.horizontalLayout = QHBoxLayout()
+        self.horizontalLayout.setContentsMargins(0,0,0,0)
+        self.horizontalLayout.setSpacing(0)
         self.setLayout(self.horizontalLayout)
         
         """ add widget to layout """
@@ -117,12 +136,11 @@ class ProfileSettingPage(QWidget):
         self.sideBar.addWidget(self.requiredSetBtn)
         self.sideBar.addWidget(self.postSetBtn)
         self.sideBar.addWidget(self.pluginBtn)
-        self.sideBar.addWidget(self.saveBtn)
         self.sideBar.addWidget(self.newPluginBtn)
         self.sideBar.addWidget(self.newProfileBtn)
+        self.sideBar.addWidget(self.saveBtn)
         self.sideBar.addWidget(self.cancelBtn)
-        self.sideBar.addWidget(self.logoImage)
-        self.sideBar.addWidget(self.GuideLink)
+        self.sideBar.addWidget(self.GuideLink, alignment=bottom)
         self.horizontalLayout.addWidget(self.sideBar)
         self.horizontalLayout.addWidget(self.settingStack)
         self.settingStack.resize(QtCore.QSize(500,800))

@@ -1,5 +1,4 @@
-from unittest import result
-from PyQt6.QtCore import QThreadPool, pyqtSignal, QObject
+from PyQt6.QtCore import pyqtSignal, QObject
 
 class Signal(QObject):
     start = pyqtSignal()

@@ -31,7 +31,6 @@ class RequiredSet(QWidget):
         self.outPutSet = ToggleView.ToggleView("Output File Format Settings", 
                                                self.outPutForm,
                                                header = True)
-        self.outPutSet.resizeViewHeight(350)
         
     def _initLayout(self):
         """initialize layout"""
@@ -39,8 +38,7 @@ class RequiredSet(QWidget):
         self.setLayout(self.verticalLayout)
         """ add widget to layout """
         self.verticalLayout.addWidget(self.engineSet, alignment=Qt.AlignmentFlag.AlignTop)
-        self.verticalLayout.addWidget(self.outPutSet, alignment=Qt.AlignmentFlag.AlignTop)  
-        self.verticalLayout.addStretch()
+        self.verticalLayout.addWidget(self.outPutSet, stretch=2, alignment=Qt.AlignmentFlag.AlignTop)  
     
     def submitForm(self):
         """ TODO: add user validation """
@@ -68,15 +66,15 @@ class OutPutFormat(QWidget):
         self.layout.addWidget(self.formatCombo)
         self.headerForm = HeaderForm(data)
         self.fileHeader = ToggleView.ToggleView("File Header Views", 
-                                                self.headerForm, 
-                                                headercolor="#fff",
-                                                viewcolor="#fff")
+                                                self.headerForm,
+                                                headercolor= "#fff",
+                                                 viewcolor=Color.GREYLIGHT)
         self.layout.addWidget(self.fileHeader)
         self.textWrap = Button.onOffButton("Text-Wrapping")
         self.textWrapField = ToggleView.ToggleView("File Format", 
                                                    self.textWrap,
-                                                   headercolor="#fff",
-                                                   viewcolor="#fff")
+                                                    headercolor= "#fff",
+                                                    viewcolor= Color.GREYLIGHT)
         self.layout.addWidget(self.textWrapField)
         
     def getValue(self):
@@ -108,7 +106,7 @@ class HeaderForm(QWidget):
         self.numCombo = QComboBox(self)
         self.numCombo.addItems(["1", "2", "3"])
         self.layout.addWidget(self.numCombo)
-        self.corpusForm = TextForm.TextForm(data)
+        self.corpusForm = TextForm.TextForm(data, Color.GREYLIGHT)
     
         for i in range(3):
             newLabel = QLabel(f"Speaker {i + 1} Gender")

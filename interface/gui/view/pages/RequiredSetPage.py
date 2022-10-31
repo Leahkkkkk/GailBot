@@ -21,6 +21,7 @@ from PyQt6.QtWidgets import (
 
 from PyQt6.QtCore import Qt
 
+center = Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignHCenter
 class RequiredSetPage(QWidget):
     def __init__(self, data, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
@@ -51,11 +52,12 @@ class RequiredSetPage(QWidget):
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
         self.layout.addWidget(self.label,
-                              alignment=Qt.AlignmentFlag.AlignTop 
-                              | Qt.AlignmentFlag.AlignHCenter)
+                              alignment=center)
         self.layout.addWidget(self.description,
-                              alignment=Qt.AlignmentFlag.AlignHCenter)
-        self.layout.addWidget(self.form, stretch= 10)
+                              alignment=center)
+        self.layout.addWidget(self.form, 
+                              alignment=center)
+        self.layout.addStretch()
         self.layout.setSpacing(0)
         
     def _initConfig(self):

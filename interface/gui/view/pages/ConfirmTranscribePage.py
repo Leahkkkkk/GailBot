@@ -31,7 +31,7 @@ ConfirmHeader = ["Type",
                  "Name",
                  "Profile",
                  "SelectedAction", 
-                 " "]
+                 "Action"]
 ConfirmHeaderDimension = [0.1,0.35,0.25,0.13,0.17]
 
 class ConfirmTranscribePage(QWidget):

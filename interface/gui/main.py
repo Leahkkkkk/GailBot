@@ -8,13 +8,14 @@ Last Modified: Thursday, 6th October 2022 11:19:06 am
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
-
+import faulthandler
 from view import MainWindow 
 from controller import Controller
 from model import Model
 from PyQt6.QtWidgets import QApplication
 import sys
 
+faulthandler.enable()
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     controller = Controller.Controller()

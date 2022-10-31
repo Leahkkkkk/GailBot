@@ -67,28 +67,25 @@ class WelcomePage(QWidget):
         self.horizontalLayout.addWidget(self.GuideText)
         
         """ vertical layout """
-        spacer = QSpacerItem(40, 50, QSizePolicy.Policy.Preferred, 
-                             QSizePolicy.Policy.Preferred)
         self.verticalLayout = QVBoxLayout()
         self.setLayout(self.verticalLayout)
         self.verticalLayout.addWidget(self.HomeSetBtn)
-        self.verticalLayout.addItem(spacer)
+        self.verticalLayout.addStretch()
         self.verticalLayout.addWidget(self.WelcomeText)
         self.verticalLayout.addWidget(self.CaptionText, 
                                       alignment = Qt.AlignmentFlag.AlignHCenter)
         self.verticalLayout.addWidget(self.StartBtn, 4, 
                                       alignment = Qt.AlignmentFlag.AlignHCenter)
-    
-        self.verticalLayout.addItem(spacer)
-        self.verticalLayout.addItem(spacer)
+        self.verticalLayout.addStretch()
         self.verticalLayout.addWidget(self.InstructionText)
         self.verticalLayout.addWidget(self.gridBox)
-        self.verticalLayout.addItem(spacer)
+        self.verticalLayout.addStretch()
         self.verticalLayout.addWidget(self.ResourcesText)
         self.verticalLayout.addWidget(self.horizontoalBox)
         self.verticalLayout.addWidget(self.MoreInfoText)
         self.verticalLayout.addWidget(self.GBLinkText)
-        self.verticalLayout.addItem(spacer)
+        self.verticalLayout.addStretch()
+
         
     def _initStyle(self):
         """ initialize style """

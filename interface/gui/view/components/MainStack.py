@@ -108,10 +108,8 @@ class MainStack(QStackedWidget):
         self.RecordPage = RecordPage.RecordPage()
         self.SystemSettingPage = SystemSettingPage.SystemSettingPage()
         self.MainSetting = QTabWidget()
-
-        
         self.MainSetting.addTab(self.ProfileSettingPage, "Porfile Setting")
-        self.MainSetting.addTab(self.SystemSettingPage, "System Setting")
+        self.MainSetting.addTab(self.SystemSettingPage, "System Setting") 
         self.addWidget(self.WelcomePage)
         self.addWidget(self.ConfirmTranscribePage)
         self.addWidget(self.FileUploadPage)
@@ -119,36 +117,29 @@ class MainStack(QStackedWidget):
         self.addWidget(self.TranscribeSuccessPage)
         self.addWidget(self.RecordPage)
         self.addWidget(self.MainSetting)
-        
-        
-        self.setCurrentWidget(self.FileUploadPage)
+        self.setCurrentWidget(self.WelcomePage)
     
-        
-        
     def _pageRedirect(self):
         """ initialize button click to page rediect functionality  """
-        self.WelcomePage.StartBtn.clicked.connect(lambda: 
-                self.setCurrentWidget(self.FileUploadPage))
+        self.WelcomePage.StartBtn.clicked.connect(self.gotoFileUploadPage)
         self.FileUploadPage.settingProfile.clicked.connect(lambda: 
                 self.setCurrentWidget(self.MainSetting))
-        self.TranscribeSuccessPage.moreBtn.clicked.connect(lambda: 
-                self.setCurrentWidget(self.FileUploadPage))
+        self.TranscribeSuccessPage.moreBtn.clicked.connect(self.gotoFileUploadPage)
         self.TranscribeSuccessPage.returnBtn.clicked.connect(lambda: 
                 self.setCurrentWidget(self.WelcomePage))
-        self.ProfileSettingPage.cancelBtn.clicked.connect(lambda:  
-                self.setCurrentWidget(self.FileUploadPage))
+        self.ProfileSettingPage.cancelBtn.clicked.connect(self.gotoFileUploadPage)
         self.FileUploadPage.gotoMainBtn.clicked.connect(lambda:
                 self.setCurrentWidget(self.WelcomePage))
         self.FileUploadPage.recordBtn.clicked.connect(lambda:
                 self.setCurrentWidget(self.RecordPage))
         self.FileUploadPage.transcribeBtn.clicked.connect(lambda:
             self.setCurrentWidget(self.ConfirmTranscribePage))
-        self.RecordPage.cancelBtn.clicked.connect(lambda:
-                self.setCurrentWidget(self.FileUploadPage))
-        self.ConfirmTranscribePage.cancelBtn.clicked.connect(lambda:
-            self.setCurrentWidget(self.FileUploadPage))
-        self.ProfileSettingPage.saveBtn.clicked.connect(lambda:
-            self.setCurrentWidget(self.FileUploadPage))
+        self.RecordPage.cancelBtn.clicked.connect(self.gotoFileUploadPage)
+        self.ConfirmTranscribePage.cancelBtn.clicked.connect(self.gotoFileUploadPage)
+        self.ProfileSettingPage.saveBtn.clicked.connect(self.gotoFileUploadPage)
+        self.SystemSettingPage.cancelBtn.clicked.connect(self.gotoFileUploadPage)
+        self.SystemSettingPage.saveBtn.clicked.connect(self.gotoFileUploadPage)
+    
     
     def addFileToTables(self, file:dict):
         self.FileUploadPage.fileTable.addFile(file)

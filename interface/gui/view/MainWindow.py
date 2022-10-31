@@ -44,7 +44,7 @@ class MainWindow(QMainWindow):
         self.profileSignals = Signals.ProfileSignals()
         self.controller = controller
         self.setWindowTitle("GailBot")
-        self.setMinimumSize(QSize(800, 650))
+        self.setMinimumSize(QSize(980, 700))
         self.setMaximumSize(QSize(1200, 900))
         self.resize(QSize(1100, 750))
     
@@ -54,7 +54,6 @@ class MainWindow(QMainWindow):
             self.fileTableSignals, 
             self.profileSignals,
             parent=self)
-        
         
         self.setCentralWidget(self.MainStack)
         self.StatusBar = StatusBar.StatusBar()
@@ -104,9 +103,11 @@ class MainWindow(QMainWindow):
     
     
     def addFileToTables(self, file:dict):
+        """ add file to file upload table """
         self.MainStack.addFileToTables(file)
         
     def updateFile(self, data:tuple):
+        """ update file information on file upload file """
         self.MainStack.updateFile(data)
     
     

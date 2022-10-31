@@ -53,8 +53,7 @@ class ColoredBtn(QPushButton):
                            f"color:#fff;"
                            f"font-size:{fontsize};"
                            f"{other}")
-        self.setMinimumSize(Dimension.RBUTTON)
-        self.setMaximumSize(Dimension.BGBUTTON)
+        self.setFixedSize(Dimension.BGBUTTON)
     
       
 class BorderBtn(QPushButton):
@@ -85,8 +84,7 @@ class BorderBtn(QPushButton):
                            f"border-radius:{borderradius};"
                            f"padding:1;"
                            f"font-size:{fontsize}")
-        self.setMinimumSize(Dimension.BLACKBUTTON)
-        self.setMaximumSize(Dimension.BGBUTTON)
+        self.setFixedSize(Dimension.RBUTTON)
 
 
 class ToggleBtn(QPushButton):
