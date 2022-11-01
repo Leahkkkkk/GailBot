@@ -145,14 +145,12 @@ class Worker(QRunnable):
                 self.logger.info(filePath)
                 self.logger.info(outPath)
                 
-                
-                
                 if not self.killed:
                     assert gb.add_source(filename, filePath, outPath)
                     self.logger.info(filedata)
                     self.logger.info("Source Added")
                     self.signals.progress.emit(f"Source{filename} Added")
-                
+    
                 if not self.killed and not gb.is_settings_profile(profile):
                     # if the profile is not already created
                     gb.create_new_settings_profile(profile, get_settings_dict())
@@ -189,7 +187,7 @@ class Worker(QRunnable):
                 for file in self.files:
                     key, filedata = file 
                     self.signals.fileTranscribed.emit((key, "Transcribed"))
-            self.signals.finish.emit()
+                    self.signals.finish.emit()
         finally:
             self.setAutoDelete(True)
 

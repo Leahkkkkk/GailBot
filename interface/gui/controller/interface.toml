@@ -31,23 +31,7 @@ BTN = "14px"
 
 
 ["profile form".Plugins]
-constructTree = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
-utteranceDict = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
-speakerDict = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
-conversationDict = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
-convModelPlugin = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
-overlaps = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
-pauses = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
-gaps = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
-syllRate = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
-layerPrint01 = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
-plainPrint = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
-chat = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
-txt = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
-csvPlugin = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
-csvWordLevel = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
-XMLtoCSV = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
-xmlSchema = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
+HiLabSuite = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
 
 ["profile form"."Post Transcribe".General]
 "Gap Length" = "0s"

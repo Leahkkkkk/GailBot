@@ -12,8 +12,6 @@ from PyQt6.QtWidgets import (
     QLineEdit
 )
 
-
-
 class ToggleCombo(QWidget):
     """ generate a list of toggle view, 
         Arg: 

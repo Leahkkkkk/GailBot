@@ -19,7 +19,6 @@ class Signals(QObject):
 class ProfileModel:
     """ database for profile  """
     def __init__(self) -> None:
-        self.form = dummySettingForms
         self.data = dummySettingValues              #TODO: for testing delete 
         self.profilekeys = list(dummySettingValues) #TODO: for testing delete
         self.signals = Signals()

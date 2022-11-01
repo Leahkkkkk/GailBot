@@ -134,7 +134,7 @@ class OpenFile(TabPage):
                 "FullPath": fullPath}
 
     def getOpenFilesAndDirs(self, caption='', directory='', 
-                           filter='audio file (*.wav) directory (/)', initialFilter=''):
+                           filter=["audio file (*.wav)","directory (/)"], initialFilter=''):
         def updateText():
                 # update the contents of the line edit widget with the selected files
             selected = []
@@ -149,7 +149,7 @@ class OpenFile(TabPage):
         if directory:
             dialog.setDirectory(directory)
         if filter:
-            dialog.setNameFilter(filter)
+            dialog.setNameFilters(filter)
         if initialFilter:
             dialog.selectNameFilter(initialFilter)
         

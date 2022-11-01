@@ -216,7 +216,7 @@ class ProfileSettingPage(QWidget):
         pluginDialog.exec()
     
     def addPluginHandler(self, plugin:str):
-        self.plugins.add(plugin)
+        # self.plugins.add(plugin)
         self.PluginPage.addNewPlugin(plugin)
         
     def updateProfile(self):

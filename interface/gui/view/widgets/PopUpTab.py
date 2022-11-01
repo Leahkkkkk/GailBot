@@ -40,7 +40,7 @@ class Tab(QWidget):
             tabs (Dict[str, TabPage]): _description_
         """
         super().__init__(*args, **kwargs)
-        self.tabsState = []
+        self.tabsState = []   
         self.curPageIdx = 0
         self.header = header 
         self.tabs = tabs
@@ -48,12 +48,13 @@ class Tab(QWidget):
         self.setFixedSize(size)
         self._initWidget()
         self._initLayout()
-        initBackground(self,Color.BLUEWHITE)
+        initBackground(self, Color.BLUEWHITE)
     
         
     def _initWidget(self):
+        """ initialize the widget """
         self.MainTab = QTabWidget(self)
-        initBackground(self.MainTab,Color.BLUEWHITE)
+        initBackground(self.MainTab, Color.BLUEWHITE)
         self.MainTab.setTabPosition(QTabWidget.TabPosition.West)
         
         """ initialize the control button """
@@ -67,11 +68,12 @@ class Tab(QWidget):
         for label, tab in self.tabs.items():
             self.MainTab.addTab(tab, label)
             self.tabsState.append(False)
-            initBackground(tab,Color.BLUEWHITE)
+            initBackground(tab, Color.BLUEWHITE)
             """ setting the page logic """
             tab.signals.nextPage.connect(self._enableBtn)
             tab.signals.goToNextPage.connect(self._toNextPage)
-            tab.signals.close.connect(lambda: self.changePageBtn.finishBtn.show())
+            tab.signals.close.connect(
+                lambda: self.changePageBtn.finishBtn.show())
         
         for i in range (1 , self.MainTab.count()):
             self.MainTab.setTabEnabled(i, False)
@@ -90,11 +92,7 @@ class Tab(QWidget):
             self.changePageBtn.deactivatePrevButton()
         else:
             self.changePageBtn.activatePrevButton()
-            
-        if index == self.MainTab.count() - 1:
-            self.changePageBtn.finishBtn.hide()
-            
-        
+         
     def _initLayout(self):
         self.layout = QHBoxLayout(self)
         self.setLayout(self.layout)
@@ -103,6 +101,7 @@ class Tab(QWidget):
     
     
     def _enableBtn(self):
+        "enabled"
         self.tabsState[self.MainTab.currentIndex()] = True
         self._setButtonState(self.MainTab.currentIndex())
         
@@ -126,9 +125,9 @@ class Tab(QWidget):
 class changePageBtn(QWidget):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.horizontaLayout = QHBoxLayout(self)
-        self.verticalLayout = QVBoxLayout(self)
-        self.subContainer = QWidget(self)
+        self.horizontaLayout = QHBoxLayout()
+        self.verticalLayout = QVBoxLayout()
+        self.subContainer = QWidget()
         self.subContainer.setLayout(self.horizontaLayout)
         self.setLayout(self.verticalLayout)
         self.nextBtn = Button.BorderBtn("▶",Color.GREYDARK)
@@ -147,6 +146,7 @@ class changePageBtn(QWidget):
         self.finishBtn.hide()
     
     def activateNextButton(self):
+        print("activated")
         self.nextBtn.setStyleSheet(buttonStyle.ButtonActive)
         self.nextBtn.setEnabled(True)
 

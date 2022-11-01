@@ -21,7 +21,7 @@ KEYERROR = "File key not found"
 
 from typing import Dict, List, Set, Tuple, TypedDict
 import logging
-
+from view.widgets import MsgBox
 from view.components.ChooseFileTab import ChooseFileTab
 from view.pages.FileUploadTabPages import ChooseSet
 from view.style.styleValues import Color
@@ -291,18 +291,24 @@ class FileTable(QTableWidget):
         self.viewSignal.goSetting.emit()
    
     def changeFileToTranscribed(self, key:str):
-        """ change one file's status to be transcribed 
+        """ change one file's status to be transcribed, and delete the file
+            from the file table
 
         Args:
             key (str): a file key that identifies the file
         """
-        self.dbSignal.changeStatus((key, "Transcribed")) 
-        if key in self.filePins:
-            row = self.indexFromItem(self.filePins[key]).row()
-            newitem = QTableWidgetItem("Transcribed")
-            self.setItem(row, 4, newitem)
-        else:
-            self.viewSignal.error.emit(KEYERROR)
+        try:
+          self.deleteFile(key)
+        except:
+          MsgBox.WarnBox("Failed to remove file from the table")
+        ## change to delete the file from the table
+        # self.dbSignal.changeStatus((key, "Transcribed")) 
+        # if key in self.filePins:
+        #     row = self.indexFromItem(self.filePins[key]).row()
+        #     newitem = QTableWidgetItem("Transcribed")
+        #     self.setItem(row, 4, newitem)
+        # else:
+        #     self.viewSignal.error.emit(KEYERROR)
     
     def changeProfile(self, key:str):
         """ open a pop up for user to change file setting 

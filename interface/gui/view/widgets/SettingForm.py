@@ -22,8 +22,7 @@ class SettingForm(QWidget):
         self.setObjectName("form")
         self.setStyleSheet("#form {border:0.5px solid grey;}")
 
-    
-    
+
     def _initWidget(self):
         self.header = Label.Label(
             self.headerText, FontSize.HEADER2,FontFamily.MAIN)

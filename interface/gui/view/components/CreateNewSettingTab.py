@@ -71,7 +71,6 @@ class CreateNewSetting(QDialog):
         )
         
         self.ChooseEngine.mainCombo.currentTextChanged.connect(self._changeEngineSetting)
-        self.ChooseEngine.signals.nextPage.emit()
         mainTab.changePageBtn.finishBtn.clicked.connect(self.postSetting)
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)

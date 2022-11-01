@@ -72,6 +72,7 @@ class ToggleView(QWidget):
         self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
         self.scroll.setWidgetResizable(True)
         self.scroll.setWidget(self.view)
+        self.scroll.ensureWidgetVisible(self.view, 10, 10)
         self.setObjectName("viewWrapper")
         self.scroll.setObjectName("view")
         self.scroll.setStyleSheet(f"#viewWrapper, #view {{background-color:{self.viewcolor}}}")

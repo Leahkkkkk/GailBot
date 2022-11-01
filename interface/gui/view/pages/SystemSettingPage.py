@@ -4,7 +4,6 @@ import tomli
 from view.widgets import SideBar, SettingForm,  Label, Button
 from view.style.Background import initBackground
 from view.style.styleValues import FontFamily, FontSize
-from model.dummySettingData import dummySystemSettingForm
 from view.Text.LinkText import Links
 from PyQt6.QtWidgets import QWidget, QHBoxLayout, QStackedWidget, QSpacerItem
 from PyQt6.QtCore import QSize, Qt
@@ -14,9 +13,9 @@ class SystemSettingPage(QWidget):
     """ post-transcription settings page """
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.data = dummySystemSettingForm
         initBackground(self)
         self._initConfig()
+        self.data = self.config["system setting form"]
         self._initWidget()
         self._initLayout()
         self._initStyle()

@@ -31,7 +31,7 @@ class Controller:
         self.ViewObj = MainWindow.MainWindow(
             self, 
             config["profile form"],
-            list(config["profile form"]["Plugins"]))
+            self.ModelObj.ProfileData.profilekeys)
         self.signal = Signal()
         self.ThreadPool = QThreadPool()
         self.logger = Logger.makeLogger("Backend")
