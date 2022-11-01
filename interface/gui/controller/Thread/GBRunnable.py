@@ -152,7 +152,6 @@ class Worker(QRunnable):
                     self.signals.progress.emit(f"Source{filename} Added")
     
                 if not self.killed and not gb.is_settings_profile(profile):
-                    # if the profile is not already created
                     gb.create_new_settings_profile(profile, get_settings_dict())
                     profiles.add(profile)
                     assert gb.is_settings_profile(profile)

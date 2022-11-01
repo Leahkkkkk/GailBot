@@ -152,3 +152,10 @@ class MainStack(QStackedWidget):
         self.ConfirmTranscribePage.fileTable.updateFileContent(data)
         self.TranscribeProgressPage.fileTable.updateFileContent(data)
         self.TranscribeSuccessPage.fileTable.updateFileContent(data)
+    
+    def changeToTranscribed(self, key: str):
+        self.FileUploadPage.fileTable.changeFileToTranscribed(key)
+        self.ConfirmTranscribePage.fileTable.changeFileToTranscribed(key)
+        self.TranscribeProgressPage.fileTable.changeFileToTranscribed(key)
+        self.TranscribeSuccessPage.fileTable.changeFileToTranscribed(key)
+        

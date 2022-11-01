@@ -110,7 +110,12 @@ class MainWindow(QMainWindow):
         """ update file information on file upload file """
         self.MainStack.updateFile(data)
     
-    
+    def changeFiletoTranscribe(self, key:str):
+        """ change the file status to be transcribed 
+            currently delete the file from the table
+        """
+        self.MainStack.changeToTranscribed(key)
+        
     """ private function """
     def _connectSignal(self):
         """ connect to signal """

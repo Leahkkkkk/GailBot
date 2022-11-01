@@ -58,7 +58,7 @@ class Controller:
         self.signal.killed.connect(
             self.ViewObj.showFileUploadPage)
         self.ViewObj.fileTableSignals.cancel.connect(
-            self.cancelGailBot)
+            self._cancelGailBot)
         self.signal.progress.connect(
             self._sendTranscribeProgressMsg
         )
@@ -77,6 +77,7 @@ class Controller:
         dbSignal.fileAdded.connect(view.addFileToTables)
         dbSignal.profileRequest.connect(profile.get)
         dbSignal.fileUpdated.connect(view.updateFile)
+        dbSignal.transcribed.connect(view.changeFiletoTranscribe)
         
     def _connectViewToFileDB(self):
         viewSignal = self.ViewObj.fileTableSignals
@@ -118,6 +119,7 @@ class Controller:
         
     ###################   gailbot running hendler #############################   
     def _handleTanscribeSignal(self):
+        """ handle signal from View that requests to transcrib the file"""
         self.ViewObj.fileTableSignals.transcribe.connect(self._transcribeFiles)
     
     def _transcribeFiles(self, files: Set[str]):
@@ -152,11 +154,12 @@ class Controller:
         self.ThreadPool.start(self.worker)
 
 
-    def cancelGailBot(self):
-        """  TODO: check this functions """
+    def _cancelGailBot(self):
+        """  Cancel the gailbot 
+        
+        TODO: check this functions """
         self.logger.info("")
         self.worker.kill()
-        # self._showUploadFile()
         
         
     #####################   TODO: change those function ################

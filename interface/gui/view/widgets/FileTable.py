@@ -19,6 +19,7 @@ Modified By:  Siara Small  & Vivian Li
 """
 KEYERROR = "File key not found"
 
+from doctest import master
 from typing import Dict, List, Set, Tuple, TypedDict
 import logging
 from view.widgets import MsgBox
@@ -147,12 +148,17 @@ class FileTable(QTableWidget):
         """ takes in a list of width and resize the width of the each 
             column to the width
         """
-        widthSum = self.width()
-        if len(widths) != self.columnCount():
-            self.logger.error("cannot resize column")
-        else:
-            for i in range(len(widths)):
-                self.setColumnWidth(i, widths[i] * widthSum)
+        try:
+            widthSum = self.width()
+            if len(widths) != self.columnCount():
+                self.logger.error("cannot resize column")
+            else:
+                for i in range(len(widths)):
+                    self.setColumnWidth(i, widths[i] * widthSum)
+        except:
+            msgBox = MsgBox.WarnBox("Failed to resize the table")
+          
+        
       
     def _setFileHeader(self) -> None:
         """ initialize file headers
@@ -160,17 +166,25 @@ class FileTable(QTableWidget):
         Args: 
             headers: (List[str]) a list of header names
         """
-        for i in range(len(self.headers)):
-            headerItem = QTableWidgetItem(self.headers[i])
-            self.setHorizontalHeaderItem(i, headerItem)
-                
-        self.horizontalHeader().sectionClicked.connect(self._headerClickedHandler)
-        self.verticalHeader().hide()
+        try:
+            for i in range(len(self.headers)):
+                headerItem = QTableWidgetItem(self.headers[i])
+                self.setHorizontalHeaderItem(i, headerItem)
+                    
+            self.horizontalHeader().sectionClicked.connect(
+                self._headerClickedHandler)
+            self.verticalHeader().hide()
+        except:
+            msgBox = MsgBox.WarnBox("Failed to set file header")
+    
     
     def _headerClickedHandler(self, idx):
         """ handle header clicked signal  """
-        if idx == 0:
-            self._toggleAllSelect()
+        try:
+            if idx == 0:
+                self._toggleAllSelect()
+        except:
+            msgBox = MsgBox.WarnBox("Failed to select all item")
    
     def _toggleAllSelect(self, clear=False):
         """ select or unselect all items in the table """
@@ -301,14 +315,7 @@ class FileTable(QTableWidget):
           self.deleteFile(key)
         except:
           MsgBox.WarnBox("Failed to remove file from the table")
-        ## change to delete the file from the table
-        # self.dbSignal.changeStatus((key, "Transcribed")) 
-        # if key in self.filePins:
-        #     row = self.indexFromItem(self.filePins[key]).row()
-        #     newitem = QTableWidgetItem("Transcribed")
-        #     self.setItem(row, 4, newitem)
-        # else:
-        #     self.viewSignal.error.emit(KEYERROR)
+       
     
     def changeProfile(self, key:str):
         """ open a pop up for user to change file setting 
