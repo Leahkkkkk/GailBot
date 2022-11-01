@@ -46,8 +46,6 @@ class Controller:
         """ Public function that run the GUI app """
         self.ViewObj.show()
     
-
-
     
     ################ connecting file database to file table ################ 
     def _connectFileDBToView(self):

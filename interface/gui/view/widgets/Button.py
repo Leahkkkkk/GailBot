@@ -10,7 +10,8 @@ Modified By:  Siara Small  & Vivian Li
 '''
 import os
 import typing
-from view.style.styleValues import FontSize, Dimension, Color
+# from view.style.styleValues import FontSize, Dimension, Color
+from util.Config import FontSize, Dimension, Color
 from view.style.Background import initBackground
 from util import Path
 
@@ -53,7 +54,7 @@ class ColoredBtn(QPushButton):
                            f"color:#fff;"
                            f"font-size:{fontsize};"
                            f"{other}")
-        self.setFixedSize(Dimension.BGBUTTON)
+        self.setFixedSize(Dimension.BTNWIDTH, Dimension.BTNHEIGHT)
     
       
 class BorderBtn(QPushButton):
@@ -84,7 +85,7 @@ class BorderBtn(QPushButton):
                            f"border-radius:{borderradius};"
                            f"padding:1;"
                            f"font-size:{fontsize}")
-        self.setFixedSize(Dimension.RBUTTON)
+        self.setFixedSize(Dimension.BTNWIDTH, Dimension.BTNHEIGHT)
 
 
 class ToggleBtn(QPushButton):

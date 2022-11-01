@@ -1,10 +1,12 @@
-from ast import Delete
-from typing import TypedDict, Tuple
+from typing import Tuple
 
-from model.dummySettingData import dummySettingForms, dummySettingValues
+from util.Logger import makeLogger
+from model.dummySettingData import dummySettingValues
+from util.Error import ErrorMsg, DBExecption
+
 from PyQt6.QtCore import QObject, pyqtSignal 
 
-
+logger = makeLogger("Database")
 KEYERROR = "profile not found"
 
 class Signals(QObject):

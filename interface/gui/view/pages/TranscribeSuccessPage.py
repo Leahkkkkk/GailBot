@@ -17,6 +17,7 @@ from view.widgets import (
     FileTable
 )
 
+from util.Config import Color, FontSize, TranscribeSuccessText
 from view.Signals import FileSignals
 from view.style.styleValues import Color, FontSize, Dimension, FontFamily
 from view.style.Background import initImgBackground
@@ -49,7 +50,6 @@ class TranscribeSuccessPage(QWidget):
     def __init__(self, signal:FileSignals, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.signal = signal
-        self._initConfig()
         self._initWidget()
         self._initStyle()
         self._initLayout()
@@ -58,20 +58,20 @@ class TranscribeSuccessPage(QWidget):
         """ intialize widgets """
         self.label = Label.Label(
             TranscribeSuccessText.mainLabelText,
-            self.config["fontSizes"]["HEADER1"],
+            FontSize.HEADER1,
             FontFamily.MAIN)
         self.label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         self.transcribedFiles = Label.Label(
             TranscribeSuccessText.transcribedFilesText,
-            self.config["fontSizes"]["HEADER3"],
+            FontSize.HEADER3,
             FontFamily.OTHER)
         self.transcribedFiles.setContentsMargins(30,0,0,0)
         self.moreBtn = Button.ColoredBtn(
             TranscribeSuccessText.moreBtnText, 
-            self.config["colors"]["GREEN"])
+            Color.GREEN)
         self.returnBtn = Button.ColoredBtn(
             TranscribeSuccessText.returnBtnText, 
-            self.config["colors"]["BLUEMEDIUM"])
+            Color.BLUEMEDIUM)
         self._initHorizontalLayout()
         self.fileTable = FileTable.FileTable(
             SuccessHeader, 
@@ -104,7 +104,3 @@ class TranscribeSuccessPage(QWidget):
         self.moreBtn.setMinimumSize(QtCore.QSize(150,30))
         self.returnBtn.setMinimumSize(QtCore.QSize(150,30))
         initImgBackground(self, "backgroundConfirmPage.png")
-
-    def _initConfig(self):
-        with open("controller/interface.toml", mode="rb") as fp:
-            self.config = tomli.load(fp)

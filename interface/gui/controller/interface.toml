@@ -16,6 +16,21 @@ BLACK = "#000000"
 WHITE = "#FFFFFF"
 GREYEXTRALIGHT = "#F0F6F9"
 
+[dimension]
+WINMAXWIDTH = 1100
+WINMAXHEIGHT = 900
+BTNWIDTH = 150
+BTNHEIGHT = 40
+SBTNWIDTH = 100
+SBTNHEIGHT  = 30 
+CONSOLEWIDTH = 1000
+CONSOLEHEIGHT = 300
+STATUSWIDTH = 900
+STATUSHEIGHT = 30 
+INPUTWIDTH = 200
+INPUTHEIGHT = 30
+ICONBTN = 50
+
 [fontSizes]
 BODY = "13px"
 TEXT_FIELD = "12px"
@@ -29,60 +44,91 @@ DESCRIPTION = "12px"
 INSTRUCTION_CAPTION = "14px"
 BTN = "14px" 
 
+[text.links]
+HILAB = "https://sites.tufts.edu/hilab"
+
+[text."TranscribeSuccessText"]
+mainLabelText = "Transcription Successful"
+transcribedFilesText = "Transcribed files and locations:"
+moreBtnText = "Process more files"
+returnBtnText = "Return to main menu"
+
+[text."TranscribeProgressText"]
+mainLabelText = "Transcription in Progress"
+loadingText = "Transcribing files..."
+inProgressText = "Files in progress:"
+cancelText = "Cancel"
+
+[text."WelcomePageText"]
+audioInstructionText = "1. Select audio and video files \n or record live in Gailbot"
+settingsInstructionText = "2. Apply settings"
+transcribeInstructionText = "3. Transcribe"
+fileInstructionText = "4. Get a transcribed file"
+editInstructionText = "5. Edit settings \n or retranscribe"
+welcomeText = "Welcome to GailBot"
+captionText = "GailBot is the world's first application that lets you convert audio and\n video files into customizd transcripts."
+startBtnText = "Get Started"
+instructionText = "How GailBot Works"
+resourcesText = "Resources"
+tutorialText = "GailBot Beginner Tutorial"
+guideText = "GailBot Settings Guide"
+gbLinkText = "GailBot.com"
+moreInfoText = "For more information visit"
+
 
 ["profile form".Plugins]
 HiLabSuite = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
 
-["profile form"."Post Transcribe".General]
+["profile form"."PostTranscribe".General]
 "Gap Length" = "0s"
 "Turn End Threshold" = "0s"
 "Large Pause - Lower Bound" = "0s"
 
-["profile form"."Post Transcribe"."Laghter Settings"]
+["profile form"."PostTranscribe"."Laghter Settings"]
 "Laughter Detection Module bool" = "ON"
 "Laughter Probability - Lower Bound" = "0s"
 "Laughter Length - Lower Bound" = "0s"
 
-["profile form"."Post Transcribe"."MicroPause Bound"]
+["profile form"."PostTranscribe"."MicroPause Bound"]
 "Upper Bound" = "0s"
 "Lower Bound" = "0s"
 
-["profile form"."Post Transcribe"."Transcription Model"]
+["profile form"."PostTranscribe"."Transcription Model"]
 "Beat Transcription Mode bool" = "ON"
 "FTO (Floor Transfer offset)Transcription Mode bool" = "ON"
 "Syllable Rate mode bool" = "ON"
 
-["profile form"."Required Setting"."OutPut Format"."Corpus Settings"]
+["profile form"."RequiredSetting"."OutPut Format"."Corpus Settings"]
 "Corpus aame" = "enter corpus name"
 "Corpus location" = "enter corpus location"
 "Corpus room layout" = "enter corous room layout"
 "Corpus situation" = "enter situation"
 
-["profile form"."Required Setting".Engine.IBM."1.language model setting"]
+["profile form"."RequiredSetting".Engine.IBM."1.language model setting"]
 "1. language model" = [ "IBM language", "English", "Spanish",]
 "2. costum language model" = [ "HRI lab", "None", "Air Force Study",]
 
-["profile form"."Required Setting".Engine.IBM."2.Acoustic Model Setting"]
+["profile form"."RequiredSetting".Engine.IBM."2.Acoustic Model Setting"]
 "1. acoustic model setting" = [ "acoustic1", "acoustic2", "acoustic3",]
 "2. acoustic model setting(optional)" = [ "1", "2", "3",]
 
-["profile form"."Required Setting".Engine.IBM."3.advanced setting"]
+["profile form"."RequiredSetting".Engine.IBM."3.advanced setting"]
 "1. Advanced Setting Option 1" = [ "advanced 1", "advanced 2", "advanced 3",]
 "2. plugin" = [ "plugin 1", "plugin 2",]
 
-["profile form"."Required Setting".Engine.IBM."4.IBM specialised setting"]
+["profile form"."RequiredSetting".Engine.IBM."4.IBM specialised setting"]
 "IBM dummy setting" = [ "dummy setting1", "dummy setting2", "dummy setting3",]
 
-["profile form"."Required Setting".Engine.CMU."1.language model setting"]
+["profile form"."RequiredSetting".Engine.CMU."1.language model setting"]
 "1. language model" = [ "CMU language", "English", "Spanish",]
 "2. costum language model" = [ "CMU costum", "None", "Air Force Study",]
 
-["profile form"."Required Setting".Engine.CMU."2.Acoustic Model Setting"]
+["profile form"."RequiredSetting".Engine.CMU."2.Acoustic Model Setting"]
 "1. acoustic model setting" = [ "acoustic1", "acoustic2", "acoustic3",]
 "2. acoustic model setting(optional)" = [ "1", "2", "3",]
 "3. plugin" = [ "plugin 1", "plugin 2",]
 
-["profile form"."Required Setting".Engine.CMU."3.CMU specialised setting"]
+["profile form"."RequiredSetting".Engine.CMU."3.CMU specialised setting"]
 "CMU dummy setting" = [ "dummy setting1", "dummy setting2", "dummy setting3",]
 
 ["system setting form"."General Setting"]

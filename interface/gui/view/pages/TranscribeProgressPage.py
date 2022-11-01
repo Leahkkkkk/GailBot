@@ -1,6 +1,7 @@
 import os
 import tomli
 
+from util.Config import Color, FontSize, TranscribeProgressText
 from view.Signals import FileSignals
 from view.widgets import MsgBox
 from view.widgets import (
@@ -11,8 +12,6 @@ from util import Path
 from view.widgets import Button
 from view.style.styleValues import Color, FontSize, Dimension, FontFamily
 from view.style.Background import initImgBackground
-from view.Text.TranscribeProgressPageText import TranscribeProgressText
-
 
 from PyQt6.QtWidgets import QLabel, QVBoxLayout, QWidget
 from PyQt6.QtGui import QMovie
@@ -35,7 +34,6 @@ class TranscribeProgressPage(QWidget):
         **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.signals = signal
-        self._initConfig()
         self._initWidget()
         self._initstyle()
         self._initLayout()
@@ -52,7 +50,7 @@ class TranscribeProgressPage(QWidget):
     def _initWidget(self):
         """ initialize widgets """
         self.label = Label.Label(TranscribeProgressText.mainLabelText,
-                                 self.config["fontSizes"]["HEADER1"], 
+                                 FontSize.HEADER1, 
                                  FontFamily.MAIN)
         self.label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         self.loadIcon = QLabel()
@@ -61,16 +59,16 @@ class TranscribeProgressPage(QWidget):
         self.loadStart()
        
         self.loadingText = Label.Label(TranscribeProgressText.loadingText,
-                                      self.config["fontSizes"]["SMALL"],
+                                      FontSize.SMALL,
                                       FontFamily.OTHER)
         self.loadingText.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         self.InProgress = Label.Label(TranscribeProgressText.inProgressText,
-                                        self.config["fontSizes"]["HEADER3"],
+                                        FontSize.HEADER3,
                                         FontFamily.MAIN)
         self.cancelBtn = Button.ColoredBtn(
             TranscribeProgressText.cancelText, 
-            self.config["colors"]["ORANGE"], 
-            self.config["fontSizes"]["BTN"])
+            Color.ORANGE, 
+            FontSize.BTN)
         self.fileTable = FileTable.FileTable(ProgressHeader, self.signals)
         self.fileTable.resizeCol(ProgressDimension)
         
@@ -115,9 +113,5 @@ class TranscribeProgressPage(QWidget):
     
     def setLoadingText(self, text):
         self.loadingText = Label.Label(text,
-                                      self.config["fontSizes"]["SMALL"],
+                                      FontSize.SMALL,
                                       FontFamily.OTHER)
-
-    def _initConfig(self):
-        with open("controller/interface.toml", mode="rb") as fp:
-            self.config = tomli.load(fp)

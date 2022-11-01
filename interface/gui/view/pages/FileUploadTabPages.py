@@ -17,11 +17,11 @@ import pathlib
 from typing import List, TypedDict
 import os
 
+from util.Config import Color, FontSize
 from view.widgets.Button import ColoredBtn, BorderBtn
 from view.widgets.Label import Label
 from view.widgets.TabPage import TabPage
 from view.style.Background import initBackground
-from view.style.styleValues import Color, FontSize
 from view.style.widgetStyleSheet import buttonStyle
 
 from PyQt6.QtWidgets import (
@@ -56,17 +56,16 @@ class Profile(TypedDict):
 class OpenFile(TabPage):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self._initConfig()
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
         self.dropLabel = Label(
             "Drop File Here to Upload", 
-            self.config["fontSizes"]["BODY"])
+            FontSize.BODY)
         self.fileDisplayList = QListWidget()
         self.filePaths = []
         self.uploadFileBtn = ColoredBtn(
             "Choose From Local", 
-            self.config["colors"]["BLUEMEDIUM"])
+            Color.BLUEMEDIUM)
         self.uploadFileBtn.clicked.connect(lambda: self.getOpenFilesAndDirs())
         self.setAcceptDrops(True)
         self.layout.addWidget(self.dropLabel, alignment=center)
@@ -167,10 +166,6 @@ class OpenFile(TabPage):
             self.filePaths = self.filePaths + selectedFiles
             self.fileDisplayList.addItems(self.filePaths)
 
-    def _initConfig(self):
-        with open("controller/interface.toml", mode="rb") as fp:
-            self.config = tomli.load(fp)
-
     
 class ChooseSet(TabPage):
     """ for user to choose setting profile """
@@ -179,13 +174,12 @@ class ChooseSet(TabPage):
         print(settings)
         self.profile = settings[0]
         self.settings = settings
-        self._initConfig()
         self._initWidget()
         self._initLayout()
         self.setAutoFillBackground(True)
         
     def _initWidget(self):
-        self.label = Label("select setting profile", self.config["fontSizes"]["HEADER3"] )
+        self.label = Label("select setting profile", FontSize.HEADER3)
         self.selectSettings = QComboBox(self)
         self.selectSettings.addItem("select settings")
         self.selectSettings.addItems(self.settings)
@@ -218,21 +212,17 @@ class ChooseSet(TabPage):
         else:
             logging.warn("the profile is not chosen")
 
-    def _initConfig(self):
-        with open("controller/interface.toml", mode="rb") as fp:
-            self.config = tomli.load(fp)
         
 class ChooseOutPut(TabPage):
     """ for user to choose output directory  """
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.outPath = None
-        self._initConfig()
         self._iniWidget()
         self._initLayout()
         
     def _iniWidget(self):
-        self.chooseDirBtn = ColoredBtn("...", self.config["colors"]["BLUEMEDIUM"], self.config["fontSizes"]["HEADER2"])
+        self.chooseDirBtn = ColoredBtn("...", Color.BLUEMEDIUM, FontSize.HEADER2)
         self.chooseDirBtn.setFixedWidth(70)
         self.dirPathText = QLineEdit(self)
         self.dirPathText.setPlaceholderText("Choose Output Directory")
@@ -263,9 +253,6 @@ class ChooseOutPut(TabPage):
             logging.error("No output direcory was chosen")
         return {"Output": self.outPath}
 
-    def _initConfig(self):
-        with open("controller/interface.toml", mode="rb") as fp:
-            self.config = tomli.load(fp)
 
 
 

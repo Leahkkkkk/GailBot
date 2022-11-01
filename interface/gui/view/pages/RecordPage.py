@@ -1,6 +1,7 @@
 import tomli
 
-from view.style.styleValues import FontFamily, FontSize, Color, Dimension
+from util.Config import Color, FontSize
+from view.style.styleValues import FontFamily, Dimension
 from view.style.Background import initBackground
 from view.widgets import InputBox, Button, Label, ToggleView
 from view.pages import RecordInProgress
@@ -13,21 +14,20 @@ class RecordPage(QWidget):
     """ post-transcription settings page """
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self._initConfig()
         self._initWidget()
         self._initLayout()
     
     def _initWidget(self):
         self.header = Label.Label("Record Audio File", 
-                                  self.config["fontSizes"]["HEADER2"], 
+                                  FontSize.HEADER2, 
                                   FontFamily.MAIN)
         self.recordForm = RecordForm(parent=self)
         self.toggleSetting = ToggleView.ToggleView("Recording Settings", 
                                                    self.recordForm,
                                                    header=True)
         self.testBtn = Button.BorderBtn("Test MicroPhone", "#000")
-        self.startRecordBtn = Button.ColoredBtn("Start Recording", self.config["colors"]["GREEN"])
-        self.cancelBtn = Button.ColoredBtn("Cancel", self.config["colors"]["ORANGE"])
+        self.startRecordBtn = Button.ColoredBtn("Start Recording", Color.GREEN)
+        self.cancelBtn = Button.ColoredBtn("Cancel", Color.ORANGE)
         self.startRecordBtn.clicked.connect(self._startRecord)
     
     def _initLayout(self):
@@ -57,26 +57,20 @@ class RecordPage(QWidget):
     def _startRecord(self):
         self.recordDialog = RecordInProgress.RecordDialog()
         self.recordDialog.exec()
-
-    def _initConfig(self):
-        with open("controller/interface.toml", mode="rb") as fp:
-            self.config = tomli.load(fp)
-        
         
 
 class RecordForm(QWidget):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self._initConfig()
         self._initWidget()
         self._initLayout()
     
     def _initWidget(self):
-        self.basicLabel = Label.Label("Basic", self.config["fontSizes"]["BODY"], FontFamily.MAIN)
+        self.basicLabel = Label.Label("Basic", FontSize.BODY, FontFamily.MAIN)
         self.basicInput = InputBox.InputBox("Filename")
         self.audioCombo = InputBox.InputCombo(["MP3", "WAV"], "Audio Format")
         self.advancedLabel = Label.Label("Advanced",
-                                         self.config["fontSizes"]["BODY"], 
+                                         FontSize.BODY, 
                                          FontFamily.MAIN)
         self.recordingRate = InputBox.InputBox("Recording Rate (Hertz)")
         self.maxDuration = InputBox.InputBox("Max Recording Duration")
@@ -91,9 +85,5 @@ class RecordForm(QWidget):
         self.layout.addWidget(self.recordingRate)
         self.layout.addWidget(self.maxDuration)
 
-    def _initConfig(self):
-        with open("controller/interface.toml", mode="rb") as fp:
-            self.config = tomli.load(fp)
-        
         
         

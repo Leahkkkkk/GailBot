@@ -1,6 +1,6 @@
 import tomli
 
-
+from util.Config import Color, FontSize, SystemSettingForm
 from view.widgets import SideBar, SettingForm,  Label, Button
 from view.style.Background import initBackground
 from view.style.styleValues import FontFamily, FontSize
@@ -14,8 +14,7 @@ class SystemSettingPage(QWidget):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         initBackground(self)
-        self._initConfig()
-        self.data = self.config["system setting form"]
+        self.data = SystemSettingForm
         self._initWidget()
         self._initLayout()
         self._initStyle()
@@ -31,10 +30,10 @@ class SystemSettingPage(QWidget):
         self.GuideLink = Label.Label(Links.guideLink, FontSize.LINK, link=True)
         self.cancelBtn = Button.BorderBtn(
             "Cancel", 
-            self.config["colors"]["ORANGE"])
+            Color.ORANGE)
         self.saveBtn = Button.ColoredBtn(
             "Save and Exit", 
-            self.config["colors"]["GREEN"])
+            Color.GREEN)
         
         self.sidebar.addStretch()
         self.sidebar.addWidget(self.saveBtn)
@@ -66,8 +65,4 @@ class SystemSettingPage(QWidget):
     def getValue(self) -> dict:
         return self.SysSet.getValue()
 
-        
-    def _initConfig(self):
-        with open("controller/interface.toml", mode="rb") as fp:
-            self.config = tomli.load(fp)
     

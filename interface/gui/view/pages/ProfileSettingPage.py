@@ -22,10 +22,9 @@ from ctypes import alignment
 import tomli 
 from typing import Dict, List, Set
 
-
-
+from util.Config import Color, FontSize, ProfileSettingForm
 from util.Logger import makeLogger
-from view.style.styleValues import Color, FontSize, Dimension
+from view.style.styleValues import Dimension
 from view.Signals import ProfileSignals
 from view.style.Background import initBackground
 from view.Text.LinkText import Links
@@ -33,7 +32,6 @@ from view.pages import RequiredSetPage, PostSetPage, PluginPage
 from view.widgets import Button, Label, ComboBox, SideBar, Image
 from view.components.CreateNewSettingTab import CreateNewSetting
 from view.components.PluginDialog import PluginDialog
-from model.dummySettingData import dummySettingForms
 
 from PyQt6.QtWidgets import (
     QWidget, 
@@ -63,7 +61,6 @@ class ProfileSettingPage(QWidget):
         self.profilekeys = profilekeys
         self.plugins = plugins
         self.logger = makeLogger("Frontend")
-        self._initConfig()
         self._initWidget()
         self._initLayout()
         self._connectSignal()
@@ -78,26 +75,26 @@ class ProfileSettingPage(QWidget):
         
         self.cancelBtn = Button.BorderBtn(
             "Cancel", 
-            self.config["colors"]["ORANGE"])
+            Color.ORANGE)
         self.saveBtn = Button.ColoredBtn(
             "Save and Exit", 
-            self.config["colors"]["GREEN"])
+            Color.GREEN)
         self.newProfileBtn = Button.ColoredBtn(
             "Create New Profile", 
-            self.config["colors"]["BLUEMEDIUM"])
+            Color.BLUEMEDIUM)
         self.requiredSetBtn = Button.BorderBtn(
             "Required Settings", 
-            self.config["colors"]["GREYDARK"], 
-            self.config["fontSizes"]["BTN"], 0)
+            Color.GREYDARK, 
+            FontSize.BTN, 0)
         self.requiredSetBtn.setFixedWidth(190)
         self.postSetBtn = Button.BorderBtn(
             "Post-Transcription Settings", 
-            self.config["colors"]["GREYDARK"], 
-            self.config["fontSizes"]["BTN"], 0)
+            Color.GREYDARK, 
+            FontSize.BTN, 0)
         self.postSetBtn.setFixedWidth(190)
         self.GuideLink = Label.Label(
             Links.guideLink, 
-            self.config["fontSizes"]["LINK"], 
+            FontSize.LINK, 
             link=True)
         self.newPluginBtn = Button.ColoredBtn(
             "Add New Plugin",
@@ -110,9 +107,9 @@ class ProfileSettingPage(QWidget):
         self.pluginBtn.setFixedWidth(190)
         self.settingStack = QStackedWidget(self)
         self.RequiredSetPage = RequiredSetPage.RequiredSetPage(
-            self.settingForm["Required Setting"])
+            ProfileSettingForm.RequiredSetting)
         self.PostSetPage = PostSetPage.PostSetPage(
-            self.settingForm["Post Transcribe"])   
+            ProfileSettingForm.PostTranscribe)   
         self.PluginPage = PluginPage.PluginPage(self.plugins)
         
         self.selectSettings.setCurrentIndex(0)     
@@ -184,10 +181,10 @@ class ProfileSettingPage(QWidget):
     def createNewSetting(self):
         """ open a pop up window for user to create new setting profile """
         createNewSettingTab = CreateNewSetting(
-                        list(self.settingForm["Required Setting"]["Engine"]),
-                             self.settingForm["Required Setting"]["Engine"],
-                             self.settingForm["Required Setting"]["OutPut Format"],
-                             self.settingForm["Post Transcribe"],
+                        list(ProfileSettingForm.RequiredSetting["Engine"]),
+                             ProfileSettingForm.RequiredSetting["Engine"],
+                             ProfileSettingForm.RequiredSetting["OutPut Format"],
+                             ProfileSettingForm.PostTranscribe,
                              self.plugins)
         createNewSettingTab.signals.newSetting.connect(self._postNewProfile)
         createNewSettingTab.exec()
@@ -197,8 +194,8 @@ class ProfileSettingPage(QWidget):
         """ load the profile data to be presented onto the table """
         key, data = profile 
         self.selectSettings.setCurrentText(key)
-        self.PostSetPage.setValue(data["Post Transcribe"])
-        self.RequiredSetPage.setValue(data["Required Setting"])
+        self.PostSetPage.setValue(data["PostTranscribe"])
+        self.RequiredSetPage.setValue(data["RequiredSetting"])
         self.PluginPage.setValue(data["Plugins"])
     
     def addProfile (self, profileName:str):
@@ -222,13 +219,9 @@ class ProfileSettingPage(QWidget):
     def updateProfile(self):
         """ update the new profile setting """
         newSetting = dict()
-        newSetting["Required Setting"] = self.RequiredSetPage.getValue()
-        newSetting["Post Transcribe"]  = self.PostSetPage.getValue()
+        newSetting["RequiredSetting"] = self.RequiredSetPage.getValue()
+        newSetting["PostTranscribe"]  = self.PostSetPage.getValue()
         newSetting["Plugins"] = self.PluginPage.getValue()
         self.logger.info(newSetting)
         profileKey = self.selectSettings.currentText()
         self.signals.edit.emit((profileKey, newSetting))
-    
-    def _initConfig(self):
-        with open("controller/interface.toml", mode="rb") as fp:
-            self.config = tomli.load(fp)

@@ -2,6 +2,7 @@ import tomli
 from asyncio.log import logger
 from typing import Dict, List
 
+from util.Config import Color, FontSize
 from util.Logger import makeLogger
 from view.widgets.Button import ColoredBtn
 from view.widgets.Label import Label
@@ -14,9 +15,7 @@ from view.widgets.TextForm import TextForm
 from view.pages.PluginPage import PluginPage
 from view.pages.PostSetPage import PostSetPage
 from view.style.Background import initBackground
-from view.style.styleValues import Color, FontSize,Dimension, FontFamily
-
-
+from view.style.styleValues import Dimension, FontFamily
 
 from PyQt6.QtWidgets import (
     QComboBox, 
@@ -37,7 +36,6 @@ class ProfileName (TabPage):
     """ page with an input field to allow user add the profile name """
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self._initConfig()
         self._initWidget()
         self._initLayout()
     
@@ -48,15 +46,15 @@ class ProfileName (TabPage):
     def _initWidget(self):
         """ initialize the widget """
         self.header = Label("Profile Name", 
-            self.config["fontSizes"]["HEADER3"], 
+            FontSize.HEADER3, 
             FontFamily.MAIN)
         self.profileName = InputBox(
             "", 
             False, 
-            labelSize = self.config["fontSizes"]["HEADER3"])
+            labelSize = FontSize.HEADER3)
         self.confirmBtn = ColoredBtn(
             "Start", 
-            self.config["colors"]["GREEN"])
+            Color.GREEN)
         self.confirmBtn.clicked.connect(self._confirmHandler)
 
     def _initLayout(self):
@@ -108,7 +106,7 @@ class ChooseEngine(TabPage):
         """ initialize the widget """
         self.title = Label(
             "Select Speech-to-text Engine", 
-            self.config["fontSizes"]["HEADER3"], 
+            FontSize.HEADER3, 
             FontFamily.MAIN)
         self.mainCombo = QComboBox(self)
         self.mainCombo.setFixedSize(QSize(400,70))
@@ -162,7 +160,7 @@ class BasicSetting(TabPage):
         self.mainWidget = UserForm()
         self.header = Label(
             "Basic settings", 
-            self.config["fontSizes"]["HEADER3"], 
+            FontSize.HEADER3, 
             FontFamily.MAIN)
     
     def _initLayout(self):
@@ -178,7 +176,7 @@ class BasicSetting(TabPage):
             alignment=hcenter)
         self.confirmBtn = ColoredBtn(
             "confirm", 
-            self.config["colors"]["GREEN"])
+            Color.GREEN)
         self.confirmBtn.setFixedSize(Dimension.BGBUTTON)
         self.confirmBtn.clicked.connect(self._confirmHandler)
         self.verticallayout.addWidget(
@@ -209,14 +207,14 @@ class EngineSetting(TabPage):
         self.setLayout(self.verticallayout)
         self.header = Label(
             "Speech to text settings", 
-            self.config["fontSizes"]["HEADER3"], 
+            FontSize.HEADER3, 
             FontFamily.MAIN)
         self.verticallayout.addWidget(
             self.header, 
             alignment=Qt.AlignmentFlag.AlignHCenter)
         self.mainForm = ToggleCombo(data, showBasicSet=False)
         self.verticallayout.addWidget(self.mainForm)
-        self.confirmBtn = ColoredBtn("confirm", self.config["colors"]["GREEN"])
+        self.confirmBtn = ColoredBtn("confirm", Color.GREEN)
         self.confirmBtn.clicked.connect(self._confirmHandler)
         self.confirmBtn.setFixedSize(Dimension.BGBUTTON)
         self.verticallayout.addWidget(self.confirmBtn, alignment=bottomRight)
@@ -251,7 +249,7 @@ class OutPutFormatSetting(TabPage):
         self.setLayout(self.verticallayout)
         self.header = Label(
             "Output format settings", 
-            self.config["fontSizes"]["HEADER2"], 
+            FontSize.HEADER2, 
             FontFamily.MAIN)
         self.verticallayout.addWidget(
             self.header, 
@@ -259,7 +257,7 @@ class OutPutFormatSetting(TabPage):
         self.verticallayout.addWidget(self.mainForm)
         self.confirmBtn = ColoredBtn(
             "confirm", 
-            self.config["colors"]["GREEN"])
+            Color.GREEN)
         self.confirmBtn.setFixedSize(Dimension.BGBUTTON)
         self.confirmBtn.clicked.connect(lambda: self.signals.nextPage.emit())
         self.verticallayout.addStretch()

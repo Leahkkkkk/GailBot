@@ -1,12 +1,12 @@
 import tomli 
 
+from util.Config import Color, FontSize
 from view.widgets import Button, Label
-from view.style.styleValues import Color, FontFamily, FontSize, Dimension
+from view.style.styleValues import FontFamily, Dimension
 from view.style.Background import initBackground, initImgBackground
 
 from PyQt6.QtWidgets import QDialog, QVBoxLayout
 from PyQt6.QtCore import QSize, Qt
-
 
 
 class RecordDialog(QDialog):
@@ -15,21 +15,19 @@ class RecordDialog(QDialog):
                  **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
-        self._initConfig()
-
         self.setFixedSize(QSize(600, 400))
         
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
-        self.startBtn = Button.ColoredBtn("Start Recording", self.config["colors"]["GREEN"])
+        self.startBtn = Button.ColoredBtn("Start Recording", Color.GREEN)
         self.startBtn.setFixedSize(Dimension.BGBUTTON)
       
-        self.cancelBtn = Button.ColoredBtn("Cancel", self.config["colors"]["ORANGE"])
+        self.cancelBtn = Button.ColoredBtn("Cancel", Color.ORANGE)
         self.cancelBtn.setFixedSize(Dimension.BGBUTTON)
         
-        self.endBtn = Button.ColoredBtn("End Recording", self.config["colors"]["ORANGE"])
+        self.endBtn = Button.ColoredBtn("End Recording", Color.ORANGE)
         self.endBtn.setFixedSize(Dimension.BGBUTTON)
-        self.iconBtn = Button.ToggleBtn(("stop.png", "play.png"), minHeight=200)
+        self.iconBtn = Button.ToggleBtn(("stop.png", "play.png"), minHeight = 200)
         # self.iconBtn.setFixedSize(QSize(200,200))
         self.iconBtn.setMinimumHeight(80)
         self.iconBtn.hide()
@@ -74,7 +72,4 @@ class RecordDialog(QDialog):
         
         self.cancelBtn.clicked.connect(self.close)
 
-    def _initConfig(self):
-        with open("controller/interface.toml", mode="rb") as fp:
-            self.config = tomli.load(fp)
         

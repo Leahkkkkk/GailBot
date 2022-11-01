@@ -1,6 +1,8 @@
 from ctypes import alignment
+
+from util.Config import Color, FontSize
 from view.widgets import Label 
-from view.style.styleValues import FontFamily, FontSize, Color
+from view.style.styleValues import FontFamily
 from view.style.Background import initBackground
 
 from PyQt6.QtWidgets import (

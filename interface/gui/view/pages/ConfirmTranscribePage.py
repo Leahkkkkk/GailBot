@@ -10,8 +10,9 @@ Modified By:  Siara Small  & Vivian Li
 '''
 import tomli
 
+from util.Config import Color, FontSize
 from view.Signals import FileSignals
-from view.style.styleValues import FontFamily, FontSize, Color
+from view.style.styleValues import FontFamily
 from view.style.Background import initImgBackground
 from view.widgets import ( Label, 
                            Button, 
@@ -30,8 +31,9 @@ from PyQt6.QtCore import Qt
 ConfirmHeader = ["Type",
                  "Name",
                  "Profile",
-                 "SelectedAction", 
+                 "SelectedAction",
                  "Action"]
+                 
 ConfirmHeaderDimension = [0.1,0.35,0.25,0.13,0.17]
 
 class ConfirmTranscribePage(QWidget):
@@ -40,7 +42,6 @@ class ConfirmTranscribePage(QWidget):
         super().__init__(*args, **kwargs)
         self.signal = signal
         self.logger = makeLogger("Frontend")
-        self._initConfig()
         self._initWidget()
         self._initLayout()
         self._initStyle()
@@ -52,7 +53,7 @@ class ConfirmTranscribePage(QWidget):
     def _initWidget(self):
         """ initlialize widget """
         self.label = Label.Label("Confirm Files and Settings", 
-                                 self.config["fontSizes"]["HEADER2"], 
+                                 FontSize.HEADER2, 
                                  FontFamily.MAIN)
         self.label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         
@@ -63,8 +64,8 @@ class ConfirmTranscribePage(QWidget):
         
         self.fileTable.resizeCol(ConfirmHeaderDimension)
         self.bottomButton = QWidget()
-        self.confirmBtn = Button.ColoredBtn("Confirm", self.config["colors"]["GREEN"])
-        self.cancelBtn = Button.ColoredBtn("Cancel", self.config["colors"]["ORANGE"])
+        self.confirmBtn = Button.ColoredBtn("Confirm", Color.GREEN)
+        self.cancelBtn = Button.ColoredBtn("Cancel", Color.ORANGE)
         
     def _initLayout(self):
         """ initialize layout"""
@@ -95,16 +96,10 @@ class ConfirmTranscribePage(QWidget):
     
     def _initStyle(self):
         initImgBackground(self,"backgroundConfirmPage.png")
-        self.confirmBtn.setMinimumSize(QtCore.QSize(150,30))
-        self.cancelBtn.setMinimumSize(QtCore.QSize(150,30))
-  
+        
     def _sendTranscribeSignal(self):
         """send a signal with a set of file keys that will be transcribed """
         self.logger.info("here")
         self.logger.info(self.fileTable.transferList)
         self.signal.transcribe.emit(self.fileTable.transferList)
         self.fileTable.transferState()
-
-    def _initConfig(self):
-        with open("controller/interface.toml", mode="rb") as fp:
-            self.config = tomli.load(fp)

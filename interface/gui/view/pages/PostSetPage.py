@@ -37,7 +37,4 @@ class PostSetPage(QWidget):
     def getValue(self) -> dict:
         return self.setForm.getValue()
         
-    def _initConfig(self):
-        with open("controller/interface.toml", mode="rb") as fp:
-            self.config = tomli.load(fp)
     
