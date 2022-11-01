@@ -10,7 +10,6 @@ class FileSignals(QObject):
     transcribe = pyqtSignal(set)
     cancel = pyqtSignal()
     getFileToTranscribe = pyqtSignal(str)
-    changeStatus = pyqtSignal(tuple)
     changeProfile = pyqtSignal(tuple)
     requestprofile = pyqtSignal(str)
     

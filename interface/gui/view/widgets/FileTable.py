@@ -128,7 +128,7 @@ class FileTable(QTableWidget):
     ########################  table initialier    #########################
     def  _connectViewSignal(self):
         """ connect the signal """
-        self.viewSignal.delete.connect(self.deleteFile)
+        self.viewSignal.delete.connect(self.removeFile)
         self.viewSignal.select.connect(self.addToNextState)
         self.viewSignal.unselect.connect(self.removeFromNextState)
         self.viewSignal.requestChangeProfile.connect(self.changeProfile)  
@@ -268,7 +268,7 @@ class FileTable(QTableWidget):
         self.fileWidgets[key] = newFileWidget
 
     ####################### delete file handlers  #########################
-    def deleteFile(self, key:str):
+    def removeFile(self, key:str):
         """ delete one file
             ** connected to delete file button 
         Args:
@@ -277,18 +277,17 @@ class FileTable(QTableWidget):
         if key in self.filePins:
             rowIdx = self.indexFromItem(self.filePins[key]).row()
             self.removeRow(rowIdx)
-            self.dbSignal.delete.emit(key)
             if key in self.transferList:
                 self.transferList.remove(key)
         else:
             self.viewSignal.error(KEYERROR)
     
-    def deleteAll(self):
+    def removeAll(self):
         """ delete all files on the file table 
             ** connected to deleteAll button 
         """
         for key in self.filePins.keys():
-            self.deleteFile(key)
+            self.removeFile(key)
             
         self.transferList.clear()
         self.filePins.clear()
@@ -311,10 +310,11 @@ class FileTable(QTableWidget):
         Args:
             key (str): a file key that identifies the file
         """
-        try:
-          self.deleteFile(key)
-        except:
-          MsgBox.WarnBox("Failed to remove file from the table")
+        if key in self.filePins:
+            self.updateFileContent((key, "Status", "Transcribed"))
+        else:
+            self.viewSignal.error.emit(KEYERROR)
+        
        
     
     def changeProfile(self, key:str):

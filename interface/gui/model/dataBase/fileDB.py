@@ -89,7 +89,6 @@ class FileModel:
         Args:
             file Tuple[key,fileObject]: a tuple with file key and file object 
         """
-        
         logger.info("edit file in the database")
         key, newfile  = file
         try:
@@ -144,7 +143,7 @@ class FileModel:
         Args:
             data (Tuple[key, new status]): _description_
         """
-        logger.info("edit the file status in the databse")
+        logger.info("edit the file status in the database")
         key, status = data
         try:
             if key not in self.data:
@@ -152,15 +151,15 @@ class FileModel:
                 logger.error(ErrorMsg.KEYERROR)
             else:
                 self.data[key]["Status"] = status
-                if status == "Transcribed":
-                    self.signals.transcribed.emit(key)
-                else:
-                    raise DBExecption()
         except:
             self.signals.error.emit(ErrorMsg.EDITERROR)
             logger.error(ErrorMsg.EDITERROR)
             
-            
+    def changeFiletoTranscribed(self, key: str):
+        """ change the file status to be transcrbed """    
+        self.editFileStatus((key, "Transcribed"))
+        
+        
     def get(self, filekey:str) -> None:
         """ send the signal to get file data 
 

@@ -22,7 +22,6 @@ from PyQt6.QtCore import QThreadPool
 class Controller:
     """ Controller for Gailbot GUI """
     def __init__(self):
-        
         config = toml.load("controller/interface.toml")
         self.ModelObj = Model.Model()
         self.FileData = self.ModelObj.FileData
@@ -35,7 +34,6 @@ class Controller:
         self.signal = Signal()
         self.ThreadPool = QThreadPool()
         self.logger = Logger.makeLogger("Backend")
-        self._connectControllerToView()
         self._connectViewToFileDB()
         self._connectFileDBToView()
         self._handleTanscribeSignal()
@@ -48,25 +46,7 @@ class Controller:
         """ Public function that run the GUI app """
         self.ViewObj.show()
     
-    def _connectControllerToView(self):
-        self.signal.busy.connect(
-            self.ViewObj.busyThreadPool)
-        self.signal.start.connect(
-            self.ViewObj.showTranscribeInProgress)
-        self.signal.finish.connect(
-            self.ViewObj.showTranscribeSuccess)
-        self.signal.killed.connect(
-            self.ViewObj.showFileUploadPage)
-        self.ViewObj.fileTableSignals.cancel.connect(
-            self._cancelGailBot)
-        self.signal.progress.connect(
-            self._sendTranscribeProgressMsg
-        )
-        self.signal.error.connect(
-            self.ViewObj.TranscribeFailed
-        )
-        self.signal.fileTranscribed.connect(
-            self.FileData.editFileStatus)
+
 
     
     ################ connecting file database to file table ################ 
@@ -77,7 +57,6 @@ class Controller:
         dbSignal.fileAdded.connect(view.addFileToTables)
         dbSignal.profileRequest.connect(profile.get)
         dbSignal.fileUpdated.connect(view.updateFile)
-        dbSignal.transcribed.connect(view.changeFiletoTranscribe)
         
     def _connectViewToFileDB(self):
         viewSignal = self.ViewObj.fileTableSignals
@@ -86,7 +65,6 @@ class Controller:
         viewSignal.delete.connect(db.delete)
         viewSignal.editFile.connect(db.edit)
         viewSignal.changeProfile.connect(db.editFileProfile)
-        viewSignal.changeStatus.connect(db.editFileStatus)
         viewSignal.requestprofile.connect(db.requestSetting)
 
     ################ connecting plugin database to profole table ###########
@@ -121,6 +99,16 @@ class Controller:
     def _handleTanscribeSignal(self):
         """ handle signal from View that requests to transcrib the file"""
         self.ViewObj.fileTableSignals.transcribe.connect(self._transcribeFiles)
+        self.signal.busy.connect(self.ViewObj.busyThreadPool)
+        self.signal.start.connect(self.ViewObj.showTranscribeInProgress)
+        self.signal.finish.connect(self.ViewObj.showTranscribeSuccess)
+        self.signal.killed.connect(self.ViewObj.showFileUploadPage)
+        self.ViewObj.fileTableSignals.cancel.connect(self._cancelGailBot)
+        
+        self.signal.progress.connect(self._sendTranscribeProgressMsg)
+        self.signal.error.connect(self.ViewObj.TranscribeFailed)
+        self.signal.fileTranscribed.connect(self.ViewObj.changeFiletoTranscribed)
+
     
     def _transcribeFiles(self, files: Set[str]):
         """ transcribing the files

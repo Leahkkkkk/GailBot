@@ -185,7 +185,7 @@ class Worker(QRunnable):
             if not self.killed:
                 for file in self.files:
                     key, filedata = file 
-                    self.signals.fileTranscribed.emit((key, "Transcribed"))
+                    self.signals.fileTranscribed.emit(key)
                     self.signals.finish.emit()
         finally:
             self.setAutoDelete(True)
@@ -198,3 +198,5 @@ class Worker(QRunnable):
         self.logger.info("User tring to cancel thread")
         self.killed = True
         self.signals.killed.emit()
+        
+        
