@@ -187,7 +187,6 @@ class ChooseSet(TabPage):
         self.selectSettings.currentTextChanged.connect(self._updateSettings)
         self.selectSettings.currentIndexChanged.connect(self._toNextPage)
    
-    
     def _initLayout(self):
         self.layout = QHBoxLayout()
         self.setLayout(self.layout)

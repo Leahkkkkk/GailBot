@@ -9,6 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 from typing import List, Tuple, Dict
+from model.dataBase.fileDB import fileObject
 import os
 import logging
 import time
@@ -23,12 +24,15 @@ from PyQt6.QtCore import (
     pyqtSignal
 )
 
+# TODO: change plugin path 
+# TODO: change the workspace path
 # TODO: move this to a config file 
+
 WATSON_API_KEY = "MSgOPTS9CvbADe49nEg4wm8_gxeRuf4FGUmlHS9QqAw3"
 WATSON_LANG_CUSTOM_ID = "41e54a38-2175-45f4-ac6a-1c11e42a2d54"
 WATSON_REGION = "dallas"
 WATSON_BASE_LANG_MODEL = "en-US_NarrowbandModel"
-WORKSPACE_DIRECTORY_PATH = "/Users/yike/Desktop/GB-UI/workdir"
+WORKSPACE_DIRECTORY_PATH = "/Users/yike/Desktop/GB-UI/workdir" #TODO: change those and move those to the config file
 #  ------------- Controller
 SETTINGS_PROFILE_NAME = "test_profile"
 SETTINGS_PROFILE_EXTENSION = "json"
@@ -76,24 +80,12 @@ def get_settings_dict(): #TODO: get the actual setting dictionary for the
         }
     }
 
-class Signals(QObject):
-    """ contain signals in order for Qrunnable object to communicate
-        with controller
-    """
-    finished = pyqtSignal(str)
-    start = pyqtSignal()
-    progress = pyqtSignal(str)
-    error = pyqtSignal(str)
-    result = pyqtSignal()
-    killed = pyqtSignal()
-    endThread = pyqtSignal()
-
 class Worker(QRunnable):
     """ a subclass of QRunnable class 
         used to run GailBot function on separte thread 
         with the added feature of handling signals
     """
-    def __init__(self, files: List [Tuple [str, Dict]], signal:Signal):
+    def __init__(self, files: List [Tuple [str, fileObject]], signal:Signal):
         """constructor for Worker class
 
         Args:
@@ -127,7 +119,7 @@ class Worker(QRunnable):
             if not self.killed:
                 plugin_suite_paths = gb.download_plugin_suite_from_url(
                 "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip", 
-                "./plugins")
+                "./plugins")  #TODO: check the plugin directory 
                 self.signals.progress.emit(str("Plugins Downloaded"))
                 path = os.path.join(os.getcwd(), plugin_suite_paths[0])
                 self.signals.progress.emit(str("Plugins Applied"))
@@ -138,7 +130,7 @@ class Worker(QRunnable):
                 key, filedata = file 
                 filename = filedata["Name"]
                 filePath = filedata["FullPath"]
-                outPath = f"{filedata['Output']}/output/"
+                outPath = f"{filedata['Output']}/{filename}_output/"
                 profile = filedata["Profile"]  
                 self.logger.info(key)
                 self.logger.info(filename)
@@ -152,6 +144,7 @@ class Worker(QRunnable):
                     self.signals.progress.emit(f"Source{filename} Added")
     
                 if not self.killed and not gb.is_settings_profile(profile):
+                    # TODO: add costomized profile, currently unimplemented
                     gb.create_new_settings_profile(profile, get_settings_dict())
                     profiles.add(profile)
                     assert gb.is_settings_profile(profile)
@@ -174,13 +167,12 @@ class Worker(QRunnable):
                 gb.transcribe()
             
             if self.killed:
-                self.logger.info("User killed the thread")
+                self.logger.info("User cancelled the trancription")
                 self.signals.killed.emit()
-                
+                         
         except Exception as e:
-            self.signals.error.emit(f"${e.__class__}fails")
-            self.logger.error(f"{e.__class__}fails")
-            time.sleep(2)
+            self.signals.error.emit(f"${e.__class__} fails")
+            self.logger.error(f"{e.__class__} fails")
         else:
             if not self.killed:
                 for file in self.files:
@@ -195,7 +187,7 @@ class Worker(QRunnable):
         """ public function to kill current running thread, the thread 
             will terminates after finishing the last function call 
         """
-        self.logger.info("User tring to cancel thread")
+        self.logger.info("received request to cancel the thread")
         self.killed = True
         self.signals.killed.emit()
         

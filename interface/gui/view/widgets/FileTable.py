@@ -194,7 +194,7 @@ class FileTable(QTableWidget):
                 if key in self.transferList:
                     self.transferList.remove(key) 
         else:
-            for key,widget in self.fileWidgets.items():
+            for key, widget in self.fileWidgets.items():
                 widget.setCheckState(True)
                 if not key in self.transferList:
                     self.transferList.add(key)
@@ -277,6 +277,8 @@ class FileTable(QTableWidget):
         if key in self.filePins:
             rowIdx = self.indexFromItem(self.filePins[key]).row()
             self.removeRow(rowIdx)
+            del self.filePins[key]
+            del self.fileWidgets[key]
             if key in self.transferList:
                 self.transferList.remove(key)
         else:

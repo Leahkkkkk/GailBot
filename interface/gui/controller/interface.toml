@@ -75,6 +75,15 @@ guideText = "GailBot Settings Guide"
 gbLinkText = "GailBot.com"
 moreInfoText = "For more information visit"
 
+[text.FileUploadPage]
+dropText = "Drop File Here to Upload"
+chooseLocalText = "Choose From Local"
+chooseSetHeader = "select setting profile"
+selectSetText = "select settings"
+selectPlaceHolderText = "None"
+selectFolderText = "Select Folder"
+chooseOutPutText = "Choose Output Directory"
+fileFilter = ["audio file (*.wav)","directory (/)"]
 
 ["profile form".Plugins]
 HiLabSuite = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"

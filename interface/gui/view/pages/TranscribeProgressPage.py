@@ -1,7 +1,11 @@
 import os
-import tomli
 
-from util.Config import Color, FontSize, TranscribeProgressText
+from util.Config import (
+    Color, 
+    FontSize, 
+    TranscribeProgressText
+)
+from util.Logger import makeLogger
 from view.Signals import FileSignals
 from view.widgets import MsgBox
 from view.widgets import (
@@ -10,7 +14,10 @@ from view.widgets import (
     FileTable)
 from util import Path
 from view.widgets import Button
-from view.style.styleValues import Color, FontSize, Dimension, FontFamily
+from view.style.styleValues import (
+    Dimension, 
+    FontFamily
+)
 from view.style.Background import initImgBackground
 
 from PyQt6.QtWidgets import QLabel, QVBoxLayout, QWidget
@@ -24,16 +31,18 @@ ProgressHeader = ["Type",
                   "Progress"]
 ProgressDimension = [0.2, 0.55, 0.25]
 
+logger = makeLogger("Frontend")
+
 """ class for transcription in progress page """
 class TranscribeProgressPage(QWidget):
     """ initialize class """
     def __init__(
         self, 
-        signal: FileSignals, 
+        signals: FileSignals, 
         * args, 
         **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.signals = signal
+        self.signals = signals
         self._initWidget()
         self._initstyle()
         self._initLayout()
@@ -79,7 +88,7 @@ class TranscribeProgressPage(QWidget):
         self.loadIcon.setScaledContents(True)
         self.cancelBtn.setMinimumSize(QtCore.QSize(130, 30))
         self.cancelBtn.setMinimumSize(Dimension.BGBUTTON)
-        initImgBackground(self, "backgroundSubPages.png")
+        initImgBackground(self, TranscribeProgressText.backgroundImg)
         
     def _initLayout(self):
         """ intiializes layout """
@@ -87,19 +96,19 @@ class TranscribeProgressPage(QWidget):
         self.setLayout(self.verticalLayout)
         """ add widget to layout """
         self.verticalLayout.addWidget(self.label)
-        self.label.setContentsMargins(0,20,0,0)
+        self.label.setContentsMargins(0, 20, 0, 0)
         self.verticalLayout.addWidget(self.loadIcon, 
                                       alignment = Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignTop)
-        self.verticalLayout.addWidget(self.loadingText, alignment =Qt.AlignmentFlag.AlignTop)
-        self.verticalLayout.addWidget(self.InProgress, alignment =Qt.AlignmentFlag.AlignTop)
+        self.verticalLayout.addWidget(self.loadingText, alignment = Qt.AlignmentFlag.AlignTop)
+        self.verticalLayout.addWidget(self.InProgress, alignment = Qt.AlignmentFlag.AlignTop)
         self.verticalLayout.addWidget(self.fileTable, 
                                       alignment= Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignTop)
         self.verticalLayout.addStretch()
         self.verticalLayout.addWidget(self.cancelBtn, 
                                       alignment = Qt.AlignmentFlag.AlignHCenter)
         self.verticalLayout.setSpacing(30)
-        self.InProgress.setContentsMargins(80,0,0,0)
-        self.loadIcon.setContentsMargins(0,0,0,0)
+        self.InProgress.setContentsMargins(80, 0, 0, 0)
+        self.loadIcon.setContentsMargins(0, 0, 0, 0)
         self.fileTable.setMaximumHeight(300)
         
     def _connectSignal(self):
@@ -108,10 +117,13 @@ class TranscribeProgressPage(QWidget):
         
     def _confirm(self):
         self.confirmCancel = MsgBox.ConfirmBox(
-            "Confirm cancellation?", 
-            lambda: self.signals.cancel.emit())
+            TranscribeProgressText.loggerMsg, self.cancelGailBot)
     
     def setLoadingText(self, text):
         self.loadingText = Label.Label(text,
                                       FontSize.SMALL,
                                       FontFamily.OTHER)
+
+    def cancelGailBot(self):
+        logger.info(TranscribeProgressText.loggerMsg)
+        self.signals.cancel.emit()

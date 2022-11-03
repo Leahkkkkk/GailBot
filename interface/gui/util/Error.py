@@ -7,8 +7,14 @@ class ErrorMsg:
     POSTERROR = "Fail to add to database"
     GETERROR = "Fail to get data"
     EDITERROR = "Fail to edit the data"
-    DELETEEROR = "Unable to delete dat"
+    DELETEEROR = "Unable to delete data"
+    RESOURCEERROR = "Thread Resource temporarily unavailable"
+    
 
 class DBExecption(Exception):
+    def __init__(self, msg = None):
+        self.msg = msg
+
+class ThreadExeceptiom(Exception):
     def __init__(self, msg = None):
         self.msg = msg

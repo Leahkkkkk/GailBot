@@ -1,6 +1,6 @@
 dummySettingValues={
     "Default": {
-        "Required Setting": {
+        "RequiredSetting": {
             'Engine': {
                 "CMU": {
                     '1.language model setting': {
@@ -18,7 +18,7 @@ dummySettingValues={
                 }
             }
         },
-        'Post Transcribe': {
+        'PostTranscribe': {
             'Gap Length': 'dummy',
             'Turn End Threshold': 'dummy',
             'Large Pause - Lower Bound': 'dummy',
@@ -34,7 +34,7 @@ dummySettingValues={
         "Plugins": {"constructTree"}
     },
     "Coffee Study": {
-        "Required Setting": {
+        "RequiredSetting": {
             "Engine": {
                 "IBM": {
                     '1.language model setting': {
@@ -55,7 +55,7 @@ dummySettingValues={
                 }
             }
         },
-        'Post Transcribe': {
+        'PostTranscribe': {
             'Gap Length': '0s',
             'Turn End Threshold': '0s',
             'Large Pause - Lower Bound': '0s',
@@ -71,7 +71,7 @@ dummySettingValues={
         "Plugins": {"constructTree", "utteranceDict", "conversationDict"}
     },
     "HRI lab study": {
-        "Required Setting": {
+        "RequiredSetting": {
             'Engine': {
                 "IBM": {
                     '1.language model setting': {
@@ -92,7 +92,7 @@ dummySettingValues={
                 }
             }
         },
-        'Post Transcribe': {
+        'PostTranscribe': {
             'Gap Length': '0s',
             'Turn End Threshold': '0s',
             'Large Pause - Lower Bound': '0s',
@@ -111,7 +111,7 @@ dummySettingValues={
 }
 
 dummySettingForms= {
-    "Required Setting": {
+    "RequiredSetting": {
         "Engine": {
             "IBM": {
                 "1.language model setting": {
@@ -205,7 +205,7 @@ dummySettingForms= {
         }
     },
     
-    "Post Transcribe": {
+    "PostTranscribe": {
         "General": {
             "Gap Length": "0s",
             "Turn End Threshold": "0s",
@@ -269,7 +269,7 @@ testSet = {
                 }
             }
         },
-        'Post Transcribe': {
+        'PostTranscribe': {
             'Gap Length': '0s',
             'Turn End Threshold': '0s',
             'Large Pause - Lower Bound': '0s',

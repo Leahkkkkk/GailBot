@@ -9,23 +9,23 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
-import tomli
-
 from view.widgets import (
     Button,
     Label,
     FileTable
 )
 
-from util.Config import Color, FontSize, TranscribeSuccessText
+from util.Config import (
+    Color, 
+    FontSize, 
+    TranscribeSuccessText
+)
 from view.Signals import FileSignals
-from view.style.styleValues import Color, FontSize, Dimension, FontFamily
+from view.style.styleValues import FontFamily
 from view.style.Background import initImgBackground
 from view.Text.TranscribeSuccessPageText import TranscribeSuccessText
 
 from PyQt6.QtWidgets import (
-    QLabel,
-    QPushButton,
     QVBoxLayout,
     QHBoxLayout,
     QWidget
@@ -33,8 +33,7 @@ from PyQt6.QtWidgets import (
 
 from PyQt6 import QtCore
 
-from PyQt6.QtWidgets import QLabel, QVBoxLayout, QWidget
-from PyQt6.QtGui import QMovie
+from PyQt6.QtWidgets import QVBoxLayout, QWidget
 from PyQt6 import QtCore
 from PyQt6.QtCore import Qt
 
@@ -103,4 +102,4 @@ class TranscribeSuccessPage(QWidget):
     def _initStyle(self):
         self.moreBtn.setMinimumSize(QtCore.QSize(150,30))
         self.returnBtn.setMinimumSize(QtCore.QSize(150,30))
-        initImgBackground(self, "backgroundConfirmPage.png")
+        initImgBackground(self, TranscribeSuccessText.backgroundImg)

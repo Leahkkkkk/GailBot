@@ -8,11 +8,13 @@ Last Modified: Thursday, 6th October 2022 10:18:15 am
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
+from util.Logger import makeLogger
 from view.style.Background import initBackground
 from view.style.styleValues import Color
-
 from PyQt6.QtWidgets import QMessageBox
 
+
+loggger = makeLogger("Frontend")
 class ConfirmBox:
     """ create and display a Confirm box """
     def __init__(self, msg: str, confirm: callable):
@@ -38,9 +40,11 @@ class ConfirmBox:
         Args:
             button (QButton)
         """
+        loggger.info("confirm message box buttonc click")
         if button.text() == "&No":
             return
         else:
+            loggger.info("confirmed") 
             self.confirm()
 
 

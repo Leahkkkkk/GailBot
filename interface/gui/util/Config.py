@@ -32,34 +32,36 @@ config = toml.load("controller/interface.toml")
 
 @dataclass 
 class ColorData(DataclassFromDict):
-        GREEN: str = field_from_dict()
-        ORANGE: str = field_from_dict()
-        BLUEWHITE: str =  field_from_dict()
-        BLUELIGHT: str =  field_from_dict()
-        BLUEMEDIUM: str =  field_from_dict()
-        BLUEDARK: str =  field_from_dict()
-        GREYLIGHT: str =  field_from_dict()
-        GREYMEDIUM1: str =  field_from_dict()
-        GREYMEDIUM2: str =  field_from_dict()
-        GREYDARK: str =  field_from_dict()
-        BORDERGREY: str =  field_from_dict()
-        BLACK: str =  field_from_dict()
-        WHITE: str =  field_from_dict()
-        GREYEXTRALIGHT: str =  field_from_dict()
+    GREEN: str = field_from_dict()
+    ORANGE: str = field_from_dict()
+    BLUEWHITE: str =  field_from_dict()
+    BLUELIGHT: str =  field_from_dict()
+    BLUEMEDIUM: str =  field_from_dict()
+    BLUEDARK: str =  field_from_dict()
+    GREYLIGHT: str =  field_from_dict()
+    GREYMEDIUM1: str =  field_from_dict()
+    GREYMEDIUM2: str =  field_from_dict()
+    GREYDARK: str =  field_from_dict()
+    BORDERGREY: str =  field_from_dict()
+    BLACK: str =  field_from_dict()
+    WHITE: str =  field_from_dict()
+    GREYEXTRALIGHT: str =  field_from_dict()
 
 @dataclass
 class FontSizeData(DataclassFromDict):
-        BODY: str =  field_from_dict()
-        TEXT_FIELD: str =  field_from_dict()
-        SMALL: str =  field_from_dict()
-        LINK: str =  field_from_dict()
-        HEADER1: str =  field_from_dict()
-        HEADER2: str =  field_from_dict()
-        HEADER3: str =  field_from_dict()
-        TABLE_ROW: str =  field_from_dict()
-        DESCRIPTION: str =  field_from_dict()
-        INSTRUCTION_CAPTION: str =  field_from_dict()
-        BTN: str =  field_from_dict()
+    BODY: str =  field_from_dict()
+    TEXT_FIELD: str =  field_from_dict()
+    SMALL: str =  field_from_dict()
+    LINK: str =  field_from_dict()
+    HEADER1: str =  field_from_dict()
+    HEADER2: str =  field_from_dict()
+    HEADER3: str =  field_from_dict()
+    TABLE_ROW: str =  field_from_dict()
+    DESCRIPTION: str =  field_from_dict()
+    INSTRUCTION_CAPTION: str =  field_from_dict()
+    BTN: str =  field_from_dict()
+    
+    
 @dataclass 
 class DimensionData(DataclassFromDict):
     WINMAXWIDTH :int = field_from_dict()
@@ -78,34 +80,37 @@ class DimensionData(DataclassFromDict):
 
 @dataclass 
 class WelcomePageTextData(DataclassFromDict):
-        audioInstructionText: str =  field_from_dict()
-        settingsInstructionText: str =  field_from_dict()
-        transcribeInstructionText: str =  field_from_dict()
-        fileInstructionText: str =  field_from_dict()
-        editInstructionText: str =  field_from_dict()
-        welcomeText: str =  field_from_dict()
-        captionText: str =  field_from_dict()
-        startBtnText: str =  field_from_dict()
-        instructionText: str =  field_from_dict()
-        resourcesText: str =  field_from_dict()
-        tutorialText: str =  field_from_dict()
-        guideText: str =  field_from_dict()
-        gbLinkText: str =  field_from_dict()
-        moreInfoText: str =  field_from_dict()
+    audioInstructionText: str =  field_from_dict()
+    settingsInstructionText: str =  field_from_dict()
+    transcribeInstructionText: str =  field_from_dict()
+    fileInstructionText: str =  field_from_dict()
+    editInstructionText: str =  field_from_dict()
+    welcomeText: str =  field_from_dict()
+    captionText: str =  field_from_dict()
+    startBtnText: str =  field_from_dict()
+    instructionText: str =  field_from_dict()
+    resourcesText: str =  field_from_dict()
+    tutorialText: str =  field_from_dict()
+    guideText: str =  field_from_dict()
+    gbLinkText: str =  field_from_dict()
+    moreInfoText: str =  field_from_dict()
         
 @dataclass
 class TranscribeSuccessTextData(DataclassFromDict):
-        mainLabelText: str =  field_from_dict()
-        transcribedFilesText: str =  field_from_dict()
-        moreBtnText: str =  field_from_dict()
-        returnBtnText: str =  field_from_dict()
+    mainLabelText: str =  field_from_dict()
+    transcribedFilesText: str =  field_from_dict()
+    moreBtnText: str =  field_from_dict()
+    returnBtnText: str =  field_from_dict()
+    backgroundImg: str = "backgroundConfirmPage.png"
 
 @dataclass
 class TranscribeProgressTextData(DataclassFromDict):
-        mainLabelText: str =  field_from_dict()
-        loadingText: str =  field_from_dict()
-        inProgressText: str =  field_from_dict()
-        cancelText: str =  field_from_dict()
+    mainLabelText: str =  field_from_dict()
+    loadingText: str =  field_from_dict()
+    inProgressText: str =  field_from_dict()
+    cancelText: str =  field_from_dict()
+    loggerMsg: str = "Confirm cancellation"
+    backgroundImg: str = "backgroundSubPages.png"
 
 @dataclass 
 class ProfileSettingData(DataclassFromDict):
@@ -133,16 +138,16 @@ SystemSettingForm = config["system setting form"]
 
 @dataclass
 class Links: 
-        link = config["text"]["links"]["HILAB"]
-        _linkTemplate = "<a href={0}>{1}</a>"
-        tutorialLink = _linkTemplate.format(
-            link, WelcomePageText.tutorialText)
-        guideLink = _linkTemplate.format(
-            link, WelcomePageText.guideText)
-        gbWebLink = _linkTemplate.format(
-            link, WelcomePageText.gbLinkText)
-        gbWebLink = _linkTemplate.format(
-            link, WelcomePageText.guideText)
+    link = config["text"]["links"]["HILAB"]
+    _linkTemplate = "<a href={0}>{1}</a>"
+    tutorialLink = _linkTemplate.format(
+        link, WelcomePageText.tutorialText)
+    guideLink = _linkTemplate.format(
+        link, WelcomePageText.guideText)
+    gbWebLink = _linkTemplate.format(
+        link, WelcomePageText.gbLinkText)
+    gbWebLink = _linkTemplate.format(
+        link, WelcomePageText.guideText)
 
 
 

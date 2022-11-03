@@ -19,7 +19,7 @@ from view.components import (
 )
 from view import Signals
 from view.widgets import MsgBox
-from controller. Controller import Controller
+
 
 from PyQt6.QtCore import QSize
 from PyQt6.QtWidgets import QMainWindow
@@ -29,7 +29,6 @@ class MainWindow(QMainWindow):
     """ mainwindow  of the GUI App"""
     def __init__(
         self, 
-        controller: Controller, 
         settingform:dict,
         settingkey: list
     ):
@@ -42,7 +41,6 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.fileTableSignals = Signals.FileSignals()
         self.profileSignals = Signals.ProfileSignals()
-        self.controller = controller
         self.setWindowTitle("GailBot")
         self.setMinimumSize(QSize(980, 700))
         self.setMaximumSize(QSize(1200, 900))
@@ -99,7 +97,7 @@ class MainWindow(QMainWindow):
         """ handle event when user tries to cancel the thread """
         self.logger.info("")
         self.MainStack.gotoFileUploadPage()
-        self.controller.cancelGailBot()
+        # self.fileTableSignals.cancel.emit()
     
     
     def addFileToTables(self, file:dict):
@@ -121,3 +119,4 @@ class MainWindow(QMainWindow):
         """ connect to signal """
         self.MenuBar.OpenConsole.triggered.connect(lambda: self.Console.show())
         self.MenuBar.CloseConsole.triggered.connect(lambda: self.Console.hide())
+        self.fileTableSignals.cancel.connect(self.confirmCancel)

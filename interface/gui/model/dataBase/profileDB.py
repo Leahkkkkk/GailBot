@@ -7,13 +7,13 @@ from util.Error import ErrorMsg, DBExecption
 from PyQt6.QtCore import QObject, pyqtSignal 
 
 logger = makeLogger("Database")
-KEYERROR = "profile not found"
+
 
 class Signals(QObject):
     """ signals sent by profile model """
-    send = pyqtSignal(tuple)
-    deleted  = pyqtSignal(str)  
-    error = pyqtSignal(str)
+    send    = pyqtSignal(tuple)
+    delete  = pyqtSignal(str)  
+    error   = pyqtSignal(str)
     success = pyqtSignal(str)
     profileAdded = pyqtSignal(str)
     
@@ -34,7 +34,6 @@ class ProfileModel:
         key, data = profile 
         if key not in self.data: 
             self.data[key] = data
-            self.signals.success.emit("profile added")
             self.signals.profileAdded.emit(key)
         else:
             self.signals.error.emit("duplicated profile name") 
@@ -47,8 +46,10 @@ class ProfileModel:
             profilekey (str): the profile key that identified the profile  
                               to be deleted
         """
+        
         if profilekey not in self.data:
-            self.signals.error.emit(KEYERROR) 
+            self.signals.error.emit(ErrorMsg.KEYERROR)
+            logger.error(ErrorMsg.KEYERROR)
         else:
             del self.data[profilekey]
     
@@ -58,11 +59,16 @@ class ProfileModel:
             profile (Tuple[key, dict]): a key that identified the profile 
                                         and new profile
         """
-        key, data = profile
-        if key not in self.data:
-            self.signals.error.emit(KEYERROR)
-        else:
-            self.data[key] = data
+        try:
+            key, data = profile
+            if key not in self.data:
+                self.signals.error.emit(ErrorMsg.KEYERROR)
+                logger.error(KeyError)
+            else:
+                self.data[key] = data
+        except:
+            self.signals.error.emit(ErrorMsg.EDITERROR)
+            logger.error(ErrorMsg.EDITERROR)
     
     
     def get(self, profilekey:str):
@@ -70,7 +76,12 @@ class ProfileModel:
         Args:
             profilekey (str): _description_
         """
-        if profilekey not in self.data:
-            self.signals.error.emit(KEYERROR)
-        else:
-            self.signals.send.emit((profilekey,self.data[profilekey]))
+        try:
+            if profilekey not in self.data:
+                self.signals.error.emit(ErrorMsg.KEYERROR)
+                logger.error(KeyError)
+            else:
+                self.signals.send.emit((profilekey, self.data[profilekey]))
+        except:
+            self.signals.error(ErrorMsg.GETERROR)
+            logger.error(ErrorMsg.GETERROR)

@@ -28,21 +28,21 @@ class Signals(QObject):
     deleted  = pyqtSignal(str)
     error = pyqtSignal(str)
     success = pyqtSignal(str)
-    requestprofile = pyqtSignal(str)
     profileRequest = pyqtSignal(str)
     fileAdded = pyqtSignal(tuple)
     fileUpdated = pyqtSignal(tuple)
-    transcribed = pyqtSignal(str)
     
 
 class FileModel:
     def __init__(self) -> None:
+        """ file database """
         logger.info("init file database")
         self.data = dict() 
         self.signals = Signals()
         self.currentKey = 1
     
     
+    ##########################  request handler ###########################
     def post(self, file:fileObject) -> None:
         """ add file to file database """
         
@@ -101,43 +101,7 @@ class FileModel:
             self.signals.error.emit(ErrorMsg.EDITERROR) 
 
 
-    def requestSetting(self, key:str):
-        """ request to view the setting fo the file on the data base
-        Args:
-            key (str): _description_
-        """
-        
-        logger.info("request file profile setting from database")  
-        try:
-            if key not in self.data:
-                self.signals.error.emit(ErrorMsg.KEYERROR)
-                logger.error(ErrorMsg.KEYERROR)
-            else:
-                profile = self.data[key]["Profile"]
-                self.signals.profileRequest.emit(profile)
-        except:
-            self.signals.error.emit(ErrorMsg.GETERROR)
-            logger.error(ErrorMsg.GETERROR)
-    
-    def editFileProfile(self, data: Tuple[str, str]) -> None:
-        """change the profile information of the file 
-        Args:
-            data (Tuple[key, new profile]): _description_
-        """
-        logger.info("request to edit file profile in the database")
-        key, profile = data
-        try:
-            if key not in self.data:
-                self.signals.error.emit(ErrorMsg.KEYERROR)
-                logger.error(ErrorMsg.KEYERROR)
-            else:
-                self.data[key]["Porfile"] = profile
-                self.signals.fileUpdated.emit((key, "Profile", profile))
-        except:
-            self.signals.error.emit(ErrorMsg.EDITERROR)
-            logger.error(ErrorMsg.EDITERROR)
-            
-   
+       
     def editFileStatus(self, data: Tuple[str, str]) -> None:
         """change the status information of the file 
         Args:
@@ -155,11 +119,70 @@ class FileModel:
             self.signals.error.emit(ErrorMsg.EDITERROR)
             logger.error(ErrorMsg.EDITERROR)
             
+    
     def changeFiletoTranscribed(self, key: str):
         """ change the file status to be transcrbed """    
         self.editFileStatus((key, "Transcribed"))
-        
-        
+    
+    
+    def editFileProfile(self, data: Tuple[str, str]) -> None:
+        """change the profile information of the file 
+        Args:
+            data (Tuple[key, new profile]): _description_
+        """
+        logger.info("request to edit file profile in the database")
+        key, profile = data
+        try:
+            if key not in self.data:
+                self.signals.error.emit(ErrorMsg.KEYERROR)
+                logger.error(ErrorMsg.KEYERROR)
+            else:
+                self.data[key]["Profile"] = profile
+                self.updateFileResponse(key, "Profile", profile)
+        except:
+            self.signals.error.emit(ErrorMsg.EDITERROR)
+            logger.error(ErrorMsg.EDITERROR)
+            
+       
+
+    ##################### response emitter ############################# 
+    
+    def updateFileResponse(self, key, field, value):
+        """ send the signal to update the file data, which will be reflected
+            on the front end 
+
+        Args:
+            key (str): file key
+            field (str): updated field 
+            value (str): updated value
+        """
+        logger.info("response to update file database content")
+        try:
+            self.signals.fileUpdated.emit((key, field, value))
+        except:
+            self.signals.error.emit(ErrorMsg.EDITERROR)
+            logger.error(ErrorMsg.EDITERROR)
+    
+    
+    def requestProfile(self, key:str):
+        """ request to view the setting fo the file on the data base
+        Args:
+            key (str): _description_
+        """
+        logger.info("request file profile setting from database")  
+        try:
+            if key not in self.data:
+                self.signals.error.emit(ErrorMsg.KEYERROR)
+                logger.error(ErrorMsg.KEYERROR)
+            else:
+                profile = self.data[key]["Profile"]
+                self.signals.profileRequest.emit(profile)
+                logger.info((key,profile))
+        except:
+            self.signals.error.emit(ErrorMsg.GETERROR)
+            logger.error(ErrorMsg.GETERROR)
+            
+ 
     def get(self, filekey:str) -> None:
         """ send the signal to get file data 
 
