@@ -42,4 +42,4 @@ class StatusBar(QStatusBar):
         if time:
             self.showMessage(msg, time)
         else:
-             self.showMessage(msg, 5000)
+             self.showMessage(msg, 2000)

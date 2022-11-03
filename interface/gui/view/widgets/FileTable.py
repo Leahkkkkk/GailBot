@@ -25,12 +25,10 @@ import logging
 from view.widgets import MsgBox
 from view.components.ChooseFileTab import ChooseFileTab
 from view.pages.FileUploadTabPages import ChooseSet
-from view.style.styleValues import Color
 from view.style.Background import initBackground
 from view.Signals import FileSignals
-
 from util.Logger import makeLogger
-
+from util.Config import Dimension, Color, Asset
 from PyQt6.QtWidgets import (
     QTableWidget, 
     QTableWidgetItem, 
@@ -116,8 +114,6 @@ class FileTable(QTableWidget):
         
         self.viewSignal = Signals()
         self.dbSignal = dbSignal
-        self.setMinimumWidth(500)
-        self.setMaximumWidth(1100)
         self._setFileHeader()     # set file header 
         self._initStyle()
         self._connectViewSignal()
@@ -141,8 +137,8 @@ class FileTable(QTableWidget):
             self.horizontalHeader().setSectionResizeMode(
                 i,
                 QHeaderView.ResizeMode.Fixed)
-        self.setFixedWidth(900)
-        self.setMaximumHeight(300)
+        self.setFixedWidth(Dimension.TABLEWIDTH)
+        self.setMinimumHeight(Dimension.TABLEMINHEIGHT)
         
     def resizeCol(self, widths:List[int]) -> None:
         """ takes in a list of width and resize the width of the each 

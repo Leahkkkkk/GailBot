@@ -1,3 +1,5 @@
+from view.style.Background import initImgBackground
+from view.widgets import Label, Button
 from PyQt6.QtWidgets import (
     QWidget, 
     QHBoxLayout,
@@ -5,14 +7,15 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import Qt
 
-from view.style.Background import initImgBackground
+
 
 class SideBar(QWidget):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.verticalLayout = QVBoxLayout()
         self.setLayout(self.verticalLayout)
-        self.setFixedWidth(210)
+        self.setFixedWidth(200)
+        self.verticalLayout.setContentsMargins(0,0,0,0)
         initImgBackground(self,"settingBackground.png")
         
 

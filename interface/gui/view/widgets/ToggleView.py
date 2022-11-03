@@ -46,11 +46,14 @@ class ToggleView(QWidget):
         self.header = header
         self.headercolor = headercolor
         self.viewcolor = viewcolor
+        
         self._configHeader()
         self._configViewField()
         self._initLayout()
         self._connectSignal()
     
+    def setScrollHeight(self, size:int):
+        self.scroll.setMinimumHeight(size)
     
     def _configHeader(self):
         self.Btn = Button.ToggleBtn(text=self.labelStr)
@@ -101,6 +104,7 @@ class ToggleView(QWidget):
         else:
             self.scroll.hide()
             self.hide = True
+    
     
 
 

@@ -11,7 +11,12 @@ Modified By:  Siara Small  & Vivian Li
 
 import tomli
 
-from util.Config import Color, FontSize, WelcomePageText
+from util.Config import (
+    Color, 
+    FontSize, 
+    Dimension
+)
+from util.Config import WelcomePageText as Text
 from view.style.styleValues import FontFamily, FontSize, Color
 from view.style.Background import initImgBackground
 from view.widgets import (
@@ -27,12 +32,10 @@ from PyQt6.QtWidgets import (
     QWidget, 
     QGridLayout, 
     QHBoxLayout, 
-    QSpacerItem, 
-    QSizePolicy,
     QVBoxLayout
 )
 
-from PyQt6 import QtCore, QtGui
+from PyQt6 import QtCore
 from PyQt6.QtCore import Qt
 
 """ TODO: 1. current background is not responsive ;
@@ -87,9 +90,8 @@ class WelcomePage(QWidget):
         
     def _initStyle(self):
         """ initialize style """
-        self.HomeSetBtn.setFixedSize(QtCore.QSize(40,40))
         self.HomeSetBtn.hide()
-        self.StartBtn.setMinimumSize(QtCore.QSize(150,30))
+        self.StartBtn.setMinimumSize(QtCore.QSize(Dimension.BTNWIDTH, Dimension.BTNHEIGHT))
         initImgBackground(self)
 
     
@@ -97,25 +99,25 @@ class WelcomePage(QWidget):
     def _initInstructionText(self):
         """ add widgets for the instructions text and icon """
         """ instruction text """
-        self.AudioInstruction = Label.Label(WelcomePageText.audioInstructionText, 
+        self.AudioInstruction = Label.Label(Text.audioInstructionText, 
                                             FontSize.INSTRUCTION_CAPTION, 
                                             FontFamily.OTHER, Color.GREYMEDIUM2)
         
-        self.SettingsInstruction = Label.Label(WelcomePageText.settingsInstructionText,
+        self.SettingsInstruction = Label.Label(Text.settingsInstructionText,
                                                FontSize.INSTRUCTION_CAPTION, 
                                                FontFamily.OTHER, Color.GREYMEDIUM2)
         
-        self.TranscribeInstruction = Label.Label(WelcomePageText.transcribeInstructionText, 
+        self.TranscribeInstruction = Label.Label(Text.transcribeInstructionText, 
                                                  FontSize.INSTRUCTION_CAPTION, 
                                                  FontFamily.OTHER,
                                                  Color.GREYMEDIUM2)
         
-        self.FileInstruction = Label.Label(WelcomePageText.fileInstructionText, 
+        self.FileInstruction = Label.Label(Text.fileInstructionText, 
                                            FontSize.INSTRUCTION_CAPTION, 
                                            FontFamily.OTHER,
                                            Color.GREYMEDIUM2)
         
-        self.EditInstruction = Label.Label(WelcomePageText.editInstructionText,
+        self.EditInstruction = Label.Label(Text.editInstructionText,
                                            FontSize.INSTRUCTION_CAPTION, 
                                            FontFamily.OTHER,
                                            Color.GREYMEDIUM2)
@@ -166,12 +168,12 @@ class WelcomePage(QWidget):
 
     def _initMainText(self):
         """ initialize the main text on home page  """
-        self.WelcomeText = Label.Label(WelcomePageText.welcomeText, 
+        self.WelcomeText = Label.Label(Text.welcomeText, 
                                         FontSize.HEADER1, 
                                         FontFamily.MAIN)
         self.WelcomeText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
         
-        self.CaptionText = Label.Label(WelcomePageText.captionText,
+        self.CaptionText = Label.Label(Text.captionText,
                                        FontSize.BODY, 
                                        FontFamily.OTHER,
                                        Color.GREYMEDIUM2)
@@ -179,9 +181,9 @@ class WelcomePage(QWidget):
         self.CaptionText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
         
         self.HomeSetBtn = Button.ColoredBtn("⚙", Color.BLUEMEDIUM,"35px")
-        self.StartBtn = Button.ColoredBtn(WelcomePageText.startBtnText, Color.GREEN)
+        self.StartBtn = Button.ColoredBtn(Text.startBtnText, Color.GREEN)
         
-        self.InstructionText = Label.Label(WelcomePageText.instructionText, FontSize.HEADER2, 
+        self.InstructionText = Label.Label(Text.instructionText, FontSize.HEADER2, 
                                            FontFamily.MAIN)
         self.InstructionText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
     
@@ -189,7 +191,7 @@ class WelcomePage(QWidget):
     """ TODO: put the link onto separate file """
     def _initLinkText(self):
         """ initialize the link text on homepage """
-        self.ResourcesText = Label.Label(WelcomePageText.resourcesText, 
+        self.ResourcesText = Label.Label(Text.resourcesText, 
                                          FontSize.HEADER2, 
                                          FontFamily.OTHER)
         self.ResourcesText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
@@ -207,7 +209,7 @@ class WelcomePage(QWidget):
         
         self.GBLinkText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
 
-        self.MoreInfoText = Label.Label(WelcomePageText.moreInfoText, 
+        self.MoreInfoText = Label.Label(Text.moreInfoText, 
                                         FontSize.SMALL, FontFamily.OTHER)
         
         self.MoreInfoText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 

@@ -9,12 +9,10 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
-"""
-    TODO: create functions to disable editing 
-"""
 from typing import Dict
 
 from util.Logger import makeLogger
+from util.Config import EngineSettingForm
 from view.widgets.MultipleCombo import ToggleCombo
 from PyQt6.QtWidgets import (
     QComboBox, 
@@ -32,9 +30,10 @@ class SettingEngineForm(QWidget):
         data (dict): a dictionary that stores the dependent logic 
     
     """
-    def __init__(self, data:Dict[str, dict], *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        self.data = data
+    def __init__(self, showBasicSet:bool = True,*args, **kwargs) -> None:
+        super().__init__( *args, **kwargs)
+        self.data = EngineSettingForm.Engine
+        self.showBasicSet = showBasicSet
         self._initWidget()
         self._initLayout()
         self._connectSignal()
@@ -50,11 +49,11 @@ class SettingEngineForm(QWidget):
     
     def _initLayout(self):
         """ initialize the layout """
-        self.layout = QVBoxLayout()
-        self.layout.setSpacing(0)
-        self.setLayout(self.layout)
-        self.layout.addWidget(self.label)
-        self.layout.addWidget(self.mainCombo)
+        self.verticalLayout = QVBoxLayout()
+        self.verticalLayout.setSpacing(0)
+        self.setLayout(self.verticalLayout)
+        self.verticalLayout.addWidget(self.label)
+        self.verticalLayout.addWidget(self.mainCombo)
          
     def _connectSignal(self):
         """ connect the signal  """
@@ -64,14 +63,15 @@ class SettingEngineForm(QWidget):
         """ function to update the combobox """
         data = self.mainCombo.itemData(index)
         if self.toggleList:
-            self.layout.removeWidget(self.toggleList)
+            self.verticalLayout.removeWidget(self.toggleList)
+            self.toggleList.hide()
             self.toggleList.deleteLater()
             
-        self.toggleList = ToggleCombo(data)
+        self.toggleList = ToggleCombo(data, self.showBasicSet)
         self.toggleList.setContentsMargins(0,0,0,0)
-        self.layout.addWidget(self.toggleList)
-        self.layout.setSpacing(0)
-        self.layout.addStretch()
+        self.verticalLayout.addWidget(self.toggleList)
+        self.verticalLayout.setSpacing(0)
+        self.verticalLayout.addStretch()
     
     def getValue(self) -> dict:
         engine = self.mainCombo.currentText()

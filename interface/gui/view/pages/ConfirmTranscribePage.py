@@ -8,9 +8,14 @@ Last Modified: Thursday, 6th October 2022 11:05:38 am
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
-import tomli
+from util.Config import (
+    Color, 
+    FontSize, 
+    FileTableHeader, 
+    FileTableDimension, 
+    Asset)
+from util.Config import ConfirmTranscribeText as Text
 
-from util.Config import Color, FontSize
 from view.Signals import FileSignals
 from view.style.styleValues import FontFamily
 from view.style.Background import initImgBackground
@@ -25,16 +30,13 @@ from PyQt6.QtWidgets import (
     QHBoxLayout
 )
 
-from PyQt6 import QtCore
+
 from PyQt6.QtCore import Qt 
 
-ConfirmHeader = ["Type",
-                 "Name",
-                 "Profile",
-                 "SelectedAction",
-                 "Action"]
-                 
-ConfirmHeaderDimension = [0.1,0.35,0.25,0.13,0.17]
+center = Qt.AlignmentFlag.AlignHCenter
+top = Qt.AlignmentFlag.AlignTop
+right = Qt.AlignmentFlag.AlignRight
+
 
 class ConfirmTranscribePage(QWidget):
     """ Confirm transcription page """
@@ -52,20 +54,20 @@ class ConfirmTranscribePage(QWidget):
 
     def _initWidget(self):
         """ initlialize widget """
-        self.label = Label.Label("Confirm Files and Settings", 
+        self.label = Label.Label(Text.confirmLabel, 
                                  FontSize.HEADER2, 
                                  FontFamily.MAIN)
-        self.label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+        self.label.setAlignment(center)
         
         self.fileTable = FileTable.FileTable(
-            ConfirmHeader,
+            FileTableHeader.confirmPage,
             self.signal,
             rowWidgets={"details"})
         
-        self.fileTable.resizeCol(ConfirmHeaderDimension)
+        self.fileTable.resizeCol(FileTableDimension.confirmPage)
         self.bottomButton = QWidget()
-        self.confirmBtn = Button.ColoredBtn("Confirm", Color.GREEN)
-        self.cancelBtn = Button.ColoredBtn("Cancel", Color.ORANGE)
+        self.confirmBtn = Button.ColoredBtn(Text.confirm, Color.GREEN)
+        self.cancelBtn = Button.ColoredBtn(Text.cancel, Color.ORANGE)
         
     def _initLayout(self):
         """ initialize layout"""
@@ -75,27 +77,17 @@ class ConfirmTranscribePage(QWidget):
         self.setLayout(self.verticalLayout)
         """ add widget to layout """
         self.verticalLayout.addWidget(self.label)
-        self.label.setContentsMargins(0,20,0,50)
         self.verticalLayout.addWidget(
-            self.fileTable,
-            alignment = Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignTop)
-        
+            self.fileTable, alignment = center|top)
         self.horizontalLayout.addWidget(
-            self.confirmBtn, 
-            alignment = Qt.AlignmentFlag.AlignRight)
-        
+            self.confirmBtn, alignment = right)
         self.horizontalLayout.addWidget(
-            self.cancelBtn, 
-            alignment = Qt.AlignmentFlag.AlignHCenter)
-        
+            self.cancelBtn, alignment = center)
         self.bottomButton.setContentsMargins(0,0,0,0)
-        self.verticalLayout.addStretch()
-        
-        self.verticalLayout.addWidget(self.bottomButton,
-                                      alignment=Qt.AlignmentFlag.AlignHCenter)
+        self.verticalLayout.addWidget(self.bottomButton, alignment=center)
     
     def _initStyle(self):
-        initImgBackground(self,"backgroundConfirmPage.png")
+        initImgBackground(self,Asset.subPageBackgorund)
         
     def _sendTranscribeSignal(self):
         """send a signal with a set of file keys that will be transcribed """

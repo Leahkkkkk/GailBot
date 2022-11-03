@@ -18,13 +18,20 @@ TODO: change name settingdata to settingFormData
                   the counter part is settingValueData
 TODO: make a combobox widget
 """
-from ctypes import alignment
-import tomli 
+
 from typing import Dict, List, Set
 
-from util.Config import Color, FontSize, ProfileSettingForm
+from util.Config import (
+    Color, 
+    About,
+    StyleSheet,
+    Dimension)
+from util.Config import ProfilePageText as Text
+from util.Config import FontSize as FS 
+from util.Config import StyleSheet as SS 
+from util.Config import ProfileSettingForm as Form 
+ 
 from util.Logger import makeLogger
-from view.style.styleValues import Dimension
 from view.Signals import ProfileSignals
 from view.style.Background import initBackground
 from view.Text.LinkText import Links
@@ -50,70 +57,50 @@ class ProfileSettingPage(QWidget):
     """ class for settings page"""
     def __init__(
         self, 
-        settingForm:Dict[str, dict], 
         profilekeys:List[str],
-        plugins:Set[str],
         signals:ProfileSignals,
         *args, 
         **kwargs) -> None:
         
         super().__init__(*args, **kwargs)
-        self.settingForm = settingForm
+    
         self.signals = signals
         self.profilekeys = profilekeys
-        self.plugins = plugins
+        self.plugins = list(Form.Plugins)
         self.logger = makeLogger("Frontend")
         self._initWidget()
         self._initLayout()
         self._connectSignal()
         self._initStyle()
+        self._initDimension()
     
     def _initWidget(self):
         """ initialize widgets"""
-        initBackground(self)
         self.sideBar = SideBar.SideBar()
         self.selectSettings = ComboBox.ComboBox()
         self.selectSettings.addItems(self.profilekeys)
         
         self.cancelBtn = Button.BorderBtn(
-            "Cancel", 
-            Color.ORANGE)
+            Text.cancelBtn, Color.ORANGE)
         self.saveBtn = Button.ColoredBtn(
-            "Save and Exit", 
-            Color.GREEN)
+            Text.saveBtn, Color.GREEN)
         self.newProfileBtn = Button.ColoredBtn(
-            "Create New Profile", 
-            Color.BLUEMEDIUM)
+            Text.newProfileBtn,Color.BLUEMEDIUM)
         self.requiredSetBtn = Button.BorderBtn(
-            "Required Settings", 
-            Color.GREYDARK, 
-            FontSize.BTN, 0)
-        self.requiredSetBtn.setFixedWidth(190)
+            Text.reuquiredSetBtn, Color.GREYDARK, FS.BTN, 0, SS.onlyTopBorder)
         self.postSetBtn = Button.BorderBtn(
-            "Post-Transcription Settings", 
-            Color.GREYDARK, 
-            FontSize.BTN, 0)
-        self.postSetBtn.setFixedWidth(190)
-        self.GuideLink = Label.Label(
-            Links.guideLink, 
-            FontSize.LINK, 
-            link=True)
+            Text.postSetBtn,Color.GREYDARK, FS.BTN, 0,SS.noSideBorder)
+        self.GuideLink = Label.Label(Links.guideLink, FS.LINK, link=True)
         self.newPluginBtn = Button.ColoredBtn(
-            "Add New Plugin",
-            Color.BLUEMEDIUM)
+            Text.newPluginBtn, Color.BLUEMEDIUM)
         self.pluginBtn = Button.BorderBtn(
-            "Plugin Setting",
-            Color.GREYDARK,FontSize.BTN,0
-        )
-       
-        self.pluginBtn.setFixedWidth(190)
+            Text.pluginSetBtn, Color.GREYDARK, FS.BTN, 0, SS.onlyBottomBorder)
+        self.versionLabel = Label.Label(About.version, FS.SMALL)
+        self.copyRightLabel = Label.Label(About.copyRight, FS.SMALL)
         self.settingStack = QStackedWidget(self)
-        self.RequiredSetPage = RequiredSetPage.RequiredSetPage(
-            ProfileSettingForm.RequiredSetting)
-        self.PostSetPage = PostSetPage.PostSetPage(
-            ProfileSettingForm.PostTranscribe)   
-        self.PluginPage = PluginPage.PluginPage(self.plugins)
-        
+        self.RequiredSetPage = RequiredSetPage.RequiredSetPage()
+        self.PostSetPage = PostSetPage.PostSetPage()   
+        self.PluginPage = PluginPage.PluginPage()
         self.selectSettings.setCurrentIndex(0)     
         self.placeHolder = QWidget()
         self.settingStack.addWidget(self.placeHolder)
@@ -129,48 +116,77 @@ class ProfileSettingPage(QWidget):
         self.horizontalLayout.setContentsMargins(0,0,0,0)
         self.horizontalLayout.setSpacing(0)
         self.setLayout(self.horizontalLayout)
-        
+        self.topSelectionContainer = QWidget()
+        self.topSelectionContainer.setContentsMargins(0,0,0,0)
+        self.sidebarTopLayout = QVBoxLayout()
+        self.sidebarTopLayout.setContentsMargins(0,0,0,0)
+        self.topSelectionContainer.setLayout(self.sidebarTopLayout)
         """ add widget to layout """
-        self.sideBar.addWidget(self.selectSettings)
-        self.sideBar.addWidget(self.requiredSetBtn)
-        self.sideBar.addWidget(self.postSetBtn)
-        self.sideBar.addWidget(self.pluginBtn)
-        self.sideBar.addWidget(self.newPluginBtn)
+        self.sidebarTopLayout.addWidget(self.selectSettings)
+        self.sidebarTopLayout.addWidget(self.requiredSetBtn)
+        self.sidebarTopLayout.addWidget(self.postSetBtn)
+        self.sidebarTopLayout.addWidget(self.pluginBtn)
+        self.sidebarTopLayout.setSpacing(0)
+        self.sideBar.addWidget(self.topSelectionContainer)
+        # self.sideBar.addWidget(self.newPluginBtn)  
         self.sideBar.addWidget(self.newProfileBtn)
         self.sideBar.addWidget(self.saveBtn)
         self.sideBar.addWidget(self.cancelBtn)
+        self.sideBar.addStretch()
         self.sideBar.addWidget(self.GuideLink, alignment=bottom)
+        self.sideBar.addWidget(self.versionLabel, alignment=bottom)
+        self.sideBar.addWidget(self.copyRightLabel, alignment=bottom)
         self.horizontalLayout.addWidget(self.sideBar)
         self.horizontalLayout.addWidget(self.settingStack)
-        self.settingStack.resize(QtCore.QSize(500,800))
         self.settingStack.setContentsMargins(0,0,0,0)
-        self.saveBtn.setFixedSize(Dimension.BGBUTTON)
-        self.cancelBtn.setFixedSize(Dimension.RBUTTON)
-        self.newProfileBtn.setFixedSize(Dimension.BGBUTTON)
-        self.newPluginBtn.setFixedSize(Dimension.BGBUTTON)
-   
+
    
     def _connectSignal(self):
         """handles signals"""
-        self.postSetBtn.clicked.connect(
-            lambda: self.settingStack.setCurrentWidget(self.PostSetPage))
-        self.requiredSetBtn.clicked.connect(
-            lambda: self.settingStack.setCurrentWidget(self.RequiredSetPage))
-        self.pluginBtn.clicked.connect(
-            lambda: self.settingStack.setCurrentWidget(self.PluginPage))
+        self.postSetBtn.clicked.connect(self._activatePostSet)
+        self.requiredSetBtn.clicked.connect(self._activeRequiredSet)
+        self.pluginBtn.clicked.connect(self._activatePlugin)
         
         self.saveBtn.clicked.connect(self.RequiredSetPage.submitForm)
         
         self.selectSettings.currentTextChanged.connect(self._getProfile)
-
         self.newProfileBtn.clicked.connect(self.createNewSetting)
         self.saveBtn.clicked.connect(self.updateProfile)
         self.newPluginBtn.clicked.connect(self.addPluginRequest)
     
+    def _activatePostSet(self):
+        self._setBtnDefault()
+        self.postSetBtn.setActiveStyle(Color.BLUEWHITE)
+        self.settingStack.setCurrentWidget(self.PostSetPage)
+    
+    def _activeRequiredSet(self):
+        self._setBtnDefault()
+        self.requiredSetBtn.setActiveStyle(Color.BLUEWHITE)
+        self.settingStack.setCurrentWidget(self.RequiredSetPage)
+    
+    def _activatePlugin(self):
+        self._setBtnDefault()
+        self.pluginBtn.setActiveStyle(Color.BLUEWHITE)
+        self.settingStack.setCurrentWidget(self.PluginPage)
+        
+    
+    
+    def _setBtnDefault(self):
+        self.postSetBtn.setDefaultStyle()
+        self.requiredSetBtn.setDefaultStyle()
+        self.pluginBtn.setDefaultStyle()
+        
+    
     def _initStyle(self):
-        self.settingStack.setObjectName("settingStack")
-        """ add this to an external stylesheet"""
-        self.settingStack.setStyleSheet("#settingStack {border: none; border-left:0.5px solid grey;}")
+        initBackground(self)
+        self.settingStack.setObjectName(SS.settingStackID)
+        self.settingStack.setStyleSheet(SS.settingStack)
+    
+    def _initDimension(self):
+        self.requiredSetBtn.setFixedWidth(Dimension.LBTNWIDTH)
+        self.postSetBtn.setFixedWidth(Dimension.LBTNWIDTH)
+        self.pluginBtn.setFixedWidth(Dimension.LBTNWIDTH)
+        
    
     def _getProfile(self, profileName:str):
         """ send the request to database to get profile data  """
@@ -182,19 +198,14 @@ class ProfileSettingPage(QWidget):
     
     def createNewSetting(self):
         """ open a pop up window for user to create new setting profile """
-        createNewSettingTab = CreateNewSetting(
-                        list(ProfileSettingForm.RequiredSetting["Engine"]),
-                             ProfileSettingForm.RequiredSetting["Engine"],
-                             ProfileSettingForm.RequiredSetting["OutPut Format"],
-                             ProfileSettingForm.PostTranscribe,
-                             self.plugins)
+        createNewSettingTab = CreateNewSetting(self.plugins)
         createNewSettingTab.signals.newSetting.connect(self._postNewProfile)
         createNewSettingTab.exec()
         
         
     def loadProfile(self, profile:tuple):
         """ load the profile data to be presented onto the table """
-        logger.info("")
+        logger.info(profile)
         key, data = profile 
         self.selectSettings.setCurrentText(key)
         self.PostSetPage.setValue(data["PostTranscribe"])
@@ -216,7 +227,7 @@ class ProfileSettingPage(QWidget):
         pluginDialog.exec()
     
     def addPluginHandler(self, plugin:str):
-        # self.plugins.add(plugin)
+        self.plugins.add(plugin)
         self.PluginPage.addNewPlugin(plugin)
         
     def updateProfile(self):

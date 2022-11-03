@@ -35,7 +35,6 @@ class Controller(QObject):
         
         # view 
         self.ViewObj = MainWindow.MainWindow(
-            config["profile form"],
             self.ModelObj.ProfileData.profilekeys)
         
         # connecting view and database

@@ -11,9 +11,8 @@ Modified By:  Siara Small  & Vivian Li
 
 
 from cProfile import run
-from view.pages.CreatNewSettingPages import (
+from view.pages.CreateNewProfilePages import (
     ProfileName,
-    ChooseEngine,
     BasicSetting, 
     EngineSetting, 
     OutPutFormatSetting,
@@ -33,69 +32,51 @@ class Signals(QObject):
     
 
 class CreateNewSetting(QDialog):
-    def __init__(self, 
-                 engineKey:list, 
-                 engineFormData:dict, 
-                 outputFormData:dict,
-                 postTranscribeFormData:dict,
-                 pluginData:set,
-                 *agrs, 
-                 **kwargs) -> None:
+    def __init__(self, plugins, *agrs, **kwargs) -> None:
         super().__init__(*agrs, **kwargs)
-        self.engineForm = engineFormData
-        print(engineFormData)
         self.signals = Signals()
         self.profilename = ProfileName()
-        self.ChooseEngine = ChooseEngine(engineKey)
         self.BasicSetting = BasicSetting()
-        self.EngineSetting = EngineSetting(self.engineForm[engineKey[0]])
-        self.OutPutFormSetting = OutPutFormatSetting(outputFormData)
-        self.PostTranscribeSetting = PostTranscribeSetting(postTranscribeFormData)
-        self.PluginSetting = PluginSetting(pluginData)
+        self.EngineSetting = EngineSetting()
+        self.OutPutFormSetting = OutPutFormatSetting()
+        self.PostTranscribeSetting = PostTranscribeSetting()
+        self.PluginSetting = PluginSetting(plugins)
         self.newSettingData = dict()
-        
         self.setWindowTitle("Create New Profile")
         
         mainTab = Tab (
             "Create new setting", 
             {
                 "ProfileName": self.profilename,
-                "Speech to text engine": self.ChooseEngine,
                 "Basic Settings": self.BasicSetting,
                 "Optional Settings": self.EngineSetting,
                 "Output File Format Setting": self.OutPutFormSetting,
                 "Post Transcribtion Settion": self.PostTranscribeSetting,
                 "Plugin Setting" : self.PluginSetting
             },
-            QSize(800,800)
+            QSize(850,800)
         )
         
-        self.ChooseEngine.mainCombo.currentTextChanged.connect(self._changeEngineSetting)
         mainTab.changePageBtn.finishBtn.clicked.connect(self.postSetting)
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
         self.layout.addWidget(mainTab)
-
-    def _changeEngineSetting(self, engine:str):
-        if engine in self.engineForm:
-            self.EngineSetting.newForm(self.engineForm[engine])
         
     def postSetting(self):
         profileData = dict()
         requiredData = dict()
         profileName = self.profilename.getData()
         basicData = self.BasicSetting.getData()
-        engine = self.ChooseEngine.getData()
         engineData = self.EngineSetting.getData()
         outputFormData = self.OutPutFormSetting.getData()
         postFormData = self.PostTranscribeSetting.getData()
         plugins = self.PluginSetting.getData()
         
         requiredData["User Info"] = basicData
-        requiredData["Engine"] = {engine:engineData}
+        requiredData["Engine"] = engineData
         requiredData["Output Form Data"] = outputFormData
-        profileData ["Post Transcribe"] = postFormData
-        profileData ["Required Setting"] = requiredData
+        profileData ["PostTranscribe"] = postFormData
+        profileData ["RequiredSetting"] = requiredData
         profileData ["Plugins"] = plugins
         
         self.signals.newSetting.emit((profileName, profileData))

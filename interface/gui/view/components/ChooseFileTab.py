@@ -8,7 +8,6 @@ Last Modified: Sunday, 23rd October 2022 11:06:50 am
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
-
 from typing import List
 
 from view.widgets.PopUpTab import Tab
@@ -44,8 +43,7 @@ class ChooseFileTab(QDialog):
         mainTab = Tab("Add New File", 
                       {"add file": self.chooseFileTab,
                        "choose setting": self.chooseSetTab,
-                       "select output": self.chooseOutPutTab}
-                      )
+                       "select output": self.chooseOutPutTab})
         mainTab.signals.closeTab.connect(self.addFile)
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
@@ -54,17 +52,15 @@ class ChooseFileTab(QDialog):
     def addFile(self) -> None: 
         fileObjList = self.chooseFileTab.getFile()
         profileObj = self.chooseSetTab.getProfile()
-        print("file profile", profileObj)
         outputPathObj = self.chooseOutPutTab.getOutputPath()
         
         statusObj = {
             "Status": "Not Transcribed", 
-            "Progress": "None", 
-            "SelectedAction":"Transcribe"}
+            "Progress": "Transcribing", 
+            "SelectedAction": "Transcribe"}
         
         for fileObj in fileObjList:
             fileData = {**fileObj, **profileObj, **outputPathObj, **statusObj}
             self.signals.postFile.emit(fileData)
-            self.signals.sendStatus.emit(200)
         self.close()
 

@@ -1,13 +1,53 @@
-import tomli
 
-from util.Config import Color, FontSize
-from view.style.styleValues import FontFamily, Dimension
+from util.Config import Color, FontSize, Dimension
+from util.Config import RecordPageText as Text
+from view.style.styleValues import FontFamily 
 from view.style.Background import initBackground
 from view.widgets import InputBox, Button, Label, ToggleView
-from view.pages import RecordInProgress
 
-from PyQt6.QtWidgets import QWidget, QVBoxLayout,QSpacerItem, QComboBox
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QProgressBar
 from PyQt6.QtCore import Qt
+
+center = Qt.AlignmentFlag.AlignHCenter
+
+
+
+class RecordProgress(QWidget):
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self._initWidget()
+        self._iniLayout()
+        self._connectSignal()
+        initBackground(self)
+    
+    def _initWidget(self):
+        self.iconBtn = Button.ToggleBtn(("stop.png", "play.png"))
+        self.endBtn  = Button.ColoredBtn(Text.end, Color.ORANGE)
+        self.recordBar = ProgressBar()
+        self.recordBar.setMinimumWidth(Dimension.PROGRESSBARWIDTH)
+        self.recordBar.setMinimumHeight(Dimension.PROGRESSBARHEIGHT)
+    
+    def _iniLayout(self):
+        self.horizontalLayout = QHBoxLayout()
+        self.setLayout(self.horizontalLayout)
+        self.horizontalLayout.addWidget(self.iconBtn, alignment=center)
+        self.horizontalLayout.addWidget(self.recordBar, alignment=center)
+        self.horizontalLayout.addWidget(self.endBtn, alignment=center)
+    
+    def _connectSignal(self):
+        self.endBtn.clicked.connect(lambda: self.hide())
+        
+
+
+class ProgressBar(QProgressBar):
+    def __init__(self, *args, **kwargs):
+        super(ProgressBar, self).__init__(*args, **kwargs)
+        self.setValue(0)
+    
+    def start(self):
+        self.startTimer(20)
+        
+            
 
 
 class RecordPage(QWidget):
@@ -16,47 +56,48 @@ class RecordPage(QWidget):
         super().__init__(*args, **kwargs)
         self._initWidget()
         self._initLayout()
-    
+        self._connectSignal()
+        
     def _initWidget(self):
-        self.header = Label.Label("Record Audio File", 
+        self.header = Label.Label(Text.record, 
                                   FontSize.HEADER2, 
                                   FontFamily.MAIN)
         self.recordForm = RecordForm(parent=self)
-        self.toggleSetting = ToggleView.ToggleView("Recording Settings", 
+        self.toggleSetting = ToggleView.ToggleView(Text.recSet, 
                                                    self.recordForm,
                                                    header=True)
-        self.testBtn = Button.BorderBtn("Test MicroPhone", "#000")
-        self.startRecordBtn = Button.ColoredBtn("Start Recording", Color.GREEN)
-        self.cancelBtn = Button.ColoredBtn("Cancel", Color.ORANGE)
-        self.startRecordBtn.clicked.connect(self._startRecord)
+        self.testBtn = Button.BorderBtn(Text.test, "#000")
+        self.startRecordBtn = Button.ColoredBtn(Text.start, Color.GREEN)
+        self.cancelBtn = Button.ColoredBtn(Text.cancel, Color.ORANGE)
+        self.recordInprogress =  RecordProgress()
+        self.recordInprogress.hide()
+
     
     def _initLayout(self):
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
         self.layout.addWidget(self.header, 
-                              alignment=Qt.AlignmentFlag.AlignHCenter)
-        self.header.setContentsMargins(0,20,0,40)
+                              alignment=center)
         self.layout.addWidget(self.toggleSetting,
-                            alignment=Qt.AlignmentFlag.AlignHCenter)
+                            alignment=center)
         self.layout.addStretch()
+        self.layout.addWidget(self.recordInprogress)
         self.layout.addWidget(self.testBtn,
-                              alignment=Qt.AlignmentFlag.AlignHCenter)
+                              alignment=center)
         self.layout.addWidget(self.startRecordBtn,
-                              alignment=Qt.AlignmentFlag.AlignHCenter)
+                              alignment=center)
         self.layout.addWidget(self.cancelBtn,
-                              alignment=Qt.AlignmentFlag.AlignHCenter)
-        self.testBtn.setFixedSize(Dimension.BGBUTTON)
-        self.startRecordBtn.setFixedSize(Dimension.BGBUTTON)
-        self.cancelBtn.setFixedSize(Dimension.BGBUTTON)
-        self.spacer = QSpacerItem(200,150)
-        self.layout.addItem(self.spacer)
-        self.cancelBtn.setContentsMargins(0,10,0,150)
+                              alignment=center)
         initBackground(self)
     
-    
-    def _startRecord(self):
-        self.recordDialog = RecordInProgress.RecordDialog()
-        self.recordDialog.exec()
+    def _connectSignal(self):
+        self.startRecordBtn.clicked.connect(
+            lambda: self.recordInprogress.show())
+        self.startRecordBtn.clicked.connect(
+            lambda: self.recordInprogress.recordBar.start())
+        self.cancelBtn.clicked.connect(
+            lambda: self.recordInprogress.hide())
+        
         
 
 class RecordForm(QWidget):
@@ -66,14 +107,14 @@ class RecordForm(QWidget):
         self._initLayout()
     
     def _initWidget(self):
-        self.basicLabel = Label.Label("Basic", FontSize.BODY, FontFamily.MAIN)
-        self.basicInput = InputBox.InputBox("Filename")
-        self.audioCombo = InputBox.InputCombo(["MP3", "WAV"], "Audio Format")
-        self.advancedLabel = Label.Label("Advanced",
+        self.basicLabel = Label.Label(Text.basic, FontSize.BODY, FontFamily.MAIN)
+        self.basicInput = InputBox.InputBox(Text.filename)
+        self.audioCombo = InputBox.InputCombo([Text.mp3, Text.wav], Text.format)
+        self.advancedLabel = Label.Label(Text.advanced,
                                          FontSize.BODY, 
                                          FontFamily.MAIN)
-        self.recordingRate = InputBox.InputBox("Recording Rate (Hertz)")
-        self.maxDuration = InputBox.InputBox("Max Recording Duration")
+        self.recordingRate = InputBox.InputBox(Text.rate)
+        self.maxDuration = InputBox.InputBox(Text.duration)
     
     def _initLayout(self):
         self.layout = QVBoxLayout()

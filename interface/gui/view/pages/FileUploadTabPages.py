@@ -34,7 +34,7 @@ from PyQt6.QtWidgets import (
     QStackedWidget,
     QDialog,
     QListView)
-from PyQt6.QtCore import QSize,Qt
+from PyQt6.QtCore import QSize, Qt, QAbstractListModel
 
 center = Qt.AlignmentFlag.AlignHCenter
 
@@ -53,56 +53,44 @@ class Profile(TypedDict):
     Profile:str
 
 
+
+
+class FileModel(QAbstractListModel):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.files = []
+        
+    def data(self, index, role):
+        if role == Qt.ItemDataRole.DisplayRole:
+            text = self.files[index.row()]
+            return text
+
+    def rowCount(self, index):
+        return len(self.files)
+
+
+
 class OpenFile(TabPage):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
-        self.dropLabel = Label(
-            "Drop File Here to Upload", 
-            FontSize.BODY)
-        self.fileDisplayList = QListWidget()
+        # self.fileDisplayList = QListWidget()
+        self.fileDisplayList = QListView()
+        self.fileListModel = FileModel()
+        self.fileDisplayList.setModel(self.fileListModel)
         self.filePaths = []
         self.uploadFileBtn = ColoredBtn(
             "Choose From Local", 
             Color.BLUEMEDIUM)
         self.uploadFileBtn.clicked.connect(lambda: self.getOpenFilesAndDirs())
-        self.setAcceptDrops(True)
-        self.layout.addWidget(self.dropLabel, alignment=center)
         self.layout.addWidget(self.fileDisplayList, alignment=center)
         self.layout.addWidget(self.uploadFileBtn,alignment=center)
         self.fileDisplayList.setStyleSheet(
             f"border: 1px solid {Color.BLUEDARK};"
             "background-color:white;")
         
-    def dragEnterEvent(self, event):
-        if event.mimeData().hasUrls:
-            event.accept()
-        else:
-            event.ignore()
-
-    def dragMoveEvent(self, event):
-        if event.mimeData().hasUrls():
-            event.setDropAction(Qt.DropAction.CopyAction)
-            event.accept()
-        else:
-            event.ignore()
-
-    def dropEvent(self, event):
-        if event.mimeData().hasUrls():
-            event.setDropAction(Qt.DropAction.CopyAction)
-            event.accept()
-            for url in event.mimeData().urls():
-                if url.isLocalFile():
-                    self.filePaths.append(str(url.toLocalFile()))
-                else:
-                    self.filePaths.append(str(url.toString()))
-            self.fileDisplayList.addItems(self.filePaths)
-            """ TODO: validate the file path first """
-            self.signals.nextPage.emit()
-        else:
-            event.ignore()
-    
+        
     def getFile(self) -> List[FileData]:
         fileList = []
         for file in self.filePaths:
@@ -116,7 +104,6 @@ class OpenFile(TabPage):
         temp = str(fullPath)
         patharr = temp.split("/")
         size = round(os.stat(fullPath).st_size/1000, 2)
-        
         if os.path.isdir(path):
             fileType = "📁"
             fileName = patharr[-2]
@@ -132,8 +119,7 @@ class OpenFile(TabPage):
                 "Size": f"{size}kb", 
                 "FullPath": fullPath}
 
-    def getOpenFilesAndDirs(self, caption='', directory='', 
-                           filter=["audio file (*.wav)","directory (/)"], initialFilter=''):
+    def getOpenFilesAndDirs(self, filter=["audio file (*.wav)","directory (/)"]):
         def updateText():
                 # update the contents of the line edit widget with the selected files
             selected = []
@@ -144,14 +130,10 @@ class OpenFile(TabPage):
         dialog = QFileDialog()
         dialog.setFileMode(dialog.FileMode.ExistingFiles)
         dialog.setOption(dialog.Option.DontUseNativeDialog, True)
-        
-        if directory:
-            dialog.setDirectory(directory)
+    
         if filter:
             dialog.setNameFilters(filter)
-        if initialFilter:
-            dialog.selectNameFilter(initialFilter)
-        
+
         dialog.accept = lambda: QDialog.accept(dialog)
         stackedWidget = dialog.findChild(QStackedWidget)
         view = stackedWidget.findChild(QListView)
@@ -164,7 +146,9 @@ class OpenFile(TabPage):
         if selectedFiles: 
             self.signals.nextPage.emit()  
             self.filePaths = self.filePaths + selectedFiles
-            self.fileDisplayList.addItems(self.filePaths)
+            self.fileListModel.files.extend(selectedFiles)
+            self.fileListModel.layoutChanged.emit()
+           
 
     
 class ChooseSet(TabPage):
@@ -226,7 +210,6 @@ class ChooseOutPut(TabPage):
         self.dirPathText = QLineEdit(self)
         self.dirPathText.setPlaceholderText("Choose Output Directory")
         self.dirPathText.setMinimumHeight(40)
-        
         self.dirPathText.setReadOnly(True)
         self.chooseDirBtn.clicked.connect(self._addDir)
         

@@ -1,10 +1,9 @@
-from ctypes import alignment
 
-from util.Config import Color, FontSize
+from util.Config import Color, FontSize, ProfileSettingForm
+from util.Config import ProfilePageText as Text
 from view.widgets import Label 
 from view.style.styleValues import FontFamily
 from view.style.Background import initBackground
-
 from PyQt6.QtWidgets import (
     QWidget, 
     QCheckBox, 
@@ -13,10 +12,13 @@ from PyQt6.QtWidgets import (
     QScrollArea)
 from PyQt6.QtCore import Qt
 
+center  = Qt.AlignmentFlag.AlignHCenter
+defaultPlugin = list (ProfileSettingForm.Plugins)
+
 class PluginPage(QWidget):
     def __init__(
         self,
-        plugins, 
+        plugins = defaultPlugin,
         *args, 
         **kwargs) -> None:
         super().__init__( *args, **kwargs)
@@ -28,14 +30,10 @@ class PluginPage(QWidget):
         
     def _initWidget(self):
         self.header = Label.Label(
-            "Choose Plugins", 
-            FontSize.HEADER2,
-            FontFamily.MAIN, 
-            alignment=Qt.AlignmentFlag.AlignTop|Qt.AlignmentFlag.AlignHCenter)
+            Text.pluginHeader, FontSize.HEADER2, FontFamily.MAIN, 
+            alignment= center)
         self.caption = Label.Label(
-            "These plugins are applied to transcription process",
-            FontSize.DESCRIPTION, 
-            FontFamily.MAIN)
+            Text.pluginCaption, FontSize.DESCRIPTION, FontFamily.MAIN)
 
     def _initlayout(self):
         self.verticalLayout = QVBoxLayout()
@@ -52,18 +50,17 @@ class PluginPage(QWidget):
         self.verticalLayout.addWidget(self.header)
         self.verticalLayout.addWidget(
             self.caption, 
-            alignment = Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignTop)
+            alignment = center)
         self.verticalLayout.setSpacing(3)
         self.verticalLayout.addWidget(
             self.scroll, 
-            alignment=Qt.AlignmentFlag.AlignHCenter)
+            alignment=center)
         self.verticalLayout.addStretch()
         initBackground(self.scroll, Color.BLUEWHITE)
         initBackground(self.scrollContainer, Color.BLUEWHITE)
 
     def _initPlugins(self):
         for plugin in self.plugins:
-            print(plugin)
             newPlugin = pluginCheckBox(plugin)
             self.pluginDict[plugin] = newPlugin
             self.scrollLayout.addWidget(
@@ -90,7 +87,6 @@ class PluginPage(QWidget):
                 appliedPlugins.add(plugin)
         return appliedPlugins
                 
-        
 class pluginCheckBox(QWidget):
     def __init__(self, plugin:str, *args, **kwargs) -> None:
         super().__init__( *args, **kwargs)

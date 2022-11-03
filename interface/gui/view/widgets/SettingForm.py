@@ -40,7 +40,7 @@ class SettingForm(QWidget):
         self.setForm.setFixedWidth(600)
         self.scroll.setMaximumHeight(750)
         self.scroll.setMinimumHeight(550)
-        initBackground(self.scroll, color=Color.BLUEWHITE)
+        initBackground(self.scroll, color = Color.BLUEWHITE)
     
     def _initLayout(self):
         """ initialize layout"""
@@ -49,12 +49,11 @@ class SettingForm(QWidget):
         """ add widget to layout """
         self.verticalLayout.addWidget(
             self.header, 
-            alignment=Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignTop)
+            alignment=Qt.AlignmentFlag.AlignHCenter)
         if self.captionText:
             self.verticalLayout.addWidget(
                 self.caption,
                 alignment=Qt.AlignmentFlag.AlignCenter)
-        self.caption.setContentsMargins(80,0,0,0)
         self.verticalLayout.addWidget(
             self.scroll,
             alignment=Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignTop)

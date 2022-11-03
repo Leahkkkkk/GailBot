@@ -3,8 +3,9 @@ import os
 from util.Config import (
     Color, 
     FontSize, 
-    TranscribeProgressText
+    Dimension
 )
+from util.Config import TranscribeProgressText as Text
 from util.Logger import makeLogger
 from view.Signals import FileSignals
 from view.widgets import MsgBox
@@ -15,7 +16,6 @@ from view.widgets import (
 from util import Path
 from view.widgets import Button
 from view.style.styleValues import (
-    Dimension, 
     FontFamily
 )
 from view.style.Background import initImgBackground
@@ -58,24 +58,21 @@ class TranscribeProgressPage(QWidget):
         
     def _initWidget(self):
         """ initialize widgets """
-        self.label = Label.Label(TranscribeProgressText.mainLabelText,
-                                 FontSize.HEADER1, 
-                                 FontFamily.MAIN)
+        self.label = Label.Label(
+            Text.mainLabelText, FontSize.HEADER2, FontFamily.MAIN)
         self.label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         self.loadIcon = QLabel()
         self.IconImg = QMovie(os.path.join(Path.getProjectRoot(), "view/asset/gbloading.gif"))
         self.loadIcon.setMovie(self.IconImg)
         self.loadStart()
        
-        self.loadingText = Label.Label(TranscribeProgressText.loadingText,
-                                      FontSize.SMALL,
-                                      FontFamily.OTHER)
+        self.loadingText = Label.Label(
+            Text.loadingText,FontSize.SMALL, FontFamily.OTHER)
         self.loadingText.setAlignment(Qt.AlignmentFlag.AlignHCenter)
-        self.InProgress = Label.Label(TranscribeProgressText.inProgressText,
-                                        FontSize.HEADER3,
-                                        FontFamily.MAIN)
+        self.InProgress = Label.Label(
+            Text.inProgressText, FontSize.HEADER3, FontFamily.MAIN)
         self.cancelBtn = Button.ColoredBtn(
-            TranscribeProgressText.cancelText, 
+            Text.cancelText, 
             Color.ORANGE, 
             FontSize.BTN)
         self.fileTable = FileTable.FileTable(ProgressHeader, self.signals)
@@ -86,9 +83,7 @@ class TranscribeProgressPage(QWidget):
         self.loadIcon.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.loadIcon.setFixedSize(QtCore.QSize(80, 80))
         self.loadIcon.setScaledContents(True)
-        self.cancelBtn.setMinimumSize(QtCore.QSize(130, 30))
-        self.cancelBtn.setMinimumSize(Dimension.BGBUTTON)
-        initImgBackground(self, TranscribeProgressText.backgroundImg)
+        initImgBackground(self, Text.backgroundImg)
         
     def _initLayout(self):
         """ intiializes layout """
@@ -117,7 +112,7 @@ class TranscribeProgressPage(QWidget):
         
     def _confirm(self):
         self.confirmCancel = MsgBox.ConfirmBox(
-            TranscribeProgressText.loggerMsg, self.cancelGailBot)
+            Text.loggerMsg, self.cancelGailBot)
     
     def setLoadingText(self, text):
         self.loadingText = Label.Label(text,
@@ -125,5 +120,5 @@ class TranscribeProgressPage(QWidget):
                                       FontFamily.OTHER)
 
     def cancelGailBot(self):
-        logger.info(TranscribeProgressText.loggerMsg)
+        logger.info(Text.loggerMsg)
         self.signals.cancel.emit()

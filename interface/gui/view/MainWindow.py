@@ -29,7 +29,6 @@ class MainWindow(QMainWindow):
     """ mainwindow  of the GUI App"""
     def __init__(
         self, 
-        settingform:dict,
         settingkey: list
     ):
         """initialzie mainwindow object 
@@ -47,13 +46,13 @@ class MainWindow(QMainWindow):
         self.resize(QSize(1100, 750))
     
         self.MainStack = MainStack.MainStack(
-            settingform, 
             settingkey,
             self.fileTableSignals, 
             self.profileSignals,
             parent=self)
         
         self.setCentralWidget(self.MainStack)
+        self.setContentsMargins(0,0,0,0)
         self.StatusBar = StatusBar.StatusBar()
         self.setStatusBar(self.StatusBar)
         self.MenuBar = MenuBar.ManuBar()

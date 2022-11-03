@@ -10,8 +10,9 @@ Modified By:  Siara Small  & Vivian Li
 '''
 import os
 import typing
-# from view.style.styleValues import FontSize, Dimension, Color
-from util.Config import FontSize, Dimension, Color
+from util.Config import FontSize, Dimension, Color, StyleSheet
+from util.Config import BtnText as Text
+from util.StyleGenerator import colorScale
 from view.style.Background import initBackground
 from util import Path
 
@@ -48,15 +49,31 @@ class ColoredBtn(QPushButton):
         """"" define and initialize class for colored button """""
         super().__init__(*args, **kwargs)
         self.setText(label)
-        self.setStyleSheet(f"background-color:{color};"
-                           f"border-radius:{borderRadius};"
-                           f"padding:1;"
-                           f"color:#fff;"
-                           f"font-size:{fontsize};"
-                           f"{other}")
+        self.origColor = color
+        self.pressColor = colorScale(color, 0.7)
+        self.borderRadius = borderRadius
+        self.fontsize = fontsize
+        self.other = other
         self.setFixedSize(Dimension.BTNWIDTH, Dimension.BTNHEIGHT)
+        self.defaultStyle = f"border-radius:{self.borderRadius};"\
+                            f"padding:1;"\
+                            f"color:#fff;"\
+                            f"font-size:{self.fontsize};"\
+                            f"{self.other};"
+        self.pressed.connect(self._pressStyle)
+        self.released.connect(self._releaseStyle)
+        self._releaseStyle()
     
-      
+    def _pressStyle(self):
+        """ set the button color to be darker  """
+        self.setStyleSheet(self.defaultStyle + 
+                           f"background-color:{self.pressColor}")
+    def _releaseStyle(self):
+        """ set the button color to original color """
+        self.setStyleSheet(self.defaultStyle + 
+                           f"background-color:{self.origColor};")
+        
+    
 class BorderBtn(QPushButton):
     """ a button widget with colored border and text 
         and white background
@@ -71,8 +88,9 @@ class BorderBtn(QPushButton):
         self, 
         label:str, 
         color:str,
-        fontsize:str = FontSize.BTN, 
-        borderradius:int = 5,
+        fontSize:str = FontSize.BTN, 
+        borderRadius:int = 5,
+        other:str = None,
         *args, 
         **kwargs
     ):
@@ -80,14 +98,28 @@ class BorderBtn(QPushButton):
         super().__init__(*args, **kwargs)
     
         self.setText(label)
-        self.setStyleSheet(f"border: 1px solid {color};"
-                           f"color:{color};"
-                           f"border-radius:{borderradius};"
-                           f"padding:1;"
-                           f"font-size:{fontsize}")
+        self.color = color 
+        self.borderRadius = borderRadius
+        self.fontSize = fontSize
+        self.other = other 
         self.setFixedSize(Dimension.BTNWIDTH, Dimension.BTNHEIGHT)
+        self.defaultStyle =f"border: 1px solid {self.color};"\
+                           f"color:{self.color};"\
+                           f"border-radius:{self.borderRadius};"\
+                           f"padding:1;"\
+                           f"font-size:{self.fontSize};"\
+                           f"{self.other};"
+        self.setDefaultStyle()
+        
 
-
+    def setDefaultStyle(self):
+        self.setStyleSheet(self.defaultStyle)
+    
+    def setActiveStyle(self, color: str):
+        self.setStyleSheet(self.defaultStyle + f"background-color:{color}")
+    
+        
+    
 class ToggleBtn(QPushButton):
     """ A toggle button that display different lable when being toggled 
     
@@ -98,7 +130,7 @@ class ToggleBtn(QPushButton):
     """
     def __init__(
         self, 
-        label: tuple = ("right.png", "down.png"), 
+        label: tuple = (Text.right, Text.down), 
         text:str = "", 
         state:bool = False, 
         minHeight:int = 30,
@@ -113,13 +145,10 @@ class ToggleBtn(QPushButton):
         self.downIcon = QIcon(os.path.join(
             Path.getProjectRoot(), 
             f"view/asset/{label[1]}"))
-        self.setMinimumSize(QSize(500, minHeight))
-        self.setMaximumSize(QSize(700, minHeight))
-        initBackground(self)
+        # initBackground(self)
         self.setCheckable(True)
         self.clicked.connect(self._changeSymbol)
         self.state = state
-        
         self._changeSymbol()
         self.update()
         self.show()
@@ -161,9 +190,9 @@ class onOffButton(QWidget):
         """initialize widgets for on-off select"""
         self.label =  QLabel(self.label)
         if self.state:
-            self.onOffBtn = QPushButton("ON")
+            self.onOffBtn = QPushButton(Text.on)
         else:
-            self.onOffBtn = QPushButton("OFF")
+            self.onOffBtn = QPushButton(Text.off)
         self.onOffBtn.setMinimumSize(35, 25)
         self.onOffBtn.setMaximumSize(40, 30)
     
@@ -182,22 +211,22 @@ class onOffButton(QWidget):
         """update status of on-off select"""
         if self.state:
             self.state = False
-            self.onOffBtn.setText("OFF")
+            self.onOffBtn.setText(Text.off)
         else:
             self.state = True 
-            self.onOffBtn.setText("ON")
+            self.onOffBtn.setText(Text.on)
 
     def value(self):
-        """access state of on-off select"""
+        """ access state of on-off select """
         return self.onOffBtn.text()
     
     def setText(self, text):
         if text == "ON":
             self.state = True 
-            self.onOffBtn.setText("ON")
+            self.onOffBtn.setText(Text.on)
         else:
             self.state = False 
-            self.onOffBtn.setText("OFF")
+            self.onOffBtn.setText(Text.off)
 
 
 class iconBtn(QPushButton):
@@ -206,12 +235,15 @@ class iconBtn(QPushButton):
       super().__init__(*args, **kwargs)
       icon = QIcon(os.path.join(Path.getProjectRoot(), f"view/asset/{icon}"))
       self.setIcon(icon)
-      self.setObjectName("iconButton")
+      self.setObjectName(Text.icon)
       if label:
           self.setText(label)
   
    
-#TODO:depreacted ##   
+   
+   
+   
+""" NOTE: currently unused in the actula interface  """  
 class dropDownButton(QWidget):
     """ a dropdown button widget, when the button is clicked,
         there is a dropdown of a list of buttons
@@ -228,7 +260,7 @@ class dropDownButton(QWidget):
         self.btn = ColoredBtn(f"▶ {label}", 
                               Color.BLUEMEDIUM,
                               FontSize.SMALL, 
-                              "margin-top:0px;border-radius:0px;padding:5px")
+                              styleSheet.dropDownBtn)
         self.label = label
         self.hideView = True 
         self.setFixedWidth(130)
@@ -269,7 +301,7 @@ class buttonList(QWidget):
                 labels[i],
                 Color.BLUEMEDIUM, 
                 FontSize.SMALL,
-                "margin-top:0px; border-radius:0px; border:1px solid #fff; padding:3px 0px")
+                StyleSheet.buttonList)
             self.btnList.append(newButton)
             if btnFuns:
                 self.btnList[i].clicked.connect(btnFuns[i])
