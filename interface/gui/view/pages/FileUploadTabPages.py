@@ -25,6 +25,7 @@ from view.style.Background import initBackground
 from view.style.widgetStyleSheet import buttonStyle
 
 from PyQt6.QtWidgets import (
+    QWidget,
     QFileDialog, 
     QLineEdit,
     QHBoxLayout,
@@ -33,8 +34,10 @@ from PyQt6.QtWidgets import (
     QListWidget,
     QStackedWidget,
     QDialog,
-    QListView)
-from PyQt6.QtCore import QSize, Qt, QAbstractListModel
+    QListView,
+    QStyledItemDelegate)
+from PyQt6.QtCore import QSize, Qt, QRectF
+from PyQt6.QtGui import QColor, QPen, QBrush
 
 center = Qt.AlignmentFlag.AlignHCenter
 
@@ -52,53 +55,68 @@ class OutputPath(TypedDict):
 class Profile(TypedDict):
     Profile:str
 
-
-
-
-class FileModel(QAbstractListModel):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.files = []
-        
-    def data(self, index, role):
-        if role == Qt.ItemDataRole.DisplayRole:
-            text = self.files[index.row()]
-            return text
-
-    def rowCount(self, index):
-        return len(self.files)
-
-
-
 class OpenFile(TabPage):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.layout = QVBoxLayout()
-        self.setLayout(self.layout)
-        # self.fileDisplayList = QListWidget()
-        self.fileDisplayList = QListView()
-        self.fileListModel = FileModel()
-        self.fileDisplayList.setModel(self.fileListModel)
+        self._initWidget()
+        self._initLayout()
+        self._connectSignal()
+        self._initStyle()
+        self._initDimension()
+        
+    def _initWidget(self):
+        """ initializing the widget """
+        self.fileDisplayList = QListWidget()
         self.filePaths = []
         self.uploadFileBtn = ColoredBtn(
-            "Choose From Local", 
+            "Add File", 
             Color.BLUEMEDIUM)
-        self.uploadFileBtn.clicked.connect(lambda: self.getOpenFilesAndDirs())
-        self.layout.addWidget(self.fileDisplayList, alignment=center)
-        self.layout.addWidget(self.uploadFileBtn,alignment=center)
+        self.uploadFolderBtn = ColoredBtn(
+            "Add Folder",
+            Color.BLUEMEDIUM)
+       
+    def _initLayout(self):
+        """ initializing the layout  """
+        self.mainLayout = QVBoxLayout()
+        self.setLayout(self.mainLayout)
+        self.buttonContainer = QWidget()
+        self.buttonContainerLayout = QHBoxLayout()
+        self.buttonContainer.setLayout(self.buttonContainerLayout)
+        self.buttonContainerLayout.addWidget(self.uploadFileBtn)
+        self.buttonContainerLayout.addWidget(self.uploadFolderBtn)
+        self.mainLayout.addWidget(self.fileDisplayList, alignment=center)
+        self.mainLayout.addWidget(self.buttonContainer,alignment=center)
+        
+    
+    def _connectSignal(self):
+        """ connect the signal  """
+        self.uploadFileBtn.clicked.connect(self._getFiles)
+        self.uploadFolderBtn.clicked.connect(self._getFolders)
+        
+    
+    def _initStyle(self):
+        """ initialize the style  """
         self.fileDisplayList.setStyleSheet(
             f"border: 1px solid {Color.BLUEDARK};"
-            "background-color:white;")
+            "background-color:white;"
+            "QListWidgetItem {background-color: grey; border: 1px solid black}")
+        listDelegate = FileListDelegate()
+        self.fileDisplayList.setItemDelegate(listDelegate)
         
+    
+    def _initDimension(self):
+        self.fileDisplayList.setFixedSize(QSize(400,150))
         
     def getFile(self) -> List[FileData]:
+        """ retun a list of files object that user selected """
         fileList = []
         for file in self.filePaths:
-            fileObj = self.pathToFileObj(file)
+            fileObj = self._pathToFileObj(file)
             fileList.append(fileObj)
         return fileList
     
-    def pathToFileObj(self, path):    
+    def _pathToFileObj(self, path):  
+        """ convert the file path to a file object TODO: change the file to be stored as an object  """  
         fullPath = path
         date = datetime.date.today().strftime("%m-%d-%y")    
         temp = str(fullPath)
@@ -118,8 +136,30 @@ class OpenFile(TabPage):
                 "Date": date, 
                 "Size": f"{size}kb", 
                 "FullPath": fullPath}
+    
 
+    def _getFiles (self):
+        dialog = QFileDialog()
+        fileFilter = "*.wav"
+        selectedFiles = dialog.getOpenFileNames(filter = fileFilter)
+        if selectedFiles:
+            files, types = selectedFiles
+            print (selectedFiles)
+            self.signals.nextPage.emit()
+            self.filePaths = self.filePaths + files
+            for file in files:
+                newItem = QStyledItemDelegate()
+            self.fileDisplayList.addItems(self.filePaths)
+            
+    def _getFolders (self):
+        dialog = QFileDialog() 
+        selectedFolder = dialog.getExistingDirectory()
+        if selectedFolder:
+            self.fileDisplayList.addItem(selectedFolder)
+    
+    
     def getOpenFilesAndDirs(self, filter=["audio file (*.wav)","directory (/)"]):
+        """ TODO  """
         def updateText():
                 # update the contents of the line edit widget with the selected files
             selected = []
@@ -146,8 +186,7 @@ class OpenFile(TabPage):
         if selectedFiles: 
             self.signals.nextPage.emit()  
             self.filePaths = self.filePaths + selectedFiles
-            self.fileListModel.files.extend(selectedFiles)
-            self.fileListModel.layoutChanged.emit()
+            self.fileDisplayList.addItems(selectedFiles)
            
 
     
@@ -237,5 +276,23 @@ class ChooseOutPut(TabPage):
 
 
 
+class FileListDelegate(QStyledItemDelegate):
+    def __init__(self, *args, **kwargs):
+        super(FileListDelegate, self).__init__(*args, **kwargs)
 
+
+
+    def paint(self, painter, option, index):
+        color = QColor("#000")
         
+        painter.save()
+
+        # set background color
+        painter.setBrush(QBrush(Qt.GlobalColor.black))
+        painter.drawRoundedRect(option., 0,0)
+        painter.drawLines([])
+        
+        # set text color
+        painter.setPen(QPen(Qt.GlobalColor.black))
+        painter.restore()
+        # same thing, get the item using the index

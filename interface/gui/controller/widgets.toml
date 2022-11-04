@@ -1,0 +1,7 @@
+####widgets
+[text.btnText]
+on = "ON"
+off = "OFF"
+icon = "iconButton"
+right = "right.png"
+down = "down.png"

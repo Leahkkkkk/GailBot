@@ -3,7 +3,8 @@ import toml
 from dataclasses import dataclass
 
 
-config = toml.load("controller/interface.toml")
+config = toml.load("controller/style.toml")
+text = toml.load("controller/text.toml")
 
 """ style data """
 Color = Adapter.ColorData.from_dict(config["style"]["colors"])
@@ -17,28 +18,28 @@ FileTableDimension = Adapter.fileTableDimension.from_dict(config["filetable"]["d
 
 """ text data """
 WelcomePageText = Adapter.WelcomePageTextData.from_dict(
-    config["text"]["WelcomePageText"])
+    text["text"]["WelcomePageText"])
 TranscribeProgressText = Adapter.TranscribeProgressTextData.from_dict(
-    config["text"]["TranscribeProgressText"])
+    text["text"]["TranscribeProgressText"])
 TranscribeSuccessText = Adapter.TranscribeSuccessTextData.from_dict(
-    config["text"]["TranscribeSuccessText"])
+    text["text"]["TranscribeSuccessText"])
 FileUploadPageText = Adapter.FileUploadPageTextData.from_dict(
-    config["text"]["FileUploadPageText"])
+    text["text"]["FileUploadPageText"])
 RecordPageText = Adapter.RecordPageTextData.from_dict(
-    config["text"]["RecordPageText"])
+    text["text"]["RecordPageText"])
 ConfirmTranscribeText = Adapter.ConfirmTranscribeTextData.from_dict(
-    config["text"]["ConfirmTranscriptionPageText"])
+    text["text"]["ConfirmTranscriptionPageText"])
 
 RecordInProgressPageText = Adapter.RecordPageProgressData.from_dict(
-    config["text"]["RecordInProgressPageText"])
+    text["text"]["RecordInProgressPageText"])
 ProfilePageText = Adapter.ProfilePageTextData.from_dict(
-    config["text"]["ProfilePageText"])
+    text["text"]["ProfilePageText"])
 SystemSetPageText = Adapter.SystemSetPageTextData.from_dict(
-    config["text"]["SystemSettingPage"])
+    text["text"]["SystemSettingPage"])
 CreateNewProfilePageText = Adapter.CreateNewProfileTextData.from_dict(
-    config["text"]["CreateNewProfilePageText"])
+    text["text"]["CreateNewProfilePageText"])
 BtnText = Adapter.btnText.from_dict(
-    config["text"]["btnText"])
+    text["text"]["btnText"])
 
 """ about data"""
 About = Adapter.aboutData.from_dict(config["about"])
