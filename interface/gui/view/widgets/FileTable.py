@@ -412,6 +412,7 @@ class FileTable(QTableWidget):
         try:
             if key in self.filePins:
                 self.transferList.add(key)
+                self.selecetdList.add(key)
                 rowIdx = self.indexFromItem(self.filePins[key]).row()
                 self._setColorRow(rowIdx, Color.BLUEWHITE)
                 self.viewSignal.nonZeroFile.emit()
@@ -434,6 +435,7 @@ class FileTable(QTableWidget):
         try:
             if key in self.transferList:
                 self.transferList.remove(key)
+                self.selecetdList.remove(key)
                 rowIdx = self.indexFromItem(self.filePins[key]).row()
                 self._setColorRow(rowIdx, "#fff")
                 self.clearSelection()

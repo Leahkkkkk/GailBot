@@ -76,7 +76,7 @@ class TranscribeProgressPage(QWidget):
             Text.inProgressText, FontSize.HEADER3, FontFamily.MAIN)
         self.cancelBtn = Button.ColoredBtn(
             Text.cancelText, 
-            Color.ORANGE, 
+            Color.GREYLIGHT, 
             FontSize.BTN)
         self.fileTable = FileTable.FileTable(ProgressHeader, self.signals)
         self.fileTable.resizeCol(ProgressDimension)
@@ -110,12 +110,14 @@ class TranscribeProgressPage(QWidget):
         self.fileTable.setMaximumHeight(300)
         
     def _connectSignal(self):
-        """ connects signal """
-        self.cancelBtn.clicked.connect(self._confirm)
+        """ connects signal. change enableCancel to true when backend functionality allows for it. """
+        enableCancel = False
+        if (enableCancel):
+            self.cancelBtn.clicked.connect(self._confirm)
         self.signals.progressChanged.connect(self.editFileProgess)
         
     def _confirm(self):
-        self.confirmCancel = MsgBox.ConfirmBox(
+        self.confirmCancel = MsgBox.ConfirmBox( 
             Text.loggerMsg, self.cancelGailBot)
     
     def setLoadingText(self, text):

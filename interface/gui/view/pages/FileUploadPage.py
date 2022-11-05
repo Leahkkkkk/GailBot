@@ -97,7 +97,7 @@ class FileUploadPage(QWidget):
         self.settingBtn.setFixedSize(
             QSize(Dimension.ICONBTN,Dimension.ICONBTN))
         self.removeAll = Button.ColoredBtn(
-            Text.removeBtnText, Color.BLUEDARK, FontSize.BTN)
+            Text.removeBtnText, Color.BLUEMEDIUM, FontSize.BTN)
         self.fileTable = FileTable.FileTable(
             FileTableHeader.fileUploadPage, 
             self.signal,

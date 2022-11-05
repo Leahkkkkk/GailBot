@@ -12,7 +12,7 @@ from view.widgets.MsgBox import WarnBox
 from view.components import OutputFormatForm, SettingEngineForm
 from view.pages.PluginPage import PluginPage
 from view.pages.PostSetPage import PostSetPage
-from view.style.styleValues import Dimension, FontFamily
+from view.style.styleValues import FontFamily
 
 from PyQt6.QtWidgets import  QVBoxLayout
 from PyQt6.QtCore import Qt, pyqtSignal, QObject

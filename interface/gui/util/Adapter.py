@@ -128,7 +128,8 @@ class Asset(DataclassFromDict):
     instructionTranscribe: str  =  field_from_dict()
     instructionFile: str  =  field_from_dict()
     instructionEdit: str  =  field_from_dict()
-    
+    recordStop: str  =  field_from_dict()
+    recordPlay: str  =  field_from_dict()
 
 @dataclass 
 class FileTableDimension(DataclassFromDict):

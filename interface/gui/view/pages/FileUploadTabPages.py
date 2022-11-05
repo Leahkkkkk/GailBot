@@ -8,9 +8,6 @@ Last Modified: Sunday, 16th October 2022 1:49:44 pm
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
-import tomli 
-
-from genericpath import isdir
 import logging 
 import datetime
 import pathlib
@@ -195,8 +192,6 @@ class ChooseSet(TabPage):
         self.setLayout(self.layout)
         self.layout.addWidget(self.label)
         self.layout.addWidget(self.selectSettings)
-        
-
         
     def _updateSettings(self, setting):
         if setting:

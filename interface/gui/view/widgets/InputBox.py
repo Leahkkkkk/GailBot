@@ -67,7 +67,13 @@ class InputBox(QWidget):
         self.inputFeild.setText(text)
     
     def disableEdit(self):
+        """ a public function to disable the edit """
         self.inputFeild.setReadOnly(True)
+    
+    
+    def enableEdit(self):
+        """ a public function to enable the edit """
+        self.inputFeild.setReadOnly(False)
     
     def _initWidget(self):
         """initialize widgets for input box"""
@@ -134,6 +140,7 @@ class InputCombo(InputBox):
         """initialize widgets for input box"""
         self.inputlabel = Label.Label(self.label, self.lableSize)
         self.inputFeild = ComboSelection(self.selections)
+        self.inputFeild.setStyleSheet("")
         
     def value(self):
         """ return the value of the input """
@@ -145,7 +152,10 @@ class InputCombo(InputBox):
     
     def disableEdit(self):
         """ disable the edit of the combo box """
-        self.inputFeild.setEditable(False)
+        self.inputFeild.setDisabled(True)
+    
+    def enableEdit(self):
+        self.inputFeild.setDisabled(False)
         
 
 class ComboSelection(QComboBox):
