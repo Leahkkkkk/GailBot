@@ -146,7 +146,6 @@ class ToggleBtn(QPushButton):
         self.downIcon = QIcon(os.path.join(
             Path.getProjectRoot(), 
             f"view/asset/{label[1]}"))
-        # initBackground(self)
         self.setCheckable(True)
         self.clicked.connect(self._changeSymbol)
         self.state = state
@@ -179,7 +178,6 @@ class onOffButton(QWidget):
         *args, 
         **kwargs
     ) -> None:
-        
         super().__init__(*args, **kwargs)
         self.label = label
         self.state = state
@@ -222,13 +220,21 @@ class onOffButton(QWidget):
         return self.onOffBtn.text()
     
     def setText(self, text):
+        """ set the text of the button to be ON or OFF"""
         if text == "ON":
             self.state = True 
             self.onOffBtn.setText(Text.on)
         else:
             self.state = False 
             self.onOffBtn.setText(Text.off)
-
+            
+    def enable(self):
+        """ public function to enable button click """
+        self.onOffBtn.setEnabled(True)
+    
+    def disable(self):
+        """ public function to disable button click """
+        self.onOffBtn.setEnabled(False)
 
 class iconBtn(QPushButton):
     """ A button with icon

@@ -51,7 +51,7 @@ class InputBox(QWidget):
         self.selections = selections
         self._initWidget()
         self._initLayout()
-        self._initStyle()
+
  
 
     def value(self) -> str: 
@@ -66,12 +66,12 @@ class InputBox(QWidget):
         """
         self.inputFeild.setText(text)
     
-    def disableEdit(self):
+    def disable(self):
         """ a public function to disable the edit """
         self.inputFeild.setReadOnly(True)
     
     
-    def enableEdit(self):
+    def enable(self):
         """ a public function to enable the edit """
         self.inputFeild.setReadOnly(False)
     
@@ -96,16 +96,11 @@ class InputBox(QWidget):
             self.inputFeild, 
             alignment=Qt.AlignmentFlag.AlignLeft)
     
-    def _initStyle(self):
-        self.inputFeild.setStyleSheet(SysStyleSheet.basic)
 
 class InputField(QLineEdit):
     """ the input field of input box"""
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.setStyleSheet(f"font-size: {FontSize.TEXT_FIELD};"
-                           f"padding:0;"
-                           f"border: 1px solid {Color.BORDERGREY} ")
         self.setFixedSize(Dimension.INPUTFIELD)
         
 
@@ -150,11 +145,11 @@ class InputCombo(InputBox):
         """ set the current text of the combo box """
         self.inputFeild.setCurrentText(text)
     
-    def disableEdit(self):
+    def disable(self):
         """ disable the edit of the combo box """
         self.inputFeild.setDisabled(True)
     
-    def enableEdit(self):
+    def enable(self):
         self.inputFeild.setDisabled(False)
         
 

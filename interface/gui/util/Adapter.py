@@ -211,6 +211,7 @@ class OutputFormatSetting(DataclassFromDict):
     CorpusSettings: dict = field_from_dict()
     FileFormat: List[str] = field_from_dict()
     Language: List[str] = field_from_dict()
+ 
 
 @dataclass 
 class FileUploadPageTextData(DataclassFromDict):

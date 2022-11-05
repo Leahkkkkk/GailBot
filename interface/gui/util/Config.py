@@ -69,6 +69,7 @@ About = Adapter.aboutData.from_dict(about["about"])
 """ setting form data  """
 ProfileSettingForm = Adapter.ProfileSettingData.from_dict(forms["profile form"])
 PostSettingForm = forms["profile form"]["PostTranscribe"]
+RecordForm = forms["record form"]
 EngineSettingForm = Adapter.EngineSetting.from_dict(
     forms["profile form"]["RequiredSetting"])
 OutputFormatForm = Adapter.OutputFormatSetting.from_dict(

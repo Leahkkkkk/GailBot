@@ -9,13 +9,9 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
-""" TODO: add function to change data on the table by cell; 
-    TODO: change transribe status, pass a file key and change the transcribe status
-    TODO: file summary section 
-    TODO: set sorting icon 
+""" 
     TODO: **sorting function
     TODO: **searching function 
-    TODO: **
 """
 KEYERROR = "File key not found"
 
@@ -455,8 +451,6 @@ class FileTable(QTableWidget):
         logging.info(self.transferList)
         self.viewSignal.transferState.emit(self.transferList)
         self.viewSignal.ZeroFile.emit()
-   
-        
         
     def transcribeFile(self):
         """ send signal to controller to transcribe file """
@@ -502,6 +496,7 @@ class TableCellButtons(QObject):
         self._initWidgets()
 
     def _initWidgets(self):
+        """ iniatialize the widget """
         if "check" in self.widgets:
             # create the widget
             self.checkBoxContainer = QWidget()
@@ -548,22 +543,32 @@ class TableCellButtons(QObject):
             self.table.setItem(self.rowidx, lastCol, lastCell)
             self.table.setCellWidget(self.rowidx, lastCol, self.Action)
 
-
     def checkStateChanged(self, state:bool):
+        """ emit signal to store the checked file to the transfer list """
         if state:
             self.signals.select.emit(self.key)
         else:
             self.signals.unselect.emit(self.key)
             
     def setCheckState(self, state):
+        """ set the state of the check box """
         if state:
             self.checkBox.setCheckState(Qt.CheckState.Checked)
         else: 
             self.checkBox.setCheckState(Qt.CheckState.Unchecked)
             
-            
 class changeProfileDialog(QDialog):
-    def __init__(self, profiles: List[str], fileKey:str, *args, **kwargs) -> None:
+    def __init__(self, 
+                 profiles: List[str], 
+                 fileKey:str, 
+                 *args, 
+                 **kwargs) -> None:
+        """ open up a dialog for user to change the profile for the file
+
+        Args:
+            profiles (List[str]):  a list of profile keys
+            fileKey (str): the file key for which its profile will be changed
+        """
         super().__init__(*args, **kwargs)
         self.signals = Signals()
         self.logger = makeLogger("Frontend")
@@ -572,11 +577,14 @@ class changeProfileDialog(QDialog):
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
         self.layout.addWidget(self.selectSetting)
-        self.selectSetting.selectSettings.currentTextChanged.connect(self.updateProfile)
+        self.selectSetting.selectSettings.currentTextChanged.connect(
+            self.updateProfile)
         initBackground(self, Color.BLUEWHITE)
         self.setFixedSize(QSize(450, 300))
     
     def updateProfile(self):
+        """ send a signal to upldate the profile in the database
+        """
         self.logger.info("update signal send")
         newSetting = self.selectSetting.getProfile()["Profile"]
         self.logger.info((self.fileKey, newSetting))

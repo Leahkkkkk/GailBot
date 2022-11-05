@@ -39,8 +39,21 @@ class TextForm(QWidget):
         self.inputDict = dict()
         self._initWidget()
         self._initStyle()
-
-
+    
+    def enableForm(self) -> None:
+        """ public function that enable the form edit """
+        for key, input in self.inputDict.items():
+            input.enable()
+            input.setStyleSheet("color:black;")
+            
+    
+    def disableForm(self) -> None:
+        """ public function that disable the form edit """
+        for key, input in self.inputDict.items():
+            input.disable()
+            input.setStyleSheet("color:grey;")
+     
+            
     def getValue(self) -> Dict[str, str]:
         """ public function that return the result of the form in a dictionary 
 
@@ -52,7 +65,6 @@ class TextForm(QWidget):
             value[key] = input.value()
         return value
             
-    
     def setValues(self, data: Dict[str, str]):
         """ public function to update the widget values
         

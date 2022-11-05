@@ -1,4 +1,12 @@
 ###### form values
+["record form".Basic]
+Filename = "filename"
+"Audio format combo" = [".Wav"]
+
+["record form".Advanced]
+"Recording Rate (Hertz)" = "4800"
+"Max Recording Duration" = "1h"
+
 ["profile form".Plugins]
 HiLabSuite = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
 
