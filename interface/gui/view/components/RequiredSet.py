@@ -3,7 +3,8 @@ from typing import Dict
 from view.widgets import ToggleView, TextForm, Button
 from view.components.SettingEngineForm import SettingEngineForm
 from view.components.OutputFormatForm import OutPutFormat
-from view.style.styleValues import FontFamily, FontSize, Color
+from util.Config import CreateNewProfilePageText as Text 
+from util.Config import Dimension
 
 
 from PyQt6.QtWidgets import (
@@ -24,14 +25,12 @@ class RequiredSet(QWidget):
     def _initWidget(self):
         """initialize widgets"""
         self.engineForm = SettingEngineForm()
-        self.engineSet = ToggleView.ToggleView("Speech to text settings", 
-                                               self.engineForm, 
-                                               header = True)
+        self.engineSet = ToggleView.ToggleView(
+            Text.engineSettingHeader,self.engineForm, header = True)
         self.outPutForm = OutPutFormat()
-        self.outPutFormatForm = ToggleView.ToggleView("Output File Format Settings", 
-                                               self.outPutForm,
-                                               header = True)
-        self.outPutFormatForm.setScrollHeight(450)
+        self.outPutFormatForm = ToggleView.ToggleView(
+            Text.outputSettingHeader, self.outPutForm, header = True)
+        self.outPutFormatForm.setScrollHeight(Dimension.DEFAULTTABHEIGHT)
         
     def _initLayout(self):
         """initialize layout"""
@@ -41,18 +40,24 @@ class RequiredSet(QWidget):
         self.verticalLayout.addWidget(
             self.engineSet, alignment=Qt.AlignmentFlag.AlignTop)
         self.verticalLayout.addWidget(
-            self.outPutFormatForm, stretch=2, alignment=Qt.AlignmentFlag.AlignTop)  
+            self.outPutFormatForm, stretch = 2, alignment=Qt.AlignmentFlag.AlignTop)  
     
-    def submitForm(self):
-        """ TODO: add user validation """
-        pass
-        """function to submit username and password form"""
-    
-    def setValue(self, data: Dict[str, Dict[str, dict]]):
+    def setValue(self, data: Dict [str, dict]):
+        """ a public function to set the form value
+
+        Args:
+            data (Dict[str, Dict[str, dict]]): a dictionary that stores the 
+                                               profile values
+        """
         self.engineForm.setValue(data["Engine"])
         # self.outPutForm.setValue(data["Output Form Data"])
     
-    def getValue(self)->dict:
+    def getValue(self) ->  Dict [str, dict]:
+        """ a plublic function that get the file value
+
+        Returns:
+            dict: retuns a dictionary that stores the profile values
+        """
         profile = dict() 
         profile["Engine"] = self.engineForm.getValue()
         profile["Output Form Data"] = self.outPutForm.getValue()

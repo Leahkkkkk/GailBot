@@ -8,10 +8,11 @@ Last Modified: Thursday, 6th October 2022 1:44:14 pm
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
+from util.SytemSet import SysFontSize,  SysStyleSheet
+from util.Config import Color, FontSize, Dimension
+
 from view.style.styleValues import (
-    FontSize, 
     Dimension, 
-    Color, 
 )
 from view.widgets import (
     Label
@@ -35,8 +36,8 @@ class InputBox(QWidget):
     def __init__(
         self, 
         label:str, 
-        vertical = False, 
-        labelSize = FontSize.BODY, 
+        vertical  = False, 
+        labelSize = SysFontSize.body, 
         inputText = None,
         selections = None,
         *args, 
@@ -50,13 +51,19 @@ class InputBox(QWidget):
         self.selections = selections
         self._initWidget()
         self._initLayout()
-        self._connectSignal()
+        self._initStyle()
+ 
 
     def value(self) -> str: 
         """ public function to ge the value of the input """
         return self.inputFeild.text()
-    
+
     def setText(self,text:str):
+        """set the current text of the input field
+
+        Args:
+            text (str): text content
+        """
         self.inputFeild.setText(text)
     
     def disableEdit(self):
@@ -79,12 +86,12 @@ class InputBox(QWidget):
 
         self.setLayout(self.layout)
         self.layout.addWidget(self.inputlabel) 
-        self.layout.addWidget(self.inputFeild, alignment=Qt.AlignmentFlag.AlignLeft)
+        self.layout.addWidget(
+            self.inputFeild, 
+            alignment=Qt.AlignmentFlag.AlignLeft)
     
-    def _connectSignal(self):
-        """connect signal- dummy for now"""
-        pass
-
+    def _initStyle(self):
+        self.inputFeild.setStyleSheet(SysStyleSheet.basic)
 
 class InputField(QLineEdit):
     """ the input field of input box"""
@@ -94,6 +101,7 @@ class InputField(QLineEdit):
                            f"padding:0;"
                            f"border: 1px solid {Color.BORDERGREY} ")
         self.setFixedSize(Dimension.INPUTFIELD)
+        
 
 class InputCombo(InputBox):
     def __init__(
@@ -112,27 +120,40 @@ class InputCombo(InputBox):
         inputText,
         selections,
         *args, **kwargs)
-        
+        """ an combobox with an label on top 
+            Args:
+            selections (list) :  a list of selections available for the combo box
+            vertical : true if the display of the combobox and the label will be 
+                       in vertical layout  
+            labelSize: the size of the label
+            inputText: the default text displayed on the combo box
+        """
         self.selections = selections 
     
     def _initWidget(self):
         """initialize widgets for input box"""
         self.inputlabel = Label.Label(self.label, self.lableSize)
         self.inputFeild = ComboSelection(self.selections)
-        self.inputFeild.setMaximumSize(Dimension.INPUTFIELD)
-
-
+        
     def value(self):
-        """ public function to ge the value of the input """
+        """ return the value of the input """
         return self.inputFeild.currentText()
     
     def setText(self,text:str):
+        """ set the current text of the combo box """
         self.inputFeild.setCurrentText(text)
     
     def disableEdit(self):
+        """ disable the edit of the combo box """
         self.inputFeild.setEditable(False)
+        
 
 class ComboSelection(QComboBox):
-    def __init__(self,selections:list, *args, **kwargs) -> None:
+    """ a costomized combobox 
+        Args: 
+        slections: a list of available options 
+    """
+    def __init__(self, selections:list, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.addItems(selections)
+

@@ -9,7 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 import os
-
+from util.SytemSet import SysImage
 from util import Path
 from PyQt6.QtCore import  Qt
 from PyQt6.QtGui import (
@@ -39,7 +39,7 @@ def initBackground(widget:QWidget, color="#FFFFFF"):
     widget.setPalette(palette)
 
 
-def initImgBackground(widget:QWidget, background: str = "background.png"):
+def initImgBackground(widget:QWidget, background: str = SysImage.homeBackground):
     widget.setAutoFillBackground(True)
     palette = widget.palette()
     brush = QBrush()

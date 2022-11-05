@@ -8,9 +8,9 @@ Last Modified: Monday, 24th October 2022 6:39:15 am
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
+from typing import List 
 
-
-from cProfile import run
+from util.Config import CreatNewProfileTabText, Dimension
 from view.pages.CreateNewProfilePages import (
     ProfileName,
     BasicSetting, 
@@ -28,11 +28,18 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import QObject, pyqtSignal, QSize
 
 class Signals(QObject):
+    """ a signal object to send new setting data values """
     newSetting = pyqtSignal(object)
     
 
 class CreateNewSetting(QDialog):
-    def __init__(self, plugins, *agrs, **kwargs) -> None:
+    def __init__(self, plugins : List[str], *agrs, **kwargs) -> None:
+        """ a pop up dialog to create a new setting
+
+        Args:
+            plugins (List [str]): a list of string that stores the available 
+                                  plugin
+        """
         super().__init__(*agrs, **kwargs)
         self.signals = Signals()
         self.profilename = ProfileName()
@@ -42,19 +49,19 @@ class CreateNewSetting(QDialog):
         self.PostTranscribeSetting = PostTranscribeSetting()
         self.PluginSetting = PluginSetting(plugins)
         self.newSettingData = dict()
-        self.setWindowTitle("Create New Profile")
+        self.setWindowTitle(CreatNewProfileTabText.WindowTitle)
         
-        mainTab = Tab (
-            "Create new setting", 
+        mainTab = Tab(
+            CreatNewProfileTabText.WindowTitle,
             {
-                "ProfileName": self.profilename,
-                "Basic Settings": self.BasicSetting,
-                "Optional Settings": self.EngineSetting,
-                "Output File Format Setting": self.OutPutFormSetting,
-                "Post Transcribtion Settion": self.PostTranscribeSetting,
-                "Plugin Setting" : self.PluginSetting
+                CreatNewProfileTabText.TabHeader1: self.profilename,
+                CreatNewProfileTabText.TabHeader2: self.BasicSetting,
+                CreatNewProfileTabText.TabHeader3: self.EngineSetting,
+                CreatNewProfileTabText.TabHeader4: self.OutPutFormSetting,
+                CreatNewProfileTabText.TabHeader5: self.PostTranscribeSetting,
+                CreatNewProfileTabText.TabHeader6: self.PluginSetting
             },
-            QSize(850,800)
+            QSize(Dimension.LARGEDIALOGWIDTH, Dimension.LARGEDIALOGHEIGHT)
         )
         
         mainTab.changePageBtn.finishBtn.clicked.connect(self.postSetting)
@@ -63,6 +70,7 @@ class CreateNewSetting(QDialog):
         self.layout.addWidget(mainTab)
         
     def postSetting(self):
+        """ a function that send the new setting data through signal"""
         profileData = dict()
         requiredData = dict()
         profileName = self.profilename.getData()
@@ -81,7 +89,6 @@ class CreateNewSetting(QDialog):
         
         self.signals.newSetting.emit((profileName, profileData))
         self.close()
-        
         
         
         

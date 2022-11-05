@@ -10,7 +10,7 @@ Modified By:  Siara Small  & Vivian Li
 '''
 from util.Logger import makeLogger
 from view.style.Background import initBackground
-from view.style.styleValues import Color
+from util.SytemSet import SysColor, SysStyleSheet
 from PyQt6.QtWidgets import QMessageBox
 
 
@@ -31,8 +31,9 @@ class ConfirmBox:
                                   QMessageBox.StandardButton.No)
         self.msgBox.buttonClicked.connect(self._confirm)
         self.confirm = confirm 
-        setMsgBoxStyle(self.msgBox)
+        initBackground(self.msgBox, color = SysColor.subBackground)
         self.msgBox.exec()
+        
     
     def _confirm(self, button):
         """ Check and handle user's confrimation 
@@ -63,8 +64,9 @@ class WarnBox:
         self.msgBox.setIcon(QMessageBox.Icon.Warning)
         self.msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
         self.msgBox.buttonClicked.connect(self._ok)
-        setMsgBoxStyle(self.msgBox)
+        initBackground(self.msgBox, color= SysColor.subBackground)
         self.msgBox.exec()
+        
     
     def _ok(self, button):
         """ handle event when button is clicked 
@@ -76,5 +78,3 @@ class WarnBox:
             self.ok()
 
 
-def setMsgBoxStyle(widget:QMessageBox):
-    initBackground(widget, Color.BLUEWHITE)

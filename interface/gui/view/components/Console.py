@@ -12,6 +12,7 @@ import logging
 
 from util import Logger
 from view.style.styleValues import Dimension, Geometry
+from util.Config import WindowTitle
 
 from PyQt6.QtWidgets import (
     QWidget, 
@@ -33,7 +34,7 @@ class Console(QWidget):
         self.resize(Dimension.CONSOLE)
         self.setGeometry(Geometry.CONSOLE)
 
-        self.label = QLabel("Console Window")
+        self.label = QLabel(WindowTitle.consoleWindow)
         layout = QVBoxLayout()
         layout.addWidget(self.label)
         layout.addWidget(self.LogBox)

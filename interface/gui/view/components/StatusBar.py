@@ -12,8 +12,8 @@ Modified By:  Siara Small  & Vivian Li
 import logging
 
 from util import Logger
-from view.style.styleValues import Dimension
-
+from util.Config import Dimension, StyleSheet
+from PyQt6.QtCore import QSize 
 from PyQt6.QtWidgets import  QStatusBar
 
 
@@ -21,7 +21,7 @@ class StatusBar(QStatusBar):
     """ A statusbar that display status message """
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.setMinimumSize(Dimension.STATUSBAR)
+        self.setMinimumSize(QSize(Dimension.STATUSWIDTH, Dimension.STATUSHEIGHT))
         self.statusLog = Logger.StatusBarHandler(self.showStatusMsg)
         logging.getLogger().addHandler(self.statusLog)
     
@@ -33,11 +33,11 @@ class StatusBar(QStatusBar):
             time (int, optional): the amount of time the message last 
                                   Defaults to None.
         """
-        self.setStyleSheet("color: black")
+        self.setStyleSheet(StyleSheet.statusText)
         if "WARN" in msg:
-            self.setStyleSheet("color: orange")
+            self.setStyleSheet(StyleSheet.warnText)
         elif "ERROR" in msg:
-            self.setStyleSheet("color: red")
+            self.setStyleSheet(StyleSheet.errorText)
 
         if time:
             self.showMessage(msg, time)

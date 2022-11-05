@@ -30,7 +30,7 @@ from dict_to_dataclass import DataclassFromDict, field_from_dict
 
 #############################  about data ################################
 year = datetime.date.today().strftime("%Y")
-copyRightText = f"©{year} HIL Lab"
+copyRightText = f"{year} © HIL Lab"
 @dataclass
 class aboutData(DataclassFromDict):
     version: str = field_from_dict()
@@ -90,6 +90,7 @@ class DimensionData(DataclassFromDict):
     INPUTWIDTH :int = field_from_dict()
     INPUTHEIGHT:int = field_from_dict()
     ICONBTN :int = field_from_dict()
+    SMALLICONBTN: int = field_from_dict()
     TABLEWIDTH: int = field_from_dict()
     TABLEMINHEIGHT: int = field_from_dict()
     TABLECONTAINERWIDTH :int = field_from_dict()
@@ -97,23 +98,46 @@ class DimensionData(DataclassFromDict):
     PROGRESSBARHEIGHT :int = field_from_dict()
     LARGEDIALOGWIDTH:int = field_from_dict()
     LARGEDIALOGHEIGHT:int = field_from_dict()
+    TOGGLEBARMAXWIDTH:int = field_from_dict()
+    TOGGLEBARMINWIDTH:int = field_from_dict()
+    TOGGLEVIEWOFFSET:int = field_from_dict()
+    STANDARDSPACING: int = field_from_dict()
+    SIDEBAR: int = field_from_dict()
+    FORMWIDTH: int = field_from_dict()
+    FORMMINHEIGHT: int = field_from_dict()
+    FORMMAXHEIGHT: int = field_from_dict()
+    DEFAULTTABHEIGHT: int = field_from_dict()
+    DEFAULTTABWIDTH : int = field_from_dict()
+
+
 
 @dataclass 
-class asset(DataclassFromDict):
+class Asset(DataclassFromDict):
     arrowImg: str =  field_from_dict()
     subPageBackgorund: str =  field_from_dict()
     trashImg: str  =  field_from_dict()
     mainBackground: str  =  field_from_dict()
+    headerFont : str  =  field_from_dict()
+    sidebarColor: str  =  field_from_dict()
+    tabSettings: str  =  field_from_dict()
+    tabTrash: str  =  field_from_dict()
+    tabDisk: str  =  field_from_dict()
+    fileIcon: str  =  field_from_dict()
+    instructionSound: str  =  field_from_dict()
+    instructionSetting: str  =  field_from_dict()
+    instructionTranscribe: str  =  field_from_dict()
+    instructionFile: str  =  field_from_dict()
+    instructionEdit: str  =  field_from_dict()
     
 
 @dataclass 
-class fileTableDimension(DataclassFromDict):
+class FileTableDimension(DataclassFromDict):
     fileUploadPage: List[float] = field_from_dict()
     confirmPage: List[float] = field_from_dict()
 
 
 @dataclass 
-class styleSheet(DataclassFromDict):
+class StyleSheet(DataclassFromDict):
     goToMain: str =  field_from_dict()
     settingStackID: str = field_from_dict()
     settingStack: str = field_from_dict()
@@ -124,7 +148,18 @@ class styleSheet(DataclassFromDict):
     boldBottomBorder: str = field_from_dict()
     onlyBottomBorder: str = field_from_dict()
     onlyTopBorder: str = field_from_dict()
+    checkbox : str = field_from_dict()
+    toggleBtnBasic: str = field_from_dict()
+    formBorder: str = field_from_dict()
+    warnText: str = field_from_dict()
+    statusText:  str = field_from_dict()
+    errorText :  str = field_from_dict()
 
+@dataclass 
+class FontFamilyData(DataclassFromDict):
+    MAIN: str = field_from_dict()
+    OTHER: str = field_from_dict()
+    
 ####################### Text Data ########################################
 @dataclass 
 class WelcomePageTextData(DataclassFromDict):
@@ -277,20 +312,73 @@ class CreateNewProfileTabTextData(DataclassFromDict):
     TabHeader6  : str = field_from_dict()
 
 @dataclass 
-class btnText(DataclassFromDict):
+class MainStackTextData(DataclassFromDict):
+    ProfileSetting : str = field_from_dict()
+    SystemSetting  : str = field_from_dict()
+
+@dataclass 
+class MenuBarText(DataclassFromDict):
+    console: str = field_from_dict()
+    open: str = field_from_dict()
+    close : str = field_from_dict()
+
+@dataclass
+class OutputFormatFormData(DataclassFromDict):
+    header : str = field_from_dict()
+    CorpuFormHeader  : str = field_from_dict()
+    LanguageHeader   : str = field_from_dict()
+    FileFormatHeader : str = field_from_dict()
+    SpeakerHeader    : str = field_from_dict()
+    TextWrap         : str = field_from_dict()
+    FileHeaderView   : str = field_from_dict()
+
+@dataclass 
+class BtnText(DataclassFromDict):
     on : str = field_from_dict()
     off : str = field_from_dict()
     icon  : str = field_from_dict()
     right : str = field_from_dict()
     down : str = field_from_dict()
+
+
+
+@dataclass
+class FileTableText(DataclassFromDict):
+    default : str = field_from_dict()
+    delete : str = field_from_dict()
+    changeSet : str = field_from_dict()
+    profileDet : str = field_from_dict()
+
+@dataclass 
+class MultipleComboText(DataclassFromDict):
+    username : str = field_from_dict()
+    password : str = field_from_dict()
     
 @dataclass
 class WindowTitleData(DataclassFromDict):
     consoleWindow : str = field_from_dict()
 
+@dataclass
+class PopUpText(DataclassFromDict):
+    leftArr : str = field_from_dict()
+    rightArr : str = field_from_dict()
+    finish : str = field_from_dict()
+    window : str = field_from_dict()
+
+@dataclass
+class TableText(DataclassFromDict):
+    location : str = field_from_dict()
+    postSettings : str = field_from_dict()
+    save : str = field_from_dict()
+    transBy : str = field_from_dict()
+    transOn : str = field_from_dict()
+    inDir : str = field_from_dict()
+    abtDir : str = field_from_dict()
+
 #####################   config data by widget #########################
 @dataclass
-class filetableHeader(DataclassFromDict):
+class FiletableHeader(DataclassFromDict):
     fileUploadPage: List[str] = field_from_dict()
     confirmPage: List[str] = field_from_dict()
     
+

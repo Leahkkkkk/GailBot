@@ -17,7 +17,8 @@ from util.Config import (
     Dimension
 )
 from util.Config import WelcomePageText as Text
-from view.style.styleValues import FontFamily, FontSize, Color
+from util.Config import FontFamily, FontSize, Color, Asset
+from util.SytemSet import SysImage
 from view.style.Background import initImgBackground
 from view.widgets import (
     Button, 
@@ -124,16 +125,16 @@ class WelcomePage(QWidget):
 
 
         """ instruction icons """
-        self.AudioIcon = Image.Image("sound.jpeg")
-        self.SettingsIcon = Image.Image("settings.png")
-        self.TranscribeIcon = Image.Image("loading.jpeg")
-        self.FileIcon = Image.Image("file.jpeg")
-        self.EditIcon = Image.Image("edit.jpeg")
+        self.AudioIcon = Image.Image(Asset.instructionSound)
+        self.SettingsIcon = Image.Image(Asset.instructionSetting)
+        self.TranscribeIcon = Image.Image(Asset.instructionTranscribe)
+        self.FileIcon = Image.Image(Asset.instructionFile)
+        self.EditIcon = Image.Image(Asset.instructionEdit)
         
       
  
     def _initInstructionGrid(self):
-        """ add a gird layout for the instruction """
+        """ add a grid layout for the instruction """
         self.gridBox = QWidget()
         self.gridLayout = QGridLayout()
         self.gridBox.setLayout(self.gridLayout)

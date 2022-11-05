@@ -1,27 +1,28 @@
-from typing import Dict, List, TypedDict
-import sys
-from typing_extensions import Required
+from typing import Dict
 
+from util.Config import Color, Dimension
+from util.Config import PopUpText as Text
 
-from view.widgets import Button, TableWidgets
+from view.widgets import Button 
 from view.widgets.TabPage import TabPage
-from view.widgets.TextForm import TextForm
-from view.components import  RequiredSet
 from view.style.widgetStyleSheet import buttonStyle
 from view.style.Background import initBackground
-from view.style.styleValues import Color
 
 from PyQt6.QtWidgets import (
     QTabWidget, 
     QWidget, 
     QVBoxLayout, 
-    QDialog,
     QHBoxLayout,
     QScrollArea)
 
 from PyQt6.QtCore import QObject, pyqtSignal, QSize, Qt
 
+
+""" default tab size """
+TabSize = QSize(Dimension.DEFAULTTABWIDTH,Dimension.DEFAULTTABHEIGHT)
+
 class Signals(QObject):
+    """ a close tab signal """
     closeTab = pyqtSignal()
 
 class Tab(QWidget):
@@ -29,15 +30,18 @@ class Tab(QWidget):
         self, 
         header:str,
         tabs: Dict[str, TabPage],
-        size: QSize = QSize(600,300),
+        size: QSize = TabSize,
         *args,
         **kwargs
         ):
-        """  A pop up tab 
+        """  A tab with the built-in logic of sequntial dependencies among 
+            different pages 
 
         Args:
-            header (str): _description_
-            tabs (Dict[str, TabPage]): _description_
+            header (str): the window header of the tab 
+            tabs (Dict[str, TabPage]): the key of dictionary is the the header 
+                                       of each tab page, and the value 
+                                       is a TabPage widget
         """
         super().__init__(*args, **kwargs)
         self.tabsState = []   
@@ -58,7 +62,7 @@ class Tab(QWidget):
         self.MainTab.setTabPosition(QTabWidget.TabPosition.West)
         
         """ initialize the control button """
-        self.changePageBtn = changePageBtn()
+        self.changePageBtn = _ChangePageBtn()
         self.changePageBtn.nextBtn.clicked.connect(self._toNextPage)
         self.changePageBtn.prevBtn.clicked.connect(self._toPreviousPage)
         self.changePageBtn.finishBtn.clicked.connect(lambda: 
@@ -83,6 +87,8 @@ class Tab(QWidget):
         self.MainTab.currentChanged.connect(self._setCurrentIdx)
         
     def _setButtonState(self, index):
+        """ change the next and prev button states  based on the signal 
+            from the current page"""
         if self.tabsState[index]:
             self.changePageBtn.activateNextButton()
         else:
@@ -94,6 +100,7 @@ class Tab(QWidget):
             self.changePageBtn.activatePrevButton()
          
     def _initLayout(self):
+        """ initialize the layout """
         self.layout = QHBoxLayout(self)
         self.setLayout(self.layout)
         self.layout.addWidget(self.MainTab)
@@ -101,12 +108,13 @@ class Tab(QWidget):
     
     
     def _enableBtn(self):
-        "enabled"
+        """ enabled the button """
         self.tabsState[self.MainTab.currentIndex()] = True
         self._setButtonState(self.MainTab.currentIndex())
         
     
     def _toNextPage(self):
+        """ activate and redirect to the next page"""
         if self.curPageIdx + 1 < self.MainTab.count():
             self.curPageIdx += 1
             self.MainTab.setCurrentIndex(self.curPageIdx)
@@ -114,28 +122,33 @@ class Tab(QWidget):
             
     
     def _toPreviousPage(self):
+        """ redirect to the previous page """
         if self.curPageIdx > 0 :
             self.curPageIdx -= 1
             self.MainTab.setCurrentIndex(self.curPageIdx)
     
     def _setCurrentIdx(self, idx):
+        """ track the current index of the tab """
         self.curPageIdx = idx
 
         
-class changePageBtn(QWidget):
+class _ChangePageBtn(QWidget):
     def __init__(self, *args, **kwargs) -> None:
+        """ a private class for Tab class to allow user to switch between 
+            pages through button"""
         super().__init__(*args, **kwargs)
         self.horizontaLayout = QHBoxLayout()
         self.verticalLayout = QVBoxLayout()
         self.subContainer = QWidget()
         self.subContainer.setLayout(self.horizontaLayout)
         self.setLayout(self.verticalLayout)
-        self.nextBtn = Button.BorderBtn("▶",Color.GREYDARK)
-        self.prevBtn = Button.BorderBtn("◀", Color.GREYDARK)
-        self.nextBtn.setFixedSize(QSize(20,20))
-        self.prevBtn.setFixedSize(QSize(20,20))
-        self.finishBtn = Button.ColoredBtn("Finish", Color.BLUEMEDIUM)
-        self.finishBtn.setFixedSize(80,40)
+        self.nextBtn = Button.BorderBtn(Text.leftArr, Color.GREYDARK)
+        self.prevBtn = Button.BorderBtn(Text.rightArr, Color.GREYDARK)
+        self.nextBtn.setFixedSize(
+            QSize(Dimension.SMALLICONBTN,Dimension.SMALLICONBTN))
+        self.prevBtn.setFixedSize(
+            QSize(Dimension.SMALLICONBTN,Dimension.SMALLICONBTN))
+        self.finishBtn = Button.ColoredBtn(Text.finish, Color.BLUEMEDIUM)
         self.deactivateNextButton()
         self.deactivatePrevButton()
         self.horizontaLayout.addWidget(self.prevBtn)
@@ -146,24 +159,28 @@ class changePageBtn(QWidget):
         self.finishBtn.hide()
     
     def activateNextButton(self):
-        print("activated")
+        """ activate the next button  """
         self.nextBtn.setStyleSheet(buttonStyle.ButtonActive)
         self.nextBtn.setEnabled(True)
 
     def deactivateNextButton(self):
+        """ deactivate the next button  """
         self.nextBtn.setStyleSheet(buttonStyle.ButtonInactive)
         self.nextBtn.setEnabled(False)
         
     def activatePrevButton(self):
+        """ activate the previous button  """
         self.prevBtn.setStyleSheet(buttonStyle.ButtonActive)
         self.prevBtn.setEnabled(True)
     
     def deactivatePrevButton(self):
+        """ deactivate the previous bytton """
         self.prevBtn.setEnabled(False)
         self.prevBtn.setStyleSheet(buttonStyle.ButtonInactive)
     
 
 class NoControlTab(QWidget):
+    
     def __init__(
         self, 
         header:str,
@@ -171,11 +188,19 @@ class NoControlTab(QWidget):
         *args,
         **kwargs
         ):
+        """ a simple tab widget that can store different pages but does 
+            not have the logic of page dependencies 
+
+        Args:
+            header (str): the window header of the pop up tab  
+            tabs (Dict[str, QWidget]): the key of dictionary is the the header 
+                                       of each tab page, and the value 
+                                       is a QWidget that implement the page
+        """
         super().__init__(*args, **kwargs)
         self.tabs = tabs
         self.header = header 
-        self.setMinimumHeight(700)
-        self.setMinimumWidth(850)
+        self.setFixedSize(TabSize)
         self._initWidget()
         initBackground(self)
 
@@ -191,30 +216,12 @@ class NoControlTab(QWidget):
             scroll = QScrollArea()
             scroll.setWidgetResizable(True)
             scroll.setWidget(tab)
-            scroll.setFixedSize(QSize(800,650))
-            scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
+            scroll.setVerticalScrollBarPolicy(
+                Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
             layout.addWidget(scroll)
             self.MainTab.addTab(container, label)
             initBackground(tab)
         self.setWindowTitle(self.header)
-    
-class FileDetails(QDialog):
-    def __init__(self, settingData, *args, **kwargs) -> None:
-        super().__init__( *args, **kwargs)
-        
-        Directory = TableWidgets.DirectoryDetails() 
-        RequiredSetting = RequiredSet.RequiredSet(settingData["engine"])  
-                          #TODO: get the dynamic data
-        PostSetting = TextForm(settingData["Post Transcribe"]) 
-                         #TODO: get the dynamic data
-        self.Maintab = NoControlTab("File Info", 
-                                    {"Directory": Directory, 
-                                    "Required Setting":RequiredSetting,
-                                    "Post Transcribe Setting": PostSetting})
-        self.setWindowTitle("File Info")
-        self.layout = QVBoxLayout()
-        self.setLayout(self.layout)
-        self.layout.addWidget(self.Maintab)        
-        
+
         
             

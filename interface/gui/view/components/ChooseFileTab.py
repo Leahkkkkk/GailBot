@@ -10,6 +10,7 @@ Modified By:  Siara Small  & Vivian Li
 '''
 from typing import List
 
+from util.Config import ChooseFileTabText
 from view.widgets.PopUpTab import Tab
 from view.pages.FileUploadTabPages import (
     OpenFile, 
@@ -24,6 +25,7 @@ from PyQt6.QtCore import QObject, pyqtSignal
 
 
 class Signals(QObject):
+    """ signal object for sending file data """
     postFile = pyqtSignal(dict)
     sendStatus = pyqtSignal(int)
    
@@ -40,16 +42,17 @@ class ChooseFileTab(QDialog):
         self.chooseSetTab = ChooseSet(settings)
         self.chooseOutPutTab = ChooseOutPut()
         self.setWindowTitle("Upload File")
-        mainTab = Tab("Add New File", 
-                      {"add file": self.chooseFileTab,
-                       "choose setting": self.chooseSetTab,
-                       "select output": self.chooseOutPutTab})
-        mainTab.signals.closeTab.connect(self.addFile)
+        mainTab = Tab(ChooseFileTabText.WindowTitle, 
+                      {ChooseFileTabText.TabHeader1: self.chooseFileTab,
+                       ChooseFileTabText.TabHeader2: self.chooseSetTab,
+                       ChooseFileTabText.TabHeader3: self.chooseOutPutTab})
+        mainTab.signals.closeTab.connect(self._addFile)
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
         self.layout.addWidget(mainTab) 
     
-    def addFile(self) -> None: 
+    def _addFile(self) -> None: 
+        """ emit a signal that contains the file data """
         fileObjList = self.chooseFileTab.getFile()
         profileObj = self.chooseSetTab.getProfile()
         outputPathObj = self.chooseOutPutTab.getOutputPath()

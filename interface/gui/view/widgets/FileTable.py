@@ -19,16 +19,18 @@ Modified By:  Siara Small  & Vivian Li
 """
 KEYERROR = "File key not found"
 
-from doctest import master
 from typing import Dict, List, Set, Tuple, TypedDict
 import logging
+
 from view.widgets import MsgBox
 from view.components.ChooseFileTab import ChooseFileTab
 from view.pages.FileUploadTabPages import ChooseSet
 from view.style.Background import initBackground
 from view.Signals import FileSignals
 from util.Logger import makeLogger
-from util.Config import Dimension, Color, Asset
+from util.Config import Dimension, Color, FontFamily, FontSize
+from util.Config import FileTableText as Text
+
 from PyQt6.QtWidgets import (
     QTableWidget, 
     QTableWidgetItem, 
@@ -79,7 +81,7 @@ class FileTable(QTableWidget):
     def __init__(self, 
                  headers: List[str], 
                  dbSignal: FileSignals,
-                 profiles: List[str] = ["Default"],  
+                 profiles: List[str] = [Text.default],  
                  rowWidgets: Set[str] = None, 
                  *args, 
                  **kwargs):
@@ -147,14 +149,13 @@ class FileTable(QTableWidget):
         try:
             widthSum = self.width()
             if len(widths) != self.columnCount():
-                self.logger.error("cannot resize column")
+                self.logger.error("Cannot resize column")
             else:
                 for i in range(len(widths)):
                     self.setColumnWidth(i, widths[i] * widthSum)
         except:
             msgBox = MsgBox.WarnBox("Failed to resize the table")
           
-        
       
     def _setFileHeader(self) -> None:
         """ initialize file headers
@@ -172,6 +173,11 @@ class FileTable(QTableWidget):
             self.verticalHeader().hide()
         except:
             msgBox = MsgBox.WarnBox("Failed to set file header")
+        
+        self.horizontalHeader().setStyleSheet(f"background-color:{Color.BLUELIGHT};"
+                                              f"font-size:{FontSize.SMALL};"
+                                              f"font-family:{FontFamily.MAIN};"
+                                              f"color:{Color.BLUEDARK}")
     
     
     def _headerClickedHandler(self, idx):
@@ -365,7 +371,7 @@ class FileTable(QTableWidget):
                 if key in self.transferList:
                     newitem.setBackground(QColor(Color.BLUELIGHT))
         else:
-            self.logger.error("file is not found")
+            self.logger.error("File is not found")
     
     ###################### file transfer handler ##############################       
     def filterFile(self, files: Set[str]):
@@ -375,7 +381,7 @@ class FileTable(QTableWidget):
         Args:
             files (List[str]) a list of file keys
         """
-        logging.info("filter")
+        logging.info("Filter")
         logging.info(len(self.filePins))
         self.transferList.clear()
         for key, pin in self.filePins.items():
@@ -402,7 +408,7 @@ class FileTable(QTableWidget):
                 self.viewSignal.nonZeroFile.emit()
                 
             else: 
-                raise Exception("file is not found in the data")
+                raise Exception("File is not found in the data")
         except Exception as err:
             self.logger.error(err)
         else:
@@ -426,7 +432,7 @@ class FileTable(QTableWidget):
                 if len(self.transferList) == 0:
                     self.viewSignal.ZeroFile.emit()
             else:
-                raise Exception("file is not added to transcribe list")
+                raise Exception("File is not added to transcribe list")
         except Exception as err:
             self.logger.error(err)
         else:
@@ -438,6 +444,7 @@ class FileTable(QTableWidget):
         """
         logging.info(self.transferList)
         self.viewSignal.transferState.emit(self.transferList)
+        
         
     def transcribeFile(self):
         """ send signal to controller to transcribe file """
@@ -451,21 +458,9 @@ class FileTable(QTableWidget):
             if self.item(rowIdx, i):
                 self.item(rowIdx, i).setBackground(QColor(color))
             else:
-                self.logger.info("cannot set row color")
-
+                self.logger.info("failed to set row color")
     
-
-    
-    # TODO: dynamically resizing the table  
-    def _resizeTable(self):
-        pass
-        
-    
-    def resizeEvent(self, e) -> None:
-        print("resize")
-        self._resizeTable()
-   
-""" TODO: add responsive handling feature """            
+     
 class TableCellButtons(QObject):
     def __init__(
         self, 
@@ -494,7 +489,6 @@ class TableCellButtons(QObject):
         self.rowidx = rowidx
         self._initWidgets()
 
-
     def _initWidgets(self):
         if "check" in self.widgets:
             # create the widget
@@ -518,18 +512,18 @@ class TableCellButtons(QObject):
             self.ActionLayout = QVBoxLayout()
             self.Action.setLayout(self.ActionLayout)
             if "delete" in self.widgets:
-                self.deleteBtn = QPushButton("Delete")
+                self.deleteBtn = QPushButton(Text.delete)
                 self.ActionLayout.addWidget(self.deleteBtn)
                 self.deleteBtn.clicked.connect(
                     lambda: self.signals.delete.emit(self.key))
             if "edit" in self.widgets:
-                self.editBtn = QPushButton("Change Setting")
+                self.editBtn = QPushButton(Text.changeSet)
                 self.ActionLayout.addWidget(self.editBtn)
                 self.editBtn.clicked.connect(
                     lambda: self.signals.requestChangeProfile.emit(self.key)
                 )
             if "details" in self.widgets:
-                self.detailBtn = QPushButton("Profile Details")
+                self.detailBtn = QPushButton(Text.profileDet)
                 self.ActionLayout.addWidget(self.detailBtn)
                 self.detailBtn.clicked.connect(
                     lambda: self.signals.requestProfile.emit(self.key)

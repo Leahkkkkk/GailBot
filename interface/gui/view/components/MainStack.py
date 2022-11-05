@@ -20,16 +20,13 @@ from view.pages import (
         RecordPage, 
         SystemSettingPage
 )
-from view.widgets.FileTable import (
-    FileTable
-)
-from view.widgets.PopUpTab import (
-    FileDetails
-)
 
-from view.style.styleValues import Dimension
+
+
+from util.Config import Dimension, MainStackText
 
 from PyQt6.QtWidgets import QStackedWidget, QTabWidget
+from PyQt6.QtCore import QSize
 
 
 class MainStack(QStackedWidget):
@@ -48,13 +45,15 @@ class MainStack(QStackedWidget):
         self.profileSignals = profileSignals
         self.logger= makeLogger("Frontend")
         self.parent = parent 
-        self.setMaximumSize(Dimension.WIN_MAXSIZE)
+        self.setMaximumSize(
+            QSize(Dimension.WINMAXWIDTH, Dimension.WINMAXHEIGHT))
         self.setContentsMargins(0,0,0,0)
         self._initPage()
         self._pageRedirect()
         self._connectSignal()
         
     def _connectSignal(self):
+        """ conecting the signal  """
         self.logger.info("connect signal")
         self.FileUploadPage.fileTable.viewSignal.goSetting.connect(
             self.gotoSettingPage)
@@ -90,7 +89,6 @@ class MainStack(QStackedWidget):
         if setting:
             self.ProfileSettingPage.selectSettings.setCurrentText(setting)
     
-    
     def _initPage(self):
         """ initialize all pages on stack widget  """
         self.WelcomePage = WelcomePage.WelcomePage(self)
@@ -107,8 +105,10 @@ class MainStack(QStackedWidget):
         self.RecordPage = RecordPage.RecordPage()
         self.SystemSettingPage = SystemSettingPage.SystemSettingPage()
         self.MainSetting = QTabWidget()
-        self.MainSetting.addTab(self.ProfileSettingPage, "Porfile Setting")
-        self.MainSetting.addTab(self.SystemSettingPage, "System Setting") 
+        self.MainSetting.addTab(
+            self.ProfileSettingPage, MainStackText.ProfileSetting)
+        self.MainSetting.addTab(
+            self.SystemSettingPage, MainStackText.SystemSetting) 
         
         self.addWidget(self.WelcomePage)
         self.addWidget(self.ConfirmTranscribePage)
@@ -117,7 +117,7 @@ class MainStack(QStackedWidget):
         self.addWidget(self.TranscribeSuccessPage)
         self.addWidget(self.RecordPage)
         self.addWidget(self.MainSetting)
-        self.setCurrentWidget(self.RecordPage)
+        self.setCurrentWidget(self.FileUploadPage)
     
     def _pageRedirect(self):
         """ initialize button click to page rediect functionality  """
@@ -142,18 +142,21 @@ class MainStack(QStackedWidget):
         
     
     def addFileToTables(self, file:dict):
+        """ public function that add files to all the file tables """
         self.FileUploadPage.fileTable.addFile(file)
         self.ConfirmTranscribePage.fileTable.addFile(file)
         self.TranscribeProgressPage.fileTable.addFile(file)
         self.TranscribeSuccessPage.fileTable.addFile(file)
     
     def updateFile(self, data:Tuple[str,str,str]):
+        """ public function that update the files to all the file tables  """
         self.FileUploadPage.fileTable.updateFileContent(data)
         self.ConfirmTranscribePage.fileTable.updateFileContent(data)
         self.TranscribeProgressPage.fileTable.updateFileContent(data)
         self.TranscribeSuccessPage.fileTable.updateFileContent(data)
     
     def changeToTranscribed(self, key: str):
+        """ publich function that change the file status on all file tabless """
         self.FileUploadPage.fileTable.changeFileToTranscribed(key)
         self.ConfirmTranscribePage.fileTable.changeFileToTranscribed(key)
         self.TranscribeProgressPage.fileTable.changeFileToTranscribed(key)

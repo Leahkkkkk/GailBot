@@ -38,6 +38,19 @@ class SettingEngineForm(QWidget):
         self._initLayout()
         self._connectSignal()
         self._updateCombo(self.mainCombo.currentIndex())
+    
+    def getValue(self) -> dict:
+        """ public function to get engine form value """
+        engine = self.mainCombo.currentText()
+        return {engine: self.toggleList.getValue()}
+    
+    def setValue(self, data: Dict[str, Dict[str, dict]]):
+        """ public function to set the engine form value """
+        engineName = list(data)[0]
+        print(engineName)
+        myLogger.info(engineName)
+        self.mainCombo.setCurrentText(engineName)
+        self.toggleList.setValue(data[engineName])
         
     def _initWidget(self):
         """ initialize the widget """
@@ -73,17 +86,7 @@ class SettingEngineForm(QWidget):
         self.verticalLayout.setSpacing(0)
         self.verticalLayout.addStretch()
     
-    def getValue(self) -> dict:
-        engine = self.mainCombo.currentText()
-        return {engine: self.toggleList.getValue()}
-    
-    def setValue(self, data: Dict[str, Dict[str, dict]]):
-        engineName = list(data)[0]
-        print(engineName)
-        myLogger.info(engineName)
-        self.mainCombo.setCurrentText(engineName)
-        self.toggleList.setValue(data[engineName])
-        
+  
         
 
 

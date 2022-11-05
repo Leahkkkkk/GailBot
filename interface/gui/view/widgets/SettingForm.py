@@ -1,9 +1,22 @@
-from view.widgets import Label,TextForm, Image, SideBar
+'''
+File: SettingForm.py
+Project: GailBot GUI
+File Created: Friday, 4th November 2022 1:01:27 pm
+Author: Siara Small  & Vivian Li
+-----
+Last Modified: Friday, 4th November 2022 6:24:06 pm
+Modified By:  Siara Small  & Vivian Li
+-----
+'''
+from typing import Dict 
+
+from view.widgets import Label,TextForm
 from view.style.Background import initBackground
-from view.style.styleValues import FontFamily, FontSize, Color
+from util.Config import FontFamily, FontSize, Color, StyleSheet, Dimension
 from PyQt6.QtWidgets import QWidget, QVBoxLayout,QScrollArea
 from PyQt6.QtCore import Qt
 
+center = Qt.AlignmentFlag.AlignHCenter
 
 class SettingForm(QWidget):
     def __init__(self, 
@@ -12,18 +25,33 @@ class SettingForm(QWidget):
                  caption: str = None, 
                  *args, 
                  **kwargs) -> None:
-        super().__init__(*args, **kwargs)
+        """  a form page with tittle , caption and form 
 
+        Args:
+            header (str): the header of the page 
+            formData (dict): the form data 
+            caption (str, optional): a short discription of the form 
+                                    Defaults to None.
+        """
+        super().__init__(*args, **kwargs)
+        
         self.headerText = header 
         self.formData = formData
         self.captionText = caption
         self._initWidget()
         self._initLayout()
-        self.setObjectName("form")
-        self.setStyleSheet("#form {border:0.5px solid grey;}")
 
+        
+    def setValue(self, values:dict):
+        """ public function to set the values in the form  """
+        self.setForm.setValue(values)
+    
+    def getValue(self) -> Dict[str, str]:
+        """ public function to get the values from the form """
+        return self.setForm.getValue()
 
     def _initWidget(self):
+        """ initialize the widget """
         self.header = Label.Label(
             self.headerText, FontSize.HEADER2,FontFamily.MAIN)
         if self.captionText:
@@ -36,31 +64,16 @@ class SettingForm(QWidget):
         self.scroll.setHorizontalScrollBarPolicy(
             Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
         self.scroll.setWidget(self.setForm)
-        self.scroll.setFixedWidth(650)
-        self.setForm.setFixedWidth(600)
-        self.scroll.setMaximumHeight(750)
-        self.scroll.setMinimumHeight(550)
+        self.scroll.setFixedWidth(Dimension.FORMWIDTH)
+        self.scroll.setFixedHeight(Dimension.FORMMINHEIGHT)
         initBackground(self.scroll, color = Color.BLUEWHITE)
     
     def _initLayout(self):
         """ initialize layout"""
         self.verticalLayout = QVBoxLayout()
         self.setLayout(self.verticalLayout)
-        """ add widget to layout """
-        self.verticalLayout.addWidget(
-            self.header, 
-            alignment=Qt.AlignmentFlag.AlignHCenter)
+        self.verticalLayout.addWidget(self.header, alignment = center)
         if self.captionText:
-            self.verticalLayout.addWidget(
-                self.caption,
-                alignment=Qt.AlignmentFlag.AlignCenter)
-        self.verticalLayout.addWidget(
-            self.scroll,
-            alignment=Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignTop)
+            self.verticalLayout.addWidget(self.caption, alignment = center )
+        self.verticalLayout.addWidget(self.scroll, alignment = center)
         self.verticalLayout.addStretch()
-    
-    def setValue(self, values:dict):
-        self.setForm.updateValues(values)
-    
-    def getValue(self) -> dict:
-        return self.setForm.getValue()

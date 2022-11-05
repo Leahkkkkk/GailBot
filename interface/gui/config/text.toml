@@ -114,7 +114,7 @@ TabHeader3  = "select output"
 [text.WindowTitle]
 consoleWindow = "Console Window"
 
-[text.CreateNewProfileText]
+[text.CreateNewProfileTabText]
 WindowTitle = "Create New Profile"
 TabTitle = "Create New Profile"
 TabHeader1 = "Profile Name"
@@ -125,13 +125,14 @@ TabHeader5 = "Post Transcribtion Settion"
 TabHeader6 = "Plugin Setting"
 
 [text.MainStackText]
-ProfileSettingBtn = "Porfile Setting"
-SystemSettingBtn  = "System Setting"
+ProfileSetting = "Porfile Setting"
+SystemSetting  = "System Setting"
 
 [text.OutputFormatForm]
 header = "Output File Format"
 CorpuFormHeader = "Corpus Settings"
 LanguageHeader  = "language"
+FileHeaderView = "File Header Views"
 FileFormatHeader = "File Format"
 SpeakerHeader = "Number of Speaker"
 TextWrap = "Text-Wrapping"
@@ -139,3 +140,41 @@ TextWrap = "Text-Wrapping"
 [text.RequiredSettingForm]
 engineSetHeader = "Speech to text settings"
 outputSetHeader = "Output File Format Settings"
+
+[text.MenuBar]
+console = "Console"
+open = "Open"
+close = "close"
+
+####widgets
+[text.btnText]
+on = "ON"
+off = "OFF"
+icon = "iconButton"
+right = "right.png"
+down = "down.png"
+
+[text.fileTableText]
+default = "Default"
+delete = "Delete"
+changeSet = "Change Setting"
+profileDet = "Profile Details"
+
+[text.multipleComboText]
+username = "Username"
+password = "Password"
+
+[text.popUpText]
+leftArr = "▶"
+rightArr = "◀"
+finish = "Finish"
+window = "File Info"
+
+[text.tableText]
+location = "Change Location"
+postSettings = "Post Transcribe Setting"
+save = "Save"
+transBy = "Transcribed by: "
+transOn = "Trancribed on: "
+inDir = "In this directory"
+abtDir = "About this directory"

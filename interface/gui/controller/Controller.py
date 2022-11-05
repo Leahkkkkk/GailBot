@@ -24,7 +24,6 @@ class Controller(QObject):
     """ Controller for Gailbot GUI """
     def __init__(self):
         super().__init__()
-        config = toml.load("controller/interface.toml")
         self.ModelObj = Model.Model()
         self.ThreadPool = QThreadPool()
         

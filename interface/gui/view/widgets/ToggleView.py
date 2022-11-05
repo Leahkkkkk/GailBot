@@ -8,16 +8,11 @@ Last Modified: Thursday, 6th October 2022 1:43:52 pm
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
-from view.widgets import Button, Label
-from view.style.styleValues import (
-    Color,
-    FontFamily,
-    FontSize,
-    Dimension,
-    Geometry
-) 
+from view.widgets import Button
+from util.Config import Color, FontSize, Dimension, StyleSheet
 
-from PyQt6.QtWidgets import QHBoxLayout, QWidget, QScrollArea, QVBoxLayout, QGridLayout
+
+from PyQt6.QtWidgets import QWidget, QScrollArea, QVBoxLayout
 from PyQt6.QtCore import Qt
 
 class ToggleView(QWidget):
@@ -53,29 +48,31 @@ class ToggleView(QWidget):
         self._connectSignal()
     
     def setScrollHeight(self, size:int):
+        """ public function to resize the scroll area height 
+        Args:
+        size: the height of the scroll area
+        """
         self.scroll.setMinimumHeight(size)
     
     def _configHeader(self):
+        """ configurate the toggle header """
         self.Btn = Button.ToggleBtn(text=self.labelStr)
-        self.Btn.setStyleSheet("text-align:left;"
+        self.Btn.setStyleSheet(f"{StyleSheet.toggleBtnBasic}"
                                f"background-color: {self.headercolor};"
-                               "border:0.5px solid #000;"
-                               "padding-left: 5px;"
                                f"font-size: {FontSize.BODY}")
         if self.header:
-            self.Btn.setMinimumWidth(700)
+            self.Btn.setMinimumWidth(Dimension.TOGGLEBARMAXWIDTH)
         else:
-            self.Btn.setMinimumWidth(550)
+            self.Btn.setMinimumWidth(Dimension.TOGGLEBARMINWIDTH)
        
     def _configViewField(self):
+        """ configurate the toggle view """
         self.scroll = QScrollArea()
-        self.scroll.setMinimumWidth(540)
+        self.scroll.setMinimumWidth(self.Btn.width() - Dimension.TOGGLEVIEWOFFSET)
         self.scroll.setMaximumWidth(self.Btn.width())
-        self.scroll.setMinimumHeight(100)
         self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
         self.scroll.setWidgetResizable(True)
         self.scroll.setWidget(self.view)
-        self.scroll.ensureWidgetVisible(self.view, 10, 10)
         self.setObjectName("viewWrapper")
         self.scroll.setObjectName("view")
         self.scroll.setStyleSheet(f"#viewWrapper, #view {{background-color:{self.viewcolor}}}")
@@ -107,11 +104,3 @@ class ToggleView(QWidget):
     
     
 
-
-class OnOffView(ToggleView):
-    """ A subclass of toggle button on which the text of the button is 
-        "on" or "off"
-    """
-    def __init__(self, label: str, view: object, *args, **kwargs):
-        super().__init__(label, view, *args, **kwargs)
-        self.Btn = Button.ToggleBtn(("on", "off"))

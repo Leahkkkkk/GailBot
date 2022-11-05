@@ -9,6 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 from view.style.styleValues import Geometry
+from util.Config import MenuBarText
 
 from PyQt6.QtWidgets import QMenuBar, QMenu
 from PyQt6 import QtCore, QtGui
@@ -19,10 +20,10 @@ class ManuBar(QMenuBar):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.setGeometry(Geometry.MENUBAR)
-        self.Console = QMenu("Console")
-        self.OpenConsole = QtGui.QAction("Open")
+        self.Console = QMenu(MenuBarText.console)
+        self.OpenConsole = QtGui.QAction(MenuBarText.open)
         self.Console.addAction(self.OpenConsole)
-        self.CloseConsole = QtGui.QAction("Close")
+        self.CloseConsole = QtGui.QAction(MenuBarText.close)
         self.Console.addAction(self.CloseConsole)
         self.addAction(self.Console.menuAction())
         

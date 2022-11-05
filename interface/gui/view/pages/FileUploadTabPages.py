@@ -35,9 +35,12 @@ from PyQt6.QtWidgets import (
     QStackedWidget,
     QDialog,
     QListView,
-    QStyledItemDelegate)
+    QAbstractItemView,
+    QTableWidget,
+    QStyledItemDelegate,
+    QTableWidgetItem)
 from PyQt6.QtCore import QSize, Qt, QRectF
-from PyQt6.QtGui import QColor, QPen, QBrush
+from PyQt6.QtGui import QColor, QPen, QBrush, QPalette
 
 center = Qt.AlignmentFlag.AlignHCenter
 
@@ -66,7 +69,7 @@ class OpenFile(TabPage):
         
     def _initWidget(self):
         """ initializing the widget """
-        self.fileDisplayList = QListWidget()
+        self.fileDisplayList = QTableWidget()
         self.filePaths = []
         self.uploadFileBtn = ColoredBtn(
             "Add File", 
@@ -100,9 +103,14 @@ class OpenFile(TabPage):
             f"border: 1px solid {Color.BLUEDARK};"
             "background-color:white;"
             "QListWidgetItem {background-color: grey; border: 1px solid black}")
-        listDelegate = FileListDelegate()
-        self.fileDisplayList.setItemDelegate(listDelegate)
-        
+        self.fileDisplayList.setAlternatingRowColors(True)
+        self.fileDisplayList.insertColumn(0)
+        self.fileDisplayList.setSelectionMode(
+            QAbstractItemView.SelectionMode.NoSelection)
+        self.fileDisplayList.setEditTriggers(
+            QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.fileDisplayList.horizontalHeader().hide()
+        self.fileDisplayList.verticalHeader().hide()
     
     def _initDimension(self):
         self.fileDisplayList.setFixedSize(QSize(400,150))
@@ -148,46 +156,23 @@ class OpenFile(TabPage):
             self.signals.nextPage.emit()
             self.filePaths = self.filePaths + files
             for file in files:
-                newItem = QStyledItemDelegate()
-            self.fileDisplayList.addItems(self.filePaths)
+                self._addFileToFileDisplay(file)
             
     def _getFolders (self):
         dialog = QFileDialog() 
         selectedFolder = dialog.getExistingDirectory()
         if selectedFolder:
-            self.fileDisplayList.addItem(selectedFolder)
-    
-    
-    def getOpenFilesAndDirs(self, filter=["audio file (*.wav)","directory (/)"]):
-        """ TODO  """
-        def updateText():
-                # update the contents of the line edit widget with the selected files
-            selected = []
-            for index in view.selectionModel().selectedRows():
-                 selected.append('"{}"'.format(index.data()))
-            lineEdit.setText(' '.join(selected))
+            self._addFileToFileDisplay(selectedFolder)
 
-        dialog = QFileDialog()
-        dialog.setFileMode(dialog.FileMode.ExistingFiles)
-        dialog.setOption(dialog.Option.DontUseNativeDialog, True)
-    
-        if filter:
-            dialog.setNameFilters(filter)
+    def _addFileToFileDisplay(self, file):
+        """ add the file to the file display table """
+        row = self.fileDisplayList.rowCount()
+        self.fileDisplayList.insertRow(row)
+        newfile = QTableWidgetItem(file)
+        self.fileDisplayList.setItem(row, 0, newfile)
+        self.fileDisplayList.resizeColumnsToContents()
+        self.fileDisplayList.resizeRowsToContents()
 
-        dialog.accept = lambda: QDialog.accept(dialog)
-        stackedWidget = dialog.findChild(QStackedWidget)
-        view = stackedWidget.findChild(QListView)
-        view.selectionModel().selectionChanged.connect(updateText)
-
-        lineEdit = dialog.findChild(QLineEdit)
-        dialog.directoryEntered.connect(lambda: lineEdit.setText(''))
-        dialog.exec() 
-        selectedFiles = dialog.selectedFiles()
-        if selectedFiles: 
-            self.signals.nextPage.emit()  
-            self.filePaths = self.filePaths + selectedFiles
-            self.fileDisplayList.addItems(selectedFiles)
-           
 
     
 class ChooseSet(TabPage):
@@ -215,6 +200,7 @@ class ChooseSet(TabPage):
         self.setLayout(self.layout)
         self.layout.addWidget(self.label)
         self.layout.addWidget(self.selectSettings)
+        
 
         
     def _updateSettings(self, setting):
@@ -276,23 +262,4 @@ class ChooseOutPut(TabPage):
 
 
 
-class FileListDelegate(QStyledItemDelegate):
-    def __init__(self, *args, **kwargs):
-        super(FileListDelegate, self).__init__(*args, **kwargs)
 
-
-
-    def paint(self, painter, option, index):
-        color = QColor("#000")
-        
-        painter.save()
-
-        # set background color
-        painter.setBrush(QBrush(Qt.GlobalColor.black))
-        painter.drawRoundedRect(option., 0,0)
-        painter.drawLines([])
-        
-        # set text color
-        painter.setPen(QPen(Qt.GlobalColor.black))
-        painter.restore()
-        # same thing, get the item using the index

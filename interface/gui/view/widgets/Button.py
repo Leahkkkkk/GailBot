@@ -9,9 +9,10 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 import os
-import typing
+from typing import List
 from util.Config import FontSize, Dimension, Color, StyleSheet
 from util.Config import BtnText as Text
+from util.SytemSet import SysColor, SysFontSize
 from util.StyleGenerator import colorScale
 from view.style.Background import initBackground
 from util import Path
@@ -73,7 +74,6 @@ class ColoredBtn(QPushButton):
         self.setStyleSheet(self.defaultStyle + 
                            f"background-color:{self.origColor};")
         
-    
 class BorderBtn(QPushButton):
     """ a button widget with colored border and text 
         and white background
@@ -82,7 +82,9 @@ class BorderBtn(QPushButton):
         label (str): button text
         color (str): hex color in string 
         fontsize (str, optional): represented in string, unit is pixel 
-                                  Defaults to FontSize.BTN.
+                                  Defaults to FontSize.BTN 
+        borderRadius (int): botton border
+        other (str): other additional style
     """
     def __init__(
         self, 
@@ -133,7 +135,6 @@ class ToggleBtn(QPushButton):
         label: tuple = (Text.right, Text.down), 
         text:str = "", 
         state:bool = False, 
-        minHeight:int = 30,
         *args, 
         **kwargs):
         super().__init__(*args, **kwargs)
@@ -230,7 +231,10 @@ class onOffButton(QWidget):
 
 
 class iconBtn(QPushButton):
-    """ A button with icon """
+    """ A button with icon
+    icon (str): a string that indcate the icon file name
+    label  (str, optional): the tex to be displayed on the icon 
+    """
     def __init__(self, icon:str, label:str=None,*args, **kwargs):
       super().__init__(*args, **kwargs)
       icon = QIcon(os.path.join(Path.getProjectRoot(), f"view/asset/{icon}"))
@@ -243,7 +247,7 @@ class iconBtn(QPushButton):
    
    
    
-""" NOTE: currently unused in the actula interface  """  
+""" NOTE: currently unused in the interface  """  
 class dropDownButton(QWidget):
     """ a dropdown button widget, when the button is clicked,
         there is a dropdown of a list of buttons
@@ -260,7 +264,7 @@ class dropDownButton(QWidget):
         self.btn = ColoredBtn(f"▶ {label}", 
                               Color.BLUEMEDIUM,
                               FontSize.SMALL, 
-                              styleSheet.dropDownBtn)
+                              StyleSheet.dropDownBtn)
         self.label = label
         self.hideView = True 
         self.setFixedWidth(130)
@@ -282,14 +286,21 @@ class dropDownButton(QWidget):
             self.buttonList.hide()
             self.btn.setText(f"▶ {self.label}")
 
-#TODO:depreacted#
+""" NOTE: currently unused on the frontend interface """
 class buttonList(QWidget):
     def __init__(
         self, 
         labels: list, 
-        btnFuns:list = None, 
+        btnFuns: List[callable] = None, 
         *args, 
         **kwargs) -> None:
+        """  a widget that implement a list of buttons
+
+        Args:
+            labels (list): a list of the button labels 
+            btnFuns (list, optional): a list of functions triggered when button 
+                                      is pressed
+        """
         super().__init__(*args, **kwargs)
         self.btnList = []
         self.layout  = QVBoxLayout(self)

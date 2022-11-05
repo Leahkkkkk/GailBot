@@ -1,8 +1,8 @@
 from typing import Dict 
 
 from view.widgets import ToggleView, TextForm, Button
-from view.style.styleValues import FontFamily, FontSize, Color
-from util.Config import OutputFormatForm
+from util.Config import OutputFormatForm, OutputFormatFormText,Color
+
 
 from PyQt6.QtWidgets import (
     QWidget, 
@@ -17,22 +17,25 @@ class OutPutFormat(QWidget):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.layout = QVBoxLayout(self)
-        self.header1 = QLabel("Output File Format")
+        self.header1 = QLabel(OutputFormatFormText.header)
         self.layout.addWidget(self.header1)
         self.formatCombo = QComboBox()
         self.formatCombo.addItems(OutputFormatForm.FileFormat)
         self.layout.addWidget(self.formatCombo)
-        self.headerForm = HeaderForm({"Corpus Settings": OutputFormatForm.CorpusSettings})
-        self.fileHeader = ToggleView.ToggleView("File Header Views", 
-                                                self.headerForm,
-                                                headercolor= "#fff",
-                                                 viewcolor=Color.GREYLIGHT)
+        self.headerForm = HeaderForm(
+            {OutputFormatFormText.CorpuFormHeader: OutputFormatForm.CorpusSettings})
+        self.fileHeader = ToggleView.ToggleView(
+            OutputFormatFormText.FileHeaderView, 
+            self.headerForm,
+            headercolor= Color.WHITE,
+            viewcolor=Color.GREYLIGHT)
         self.layout.addWidget(self.fileHeader)
-        self.textWrap = Button.onOffButton("Text-Wrapping")
-        self.textWrapField = ToggleView.ToggleView("File Format", 
-                                                   self.textWrap,
-                                                    headercolor= "#fff",
-                                                    viewcolor= Color.GREYLIGHT)
+        self.textWrap = Button.onOffButton(OutputFormatFormText.TextWrap)
+        self.textWrapField = ToggleView.ToggleView(
+            OutputFormatFormText.FileFormatHeader, 
+            self.textWrap,
+            headercolor= Color.WHITE,
+            viewcolor= Color.GREYLIGHT)
         self.layout.addWidget(self.textWrapField)
         
     def getValue(self):
@@ -52,13 +55,13 @@ class HeaderForm(QWidget):
         self.speakerCombolist = []
         self.speakerLabelList = []
         
-        self.label1 = QLabel("language")
+        self.label1 = QLabel(OutputFormatFormText.LanguageHeader)
         self.layout.addWidget(self.label1)
             
         self.lanCombo = QComboBox(self)
         self.lanCombo.addItems(OutputFormatForm.Language)
         self.layout.addWidget(self.lanCombo)
-        self.label2 = QLabel("Number of Speaker")
+        self.label2 = QLabel(OutputFormatFormText.SpeakerHeader)
         self.layout.addWidget(self.label2)
         self.numCombo = QComboBox(self)
         self.numCombo.addItems(["1", "2", "3"])
@@ -79,6 +82,7 @@ class HeaderForm(QWidget):
         self.layout.addWidget(self.corpusForm)
     
     def _updateNumCombo(self,index):
+        """ dynamically change the number of combo box """
         for i in range(index + 1):
             self.speakerCombolist[i].show()
             self.speakerLabelList[i].show()
@@ -88,6 +92,7 @@ class HeaderForm(QWidget):
             self.speakerLabelList[i].hide()
     
     def getValue(self):
+        """ public function to get the form value """
         value = dict()
         value["language"] = self.lanCombo.currentText()
         value["Number of speaker"] = self.numCombo.currentText()
@@ -98,10 +103,15 @@ class HeaderForm(QWidget):
         value["Corpus Settings"] = corpusValue
         return value 
 
-    def setValue(self, data:dict):
+    def setValue(self, data: Dict[str, str]):
+        """ public function to set the form value
+        
+        Args: 
+            data (Dict[str, str]): a dutionary that stores the data value
+        """
         self.lanCombo.setCurrentText(data["language"])
         self.numCombo.setCurrentIndex(data["Number of speaker"])
         for i in range(len(self.speakerCombolist)):
             self.speakerCombolist[i].setCurrentText(data[f"gender{i}"])
-        self.corpusForm.updateValues(data["Corpus Settings"])
+        self.corpusForm.setValues(data["Corpus Settings"])
             

@@ -11,7 +11,11 @@ Modified By:  Siara Small  & Vivian Li
 import os
 import logging
 
-from view.style.styleValues import FontFamily
+
+from util.SytemSet import SysFontSize, SysColor, SysStyleSheet
+
+
+from util.Config import FontSize, FontFamily, Asset
 
 from PyQt6.QtWidgets import QLabel
 from PyQt6.QtGui import QFont, QFontDatabase
@@ -32,10 +36,10 @@ class Label(QLabel):
         self, 
         text:str, 
         size:str, 
-        font = FontFamily.OTHER, 
-        color = "Black", 
+        font   = FontFamily.OTHER, 
+        color  =  SysColor.maintext, 
         others = None, 
-        link = False,
+        link   = False,
         *args, 
         **kwargs
     ): 
@@ -46,6 +50,7 @@ class Label(QLabel):
         self.setStyleSheet(f"font-size: {size};" 
                            f"padding:0;" 
                            f"color:{color};"
+                           f"background-color:none;"
                            f"{others}")
         if font == FontFamily.MAIN:
             self.loadHeaderFont()
@@ -56,8 +61,8 @@ class Label(QLabel):
         """load font for header label (since it's not default)"""
         id = QFontDatabase.addApplicationFont(os.path.join
                                                    (Path.getProjectRoot(), 
-                                                    "view/asset/Raleway.ttf"))
-        if id < 0 : logging.warn("font cannot be loaded")
+                                                    Asset.headerFont))
+        if id < 0 : logging.warn("Font cannot be loaded")
         Raleway =  QFontDatabase.applicationFontFamilies(id)
         self.setFont(QFont(Raleway[0], weight=800))
 
