@@ -72,6 +72,8 @@ class FileUploadPage(QWidget):
         self.uploadFileBtn.clicked.connect(self.fileTable.uploadFile)
         # load confirm page table with selected file 
         self.transcribeBtn.clicked.connect(self.fileTable.transferState) 
+ 
+        
         # remove all file 
         self.removeAll.clicked.connect(self._confirmRemove)
         # change transcribe button color

@@ -9,7 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 from typing import Set
-import toml 
+
 
 from controller.TranscribeController import TranscribeController
 from controller.MVController import MVController
@@ -17,8 +17,9 @@ from model import Model
 from view import MainWindow
 from util import Logger
 from controller.Signals import Signal
+from PyQt6.QtCore import pyqtSlot, QObject, QThreadPool, pyqtSignal 
 
-from PyQt6.QtCore import pyqtSlot, QObject, QThreadPool
+
 
 class Controller(QObject):
     """ Controller for Gailbot GUI """
@@ -45,7 +46,6 @@ class Controller(QObject):
         
         # only initialize when user make a transcribe request 
         self.transcribeController = None
-        
         self.signal = Signal()
         self.logger = Logger.makeLogger("Backend")
         
@@ -61,6 +61,7 @@ class Controller(QObject):
     def handleTanscribeSignal(self):
         """ handle signal from View that requests to transcrib the file"""
         self.ViewObj.fileTableSignals.transcribe.connect(self._transcribeFiles)
+        self.signal.fileProgress.connect(self.FileData.updateFileProgress)
         
     @pyqtSlot(set)
     def _transcribeFiles(self, files: Set[str]):

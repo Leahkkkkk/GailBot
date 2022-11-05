@@ -52,7 +52,7 @@ class RequiredSet(QWidget):
         self.engineForm.setValue(data["Engine"])
         # self.outPutForm.setValue(data["Output Form Data"])
     
-    def getValue(self) ->  Dict [str, dict]:
+    def getValue(self) -> dict:
         """ a plublic function that get the file value
 
         Returns:

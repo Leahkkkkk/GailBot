@@ -162,4 +162,7 @@ class MainStack(QStackedWidget):
         self.TranscribeProgressPage.fileTable.changeFileToTranscribed(key)
         self.TranscribeSuccessPage.fileTable.changeFileToTranscribed(key)
         self.FileUploadPage.fileTable.removeFile(key)
+        self.ConfirmTranscribePage.fileTable.transferList.clear()
+    
+
         

@@ -24,7 +24,7 @@ class SysFonsizeData(DataclassFromDict):
 class SysStyleSheetData(DataclassFromDict):
     basic: str = field_from_dict()
     
-SysColor     = SysColorData.from_dict(config["sysColor"])
-SysImage     = SysImagesData.from_dict(config["sysImages"])
-SysFontSize  = SysFonsizeData.from_dict(config["sysFontSize"])
+SysColor      = SysColorData.from_dict(config["sysColor"])
+SysImage      = SysImagesData.from_dict(config["sysImages"])
+SysFontSize   = SysFonsizeData.from_dict(config["sysFontSize"])
 SysStyleSheet = SysStyleSheetData.from_dict(config["sysStyleSheet"])

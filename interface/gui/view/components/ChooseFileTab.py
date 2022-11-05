@@ -53,17 +53,17 @@ class ChooseFileTab(QDialog):
     
     def _addFile(self) -> None: 
         """ emit a signal that contains the file data """
-        fileObjList = self.chooseFileTab.getFile()
-        profileObj = self.chooseSetTab.getProfile()
-        outputPathObj = self.chooseOutPutTab.getOutputPath()
+        fileList = self.chooseFileTab.getFile()
+        profile = self.chooseSetTab.getProfile()
+        outputPath = self.chooseOutPutTab.getOutputPath()
         
-        statusObj = {
+        status = {
             "Status": "Not Transcribed", 
-            "Progress": "Transcribing", 
+            "Progress": "None", 
             "SelectedAction": "Transcribe"}
         
-        for fileObj in fileObjList:
-            fileData = {**fileObj, **profileObj, **outputPathObj, **statusObj}
+        for fileObj in fileList:
+            fileData = {**fileObj, **profile, **outputPath, **status}
             self.signals.postFile.emit(fileData)
         self.close()
 

@@ -9,19 +9,14 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 from typing import List, Tuple, Dict
-from model.dataBase.fileDB import fileObject
+from model.dataBase.fileDB import FileObj
+from controller.Signals import Signal
 import os
 import logging
 import time
-
-from controller.Signals import Signal
-
 from gailbot import GailBotController
 from PyQt6.QtCore import (
-    QRunnable, 
-    QObject, 
-    pyqtSlot, 
-    pyqtSignal
+    QRunnable, pyqtSlot
 )
 
 # TODO: change plugin path 
@@ -34,7 +29,7 @@ WATSON_REGION = "dallas"
 WATSON_BASE_LANG_MODEL = "en-US_NarrowbandModel"
 WORKSPACE_DIRECTORY_PATH = "/Users/yike/Desktop/GB-UI/workdir" #TODO: change those and move those to the config file
 #  ------------- Controller
-SETTINGS_PROFILE_NAME = "test_profile"
+SETTINGS_PROFILE_NAME = "default"
 SETTINGS_PROFILE_EXTENSION = "json"
 
 """ Gailbot plugins from documentation  
@@ -85,11 +80,11 @@ class Worker(QRunnable):
         used to run GailBot function on separte thread 
         with the added feature of handling signals
     """
-    def __init__(self, files: List [Tuple [str, fileObject]], signal:Signal):
+    def __init__(self, files: List [Tuple [str, FileObj]], signal: Signal):
         """constructor for Worker class
 
         Args:
-            files List[Tuple (filekey, file data)]: a list of tuples that 
+            files List[Tuple (filekey, FileObjt)]: a list of tuples that 
             stores the file data, the first element of tuple is filekey 
             and the second is the file object
         """
@@ -128,10 +123,10 @@ class Worker(QRunnable):
             for file in self.files:
                 #iterate through the list of the file
                 key, filedata = file 
-                filename = filedata["Name"]
-                filePath = filedata["FullPath"]
-                outPath = f"{filedata['Output']}/{filename}_output/"
-                profile = filedata["Profile"]  
+                filename = filedata.Name
+                filePath = filedata.FullPath
+                outPath = f"{filedata.Output}/{filename}_output/"
+                profile = filedata.Profile 
                 self.logger.info(key)
                 self.logger.info(filename)
                 self.logger.info(filePath)
@@ -142,6 +137,7 @@ class Worker(QRunnable):
                     self.logger.info(filedata)
                     self.logger.info("Source Added")
                     self.signals.progress.emit(f"Source{filename} Added")
+                    
     
                 if not self.killed and not gb.is_settings_profile(profile):
                     # TODO: add costomized profile, currently unimplemented
@@ -163,7 +159,7 @@ class Worker(QRunnable):
                 
             if not self.killed:
                 self.signals.progress.emit(str("Transcribing"))
-                self.logger.info("transcribing")
+                self.logger.info("Transcribing")
                 gb.transcribe()
             
             if self.killed:
@@ -182,7 +178,7 @@ class Worker(QRunnable):
         finally:
             self.setAutoDelete(True)
 
-
+            
     def kill(self):
         """ public function to kill current running thread, the thread 
             will terminates after finishing the last function call 

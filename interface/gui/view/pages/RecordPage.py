@@ -47,8 +47,7 @@ class ProgressBar(QProgressBar):
     def start(self):
         self.startTimer(20)
         
-            
-
+        
 
 class RecordPage(QWidget):
     """ post-transcription settings page """

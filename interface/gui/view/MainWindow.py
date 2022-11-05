@@ -82,6 +82,9 @@ class MainWindow(QMainWindow):
         """shows status message"""
         self.StatusBar.showStatusMsg(msg, time)
     
+    def showFileProgress(self, msg):
+        self.fileTableSignals.progressChanged.emit(msg)
+    
     def freeThread(self):
         """clears thread message"""
         self.StatusBar.clearMessage()

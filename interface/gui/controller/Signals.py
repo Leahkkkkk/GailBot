@@ -7,4 +7,5 @@ class Signal(QObject):
     error = pyqtSignal(str)
     busy = pyqtSignal()
     progress = pyqtSignal(str)
+    fileProgress = pyqtSignal(tuple)
     killed = pyqtSignal()

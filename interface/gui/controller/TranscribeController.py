@@ -17,6 +17,7 @@ from PyQt6.QtCore import pyqtSignal, QObject, QThreadPool, pyqtSlot
 
 logger = makeLogger ("Backend")
 class Signal(QObject):
+    """ a signal object that  """
     start = pyqtSignal()
     finish = pyqtSignal()
     fileTranscribed = pyqtSignal(str)
@@ -27,7 +28,15 @@ class Signal(QObject):
 
 
 class TranscribeController(QObject):
-    def __init__(self, ThreadPool: QThreadPool, view: MainWindow, files):
+    def __init__(self, ThreadPool: QThreadPool, view: MainWindow, files:list):
+        """ a controller that controls the transcription processs 
+
+        Args:
+            ThreadPool (QThreadPool): a threadpool provided by the parent 
+            view (MainWindow): view object that handle the signal from the 
+                               backend
+            files (list): a list of files to be transcribed
+        """
         super().__init__()
         logger.info("initialize the transcribe controller")
         self.ThreadPool = ThreadPool
@@ -43,7 +52,9 @@ class TranscribeController(QObject):
         self.signal.killed.connect(view.showFileUploadPage)
         
         # view handler to show transcribtion status
-        self.signal.progress.connect(lambda x: view.showStatusMsg(x, 20000))
+        self.signal.progress.connect(view.showStatusMsg)
+        self.signal.progress.connect(view.showFileProgress)
+        
         
         # view handler for transcription fialed 
         self.signal.error.connect(view.TranscribeFailed)

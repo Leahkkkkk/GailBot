@@ -95,3 +95,4 @@ class ConfirmTranscribePage(QWidget):
         self.logger.info(self.fileTable.transferList)
         self.signal.transcribe.emit(self.fileTable.transferList)
         self.fileTable.transferState()
+

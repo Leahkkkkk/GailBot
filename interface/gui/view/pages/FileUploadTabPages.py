@@ -31,16 +31,11 @@ from PyQt6.QtWidgets import (
     QHBoxLayout,
     QVBoxLayout,
     QComboBox,
-    QListWidget,
-    QStackedWidget,
-    QDialog,
-    QListView,
     QAbstractItemView,
     QTableWidget,
-    QStyledItemDelegate,
     QTableWidgetItem)
-from PyQt6.QtCore import QSize, Qt, QRectF
-from PyQt6.QtGui import QColor, QPen, QBrush, QPalette
+from PyQt6.QtCore import QSize, Qt
+
 
 center = Qt.AlignmentFlag.AlignHCenter
 

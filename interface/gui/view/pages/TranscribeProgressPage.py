@@ -25,6 +25,8 @@ from PyQt6.QtGui import QMovie
 from PyQt6 import QtCore
 from PyQt6.QtCore import Qt
 
+top = Qt.AlignmentFlag.AlignTop
+center = Qt.AlignmentFlag.AlignHCenter
 
 ProgressHeader = ["Type",
                   "Name",
@@ -60,15 +62,16 @@ class TranscribeProgressPage(QWidget):
         """ initialize widgets """
         self.label = Label.Label(
             Text.mainLabelText, FontSize.HEADER2, FontFamily.MAIN)
-        self.label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+        self.label.setAlignment(center)
         self.loadIcon = QLabel()
-        self.IconImg = QMovie(os.path.join(Path.getProjectRoot(), "view/asset/gbloading.gif"))
+        self.IconImg = QMovie(
+            os.path.join(Path.getProjectRoot(), "view/asset/gbloading.gif"))
         self.loadIcon.setMovie(self.IconImg)
         self.loadStart()
        
         self.loadingText = Label.Label(
             Text.loadingText,FontSize.SMALL, FontFamily.OTHER)
-        self.loadingText.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+        self.loadingText.setAlignment(center)
         self.InProgress = Label.Label(
             Text.inProgressText, FontSize.HEADER3, FontFamily.MAIN)
         self.cancelBtn = Button.ColoredBtn(
@@ -93,14 +96,14 @@ class TranscribeProgressPage(QWidget):
         self.verticalLayout.addWidget(self.label)
         self.label.setContentsMargins(0, 20, 0, 0)
         self.verticalLayout.addWidget(self.loadIcon, 
-                                      alignment = Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignTop)
-        self.verticalLayout.addWidget(self.loadingText, alignment = Qt.AlignmentFlag.AlignTop)
-        self.verticalLayout.addWidget(self.InProgress, alignment = Qt.AlignmentFlag.AlignTop)
+                                      alignment = center|top)
+        self.verticalLayout.addWidget(self.loadingText, alignment = top)
+        self.verticalLayout.addWidget(self.InProgress, alignment = top)
         self.verticalLayout.addWidget(self.fileTable, 
-                                      alignment= Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignTop)
+                                      alignment= center|top)
         self.verticalLayout.addStretch()
         self.verticalLayout.addWidget(self.cancelBtn, 
-                                      alignment = Qt.AlignmentFlag.AlignHCenter)
+                                      alignment = center)
         self.verticalLayout.setSpacing(30)
         self.InProgress.setContentsMargins(80, 0, 0, 0)
         self.loadIcon.setContentsMargins(0, 0, 0, 0)
@@ -109,6 +112,7 @@ class TranscribeProgressPage(QWidget):
     def _connectSignal(self):
         """ connects signal """
         self.cancelBtn.clicked.connect(self._confirm)
+        self.signals.progressChanged.connect(self.editFileProgess)
         
     def _confirm(self):
         self.confirmCancel = MsgBox.ConfirmBox(
@@ -122,3 +126,12 @@ class TranscribeProgressPage(QWidget):
     def cancelGailBot(self):
         logger.info(Text.loggerMsg)
         self.signals.cancel.emit()
+        
+    def editFileProgess(self, progress: str):
+        """ change the display of file progress on the table
+
+        Args:
+            progress (str): the message to show the file progress
+        """
+        logger.info("change file progress status")
+        self.fileTable.changeAllFileProgress(progress)

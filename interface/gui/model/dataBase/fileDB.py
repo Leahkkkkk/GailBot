@@ -1,23 +1,35 @@
-
-from logging import raiseExceptions
-from typing import TypedDict, Tuple
-
+from dataclasses import dataclass
+from typing import TypedDict, Tuple, Dict
 
 from util.Logger import makeLogger
 from util.Error import ErrorMsg, DBExecption
-
 from PyQt6.QtCore import QObject, pyqtSignal
+
+from dict_to_dataclass import DataclassFromDict, field_from_dict
 
 logger = makeLogger("Database")
 
-
-class fileObject(TypedDict):
-    Name:str
-    Type:str
+@dataclass 
+class FileObj(DataclassFromDict):
+    Name:     str  = field_from_dict()
+    Type:     str  = field_from_dict()
+    Profile:  str = field_from_dict()
+    Status:   str = field_from_dict()
+    Date:     str = field_from_dict()
+    Size:     str = field_from_dict()
+    Output:   str = field_from_dict()
+    FullPath: str = field_from_dict()
+    SelectedAction: str = field_from_dict()
+    Progress:       str = field_from_dict()
+    
+    
+class fileDict(TypedDict):
+    Name:   str
+    Type:   str
     Profile:str
     Status: str
-    Date: str
-    Size: str
+    Date:   str
+    Size:   str
     Output: str
     FullPath: str
     SelectedAction: str
@@ -37,21 +49,22 @@ class FileModel:
     def __init__(self) -> None:
         """ file database """
         logger.info("init file database")
-        self.data = dict() 
+        self.data : Dict[str, FileObj] = dict() 
         self.signals = Signals()
         self.currentKey = 1
     
     
     ##########################  request handler ###########################
-    def post(self, file:fileObject) -> None:
+    def post(self, data : fileDict) -> None:
         """ add file to file database """
         
         logger.info("post file to database")
         key = str(self.currentKey)
         try:
             if key not in self.data:
+                file = FileObj.from_dict(data)
                 self.data[key] = file 
-                self.signals.fileAdded.emit((key, file))
+                self.signals.fileAdded.emit((key, data))
                 self.currentKey += 1
             else:
                 self.signals.error.emit(ErrorMsg.DUPLICATEKEY)
@@ -83,8 +96,7 @@ class FileModel:
             logger.error(err)
             
             
-    
-    def edit(self, file: Tuple[str,fileObject]) -> None:
+    def edit(self, file: Tuple[str,fileDict]) -> None:
         """ change the file information on the database 
         Args:
             file Tuple[key,fileObject]: a tuple with file key and file object 
@@ -101,7 +113,6 @@ class FileModel:
             self.signals.error.emit(ErrorMsg.EDITERROR) 
 
 
-       
     def editFileStatus(self, data: Tuple[str, str]) -> None:
         """change the status information of the file 
         Args:
@@ -114,7 +125,7 @@ class FileModel:
                 self.signals.error.emit(ErrorMsg.KEYERROR)
                 logger.error(ErrorMsg.KEYERROR)
             else:
-                self.data[key]["Status"] = status
+                self.data[key].Status = status
         except:
             self.signals.error.emit(ErrorMsg.EDITERROR)
             logger.error(ErrorMsg.EDITERROR)
@@ -137,16 +148,28 @@ class FileModel:
                 self.signals.error.emit(ErrorMsg.KEYERROR)
                 logger.error(ErrorMsg.KEYERROR)
             else:
-                self.data[key]["Profile"] = profile
+                self.data[key].Profile = profile
                 self.updateFileResponse(key, "Profile", profile)
         except:
             self.signals.error.emit(ErrorMsg.EDITERROR)
             logger.error(ErrorMsg.EDITERROR)
             
-       
+    def updateFileProgress(self, data):
+        logger.info("request to change file progress in the database")
+        key, progress = data
+        try:
+            if key not in self.data:
+                self.signals.error.emit(ErrorMsg.KEYERROR)
+                logger.error(ErrorMsg.KEYERROR)
+            else:
+                self.data[key].Progress = progress
+                self.updateFileResponse(key, "Progress", progress)
+        except:
+            self.signals.error.emit(ErrorMsg.EDITERROR)
+            logger.error(ErrorMsg.EDITERROR)
+        
 
     ##################### response emitter ############################# 
-    
     def updateFileResponse(self, key, field, value):
         """ send the signal to update the file data, which will be reflected
             on the front end 
@@ -175,7 +198,7 @@ class FileModel:
                 self.signals.error.emit(ErrorMsg.KEYERROR)
                 logger.error(ErrorMsg.KEYERROR)
             else:
-                profile = self.data[key]["Profile"]
+                profile = self.data[key].Profile
                 self.signals.profileRequest.emit(profile)
                 logger.info((key,profile))
         except:
