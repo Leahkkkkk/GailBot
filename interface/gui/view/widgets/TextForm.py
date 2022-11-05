@@ -12,9 +12,8 @@ Modified By:  Siara Small  & Vivian Li
 
 from typing import Dict 
 from view.widgets import Label, InputBox, Button
-from util.Config import FontFamily, FontSize, Dimension
-from util.SytemSet import SysColor 
-from view.style.Background import initBackground
+from util.Style import Color, FontFamily, FontSize, Dimension
+from view.style.Background import initSecondaryColorBackground
 
 from PyQt6.QtWidgets import (
     QWidget, 
@@ -24,7 +23,7 @@ from PyQt6.QtWidgets import (
 class TextForm(QWidget):
     def __init__(self, 
                  data: Dict[str, str], 
-                 backgroundColor: str = SysColor.subBackground,
+                 backgroundColor: str = Color.SUB_BACKGROUND,
                  *args, **kwargs) -> None:
         """ Display a form 
 
@@ -99,7 +98,7 @@ class TextForm(QWidget):
        
     def _initStyle(self):
         """ initialize the widget style """
-        initBackground(self, self.backgroundColor)
+        initSecondaryColorBackground(self)
         
 
         

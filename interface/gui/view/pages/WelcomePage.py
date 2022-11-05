@@ -11,15 +11,8 @@ Modified By:  Siara Small  & Vivian Li
 
 import tomli
 
-from util.Config import (
-    Color, 
-    FontSize, 
-    Dimension
-)
-from util.Config import WelcomePageText as Text
-from util.Config import FontFamily, FontSize, Color, Asset
-from util.SytemSet import SysImage
-from view.style.Background import initImgBackground
+from util.Style import  Color,  FontSize,  Dimension,  FontFamily,  Asset
+from util.Text import WelcomePageText as Text
 from view.widgets import (
     Button, 
     Label, 
@@ -44,7 +37,7 @@ from PyQt6.QtCore import Qt
 """
 class WelcomePage(QWidget):
     """ class for welcome page """
-    def __init__(self, config=None, *args, **kwargs) -> None:
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self._initWidget()
         self._initLayout()
@@ -93,7 +86,6 @@ class WelcomePage(QWidget):
         """ initialize style """
         self.HomeSetBtn.hide()
         self.StartBtn.setMinimumSize(QtCore.QSize(Dimension.BTNWIDTH, Dimension.BTNHEIGHT))
-        initImgBackground(self)
 
     
     """ TODO: separate to a different file """   

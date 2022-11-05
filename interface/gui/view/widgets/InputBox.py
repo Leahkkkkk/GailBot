@@ -8,8 +8,7 @@ Last Modified: Thursday, 6th October 2022 1:44:14 pm
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
-from util.SytemSet import SysFontSize,  SysStyleSheet
-from util.Config import Color, FontSize, Dimension
+from util.Style import FontSize, Dimension
 
 from view.style.styleValues import (
     Dimension, 
@@ -37,7 +36,7 @@ class InputBox(QWidget):
         self, 
         label:str, 
         vertical  = False, 
-        labelSize = SysFontSize.body, 
+        labelSize = FontSize.BODY, 
         inputText = None,
         selections = None,
         *args, 

@@ -21,11 +21,11 @@ import logging
 from view.widgets import MsgBox
 from view.components.ChooseFileTab import ChooseFileTab
 from view.pages.FileUploadTabPages import ChooseSet
-from view.style.Background import initBackground
+from view.style.Background import initSecondaryColorBackground
 from view.Signals import FileSignals
 from util.Logger import makeLogger
-from util.Config import Dimension, Color, FontFamily, FontSize
-from util.Config import FileTableText as Text
+from util.Style import Dimension, Color, FontFamily, FontSize
+from util.Text import FileTableText as Text
 
 from PyQt6.QtWidgets import (
     QTableWidget, 
@@ -579,7 +579,7 @@ class changeProfileDialog(QDialog):
         self.layout.addWidget(self.selectSetting)
         self.selectSetting.selectSettings.currentTextChanged.connect(
             self.updateProfile)
-        initBackground(self, Color.BLUEWHITE)
+        initSecondaryColorBackground(self)
         self.setFixedSize(QSize(450, 300))
     
     def updateProfile(self):

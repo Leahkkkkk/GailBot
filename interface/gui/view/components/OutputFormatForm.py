@@ -1,7 +1,8 @@
 from typing import Dict 
 
 from view.widgets import ToggleView, TextForm, Button
-from util.Config import OutputFormatForm, OutputFormatFormText,Color
+from util.Text import OutputFormatForm, OutputFormatFormText
+from util.Style import Color
 
 
 from PyQt6.QtWidgets import (

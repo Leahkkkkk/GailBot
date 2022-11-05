@@ -21,9 +21,8 @@ from typing import List, Dict
 from view.widgets import Label, Button, FileTable
 from view.style.widgetStyleSheet import buttonStyle
 from view.widgets import MsgBox
-from util.Config import (
+from util.Style import (
     FileTableDimension, 
-    FileTableHeader, 
     Asset, 
     StyleSheet,
     Color, 
@@ -31,11 +30,11 @@ from util.Config import (
     Dimension
 )
 
-from util.Config import FileUploadPageText as Text 
-from util.Config import FontSize as FS
+from util.Text import FileTableHeader
+from util.Text import FileUploadPageText as Text 
+from util.Style import FontSize as FS
 from view.style.styleValues import FontFamily
 
-from view.style.Background import initImgBackground
 from PyQt6.QtWidgets import (
     QWidget, 
     QVBoxLayout,
@@ -145,7 +144,6 @@ class FileUploadPage(QWidget):
 
     def _initStyle(self):
         """ initialize the style """
-        initImgBackground(self, Asset.subPageBackgorund)
         self.gotoMainBtn.setFixedSize(
             QSize(Dimension.LBTNWIDTH,Dimension.BTNHEIGHT))
         self.gotoMainBtn.setStyleSheet(StyleSheet.goToMain)

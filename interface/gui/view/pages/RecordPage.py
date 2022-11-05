@@ -1,9 +1,9 @@
 import datetime
 
-from util.Config import Color, FontSize, Dimension, Asset, RecordForm
-from util.Config import RecordPageText as Text
+from util.Style import Color, FontSize, Dimension, Asset
+from util.Text import RecordPageText as Text
+from util.Text import RecordForm
 from view.style.styleValues import FontFamily 
-from view.style.Background import initBackground
 from view.widgets import (
     InputBox, 
     Button, 
@@ -28,7 +28,6 @@ class RecordProgress(QWidget):
         self._iniLayout()
         self._initTimer()
         self._connectSignal()
-        initBackground(self)
     
     def _initTimer(self):
         self.timer = QTimer()
@@ -137,7 +136,6 @@ class RecordPage(QWidget):
         self.layout.addWidget(self.cancelBtn,
                               alignment=center)
         self.layout.addStretch()
-        initBackground(self)
     
     def _connectSignal(self):
         self.startRecordBtn.clicked.connect(

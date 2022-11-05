@@ -12,7 +12,7 @@ import logging
 
 from util import Logger
 from view.style.styleValues import Dimension, Geometry
-from util.Config import WindowTitle
+from util.Text import WindowTitle
 
 from PyQt6.QtWidgets import (
     QWidget, 

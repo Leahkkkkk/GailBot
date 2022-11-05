@@ -21,19 +21,17 @@ TODO: make a combobox widget
 
 from typing import Dict, List, Set
 
-from util.Config import (
+from util.Style import (
     Color, 
-    About,
     StyleSheet,
     Dimension)
-from util.Config import ProfilePageText as Text
-from util.Config import FontSize as FS 
-from util.Config import StyleSheet as SS 
-from util.Config import ProfileSettingForm as Form 
+from util.Text import ProfilePageText as Text, About
+from util.Style import FontSize as FS 
+from util.Style import StyleSheet as SS 
+from util.Text import ProfileSettingForm as Form 
  
 from util.Logger import makeLogger
 from view.Signals import ProfileSignals
-from view.style.Background import initBackground
 from view.Text.LinkText import Links
 from view.pages import RequiredSetPage, PostSetPage, PluginPage
 from view.widgets import Button, Label, ComboBox, SideBar, Image
@@ -178,7 +176,6 @@ class ProfileSettingPage(QWidget):
         
     
     def _initStyle(self):
-        initBackground(self)
         self.settingStack.setObjectName(SS.settingStackID)
         self.settingStack.setStyleSheet(SS.settingStack)
     

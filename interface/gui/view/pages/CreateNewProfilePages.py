@@ -1,7 +1,7 @@
 import tomli
 from typing import Dict
 
-from util.Config import Color, FontSize
+from util.Style import Color, FontSize
 from util.Logger import makeLogger
 from view.widgets.Button import ColoredBtn
 from view.widgets.Label import Label

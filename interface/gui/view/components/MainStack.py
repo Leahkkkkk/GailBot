@@ -23,7 +23,8 @@ from view.pages import (
 
 
 
-from util.Config import Dimension, MainStackText
+from util.Style import Dimension
+from util.Text import MainStackText
 
 from PyQt6.QtWidgets import QStackedWidget, QTabWidget
 from PyQt6.QtCore import QSize

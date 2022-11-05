@@ -39,6 +39,7 @@ class MVController:
         self.pluginDB = pluginDB
     
     def exec(self):
+        """ public function to execute the model view controller """
         self._connectFileDBToView()
         self._connectViewToFileDB()
         self._connectPluginDBToView()
@@ -47,6 +48,9 @@ class MVController:
         self._connectViewToProfileDB()
         
     def _connectFileDBToView(self):
+        """ connect the signal from the file database to view
+            change the presentation of data on the view
+        """
         logger.info("")
         dbSignal = self.fileDB.signals
         view = self.view
@@ -57,8 +61,10 @@ class MVController:
         # handle file database's request to load the profile of one file
         dbSignal.profileRequest.connect(self.profileDB.get)
      
-    
     def _connectViewToFileDB(self):
+        """ connect the signal from the view to file database  
+            store, delete or edit the database based on the view's request
+        """
         logger.info("initailize model&view connection")
         viewSignal = self.view.fileTableSignals
         db = self.fileDB
@@ -72,12 +78,18 @@ class MVController:
         viewSignal.requestprofile.connect(db.requestProfile)
     
     def _connectViewToPluginDB(self):
+        """ connect the signal from the view to plugin database  
+            store, delete or edit the database based on the view's request
+        """
         logger.info("initailize model&view connection")
         viewSignal = self.view.profileSignals
         # handle view's request to load new plugin
         viewSignal.addPlugin.connect(self.pluginDB.post)
     
     def _connectPluginDBToView(self):
+        """ connect the signal from the plugin database to view
+            change the presentation of data on the view
+        """
         logger.info("initailize model&view connection")
         dbSignal = self.pluginDB.signals
         view = self.view.MainStack.ProfileSettingPage
@@ -85,6 +97,9 @@ class MVController:
         dbSignal.pluginAdded.connect(view.addPluginHandler)
         
     def _connectViewToProfileDB(self):
+        """ connect the signal from the view to profile database  
+            store, delete or edit the database based on the view's request
+        """
         logger.info("initailize model&view connection")
         viewSignal = self.view.profileSignals
         db = self.profileDB
@@ -96,6 +111,9 @@ class MVController:
         viewSignal.edit.connect(db.edit)
     
     def _connectProfileDBToView(self):
+        """ connect the signal from the profile database to view
+            change the presentation of data on the view
+        """
         logger.info("initailize model&view connection")
         dbSignal = self.profileDB.signals
         profileView = self.view.MainStack.ProfileSettingPage

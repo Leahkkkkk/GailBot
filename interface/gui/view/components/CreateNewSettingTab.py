@@ -10,7 +10,8 @@ Modified By:  Siara Small  & Vivian Li
 '''
 from typing import List 
 
-from util.Config import CreatNewProfileTabText, Dimension
+from util.Text import CreatNewProfileTabText as Text
+from util.Style import Dimension
 from view.pages.CreateNewProfilePages import (
     ProfileName,
     BasicSetting, 
@@ -49,17 +50,17 @@ class CreateNewSetting(QDialog):
         self.PostTranscribeSetting = PostTranscribeSetting()
         self.PluginSetting = PluginSetting(plugins)
         self.newSettingData = dict()
-        self.setWindowTitle(CreatNewProfileTabText.WindowTitle)
+        self.setWindowTitle(Text.WindowTitle)
         
         mainTab = Tab(
-            CreatNewProfileTabText.WindowTitle,
+            Text.WindowTitle,
             {
-                CreatNewProfileTabText.TabHeader1: self.profilename,
-                CreatNewProfileTabText.TabHeader2: self.BasicSetting,
-                CreatNewProfileTabText.TabHeader3: self.EngineSetting,
-                CreatNewProfileTabText.TabHeader4: self.OutPutFormSetting,
-                CreatNewProfileTabText.TabHeader5: self.PostTranscribeSetting,
-                CreatNewProfileTabText.TabHeader6: self.PluginSetting
+                Text.TabHeader1: self.profilename,
+                Text.TabHeader2: self.BasicSetting,
+                Text.TabHeader3: self.EngineSetting,
+                Text.TabHeader4: self.OutPutFormSetting,
+                Text.TabHeader5: self.PostTranscribeSetting,
+                Text.TabHeader6: self.PluginSetting
             },
             QSize(Dimension.LARGEDIALOGWIDTH, Dimension.LARGEDIALOGHEIGHT)
         )

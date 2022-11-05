@@ -3,8 +3,8 @@ from typing import Dict
 from view.widgets import ToggleView, TextForm, Button
 from view.components.SettingEngineForm import SettingEngineForm
 from view.components.OutputFormatForm import OutPutFormat
-from util.Config import CreateNewProfilePageText as Text 
-from util.Config import Dimension
+from util.Text import CreateNewProfilePageText as Text 
+from util.Style import Dimension
 
 
 from PyQt6.QtWidgets import (

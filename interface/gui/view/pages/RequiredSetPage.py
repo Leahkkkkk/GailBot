@@ -10,8 +10,8 @@ Modified By:  Siara Small  & Vivian Li
 '''
 import tomli
 
-from util.Config import Color, FontSize
-from util.Config import ProfilePageText as Text
+from util.Style import FontSize
+from util.Text import ProfilePageText as Text
 from view.widgets import  Label
 from view.style.styleValues import FontFamily
 from view.components import RequiredSet

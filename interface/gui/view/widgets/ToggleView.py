@@ -9,7 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 from view.widgets import Button
-from util.Config import Color, FontSize, Dimension, StyleSheet
+from util.Style import Color, FontSize, Dimension, StyleSheet
 
 
 from PyQt6.QtWidgets import QWidget, QScrollArea, QVBoxLayout

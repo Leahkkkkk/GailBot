@@ -1,11 +1,19 @@
-import tomli
+'''
+File: SystemSettingPage.py
+Project: GailBot GUI
+File Created: Friday, 4th November 2022 1:01:27 pm
+Author: Siara Small  & Vivian Li
+-----
+Last Modified: Saturday, 5th November 2022 7:06:32 pm
+Modified By:  Siara Small  & Vivian Li
+-----
+'''
 
-from util.Config import Color, FontSize, SystemSettingForm, About, StyleSheet
-from util.Config import SystemSetPageText as Text 
-from util.Config import FontSize as FS 
-from util.Config import StyleSheet as ass
+from util.Style import Color, StyleSheet
 from view.widgets import SideBar, SettingForm,  Label, Button
-from view.style.Background import initBackground
+from util.Text import SystemSetPageText as Text 
+from util.Text import SystemSettingForm as Form
+from util.Text import About
 from view.style.styleValues import  FontSize
 from view.Text.LinkText import Links
 
@@ -20,8 +28,7 @@ class SystemSettingPage(QWidget):
     """ post-transcription settings page """
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        initBackground(self)
-        self.data = SystemSettingForm
+        self.data = Form
         self._initWidget()
         self._initLayout()
         self._initStyle()
@@ -68,9 +75,11 @@ class SystemSettingPage(QWidget):
         self.Mainstack.setStyleSheet(StyleSheet.sysSettingStack)
    
     def setValue(self, values:dict):
+        """ public function to set the system setting form value """
         self.SysSet.setValue(values)
     
     def getValue(self) -> dict:
+        """ public function to get the system setting form value"""
         return self.SysSet.getValue()
 
     

@@ -1,6 +1,6 @@
 from typing import Dict, Tuple, TypedDict
-from util.Config import Color, Dimension
-from util.Config import MultipleComboText as Text
+from util.Style import Color, Dimension
+from util.Text import MultipleComboText as Text
 from view.widgets import ToggleView
 
 from PyQt6.QtWidgets import (

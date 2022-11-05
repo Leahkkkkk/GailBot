@@ -11,8 +11,8 @@ Modified By:  Siara Small  & Vivian Li
 
 
 from view.widgets import SettingForm
-from util.Config import ProfilePageText as Text 
-from util.Config import PostSettingForm
+from util.Text import ProfilePageText as Text 
+from util.Text import PostSettingForm as Form
 from PyQt6.QtWidgets import QWidget, QVBoxLayout
 
 
@@ -21,7 +21,7 @@ class PostSetPage(QWidget):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.setForm = SettingForm.SettingForm(
-        Text.postSetHeader, PostSettingForm, Text.postSetCaption)
+        Text.postSetHeader, Form, Text.postSetCaption)
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
         """ add widget to layout """

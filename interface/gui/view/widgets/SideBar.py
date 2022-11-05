@@ -9,8 +9,8 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
-from view.style.Background import initImgBackground
-from util.Config import Asset, Dimension
+from view.style.Background import initSideBarBackground
+from util.Style import Dimension
 from PyQt6.QtWidgets import (
     QWidget, 
     QVBoxLayout
@@ -26,7 +26,7 @@ class SideBar(QWidget):
         self.setLayout(self.verticalLayout)
         self.setFixedWidth(Dimension.SIDEBAR)
         self.verticalLayout.setContentsMargins(0,0,0,0)
-        initImgBackground(self, Asset.sidebarColor)
+        initSideBarBackground(self)
 
         
     def addWidget(self, widget: QWidget, alignment = None):

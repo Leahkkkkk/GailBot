@@ -15,15 +15,10 @@ from view.widgets import (
     FileTable
 )
 
-from util.Config import (
-    Color, 
-    FontSize, 
-    Dimension
-)
-from util.Config import TranscribeSuccessText as Text
+from util.Style import Color,  FontSize, Dimension
+from util.Text import TranscribeSuccessText as Text
 from view.Signals import FileSignals
 from view.style.styleValues import FontFamily
-from view.style.Background import initImgBackground
 
 from PyQt6.QtWidgets import (
     QVBoxLayout,
@@ -100,4 +95,4 @@ class TranscribeSuccessPage(QWidget):
             QtCore.QSize(Dimension.BTNWIDTH, Dimension.BTNHEIGHT))
         self.returnBtn.setMinimumSize(
             QtCore.QSize(Dimension.BTNWIDTH, Dimension.BTNHEIGHT))
-        initImgBackground(self, Text.backgroundImg)
+

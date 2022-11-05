@@ -11,8 +11,8 @@ Modified By:  Siara Small  & Vivian Li
 from typing import Dict 
 
 from view.widgets import Label,TextForm
-from view.style.Background import initBackground
-from util.Config import FontFamily, FontSize, Color, StyleSheet, Dimension
+from view.style.Background import initSecondaryColorBackground
+from util.Style import FontFamily, FontSize, Dimension
 from PyQt6.QtWidgets import QWidget, QVBoxLayout,QScrollArea
 from PyQt6.QtCore import Qt
 
@@ -66,7 +66,7 @@ class SettingForm(QWidget):
         self.scroll.setWidget(self.setForm)
         self.scroll.setFixedWidth(Dimension.FORMWIDTH)
         self.scroll.setFixedHeight(Dimension.FORMMINHEIGHT)
-        initBackground(self.scroll, color = Color.BLUEWHITE)
+        initSecondaryColorBackground(self.scroll)
     
     def _initLayout(self):
         """ initialize layout"""

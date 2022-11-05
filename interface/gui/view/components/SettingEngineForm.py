@@ -12,7 +12,7 @@ Modified By:  Siara Small  & Vivian Li
 from typing import Dict
 
 from util.Logger import makeLogger
-from util.Config import EngineSettingForm
+from util.Text import EngineSettingForm
 from view.widgets.MultipleCombo import ToggleCombo
 from PyQt6.QtWidgets import (
     QComboBox, 

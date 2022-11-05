@@ -77,18 +77,5 @@ HiLabSuite = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
 "Dummy input" = "dummy"
 "Dummy selection mode combo" = [ "selection1", "selection2", "selection3",]
 
-[filetable.header]
-"fileUploadPage" = ["Select All", "Type", "Name", "Profile", 
-                    "Status", "Date", "Size", "Actions"]
-"confirmPage"    = ["Type", "Name", "Profile", "SelectedAction", "Action"]
-"transcribePage" = ["Type", "Name", "Progress"]
-"successPage"    =  ["Type",  "Name", "Status", "Output"]
-
-
-[filetable.dimension]
-"fileUploadPage" = [0.07,0.07,0.2,0.15,0.15,0.08,0.08,0.2]
-"confirmPage"    = [0.1,0.35,0.25,0.13,0.17]
-"transcribePage" = [0.2, 0.55, 0.25]
-"successPage"    =  [0.17, 0.35, 0.25, 0.23]
 
 

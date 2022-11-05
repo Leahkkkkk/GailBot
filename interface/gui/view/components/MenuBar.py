@@ -9,7 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 from view.style.styleValues import Geometry
-from util.Config import MenuBarText
+from util.Text import MenuBarText
 
 from PyQt6.QtWidgets import QMenuBar, QMenu
 from PyQt6 import QtCore, QtGui

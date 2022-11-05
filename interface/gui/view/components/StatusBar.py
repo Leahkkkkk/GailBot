@@ -12,7 +12,7 @@ Modified By:  Siara Small  & Vivian Li
 import logging
 
 from util import Logger
-from util.Config import Dimension, StyleSheet
+from util.Style import Dimension, StyleSheet
 from PyQt6.QtCore import QSize 
 from PyQt6.QtWidgets import  QStatusBar
 

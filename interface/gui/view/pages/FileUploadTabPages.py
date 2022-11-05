@@ -14,11 +14,10 @@ import pathlib
 from typing import List, TypedDict
 import os
 
-from util.Config import Color, FontSize
+from util.Style import Color, FontSize
 from view.widgets.Button import ColoredBtn, BorderBtn
 from view.widgets.Label import Label
 from view.widgets.TabPage import TabPage
-from view.style.Background import initBackground
 from view.style.widgetStyleSheet import buttonStyle
 
 from PyQt6.QtWidgets import (
@@ -91,10 +90,6 @@ class OpenFile(TabPage):
     
     def _initStyle(self):
         """ initialize the style  """
-        self.fileDisplayList.setStyleSheet(
-            f"border: 1px solid {Color.BLUEDARK};"
-            "background-color:white;"
-            "QListWidgetItem {background-color: grey; border: 1px solid black}")
         self.fileDisplayList.setAlternatingRowColors(True)
         self.fileDisplayList.insertColumn(0)
         self.fileDisplayList.setSelectionMode(

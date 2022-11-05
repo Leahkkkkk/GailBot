@@ -9,7 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 import os
-from util.SytemSet import SysImage
+from util.Style import Color, Asset
 from util import Path
 from PyQt6.QtCore import  Qt
 from PyQt6.QtGui import (
@@ -29,8 +29,7 @@ class Background(QBrush):
         self.setStyle(Qt.BrushStyle.SolidPattern) 
 
 
-
-def initBackground(widget:QWidget, color="#FFFFFF"):
+def _initBackground(widget:QWidget, color=Color.MAIN_BACKRGOUND):
     """ make the widget background as white """
     widget.setAutoFillBackground(True)
     bg = Background(color)
@@ -39,7 +38,7 @@ def initBackground(widget:QWidget, color="#FFFFFF"):
     widget.setPalette(palette)
 
 
-def initImgBackground(widget:QWidget, background: str = SysImage.homeBackground):
+def _initImgBackground(widget:QWidget, background: str = Asset.homeBackground):
     widget.setAutoFillBackground(True)
     palette = widget.palette()
     brush = QBrush()
@@ -50,3 +49,21 @@ def initImgBackground(widget:QWidget, background: str = SysImage.homeBackground)
     brush.setTransform(backgroundTransform.scale(1,1))
     palette.setBrush(QPalette.ColorRole.Window, brush) 
     widget.setPalette(palette)
+    
+def initHomePageBackground(widget:QWidget):
+    _initImgBackground(widget, Asset.homeBackground)
+
+def initSubpageBackgorund(widget:QWidget):
+    _initImgBackground(widget, Asset.subPageBackground)
+
+def initSideBarBackground(widget:QWidget):
+    _initImgBackground(widget, Asset.sideBarBackground)
+    
+    
+def initPrimaryColorBackground(widget:QWidget):
+    _initBackground(widget, Color.MAIN_BACKRGOUND)
+
+def initSecondaryColorBackground(widget:QWidget):
+    _initBackground(widget, Color.SUB_BACKGROUND)
+
+    

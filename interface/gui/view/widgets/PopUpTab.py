@@ -1,12 +1,12 @@
 from typing import Dict
 
-from util.Config import Color, Dimension
-from util.Config import PopUpText as Text
+from util.Style import Color, Dimension
+from util.Text import PopUpText as Text
 
 from view.widgets import Button 
 from view.widgets.TabPage import TabPage
 from view.style.widgetStyleSheet import buttonStyle
-from view.style.Background import initBackground
+from view.style.Background import initPrimaryColorBackground
 
 from PyQt6.QtWidgets import (
     QTabWidget, 
@@ -52,13 +52,13 @@ class Tab(QWidget):
         self.setFixedSize(size)
         self._initWidget()
         self._initLayout()
-        initBackground(self, Color.BLUEWHITE)
+        initPrimaryColorBackground(self)
     
         
     def _initWidget(self):
         """ initialize the widget """
         self.MainTab = QTabWidget(self)
-        initBackground(self.MainTab, Color.BLUEWHITE)
+        initPrimaryColorBackground(self.MainTab)
         self.MainTab.setTabPosition(QTabWidget.TabPosition.West)
         
         """ initialize the control button """
@@ -72,7 +72,7 @@ class Tab(QWidget):
         for label, tab in self.tabs.items():
             self.MainTab.addTab(tab, label)
             self.tabsState.append(False)
-            initBackground(tab, Color.BLUEWHITE)
+            initPrimaryColorBackground(tab)
             """ setting the page logic """
             tab.signals.nextPage.connect(self._enableBtn)
             tab.signals.goToNextPage.connect(self._toNextPage)
@@ -202,11 +202,11 @@ class NoControlTab(QWidget):
         self.header = header 
         self.setFixedSize(TabSize)
         self._initWidget()
-        initBackground(self)
+        initPrimaryColorBackground(self)
 
     def _initWidget(self):
         self.MainTab = QTabWidget(self)
-        initBackground(self.MainTab)
+        initPrimaryColorBackground(self.MainTab)
         self.MainTab.setTabPosition(QTabWidget.TabPosition.North)
         """ initialize the pages on the tab """
         for label, tab in self.tabs.items():
@@ -220,7 +220,7 @@ class NoControlTab(QWidget):
                 Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
             layout.addWidget(scroll)
             self.MainTab.addTab(container, label)
-            initBackground(tab)
+            initPrimaryColorBackground(tab)
         self.setWindowTitle(self.header)
 
         

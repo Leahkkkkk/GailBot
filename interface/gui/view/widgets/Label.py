@@ -12,10 +12,7 @@ import os
 import logging
 
 
-from util.SytemSet import SysFontSize, SysColor, SysStyleSheet
-
-
-from util.Config import FontSize, FontFamily, Asset
+from util.Style import FontSize, Color, StyleSheet, Asset, FontFamily
 
 from PyQt6.QtWidgets import QLabel
 from PyQt6.QtGui import QFont, QFontDatabase
@@ -37,7 +34,7 @@ class Label(QLabel):
         text:str, 
         size:str, 
         font   = FontFamily.OTHER, 
-        color  =  SysColor.maintext, 
+        color  =  Color.MAIN_TEXT, 
         others = None, 
         link   = False,
         *args, 

@@ -1,11 +1,18 @@
+'''
+File: TranscribeProgressPage.py
+Project: GailBot GUI
+File Created: Friday, 4th November 2022 1:01:27 pm
+Author: Siara Small  & Vivian Li
+-----
+Last Modified: Saturday, 5th November 2022 7:06:45 pm
+Modified By:  Siara Small  & Vivian Li
+-----
+'''
+
 import os
 
-from util.Config import (
-    Color, 
-    FontSize, 
-    Dimension
-)
-from util.Config import TranscribeProgressText as Text
+from util.Style import (Color, FontSize)
+from util.Text import TranscribeProgressText as Text
 from util.Logger import makeLogger
 from view.Signals import FileSignals
 from view.widgets import MsgBox
@@ -18,7 +25,7 @@ from view.widgets import Button
 from view.style.styleValues import (
     FontFamily
 )
-from view.style.Background import initImgBackground
+
 
 from PyQt6.QtWidgets import QLabel, QVBoxLayout, QWidget
 from PyQt6.QtGui import QMovie
@@ -86,7 +93,6 @@ class TranscribeProgressPage(QWidget):
         self.loadIcon.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.loadIcon.setFixedSize(QtCore.QSize(80, 80))
         self.loadIcon.setScaledContents(True)
-        initImgBackground(self, Text.backgroundImg)
         
     def _initLayout(self):
         """ intiializes layout """

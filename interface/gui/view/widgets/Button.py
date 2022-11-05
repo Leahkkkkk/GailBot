@@ -10,11 +10,9 @@ Modified By:  Siara Small  & Vivian Li
 '''
 import os
 from typing import List
-from util.Config import FontSize, Dimension, Color, StyleSheet
-from util.Config import BtnText as Text
-from util.SytemSet import SysColor, SysFontSize
+from util.Style import FontSize, Dimension, Color, StyleSheet
+from util.Text import BtnText as Text
 from util.StyleGenerator import colorScale
-from view.style.Background import initBackground
 from util import Path
 
 from PyQt6.QtWidgets import (

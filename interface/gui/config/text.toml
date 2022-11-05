@@ -1,20 +1,20 @@
 ###### text values 
-[text.links]
+[links]
 HILAB = "https://sites.tufts.edu/hilab"
 
-[text.TranscribeSuccessText]
+[TranscribeSuccessText]
 mainLabelText = "Transcription Successful"
 transcribedFilesText = "Transcribed files and locations:"
 moreBtnText = "Process more files"
 returnBtnText = "Return to main menu"
 
-[text.TranscribeProgressText]
+[TranscribeProgressText]
 mainLabelText = "Transcription in Progress"
 loadingText = "Transcribing files..."
 inProgressText = "Files in progress:"
 cancelText = "Cancel"
 
-[text.WelcomePageText]
+[WelcomePageText]
 audioInstructionText = "1. Select audio and video files \n or record live in Gailbot"
 settingsInstructionText = "2. Apply settings"
 transcribeInstructionText = "3. Transcribe"
@@ -30,7 +30,7 @@ guideText = "GailBot Settings Guide"
 gbLinkText = "GailBot.com"
 moreInfoText = "For more information visit"
 
-[text.FileUploadPageText]
+[FileUploadPageText]
 header = "Files to Transcribe"
 returnMainText = "Return to Main Menu"
 recordBtnText = "Record live"
@@ -48,7 +48,7 @@ chooseOutPutText = "Choose Output Directory"
 fileFilter = ["audio file (*.wav)","directory (/)"]
 removeWarnText = "Remove all files?"
 
-[text.RecordPageText]
+[RecordPageText]
 basic = "Basic"
 filename = "Filename"
 mp3 = "MP3"
@@ -64,7 +64,7 @@ recSet = "Recording Settings"
 record = "Record Audio File"
 end = "End Recording"
 
-[text.ProfilePageText]
+[ProfilePageText]
 cancelBtn = "Cancel"
 saveBtn = "Save and Exit"
 newProfileBtn = "Create New Profile"
@@ -79,24 +79,31 @@ requiredSetCaption =  "These settings are required before transcription and cann
 pluginHeader = "Choose Plugins"
 pluginCaption = "These plugins are applied to transcription process"
 
-[text.SystemSettingPage]
+[SystemSettingPage]
 header = "System Setting"
 caption = "These settings are applied for system setting"
 cancelBtn = "Cancel"
 saveBtn = "Save and Exit"
 
-[text.ConfirmTranscriptionPageText]
+[ConfirmTranscriptionPageText]
 confirmLabel = "Confirm Files and Settings"
 confirm = "Confirm"
 cancel = "Cancel"
 
-[text.RecordInProgressPageText]
+[RecordInProgressPageText]
 start = "Start Recording"
 cancel = "Cancel"
 end = "End Recording"
 
-#################   TODO: insert values #################
-[text.CreateNewProfilePageText]  
+[filetable.header]
+"fileUploadPage" = ["Select All", "Type", "Name", "Profile", 
+                    "Status", "Date", "Size", "Actions"]
+"confirmPage"    = ["Type", "Name", "Profile", "SelectedAction", "Action"]
+"transcribePage" = ["Type", "Name", "Progress"]
+"successPage"    =  ["Type",  "Name", "Status", "Output"]
+
+
+[CreateNewProfilePageText]  
 confirmProfileNameBtn = "Start"
 emptyNameMsg = "The profile name cannot be empty"
 emptyUserMsg = "Please enter user name and password"
@@ -104,17 +111,17 @@ engineSettingHeader = "Speech to text settings"
 outputSettingHeader =  "Output format settings"
 cofirmBtn = "confirm"
 
-[text.ChooseFileTabText]
+[ChooseFileTabText]
 WindowTitle = "Upload File"
 TabTitle    = "Add New File"
 TabHeader1  = "add file"
 TabHeader2  = "choose setting"
 TabHeader3  = "select output"
 
-[text.WindowTitle]
+[WindowTitle]
 consoleWindow = "Console Window"
 
-[text.CreateNewProfileTabText]
+[CreateNewProfileTabText]
 WindowTitle = "Create New Profile"
 TabTitle = "Create New Profile"
 TabHeader1 = "Profile Name"
@@ -124,11 +131,11 @@ TabHeader4 = "Output File Format Setting"
 TabHeader5 = "Post Transcribtion Settion"
 TabHeader6 = "Plugin Setting"
 
-[text.MainStackText]
+[MainStackText]
 ProfileSetting = "Porfile Setting"
 SystemSetting  = "System Setting"
 
-[text.OutputFormatForm]
+[OutputFormatForm]
 header = "Output File Format"
 CorpuFormHeader = "Corpus Settings"
 LanguageHeader  = "language"
@@ -137,40 +144,40 @@ FileFormatHeader = "File Format"
 SpeakerHeader = "Number of Speaker"
 TextWrap = "Text-Wrapping"
 
-[text.RequiredSettingForm]
+[RequiredSettingForm]
 engineSetHeader = "Speech to text settings"
 outputSetHeader = "Output File Format Settings"
 
-[text.MenuBar]
+[MenuBar]
 console = "Console"
 open = "Open"
 close = "close"
 
 ####widgets
-[text.btnText]
+[btnText]
 on = "ON"
 off = "OFF"
 icon = "iconButton"
 right = "right.png"
 down = "down.png"
 
-[text.fileTableText]
+[fileTableText]
 default = "Default"
 delete = "Delete"
 changeSet = "Change Setting"
 profileDet = "Profile Details"
 
-[text.multipleComboText]
+[multipleComboText]
 username = "Username"
 password = "Password"
 
-[text.popUpText]
+[popUpText]
 leftArr = "▶"
 rightArr = "◀"
 finish = "Finish"
 window = "File Info"
 
-[text.tableText]
+[tableText]
 location = "Change Location"
 postSettings = "Post Transcribe Setting"
 save = "Save"

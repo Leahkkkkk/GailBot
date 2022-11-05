@@ -1,9 +1,10 @@
 
-from util.Config import Color, FontSize, ProfileSettingForm
-from util.Config import ProfilePageText as Text
+from util.Style import Color, FontSize
+from util.Text import ProfilePageText as Text
+from util.Text import ProfileSettingForm as Form
 from view.widgets import Label 
 from view.style.styleValues import FontFamily
-from view.style.Background import initBackground
+from view.style.Background import initSecondaryColorBackground
 from PyQt6.QtWidgets import (
     QWidget, 
     QCheckBox, 
@@ -13,7 +14,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt
 
 center  = Qt.AlignmentFlag.AlignHCenter
-defaultPlugin = list (ProfileSettingForm.Plugins)
+defaultPlugin = list (Form.Plugins)
 
 class PluginPage(QWidget):
     def __init__(
@@ -56,8 +57,8 @@ class PluginPage(QWidget):
             self.scroll, 
             alignment=center)
         self.verticalLayout.addStretch()
-        initBackground(self.scroll, Color.BLUEWHITE)
-        initBackground(self.scrollContainer, Color.BLUEWHITE)
+        initSecondaryColorBackground(self.scroll)
+        initSecondaryColorBackground(self.scrollContainer)
 
     def _initPlugins(self):
         for plugin in self.plugins:
@@ -99,8 +100,7 @@ class pluginCheckBox(QWidget):
         self.layout.addWidget(self.pluginLabel)
         self.layout.setSpacing(20)
         self.layout.addStretch()
-        initBackground(self, Color.BLUEWHITE)
-    
+
     def isChecked(self):
         return self.checkBox.checkState() == Qt.CheckState.Checked 
     

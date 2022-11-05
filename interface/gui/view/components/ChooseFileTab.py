@@ -10,7 +10,7 @@ Modified By:  Siara Small  & Vivian Li
 '''
 from typing import List
 
-from util.Config import ChooseFileTabText
+from util.Text import ChooseFileTabText
 from view.widgets.PopUpTab import Tab
 from view.pages.FileUploadTabPages import (
     OpenFile, 

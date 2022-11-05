@@ -2,8 +2,7 @@ import os
 
 from view.Signals import ProfileSignals
 from view.widgets import Button, MsgBox
-from util.Config import Color, FontSize, Dimension
-from view.style.Background import initBackground
+from util.Style import Color,Dimension
 from PyQt6.QtWidgets import QDialog, QListWidget, QVBoxLayout, QFileDialog
 from PyQt6.QtCore import Qt, QSize 
 
@@ -24,7 +23,6 @@ class PluginDialog(QDialog):
         self._initWidget()
         self._initLayout()
         self._connectSignal()
-        initBackground(self, Color.BLUEWHITE)
         
     def _initWidget(self):
         """ initialize the widget """

@@ -8,17 +8,18 @@ Last Modified: Thursday, 6th October 2022 11:05:38 am
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
-from util.Config import (
+from util.Style import (
     Color, 
     FontSize, 
-    FileTableHeader, 
-    FileTableDimension, 
-    Asset)
-from util.Config import ConfirmTranscribeText as Text
+    FileTableDimension)
+from util.Text import ConfirmTranscribeText as Text
+from util.Text import FileTableHeader 
+
+
 
 from view.Signals import FileSignals
 from view.style.styleValues import FontFamily
-from view.style.Background import initImgBackground
+from view.style.Background import initSubpageBackgorund
 from view.widgets import ( Label, 
                            Button, 
                            FileTable) 
@@ -87,7 +88,7 @@ class ConfirmTranscribePage(QWidget):
         self.verticalLayout.addWidget(self.bottomButton, alignment=center)
     
     def _initStyle(self):
-        initImgBackground(self,Asset.subPageBackgorund)
+        initSubpageBackgorund(self)
         
     def _sendTranscribeSignal(self):
         """send a signal with a set of file keys that will be transcribed """
