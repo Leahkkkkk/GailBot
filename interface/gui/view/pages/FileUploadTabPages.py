@@ -15,10 +15,9 @@ from typing import List, TypedDict
 import os
 
 from util.Style import Color, FontSize
-from view.widgets.Button import ColoredBtn, BorderBtn
+from view.widgets.Button import ColoredBtn
 from view.widgets.Label import Label
 from view.widgets.TabPage import TabPage
-from view.style.widgetStyleSheet import buttonStyle
 
 from PyQt6.QtWidgets import (
     QWidget,

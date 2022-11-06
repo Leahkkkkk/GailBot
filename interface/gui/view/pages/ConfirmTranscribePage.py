@@ -17,9 +17,10 @@ from util.Text import FileTableHeader
 
 
 
+
 from view.Signals import FileSignals
 from view.style.styleValues import FontFamily
-from view.style.Background import initSubpageBackgorund
+from view.style.Background import addLogo
 from view.widgets import ( Label, 
                            Button, 
                            FileTable) 
@@ -47,10 +48,10 @@ class ConfirmTranscribePage(QWidget):
         self.logger = makeLogger("Frontend")
         self._initWidget()
         self._initLayout()
-        self._initStyle()
         self._connectSignal()
     
     def _connectSignal(self):
+        """ connect signal """
         self.confirmBtn.clicked.connect(self._sendTranscribeSignal)
 
     def _initWidget(self):
@@ -77,6 +78,7 @@ class ConfirmTranscribePage(QWidget):
         self.bottomButton.setLayout(self.horizontalLayout)
         self.setLayout(self.verticalLayout)
         """ add widget to layout """
+        addLogo(self.verticalLayout)
         self.verticalLayout.addWidget(self.label)
         self.verticalLayout.addWidget(
             self.fileTable, alignment = center|top)
@@ -87,8 +89,6 @@ class ConfirmTranscribePage(QWidget):
         self.bottomButton.setContentsMargins(0,0,0,0)
         self.verticalLayout.addWidget(self.bottomButton, alignment=center)
     
-    def _initStyle(self):
-        initSubpageBackgorund(self)
         
     def _sendTranscribeSignal(self):
         """send a signal with a set of file keys that will be transcribed """

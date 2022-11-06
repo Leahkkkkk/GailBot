@@ -9,14 +9,20 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
+from util.Style import (
+    Color, 
+    Dimension, 
+    FileTableDimension
+)
+from util.Style import FontSize as FS
+from util.Text import TranscribeSuccessText as Text
+from util.Text import FileTableHeader
 from view.widgets import (
     Button,
     Label,
     FileTable
 )
-
-from util.Style import Color,  FontSize, Dimension
-from util.Text import TranscribeSuccessText as Text
+from view.style.Background import addLogo
 from view.Signals import FileSignals
 from view.style.styleValues import FontFamily
 
@@ -25,19 +31,12 @@ from PyQt6.QtWidgets import (
     QHBoxLayout,
     QWidget
 )
-
 from PyQt6 import QtCore
-
 from PyQt6.QtWidgets import QVBoxLayout, QWidget
 from PyQt6 import QtCore
 from PyQt6.QtCore import Qt
 
 
-SuccessHeader = ["Type",
-                 "Name",
-                 "Status",
-                 "Output"]
-SuccessDimension = [0.17, 0.35, 0.25, 0.23]
 
 class TranscribeSuccessPage(QWidget):
     """ class for trancription success page """
@@ -49,14 +48,14 @@ class TranscribeSuccessPage(QWidget):
         self._initLayout()
         
     def _initWidget(self):
-        """ intialize widgets """
+        """ intializes widgets on the page """
         self.label = Label.Label(
             Text.mainLabelText,
-            FontSize.HEADER2,
+            FS.HEADER2,
             FontFamily.MAIN)
         self.label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         self.transcribedFiles = Label.Label(
-            Text.transcribedFilesText, FontSize.HEADER3, FontFamily.MAIN)
+            Text.transcribedFilesText, FS.HEADER3, FontFamily.MAIN)
         self.transcribedFiles.setContentsMargins(30,0,0,0)
         self.moreBtn = Button.ColoredBtn(
             Text.moreBtnText, Color.GREEN)
@@ -64,25 +63,25 @@ class TranscribeSuccessPage(QWidget):
             Text.returnBtnText, Color.BLUEMEDIUM)
         self._initHorizontalLayout()
         self.fileTable = FileTable.FileTable(
-            SuccessHeader, self.signal)
-        self.fileTable.resizeCol(SuccessDimension)
+            FileTableHeader.successPage, self.signal)
+        self.fileTable.resizeCol(FileTableDimension.successPage)
         
     def _initLayout(self):
-        """ initialize page layout """
+        """ initializes page layout """
         self.verticalLayout = QVBoxLayout()
         self.setLayout(self.verticalLayout)
-        self.label.setContentsMargins(0,30,0,20)
-        """ add widget to layout """
+        addLogo(self.verticalLayout)
+        """ adds widgets to the vertical layout """
         self.verticalLayout.addWidget(self.label)
         self.verticalLayout.addWidget(self.transcribedFiles)
-        self.transcribedFiles.setContentsMargins(80,0,0,0)
         self.verticalLayout.addWidget(
             self.fileTable,alignment = Qt.AlignmentFlag.AlignHCenter)
-        self.verticalLayout.addStretch()
         self.verticalLayout.addWidget(self.horizontal)
-        self.verticalLayout.setSpacing(20)
+        self.verticalLayout.setSpacing(40)
+        self.verticalLayout.addStretch
 
     def _initHorizontalLayout(self):
+        """ initializes the horizontal layout of buttons to be added to the vertical layout """
         #TODO: make buttons closer together
         self.horizontal = QWidget()
         self.horizontalLayout = QHBoxLayout()
@@ -91,6 +90,7 @@ class TranscribeSuccessPage(QWidget):
         self.horizontalLayout.addWidget(self.returnBtn)
 
     def _initStyle(self):
+        """ initializes the style of the buttons on the page """
         self.moreBtn.setMinimumSize(
             QtCore.QSize(Dimension.BTNWIDTH, Dimension.BTNHEIGHT))
         self.returnBtn.setMinimumSize(

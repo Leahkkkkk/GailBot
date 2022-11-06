@@ -12,14 +12,14 @@ Modified By:  Siara Small  & Vivian Li
 """ 
 TODO: add file summary widget 
 TODO: add search bar 
-TODO: add "NO files added" text
-
 """ 
 
+from typing import List
+
 from view.Signals import FileSignals
-from typing import List, Dict
 from view.widgets import Label, Button, FileTable
 from view.style.widgetStyleSheet import buttonStyle
+from view.style.Background import addLogo
 from view.widgets import MsgBox
 from util.Style import (
     FileTableDimension, 
@@ -29,11 +29,11 @@ from util.Style import (
     FontSize,
     Dimension
 )
-
 from util.Text import FileTableHeader
 from util.Text import FileUploadPageText as Text 
 from util.Style import FontSize as FS
 from view.style.styleValues import FontFamily
+
 
 from PyQt6.QtWidgets import (
     QWidget, 
@@ -41,7 +41,6 @@ from PyQt6.QtWidgets import (
     QHBoxLayout,
     QVBoxLayout,
 )
-
 from PyQt6.QtCore import Qt, QSize
 
 center = Qt.AlignmentFlag.AlignHCenter
@@ -110,6 +109,7 @@ class FileUploadPage(QWidget):
         self.verticalLayout = QVBoxLayout()
         self.setLayout(self.verticalLayout)
         """ add widget to layout """
+        addLogo(self.verticalLayout)
         self.verticalLayout.addWidget(self.gotoMainBtn, alignment = left)
         self.verticalLayout.addWidget(self.label, alignment = center)
         

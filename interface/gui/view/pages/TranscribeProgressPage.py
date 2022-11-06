@@ -11,21 +11,25 @@ Modified By:  Siara Small  & Vivian Li
 
 import os
 
-from util.Style import (Color, FontSize)
+from util.Style import (
+    Color, 
+    FontSize, 
+    Asset
+)
 from util.Text import TranscribeProgressText as Text
 from util.Logger import makeLogger
+from util import Path
+from view.style.Background import addLogo
 from view.Signals import FileSignals
 from view.widgets import MsgBox
 from view.widgets import (
     Label,   
     Button,
     FileTable)
-from util import Path
 from view.widgets import Button
 from view.style.styleValues import (
     FontFamily
 )
-
 
 from PyQt6.QtWidgets import QLabel, QVBoxLayout, QWidget
 from PyQt6.QtGui import QMovie
@@ -42,14 +46,14 @@ ProgressDimension = [0.2, 0.55, 0.25]
 
 logger = makeLogger("Frontend")
 
-""" class for transcription in progress page """
 class TranscribeProgressPage(QWidget):
-    """ initialize class """
+    """ class for transcription in progress page """
     def __init__(
         self, 
         signals: FileSignals, 
         * args, 
         **kwargs) -> None:
+        """ initializes class """
         super().__init__(*args, **kwargs)
         self.signals = signals
         self._initWidget()
@@ -72,7 +76,7 @@ class TranscribeProgressPage(QWidget):
         self.label.setAlignment(center)
         self.loadIcon = QLabel()
         self.IconImg = QMovie(
-            os.path.join(Path.getProjectRoot(), "view/asset/gbloading.gif"))
+            os.path.join(Path.getProjectRoot(), Asset.transcribing))
         self.loadIcon.setMovie(self.IconImg)
         self.loadStart()
        
@@ -99,6 +103,7 @@ class TranscribeProgressPage(QWidget):
         self.verticalLayout = QVBoxLayout()
         self.setLayout(self.verticalLayout)
         """ add widget to layout """
+        addLogo(self.verticalLayout)
         self.verticalLayout.addWidget(self.label)
         self.label.setContentsMargins(0, 20, 0, 0)
         self.verticalLayout.addWidget(self.loadIcon, 
@@ -110,10 +115,10 @@ class TranscribeProgressPage(QWidget):
         self.verticalLayout.addStretch()
         self.verticalLayout.addWidget(self.cancelBtn, 
                                       alignment = center)
-        self.verticalLayout.setSpacing(30)
         self.InProgress.setContentsMargins(80, 0, 0, 0)
         self.loadIcon.setContentsMargins(0, 0, 0, 0)
-        self.fileTable.setMaximumHeight(300)
+        self.verticalLayout.setSpacing(20)
+        self.verticalLayout.addStretch()
         
     def _connectSignal(self):
         """ connects signal. change enableCancel to true when backend functionality allows for it. """
@@ -123,15 +128,22 @@ class TranscribeProgressPage(QWidget):
         self.signals.progressChanged.connect(self.editFileProgess)
         
     def _confirm(self):
+        """ pulls up message box that prompts user to confirm cancellation """
         self.confirmCancel = MsgBox.ConfirmBox( 
             Text.loggerMsg, self.cancelGailBot)
     
     def setLoadingText(self, text):
+        """ functionality to be able to dynamically change the text under the loading icon 
+        
+        Args: 
+            text (str): the message to display under the loading icon
+        """
         self.loadingText = Label.Label(text,
                                       FontSize.SMALL,
                                       FontFamily.OTHER)
 
     def cancelGailBot(self):
+        """ simulates the cancellation of gailbot- will rely on backend functionality when complete """
         logger.info(Text.loggerMsg)
         self.signals.cancel.emit()
         

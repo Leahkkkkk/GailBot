@@ -19,29 +19,33 @@ TODO: change name settingdata to settingFormData
 TODO: make a combobox widget
 """
 
-from typing import Dict, List, Set
+from typing import List
 
-from util.Style import (
-    Color, 
-    StyleSheet,
-    Dimension)
+from util.Style import Color, Dimension
 from util.Text import ProfilePageText as Text, About
 from util.Style import FontSize as FS 
 from util.Style import StyleSheet as SS 
 from util.Text import ProfileSettingForm as Form 
- 
 from util.Logger import makeLogger
 from view.Signals import ProfileSignals
 from view.Text.LinkText import Links
-from view.pages import RequiredSetPage, PostSetPage, PluginPage
-from view.widgets import Button, Label, ComboBox, SideBar, Image
+from view.pages import (
+    RequiredSetPage, 
+    PostSetPage, 
+    PluginPage
+)
+from view.widgets import (
+    Button, 
+    Label, 
+    ComboBox, 
+    SideBar
+)
 from view.components.CreateNewSettingTab import CreateNewSetting
 from view.components.PluginDialog import PluginDialog
 
 from PyQt6.QtWidgets import (
     QWidget, 
     QStackedWidget, 
-    QGridLayout,
     QHBoxLayout,
     QVBoxLayout
 )
@@ -52,14 +56,14 @@ bottom = QtCore.Qt.AlignmentFlag.AlignBottom
 logger = makeLogger("frontend")
 
 class ProfileSettingPage(QWidget):
-    """ class for settings page"""
+    """ class for settings page """
     def __init__(
         self, 
         profilekeys:List[str],
         signals:ProfileSignals,
         *args, 
         **kwargs) -> None:
-        
+        """ initializes class """
         super().__init__(*args, **kwargs)
     
         self.signals = signals
@@ -73,7 +77,7 @@ class ProfileSettingPage(QWidget):
         self._initDimension()
     
     def _initWidget(self):
-        """ initialize widgets"""
+        """ initializes widgets"""
         self.sideBar = SideBar.SideBar()
         self.selectSettings = ComboBox.ComboBox()
         self.selectSettings.addItems(self.profilekeys)
@@ -109,7 +113,7 @@ class ProfileSettingPage(QWidget):
 
     
     def _initLayout(self):
-        """initialize layout"""
+        """initializes layout"""
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setContentsMargins(0,0,0,0)
         self.horizontalLayout.setSpacing(0)
@@ -119,7 +123,7 @@ class ProfileSettingPage(QWidget):
         self.sidebarTopLayout = QVBoxLayout()
         self.sidebarTopLayout.setContentsMargins(0,0,0,0)
         self.topSelectionContainer.setLayout(self.sidebarTopLayout)
-        """ add widget to layout """
+        """ adds widgets to layout """
         self.sidebarTopLayout.addWidget(self.selectSettings)
         self.sidebarTopLayout.addWidget(self.requiredSetBtn)
         self.sidebarTopLayout.addWidget(self.postSetBtn)
@@ -140,68 +144,67 @@ class ProfileSettingPage(QWidget):
 
    
     def _connectSignal(self):
-        """handles signals"""
+        """ connects signals upon button clicks """
         self.postSetBtn.clicked.connect(self._activatePostSet)
         self.requiredSetBtn.clicked.connect(self._activeRequiredSet)
         self.pluginBtn.clicked.connect(self._activatePlugin)
-        
         self.saveBtn.clicked.connect(self.RequiredSetPage.submitForm)
-        
         self.selectSettings.currentTextChanged.connect(self._getProfile)
         self.newProfileBtn.clicked.connect(self.createNewSetting)
         self.saveBtn.clicked.connect(self.updateProfile)
         self.newPluginBtn.clicked.connect(self.addPluginRequest)
     
     def _activatePostSet(self):
+        """ switches current page from required settings page to post trancription settings page """
         self._setBtnDefault()
         self.postSetBtn.setActiveStyle(Color.BLUEWHITE)
         self.settingStack.setCurrentWidget(self.PostSetPage)
     
     def _activeRequiredSet(self):
+        """ switches current page from post transcription settings page to required settings page """
         self._setBtnDefault()
         self.requiredSetBtn.setActiveStyle(Color.BLUEWHITE)
         self.settingStack.setCurrentWidget(self.RequiredSetPage)
     
     def _activatePlugin(self):
+        """ switches current page to plugin page """
         self._setBtnDefault()
         self.pluginBtn.setActiveStyle(Color.BLUEWHITE)
         self.settingStack.setCurrentWidget(self.PluginPage)
-        
-    
     
     def _setBtnDefault(self):
+        """ private function that sets the default style of the buttons on the page """
         self.postSetBtn.setDefaultStyle()
         self.requiredSetBtn.setDefaultStyle()
         self.pluginBtn.setDefaultStyle()
-        
     
     def _initStyle(self):
+        """ initializes the style of the setting stack """
         self.settingStack.setObjectName(SS.settingStackID)
         self.settingStack.setStyleSheet(SS.settingStack)
     
     def _initDimension(self):
+        """ initializes the dimensions of the buttons on the page """
         self.requiredSetBtn.setFixedWidth(Dimension.LBTNWIDTH)
         self.postSetBtn.setFixedWidth(Dimension.LBTNWIDTH)
         self.pluginBtn.setFixedWidth(Dimension.LBTNWIDTH)
-        
    
     def _getProfile(self, profileName:str):
-        """ send the request to database to get profile data  """
+        """ sends the request to database to get profile data  """
         self.signals.get.emit(profileName)
         
     def _postNewProfile(self, profile: tuple):
-        """ send the request to database to post a new profile data """
+        """ sends the request to database to post a new profile data """
         self.signals.post.emit(profile)
     
     def createNewSetting(self):
-        """ open a pop up window for user to create new setting profile """
+        """ opens a pop up window for user to create new setting profile """
         createNewSettingTab = CreateNewSetting(self.plugins)
         createNewSettingTab.signals.newSetting.connect(self._postNewProfile)
         createNewSettingTab.exec()
         
-        
     def loadProfile(self, profile:tuple):
-        """ load the profile data to be presented onto the table """
+        """ loads the profile data to be presented onto the table """
         logger.info(profile)
         key, data = profile 
         self.selectSettings.setCurrentText(key)
@@ -210,25 +213,26 @@ class ProfileSettingPage(QWidget):
         self.PluginPage.setValue(data["Plugins"])
     
     def addProfile (self, profileName:str):
-        """ adding a new profile optin to the setting page 
+        """ adding a new profile option to the settings page 
         Arg:
-            profileName
-        
+            profileName(str): name to be added as profile name to the new profile entry
         """
         self.selectSettings.addItem(profileName)
     
     def addPluginRequest(self):
-        """ open a pop up window to add plugin
-        """
+        """ opens a pop up window to add plugin """
         pluginDialog = PluginDialog(self.signals)
         pluginDialog.exec()
     
     def addPluginHandler(self, plugin:str):
+        """ adds a new plugin to the plugin handler
+        Args: plugin(str): name of the plugin to be added
+        """
         self.plugins.add(plugin)
         self.PluginPage.addNewPlugin(plugin)
         
     def updateProfile(self):
-        """ update the new profile setting """
+        """ updates the new profile setting """
         newSetting = dict()
         newSetting["RequiredSetting"] = self.RequiredSetPage.getValue()
         newSetting["PostTranscribe"]  = self.PostSetPage.getValue()

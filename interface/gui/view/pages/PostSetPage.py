@@ -9,28 +9,32 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
-
 from view.widgets import SettingForm
 from util.Text import ProfilePageText as Text 
 from util.Text import PostSettingForm as Form
+
 from PyQt6.QtWidgets import QWidget, QVBoxLayout
 
-
 class PostSetPage(QWidget):
-    """ post-transcription settings page """
+    """ class for the post-transcription settings page """
     def __init__(self, *args, **kwargs) -> None:
+        """ initializes class """
         super().__init__(*args, **kwargs)
         self.setForm = SettingForm.SettingForm(
         Text.postSetHeader, Form, Text.postSetCaption)
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
-        """ add widget to layout """
+        """ adds widget to layout """
         self.layout.addWidget(self.setForm)
     
     def setValue(self, values:dict):
+        """ sets the value of the setting form
+        Args: values:dict: TODO
+        """
         self.setForm.setValue(values)
     
     def getValue(self) -> dict:
+        """ gets the value in the setting form """
         return self.setForm.getValue()
         
     

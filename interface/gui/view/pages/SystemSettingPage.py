@@ -10,7 +10,12 @@ Modified By:  Siara Small  & Vivian Li
 '''
 
 from util.Style import Color, StyleSheet
-from view.widgets import SideBar, SettingForm,  Label, Button
+from view.widgets import (
+    SideBar, 
+    SettingForm, 
+    Label, 
+    Button
+)
 from util.Text import SystemSetPageText as Text 
 from util.Text import SystemSettingForm as Form
 from util.Text import About
@@ -25,8 +30,9 @@ from PyQt6.QtCore import Qt
 
 bottom = Qt.AlignmentFlag.AlignBottom
 class SystemSettingPage(QWidget):
-    """ post-transcription settings page """
+    """ class for the system settings page """
     def __init__(self, *args, **kwargs) -> None:
+        """ initializes the page """
         super().__init__(*args, **kwargs)
         self.data = Form
         self._initWidget()
@@ -34,7 +40,7 @@ class SystemSettingPage(QWidget):
         self._initStyle()
         
     def _initWidget(self):
-        """initialize widgets"""
+        """ initializes widgets to be shown """
         self.sideBar = SideBar.SideBar()
        
         self.Mainstack = QStackedWidget()
@@ -59,13 +65,13 @@ class SystemSettingPage(QWidget):
         
         
     def _initLayout(self):
-        """ initialize layout"""
+        """ initializes the layout of the page """
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setContentsMargins(0,0,0,0)
         self.horizontalLayout.setSpacing(0)
         
         self.setLayout(self.horizontalLayout)
-        """ add widget to layout """
+        """ add widgets to horizontal layout """
         self.horizontalLayout.addWidget(self.sideBar)
         self.horizontalLayout.addWidget(self.Mainstack)
 
@@ -75,7 +81,10 @@ class SystemSettingPage(QWidget):
         self.Mainstack.setStyleSheet(StyleSheet.sysSettingStack)
    
     def setValue(self, values:dict):
-        """ public function to set the system setting form value """
+        """ public function to set the system setting form value 
+        
+        Args: values:dict: TODO
+        """
         self.SysSet.setValue(values)
     
     def getValue(self) -> dict:

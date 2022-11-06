@@ -246,10 +246,12 @@ class TableText(DataclassFromDict):
     inDir : str = field_from_dict()
     abtDir : str = field_from_dict()
 
-#####################   config data by widget #########################
 @dataclass
 class FiletableHeader(DataclassFromDict):
     fileUploadPage: List[str] = field_from_dict()
     confirmPage: List[str] = field_from_dict()
-    
+    successPage:  List[str] = field_from_dict()
+
+
+
 

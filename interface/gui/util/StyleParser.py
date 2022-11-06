@@ -38,6 +38,7 @@ class ColorData(DataclassFromDict):
     MAIN_BACKRGOUND: str =  field_from_dict()
     SUB_BACKGROUND: str =  field_from_dict()
     
+    
 @dataclass
 class FontSizeData(DataclassFromDict):
     BODY: str =  field_from_dict()
@@ -92,6 +93,9 @@ class DimensionData(DataclassFromDict):
     FORMMAXHEIGHT: int = field_from_dict()
     DEFAULTTABHEIGHT: int = field_from_dict()
     DEFAULTTABWIDTH : int = field_from_dict()
+    LOGO_WIDTH : int = field_from_dict()
+    LOGO_HEIGHT : int = field_from_dict()
+    
 
 @dataclass 
 class Asset(DataclassFromDict):
@@ -113,7 +117,11 @@ class Asset(DataclassFromDict):
     homeBackground: str = field_from_dict()
     subPageBackground: str = field_from_dict()
     sideBarBackground: str = field_from_dict()
-    
+    downImg:str = field_from_dict()
+    rightImg: str = field_from_dict()
+    hilLabLogo: str = field_from_dict()
+    transcribing: str = field_from_dict()
+
 
 @dataclass 
 class FileTableDimension(DataclassFromDict):
@@ -144,3 +152,4 @@ class StyleSheet(DataclassFromDict):
     dropDownBtn:  str = field_from_dict()
     checkbox:  str = field_from_dict()
     basic:  str = field_from_dict()
+    linkStyle: str = field_from_dict()

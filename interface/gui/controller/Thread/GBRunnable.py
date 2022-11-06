@@ -9,11 +9,13 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 from typing import List, Tuple, Dict
-from model.dataBase.fileDB import FileObj
-from controller.Signals import Signal
 import os
 import logging
-import time
+
+
+from model.dataBase.fileDB import FileObj
+from controller.Signals import Signal
+from util.GailBotData import Crendential, Directory, ProfileConfig, Plugin
 from gailbot import GailBotController
 from PyQt6.QtCore import (
     QRunnable, pyqtSlot
@@ -23,36 +25,18 @@ from PyQt6.QtCore import (
 # TODO: change the workspace path
 # TODO: move this to a config file 
 
-WATSON_API_KEY = "MSgOPTS9CvbADe49nEg4wm8_gxeRuf4FGUmlHS9QqAw3"
-WATSON_LANG_CUSTOM_ID = "41e54a38-2175-45f4-ac6a-1c11e42a2d54"
-WATSON_REGION = "dallas"
-WATSON_BASE_LANG_MODEL = "en-US_NarrowbandModel"
-WORKSPACE_DIRECTORY_PATH = "/Users/yike/Desktop/GB-UI/workdir" #TODO: change those and move those to the config file
+WATSON_API_KEY = Crendential.WATSON_API_KEY
+WATSON_LANG_CUSTOM_ID = Crendential.WATSON_LANG_CUSTOM_ID
+WATSON_REGION = Crendential.WATSON_REGION
+WATSON_BASE_LANG_MODEL = Crendential.WATSON_BASE_LANG_MODEL
+WORKSPACE_DIRECTORY_PATH = Directory.WORKSPACE_DIRECTORY_PATH 
 #  ------------- Controller
-SETTINGS_PROFILE_NAME = "default"
-SETTINGS_PROFILE_EXTENSION = "json"
+SETTINGS_PROFILE_NAME = ProfileConfig.SETTINGS_PROFILE_NAME
+SETTINGS_PROFILE_EXTENSION = ProfileConfig.SETTINGS_PROFILE_EXTENSION
 
 """ Gailbot plugins from documentation  
 """
-PLUGINS_TO_APPLY = [
-        "constructTree",
-        "utteranceDict",
-        "speakerDict",
-        "conversationDict",
-        "convModelPlugin",
-        "overlaps",
-        "pauses",
-        "gaps",
-        "syllRate",
-        "layerPrint01",
-        "plainPrint",
-        "chat",
-        "txt",
-        "csvPlugin",
-        "csvWordLevel",
-        "XMLtoCSV",
-        "xmlSchema"
-]
+PLUGINS_TO_APPLY = Plugin.PLUGIN_TO_APPLY
 
 def get_settings_dict(): #TODO: get the actual setting dictionary for the 
                          #      profile database
@@ -113,8 +97,7 @@ class Worker(QRunnable):
         
             if not self.killed:
                 plugin_suite_paths = gb.download_plugin_suite_from_url(
-                "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip", 
-                "./plugins")  #TODO: check the plugin directory 
+                Plugin.HIL_PLUGIN_URL, Directory.PLUGIN_DOWNLOADS)  
                 self.signals.progress.emit(str("Plugins Downloaded"))
                 path = os.path.join(os.getcwd(), plugin_suite_paths[0])
                 self.signals.progress.emit(str("Plugins Applied"))

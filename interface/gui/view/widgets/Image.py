@@ -12,7 +12,7 @@ Modified By:  Siara Small  & Vivian Li
 import os 
 
 from util import Path  
-
+from util.Style import Dimension
 from PyQt6.QtWidgets import (
     QLabel)
 from PyQt6.QtGui import QPixmap
@@ -29,7 +29,7 @@ class Image(QLabel):
     def __init__(
         self, 
         imagename:str, 
-        size = 50, 
+        size = (Dimension.ICONBTN,Dimension.ICONBTN), 
         *args, 
         **kwargs
     ) -> None:
@@ -38,6 +38,6 @@ class Image(QLabel):
         self.img = QPixmap(imgpath)
         self.setPixmap(self.img)
         self.resize(self.img.width(), self.img.height())
-        self.setFixedSize(QSize(size, size))
+        self.setFixedSize(QSize(size[0], size[1]))
         self.setScaledContents(True)
         

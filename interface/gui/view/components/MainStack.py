@@ -25,6 +25,10 @@ from view.pages import (
 
 from util.Style import Dimension
 from util.Text import MainStackText
+from view.style.Background import (
+    initHomePageBackground, 
+    initSubpageBackgorund,
+    initPrimaryColorBackground)
 
 from PyQt6.QtWidgets import QStackedWidget, QTabWidget
 from PyQt6.QtCore import QSize
@@ -48,7 +52,6 @@ class MainStack(QStackedWidget):
         self.parent = parent 
         self.setMaximumSize(
             QSize(Dimension.WINMAXWIDTH, Dimension.WINMAXHEIGHT))
-        self.setContentsMargins(0,0,0,0)
         self._initPage()
         self._pageRedirect()
         self._connectSignal()
@@ -93,18 +96,26 @@ class MainStack(QStackedWidget):
     def _initPage(self):
         """ initialize all pages on stack widget  """
         self.WelcomePage = WelcomePage.WelcomePage(self)
+        initHomePageBackground(self.WelcomePage)
         self.FileUploadPage = FileUploadPage.FileUploadPage(
             self.profilekeys,self.fileSignal) 
+        initSubpageBackgorund(self.FileUploadPage)
         self.ConfirmTranscribePage = ConfirmTranscribePage.ConfirmTranscribePage(
             self.fileSignal)
+        initSubpageBackgorund(self.ConfirmTranscribePage)
         self.ProfileSettingPage = ProfileSettingPage.ProfileSettingPage(
             self.profilekeys, self.profileSignals)
+        initPrimaryColorBackground(self.ProfileSettingPage)
         self.TranscribeProgressPage = TranscribeProgressPage.TranscribeProgressPage(
             self.fileSignal)
+        initSubpageBackgorund(self.TranscribeProgressPage)
         self.TranscribeSuccessPage = TranscribeSuccessPage.TranscribeSuccessPage(
             self.fileSignal)
+        initSubpageBackgorund(self.TranscribeSuccessPage)
         self.RecordPage = RecordPage.RecordPage()
+        initSubpageBackgorund(self.RecordPage)
         self.SystemSettingPage = SystemSettingPage.SystemSettingPage()
+        initPrimaryColorBackground(self.SystemSettingPage)
         self.MainSetting = QTabWidget()
         self.MainSetting.addTab(
             self.ProfileSettingPage, MainStackText.ProfileSetting)
@@ -118,7 +129,7 @@ class MainStack(QStackedWidget):
         self.addWidget(self.TranscribeSuccessPage)
         self.addWidget(self.RecordPage)
         self.addWidget(self.MainSetting)
-        self.setCurrentWidget(self.FileUploadPage)
+        self.setCurrentWidget(self.TranscribeSuccessPage)
     
     def _pageRedirect(self):
         """ initialize button click to page rediect functionality  """

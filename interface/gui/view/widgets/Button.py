@@ -10,9 +10,9 @@ Modified By:  Siara Small  & Vivian Li
 '''
 import os
 from typing import List
-from util.Style import FontSize, Dimension, Color, StyleSheet
+from util.Style import FontSize, Dimension, Color, StyleSheet, Asset
 from util.Text import BtnText as Text
-from util.StyleGenerator import colorScale
+from util.ColorGenerator import colorScale
 from util import Path
 
 from PyQt6.QtWidgets import (
@@ -130,8 +130,8 @@ class ToggleBtn(QPushButton):
     """
     def __init__(
         self, 
-        label: tuple = (Text.right, Text.down), 
-        text:str = "", 
+        label: tuple = (Asset.rightImg, Asset.downImg), 
+        text: str = "", 
         state:bool = False, 
         *args, 
         **kwargs):

@@ -70,12 +70,9 @@ HiLabSuite = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
 ["system setting form"."General Setting"]
 "Font Size combo" = [ "small", "medium", "big",]
 "Color Mode combo" = [ "default", "dark", "light",]
-"Large Pause - Lower Bound" = "0s"
 
-["system setting form"."Dummy Setting Options"]
-"Dummy on and off bool" = "ON"
-"Dummy input" = "dummy"
-"Dummy selection mode combo" = [ "selection1", "selection2", "selection3",]
+
+
 
 
 

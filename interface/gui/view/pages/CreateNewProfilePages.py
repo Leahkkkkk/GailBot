@@ -1,4 +1,14 @@
-import tomli
+'''
+File: CreateNewProfilePages.py
+Project: GailBot GUI
+File Created: Friday, 4th November 2022 1:01:27 pm
+Author: Siara Small  & Vivian Li
+-----
+Last Modified: Saturday, 5th November 2022 7:22:34 pm
+Modified By:  Siara Small  & Vivian Li
+-----
+'''
+
 from typing import Dict
 
 from util.Style import Color, FontSize

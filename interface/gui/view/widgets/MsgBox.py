@@ -64,7 +64,7 @@ class WarnBox:
         self.msgBox.setIcon(QMessageBox.Icon.Warning)
         self.msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
         self.msgBox.buttonClicked.connect(self._ok)
-        initSecondaryColorBackground(self)
+        initSecondaryColorBackground(self.msgBox)
         self.msgBox.exec()
         
     

@@ -4,7 +4,7 @@ HILAB = "https://sites.tufts.edu/hilab"
 
 [TranscribeSuccessText]
 mainLabelText = "Transcription Successful"
-transcribedFilesText = "Transcribed files and locations:"
+transcribedFilesText = "Files summary and locations:"
 moreBtnText = "Process more files"
 returnBtnText = "Return to main menu"
 
@@ -29,6 +29,7 @@ tutorialText = "GailBot Beginner Tutorial"
 guideText = "GailBot Settings Guide"
 gbLinkText = "GailBot.com"
 moreInfoText = "For more information visit"
+
 
 [FileUploadPageText]
 header = "Files to Transcribe"

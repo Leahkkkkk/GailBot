@@ -9,7 +9,8 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 import os
-from util.Style import Color, Asset
+from util.Style import Color, Asset, Dimension
+from view.widgets import Image
 from util import Path
 from PyQt6.QtCore import  Qt
 from PyQt6.QtGui import (
@@ -19,7 +20,8 @@ from PyQt6.QtGui import (
     QImage,
     QTransform
 )
-from PyQt6.QtWidgets import QWidget
+from PyQt6.QtWidgets import QWidget, QVBoxLayout
+
 
 class Background(QBrush):
     """ a Qbrush object that craeates a white background """
@@ -27,6 +29,8 @@ class Background(QBrush):
         super().__init__(*args, **kwargs)
         self.setColor(QColor(color))
         self.setStyle(Qt.BrushStyle.SolidPattern) 
+
+
 
 
 def _initBackground(widget:QWidget, color=Color.MAIN_BACKRGOUND):
@@ -59,11 +63,17 @@ def initSubpageBackgorund(widget:QWidget):
 def initSideBarBackground(widget:QWidget):
     _initImgBackground(widget, Asset.sideBarBackground)
     
-    
 def initPrimaryColorBackground(widget:QWidget):
     _initBackground(widget, Color.MAIN_BACKRGOUND)
 
 def initSecondaryColorBackground(widget:QWidget):
     _initBackground(widget, Color.SUB_BACKGROUND)
 
+
+def addLogo(layout: QVBoxLayout):
+    logo = Image.Image(
+        Asset.hilLabLogo, (Dimension.LOGO_WIDTH, Dimension.LOGO_HEIGHT))
+    layout.addWidget(
+        logo, alignment=Qt.AlignmentFlag.AlignTop|Qt.AlignmentFlag.AlignRight)
+    logo.setContentsMargins(0,0,0,0)
     
