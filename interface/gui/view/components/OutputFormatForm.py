@@ -40,11 +40,15 @@ class OutPutFormat(QWidget):
         self.layout.addWidget(self.textWrapField)
         
     def getValue(self):
+        """ gets current value of the form data """
         value = self.headerForm.getValue()
         value["Output File Format"] = self.formatCombo.currentText()
         return value
     
     def setValue(self, data:dict):
+        """ gets current value of the form data 
+        Args: data:dict: dictionary to update
+        """
         self.formatCombo.setCurrentText(data["Output File Format"])
         
 class HeaderForm(QWidget):

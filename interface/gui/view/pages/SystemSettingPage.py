@@ -8,6 +8,7 @@ Last Modified: Saturday, 5th November 2022 7:06:32 pm
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
+import shutil 
 
 from util.Style import Color, StyleSheet
 from view.widgets import (
@@ -21,6 +22,7 @@ from util.Text import SystemSettingForm as Form
 from util.Text import About
 from view.style.styleValues import  FontSize
 from view.Text.LinkText import Links
+from view.widgets import MsgBox
 
 from PyQt6.QtWidgets import (
     QWidget, 
@@ -52,6 +54,7 @@ class SystemSettingPage(QWidget):
             Text.cancelBtn, Color.ORANGE)
         self.saveBtn = Button.ColoredBtn(
             Text.saveBtn, Color.GREEN)
+        self.saveBtn.clicked.connect(self.changeSetting)
         self.versionLabel = Label.Label(About.version, FontSize.SMALL)
         self.copyRightLabel = Label.Label(About.copyRight, FontSize.SMALL)
         
@@ -91,4 +94,10 @@ class SystemSettingPage(QWidget):
         """ public function to get the system setting form value"""
         return self.SysSet.getValue()
 
-    
+    def changeSetting(self)->None:
+        try:
+            source = "config/colorDark.toml"
+            des = "config/currentColor.toml"
+            shutil.copy(source, des)
+        except:
+            box = MsgBox.WarnBox("Change system setting failed")

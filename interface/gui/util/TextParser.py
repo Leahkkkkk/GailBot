@@ -13,7 +13,6 @@ from typing import List
 import datetime
 # from util.Path import getProjectRoot
 from os.path import exists
-import toml 
 from dict_to_dataclass import DataclassFromDict, field_from_dict
 
 
@@ -101,7 +100,11 @@ class FileUploadPageTextData(DataclassFromDict):
     selectFolderText: str =  field_from_dict()
     chooseOutPutText: str =  field_from_dict()
     removeWarnText: str =  field_from_dict()
-    fileFilter: List[str] =  field_from_dict()
+    fileFilter: str =  field_from_dict()
+    tabAddfile : str =  field_from_dict()
+    tabAddFolder: str =  field_from_dict()
+    audioLogo: str =  field_from_dict()
+    directoryLogo: str =  field_from_dict()
 
 @dataclass
 class RecordPageTextData(DataclassFromDict):
@@ -157,6 +160,7 @@ class ConfirmTranscribeTextData(DataclassFromDict):
 
 @dataclass 
 class CreateNewProfileTextData(DataclassFromDict):
+    profileName: str = field_from_dict()
     confirmProfileNameBtn: str = field_from_dict()
     emptyNameMsg :str = field_from_dict()
     emptyUserMsg : str = field_from_dict()
@@ -182,6 +186,7 @@ class CreateNewProfileTabTextData(DataclassFromDict):
     TabHeader4  : str = field_from_dict()
     TabHeader5  : str = field_from_dict()
     TabHeader6  : str = field_from_dict()
+    pluginFilter : str = field_from_dict()
 
 @dataclass 
 class MainStackTextData(DataclassFromDict):
@@ -251,7 +256,19 @@ class FiletableHeader(DataclassFromDict):
     fileUploadPage: List[str] = field_from_dict()
     confirmPage: List[str] = field_from_dict()
     successPage:  List[str] = field_from_dict()
+    transcribePage: List[str] = field_from_dict()
 
 
+@dataclass
+class TableWidgetOptions(DataclassFromDict):
+    fileDetails: str = field_from_dict()
+    
 
-
+@dataclass 
+class ProfileField(DataclassFromDict):
+    user: str = field_from_dict()
+    engine : str = field_from_dict()
+    outPutFormat: str = field_from_dict()
+    postTranscribe : str = field_from_dict()
+    reuquiredSetting : str = field_from_dict()
+    plugin: str = field_from_dict()

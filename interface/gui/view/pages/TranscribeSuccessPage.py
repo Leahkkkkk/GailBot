@@ -54,9 +54,9 @@ class TranscribeSuccessPage(QWidget):
             FS.HEADER2,
             FontFamily.MAIN)
         self.label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
-        self.transcribedFiles = Label.Label(
+        self.caption = Label.Label(
             Text.transcribedFilesText, FS.HEADER3, FontFamily.MAIN)
-        self.transcribedFiles.setContentsMargins(30,0,0,0)
+        self.caption.setContentsMargins(Dimension.MEDIUM_SPACING,0,0,0)
         self.moreBtn = Button.ColoredBtn(
             Text.moreBtnText, Color.GREEN)
         self.returnBtn = Button.ColoredBtn(
@@ -69,20 +69,25 @@ class TranscribeSuccessPage(QWidget):
     def _initLayout(self):
         """ initializes page layout """
         self.verticalLayout = QVBoxLayout()
+        self.container = QWidget()
+        self.containerLayout = QVBoxLayout()
+        self.container.setFixedWidth(Dimension.TABLECONTAINERWIDTH)
+        self.container.setLayout(self.containerLayout)
+        self.containerLayout.addWidget(self.caption)
+        self.containerLayout.addWidget(self.fileTable)
         self.setLayout(self.verticalLayout)
         addLogo(self.verticalLayout)
         """ adds widgets to the vertical layout """
         self.verticalLayout.addWidget(self.label)
-        self.verticalLayout.addWidget(self.transcribedFiles)
         self.verticalLayout.addWidget(
-            self.fileTable,alignment = Qt.AlignmentFlag.AlignHCenter)
+            self.container,alignment = Qt.AlignmentFlag.AlignHCenter)
         self.verticalLayout.addWidget(self.horizontal)
-        self.verticalLayout.setSpacing(40)
-        self.verticalLayout.addStretch
+        self.verticalLayout.setSpacing(Dimension.LARGE_SPACING)
+
 
     def _initHorizontalLayout(self):
-        """ initializes the horizontal layout of buttons to be added to the vertical layout """
-        #TODO: make buttons closer together
+        """ initializes the horizontal layout of buttons to 
+            be added to the vertical layout """
         self.horizontal = QWidget()
         self.horizontalLayout = QHBoxLayout()
         self.horizontal.setLayout(self.horizontalLayout)

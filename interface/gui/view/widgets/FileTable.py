@@ -38,7 +38,6 @@ from PyQt6.QtWidgets import (
     QVBoxLayout, 
     QDialog
 )
-
 from PyQt6.QtCore import (
     QObject, 
     Qt, 
@@ -46,7 +45,6 @@ from PyQt6.QtCore import (
     pyqtSignal
 )
 from PyQt6.QtGui import QColor
-
 
 class fileObject(TypedDict):
     Name: str
@@ -59,8 +57,7 @@ class fileObject(TypedDict):
     FullPath: str
     
 class Signals(QObject):
-    """signals for controlling frontend view changes 
-    """
+    """signals for controlling frontend view changes """
     requestProfile = pyqtSignal(str)
     requestChangeProfile = pyqtSignal(str)
     goSetting = pyqtSignal()
@@ -74,6 +71,7 @@ class Signals(QObject):
     error = pyqtSignal(str)
 
 class FileTable(QTableWidget):
+    """ class for the file tables """
     def __init__(self, 
                  headers: List[str], 
                  dbSignal: FileSignals,
@@ -123,7 +121,7 @@ class FileTable(QTableWidget):
     
     ########################  table initialier    #########################
     def  _connectViewSignal(self):
-        """ connect the signal """
+        """ connects the signals upon button clicks """
         self.viewSignal.delete.connect(self.removeFile)
         self.viewSignal.select.connect(self.addToNextState)
         self.viewSignal.unselect.connect(self.removeFromNextState)

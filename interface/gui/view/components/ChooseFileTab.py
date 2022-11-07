@@ -10,20 +10,22 @@ Modified By:  Siara Small  & Vivian Li
 '''
 from typing import List
 
+from util.Logger import makeLogger
 from util.Text import ChooseFileTabText
 from view.widgets.PopUpTab import Tab
 from view.pages.FileUploadTabPages import (
     OpenFile, 
     ChooseOutPut, 
-    ChooseSet)
+    ChooseSet
+)
+
 from PyQt6.QtWidgets import (
     QVBoxLayout, 
     QDialog,
 )
-
 from PyQt6.QtCore import QObject, pyqtSignal
 
-
+logger = makeLogger("F")
 class Signals(QObject):
     """ signal object for sending file data """
     postFile = pyqtSignal(dict)
@@ -50,6 +52,7 @@ class ChooseFileTab(QDialog):
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
         self.layout.addWidget(mainTab) 
+        logger.info("")
     
     def _addFile(self) -> None: 
         """ emit a signal that contains the file data """
@@ -65,5 +68,7 @@ class ChooseFileTab(QDialog):
         for fileObj in fileList:
             fileData = {**fileObj, **profile, **outputPath, **status}
             self.signals.postFile.emit(fileData)
+            logger.info(fileData)
+        
         self.close()
 

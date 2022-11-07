@@ -70,7 +70,6 @@ class WarnBox:
     
     def _ok(self, button):
         """ handle event when button is clicked 
-
         Args:
             button (QButton)
         """

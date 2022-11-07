@@ -8,8 +8,10 @@ Last Modified: Monday, 24th October 2022 6:39:15 am
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
+
 from typing import List 
 
+from util.Logger import makeLogger
 from util.Text import CreatNewProfileTabText as Text
 from util.Style import Dimension
 from view.pages.CreateNewProfilePages import (
@@ -28,6 +30,7 @@ from PyQt6.QtWidgets import (
 
 from PyQt6.QtCore import QObject, pyqtSignal, QSize
 
+logger = makeLogger("F")
 class Signals(QObject):
     """ a signal object to send new setting data values """
     newSetting = pyqtSignal(object)
@@ -69,6 +72,7 @@ class CreateNewSetting(QDialog):
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
         self.layout.addWidget(mainTab)
+        logger.info("")
         
     def postSetting(self):
         """ a function that send the new setting data through signal"""
@@ -89,6 +93,7 @@ class CreateNewSetting(QDialog):
         profileData ["Plugins"] = plugins
         
         self.signals.newSetting.emit((profileName, profileData))
+        logger.info(profileData)
         self.close()
         
         

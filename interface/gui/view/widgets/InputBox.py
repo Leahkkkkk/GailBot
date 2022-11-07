@@ -9,13 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 from util.Style import FontSize, Dimension
-
-from view.style.styleValues import (
-    Dimension, 
-)
-from view.widgets import (
-    Label
-)
+from view.widgets import Label
 
 from PyQt6.QtWidgets import (
     QComboBox, 
@@ -24,7 +18,7 @@ from PyQt6.QtWidgets import (
     QLineEdit,
     QVBoxLayout
 )
-from PyQt6.QtCore import QSize, Qt
+from PyQt6.QtCore import Qt, QSize
 
 class InputBox(QWidget):
     """ an input box widget
@@ -51,8 +45,6 @@ class InputBox(QWidget):
         self._initWidget()
         self._initLayout()
 
- 
-
     def value(self) -> str: 
         """ public function to ge the value of the input """
         return self.inputFeild.text()
@@ -69,7 +61,6 @@ class InputBox(QWidget):
         """ a public function to disable the edit """
         self.inputFeild.setReadOnly(True)
     
-    
     def enable(self):
         """ a public function to enable the edit """
         self.inputFeild.setReadOnly(False)
@@ -78,7 +69,8 @@ class InputBox(QWidget):
         """initialize widgets for input box"""
         self.inputlabel = Label.Label(self.label, self.lableSize)
         self.inputFeild = InputField(self) 
-        self.inputFeild.setMaximumSize(Dimension.INPUTFIELD)
+        self.inputFeild.setMaximumSize(
+            QSize(Dimension.INPUTWIDTH, Dimension.INPUTHEIGHT))
         if self.inputText:
             self.setText(self.inputText)
             
@@ -100,10 +92,12 @@ class InputField(QLineEdit):
     """ the input field of input box"""
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.setFixedSize(Dimension.INPUTFIELD)
+        self.setFixedSize(
+            QSize(Dimension.INPUTWIDTH, Dimension.INPUTHEIGHT))
         
 
 class InputCombo(InputBox):
+    """ class for an input combo box """
     def __init__(
         self,
         selections:list, 

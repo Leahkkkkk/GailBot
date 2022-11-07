@@ -1,4 +1,5 @@
-from typing import Dict, Tuple, TypedDict
+from typing import Dict, Tuple
+
 from util.Style import Color, Dimension
 from util.Text import MultipleComboText as Text
 from view.widgets import ToggleView

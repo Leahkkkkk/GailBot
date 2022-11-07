@@ -10,7 +10,6 @@ Modified By:  Siara Small  & Vivian Li
 '''
 
 import os
-
 def getProjectRoot() -> str:
     """return the root path of the program """
     return os.getcwd()

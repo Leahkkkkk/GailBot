@@ -71,7 +71,13 @@ HiLabSuite = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
 "Font Size combo" = [ "small", "medium", "big",]
 "Color Mode combo" = [ "default", "dark", "light",]
 
-
+[formField]
+user = "User Info"
+engine = "Engine"
+outPutFormat = "Output Form Data"
+postTranscribe = "PostTranscribe"
+reuquiredSetting = "RequiredSetting"
+plugin = "Plugins"
 
 
 

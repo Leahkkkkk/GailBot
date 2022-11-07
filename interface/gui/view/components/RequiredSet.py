@@ -1,17 +1,14 @@
 from typing import Dict 
 
-from view.widgets import ToggleView, TextForm, Button
+from view.widgets import ToggleView
 from view.components.SettingEngineForm import SettingEngineForm
 from view.components.OutputFormatForm import OutPutFormat
 from util.Text import CreateNewProfilePageText as Text 
 from util.Style import Dimension
 
-
 from PyQt6.QtWidgets import (
     QWidget, 
-    QLabel, 
     QVBoxLayout, 
-    QComboBox,
 )
 from PyQt6.QtCore import Qt
 

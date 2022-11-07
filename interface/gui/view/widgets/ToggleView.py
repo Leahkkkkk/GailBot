@@ -9,10 +9,18 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 from view.widgets import Button
-from util.Style import Color, FontSize, Dimension, StyleSheet
+from util.Style import (
+    Color, 
+    FontSize, 
+    Dimension, 
+    StyleSheet
+)
 
-
-from PyQt6.QtWidgets import QWidget, QScrollArea, QVBoxLayout
+from PyQt6.QtWidgets import (
+    QWidget, 
+    QScrollArea, 
+    QVBoxLayout
+)
 from PyQt6.QtCore import Qt
 
 class ToggleView(QWidget):
@@ -55,7 +63,7 @@ class ToggleView(QWidget):
         self.scroll.setMinimumHeight(size)
     
     def _configHeader(self):
-        """ configurate the toggle header """
+        """ configurates the toggle header """
         self.Btn = Button.ToggleBtn(text=self.labelStr)
         self.Btn.setStyleSheet(f"{StyleSheet.toggleBtnBasic}"
                                f"background-color: {self.headercolor};"
@@ -66,7 +74,7 @@ class ToggleView(QWidget):
             self.Btn.setMinimumWidth(Dimension.TOGGLEBARMINWIDTH)
        
     def _configViewField(self):
-        """ configurate the toggle view """
+        """ configurates the toggle view """
         self.scroll = QScrollArea()
         self.scroll.setMinimumWidth(self.Btn.width() - Dimension.TOGGLEVIEWOFFSET)
         self.scroll.setMaximumWidth(self.Btn.width())
@@ -81,9 +89,8 @@ class ToggleView(QWidget):
         self.scroll.hide()
         self.hide = True
     
-    
     def _initLayout(self):
-        """ initialize the layout """
+        """ initializes the layout """
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
         self.layout.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
@@ -91,10 +98,11 @@ class ToggleView(QWidget):
         self.layout.addWidget(self.scroll)
     
     def _connectSignal(self):
+        """ connects signals upon button clicks """
         self.Btn.clicked.connect(self._toggleView)
         
     def _toggleView(self):
-        """set view for toggle class"""
+        """ sets view for toggle class """
         if self.hide:
             self.scroll.show()
             self.hide = False

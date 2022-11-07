@@ -46,8 +46,13 @@ selectSetText = "select settings"
 selectPlaceHolderText = "None"
 selectFolderText = "Select Folder"
 chooseOutPutText = "Choose Output Directory"
-fileFilter = ["audio file (*.wav)","directory (/)"]
+fileFilter = "audio file (*.wav)"
 removeWarnText = "Remove all files?"
+tabAddfile = "Add File"
+tabAddFolder = "Add Folder"
+audioLogo = "🔈"
+directoryLogo = "📁"
+
 
 [RecordPageText]
 basic = "Basic"
@@ -97,14 +102,15 @@ cancel = "Cancel"
 end = "End Recording"
 
 [filetable.header]
-"fileUploadPage" = ["Select All", "Type", "Name", "Profile", 
+fileUploadPage = ["Select All", "Type", "Name", "Profile", 
                     "Status", "Date", "Size", "Actions"]
-"confirmPage"    = ["Type", "Name", "Profile", "SelectedAction", "Action"]
-"transcribePage" = ["Type", "Name", "Progress"]
-"successPage"    =  ["Type",  "Name", "Status", "Output"]
+confirmPage   = ["Type", "Name", "Profile", "SelectedAction", "Action"]
+transcribePage = ["Type", "Name", "Progress"]
+successPage   =  ["Type",  "Name", "Status", "Output"]
 
 
 [CreateNewProfilePageText]  
+profileName = "Profile Name"
 confirmProfileNameBtn = "Start"
 emptyNameMsg = "The profile name cannot be empty"
 emptyUserMsg = "Please enter user name and password"
@@ -131,6 +137,7 @@ TabHeader3 = "Optional Settings"
 TabHeader4 = "Output File Format Setting"
 TabHeader5 = "Post Transcribtion Settion"
 TabHeader6 = "Plugin Setting"
+pluginFilter = "json file (*.json) zip file (*.zip)"
 
 [MainStackText]
 ProfileSetting = "Porfile Setting"
@@ -153,6 +160,9 @@ outputSetHeader = "Output File Format Settings"
 console = "Console"
 open = "Open"
 close = "close"
+
+
+
 
 ####widgets
 [btnText]
@@ -186,3 +196,8 @@ transBy = "Transcribed by: "
 transOn = "Trancribed on: "
 inDir = "In this directory"
 abtDir = "About this directory"
+
+[tableWidgetOptions]
+fileDetails = "details"
+checkbox = "check"
+

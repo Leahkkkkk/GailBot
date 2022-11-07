@@ -12,7 +12,9 @@ Modified By:  Siara Small  & Vivian Li
 from typing import Dict
 
 from util.Style import Color, FontSize
+from util.Text import CreateNewProfilePageText as Text 
 from util.Logger import makeLogger
+
 from view.widgets.Button import ColoredBtn
 from view.widgets.Label import Label
 from view.widgets.TabPage import TabPage
@@ -25,7 +27,11 @@ from view.pages.PostSetPage import PostSetPage
 from view.style.styleValues import FontFamily
 
 from PyQt6.QtWidgets import  QVBoxLayout
-from PyQt6.QtCore import Qt, pyqtSignal, QObject
+from PyQt6.QtCore import (
+    Qt, 
+    pyqtSignal, 
+    QObject
+)
 
 mylogger = makeLogger("Frontend")
 hcenter = Qt.AlignmentFlag.AlignHCenter
@@ -39,6 +45,7 @@ class settingSignals(QObject):
 class ProfileName (TabPage):
     """ page with an input field to allow user add the profile name """
     def __init__(self, *args, **kwargs) -> None:
+        """" initializes page """
         super().__init__(*args, **kwargs)
         self._initWidget()
         self._initLayout()
@@ -48,8 +55,8 @@ class ProfileName (TabPage):
         return self.profileName.value()
         
     def _initWidget(self):
-        """ initialize the widget """
-        self.header = Label("Profile Name", 
+        """ initializes the widgets """
+        self.header = Label(Text.profileName, 
             FontSize.HEADER3, 
             FontFamily.MAIN)
         self.profileName = InputBox(
@@ -62,7 +69,7 @@ class ProfileName (TabPage):
         self.confirmBtn.clicked.connect(self._confirmHandler)
 
     def _initLayout(self):
-        """ initialize the layout """
+        """ initializes the layout """
         self.verticalLayout = QVBoxLayout()
         self.setLayout(self.verticalLayout)
         self.verticalLayout.addStretch()
@@ -80,7 +87,7 @@ class ProfileName (TabPage):
     def _confirmHandler(self):
         """ event hander for confirm button  """
         if self.profileName.value() == "":
-            warn = WarnBox("The profile name cannot be empty")
+            warn = WarnBox(Text.emptyNameMsg)
         else:
             self.signals.goToNextPage.emit()
         
@@ -114,15 +121,11 @@ class BasicSetting(TabPage):
         """ initialize the layout """
         self.verticallayout = QVBoxLayout()
         self.setLayout(self.verticallayout)
-        self.verticallayout.addWidget(
-            self.header, 
-            alignment=hcenter)
+        self.verticallayout.addWidget(self.header, alignment=hcenter)
         self.verticallayout.addStretch()
-        self.verticallayout.addWidget(
-            self.mainWidget, 
-            alignment=hcenter)
+        self.verticallayout.addWidget(self.mainWidget, alignment=hcenter)
         self.confirmBtn = ColoredBtn(
-            "confirm", 
+            Text.cofirmBtn, 
             Color.GREEN)
         self.confirmBtn.clicked.connect(self._confirmHandler)
         self.verticallayout.addWidget(
@@ -135,22 +138,21 @@ class BasicSetting(TabPage):
         """ confirm button handler """
         res = self.mainWidget.getValue()
         if res[0] == "" or res[1] == "":
-            warn = WarnBox("Please enter user name and password")
+            warn = WarnBox(Text.emptyUserMsg)
         else:
             self.signals.nextPage.emit()
             self.signals.goToNextPage.emit()
     
-
-
 class EngineSetting(TabPage):
+    """ class for engine setting form """
     def __init__(self,  *args, **kwargs) -> None:
-        """ a page with form about enegine setting """
+        """ initializes page """
         super().__init__(*args, **kwargs)
 
         self.verticallayout = QVBoxLayout()
         self.setLayout(self.verticallayout)
         self.header = Label(
-            "Speech to text settings", 
+            Text.engineSettingHeader, 
             FontSize.HEADER3, 
             FontFamily.MAIN)
         self.verticallayout.addWidget(
@@ -158,25 +160,29 @@ class EngineSetting(TabPage):
             alignment=Qt.AlignmentFlag.AlignHCenter)
         self.mainForm = SettingEngineForm.SettingEngineForm(showBasicSet=False)
         self.verticallayout.addWidget(self.mainForm)
-        self.confirmBtn = ColoredBtn("confirm", Color.GREEN)
+        self.confirmBtn = ColoredBtn(Text.cofirmBtn, Color.GREEN)
         self.confirmBtn.clicked.connect(self._confirmHandler)
         self.verticallayout.addWidget(self.confirmBtn, alignment=bottomRight)
     
     def _confirmHandler(self):
+        """" handles if user should be able to go to the next page in popup """
         self.signals.nextPage.emit()
         print (self.mainForm.getValue())
     
     def getData(self) -> Dict[str, dict]:
+        """ gets current value of key in dictionary """
         return self.mainForm.getValue()
 
 class OutPutFormatSetting(TabPage):
+    """ class for the output of settings """
     def __init__(self, *args, **kwargs) -> None:
+        """ initializes class """
         super().__init__(*args, **kwargs)
         self.mainForm = OutputFormatForm.OutPutFormat()
         self.verticallayout = QVBoxLayout()
         self.setLayout(self.verticallayout)
         self.header = Label(
-            "Output format settings", 
+            Text.outputSettingHeader, 
             FontSize.HEADER2, 
             FontFamily.MAIN)
         self.verticallayout.addWidget(
@@ -184,7 +190,7 @@ class OutPutFormatSetting(TabPage):
             alignment=hcenter)
         self.verticallayout.addWidget(self.mainForm)
         self.confirmBtn = ColoredBtn(
-            "confirm", 
+            Text.cofirmBtn, 
             Color.GREEN)
         self.confirmBtn.clicked.connect(lambda: self.signals.nextPage.emit())
         self.verticallayout.addStretch()
@@ -193,14 +199,17 @@ class OutPutFormatSetting(TabPage):
             alignment=bottomRight)
         
     def getData(self):
+        """ gets current value of data """
         return self.mainForm.getValue()
 
      
 class PostTranscribeSetting(TabPage):
+    """ class for the post-transcription settings tab """
     def __init__(self, *args, **kwargs) -> None:
+        """ initializes tab """
         super().__init__(*args, **kwargs)
         self.mainForm = PostSetPage()
-        self.confirmBtn = ColoredBtn("confirm", Color.GREEN)
+        self.confirmBtn = ColoredBtn(Text.cofirmBtn, Color.GREEN)
         self.confirmBtn.clicked.connect(lambda: self.signals.nextPage.emit())
         self.verticallayout = QVBoxLayout()
         self.setLayout(self.verticallayout)
@@ -210,14 +219,17 @@ class PostTranscribeSetting(TabPage):
             alignment=Qt.AlignmentFlag.AlignRight)
         
     def getData(self):
+        """ gets current value of data """
         mylogger.info(self.mainForm.getValue())
         return self.mainForm.getValue() 
             
 class PluginSetting(TabPage):
+    """ class for the plugin settings tab """
     def __init__(self, plugins, *args, **kwargs) -> None:
+        """ initializes tab """
         super().__init__(*args, **kwargs)
         self.mainForm = PluginPage(plugins)
-        self.confirmBtn = ColoredBtn("confirm", Color.GREEN)
+        self.confirmBtn = ColoredBtn(Text.cofirmBtn, Color.GREEN)
         self.confirmBtn.clicked.connect(lambda: self.signals.close.emit())
         self.verticalLayout = QVBoxLayout()
         self.setLayout(self.verticalLayout)
@@ -227,6 +239,7 @@ class PluginSetting(TabPage):
             alignment=Qt.AlignmentFlag.AlignRight)
         
     def getData(self):
+        """ gets current value of data """
         return self.mainForm.getValue()
 
         

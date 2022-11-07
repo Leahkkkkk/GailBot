@@ -17,6 +17,8 @@ from util.Style import (
     Asset
 )
 from util.Text import TranscribeProgressText as Text
+from util.Text import FileTableHeader
+from util.Style import Dimension, FileTableDimension
 from util.Logger import makeLogger
 from util import Path
 from view.style.Background import addLogo
@@ -39,10 +41,6 @@ from PyQt6.QtCore import Qt
 top = Qt.AlignmentFlag.AlignTop
 center = Qt.AlignmentFlag.AlignHCenter
 
-ProgressHeader = ["Type",
-                  "Name",
-                  "Progress"]
-ProgressDimension = [0.2, 0.55, 0.25]
 
 logger = makeLogger("Frontend")
 
@@ -89,13 +87,15 @@ class TranscribeProgressPage(QWidget):
             Text.cancelText, 
             Color.GREYLIGHT, 
             FontSize.BTN)
-        self.fileTable = FileTable.FileTable(ProgressHeader, self.signals)
-        self.fileTable.resizeCol(ProgressDimension)
+        self.fileTable = FileTable.FileTable(
+            FileTableHeader.transcribePage, self.signals)
+        self.fileTable.resizeCol(FileTableDimension.transcribePage)
         
     def _initstyle(self):
         """ styles loading icon movie """
         self.loadIcon.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-        self.loadIcon.setFixedSize(QtCore.QSize(80, 80))
+        self.loadIcon.setFixedSize(
+            QtCore.QSize(Dimension.LARGE_ICON, Dimension.LARGE_ICON))
         self.loadIcon.setScaledContents(True)
         
     def _initLayout(self):
@@ -105,7 +105,7 @@ class TranscribeProgressPage(QWidget):
         """ add widget to layout """
         addLogo(self.verticalLayout)
         self.verticalLayout.addWidget(self.label)
-        self.label.setContentsMargins(0, 20, 0, 0)
+        self.label.setContentsMargins(0, Dimension.MEDIUM_SPACING, 0, 0)
         self.verticalLayout.addWidget(self.loadIcon, 
                                       alignment = center|top)
         self.verticalLayout.addWidget(self.loadingText, alignment = top)
@@ -115,9 +115,8 @@ class TranscribeProgressPage(QWidget):
         self.verticalLayout.addStretch()
         self.verticalLayout.addWidget(self.cancelBtn, 
                                       alignment = center)
-        self.InProgress.setContentsMargins(80, 0, 0, 0)
-        self.loadIcon.setContentsMargins(0, 0, 0, 0)
-        self.verticalLayout.setSpacing(20)
+        self.InProgress.setContentsMargins(Dimension.LARGE_SPACING, 0, 0, 0)
+        self.verticalLayout.setSpacing(Dimension.MEDIUM_SPACING)
         self.verticalLayout.addStretch()
         
     def _connectSignal(self):

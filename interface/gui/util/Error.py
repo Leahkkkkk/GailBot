@@ -1,3 +1,15 @@
+'''
+File: Error.py
+Project: GailBot GUI
+File Created: Friday, 4th November 2022 1:01:27 pm
+Author: Siara Small  & Vivian Li
+-----
+Last Modified: Sunday, 6th November 2022 1:11:39 pm
+Modified By:  Siara Small  & Vivian Li
+-----
+'''
+
+
 from dataclasses import dataclass
 
 @dataclass

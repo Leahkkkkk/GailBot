@@ -8,8 +8,11 @@ Last Modified: Thursday, 6th October 2022 9:59:56 am
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
-from util.Logger import makeLogger
 from typing import Tuple
+
+from util.Logger import makeLogger
+from util.Style import Dimension
+from util.Text import MainStackText
 from view.pages import (
         WelcomePage, 
         ConfirmTranscribePage,
@@ -20,11 +23,6 @@ from view.pages import (
         RecordPage, 
         SystemSettingPage
 )
-
-
-
-from util.Style import Dimension
-from util.Text import MainStackText
 from view.style.Background import (
     initHomePageBackground, 
     initSubpageBackgorund,
@@ -75,12 +73,10 @@ class MainStack(QStackedWidget):
         self.TranscribeProgressPage.IconImg.start()
         self.setCurrentWidget(self.TranscribeProgressPage)
         
-            
     def gotoTranscribeSuccess(self):
         """ redirect to transcribe success page """
         self.setCurrentWidget(self.TranscribeSuccessPage)
        
-        
     def gotoFileUploadPage(self):
         """ redirect to go to file upload page """
         self.setCurrentWidget(self.FileUploadPage)
@@ -94,7 +90,7 @@ class MainStack(QStackedWidget):
             self.ProfileSettingPage.selectSettings.setCurrentText(setting)
     
     def _initPage(self):
-        """ initialize all pages on stack widget  """
+        """ initialize all pages on stack widget, using current widget to mimic the functionality of swapping pages """
         self.WelcomePage = WelcomePage.WelcomePage(self)
         initHomePageBackground(self.WelcomePage)
         self.FileUploadPage = FileUploadPage.FileUploadPage(
@@ -132,7 +128,7 @@ class MainStack(QStackedWidget):
         self.setCurrentWidget(self.TranscribeSuccessPage)
     
     def _pageRedirect(self):
-        """ initialize button click to page rediect functionality  """
+        """ initializes button click to page redirect functionality  """
         self.WelcomePage.StartBtn.clicked.connect(self.gotoFileUploadPage)
         self.FileUploadPage.settingBtn.clicked.connect(lambda: 
                 self.setCurrentWidget(self.MainSetting))
@@ -168,7 +164,7 @@ class MainStack(QStackedWidget):
         self.TranscribeSuccessPage.fileTable.updateFileContent(data)
     
     def changeToTranscribed(self, key: str):
-        """ publich function that change the file status on all file tabless """
+        """ public function that change the file status on all file tabless """
         self.FileUploadPage.fileTable.changeFileToTranscribed(key)
         self.ConfirmTranscribePage.fileTable.changeFileToTranscribed(key)
         self.TranscribeProgressPage.fileTable.changeFileToTranscribed(key)
@@ -176,5 +172,3 @@ class MainStack(QStackedWidget):
         self.FileUploadPage.fileTable.removeFile(key)
         self.ConfirmTranscribePage.fileTable.transferList.clear()
     
-
-        

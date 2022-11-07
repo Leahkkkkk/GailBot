@@ -1,10 +1,21 @@
+'''
+File: SettingPage.py
+Project: GailBot GUI
+File Created: Wednesday, 5th October 2022 12:22:13 pm
+Author: Siara Small  & Vivian Li
+-----
+Last Modified: Sunday, 6th November 2022 11:11:19 am
+Modified By:  Siara Small  & Vivian Li
+-----
+'''
 
-from util.Style import Color, FontSize
+from util.Style import FontSize, Dimension
 from util.Text import ProfilePageText as Text
 from util.Text import ProfileSettingForm as Form
 from view.widgets import Label 
 from view.style.styleValues import FontFamily
 from view.style.Background import initSecondaryColorBackground
+
 from PyQt6.QtWidgets import (
     QWidget, 
     QCheckBox, 
@@ -17,12 +28,14 @@ center  = Qt.AlignmentFlag.AlignHCenter
 defaultPlugin = list (Form.Plugins)
 
 class PluginPage(QWidget):
+    """" class for the plugins page """
     def __init__(
         self,
         plugins = defaultPlugin,
         *args, 
         **kwargs) -> None:
         super().__init__( *args, **kwargs)
+        """ initializes class """
         self.plugins = plugins
         self.pluginDict = dict()
         self._initWidget()
@@ -30,6 +43,7 @@ class PluginPage(QWidget):
         self._initPlugins()
         
     def _initWidget(self):
+        """ initializes widgets """
         self.header = Label.Label(
             Text.pluginHeader, FontSize.HEADER2, FontFamily.MAIN, 
             alignment= center)
@@ -37,6 +51,7 @@ class PluginPage(QWidget):
             Text.pluginCaption, FontSize.DESCRIPTION, FontFamily.MAIN)
 
     def _initlayout(self):
+        """" initializes layout """
         self.verticalLayout = QVBoxLayout()
         self.setLayout(self.verticalLayout)
         self.scrollContainer = QWidget()
@@ -44,15 +59,15 @@ class PluginPage(QWidget):
         self.scrollContainer.setLayout(self.scrollLayout)
         self.scrollLayout.setSpacing(10)
         self.scroll = QScrollArea()
-        self.scroll.setFixedWidth(650)
-        self.scroll.setMinimumHeight(550)
-        self.scroll.setMaximumHeight(700)
+        self.scroll.setFixedWidth(Dimension.FORMWIDTH)
+        self.scroll.setMinimumHeight(Dimension.FORMMINHEIGHT)
+        self.scroll.setMaximumHeight(Dimension.FORMMAXHEIGHT)
         self.scroll.setWidgetResizable(True)
         self.verticalLayout.addWidget(self.header)
         self.verticalLayout.addWidget(
             self.caption, 
             alignment = center)
-        self.verticalLayout.setSpacing(3)
+        self.verticalLayout.setSpacing(Dimension.SMALL_SPACING)
         self.verticalLayout.addWidget(
             self.scroll, 
             alignment=center)
@@ -61,6 +76,7 @@ class PluginPage(QWidget):
         initSecondaryColorBackground(self.scrollContainer)
 
     def _initPlugins(self):
+        """ initializes plugins to be shown on screen """
         for plugin in self.plugins:
             newPlugin = pluginCheckBox(plugin)
             self.pluginDict[plugin] = newPlugin
@@ -69,12 +85,18 @@ class PluginPage(QWidget):
         self.scroll.setWidget(self.scrollContainer)
     
     def addNewPlugin(self, plugin):
+        """ adds new plugin as an option on the page
+        Args: plugin: plugin to be added
+        """
         newPlugin = pluginCheckBox(plugin)
         self.pluginDict[plugin] = newPlugin
         self.scrollLayout.addWidget(newPlugin)
         self.scroll.setWidget(self.scrollContainer)
     
     def setValue(self, appliedPlugins: set):
+        """ sets the value of the given plugin
+        Args: appliedPlugins:set: TODO
+        """
         for plugin, checkwidget in self.pluginDict.items():
             if plugin in appliedPlugins:
                 checkwidget.setCheck()
@@ -82,6 +104,7 @@ class PluginPage(QWidget):
                 checkwidget.setUncheck()
     
     def getValue(self) -> set:
+        """ gets the value of the given plugin """
         appliedPlugins = set()
         for plugin, checkWidget in self.pluginDict.items():
             if checkWidget.isChecked():
@@ -89,7 +112,9 @@ class PluginPage(QWidget):
         return appliedPlugins
                 
 class pluginCheckBox(QWidget):
+    """ class for a plugin checkbox """
     def __init__(self, plugin:str, *args, **kwargs) -> None:
+        """ initializes the class """
         super().__init__( *args, **kwargs)
         self.plugin  = plugin
         self.layout = QHBoxLayout()
@@ -102,10 +127,13 @@ class pluginCheckBox(QWidget):
         self.layout.addStretch()
 
     def isChecked(self):
+        """ determines if the given checkbox is currently checked """
         return self.checkBox.checkState() == Qt.CheckState.Checked 
     
     def setCheck(self):
+        """ check the current checkbox """
         self.checkBox.setChecked(True)
     
     def setUncheck(self):
+        """ uncheck the current checkbox """
         self.checkBox.setChecked(False)

@@ -55,7 +55,7 @@ class Label(QLabel):
             self.setOpenExternalLinks(True)
         
     def loadHeaderFont(self):
-        """load font for header label (since it's not default)"""
+        """loads font for header label (since it's not default)"""
         id = QFontDatabase.addApplicationFont(os.path.join
                                                    (Path.getProjectRoot(), 
                                                     Asset.headerFont))
@@ -64,4 +64,7 @@ class Label(QLabel):
         self.setFont(QFont(Raleway[0], weight=800))
 
     def changeText(self, text):
+        """ changes the current text
+        Args: text (str): text to set current value to
+        """
         self.setText(text)

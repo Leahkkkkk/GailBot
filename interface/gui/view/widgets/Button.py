@@ -45,7 +45,7 @@ class ColoredBtn(QPushButton):
         *args, 
         **kwargs
     ):
-        """"" define and initialize class for colored button """""
+        """"" defines and initialize classs for colored button """""
         super().__init__(*args, **kwargs)
         self.setText(label)
         self.origColor = color
@@ -64,11 +64,11 @@ class ColoredBtn(QPushButton):
         self._releaseStyle()
     
     def _pressStyle(self):
-        """ set the button color to be darker  """
+        """ sets the button color to be darker  """
         self.setStyleSheet(self.defaultStyle + 
                            f"background-color:{self.pressColor}")
     def _releaseStyle(self):
-        """ set the button color to original color """
+        """ sets the button color to original color """
         self.setStyleSheet(self.defaultStyle + 
                            f"background-color:{self.origColor};")
         
@@ -110,15 +110,14 @@ class BorderBtn(QPushButton):
                            f"font-size:{self.fontSize};"\
                            f"{self.other};"
         self.setDefaultStyle()
-        
 
     def setDefaultStyle(self):
+        """ sets default style sheet """
         self.setStyleSheet(self.defaultStyle)
     
     def setActiveStyle(self, color: str):
+        """ sets to current style sheet """
         self.setStyleSheet(self.defaultStyle + f"background-color:{color}")
-    
-        
     
 class ToggleBtn(QPushButton):
     """ A toggle button that display different lable when being toggled 
@@ -152,7 +151,7 @@ class ToggleBtn(QPushButton):
         self.show()
 
     def _changeSymbol(self):
-        """ to change the button symbol """
+        """ changes the button symbol """
         if self.state:
             self.setIcon(self.downIcon)
         else:
@@ -247,10 +246,6 @@ class iconBtn(QPushButton):
       if label:
           self.setText(label)
   
-   
-   
-   
-   
 """ NOTE: currently unused in the interface  """  
 class dropDownButton(QWidget):
     """ a dropdown button widget, when the button is clicked,

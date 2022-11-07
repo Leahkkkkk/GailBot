@@ -2,10 +2,16 @@ import os
 
 from view.Signals import ProfileSignals
 from view.widgets import Button, MsgBox
-from util.Style import Color,Dimension
-from PyQt6.QtWidgets import QDialog, QListWidget, QVBoxLayout, QFileDialog
-from PyQt6.QtCore import Qt, QSize 
+from util.Style import Color, Dimension
+from util.Text import CreatNewProfileTabText as Text 
 
+from PyQt6.QtWidgets import (
+    QDialog, 
+    QListWidget, 
+    QVBoxLayout, 
+    QFileDialog
+)
+from PyQt6.QtCore import Qt, QSize 
 
 class PluginDialog(QDialog):
     def __init__(self, signal:ProfileSignals, *arg, **kwarg) -> None:
@@ -25,7 +31,7 @@ class PluginDialog(QDialog):
         self._connectSignal()
         
     def _initWidget(self):
-        """ initialize the widget """
+        """ initializes the widget """
         self.uploadBtn = Button.ColoredBtn(
             "Load Plugins",
             Color.BLUEMEDIUM)
@@ -45,20 +51,17 @@ class PluginDialog(QDialog):
         self.verticalLayout.addWidget(self.addBtn, 
                                       alignment=Qt.AlignmentFlag.AlignRight)
 
-        
-    
     def _connectSignal(self):
-        """ connecting the file signal  """
+        """ connects the file signals upon button click """
         self.uploadBtn.clicked.connect(self._addPlugins)
         self.addBtn.clicked.connect(self._postPlugins)
-
         
     def _addPlugins(self):
         """ open a file dialog to let user load file """
         dialog = QFileDialog()
         dialog.setFileMode(dialog.FileMode.ExistingFiles)
-        filer = "json file (*.json) zip file (*.zip)"
-        dialog.setNameFilter(filer)
+        filter = Text.pluginFilter
+        dialog.setNameFilter(filter)
         dialog.exec()
         files = dialog.selectedFiles()
         if files:

@@ -9,23 +9,32 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
-
 from typing import Dict 
-from view.widgets import Label, InputBox, Button
-from util.Style import Color, FontFamily, FontSize, Dimension
+
+from view.widgets import (
+    Label, 
+    InputBox, 
+    Button
+)
+from util.Style import (
+    Color, 
+    FontFamily, 
+    FontSize, 
+    Dimension
+)
 from view.style.Background import initSecondaryColorBackground
 
 from PyQt6.QtWidgets import (
     QWidget, 
-    QVBoxLayout)
-
+    QVBoxLayout
+)
 
 class TextForm(QWidget):
     def __init__(self, 
                  data: Dict[str, str], 
                  backgroundColor: str = Color.SUB_BACKGROUND,
                  *args, **kwargs) -> None:
-        """ Display a form 
+        """ Displays a form 
 
         Args:
             data (Dict[str, str]): a dictionary that stores the form 
@@ -75,7 +84,7 @@ class TextForm(QWidget):
             input.setText(data[key])
     
     def _initWidget(self):
-        """ initialize the widget """
+        """ initializes the widgets """
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
         self.layout.setSpacing(Dimension.STANDARDSPACING)
@@ -97,7 +106,7 @@ class TextForm(QWidget):
                 self.inputDict[keyCopy] = newInput
        
     def _initStyle(self):
-        """ initialize the widget style """
+        """ initializes the widget style """
         initSecondaryColorBackground(self)
         
 

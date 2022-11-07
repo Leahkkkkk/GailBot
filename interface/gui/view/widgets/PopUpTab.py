@@ -17,7 +17,6 @@ from PyQt6.QtWidgets import (
 
 from PyQt6.QtCore import QObject, pyqtSignal, QSize, Qt
 
-
 """ default tab size """
 TabSize = QSize(Dimension.DEFAULTTABWIDTH,Dimension.DEFAULTTABHEIGHT)
 
@@ -149,6 +148,7 @@ class _ChangePageBtn(QWidget):
         self.prevBtn.setFixedSize(
             QSize(Dimension.SMALLICONBTN,Dimension.SMALLICONBTN))
         self.finishBtn = Button.ColoredBtn(Text.finish, Color.BLUEMEDIUM)
+        self.finishBtn.setFixedWidth(Dimension.SBTNWIDTH)
         self.deactivateNextButton()
         self.deactivatePrevButton()
         self.horizontaLayout.addWidget(self.prevBtn)
@@ -205,6 +205,7 @@ class NoControlTab(QWidget):
         initPrimaryColorBackground(self)
 
     def _initWidget(self):
+        """ initializes widgets """
         self.MainTab = QTabWidget(self)
         initPrimaryColorBackground(self.MainTab)
         self.MainTab.setTabPosition(QTabWidget.TabPosition.North)

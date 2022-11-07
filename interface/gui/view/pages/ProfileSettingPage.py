@@ -110,7 +110,6 @@ class ProfileSettingPage(QWidget):
         self.settingStack.addWidget(self.PostSetPage)
         self.settingStack.addWidget(self.PluginPage)
         self.settingStack.setCurrentWidget(self.RequiredSetPage)
-
     
     def _initLayout(self):
         """initializes layout"""
@@ -141,7 +140,6 @@ class ProfileSettingPage(QWidget):
         self.horizontalLayout.addWidget(self.sideBar)
         self.horizontalLayout.addWidget(self.settingStack)
         self.settingStack.setContentsMargins(0,0,0,0)
-
    
     def _connectSignal(self):
         """ connects signals upon button clicks """

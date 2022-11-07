@@ -9,14 +9,14 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
-
 from PyQt6.QtWidgets import QComboBox 
 from PyQt6.QtCore import QSize
 
 class ComboBox(QComboBox):
     """ a customized QComboBox Widget """
     def __init__(self, *args, **kwargs) -> None:
+        """ initializes widget """
         super().__init__(*args, **kwargs)
-        self.setStyleSheet("padding: 10px; font-size:14px")
+        self.setStyleSheet("padding: 10px; font-size:14px") #TODO put in toml
         self.setContentsMargins(0,20,0,20)
         self.setFixedSize(QSize(170,50))

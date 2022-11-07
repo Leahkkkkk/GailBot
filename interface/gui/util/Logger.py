@@ -25,6 +25,11 @@ def makeLogger(source:str):
         source(str): indicates the source of the log, 
                      either "Backend" or "Frontend"
     """
+    if source == "F":
+        source = "Frontend"
+    elif source == "B":
+        source = "Backend"
+        
     logExtra = {"source": source}
     logger = logging.getLogger()
     logger = logging.LoggerAdapter(logger, logExtra)
@@ -118,7 +123,6 @@ class StatusBarHandler(logging.Handler, QtCore.QObject):
                     as argument 
     """ 
     addStatusMsg = QtCore.pyqtSignal(str)
-    
     def __init__(self, showMsgFun:callable):
         super().__init__()
         QtCore.QObject.__init__(self)

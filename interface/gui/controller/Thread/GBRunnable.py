@@ -36,7 +36,7 @@ SETTINGS_PROFILE_EXTENSION = ProfileConfig.SETTINGS_PROFILE_EXTENSION
 
 """ Gailbot plugins from documentation  
 """
-PLUGINS_TO_APPLY = Plugin.PLUGIN_TO_APPLY
+PLUGINS_TO_APPLY = Plugin.PLUGINS_TO_APPLY
 
 def get_settings_dict(): #TODO: get the actual setting dictionary for the 
                          #      profile database

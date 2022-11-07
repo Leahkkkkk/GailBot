@@ -42,16 +42,16 @@ LARGE_SPACING = 30
 
 
 [fontSizes]
-BODY = "13px"
-TEXT_FIELD = "12px"
+BODY = "15px"
+TEXT_FIELD = "15px"
 SMALL="11px"
-LINK = "15px"
-HEADER1 = "32px" 
-HEADER2  = "24px"
-HEADER3  = "18px"
-TABLE_ROW = "13px"
-DESCRIPTION = "12px"
-INSTRUCTION_CAPTION = "14px"
+LINK = "18px"
+HEADER1 = "38px" 
+HEADER2  = "28px"
+HEADER3  = "22px"
+TABLE_ROW = "28px"
+DESCRIPTION = "17px"
+INSTRUCTION_CAPTION = "18px"
 BTN = "14px" 
 SETTINGICON = "40px"
 

@@ -16,11 +16,6 @@ TODO: add search bar
 
 from typing import List
 
-from view.Signals import FileSignals
-from view.widgets import Label, Button, FileTable
-from view.style.widgetStyleSheet import buttonStyle
-from view.style.Background import addLogo
-from view.widgets import MsgBox
 from util.Style import (
     FileTableDimension, 
     Asset, 
@@ -32,8 +27,12 @@ from util.Style import (
 from util.Text import FileTableHeader
 from util.Text import FileUploadPageText as Text 
 from util.Style import FontSize as FS
+from view.Signals import FileSignals
+from view.widgets import Label, Button, FileTable
+from view.style.widgetStyleSheet import buttonStyle
+from view.style.Background import addLogo
+from view.widgets import MsgBox
 from view.style.styleValues import FontFamily
-
 
 from PyQt6.QtWidgets import (
     QWidget, 
@@ -49,13 +48,14 @@ right  = Qt.AlignmentFlag.AlignRight
 top    =  Qt.AlignmentFlag.AlignTop
 
 class FileUploadPage(QWidget):
+    """ class for the file upload page """
     def __init__(
         self, 
         profilekeys: List[str],
         signal: FileSignals, 
         *args, 
         **kwargs) -> None:
-        """ file upload page """
+        """ initializes file upload page """
         super().__init__(*args, **kwargs)
         self.signal = signal
         self.profilekeys = profilekeys
@@ -65,22 +65,16 @@ class FileUploadPage(QWidget):
         self._connectSignal()
         
     def _connectSignal(self):
-        """ connect signals to different functions """
-        # uploading file
+        """ connects signals to different functions upon button clicks """
         self.uploadFileBtn.clicked.connect(self.fileTable.uploadFile)
-        # load confirm page table with selected file 
         self.transcribeBtn.clicked.connect(self.fileTable.transferState) 
- 
-        
-        # remove all file 
         self.removeAll.clicked.connect(self._confirmRemove)
-        # change transcribe button color
         self.fileTable.viewSignal.nonZeroFile.connect(self._allowTranscribe)
         self.fileTable.viewSignal.ZeroFile.connect(self._disallowTranscribe)
         self._disallowTranscribe()
         
     def _initWidget(self):
-        """ initialzie widget """
+        """ initializes widgets """
         self.label = Label.Label(Text.header, FS.HEADER2, FontFamily.MAIN)
         self.gotoMainBtn = Button.iconBtn(
             Asset.arrowImg, Text.returnMainText) 
@@ -103,12 +97,11 @@ class FileUploadPage(QWidget):
             {"check", "delete", "details", "edit"})
         self.fileTable.resizeCol(FileTableDimension.fileUploadPage)
         
-        
     def _initLayout(self):
-        """ initialize layout """
+        """ initializes layout """
         self.verticalLayout = QVBoxLayout()
         self.setLayout(self.verticalLayout)
-        """ add widget to layout """
+        """ adds widget to layout """
         addLogo(self.verticalLayout)
         self.verticalLayout.addWidget(self.gotoMainBtn, alignment = left)
         self.verticalLayout.addWidget(self.label, alignment = center)
@@ -141,20 +134,19 @@ class FileUploadPage(QWidget):
         self.verticalLayout.addWidget(self.transcribeBtn,
                                       alignment = center)
         
-
     def _initStyle(self):
-        """ initialize the style """
+        """ initializes the style """
         self.gotoMainBtn.setFixedSize(
             QSize(Dimension.LBTNWIDTH,Dimension.BTNHEIGHT))
         self.gotoMainBtn.setStyleSheet(StyleSheet.goToMain)
 
     def _allowTranscribe(self):
-        """ activate the transcribe button """
+        """ activates the transcribe button """
         self.transcribeBtn.setEnabled(True)
         self.transcribeBtn.setStyleSheet(buttonStyle.ButtonActive)
         
     def _disallowTranscribe(self):
-        """ deactivate the transcribe button """
+        """ deactivates the transcribe button """
         self.transcribeBtn.setDisabled(True)
         self.transcribeBtn.setStyleSheet(buttonStyle.ButtonInactive)
         

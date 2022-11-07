@@ -14,35 +14,29 @@ from util.Style import (
     FileTableDimension)
 from util.Text import ConfirmTranscribeText as Text
 from util.Text import FileTableHeader 
-
-
-
-
+from util.Logger import makeLogger
 from view.Signals import FileSignals
 from view.style.styleValues import FontFamily
 from view.style.Background import addLogo
 from view.widgets import ( Label, 
                            Button, 
                            FileTable) 
-from util.Logger import makeLogger
 
 from PyQt6.QtWidgets import (
     QWidget, 
     QVBoxLayout,
     QHBoxLayout
 )
-
-
 from PyQt6.QtCore import Qt 
 
 center = Qt.AlignmentFlag.AlignHCenter
 top = Qt.AlignmentFlag.AlignTop
 right = Qt.AlignmentFlag.AlignRight
 
-
 class ConfirmTranscribePage(QWidget):
     """ Confirm transcription page """
     def __init__(self, signal:FileSignals, *args, **kwargs) -> None:
+        """ initializes page """
         super().__init__(*args, **kwargs)
         self.signal = signal
         self.logger = makeLogger("Frontend")
@@ -51,11 +45,11 @@ class ConfirmTranscribePage(QWidget):
         self._connectSignal()
     
     def _connectSignal(self):
-        """ connect signal """
+        """ connects signals upon button clicks """
         self.confirmBtn.clicked.connect(self._sendTranscribeSignal)
 
     def _initWidget(self):
-        """ initlialize widget """
+        """ initializes widgets """
         self.label = Label.Label(Text.confirmLabel, 
                                  FontSize.HEADER2, 
                                  FontFamily.MAIN)
@@ -72,12 +66,12 @@ class ConfirmTranscribePage(QWidget):
         self.cancelBtn = Button.ColoredBtn(Text.cancel, Color.ORANGE)
         
     def _initLayout(self):
-        """ initialize layout"""
+        """ initializes layout"""
         self.verticalLayout = QVBoxLayout()
         self.horizontalLayout = QHBoxLayout()
         self.bottomButton.setLayout(self.horizontalLayout)
         self.setLayout(self.verticalLayout)
-        """ add widget to layout """
+        """ adds widgets to layout """
         addLogo(self.verticalLayout)
         self.verticalLayout.addWidget(self.label)
         self.verticalLayout.addWidget(
@@ -88,10 +82,9 @@ class ConfirmTranscribePage(QWidget):
             self.cancelBtn, alignment = center)
         self.bottomButton.setContentsMargins(0,0,0,0)
         self.verticalLayout.addWidget(self.bottomButton, alignment=center)
-    
-        
+     
     def _sendTranscribeSignal(self):
-        """send a signal with a set of file keys that will be transcribed """
+        """sends a signal with a set of file keys that will be transcribed """
         self.logger.info("here")
         self.logger.info(self.fileTable.transferList)
         self.signal.transcribe.emit(self.fileTable.transferList)

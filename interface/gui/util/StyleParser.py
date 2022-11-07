@@ -5,7 +5,6 @@ from typing import List
 import datetime
 # from util.Path import getProjectRoot
 from os.path import exists
-import toml 
 from dict_to_dataclass import DataclassFromDict, field_from_dict
 
 
@@ -95,6 +94,12 @@ class DimensionData(DataclassFromDict):
     DEFAULTTABWIDTH : int = field_from_dict()
     LOGO_WIDTH : int = field_from_dict()
     LOGO_HEIGHT : int = field_from_dict()
+    SMALL_TABLE_WIDTH : int = field_from_dict()
+    SMALL_TABLE_HEIGHT : int = field_from_dict()
+    SMALL_SPACING : int = field_from_dict()
+    MEDIUM_SPACING : int = field_from_dict()
+    LARGE_SPACING : int = field_from_dict()
+    LARGE_ICON: int = field_from_dict()
     
 
 @dataclass 
