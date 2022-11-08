@@ -2,9 +2,9 @@ from util import TextParser
 import toml 
 from dataclasses import dataclass
 
-text   = toml.load("config/text.toml")
-forms  = toml.load("config/forms.toml")
-about  = toml.load("config/about.toml")
+text   = toml.load("config/text/text.toml")
+forms  = toml.load("config/text/forms.toml")
+about  = toml.load("config/text/about.toml")
 
 
 """ pages text data """

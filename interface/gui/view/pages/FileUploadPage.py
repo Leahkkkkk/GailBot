@@ -79,17 +79,17 @@ class FileUploadPage(QWidget):
         self.gotoMainBtn = Button.iconBtn(
             Asset.arrowImg, Text.returnMainText) 
         self.recordBtn = Button.ColoredBtn(
-            Text.recordBtnText, Color.BLUEMEDIUM, FontSize.BTN)
+            Text.recordBtnText, Color.PRIMARY_BUTTON, FontSize.BTN)
         self.uploadFileBtn = Button.ColoredBtn(
-            Text.uploadBtnText, Color.BLUEMEDIUM, FontSize.BTN)
+            Text.uploadBtnText, Color.PRIMARY_BUTTON, FontSize.BTN)
         self.transcribeBtn = Button.ColoredBtn(
-            Text.transcribeBtnText, Color.GREYLIGHT, FontSize.BTN)
+            Text.transcribeBtnText, Color.LOW_CONTRAST, FontSize.BTN)
         self.settingBtn = Button.ColoredBtn(
-            Text.settingBtnText, Color.BLUEMEDIUM, FS.SETTINGICON)
+            Text.settingBtnText, Color.PRIMARY_BUTTON, FS.SETTINGICON)
         self.settingBtn.setFixedSize(
             QSize(Dimension.ICONBTN,Dimension.ICONBTN))
         self.removeAll = Button.ColoredBtn(
-            Text.removeBtnText, Color.BLUEMEDIUM, FontSize.BTN)
+            Text.removeBtnText, Color.PRIMARY_BUTTON, FontSize.BTN)
         self.fileTable = FileTable.FileTable(
             FileTableHeader.fileUploadPage, 
             self.signal,

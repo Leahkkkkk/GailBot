@@ -1,3 +1,15 @@
+'''
+File: PluginDialog.py
+Project: GailBot GUI
+File Created: Sunday, 30th October 2022 7:06:50 pm
+Author: Siara Small  & Vivian Li
+-----
+Last Modified: Tuesday, 8th November 2022 4:01:32 pm
+Modified By:  Siara Small  & Vivian Li
+-----
+'''
+
+
 import os 
 
 from view.Signals import ProfileSignals
@@ -34,11 +46,11 @@ class PluginDialog(QDialog):
         """ initializes the widget """
         self.uploadBtn = Button.ColoredBtn(
             "Load Plugins",
-            Color.BLUEMEDIUM)
+            Color.PRIMARY_BUTTON)
         self.displayPlugins = QListWidget()
         self.addBtn = Button.ColoredBtn(
             "Add Plugins",
-            Color.GREEN
+            Color.SECONDARY_BUTTON
         )
         
     def _initLayout(self):

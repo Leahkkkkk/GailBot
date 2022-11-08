@@ -16,13 +16,13 @@ from dataclasses import dataclass
 @dataclass
 class StyleSource:
     """ stores file paths to different style theme"""
-    DARK_COLOR          = "config/colorDark.toml"
-    LIGHT_COLOR         = "config/colorLight.toml"
-    CURRENT_COLOR       = "config/color.toml"
-    L_FONTSIZE          = "config/fontSizeL.toml"
-    M_FONTSIZE          = "config/fontSizeM.toml"
-    S_FONTSIZE          = "config/fontSizeM.toml"
-    CURRENT_FONTSIZE    = "config/fontSize.toml"
+    DARK_COLOR          = "config/style/color/colorDark.toml"
+    LIGHT_COLOR         = "config/style/color/colorLight.toml"
+    CURRENT_COLOR       = "config/style/color/color.toml"
+    L_FONTSIZE          = "config/style/font/fontSizeL.toml"
+    M_FONTSIZE          = "config/style/font/fontSizeM.toml"
+    S_FONTSIZE          = "config/style/font/fontSizeM.toml"
+    CURRENT_FONTSIZE    = "config/style/font/fontSize.toml"
 
 
 """ a search table with all style choices and the path to the source"""

@@ -170,10 +170,10 @@ class FileTable(QTableWidget):
         except:
             msgBox = MsgBox.WarnBox("Failed to set file header")
         
-        self.horizontalHeader().setStyleSheet(f"background-color:{Color.BLUELIGHT};"
+        self.horizontalHeader().setStyleSheet(f"background-color:{Color.TABLE_HEADER};"
                                               f"font-size:{FontSize.SMALL};"
                                               f"font-family:{FontFamily.MAIN};"
-                                              f"color:{Color.BLUEDARK}")
+                                              f"color:{Color.PRIMARY_INTENSE}")
     
     
     def _headerClickedHandler(self, idx):
@@ -346,7 +346,7 @@ class FileTable(QTableWidget):
             newitem = QTableWidgetItem(profilekey)
             self.setItem(row, 3, newitem)
             if key in self.selecetdList: 
-                newitem.setBackground(QColor(Color.BLUEWHITE))
+                newitem.setBackground(QColor(Color.HIGHLIGHT))
         else:
             self.viewSignal.error.emit(KEYERROR)
     
@@ -372,7 +372,7 @@ class FileTable(QTableWidget):
                 newitem = QTableWidgetItem(value)
                 self.setItem(row, col, newitem)
                 if key in self.selecetdList:
-                    newitem.setBackground(QColor(Color.BLUEWHITE))
+                    newitem.setBackground(QColor(Color.HIGHLIGHT))
         else:
             self.logger.error("File is not found")
     
@@ -408,7 +408,7 @@ class FileTable(QTableWidget):
                 self.transferList.add(key)
                 self.selecetdList.add(key)
                 rowIdx = self.indexFromItem(self.filePins[key]).row()
-                self._setColorRow(rowIdx, Color.BLUEWHITE)
+                self._setColorRow(rowIdx, Color.HIGHLIGHT)
                 self.viewSignal.nonZeroFile.emit()
             else: 
                 raise Exception("File is not found in the data")

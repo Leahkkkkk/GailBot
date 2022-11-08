@@ -1,3 +1,13 @@
+'''
+File: OutputFormatForm.py
+Project: GailBot GUI
+File Created: Friday, 4th November 2022 1:01:27 pm
+Author: Siara Small  & Vivian Li
+-----
+Last Modified: Tuesday, 8th November 2022 4:01:17 pm
+Modified By:  Siara Small  & Vivian Li
+-----
+'''
 from typing import Dict 
 
 from view.style.Background import initPrimaryColorBackground
@@ -32,14 +42,14 @@ class OutPutFormat(QWidget):
             OutputFormatFormText.FileHeaderView, 
             self.headerForm,
             headercolor= Color.WHITE,
-            viewcolor=Color.GREYLIGHT)
+            viewcolor=Color.LOW_CONTRAST)
         self.layout.addWidget(self.fileHeader)
         self.textWrap = Button.onOffButton(OutputFormatFormText.TextWrap)
         self.textWrapField = ToggleView.ToggleView(
             OutputFormatFormText.FileFormatHeader, 
             self.textWrap,
             headercolor= Color.WHITE,
-            viewcolor= Color.GREYLIGHT)
+            viewcolor= Color.LOW_CONTRAST)
         self.layout.addWidget(self.textWrapField)
         
     def getValue(self):

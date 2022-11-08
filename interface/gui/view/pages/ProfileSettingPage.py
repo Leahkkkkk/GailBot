@@ -83,18 +83,18 @@ class ProfileSettingPage(QWidget):
         self.selectSettings.addItems(self.profilekeys)
         
         self.cancelBtn = Button.BorderBtn(
-            Text.cancelBtn, Color.ORANGE)
+            Text.cancelBtn, Color.CANCEL_QUIT)
         self.saveBtn = Button.ColoredBtn(
-            Text.saveBtn, Color.GREEN)
+            Text.saveBtn, Color.SECONDARY_BUTTON)
         self.newProfileBtn = Button.ColoredBtn(
-            Text.newProfileBtn,Color.BLUEMEDIUM)
+            Text.newProfileBtn,Color.PRIMARY_BUTTON)
         self.requiredSetBtn = Button.BorderBtn(
             Text.reuquiredSetBtn, Color.GREYDARK, FS.BTN, 0, SS.onlyTopBorder)
         self.postSetBtn = Button.BorderBtn(
             Text.postSetBtn,Color.GREYDARK, FS.BTN, 0,SS.noSideBorder)
         self.GuideLink = Label.Label(Links.guideLink, FS.LINK, link=True)
         self.newPluginBtn = Button.ColoredBtn(
-            Text.newPluginBtn, Color.BLUEMEDIUM)
+            Text.newPluginBtn, Color.PRIMARY_BUTTON)
         self.pluginBtn = Button.BorderBtn(
             Text.pluginSetBtn, Color.GREYDARK, FS.BTN, 0, SS.onlyBottomBorder)
         self.versionLabel = Label.Label(About.version, FS.SMALL)
@@ -154,19 +154,19 @@ class ProfileSettingPage(QWidget):
     def _activatePostSet(self):
         """ switches current page from required settings page to post trancription settings page """
         self._setBtnDefault()
-        self.postSetBtn.setActiveStyle(Color.BLUEWHITE)
+        self.postSetBtn.setActiveStyle(Color.HIGHLIGHT)
         self.settingStack.setCurrentWidget(self.PostSetPage)
     
     def _activeRequiredSet(self):
         """ switches current page from post transcription settings page to required settings page """
         self._setBtnDefault()
-        self.requiredSetBtn.setActiveStyle(Color.BLUEWHITE)
+        self.requiredSetBtn.setActiveStyle(Color.HIGHLIGHT)
         self.settingStack.setCurrentWidget(self.RequiredSetPage)
     
     def _activatePlugin(self):
         """ switches current page to plugin page """
         self._setBtnDefault()
-        self.pluginBtn.setActiveStyle(Color.BLUEWHITE)
+        self.pluginBtn.setActiveStyle(Color.HIGHLIGHT)
         self.settingStack.setCurrentWidget(self.PluginPage)
     
     def _setBtnDefault(self):

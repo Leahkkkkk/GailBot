@@ -66,7 +66,7 @@ class ProfileName (TabPage):
             labelSize = FontSize.HEADER3)
         self.confirmBtn = ColoredBtn(
             "Start", 
-            Color.GREEN)
+            Color.SECONDARY_BUTTON)
         self.confirmBtn.clicked.connect(self._confirmHandler)
 
     def _initLayout(self):
@@ -127,7 +127,7 @@ class BasicSetting(TabPage):
         self.verticallayout.addWidget(self.mainWidget, alignment=hcenter)
         self.confirmBtn = ColoredBtn(
             Text.cofirmBtn, 
-            Color.GREEN)
+            Color.SECONDARY_BUTTON)
         self.confirmBtn.clicked.connect(self._confirmHandler)
         self.verticallayout.addWidget(
             self.confirmBtn,
@@ -161,7 +161,7 @@ class EngineSetting(TabPage):
             alignment=Qt.AlignmentFlag.AlignHCenter)
         self.mainForm = SettingEngineForm.SettingEngineForm(showBasicSet=False)
         self.verticallayout.addWidget(self.mainForm)
-        self.confirmBtn = ColoredBtn(Text.cofirmBtn, Color.GREEN)
+        self.confirmBtn = ColoredBtn(Text.cofirmBtn, Color.SECONDARY_BUTTON)
         self.confirmBtn.clicked.connect(self._confirmHandler)
         self.verticallayout.addWidget(self.confirmBtn, alignment=bottomRight)
     
@@ -192,7 +192,7 @@ class OutPutFormatSetting(TabPage):
         self.verticallayout.addWidget(self.mainForm)
         self.confirmBtn = ColoredBtn(
             Text.cofirmBtn, 
-            Color.GREEN)
+            Color.SECONDARY_BUTTON)
         self.confirmBtn.clicked.connect(lambda: self.signals.nextPage.emit())
         self.verticallayout.addStretch()
         self.verticallayout.addWidget(
@@ -211,7 +211,7 @@ class PostTranscribeSetting(TabPage):
         super().__init__(*args, **kwargs)
         self.logger = makeLogger("F")
         self.mainForm = PostSetPage()
-        self.confirmBtn = ColoredBtn(Text.cofirmBtn, Color.GREEN)
+        self.confirmBtn = ColoredBtn(Text.cofirmBtn, Color.SECONDARY_BUTTON)
         self.confirmBtn.clicked.connect(lambda: self.signals.nextPage.emit())
         self.verticallayout = QVBoxLayout()
         self.setLayout(self.verticallayout)
@@ -231,7 +231,7 @@ class PluginSetting(TabPage):
         """ initializes tab """
         super().__init__(*args, **kwargs)
         self.mainForm = PluginPage(plugins)
-        self.confirmBtn = ColoredBtn(Text.cofirmBtn, Color.GREEN)
+        self.confirmBtn = ColoredBtn(Text.cofirmBtn, Color.SECONDARY_BUTTON)
         self.confirmBtn.clicked.connect(lambda: self.signals.close.emit())
         self.verticalLayout = QVBoxLayout()
         self.setLayout(self.verticalLayout)

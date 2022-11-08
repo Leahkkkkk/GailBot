@@ -68,10 +68,10 @@ class OpenFile(TabPage):
         self.filePaths = []
         self.uploadFileBtn = ColoredBtn(
             Text.tabAddfile, 
-            Color.BLUEMEDIUM)
+            Color.PRIMARY_BUTTON)
         self.uploadFolderBtn = ColoredBtn(
             Text.tabAddFolder,
-            Color.BLUEMEDIUM)
+            Color.PRIMARY_BUTTON)
        
     def _initLayout(self):
         """ initializes the layout  """
@@ -227,7 +227,7 @@ class ChooseOutPut(TabPage):
         
     def _iniWidget(self):
         """ initializes the widgets """
-        self.chooseDirBtn = ColoredBtn("...", Color.BLUEMEDIUM, FontSize.HEADER2)
+        self.chooseDirBtn = ColoredBtn("...", Color.PRIMARY_BUTTON, FontSize.HEADER2)
         self.chooseDirBtn.setFixedWidth(70)
         self.dirPathText = QLineEdit(self)
         self.dirPathText.setPlaceholderText(Text.chooseOutPutText)

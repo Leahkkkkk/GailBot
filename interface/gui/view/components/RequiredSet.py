@@ -1,3 +1,14 @@
+'''
+File: RequiredSet.py
+Project: GailBot GUI
+File Created: Friday, 4th November 2022 1:01:27 pm
+Author: Siara Small  & Vivian Li
+-----
+Last Modified: Tuesday, 8th November 2022 4:00:50 pm
+Modified By:  Siara Small  & Vivian Li
+-----
+'''
+
 from typing import Dict 
 
 from view.widgets import ToggleView

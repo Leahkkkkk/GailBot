@@ -42,10 +42,6 @@ SMALL_SPACING = 5
 MEDIUM_SPACING = 20 
 LARGE_SPACING = 30 
 
-[fontFamily]
-MAIN       = "Raleway"
-OTHER      = "Helvetica"
-CLOCK      = "Digital"
 
 [filetable.dimension]
 fileUploadPage = [0.07,0.07,0.2,0.15,0.15,0.08,0.08,0.2]

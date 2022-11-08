@@ -38,8 +38,8 @@ class ToggleView(QWidget):
         label:str, 
         view: object, 
         header = False, 
-        headercolor =Color.BLUEWHITE, 
-        viewcolor = Color.BLUEWHITE,
+        headercolor = Color.HIGHLIGHT, 
+        viewcolor = Color.HIGHLIGHT,
         *args, 
         **kwargs):
         

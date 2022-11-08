@@ -63,8 +63,8 @@ class ConfirmTranscribePage(QWidget):
         
         self.fileTable.resizeCol(FileTableDimension.confirmPage)
         self.bottomButton = QWidget()
-        self.confirmBtn = Button.ColoredBtn(Text.confirm, Color.GREEN)
-        self.cancelBtn = Button.ColoredBtn(Text.cancel, Color.ORANGE)
+        self.confirmBtn = Button.ColoredBtn(Text.confirm, Color.SECONDARY_BUTTON)
+        self.cancelBtn = Button.ColoredBtn(Text.cancel, Color.CANCEL_QUIT)
         
     def _initLayout(self):
         """ initializes layout"""

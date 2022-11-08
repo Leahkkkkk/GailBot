@@ -86,7 +86,7 @@ class TranscribeProgressPage(QWidget):
             Text.inProgressText, FontSize.HEADER3, FontFamily.MAIN)
         self.cancelBtn = Button.ColoredBtn(
             Text.cancelText, 
-            Color.GREYLIGHT, 
+            Color.LOW_CONTRAST, 
             FontSize.BTN)
         self.fileTable = FileTable.FileTable(
             FileTableHeader.transcribePage, self.signals)

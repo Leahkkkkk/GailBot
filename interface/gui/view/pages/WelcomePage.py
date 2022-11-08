@@ -95,26 +95,26 @@ class WelcomePage(QWidget):
         """ instruction text """
         self.AudioInstruction = Label.Label(Text.audioInstructionText, 
                                             FS.INSTRUCTION_CAPTION, 
-                                            FontFamily.OTHER, Color.GREYMEDIUM2)
+                                            FontFamily.OTHER, Color.LOW_CONTRAST2)
         
         self.SettingsInstruction = Label.Label(Text.settingsInstructionText,
                                                FS.INSTRUCTION_CAPTION, 
-                                               FontFamily.OTHER, Color.GREYMEDIUM2)
+                                               FontFamily.OTHER, Color.LOW_CONTRAST2)
         
         self.TranscribeInstruction = Label.Label(Text.transcribeInstructionText, 
                                                  FS.INSTRUCTION_CAPTION, 
                                                  FontFamily.OTHER,
-                                                 Color.GREYMEDIUM2)
+                                                 Color.LOW_CONTRAST2)
         
         self.FileInstruction = Label.Label(Text.fileInstructionText, 
                                            FS.INSTRUCTION_CAPTION, 
                                            FontFamily.OTHER,
-                                           Color.GREYMEDIUM2)
+                                           Color.LOW_CONTRAST2)
         
         self.EditInstruction = Label.Label(Text.editInstructionText,
                                            FS.INSTRUCTION_CAPTION, 
                                            FontFamily.OTHER,
-                                           Color.GREYMEDIUM2)
+                                           Color.LOW_CONTRAST2)
 
         """ instruction icons """
         self.AudioIcon = Image.Image(Asset.instructionSound)
@@ -168,10 +168,10 @@ class WelcomePage(QWidget):
         self.CaptionText = Label.Label(Text.captionText,
                                        FS.BODY, 
                                        FontFamily.OTHER,
-                                       Color.GREYMEDIUM2)
+                                       Color.LOW_CONTRAST2)
         
         self.CaptionText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
-        self.StartBtn = Button.ColoredBtn(Text.startBtnText, Color.GREEN)
+        self.StartBtn = Button.ColoredBtn(Text.startBtnText, Color.SECONDARY_BUTTON)
         
         self.InstructionText = Label.Label(Text.instructionText, FS.HEADER2, 
                                            FontFamily.MAIN)
@@ -187,14 +187,14 @@ class WelcomePage(QWidget):
         self.ResourcesText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
         
         self.TutorialText = Label.Label(Links.tutorialLink, FS.LINK,
-                                        FontFamily.OTHER, Color.BLUEMEDIUM,
+                                        FontFamily.OTHER, Color.PRIMARY_BUTTON,
                                         StyleSheet.linkStyle, link=True)
 
         self.GuideText = Label.Label(Links.guideLink, FS.LINK, 
-                                        FontFamily.OTHER, Color.BLUEMEDIUM,
+                                        FontFamily.OTHER, Color.PRIMARY_BUTTON,
                                          StyleSheet.linkStyle, link=True)
         self.GBLinkText = Label.Label(Links.gbWebLink, FS.BODY, 
-                                      FontFamily.OTHER, Color.BLUEMEDIUM, link=True)
+                                      FontFamily.OTHER, Color.PRIMARY_BUTTON, link=True)
         
         self.GBLinkText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
 

@@ -58,9 +58,9 @@ class TranscribeSuccessPage(QWidget):
             Text.transcribedFilesText, FS.HEADER3, FontFamily.MAIN)
         self.caption.setContentsMargins(Dimension.MEDIUM_SPACING,0,0,0)
         self.moreBtn = Button.ColoredBtn(
-            Text.moreBtnText, Color.GREEN)
+            Text.moreBtnText, Color.SECONDARY_BUTTON)
         self.returnBtn = Button.ColoredBtn(
-            Text.returnBtnText, Color.BLUEMEDIUM)
+            Text.returnBtnText, Color.PRIMARY_BUTTON)
         self._initHorizontalLayout()
         self.fileTable = FileTable.FileTable(
             FileTableHeader.successPage, self.signal)

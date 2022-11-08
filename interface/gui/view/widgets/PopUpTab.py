@@ -147,7 +147,7 @@ class _ChangePageBtn(QWidget):
             QSize(Dimension.SMALLICONBTN,Dimension.SMALLICONBTN))
         self.prevBtn.setFixedSize(
             QSize(Dimension.SMALLICONBTN,Dimension.SMALLICONBTN))
-        self.finishBtn = Button.ColoredBtn(Text.finish, Color.BLUEMEDIUM)
+        self.finishBtn = Button.ColoredBtn(Text.finish, Color.PRIMARY_BUTTON)
         self.finishBtn.setFixedWidth(Dimension.SBTNWIDTH)
         self.deactivateNextButton()
         self.deactivatePrevButton()

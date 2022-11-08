@@ -15,12 +15,11 @@ from PyQt6.QtWidgets import QApplication
 import sys
 
 
-EXIT_CODE_REBOOT = -11231351
+EXIT_CODE_REBOOT = -20000
 
 def main():
     exitCode = 0
     while True:
-        print("try")
         app = QApplication(sys.argv)
         controller = Controller.Controller()
         controller.signal.restart.connect(lambda: app.exit(EXIT_CODE_REBOOT))
@@ -28,8 +27,6 @@ def main():
         exitCode = app.exec()
         app = None 
         controller = None
-      
-        print(exitCode)
         if exitCode != EXIT_CODE_REBOOT: break
     return exitCode
 

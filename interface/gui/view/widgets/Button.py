@@ -10,6 +10,7 @@ Modified By:  Siara Small  & Vivian Li
 '''
 import os
 from typing import List
+from view.widgets import Label
 from util.Style import FontSize, Dimension, Color, StyleSheet, Asset
 from util.Text import BtnText as Text
 from util.ColorGenerator import colorScale
@@ -190,7 +191,7 @@ class onOffButton(QWidget):
         
     def _initWidget(self):
         """initialize widgets for on-off select"""
-        self.label =  QLabel(self.label)
+        self.label = Label.Label(self.label, FontSize.BTN)
         if self.state:
             self.onOffBtn = QPushButton(Text.on)
         else:

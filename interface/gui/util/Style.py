@@ -16,7 +16,8 @@ from util.StyleSource import StyleSource
 
 color = toml.load(StyleSource.CURRENT_COLOR)
 fontSize = toml.load(StyleSource.CURRENT_FONTSIZE)
-dimension = toml.load("config/dimension.toml")
+dimension = toml.load("config/style/dimension.toml")
+fontfamily = toml.load("config/style/font/fontFamily.toml")
 Color = StyleParser.ColorData.from_dict(color["colors"])
 FontSize = StyleParser.FontSizeData.from_dict(
     fontSize["fontSizes"])
@@ -27,4 +28,6 @@ StyleSheet = StyleParser.StyleSheet.from_dict(
 Asset = StyleParser.Asset.from_dict(color["asset"])
 FileTableDimension = StyleParser.FileTableDimension.from_dict(
     dimension["filetable"]["dimension"])
-FontFamily = StyleParser.FontFamilyData.from_dict(dimension["fontFamily"])
+FontFamily = StyleParser.FontFamilyData.from_dict(fontfamily["fontFamily"])
+FontSource = StyleParser.FontSource.from_dict(fontfamily["fontSource"])
+

@@ -28,7 +28,7 @@ import toml
 from dict_to_dataclass import field_from_dict, DataclassFromDict
 
 
-config = toml.load("config/gailbot.toml")
+config = toml.load("config/backend/gailbot.toml")
 
 @dataclass
 class CrendentialData(DataclassFromDict):

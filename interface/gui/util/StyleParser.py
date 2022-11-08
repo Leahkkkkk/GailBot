@@ -8,34 +8,32 @@ from os.path import exists
 from dict_to_dataclass import DataclassFromDict, field_from_dict
 
 
-""" 
-   TODO: load the config file dynamically 
-    
-    - load either from user toml or interface toml 
-    - get the root path 
-
-"""
 
 ################################## style data #############################
 @dataclass 
 class ColorData(DataclassFromDict):
-    GREEN: str = field_from_dict()
-    ORANGE: str = field_from_dict()
-    BLUEWHITE: str =  field_from_dict()
-    BLUELIGHT: str =  field_from_dict()
-    BLUEMEDIUM: str =  field_from_dict()
-    BLUEDARK: str =  field_from_dict()
-    GREYLIGHT: str =  field_from_dict()
-    GREYMEDIUM1: str =  field_from_dict()
-    GREYMEDIUM2: str =  field_from_dict()
+    SECONDARY_BUTTON : str = field_from_dict()
+    CANCEL_QUIT: str = field_from_dict()
+    HIGHLIGHT: str =  field_from_dict()
+    TABLE_HEADER: str =  field_from_dict()
+    PRIMARY_BUTTON : str =  field_from_dict()
+    PRIMARY_INTENSE: str =  field_from_dict()
+    LOW_CONTRAST: str =  field_from_dict()
+    LOW_CONTRAST2: str =  field_from_dict()
+    OUTLINE: str =  field_from_dict()
     GREYDARK: str =  field_from_dict()
-    BORDERGREY: str =  field_from_dict()
-    BLACK: str =  field_from_dict()
-    WHITE: str =  field_from_dict()
+    BORDER: str =  field_from_dict()
     GREYEXTRALIGHT: str =  field_from_dict()
     MAIN_TEXT: str =  field_from_dict()
     MAIN_BACKRGOUND: str =  field_from_dict()
     SUB_BACKGROUND: str =  field_from_dict()
+    WHITE: str =  field_from_dict()
+    
+    
+@dataclass 
+class FontSource(DataclassFromDict):
+    headerFont: str =  field_from_dict()
+    clockFont: str =  field_from_dict()
     
     
 @dataclass

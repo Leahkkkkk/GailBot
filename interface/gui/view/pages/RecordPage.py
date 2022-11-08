@@ -59,7 +59,7 @@ class RecordProgress(QWidget):
         self.iconBtn.setFixedSize(QSize(Dimension.SMALLICONBTN,Dimension.SMALLICONBTN))
         self.iconBtn.setIconSize(QSize(Dimension.SMALLICONBTN, Dimension.SMALLICONBTN))
         self.iconBtn.setStyleSheet(StyleSheet.iconBtn)
-        self.endBtn  = Button.ColoredBtn(Text.end, Color.ORANGE)
+        self.endBtn  = Button.ColoredBtn(Text.end, Color.CANCEL_QUIT)
         self.recordBar = ProgressBar()
         self.recordBar.setMinimumWidth(Dimension.PROGRESSBARWIDTH)
         self.recordBar.setMinimumHeight(Dimension.PROGRESSBARHEIGHT)
@@ -143,9 +143,8 @@ class RecordPage(QWidget):
         self.toggleSetting = ToggleView.ToggleView(Text.recSet, 
                                                    self.recordForm,
                                                    header=True)
-        self.testBtn = Button.BorderBtn(Text.test, Color.BLACK)
-        self.startRecordBtn = Button.ColoredBtn(Text.start, Color.GREEN)
-        self.cancelBtn = Button.ColoredBtn(Text.cancel, Color.ORANGE)
+        self.startRecordBtn = Button.ColoredBtn(Text.start, Color.SECONDARY_BUTTON)
+        self.cancelBtn = Button.ColoredBtn(Text.cancel, Color.CANCEL_QUIT)
         self.recordInprogress =  RecordProgress()
         self.recordInprogress.hide()
     
