@@ -20,7 +20,6 @@ from controller.Signals import Signal
 from PyQt6.QtCore import pyqtSlot, QObject, QThreadPool, pyqtSignal 
 
 
-
 class Controller(QObject):
     """ Controller for Gailbot GUI """
     def __init__(self):
@@ -75,6 +74,7 @@ class Controller(QObject):
     def restart(self):
         self.signal.restart.emit()
         logging.getLogger().removeHandler(self.logHandler)
+        
     ###################   gailbot  handler #############################   
     def handleTanscribeSignal(self):
         """ handle signal from View that requests to transcrib the file"""
@@ -90,7 +90,6 @@ class Controller(QObject):
                               will be transcribed
         """
         self.logger.info(files)
-        self.logger.info(len(files))
         transcribeList = []
         # get the file object from the database
         for key in files: 

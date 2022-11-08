@@ -80,7 +80,7 @@ class TranscribeProgressPage(QWidget):
         self.loadingText = Label.Label(
             Text.loadingText,FontSize.SMALL, FontFamily.OTHER)
         self.loadingText.setAlignment(center)
-        self.InProgress = Label.Label(
+        self.Caption = Label.Label(
             Text.inProgressText, FontSize.HEADER3, FontFamily.MAIN)
         self.cancelBtn = Button.ColoredBtn(
             Text.cancelText, 
@@ -100,6 +100,12 @@ class TranscribeProgressPage(QWidget):
     def _initLayout(self):
         """ intiializes layout """
         self.verticalLayout = QVBoxLayout()
+        self.container = QWidget()
+        self.containerLayout = QVBoxLayout()
+        self.container.setFixedWidth(Dimension.TABLECONTAINERWIDTH)
+        self.container.setLayout(self.containerLayout)
+        self.containerLayout.addWidget(self.Caption)
+        self.containerLayout.addWidget(self.fileTable)
         self.setLayout(self.verticalLayout)
         """ add widget to layout """
         addLogo(self.verticalLayout)
@@ -108,13 +114,11 @@ class TranscribeProgressPage(QWidget):
         self.verticalLayout.addWidget(self.loadIcon, 
                                       alignment = center|top)
         self.verticalLayout.addWidget(self.loadingText, alignment = top)
-        self.verticalLayout.addWidget(self.InProgress, alignment = top)
-        self.verticalLayout.addWidget(self.fileTable, 
-                                      alignment= center|top)
+        self.verticalLayout.addWidget(self.container, alignment = top|center)
         self.verticalLayout.addStretch()
         self.verticalLayout.addWidget(self.cancelBtn, 
                                       alignment = center)
-        self.InProgress.setContentsMargins(Dimension.LARGE_SPACING, 0, 0, 0)
+        self.Caption.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setSpacing(Dimension.MEDIUM_SPACING)
         self.verticalLayout.addStretch()
         

@@ -16,7 +16,6 @@ from model.dataBase.profileDB import ProfileModel
 from model.dataBase.pluginDB import PluginModel
 
 
-
 class MVController:
     def __init__(
         self, 

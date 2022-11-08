@@ -38,8 +38,7 @@ SETTINGS_PROFILE_EXTENSION = ProfileConfig.SETTINGS_PROFILE_EXTENSION
 """
 PLUGINS_TO_APPLY = Plugin.PLUGINS_TO_APPLY
 
-def get_settings_dict(): #TODO: get the actual setting dictionary for the 
-                         #      profile database
+def get_settings_dict():
                          
     """ returns a dictionary that contains the setting information
     """

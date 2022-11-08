@@ -125,7 +125,7 @@ class MainStack(QStackedWidget):
         self.addWidget(self.TranscribeSuccessPage)
         self.addWidget(self.RecordPage)
         self.addWidget(self.MainSetting)
-        self.setCurrentWidget(self.RecordPage)
+        self.setCurrentWidget(self.TranscribeProgressPage)
     
     def _pageRedirect(self):
         """ initializes button click to page redirect functionality  """
