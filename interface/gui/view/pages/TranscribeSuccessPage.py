@@ -15,6 +15,7 @@ from util.Style import (
     FileTableDimension
 )
 from util.Style import FontSize as FS
+from util.Style import FontFamily
 from util.Text import TranscribeSuccessText as Text
 from util.Text import FileTableHeader
 from view.widgets import (
@@ -22,10 +23,8 @@ from view.widgets import (
     Label,
     FileTable
 )
-from view.style.Background import addLogo
+from view.widgets.Background import addLogo
 from view.Signals import FileSignals
-from view.style.styleValues import FontFamily
-
 from PyQt6.QtWidgets import (
     QVBoxLayout,
     QHBoxLayout,

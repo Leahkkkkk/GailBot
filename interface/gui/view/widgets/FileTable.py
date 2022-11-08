@@ -21,7 +21,7 @@ import logging
 from view.widgets import MsgBox
 from view.components.ChooseFileTab import ChooseFileTab
 from view.pages.FileUploadTabPages import ChooseSet
-from view.style.Background import initSecondaryColorBackground
+from view.widgets.Background import initSecondaryColorBackground
 from view.Signals import FileSignals
 from util.Logger import makeLogger
 from util.Style import Dimension, Color, FontFamily, FontSize

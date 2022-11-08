@@ -10,7 +10,7 @@ from util.Style import (
 from util.Text import RecordPageText as Text
 from util.Text import RecordForm
 from util.Style import Dimension, StyleSheet
-from view.style.Background import addLogo
+from view.widgets.Background import addLogo
 from view.widgets import (
     Button, 
     Label, 
@@ -54,7 +54,7 @@ class RecordProgress(QWidget):
     def _initWidget(self):
         """ initializes the widgets """
         self.timeDisplay = Label.Label(
-            str(self.counter), FontSize.HEADER1,FontFamily.CLOCK )
+            str(self.counter), FontSize.HEADER1, FontFamily.CLOCK )
         self.iconBtn = Button.ToggleBtn((Asset.recordStop, Asset.recordPlay))
         self.iconBtn.setFixedSize(QSize(Dimension.SMALLICONBTN,Dimension.SMALLICONBTN))
         self.iconBtn.setIconSize(QSize(Dimension.SMALLICONBTN, Dimension.SMALLICONBTN))

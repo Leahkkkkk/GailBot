@@ -9,7 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
-from view.style.Background import initSideBarBackground
+from view.widgets.Background import initSideBarBackground
 from util.Style import Dimension
 
 from PyQt6.QtWidgets import (

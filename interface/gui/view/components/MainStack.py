@@ -23,7 +23,7 @@ from view.pages import (
         RecordPage, 
         SystemSettingPage
 )
-from view.style.Background import (
+from view.widgets.Background import (
     initHomePageBackground, 
     initSubpageBackgorund,
     initPrimaryColorBackground)

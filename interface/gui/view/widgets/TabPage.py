@@ -8,7 +8,7 @@ Last Modified: Sunday, 23rd October 2022 10:40:25 am
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
-from PyQt6.QtWidgets import QWidget, QVBoxLayout
+from PyQt6.QtWidgets import QWidget
 from PyQt6.QtCore import pyqtSignal, QObject
 
 

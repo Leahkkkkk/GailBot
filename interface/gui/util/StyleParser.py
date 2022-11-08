@@ -21,13 +21,13 @@ class ColorData(DataclassFromDict):
     LOW_CONTRAST: str =  field_from_dict()
     LOW_CONTRAST2: str =  field_from_dict()
     OUTLINE: str =  field_from_dict()
-    GREYDARK: str =  field_from_dict()
     BORDER: str =  field_from_dict()
-    GREYEXTRALIGHT: str =  field_from_dict()
     MAIN_TEXT: str =  field_from_dict()
     MAIN_BACKRGOUND: str =  field_from_dict()
     SUB_BACKGROUND: str =  field_from_dict()
     WHITE: str =  field_from_dict()
+    GREYDARK: str =  field_from_dict()
+    GREYEXTRALIGHT: str =  field_from_dict()
     
     
 @dataclass 
@@ -61,8 +61,6 @@ class FontFamilyData(DataclassFromDict):
 class DimensionData(DataclassFromDict):
     WINMAXWIDTH : int = field_from_dict()
     WINMAXHEIGHT :int = field_from_dict()
-    WIN_MIN_WIDTH :int = field_from_dict()
-    WIN_MIN_HEIGHT :int = field_from_dict()
     BTNWIDTH: int = field_from_dict()
     BTNHEIGHT :int = field_from_dict()
     SBTNWIDTH :int = field_from_dict()
@@ -101,6 +99,8 @@ class DimensionData(DataclassFromDict):
     MEDIUM_SPACING : int = field_from_dict()
     LARGE_SPACING : int = field_from_dict()
     LARGE_ICON: int = field_from_dict()
+    WIN_MIN_WIDTH :int = field_from_dict()
+    WIN_MIN_HEIGHT :int = field_from_dict()
     
 
 @dataclass 

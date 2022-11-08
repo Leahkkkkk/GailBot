@@ -11,7 +11,7 @@ Modified By:  Siara Small  & Vivian Li
 import logging
 
 from util import Logger
-from view.style.styleValues import Dimension, Geometry
+from util.Style import Dimension
 from util.Text import WindowTitle
 
 from PyQt6.QtWidgets import (
@@ -20,7 +20,7 @@ from PyQt6.QtWidgets import (
     QLabel, 
     QPlainTextEdit
 )
-
+from PyQt6.QtCore import QSize
 class Console(QWidget):
     """ A console window that display all log messages """
     def __init__(self):
@@ -28,8 +28,7 @@ class Console(QWidget):
         self.LogBox = QPlainTextEdit()
         self.LogBox.setReadOnly(True)
         logging.getLogger().setLevel(logging.DEBUG)
-        self.resize(Dimension.CONSOLE)
-        self.setGeometry(Geometry.CONSOLE)
+        self.resize(QSize(Dimension.CONSOLEWIDTH, Dimension.CONSOLEHEIGHT))
 
         self.label = QLabel(WindowTitle.consoleWindow)
         layout = QVBoxLayout()

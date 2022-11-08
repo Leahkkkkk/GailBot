@@ -25,7 +25,7 @@ from view.widgets import (
     Button
 )
 from view.Text.LinkText import Links
-from view.style.Background import addLogo
+from view.widgets.Background import addLogo
 
 from PyQt6.QtWidgets import (
     QWidget, 

@@ -11,7 +11,7 @@ Modified By:  Siara Small  & Vivian Li
 from typing import Dict 
 
 from view.widgets import Label,TextForm
-from view.style.Background import initSecondaryColorBackground
+from view.widgets.Background import initSecondaryColorBackground
 from util.Style import (
     FontFamily, 
     FontSize, 

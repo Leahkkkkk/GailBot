@@ -10,7 +10,7 @@ Modified By:  Siara Small  & Vivian Li
 '''
 import shutil 
 
-from util.Style import Color, StyleSheet
+from util.Style import Color, StyleSheet, FontSize
 from view.widgets import (
     SideBar, 
     SettingForm, 
@@ -21,14 +21,14 @@ from util.StyleSource import StyleSource, StyleTable
 from util.Text import SystemSetPageText as Text 
 from util.Text import SystemSettingForm as Form
 from util.Text import About
-from view.style.styleValues import  FontSize
 from view.Text.LinkText import Links
 from view.widgets import MsgBox
 
 from PyQt6.QtWidgets import (
     QWidget, 
     QHBoxLayout,
-    QStackedWidget)
+    QStackedWidget,
+    QMessageBox)
 from PyQt6.QtCore import Qt, pyqtSignal, QObject
 
 class Signal(QObject):
@@ -101,7 +101,8 @@ class SystemSettingPage(QWidget):
 
     def confirmChangeSetting(self)->None:
         """ open a pop up box to confirm restarting the app and change the setting"""
-        MsgBox.ConfirmBox(Text.confirmChange, self.changeSetting)
+        MsgBox.ConfirmBox(
+            Text.confirmChange, self.changeSetting, QMessageBox.StandardButton.Reset)
         
         
     def changeSetting(self)->None:

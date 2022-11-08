@@ -8,16 +8,19 @@ Last Modified: Thursday, 6th October 2022 10:18:15 am
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
+from typing import List 
 from util.Logger import makeLogger
-from view.style.Background import initSecondaryColorBackground
-from util.Style import Color, StyleSheet
+from view.widgets.Background import initSecondaryColorBackground
 from PyQt6.QtWidgets import QMessageBox
-
 
 
 class ConfirmBox:
     """ create and display a Confirm box """
-    def __init__(self, msg: str, confirm: callable):
+    def __init__(
+        self, 
+        msg: str, 
+        confirm: callable, 
+        confirmButton: QMessageBox.standardButton = QMessageBox.StandardButton.Yes):
         """ A confirm box 
         
         Args:
@@ -28,8 +31,10 @@ class ConfirmBox:
         self.logger = makeLogger("Frontend")
         self.msgBox = QMessageBox(text=msg)
         self.msgBox.setIcon(QMessageBox.Icon.Warning)
-        self.msgBox.setStandardButtons(QMessageBox.StandardButton.Yes | 
-                                  QMessageBox.StandardButton.No)
+        
+       
+        self.msgBox.setStandardButtons(
+            confirmButton| QMessageBox.StandardButton.Cancel)
         self.msgBox.buttonClicked.connect(self._confirm)
         self.confirm = confirm 
         initSecondaryColorBackground(self.msgBox)
@@ -43,7 +48,8 @@ class ConfirmBox:
             button (QButton)
         """
         self.logger.info("confirm message box buttonc click")
-        if button.text() == "&No":
+        print(button.text())
+        if button.text() == "Cancel":
             return
         else:
             self.logger.info("confirmed") 

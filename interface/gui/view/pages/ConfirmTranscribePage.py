@@ -11,13 +11,13 @@ Modified By:  Siara Small  & Vivian Li
 from util.Style import (
     Color, 
     FontSize, 
-    FileTableDimension)
+    FileTableDimension,
+    FontFamily)
 from util.Text import ConfirmTranscribeText as Text
 from util.Text import FileTableHeader 
 from util.Logger import makeLogger
 from view.Signals import FileSignals
-from view.style.styleValues import FontFamily
-from view.style.Background import addLogo
+from view.widgets.Background import addLogo
 from view.widgets import ( 
     Label, 
     Button, 

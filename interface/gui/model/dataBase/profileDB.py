@@ -1,7 +1,7 @@
 from typing import Tuple
 
 from util.Logger import makeLogger
-from model.dummySettingData import dummySettingValues
+from model.SettingData import SettingValues
 from util.Error import ErrorMsg, DBExecption
 
 from PyQt6.QtCore import QObject, pyqtSignal 
@@ -20,8 +20,8 @@ class ProfileModel:
     def __init__(self) -> None:
         
         self.logger = makeLogger("Database")
-        self.data = dummySettingValues              #TODO: for testing delete 
-        self.profilekeys = list(dummySettingValues) #TODO: for testing delete
+        self.data = SettingValues              #TODO: for testing delete 
+        self.profilekeys = list(SettingValues) #TODO: for testing delete
         self.signals = Signals()
     
     def post(self, profile: Tuple[str, dict]):

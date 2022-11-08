@@ -10,12 +10,11 @@ Modified By:  Siara Small  & Vivian Li
 '''
 from typing import Dict 
 
-from view.style.Background import initPrimaryColorBackground
+from view.widgets.Background import initPrimaryColorBackground
 from view.widgets import ToggleView, TextForm, Button
 from util.Text import OutputFormatForm, OutputFormatFormText
 from util.Style import Color
 from util.Logger import makeLogger
-
 
 from PyQt6.QtWidgets import (
     QWidget, 
@@ -23,7 +22,6 @@ from PyQt6.QtWidgets import (
     QVBoxLayout, 
     QComboBox,
 )
-from PyQt6.QtCore import Qt
 
 class OutPutFormat(QWidget):
     """class for output form"""

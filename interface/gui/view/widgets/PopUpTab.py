@@ -1,12 +1,11 @@
 from typing import Dict
 
-from util.Style import Color, Dimension
+from util.Style import Color, Dimension, buttonStyle
 from util.Text import PopUpText as Text
 
 from view.widgets import Button 
 from view.widgets.TabPage import TabPage
-from view.style.widgetStyleSheet import buttonStyle
-from view.style.Background import initSecondaryColorBackground
+from view.widgets.Background import initSecondaryColorBackground
 
 from PyQt6.QtWidgets import (
     QTabWidget, 
@@ -18,7 +17,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import QObject, pyqtSignal, QSize, Qt
 
 """ default tab size """
-TabSize = QSize(Dimension.DEFAULTTABWIDTH,Dimension.DEFAULTTABHEIGHT)
+TabSize = QSize(Dimension.DEFAULTTABWIDTH, Dimension.DEFAULTTABHEIGHT)
 
 class Signals(QObject):
     """ a close tab signal """

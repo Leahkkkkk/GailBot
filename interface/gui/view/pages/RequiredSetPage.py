@@ -8,11 +8,10 @@ Last Modified: Thursday, 6th October 2022 11:08:43 am
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
-
-from util.Style import FontSize
+ 
+from util.Style import FontSize,FontFamily
 from util.Text import ProfilePageText as Text
 from view.widgets import  Label
-from view.style.styleValues import FontFamily
 from view.components import RequiredSet
 
 from PyQt6.QtWidgets import (

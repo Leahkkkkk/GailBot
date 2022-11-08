@@ -22,7 +22,7 @@ from util.Style import (
     FontSize, 
     Dimension
 )
-from view.style.Background import initSecondaryColorBackground
+from view.widgets.Background import initSecondaryColorBackground
 
 from PyQt6.QtWidgets import (
     QWidget, 

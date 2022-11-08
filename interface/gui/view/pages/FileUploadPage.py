@@ -22,17 +22,17 @@ from util.Style import (
     StyleSheet,
     Color, 
     FontSize,
-    Dimension
+    Dimension,
+    FontFamily
 )
 from util.Text import FileTableHeader
 from util.Text import FileUploadPageText as Text 
 from util.Style import FontSize as FS
+from util.Style import buttonStyle
 from view.Signals import FileSignals
 from view.widgets import Label, Button, FileTable
-from view.style.widgetStyleSheet import buttonStyle
-from view.style.Background import addLogo
+from view.widgets.Background import addLogo
 from view.widgets import MsgBox
-from view.style.styleValues import FontFamily
 
 from PyQt6.QtWidgets import (
     QWidget, 

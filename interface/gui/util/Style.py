@@ -9,7 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
-
+from dataclasses import dataclass
 import toml
 from util import StyleParser
 from util.StyleSource import StyleSource
@@ -31,3 +31,18 @@ FileTableDimension = StyleParser.FileTableDimension.from_dict(
 FontFamily = StyleParser.FontFamilyData.from_dict(fontfamily["fontFamily"])
 FontSource = StyleParser.FontSource.from_dict(fontfamily["fontSource"])
 
+
+@dataclass
+class buttonStyle:
+    BASE = "background-color:#fff;\
+            border:none;"
+    
+    ButtonActive = f"background-color:{Color.SECONDARY_BUTTON};\
+                    color:white;\
+                    border-radius:5;\
+                    font-size:{FontSize.BTN}"
+                    
+    ButtonInactive = f"background-color:{Color.LOW_CONTRAST};\
+                    color:white;\
+                    border-radius:5;\
+                    font-size:{FontSize.BTN}"

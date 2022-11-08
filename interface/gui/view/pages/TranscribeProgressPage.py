@@ -18,10 +18,10 @@ from util.Style import (
 )
 from util.Text import TranscribeProgressText as Text
 from util.Text import FileTableHeader
-from util.Style import Dimension, FileTableDimension
+from util.Style import Dimension, FileTableDimension, FontFamily
 from util.Logger import makeLogger
 from util import Path
-from view.style.Background import addLogo
+from view.widgets.Background import addLogo
 from view.Signals import FileSignals
 from view.widgets import MsgBox
 from view.widgets import (
@@ -29,9 +29,7 @@ from view.widgets import (
     Button,
     FileTable)
 from view.widgets import Button
-from view.style.styleValues import (
-    FontFamily
-)
+
 
 from PyQt6.QtWidgets import QLabel, QVBoxLayout, QWidget
 from PyQt6.QtGui import QMovie

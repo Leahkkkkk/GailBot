@@ -9,12 +9,11 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
-from util.Style import FontSize, Dimension
+from util.Style import FontSize, Dimension, FontFamily
 from util.Text import ProfilePageText as Text
 from util.Text import ProfileSettingForm as Form
 from view.widgets import Label 
-from view.style.styleValues import FontFamily
-from view.style.Background import initSecondaryColorBackground
+from view.widgets.Background import initSecondaryColorBackground
 
 from PyQt6.QtWidgets import (
     QWidget, 

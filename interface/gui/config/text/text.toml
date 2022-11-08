@@ -89,7 +89,7 @@ header = "System Setting"
 caption = "These settings are applied for system setting"
 cancelBtn = "Cancel"
 saveBtn = "Save and Exit"
-confirmChange = "This change will relaunch GailBot and all uploaded files will be lost. Are you sure you want to relaunch?"
+confirmChange = "This change will relaunch GailBot and all uploaded files will be lost. Do you want to relaunch and change system settings?"
 changeError = "Change system setting failed"
 
 [ConfirmTranscriptionPageText]

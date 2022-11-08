@@ -18,7 +18,6 @@ from PyQt6.QtCore import pyqtSignal, QObject, QThreadPool, pyqtSlot
 
 class Signal(QObject):
     """ a signal object that  """
-    
     start = pyqtSignal()
     finish = pyqtSignal()
     fileTranscribed = pyqtSignal(str)
@@ -56,7 +55,6 @@ class TranscribeController(QObject):
         # view handler to show transcribtion status
         self.signal.progress.connect(view.showStatusMsg)
         self.signal.progress.connect(view.showFileProgress)
-        
         
         # view handler for transcription fialed 
         self.signal.error.connect(view.TranscribeFailed)

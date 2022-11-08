@@ -24,7 +24,7 @@ from view.widgets.MsgBox import WarnBox
 from view.components import OutputFormatForm, SettingEngineForm
 from view.pages.PluginPage import PluginPage
 from view.pages.PostSetPage import PostSetPage
-from view.style.Background import initPrimaryColorBackground
+from view.widgets.Background import initPrimaryColorBackground
 
 from PyQt6.QtWidgets import  QVBoxLayout
 from PyQt6.QtCore import (

@@ -8,7 +8,6 @@ Last Modified: Thursday, 6th October 2022 10:17:30 am
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
-from view.style.styleValues import Geometry
 from util.Text import MenuBarText
 
 from PyQt6.QtWidgets import QMenuBar, QMenu
@@ -19,7 +18,6 @@ class ManuBar(QMenuBar):
     """ Gui menu bar, include open and close console option """
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.setGeometry(Geometry.MENUBAR)
         self.Console = QMenu(MenuBarText.console)
         self.OpenConsole = QtGui.QAction(MenuBarText.open)
         self.Console.addAction(self.OpenConsole)

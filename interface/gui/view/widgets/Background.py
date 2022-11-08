@@ -41,6 +41,11 @@ def _initBackground(widget:QWidget, color=Color.MAIN_BACKRGOUND):
 
 
 def _initImgBackground(widget:QWidget, background: str = Asset.homeBackground):
+    """  initialize the image background for a widgte
+    Args:
+    widget (QWidget): a Qwidget object 
+    background (str): the background image name
+    """
     widget.setAutoFillBackground(True)
     palette = widget.palette()
     brush = QBrush()
@@ -53,22 +58,28 @@ def _initImgBackground(widget:QWidget, background: str = Asset.homeBackground):
     widget.setPalette(palette)
     
 def initHomePageBackground(widget:QWidget):
+    """initialize the home page background with image"""
     _initImgBackground(widget, Asset.homeBackground)
 
 def initSubpageBackgorund(widget:QWidget):
+    """ initialize the sub pages background with image"""
     _initImgBackground(widget, Asset.subPageBackground)
 
 def initSideBarBackground(widget:QWidget):
+    """ initialize the side bar background with image"""
     _initImgBackground(widget, Asset.sideBarBackground)
     
 def initPrimaryColorBackground(widget:QWidget):
+    """ fill the widget with primary color background"""
     _initBackground(widget, Color.MAIN_BACKRGOUND)
 
 def initSecondaryColorBackground(widget:QWidget):
+    """ fill the widget with secondary color background"""
     _initBackground(widget, Color.SUB_BACKGROUND)
 
 
 def addLogo(layout: QVBoxLayout):
+    """ add the logo to the top left corner on the layout """
     logo = Image.Image(
         Asset.hilLabLogo, (Dimension.LOGO_WIDTH, Dimension.LOGO_HEIGHT))
     layout.addWidget(
