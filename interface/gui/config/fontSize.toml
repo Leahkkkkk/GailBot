@@ -1,0 +1,16 @@
+[fontSizes]
+BODY = "15px"
+TEXT_FIELD = "15px"
+SMALL="11px"
+LINK = "18px"
+HEADER1 = "40px" 
+HEADER2  = "30px"
+HEADER3  = "24px"
+TABLE_ROW = "30px"
+DESCRIPTION = "20px"
+INSTRUCTION_CAPTION = "20px"
+BTN = "15px" 
+SETTINGICON = "40px"
+
+
+

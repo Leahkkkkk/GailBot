@@ -99,9 +99,7 @@ class MainWindow(QMainWindow):
         """ handle event when user tries to cancel the thread """
         self.logger.info("")
         self.MainStack.gotoFileUploadPage()
-        # self.fileTableSignals.cancel.emit()
-    
-    
+
     def addFileToTables(self, file:dict):
         """ add file to file upload table """
         self.MainStack.addFileToTables(file)
@@ -119,6 +117,8 @@ class MainWindow(QMainWindow):
     """ private function """
     def _connectSignal(self):
         """ connect to signal """
+        self.MainStack.SystemSettingPage.signal.reset.connect(self.hide)
         self.MenuBar.OpenConsole.triggered.connect(lambda: self.Console.show())
         self.MenuBar.CloseConsole.triggered.connect(lambda: self.Console.hide())
         self.fileTableSignals.cancel.connect(self.confirmCancel)
+    

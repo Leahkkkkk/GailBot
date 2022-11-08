@@ -12,12 +12,14 @@ Modified By:  Siara Small  & Vivian Li
 
 import toml
 from util import StyleParser
+from util.StyleSource import StyleSource
 
-color = toml.load("config/color.toml")
+color = toml.load(StyleSource.CURRENT_COLOR)
+fontSize = toml.load(StyleSource.CURRENT_FONTSIZE)
 dimension = toml.load("config/dimension.toml")
 Color = StyleParser.ColorData.from_dict(color["colors"])
 FontSize = StyleParser.FontSizeData.from_dict(
-    dimension["fontSizes"])
+    fontSize["fontSizes"])
 Dimension = StyleParser.DimensionData.from_dict(
     dimension["dimension"])
 StyleSheet = StyleParser.StyleSheet.from_dict(

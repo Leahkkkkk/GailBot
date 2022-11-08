@@ -51,7 +51,7 @@ class SettingForm(QWidget):
 
     def setValue(self, values:dict):
         """ public function to set the values in the form  """
-        self.setForm.setValue(values)
+        self.setForm.setValues(values)
     
     def getValue(self) -> Dict[str, str]:
         """ public function to get the values from the form """

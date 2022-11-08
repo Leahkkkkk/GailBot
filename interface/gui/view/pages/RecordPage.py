@@ -23,7 +23,7 @@ from PyQt6.QtWidgets import (
     QHBoxLayout, 
     QProgressBar
 )
-from PyQt6.QtCore import Qt, QTimer
+from PyQt6.QtCore import Qt, QTimer, QSize
 
 center = Qt.AlignmentFlag.AlignHCenter
 
@@ -54,6 +54,7 @@ class RecordProgress(QWidget):
         """ initializes the widgets """
         self.timeDisplay = Label.Label(str(self.counter), FontSize.BODY)
         self.iconBtn = Button.ToggleBtn((Asset.recordStop, Asset.recordPlay))
+        self.iconBtn.setFixedSize(QSize(40,40))
         self.endBtn  = Button.ColoredBtn(Text.end, Color.ORANGE)
         self.recordBar = ProgressBar()
         self.recordBar.setMinimumWidth(Dimension.PROGRESSBARWIDTH)
@@ -66,7 +67,6 @@ class RecordProgress(QWidget):
         self.horizontalContainer = QWidget()
         self.horizontalContainer.setLayout(self.horizontalLayout)
         self.setLayout(self.verticalLayout)
-        addLogo(self.verticalLayout)
         self.horizontalLayout.addWidget(self.iconBtn, alignment=center)
         self.horizontalLayout.addWidget(self.recordBar, alignment=center)
         self.horizontalLayout.addWidget(self.endBtn, alignment=center)
@@ -77,8 +77,14 @@ class RecordProgress(QWidget):
     
     def _connectSignal(self):
         """ connects the button signal when clicked """
-        self.endBtn.clicked.connect(self.clearTimer)
+        self.endBtn.clicked.connect(self.endRecording)
         self.iconBtn.clicked.connect(self.recordSwitch)
+        
+    def endRecording(self):
+        """ handler for ending recording """
+        self.clearTimer()
+        self.iconBtn.resetBtn()
+        self.recording = False
         
     def recordSwitch(self):
         """ starts the timer if not currently recording or stops the timer if currently recording """
@@ -143,6 +149,7 @@ class RecordPage(QWidget):
         """ initializes the layout """
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
+        addLogo(self.layout)
         self.layout.addWidget(self.header, 
                               alignment=center)
         self.layout.addWidget(self.toggleSetting,

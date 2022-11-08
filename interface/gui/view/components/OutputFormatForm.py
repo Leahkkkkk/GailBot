@@ -1,5 +1,6 @@
 from typing import Dict 
 
+from view.style.Background import initPrimaryColorBackground
 from view.widgets import ToggleView, TextForm, Button
 from util.Text import OutputFormatForm, OutputFormatFormText
 from util.Style import Color
@@ -71,7 +72,8 @@ class HeaderForm(QWidget):
         self.numCombo = QComboBox(self)
         self.numCombo.addItems(["1", "2", "3"])
         self.layout.addWidget(self.numCombo)
-        self.corpusForm = TextForm.TextForm(data, Color.GREYLIGHT)
+        self.corpusForm = TextForm.TextForm(data)
+        initPrimaryColorBackground(self.corpusForm)
     
         for i in range(3):
             newLabel = QLabel(f"Speaker {i + 1} Gender")

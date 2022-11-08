@@ -11,7 +11,7 @@ Modified By:  Siara Small  & Vivian Li
 
 from typing import Dict
 
-from util.Style import Color, FontSize
+from util.Style import Color, FontSize, FontFamily
 from util.Text import CreateNewProfilePageText as Text 
 from util.Logger import makeLogger
 
@@ -24,7 +24,7 @@ from view.widgets.MsgBox import WarnBox
 from view.components import OutputFormatForm, SettingEngineForm
 from view.pages.PluginPage import PluginPage
 from view.pages.PostSetPage import PostSetPage
-from view.style.styleValues import FontFamily
+from view.style.Background import initPrimaryColorBackground
 
 from PyQt6.QtWidgets import  QVBoxLayout
 from PyQt6.QtCore import (
@@ -121,8 +121,8 @@ class BasicSetting(TabPage):
         """ initialize the layout """
         self.verticallayout = QVBoxLayout()
         self.setLayout(self.verticallayout)
-        self.verticallayout.addWidget(self.header, alignment=hcenter)
         self.verticallayout.addStretch()
+        self.verticallayout.addWidget(self.header, alignment=hcenter)
         self.verticallayout.addWidget(self.mainWidget, alignment=hcenter)
         self.confirmBtn = ColoredBtn(
             Text.cofirmBtn, 
@@ -237,6 +237,7 @@ class PluginSetting(TabPage):
         self.verticalLayout.addWidget(
             self.confirmBtn,
             alignment=Qt.AlignmentFlag.AlignRight)
+        initPrimaryColorBackground(self.mainForm.scrollContainer)
         
     def getData(self):
         """ gets current value of data """

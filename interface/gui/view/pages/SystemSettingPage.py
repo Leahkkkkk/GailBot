@@ -17,6 +17,7 @@ from view.widgets import (
     Label, 
     Button
 )
+from util.StyleSource import StyleSource, StyleTable
 from util.Text import SystemSetPageText as Text 
 from util.Text import SystemSettingForm as Form
 from util.Text import About
@@ -28,7 +29,10 @@ from PyQt6.QtWidgets import (
     QWidget, 
     QHBoxLayout,
     QStackedWidget)
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, pyqtSignal, QObject
+
+class Signal(QObject):
+    reset = pyqtSignal()
 
 bottom = Qt.AlignmentFlag.AlignBottom
 class SystemSettingPage(QWidget):
@@ -37,6 +41,7 @@ class SystemSettingPage(QWidget):
         """ initializes the page """
         super().__init__(*args, **kwargs)
         self.data = Form
+        self.signal = Signal()
         self._initWidget()
         self._initLayout()
         self._initStyle()
@@ -46,15 +51,15 @@ class SystemSettingPage(QWidget):
         self.sideBar = SideBar.SideBar()
        
         self.Mainstack = QStackedWidget()
-        self.SysSet = SettingForm.SettingForm(
+        self.SysSetForm = SettingForm.SettingForm(
             Text.header, self.data, Text.caption)
-        self.Mainstack.addWidget(self.SysSet)
+        self.Mainstack.addWidget(self.SysSetForm)
         self.GuideLink = Label.Label(Links.guideLink, FontSize.LINK, link=True)
         self.cancelBtn = Button.BorderBtn(
             Text.cancelBtn, Color.ORANGE)
         self.saveBtn = Button.ColoredBtn(
             Text.saveBtn, Color.GREEN)
-        self.saveBtn.clicked.connect(self.changeSetting)
+        self.saveBtn.clicked.connect(self.confirmChangeSetting)
         self.versionLabel = Label.Label(About.version, FontSize.SMALL)
         self.copyRightLabel = Label.Label(About.copyRight, FontSize.SMALL)
         
@@ -86,18 +91,30 @@ class SystemSettingPage(QWidget):
     def setValue(self, values:dict):
         """ public function to set the system setting form value 
         
-        Args: values:dict: TODO
+        Args: values: a dictionary that stores the system setting value
         """
-        self.SysSet.setValue(values)
+        self.SysSetForm.setValue(values)
     
     def getValue(self) -> dict:
         """ public function to get the system setting form value"""
-        return self.SysSet.getValue()
+        return self.SysSetForm.getValue()
 
+    def confirmChangeSetting(self)->None:
+        """ open a pop up box to confirm restarting the app and change the setting"""
+        MsgBox.ConfirmBox(Text.confirmChange, self.changeSetting)
+        
+        
     def changeSetting(self)->None:
+        """ rewrite the current setting file based on the user's choice"""
+        setting = self.SysSetForm.getValue()
+        
         try:
-            source = "config/colorDark.toml"
-            des = "config/currentColor.toml"
-            shutil.copy(source, des)
+            colorSource = StyleTable[setting["Color Mode combo"]]
+            colorDes    = StyleSource.CURRENT_COLOR
+            fontSource  = StyleTable[setting["Font Size combo"]]
+            fontDes     = StyleSource.CURRENT_FONTSIZE
+            shutil.copy(colorSource, colorDes)
+            shutil.copy(fontSource, fontDes)  
         except:
-            box = MsgBox.WarnBox("Change system setting failed")
+            MsgBox.WarnBox(Text.changeError)
+        self.signal.reset.emit()  

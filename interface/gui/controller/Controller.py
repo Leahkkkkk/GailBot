@@ -10,7 +10,6 @@ Modified By:  Siara Small  & Vivian Li
 '''
 from typing import Set
 
-
 from controller.TranscribeController import TranscribeController
 from controller.MVController import MVController
 from model import Model

@@ -90,6 +90,8 @@ header = "System Setting"
 caption = "These settings are applied for system setting"
 cancelBtn = "Cancel"
 saveBtn = "Save and Exit"
+confirmChange = "We will restart the app and all the uploaded file will be removed"
+changeError = "Change system setting failed"
 
 [ConfirmTranscriptionPageText]
 confirmLabel = "Confirm Files and Settings"

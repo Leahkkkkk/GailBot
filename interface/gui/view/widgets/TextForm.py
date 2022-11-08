@@ -32,7 +32,6 @@ from PyQt6.QtWidgets import (
 class TextForm(QWidget):
     def __init__(self, 
                  data: Dict[str, str], 
-                 backgroundColor: str = Color.SUB_BACKGROUND,
                  *args, **kwargs) -> None:
         """ Displays a form 
 
@@ -43,7 +42,6 @@ class TextForm(QWidget):
         """
         super().__init__(*args, **kwargs)
         self.data = data
-        self.backgroundColor = backgroundColor 
         self.inputDict = dict()
         self._initWidget()
         self._initStyle()

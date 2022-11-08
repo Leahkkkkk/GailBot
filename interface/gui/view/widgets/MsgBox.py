@@ -31,7 +31,7 @@ class ConfirmBox:
                                   QMessageBox.StandardButton.No)
         self.msgBox.buttonClicked.connect(self._confirm)
         self.confirm = confirm 
-        initSecondaryColorBackground(self.msgBox, color = Color.SUB_BACKGROUND)
+        initSecondaryColorBackground(self.msgBox)
         self.msgBox.exec()
         
     

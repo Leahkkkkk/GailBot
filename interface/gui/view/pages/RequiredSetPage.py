@@ -22,6 +22,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt
 
 center = Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignHCenter
+
 class RequiredSetPage(QWidget):
     """ class for the required settings page """
     def __init__(self, *args, **kwargs) -> None:
@@ -29,11 +30,7 @@ class RequiredSetPage(QWidget):
         super().__init__(*args, **kwargs)
         self._initWidget()
         self._initLayout()
-    
-    def submitForm(self):
-        """ submits setting form """
-        self.form.submitForm()
-    
+
     def setValue(self, data:dict):
         """ sets the value of data
         Args: data:dict: dictionary that is passed in to be updated

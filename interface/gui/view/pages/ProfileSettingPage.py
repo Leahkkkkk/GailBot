@@ -146,7 +146,6 @@ class ProfileSettingPage(QWidget):
         self.postSetBtn.clicked.connect(self._activatePostSet)
         self.requiredSetBtn.clicked.connect(self._activeRequiredSet)
         self.pluginBtn.clicked.connect(self._activatePlugin)
-        self.saveBtn.clicked.connect(self.RequiredSetPage.submitForm)
         self.selectSettings.currentTextChanged.connect(self._getProfile)
         self.newProfileBtn.clicked.connect(self.createNewSetting)
         self.saveBtn.clicked.connect(self.updateProfile)

@@ -18,9 +18,10 @@ from util.Logger import makeLogger
 from view.Signals import FileSignals
 from view.style.styleValues import FontFamily
 from view.style.Background import addLogo
-from view.widgets import ( Label, 
-                           Button, 
-                           FileTable) 
+from view.widgets import ( 
+    Label, 
+    Button, 
+    FileTable) 
 
 from PyQt6.QtWidgets import (
     QWidget, 

@@ -40,21 +40,6 @@ SMALL_SPACING = 5
 MEDIUM_SPACING = 20 
 LARGE_SPACING = 30 
 
-
-[fontSizes]
-BODY = "13px"
-TEXT_FIELD = "12px"
-SMALL="11px"
-LINK = "15px"
-HEADER1 = "32px" 
-HEADER2  = "24px"
-HEADER3  = "18px"
-TABLE_ROW = "13px"
-DESCRIPTION = "12px"
-INSTRUCTION_CAPTION = "14px"
-BTN = "14px" 
-SETTINGICON = "40px"
-
 [fontFamily]
 MAIN       = "Raleway"
 OTHER      = "Helvetica"

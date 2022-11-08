@@ -31,8 +31,6 @@ class Background(QBrush):
         self.setStyle(Qt.BrushStyle.SolidPattern) 
 
 
-
-
 def _initBackground(widget:QWidget, color=Color.MAIN_BACKRGOUND):
     """ make the widget background as white """
     widget.setAutoFillBackground(True)

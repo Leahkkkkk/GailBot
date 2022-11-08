@@ -150,6 +150,7 @@ class ToggleBtn(QPushButton):
         self.update()
         self.show()
 
+    
     def _changeSymbol(self):
         """ changes the button symbol """
         if self.state:
@@ -157,6 +158,10 @@ class ToggleBtn(QPushButton):
         else:
             self.setIcon(self.rightIcon)
         self.state = not self.state
+    
+    def resetBtn(self):
+        self.setIcon(self.rightIcon)
+        self.state = True
 
     
 
@@ -276,6 +281,7 @@ class dropDownButton(QWidget):
 
     
     def _toggle(self):
+        """ change the state and the sign of the button """
         if self.hideView == True:
             self.hideView = False
             self.buttonList.show()

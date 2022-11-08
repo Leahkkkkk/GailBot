@@ -25,6 +25,7 @@ from view.widgets import (
     Button
 )
 from view.Text.LinkText import Links
+from view.style.Background import addLogo
 
 from PyQt6.QtWidgets import (
     QWidget, 
@@ -66,6 +67,7 @@ class WelcomePage(QWidget):
         """ vertical layout """
         self.verticalLayout = QVBoxLayout()
         self.setLayout(self.verticalLayout)
+        addLogo(self.verticalLayout)
         self.verticalLayout.addStretch()
         self.verticalLayout.addWidget(self.WelcomeText)
         self.verticalLayout.addWidget(self.CaptionText, 
