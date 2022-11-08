@@ -1,5 +1,3 @@
 [about]
-"version" = "version 0.0.1"
-
-[workdirectory]
-"temp" = "/temp"
+version = "version 0.0.1"
+APP_TITTLE = "GailBot"

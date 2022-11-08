@@ -1,6 +1,8 @@
 [dimension]
 WINMAXWIDTH = 1100
 WINMAXHEIGHT = 900
+WIN_MIN_WIDTH = 980
+WIN_MIN_HEIGHT = 720
 BTNWIDTH = 150
 BTNHEIGHT = 40
 SBTNWIDTH = 100
@@ -43,11 +45,12 @@ LARGE_SPACING = 30
 [fontFamily]
 MAIN       = "Raleway"
 OTHER      = "Helvetica"
+CLOCK      = "Digital"
 
 [filetable.dimension]
 fileUploadPage = [0.07,0.07,0.2,0.15,0.15,0.08,0.08,0.2]
 confirmPage    = [0.1,0.35,0.25,0.13,0.17]
 transcribePage = [0.2, 0.55, 0.25]
-successPage    =  [0.17, 0.35, 0.25, 0.23]
+successPage    = [0.17, 0.35, 0.25, 0.23]
 
 

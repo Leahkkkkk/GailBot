@@ -51,6 +51,8 @@ class Label(QLabel):
                            f"{others}")
         if font == FontFamily.MAIN:
             self.loadHeaderFont()
+        elif font == FontFamily.CLOCK:
+            self.loadClockFont()
         if link:
             self.setOpenExternalLinks(True)
         
@@ -62,6 +64,13 @@ class Label(QLabel):
         if id < 0 : logging.warn("Font cannot be loaded")
         Raleway =  QFontDatabase.applicationFontFamilies(id)
         self.setFont(QFont(Raleway[0], weight=800))
+    
+    def loadClockFont(self):
+        id = QFontDatabase.addApplicationFont(os.path.join (Path.getProjectRoot(),
+                                                            Asset.clockFont))
+        if id < 0 : logging.warn("Font cannot be loaded")
+        Cockfont =  QFontDatabase.applicationFontFamilies(id)
+        self.setFont(QFont(Cockfont[0], weight=600))
 
     def changeText(self, text):
         """ changes the current text

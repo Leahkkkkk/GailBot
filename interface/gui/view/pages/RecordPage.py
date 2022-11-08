@@ -9,6 +9,7 @@ from util.Style import (
 )
 from util.Text import RecordPageText as Text
 from util.Text import RecordForm
+from util.Style import Dimension, StyleSheet
 from view.style.Background import addLogo
 from view.widgets import (
     Button, 
@@ -52,9 +53,12 @@ class RecordProgress(QWidget):
         
     def _initWidget(self):
         """ initializes the widgets """
-        self.timeDisplay = Label.Label(str(self.counter), FontSize.BODY)
+        self.timeDisplay = Label.Label(
+            str(self.counter), FontSize.HEADER1,FontFamily.CLOCK )
         self.iconBtn = Button.ToggleBtn((Asset.recordStop, Asset.recordPlay))
-        self.iconBtn.setFixedSize(QSize(40,40))
+        self.iconBtn.setFixedSize(QSize(Dimension.SMALLICONBTN,Dimension.SMALLICONBTN))
+        self.iconBtn.setIconSize(QSize(Dimension.SMALLICONBTN, Dimension.SMALLICONBTN))
+        self.iconBtn.setStyleSheet(StyleSheet.iconBtn)
         self.endBtn  = Button.ColoredBtn(Text.end, Color.ORANGE)
         self.recordBar = ProgressBar()
         self.recordBar.setMinimumWidth(Dimension.PROGRESSBARWIDTH)
@@ -155,12 +159,13 @@ class RecordPage(QWidget):
         self.layout.addWidget(self.toggleSetting,
                             alignment=center)
         self.layout.addStretch()
+        self.toggleSetting.setContentsMargins(0,0,0, Dimension.LARGE_SPACING)
         self.layout.addWidget(self.recordInprogress)
         self.layout.addWidget(self.startRecordBtn,
                               alignment=center)
         self.layout.addWidget(self.cancelBtn,
                               alignment=center)
-        self.layout.addStretch()
+
     
     def _connectSignal(self):
         """ connects signals upon button clicks """

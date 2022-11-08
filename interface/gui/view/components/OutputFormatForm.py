@@ -4,6 +4,7 @@ from view.style.Background import initPrimaryColorBackground
 from view.widgets import ToggleView, TextForm, Button
 from util.Text import OutputFormatForm, OutputFormatFormText
 from util.Style import Color
+from util.Logger import makeLogger
 
 
 from PyQt6.QtWidgets import (
@@ -18,6 +19,7 @@ class OutPutFormat(QWidget):
     """class for output form"""
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
+        self.logger = makeLogger("F")
         self.layout = QVBoxLayout(self)
         self.header1 = QLabel(OutputFormatFormText.header)
         self.layout.addWidget(self.header1)

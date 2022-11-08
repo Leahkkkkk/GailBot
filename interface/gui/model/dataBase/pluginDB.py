@@ -1,5 +1,6 @@
 from typing import TypedDict, Tuple
-from model.dummySettingData import dummySettingForms
+from util import GailBotData
+
 from PyQt6.QtCore import QObject, pyqtSignal
 
 KEYERROR = "Plugin key not found"
@@ -15,7 +16,7 @@ class Signals(QObject):
     
 class PluginModel:
     def __init__(self) -> None:
-        self.data = dummySettingForms["Plugins"]
+        self.data = dict()
         self.signals = Signals()
     
     def post(self, plugin: Tuple[str, str]) -> None: 

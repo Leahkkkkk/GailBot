@@ -36,8 +36,6 @@ from PyQt6.QtWidgets import (
 from PyQt6 import QtCore
 from PyQt6.QtCore import Qt
 
-
-
 class WelcomePage(QWidget):
     """ class representing the welcome page """
     def __init__(self, *args, **kwargs) -> None:

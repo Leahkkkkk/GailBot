@@ -9,11 +9,11 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
-
 from dataclasses import dataclass
 
 @dataclass
 class ErrorMsg:
+    """ error messages """
     KEYERROR = "File key not found"
     DUPLICATEKEY = "Duplicate key"
     POSTERROR = "Fail to add to database"

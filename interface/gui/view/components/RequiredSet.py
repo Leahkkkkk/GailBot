@@ -47,7 +47,7 @@ class RequiredSet(QWidget):
                                                profile values
         """
         self.engineForm.setValue(data["Engine"])
-        # self.outPutForm.setValue(data["Output Form Data"])
+        self.outPutForm.setValue(data["Output Form Data"])
     
     def getValue(self) -> dict:
         """ a plublic function that get the file value

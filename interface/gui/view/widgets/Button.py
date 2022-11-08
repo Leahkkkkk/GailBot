@@ -131,7 +131,7 @@ class ToggleBtn(QPushButton):
         self, 
         label: tuple = (Asset.rightImg, Asset.downImg), 
         text: str = "", 
-        state:bool = False, 
+        state: bool = False, 
         *args, 
         **kwargs):
         super().__init__(*args, **kwargs)
@@ -160,6 +160,7 @@ class ToggleBtn(QPushButton):
         self.state = not self.state
     
     def resetBtn(self):
+        """ reset teh button's state to initial state"""
         self.setIcon(self.rightIcon)
         self.state = True
 
@@ -194,15 +195,16 @@ class onOffButton(QWidget):
             self.onOffBtn = QPushButton(Text.on)
         else:
             self.onOffBtn = QPushButton(Text.off)
-        self.onOffBtn.setMinimumSize(35, 25)
-        self.onOffBtn.setMaximumSize(40, 30)
+        self.onOffBtn.setMaximumSize(
+            Dimension.ICONBTN, Dimension.ICONBTN)
     
     def _initLayout(self):
         """initialize layout for on-off select"""
         self.layout = QHBoxLayout(self)
         self.setLayout(self.layout)
         self.layout.addWidget(self.label)
-        self.layout.addWidget(self.onOffBtn, alignment=Qt.AlignmentFlag.AlignLeft) 
+        self.layout.addWidget(
+            self.onOffBtn, alignment=Qt.AlignmentFlag.AlignLeft) 
         
     def _connectSignal(self):
         """marked signal as clicked"""
@@ -250,6 +252,7 @@ class iconBtn(QPushButton):
       self.setObjectName(Text.icon)
       if label:
           self.setText(label)
+          
   
 """ NOTE: currently unused in the interface  """  
 class dropDownButton(QWidget):
@@ -291,7 +294,7 @@ class dropDownButton(QWidget):
             self.buttonList.hide()
             self.btn.setText(f"▶ {self.label}")
 
-""" NOTE: currently unused on the frontend interface """
+""" NOTE: currently unused on the frontend interface  """
 class buttonList(QWidget):
     def __init__(
         self, 

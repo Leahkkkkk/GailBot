@@ -1,4 +1,3 @@
-###### text values 
 [links]
 HILAB = "https://sites.tufts.edu/hilab"
 
@@ -164,9 +163,6 @@ open = "Open"
 close = "close"
 
 
-
-
-####widgets
 [btnText]
 on = "ON"
 off = "OFF"

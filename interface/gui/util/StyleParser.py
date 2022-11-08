@@ -57,11 +57,14 @@ class FontSizeData(DataclassFromDict):
 class FontFamilyData(DataclassFromDict):
     MAIN: str = field_from_dict()
     OTHER: str = field_from_dict()
+    CLOCK: str = field_from_dict()
     
 @dataclass 
 class DimensionData(DataclassFromDict):
     WINMAXWIDTH : int = field_from_dict()
     WINMAXHEIGHT :int = field_from_dict()
+    WIN_MIN_WIDTH :int = field_from_dict()
+    WIN_MIN_HEIGHT :int = field_from_dict()
     BTNWIDTH: int = field_from_dict()
     BTNHEIGHT :int = field_from_dict()
     SBTNWIDTH :int = field_from_dict()
@@ -107,6 +110,7 @@ class Asset(DataclassFromDict):
     arrowImg: str =  field_from_dict()
     trashImg: str  =  field_from_dict()
     headerFont : str  =  field_from_dict()
+    clockFont :  str  =  field_from_dict()
     sidebarColor: str  =  field_from_dict()
     tabSettings: str  =  field_from_dict()
     tabTrash: str  =  field_from_dict()
@@ -158,3 +162,4 @@ class StyleSheet(DataclassFromDict):
     checkbox:  str = field_from_dict()
     basic:  str = field_from_dict()
     linkStyle: str = field_from_dict()
+    iconBtn: str = field_from_dict()

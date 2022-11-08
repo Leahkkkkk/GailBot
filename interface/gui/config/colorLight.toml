@@ -19,8 +19,6 @@ MAIN_BACKRGOUND = "#FFFFFF"
 SUB_BACKGROUND  = "#F0F6F9"
 
 
-
-
 [styleSheet]
 basic               = "background-color: #fff; color: #000"
 goToMain            = "border:none; color:#3D4A80;"
@@ -43,11 +41,14 @@ warnText            = "color: orange"
 statusText          = "color: black"
 errorText           = "color: red"
 linkStyle           = "text-decoration: underline;"
+iconBtn             = "border:none; background-color:none;"
+
 
 [asset]
 arrowImg = "/light/arrow.png"
 trashImg = "/light/trash.png"
 headerFont =  "view/asset/Raleway.ttf"
+clockFont = "view/asset/digital.ttf"
 sidebarColor = "/light/settingBackground.png"
 tabSettings = "/light/settings.png"
 tabTrash = "/light/trash.png"

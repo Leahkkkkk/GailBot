@@ -64,6 +64,7 @@ class ConsoleFormatter(logging.Formatter):
         }
 
     def format(self, record):
+        """ return a formatted logging string  """
         log_fmt = self.FORMATS.get(record.levelno)
         formatter = logging.Formatter(log_fmt)
         return formatter.format(record)

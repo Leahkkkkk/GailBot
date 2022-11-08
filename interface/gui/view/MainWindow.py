@@ -17,9 +17,11 @@ from view.components import (
     MenuBar, 
     Console, 
 )
+
 from view import Signals
 from view.widgets import MsgBox
 from util.Style import Dimension
+from util.Text import About
 
 
 from PyQt6.QtCore import QSize, QObject, pyqtSignal
@@ -49,13 +51,13 @@ class MainWindow(QMainWindow):
         self.MenuBar = MenuBar.ManuBar()
         self.setMenuBar(self.MenuBar)
         self.Console = Console.Console()
-        self.logger = Logger.makeLogger("Frontend")
+        self.logger = Logger.makeLogger("F")
         
-        self.setWindowTitle("GailBot")
-        self.setMinimumSize(QSize(980, 700))
+        self.setWindowTitle(About.APP_TITTLE)
+        self.setMinimumSize(QSize(Dimension.WIN_MIN_WIDTH, Dimension.WIN_MIN_HEIGHT))
         self.setMaximumSize(
             QSize(Dimension.WINMAXWIDTH, Dimension.WINMAXHEIGHT))
-        self.resize(QSize(1100, 750))
+
     
         self.MainStack = MainStack.MainStack(
             settingkey,

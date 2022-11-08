@@ -53,7 +53,7 @@ HiLabSuite = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
 "2. plugin" = [ "plugin 1", "plugin 2",]
 
 ["profile form"."RequiredSetting".Engine.IBM."4.IBM specialised setting"]
-"IBM dummy setting" = [ "dummy setting1", "dummy setting2", "dummy setting3",]
+"IBM setting option" = [ "setting option 1", "setting option 2", "setting option 3",]
 
 ["profile form"."RequiredSetting".Engine.CMU."1.language model setting"]
 "1. language model" = [ "CMU language", "English", "Spanish",]
@@ -65,7 +65,7 @@ HiLabSuite = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
 "3. plugin" = [ "plugin 1", "plugin 2",]
 
 ["profile form"."RequiredSetting".Engine.CMU."3.CMU specialised setting"]
-"CMU dummy setting" = [ "dummy setting1", "dummy setting2", "dummy setting3",]
+"CMU setting option" = [ "setting option 1", "setting option 2", "setting option 3",]
 
 ["system setting form"."General Setting"]
 "Font Size combo" = [ "small", "medium", "large"]

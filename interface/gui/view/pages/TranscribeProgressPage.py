@@ -144,7 +144,7 @@ class TranscribeProgressPage(QWidget):
 
     def cancelGailBot(self):
         """ simulates the cancellation of gailbot- will rely on backend functionality when complete """
-        logger.info(Text.loggerMsg)
+        self.logger.info(Text.loggerMsg)
         self.signals.cancel.emit()
         
     def editFileProgess(self, progress: str):
@@ -153,5 +153,5 @@ class TranscribeProgressPage(QWidget):
         Args:
             progress (str): the message to show the file progress
         """
-        logger.info("change file progress status")
+        self.logger.info("change file progress status")
         self.fileTable.changeAllFileProgress(progress)

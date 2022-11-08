@@ -29,6 +29,7 @@ copyRightText = f"copyright {year} © HIL Lab"
 @dataclass
 class aboutData(DataclassFromDict):
     version: str = field_from_dict()
+    APP_TITTLE: str = field_from_dict()
     copyRight = copyRightText
     
 ####################### Text Data ########################################
@@ -173,10 +174,10 @@ class CreateNewProfileTextData(DataclassFromDict):
 @dataclass
 class ChooseFileTabTextData(DataclassFromDict):
     WindowTitle : str = field_from_dict()
-    TabTitle    : str = field_from_dict()
-    TabHeader1  : str = field_from_dict()
-    TabHeader2  : str = field_from_dict()
-    TabHeader3  : str = field_from_dict()
+    TabTitle : str = field_from_dict()
+    TabHeader1 : str = field_from_dict()
+    TabHeader2 : str = field_from_dict()
+    TabHeader3 : str = field_from_dict()
 
 @dataclass 
 class CreateNewProfileTabTextData(DataclassFromDict):
