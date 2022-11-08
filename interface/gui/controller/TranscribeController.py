@@ -15,9 +15,10 @@ from util.Logger import makeLogger
 from PyQt6.QtCore import pyqtSignal, QObject, QThreadPool, pyqtSlot
 
 
-logger = makeLogger ("Backend")
+
 class Signal(QObject):
     """ a signal object that  """
+    
     start = pyqtSignal()
     finish = pyqtSignal()
     fileTranscribed = pyqtSignal(str)
@@ -38,7 +39,8 @@ class TranscribeController(QObject):
             files (list): a list of files to be transcribed
         """
         super().__init__()
-        logger.info("initialize the transcribe controller")
+        self.logger = makeLogger ("B")
+        self.logger.info("initialize the transcribe controller")
         self.ThreadPool = ThreadPool
         self.signal = Signal()
         self.files = files
@@ -67,30 +69,30 @@ class TranscribeController(QObject):
 
     def runGailBot(self):
         """ function to run gailbot on a separate thread """
-        logger.info(self.ThreadPool.activeThreadCount())
+        self.logger.info(self.ThreadPool.activeThreadCount())
         if self.ThreadPool.activeThreadCount() > 0:
             self.signal.busy.emit()
-            logger.warn("threadpool busy")
+            self.logger.warn("threadpool busy")
         else:
             try:
                 self.ThreadPool.clear()
-                logger.info(self.files)
+                self.logger.info(self.files)
                 self.worker = Worker(self.files, self.signal)
                 self.signal.start.emit()
                 if not self.ThreadPool.tryStart(self.worker):
                     raise ThreadExeceptiom(ErrorMsg.RESOURCEERROR)
             except:
                 self.signal.error("failed to start transcribing")
-                logger.error("failed to start transcribe")
+                self.logger.error("failed to start transcribe")
     
 
     def cancelGailBot(self):
         """ handler for user's request to cancel the gailbot """
-        logger.info("receive request to cancel gailbot")
+        self.logger.info("receive request to cancel gailbot")
         try:
           if self.worker:
              self.worker.kill()
               
         except:
           self.signal.error.emit("failed to cancel gailbot")
-          logger.error("failed to cancel transcription")
+          self.logger.error("failed to cancel transcription")

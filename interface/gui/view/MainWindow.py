@@ -19,12 +19,15 @@ from view.components import (
 )
 from view import Signals
 from view.widgets import MsgBox
+from util.Style import Dimension
 
 
-from PyQt6.QtCore import QSize
+from PyQt6.QtCore import QSize, QObject, pyqtSignal
 from PyQt6.QtWidgets import QMainWindow
 
-
+class ViewSignals(QObject):
+    restart = pyqtSignal()
+    
 class MainWindow(QMainWindow):
     """ mainwindow  of the GUI App"""
     def __init__(
@@ -40,9 +43,18 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.fileTableSignals = Signals.FileSignals()
         self.profileSignals = Signals.ProfileSignals()
+        self.viewSignal = ViewSignals()
+        self.StatusBar = StatusBar.StatusBar()
+        self.setStatusBar(self.StatusBar)
+        self.MenuBar = MenuBar.ManuBar()
+        self.setMenuBar(self.MenuBar)
+        self.Console = Console.Console()
+        self.logger = Logger.makeLogger("Frontend")
+        
         self.setWindowTitle("GailBot")
         self.setMinimumSize(QSize(980, 700))
-        self.setMaximumSize(QSize(1200, 900))
+        self.setMaximumSize(
+            QSize(Dimension.WINMAXWIDTH, Dimension.WINMAXHEIGHT))
         self.resize(QSize(1100, 750))
     
         self.MainStack = MainStack.MainStack(
@@ -53,12 +65,6 @@ class MainWindow(QMainWindow):
         
         self.setCentralWidget(self.MainStack)
         self.setContentsMargins(0,0,0,0)
-        self.StatusBar = StatusBar.StatusBar()
-        self.setStatusBar(self.StatusBar)
-        self.MenuBar = MenuBar.ManuBar()
-        self.setMenuBar(self.MenuBar)
-        self.Console = Console.Console()
-        self.logger = Logger.makeLogger("Frontend")
         self._connectSignal()
 
     """ Functions provided to controller """
@@ -108,6 +114,10 @@ class MainWindow(QMainWindow):
         """ update file information on file upload file """
         self.MainStack.updateFile(data)
     
+    def getLogDisplayer(self):
+        """ return the widget that display the logging message """
+        return self.Console.LogBox
+    
     def changeFiletoTranscribed(self, key:str):
         """ change the file status to be transcribed 
             currently delete the file from the table
@@ -117,7 +127,8 @@ class MainWindow(QMainWindow):
     """ private function """
     def _connectSignal(self):
         """ connect to signal """
-        self.MainStack.SystemSettingPage.signal.reset.connect(self.hide)
+        self.MainStack.SystemSettingPage.signal.restart.connect(
+            lambda: self.viewSignal.restart.emit())
         self.MenuBar.OpenConsole.triggered.connect(lambda: self.Console.show())
         self.MenuBar.CloseConsole.triggered.connect(lambda: self.Console.hide())
         self.fileTableSignals.cancel.connect(self.confirmCancel)

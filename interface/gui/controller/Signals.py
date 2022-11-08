@@ -22,3 +22,4 @@ class Signal(QObject):
     progress = pyqtSignal(str)
     fileProgress = pyqtSignal(tuple)
     killed = pyqtSignal()
+    restart = pyqtSignal()

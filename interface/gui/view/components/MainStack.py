@@ -46,7 +46,7 @@ class MainStack(QStackedWidget):
         self.profilekeys = profilekeys
         self.fileSignal = fileTableSignal
         self.profileSignals = profileSignals
-        self.logger= makeLogger("Frontend")
+        self.logger= makeLogger("F")
         self.parent = parent 
         self.setMaximumSize(
             QSize(Dimension.WINMAXWIDTH, Dimension.WINMAXHEIGHT))
@@ -56,7 +56,7 @@ class MainStack(QStackedWidget):
         
     def _connectSignal(self):
         """ conecting the signal  """
-        self.logger.info("connect signal")
+        # self.logger.info("connect signal")
         self.FileUploadPage.fileTable.viewSignal.goSetting.connect(
             self.gotoSettingPage)
         self.ConfirmTranscribePage.fileTable.viewSignal.goSetting.connect(

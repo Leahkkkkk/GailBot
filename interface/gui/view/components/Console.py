@@ -27,9 +27,6 @@ class Console(QWidget):
         super().__init__()
         self.LogBox = QPlainTextEdit()
         self.LogBox.setReadOnly(True)
-        self.LogHandler = Logger.ConsoleHandler(self.LogBox)
-        
-        logging.getLogger().addHandler(self.LogHandler)
         logging.getLogger().setLevel(logging.DEBUG)
         self.resize(Dimension.CONSOLE)
         self.setGeometry(Geometry.CONSOLE)

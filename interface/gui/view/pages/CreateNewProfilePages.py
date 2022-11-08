@@ -33,7 +33,7 @@ from PyQt6.QtCore import (
     QObject
 )
 
-mylogger = makeLogger("Frontend")
+
 hcenter = Qt.AlignmentFlag.AlignHCenter
 vcenter = Qt.AlignmentFlag.AlignVCenter
 center = hcenter | vcenter
@@ -47,6 +47,7 @@ class ProfileName (TabPage):
     def __init__(self, *args, **kwargs) -> None:
         """" initializes page """
         super().__init__(*args, **kwargs)
+        self.logger = makeLogger("F")
         self._initWidget()
         self._initLayout()
     
@@ -148,7 +149,7 @@ class EngineSetting(TabPage):
     def __init__(self,  *args, **kwargs) -> None:
         """ initializes page """
         super().__init__(*args, **kwargs)
-
+        self.logger = makeLogger("F")
         self.verticallayout = QVBoxLayout()
         self.setLayout(self.verticallayout)
         self.header = Label(
@@ -208,6 +209,7 @@ class PostTranscribeSetting(TabPage):
     def __init__(self, *args, **kwargs) -> None:
         """ initializes tab """
         super().__init__(*args, **kwargs)
+        self.logger = makeLogger("F")
         self.mainForm = PostSetPage()
         self.confirmBtn = ColoredBtn(Text.cofirmBtn, Color.GREEN)
         self.confirmBtn.clicked.connect(lambda: self.signals.nextPage.emit())
@@ -220,7 +222,7 @@ class PostTranscribeSetting(TabPage):
         
     def getData(self):
         """ gets current value of data """
-        mylogger.info(self.mainForm.getValue())
+        self.logger.info(self.mainForm.getValue())
         return self.mainForm.getValue() 
             
 class PluginSetting(TabPage):

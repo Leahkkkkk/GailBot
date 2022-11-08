@@ -25,7 +25,7 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import QObject, pyqtSignal
 
-logger = makeLogger("F")
+
 class Signals(QObject):
     """ signal object for sending file data """
     postFile = pyqtSignal(dict)
@@ -39,6 +39,7 @@ class ChooseFileTab(QDialog):
             settings (List[str]): _description_
         """
         super().__init__(*args, **kwargs)
+        self.logger = makeLogger("F")
         self.signals = Signals()
         self.chooseFileTab = OpenFile()
         self.chooseSetTab = ChooseSet(settings)
@@ -52,7 +53,7 @@ class ChooseFileTab(QDialog):
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
         self.layout.addWidget(mainTab) 
-        logger.info("")
+        self.logger.info("")
     
     def _addFile(self) -> None: 
         """ emit a signal that contains the file data """
@@ -68,7 +69,7 @@ class ChooseFileTab(QDialog):
         for fileObj in fileList:
             fileData = {**fileObj, **profile, **outputPath, **status}
             self.signals.postFile.emit(fileData)
-            logger.info(fileData)
+            self.logger.info(fileData)
         
         self.close()
 

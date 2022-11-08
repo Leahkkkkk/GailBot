@@ -32,7 +32,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt, pyqtSignal, QObject
 
 class Signal(QObject):
-    reset = pyqtSignal()
+    restart = pyqtSignal()
 
 bottom = Qt.AlignmentFlag.AlignBottom
 class SystemSettingPage(QWidget):
@@ -117,4 +117,4 @@ class SystemSettingPage(QWidget):
             shutil.copy(fontSource, fontDes)  
         except:
             MsgBox.WarnBox(Text.changeError)
-        self.signal.reset.emit()  
+        self.signal.restart.emit() 

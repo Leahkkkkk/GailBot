@@ -53,7 +53,7 @@ from PyQt6 import QtCore
 
 center = QtCore.Qt.AlignmentFlag.AlignHCenter
 bottom = QtCore.Qt.AlignmentFlag.AlignBottom
-logger = makeLogger("frontend")
+
 
 class ProfileSettingPage(QWidget):
     """ class for settings page """
@@ -202,7 +202,7 @@ class ProfileSettingPage(QWidget):
         
     def loadProfile(self, profile:tuple):
         """ loads the profile data to be presented onto the table """
-        logger.info(profile)
+        self.logger.info(profile)
         key, data = profile 
         self.selectSettings.setCurrentText(key)
         self.PostSetPage.setValue(data["PostTranscribe"])

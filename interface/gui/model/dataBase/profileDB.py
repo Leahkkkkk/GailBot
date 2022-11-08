@@ -6,9 +6,6 @@ from util.Error import ErrorMsg, DBExecption
 
 from PyQt6.QtCore import QObject, pyqtSignal 
 
-logger = makeLogger("Database")
-
-
 class Signals(QObject):
     """ signals sent by profile model """
     send    = pyqtSignal(tuple)
@@ -21,6 +18,8 @@ class Signals(QObject):
 class ProfileModel:
     """ database for profile  """
     def __init__(self) -> None:
+        
+        self.logger = makeLogger("Database")
         self.data = dummySettingValues              #TODO: for testing delete 
         self.profilekeys = list(dummySettingValues) #TODO: for testing delete
         self.signals = Signals()
@@ -49,7 +48,7 @@ class ProfileModel:
         
         if profilekey not in self.data:
             self.signals.error.emit(ErrorMsg.KEYERROR)
-            logger.error(ErrorMsg.KEYERROR)
+            self.logger.error(ErrorMsg.KEYERROR)
         else:
             del self.data[profilekey]
     
@@ -63,12 +62,12 @@ class ProfileModel:
             key, data = profile
             if key not in self.data:
                 self.signals.error.emit(ErrorMsg.KEYERROR)
-                logger.error(KeyError)
+                self.logger.error(KeyError)
             else:
                 self.data[key] = data
         except:
             self.signals.error.emit(ErrorMsg.EDITERROR)
-            logger.error(ErrorMsg.EDITERROR)
+            self.logger.error(ErrorMsg.EDITERROR)
     
     
     def get(self, profilekey:str):
@@ -79,9 +78,9 @@ class ProfileModel:
         try:
             if profilekey not in self.data:
                 self.signals.error.emit(ErrorMsg.KEYERROR)
-                logger.error(KeyError)
+                self.logger.error(KeyError)
             else:
                 self.signals.send.emit((profilekey, self.data[profilekey]))
         except:
             self.signals.error(ErrorMsg.GETERROR)
-            logger.error(ErrorMsg.GETERROR)
+            self.logger.error(ErrorMsg.GETERROR)

@@ -21,7 +21,6 @@ from PyQt6.QtWidgets import (
     QLabel, 
 )
 
-myLogger = makeLogger("Frontend")
 
 class SettingEngineForm(QWidget):
     """ Generate a dynamic list of combobox
@@ -32,6 +31,7 @@ class SettingEngineForm(QWidget):
     """
     def __init__(self, showBasicSet:bool = True,*args, **kwargs) -> None:
         super().__init__( *args, **kwargs)
+        self.logger = makeLogger("Frontend")
         self.data = EngineSettingForm.Engine
         self.showBasicSet = showBasicSet
         self._initWidget()
@@ -48,7 +48,7 @@ class SettingEngineForm(QWidget):
         """ public function to set the engine form value """
         engineName = list(data)[0]
         print(engineName)
-        myLogger.info(engineName)
+        self.logger.info(engineName)
         self.mainCombo.setCurrentText(engineName)
         self.toggleList.setValue(data[engineName])
         

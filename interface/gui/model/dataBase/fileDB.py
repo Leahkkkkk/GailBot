@@ -7,7 +7,7 @@ from PyQt6.QtCore import QObject, pyqtSignal
 
 from dict_to_dataclass import DataclassFromDict, field_from_dict
 
-logger = makeLogger("Database")
+
 
 @dataclass 
 class FileObj(DataclassFromDict):
@@ -48,7 +48,6 @@ class Signals(QObject):
 class FileModel:
     def __init__(self) -> None:
         """ file database """
-        logger.info("init file database")
         self.data : Dict[str, FileObj] = dict() 
         self.signals = Signals()
         self.currentKey = 1
@@ -57,8 +56,8 @@ class FileModel:
     ##########################  request handler ###########################
     def post(self, data : fileDict) -> None:
         """ add file to file database """
-        
-        logger.info("post file to database")
+        self.logger = makeLogger("Database")
+        self.logger.info("post file to database")
         key = str(self.currentKey)
         try:
             if key not in self.data:
@@ -68,10 +67,10 @@ class FileModel:
                 self.currentKey += 1
             else:
                 self.signals.error.emit(ErrorMsg.DUPLICATEKEY)
-                logger.error(ErrorMsg.DUPLICATEKEY)
+                self.logger.error(ErrorMsg.DUPLICATEKEY)
         except:
             self.signals.error.emit(ErrorMsg.POSTERROR)
-            logger.error(ErrorMsg.POSTERROR)
+            self.logger.error(ErrorMsg.POSTERROR)
     
     
     def delete(self, key: str):
@@ -80,7 +79,7 @@ class FileModel:
             key (str): the file key of the file to be deleted 
         """
         
-        logger.info("delete file from database")
+        self.logger.info("delete file from database")
         try:
             if key in self.data:
                 del self.data[key]
@@ -90,10 +89,10 @@ class FileModel:
                     raise DBExecption(ErrorMsg.DELETEEROR)
             else:
                 self.signals.error.emit(ErrorMsg.KEYERROR)
-                logger.error(ErrorMsg.KEYERROR)
+                self.logger.error(ErrorMsg.KEYERROR)
         except DBExecption as err:
             self.signals.error.emit(err)
-            logger.error(err)
+            self.logger.error(err)
             
             
     def edit(self, file: Tuple[str,fileDict]) -> None:
@@ -101,11 +100,11 @@ class FileModel:
         Args:
             file Tuple[key,fileObject]: a tuple with file key and file object 
         """
-        logger.info("edit file in the database")
+        self.logger.info("edit file in the database")
         key, newfile  = file
         try:
             if key not in self.data:
-                logger.error(ErrorMsg.KEYERROR)
+                self.logger.error(ErrorMsg.KEYERROR)
                 self.signals.error.emit(ErrorMsg.KEYERROR)
             else:
                 self.data[key] = newfile
@@ -118,17 +117,17 @@ class FileModel:
         Args:
             data (Tuple[key, new status]): _description_
         """
-        logger.info("edit the file status in the database")
+        self.logger.info("edit the file status in the database")
         key, status = data
         try:
             if key not in self.data:
                 self.signals.error.emit(ErrorMsg.KEYERROR)
-                logger.error(ErrorMsg.KEYERROR)
+                self.logger.error(ErrorMsg.KEYERROR)
             else:
                 self.data[key].Status = status
         except:
             self.signals.error.emit(ErrorMsg.EDITERROR)
-            logger.error(ErrorMsg.EDITERROR)
+            self.logger.error(ErrorMsg.EDITERROR)
             
     
     def changeFiletoTranscribed(self, key: str):
@@ -141,32 +140,32 @@ class FileModel:
         Args:
             data (Tuple[key, new profile]): _description_
         """
-        logger.info("request to edit file profile in the database")
+        self.logger.info("request to edit file profile in the database")
         key, profile = data
         try:
             if key not in self.data:
                 self.signals.error.emit(ErrorMsg.KEYERROR)
-                logger.error(ErrorMsg.KEYERROR)
+                self.logger.error(ErrorMsg.KEYERROR)
             else:
                 self.data[key].Profile = profile
                 self.updateFileResponse(key, "Profile", profile)
         except:
             self.signals.error.emit(ErrorMsg.EDITERROR)
-            logger.error(ErrorMsg.EDITERROR)
+            self.logger.error(ErrorMsg.EDITERROR)
             
     def updateFileProgress(self, data):
-        logger.info("request to change file progress in the database")
+        self.logger.info("request to change file progress in the database")
         key, progress = data
         try:
             if key not in self.data:
                 self.signals.error.emit(ErrorMsg.KEYERROR)
-                logger.error(ErrorMsg.KEYERROR)
+                self.logger.error(ErrorMsg.KEYERROR)
             else:
                 self.data[key].Progress = progress
                 self.updateFileResponse(key, "Progress", progress)
         except:
             self.signals.error.emit(ErrorMsg.EDITERROR)
-            logger.error(ErrorMsg.EDITERROR)
+            self.logger.error(ErrorMsg.EDITERROR)
         
 
     ##################### response emitter ############################# 
@@ -179,12 +178,12 @@ class FileModel:
             field (str): updated field 
             value (str): updated value
         """
-        logger.info("response to update file database content")
+        self.logger.info("response to update file database content")
         try:
             self.signals.fileUpdated.emit((key, field, value))
         except:
             self.signals.error.emit(ErrorMsg.EDITERROR)
-            logger.error(ErrorMsg.EDITERROR)
+            self.logger.error(ErrorMsg.EDITERROR)
     
     
     def requestProfile(self, key:str):
@@ -192,18 +191,18 @@ class FileModel:
         Args:
             key (str): _description_
         """
-        logger.info("request file profile setting from database")  
+        self.logger.info("request file profile setting from database")  
         try:
             if key not in self.data:
                 self.signals.error.emit(ErrorMsg.KEYERROR)
-                logger.error(ErrorMsg.KEYERROR)
+                self.logger.error(ErrorMsg.KEYERROR)
             else:
                 profile = self.data[key].Profile
                 self.signals.profileRequest.emit(profile)
-                logger.info((key,profile))
+                self.logger.info((key,profile))
         except:
             self.signals.error.emit(ErrorMsg.GETERROR)
-            logger.error(ErrorMsg.GETERROR)
+            self.logger.error(ErrorMsg.GETERROR)
             
  
     def get(self, filekey:str) -> None:
@@ -212,16 +211,16 @@ class FileModel:
         Args:
             filekey (str): 
         """
-        logger.info("get the file from the database")
+        self.logger.info("get the file from the database")
         try:
             if filekey not in self.data:
                 self.signals.error.emit(ErrorMsg.KEYERROR)
-                logger.error(ErrorMsg.KEYERROR)
+                self.logger.error(ErrorMsg.KEYERROR)
             else:
                 self.signals.send.emit(self.data[filekey])
         except:
             self.signals.error.emit(ErrorMsg.GETERROR)
-            logger.error(ErrorMsg.GETERROR)  
+            self.logger.error(ErrorMsg.GETERROR)  
             
               
     def getTranscribeData(self, key:str) -> Tuple:
@@ -233,9 +232,9 @@ class FileModel:
         Returns:
             Tuple: (filekey, fileobject)
         """
-        logger.info("get the file data that will be trancribed")
+        self.logger.info("get the file data that will be trancribed")
         if key not in self.data:
             self.signals.error.emit(ErrorMsg.GETERROR)
-            logger.info(ErrorMsg.GETERROR)
+            self.logger.info(ErrorMsg.GETERROR)
         else:
             return (key, self.data[key])

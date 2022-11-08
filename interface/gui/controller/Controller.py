@@ -9,6 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 from typing import Set
+import logging 
 
 from controller.TranscribeController import TranscribeController
 from controller.MVController import MVController
@@ -35,7 +36,7 @@ class Controller(QObject):
         # view 
         self.ViewObj = MainWindow.MainWindow(
             self.ModelObj.ProfileData.profilekeys)
-        
+    
         # connecting view and database
         self.MVController = MVController(
             self.ViewObj, 
@@ -46,16 +47,34 @@ class Controller(QObject):
         # only initialize when user make a transcribe request 
         self.transcribeController = None
         self.signal = Signal()
-        self.logger = Logger.makeLogger("Backend")
+       
+    
+    def _initLogger(self):
+        """ initialize the loggier """
+        logDisplay = self.ViewObj.getLogDisplayer()
+        self.logHandler = Logger.ConsoleHandler(logDisplay)
+        logging.getLogger().addHandler(self.logHandler)
+        logging.getLogger().setLevel(logging.DEBUG)
+        self.logger = Logger.makeLogger("B")
+        self.logger.info("Initialize the controller")
         
  
     def run(self):
         """ Public function that run the GUI app """
+        self._initLogger()
+        self.handleViewSignal()
         self.ViewObj.show()
         self.MVController.exec()
         self.handleTanscribeSignal()
     
+    def handleViewSignal(self):
+        """ handling signal to change the interface content from view object  """
+        self.ViewObj.viewSignal.restart.connect( self.restart
+        )
         
+    def restart(self):
+        self.signal.restart.emit()
+        logging.getLogger().removeHandler(self.logHandler)
     ###################   gailbot  handler #############################   
     def handleTanscribeSignal(self):
         """ handle signal from View that requests to transcrib the file"""
@@ -78,7 +97,7 @@ class Controller(QObject):
             fileData = self.ModelObj.FileData.getTranscribeData(key)
             transcribeList.append(fileData)
             
-        # run Gailbot 
+        # run Gailbot re
         self._runGailBot(transcribeList)
         
     def _runGailBot(self, files):

@@ -42,7 +42,7 @@ top = Qt.AlignmentFlag.AlignTop
 center = Qt.AlignmentFlag.AlignHCenter
 
 
-logger = makeLogger("Frontend")
+
 
 class TranscribeProgressPage(QWidget):
     """ class for transcription in progress page """
@@ -54,6 +54,7 @@ class TranscribeProgressPage(QWidget):
         """ initializes class """
         super().__init__(*args, **kwargs)
         self.signals = signals
+        self.logger = makeLogger("F")
         self._initWidget()
         self._initstyle()
         self._initLayout()

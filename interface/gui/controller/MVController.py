@@ -15,7 +15,7 @@ from model.dataBase.fileDB import FileModel
 from model.dataBase.profileDB import ProfileModel
 from model.dataBase.pluginDB import PluginModel
 
-logger = makeLogger("Backend")
+
 
 class MVController:
     def __init__(
@@ -33,6 +33,7 @@ class MVController:
             profileDB (ProfileModel): profile database
             pluginDB (PluginModel): plugin database
         """
+        self.logger = makeLogger("Backend")
         self.view = view 
         self.fileDB = fileDB
         self.profileDB = profileDB
@@ -51,7 +52,7 @@ class MVController:
         """ connect the signal from the file database to view
             change the presentation of data on the view
         """
-        logger.info("")
+        self.logger.info("")
         dbSignal = self.fileDB.signals
         view = self.view
         # connect database response to view to display change
@@ -65,7 +66,7 @@ class MVController:
         """ connect the signal from the view to file database  
             store, delete or edit the database based on the view's request
         """
-        logger.info("initailize model&view connection")
+        self.logger.info("initailize model&view connection")
         viewSignal = self.view.fileTableSignals
         db = self.fileDB
         # handle view's request to post new file
@@ -81,7 +82,7 @@ class MVController:
         """ connect the signal from the view to plugin database  
             store, delete or edit the database based on the view's request
         """
-        logger.info("initailize model&view connection")
+        self.logger.info("initailize model&view connection")
         viewSignal = self.view.profileSignals
         # handle view's request to load new plugin
         viewSignal.addPlugin.connect(self.pluginDB.post)
@@ -90,7 +91,7 @@ class MVController:
         """ connect the signal from the plugin database to view
             change the presentation of data on the view
         """
-        logger.info("initailize model&view connection")
+        self.logger.info("initailize model&view connection")
         dbSignal = self.pluginDB.signals
         view = self.view.MainStack.ProfileSettingPage
         # reflect the plugin database's changes on view
@@ -100,7 +101,7 @@ class MVController:
         """ connect the signal from the view to profile database  
             store, delete or edit the database based on the view's request
         """
-        logger.info("initailize model&view connection")
+        self.logger.info("initailize model&view connection")
         viewSignal = self.view.profileSignals
         db = self.profileDB
         # handle view's request to post new profile
@@ -114,7 +115,7 @@ class MVController:
         """ connect the signal from the profile database to view
             change the presentation of data on the view
         """
-        logger.info("initailize model&view connection")
+        self.logger.info("initailize model&view connection")
         dbSignal = self.profileDB.signals
         profileView = self.view.MainStack.ProfileSettingPage
         fileView = self.view.MainStack.FileUploadPage.fileTable

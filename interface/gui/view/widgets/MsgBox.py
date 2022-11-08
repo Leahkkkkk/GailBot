@@ -14,7 +14,7 @@ from util.Style import Color, StyleSheet
 from PyQt6.QtWidgets import QMessageBox
 
 
-loggger = makeLogger("Frontend")
+
 class ConfirmBox:
     """ create and display a Confirm box """
     def __init__(self, msg: str, confirm: callable):
@@ -25,6 +25,7 @@ class ConfirmBox:
             confirm (function): function get called when the confirmation 
                                 is made
         """
+        self.logger = makeLogger("Frontend")
         self.msgBox = QMessageBox(text=msg)
         self.msgBox.setIcon(QMessageBox.Icon.Warning)
         self.msgBox.setStandardButtons(QMessageBox.StandardButton.Yes | 
@@ -41,11 +42,11 @@ class ConfirmBox:
         Args:
             button (QButton)
         """
-        loggger.info("confirm message box buttonc click")
+        self.logger.info("confirm message box buttonc click")
         if button.text() == "&No":
             return
         else:
-            loggger.info("confirmed") 
+            self.logger.info("confirmed") 
             self.confirm()
 
 
