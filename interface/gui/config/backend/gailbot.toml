@@ -33,3 +33,6 @@ PLUGINS_TO_APPLY = [
         "XMLtoCSV",
         "xmlSchema"
 ]
+
+[threadControl]
+maxThread = 1

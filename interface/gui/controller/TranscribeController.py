@@ -12,8 +12,8 @@ from util.Error import ErrorMsg, ThreadExeceptiom
 from view.MainWindow import MainWindow
 from controller.Thread.GBRunnable import Worker
 from util.Logger import makeLogger
-from PyQt6.QtCore import pyqtSignal, QObject, QThreadPool, pyqtSlot
-
+from util.GailBotData import ThreadControl
+from PyQt6.QtCore import pyqtSignal, QObject, QThreadPool
 
 
 class Signal(QObject):
@@ -68,7 +68,7 @@ class TranscribeController(QObject):
     def runGailBot(self):
         """ function to run gailbot on a separate thread """
         self.logger.info(self.ThreadPool.activeThreadCount())
-        if self.ThreadPool.activeThreadCount() > 0:
+        if self.ThreadPool.activeThreadCount() >= ThreadControl.maxThread:
             self.signal.busy.emit()
             self.logger.warn("threadpool busy")
         else:

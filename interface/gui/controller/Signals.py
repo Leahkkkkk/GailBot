@@ -13,7 +13,7 @@ from PyQt6.QtCore import pyqtSignal, QObject
 
 class Signal(QObject):
     """ a signal object that contains signal for communication between 
-        backend transcription process and front end view"""
+        backend transcription process and frontend view object"""
     start = pyqtSignal()
     finish = pyqtSignal()
     fileTranscribed = pyqtSignal(str)

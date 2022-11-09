@@ -10,7 +10,6 @@ Modified By:  Siara Small  & Vivian Li
 '''
 import logging
 
-from util import Logger
 from util.Style import Dimension
 from util.Text import WindowTitle
 

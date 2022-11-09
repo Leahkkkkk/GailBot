@@ -17,7 +17,7 @@ from model import Model
 from view import MainWindow
 from util import Logger
 from controller.Signals import Signal
-from PyQt6.QtCore import pyqtSlot, QObject, QThreadPool, pyqtSignal 
+from PyQt6.QtCore import pyqtSlot, QObject, QThreadPool 
 
 
 class Controller(QObject):

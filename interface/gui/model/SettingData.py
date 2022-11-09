@@ -1,3 +1,17 @@
+'''
+File: SettingData.py
+Project: GailBot GUI
+File Created: Friday, 4th November 2022 1:01:27 pm
+Author: Siara Small  & Vivian Li
+-----
+Last Modified: Wednesday, 9th November 2022 12:32:55 pm
+Modified By:  Siara Small  & Vivian Li
+-----
+'''
+
+
+
+""" placeholder data values for development """
 SettingValues={
     "Default": {
         "RequiredSetting": {

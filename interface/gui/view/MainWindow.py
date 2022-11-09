@@ -129,9 +129,14 @@ class MainWindow(QMainWindow):
     """ private function """
     def _connectSignal(self):
         """ connect to signal """
-        self.MainStack.SystemSettingPage.signal.restart.connect(
-            lambda: self.viewSignal.restart.emit())
+        self.MainStack.SystemSettingPage.signal.restart.connect(self._restart)
         self.MenuBar.OpenConsole.triggered.connect(lambda: self.Console.show())
         self.MenuBar.CloseConsole.triggered.connect(lambda: self.Console.hide())
         self.fileTableSignals.cancel.connect(self.confirmCancel)
+    
+    def _restart(self):
+        """ restarting the app """
+        self.viewSignal.restart.emit()
+        self.hide()
+        self.close()
     

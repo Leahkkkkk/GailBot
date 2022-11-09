@@ -10,24 +10,24 @@ Modified By:  Siara Small  & Vivian Li
 '''
 
 
+import sys
+import os 
+
 from controller import Controller
 from PyQt6.QtWidgets import QApplication
-import sys
 
 
 EXIT_CODE_REBOOT = -20000
-
 def main():
     exitCode = 0
-    while True:
-        app = QApplication(sys.argv)
-        controller = Controller.Controller()
-        controller.signal.restart.connect(lambda: app.exit(EXIT_CODE_REBOOT))
-        controller.run()
-        exitCode = app.exec()
-        app = None 
-        controller = None
-        if exitCode != EXIT_CODE_REBOOT: break
+    app = QApplication(sys.argv)
+    controller = Controller.Controller()
+    controller.signal.restart.connect(lambda: app.exit(EXIT_CODE_REBOOT))
+    controller.run()
+    exitCode = app.exec()
+    if exitCode == EXIT_CODE_REBOOT: 
+        os.system("python main.py")
+        app.exit()
     return exitCode
 
 

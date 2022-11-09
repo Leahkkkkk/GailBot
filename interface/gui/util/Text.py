@@ -1,4 +1,16 @@
-from util import TextParser
+'''
+File: Text.py
+Project: GailBot GUI
+File Created: Friday, 4th November 2022 1:01:27 pm
+Author: Siara Small  & Vivian Li
+-----
+Last Modified: Wednesday, 9th November 2022 12:36:45 pm
+Modified By:  Siara Small  & Vivian Li
+-----
+'''
+
+
+from util.ConfigParser import TextParser
 import toml 
 from dataclasses import dataclass
 

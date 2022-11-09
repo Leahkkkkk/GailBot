@@ -24,9 +24,11 @@ class ErrorMsg:
     
     
 class DBExecption(Exception):
+    """ exception for database module """
     def __init__(self, msg = None):
         self.msg = msg
 
 class ThreadExeceptiom(Exception):
+    """ exeception for thread module """
     def __init__(self, msg = None):
         self.msg = msg

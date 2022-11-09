@@ -57,7 +57,14 @@ class PluginData(DataclassFromDict):
     PLUGINS_TO_APPLY: List[str] =  field_from_dict()
     HIL_PLUGIN_URL: str  =  field_from_dict()
 
+@dataclass 
+class ThreadData(DataclassFromDict):
+    """ data for thread control """
+    maxThread: int 
+    
+
 Crendential = CrendentialData.from_dict(config["credential"])
 Directory = DirectoryData.from_dict(config["directory"])
 ProfileConfig = ProfileConfigData.from_dict(config["profileConfig"])
 Plugin = PluginData.from_dict(config["plugin"])
+ThreadControl = ThreadData.from_dict(config["threadControl"])

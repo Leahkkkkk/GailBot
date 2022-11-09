@@ -11,8 +11,8 @@ Modified By:  Siara Small  & Vivian Li
 
 from dataclasses import dataclass
 import toml
-from util import StyleParser
 from util.StyleSource import StyleSource
+from util.ConfigParser import StyleParser
 
 color = toml.load(StyleSource.CURRENT_COLOR)
 fontSize = toml.load(StyleSource.CURRENT_FONTSIZE)

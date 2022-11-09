@@ -12,7 +12,6 @@ Modified By:  Siara Small  & Vivian Li
 
 from dataclasses import dataclass
 
-
 @dataclass
 class StyleSource:
     """ stores file paths to different style theme"""
