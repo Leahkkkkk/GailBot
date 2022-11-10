@@ -60,7 +60,7 @@ class PluginData(DataclassFromDict):
 @dataclass 
 class ThreadData(DataclassFromDict):
     """ data for thread control """
-    maxThread: int 
+    maxThread: int =  field_from_dict()
     
 
 Crendential = CrendentialData.from_dict(config["credential"])

@@ -32,19 +32,22 @@ from PyQt6.QtWidgets import (
 class TextForm(QWidget):
     def __init__(self, 
                  data: Dict[str, str], 
+                 background : bool = True,
                  *args, **kwargs) -> None:
         """ Displays a form 
 
         Args:
             data (Dict[str, str]): a dictionary that stores the form 
                                    and initial values of the form 
-            backgroundColor str  : the background color
+            backgroundColor (bool)  : if true, the background is autofilled 
+                                      with difault color
         """
         super().__init__(*args, **kwargs)
         self.data = data
         self.inputDict = dict()
         self._initWidget()
-        self._initStyle()
+        if background:
+            self._initStyle()
     
     def enableForm(self) -> None:
         """ public function that enable the form edit """

@@ -11,7 +11,7 @@ Modified By:  Siara Small  & Vivian Li
 
 
 import sys
-import os 
+import subprocess
 
 from controller import Controller
 from PyQt6.QtWidgets import QApplication
@@ -25,9 +25,9 @@ def main():
     controller.signal.restart.connect(lambda: app.exit(EXIT_CODE_REBOOT))
     controller.run()
     exitCode = app.exec()
-    if exitCode == EXIT_CODE_REBOOT: 
-        os.system("python main.py")
+    if exitCode == EXIT_CODE_REBOOT:  
         app.exit()
+        subprocess.run(["python", "main.py"], check=True)
     return exitCode
 
 

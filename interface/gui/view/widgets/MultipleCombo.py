@@ -67,6 +67,7 @@ class ToggleCombo(QWidget):
             self.basicSet = ToggleView.ToggleView(
             self.header, self.userForm, 
             headercolor = Color.WHITE, viewcolor =Color.LOW_CONTRAST)
+            self.basicSet.setContentsMargins(0,0,0,0)
             self.layout.addWidget(self.basicSet)
             
         for key, item in self.data.items():
@@ -75,6 +76,7 @@ class ToggleCombo(QWidget):
             key, newCombo, 
             headercolor = Color.WHITE, viewcolor = Color.LOW_CONTRAST)
             self.layout.addWidget(newToggle)
+            newToggle.setContentsMargins(0,0,0,0)
             self.comboListDict[key] = newCombo
             
         self.layout.addStretch()

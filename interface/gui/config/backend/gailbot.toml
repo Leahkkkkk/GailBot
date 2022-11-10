@@ -14,6 +14,7 @@ PLUGIN_DOWNLOADS = "/Users/yike/Desktop/GB-UI/plugin"
 
 [plugin]
 HIL_PLUGIN_URL = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
+
 PLUGINS_TO_APPLY = [
         "constructTree",
         "utteranceDict",

@@ -13,7 +13,7 @@ from typing import Dict
 from view.widgets.Background import initPrimaryColorBackground
 from view.widgets import ToggleView, TextForm, Button
 from util.Text import OutputFormatForm, OutputFormatFormText
-from util.Style import Color
+from util.Style import Color, Dimension
 from util.Logger import makeLogger
 
 from PyQt6.QtWidgets import (
@@ -49,6 +49,7 @@ class OutPutFormat(QWidget):
             headercolor= Color.WHITE,
             viewcolor= Color.LOW_CONTRAST)
         self.layout.addWidget(self.textWrapField)
+        self.layout.addSpacing(Dimension.MEDIUM_SPACING * 10)
         
     def getValue(self):
         """ gets current value of the form data """
@@ -82,8 +83,8 @@ class HeaderForm(QWidget):
         self.numCombo = QComboBox(self)
         self.numCombo.addItems(["1", "2", "3"])
         self.layout.addWidget(self.numCombo)
-        self.corpusForm = TextForm.TextForm(data)
-        initPrimaryColorBackground(self.corpusForm)
+        self.corpusForm = TextForm.TextForm(data, background=False)
+    
     
         for i in range(3):
             newLabel = QLabel(f"Speaker {i + 1} Gender")

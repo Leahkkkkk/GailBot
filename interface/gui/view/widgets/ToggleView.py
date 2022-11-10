@@ -36,7 +36,7 @@ class ToggleView(QWidget):
     def __init__(
         self, 
         label:str, 
-        view: object, 
+        view: QWidget, 
         header = False, 
         headercolor = Color.HIGHLIGHT, 
         viewcolor = Color.HIGHLIGHT,
@@ -49,7 +49,7 @@ class ToggleView(QWidget):
         self.header = header
         self.headercolor = headercolor
         self.viewcolor = viewcolor
-        
+        self.setContentsMargins(0,0,0,0)
         self._configHeader()
         self._configViewField()
         self._initLayout()
@@ -81,6 +81,8 @@ class ToggleView(QWidget):
         self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
         self.scroll.setWidgetResizable(True)
         self.scroll.setWidget(self.view)
+        self.scroll.ensureWidgetVisible(self.view)
+        self.scroll.setBaseSize(self.view.width(), self.view.height())
         self.setObjectName("viewWrapper")
         self.scroll.setObjectName("view")
         self.scroll.setStyleSheet(f"#viewWrapper, #view {{background-color:{self.viewcolor}}}")
