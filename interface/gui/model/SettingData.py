@@ -11,7 +11,7 @@ Modified By:  Siara Small  & Vivian Li
 
 
 
-""" placeholder data values for development """
+""" placeholder data profile values for development """
 SettingValues={
     "Default": {
         "RequiredSetting": {

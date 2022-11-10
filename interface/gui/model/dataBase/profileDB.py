@@ -2,7 +2,7 @@ from typing import Tuple
 
 from util.Logger import makeLogger
 from model.SettingData import SettingValues
-from util.Error import ErrorMsg, DBExecption
+from util.Error import ErrorMsg
 
 from PyQt6.QtCore import QObject, pyqtSignal 
 

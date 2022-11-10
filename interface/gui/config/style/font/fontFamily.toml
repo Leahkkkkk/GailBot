@@ -4,5 +4,5 @@ OTHER      = "Helvetica"
 CLOCK      = "Digital"
 
 [fontSource]
-headerFont = "view/asset/Raleway.ttf"
-clockFont  = "view/asset/digital.ttf"
+headerFont = "view/asset/font/Raleway.ttf"
+clockFont  = "view/asset/font/digital.ttf"

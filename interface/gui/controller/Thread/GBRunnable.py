@@ -14,7 +14,6 @@ import logging
 
 
 from model.dataBase.fileDB import FileObj
-from controller.Signals import Signal
 from util.GailBotData import Crendential, Directory, ProfileConfig, Plugin
 from gailbot import GailBotController
 from PyQt6.QtCore import (
@@ -63,13 +62,15 @@ class Worker(QRunnable):
         used to run GailBot function on separte thread 
         with the added feature of handling signals
     """
-    def __init__(self, files: List [Tuple [str, FileObj]], signal: Signal):
+    def __init__(self, files: List [Tuple [str, FileObj]], signal):
         """constructor for Worker class
 
         Args:
             files List[Tuple (filekey, FileObjt)]: a list of tuples that 
             stores the file data, the first element of tuple is filekey 
             and the second is the file object
+            signal: a Signal object to support comunication btween the runnable 
+                    and transcribe controller
         """
         super(Worker, self).__init__()
         self.signals = signal

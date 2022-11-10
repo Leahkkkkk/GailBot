@@ -55,7 +55,10 @@ class FileModel:
     
     ##########################  request handler ###########################
     def post(self, data : fileDict) -> None:
-        """ add file to file database """
+        """ add file to file database 
+        data: (fileDict) a dictionary that contains the file data to be 
+              added to the data base
+        """
         self.logger = makeLogger("Database")
         self.logger.info("post file to database")
         key = str(self.currentKey)
@@ -131,14 +134,18 @@ class FileModel:
             
     
     def changeFiletoTranscribed(self, key: str):
-        """ change the file status to be transcrbed """    
+        """ change the file status to be transcrbed 
+        Args: 
+            key: a file key that identifies the file in the database
+        """    
         self.editFileStatus((key, "Transcribed"))
     
     
     def editFileProfile(self, data: Tuple[str, str]) -> None:
         """change the profile information of the file 
         Args:
-            data (Tuple[key, new profile]): _description_
+            data (Tuple[key, new profile]): a tuple  that stores the file key 
+                                            and a the new profile name
         """
         self.logger.info("request to edit file profile in the database")
         key, profile = data
@@ -153,7 +160,13 @@ class FileModel:
             self.signals.error.emit(ErrorMsg.EDITERROR)
             self.logger.error(ErrorMsg.EDITERROR)
             
-    def updateFileProgress(self, data):
+    def updateFileProgress(self, data: Tuple [str, str]):
+        """ update the file transcribing progress in file databse 
+
+        Args:
+            data (Tuple[str, str]):a tuple that stores the file key and the 
+                                   current transcribe progress in strings
+        """
         self.logger.info("request to change file progress in the database")
         key, progress = data
         try:
@@ -189,7 +202,7 @@ class FileModel:
     def requestProfile(self, key:str):
         """ request to view the setting fo the file on the data base
         Args:
-            key (str): _description_
+            key (str): a file key that identifies the file in the database
         """
         self.logger.info("request file profile setting from database")  
         try:
@@ -209,7 +222,7 @@ class FileModel:
         """ send the signal to get file data 
 
         Args:
-            filekey (str): 
+            filekey (str): a file key that identifies the file in the database
         """
         self.logger.info("get the file from the database")
         try:
@@ -227,10 +240,11 @@ class FileModel:
         """ send the file data that will be transcribed
 
         Args:
-            filekey (str): _description_
+            key (str):a file key that identifies the file in the database
 
         Returns:
-            Tuple: (filekey, fileobject)
+            Tuple: (filekey, fileobject): return a tuple containint the file key 
+                                            and the file object
         """
         self.logger.info("get the file data that will be trancribed")
         if key not in self.data:

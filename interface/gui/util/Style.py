@@ -14,11 +14,14 @@ import toml
 from util.StyleSource import StyleSource
 from util.ConfigParser import StyleParser
 
+# reading data from toml files
 color = toml.load(StyleSource.CURRENT_COLOR)
 fontSize = toml.load(StyleSource.CURRENT_FONTSIZE)
 dimension = toml.load("config/style/dimension.toml")
 fontfamily = toml.load("config/style/font/fontFamily.toml")
 Color = StyleParser.ColorData.from_dict(color["colors"])
+
+# parse toml files to dataclass object
 FontSize = StyleParser.FontSizeData.from_dict(
     fontSize["fontSizes"])
 Dimension = StyleParser.DimensionData.from_dict(

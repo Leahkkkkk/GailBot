@@ -11,7 +11,7 @@ Modified By:  Siara Small  & Vivian Li
 from util.Text import MenuBarText
 
 from PyQt6.QtWidgets import QMenuBar, QMenu
-from PyQt6 import QtCore, QtGui
+from PyQt6 import QtGui
 
 
 class ManuBar(QMenuBar):

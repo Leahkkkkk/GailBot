@@ -16,9 +16,16 @@ from controller.MVController import MVController
 from model import Model
 from view import MainWindow
 from util import Logger
-from controller.Signals import Signal
 from PyQt6.QtCore import pyqtSlot, QObject, QThreadPool 
 
+from PyQt6.QtCore import pyqtSignal, QObject
+
+class Signal(QObject):
+    """ a signal object that contains signal for communication between 
+        backend transcription process and frontend view object"""
+    fileProgress = pyqtSignal(tuple)
+    restart = pyqtSignal()
+    
 
 class Controller(QObject):
     """ Controller for Gailbot GUI """
@@ -32,7 +39,7 @@ class Controller(QObject):
         self.ProfileData = self.ModelObj.ProfileData
         self.PluginData = self.ModelObj.PluginData
         
-        # view 
+        # view object
         self.ViewObj = MainWindow.MainWindow(
             self.ModelObj.ProfileData.profilekeys)
     
@@ -43,7 +50,8 @@ class Controller(QObject):
             self.ProfileData, 
             self.PluginData)
         
-        # only initialize when user make a transcribe request 
+        # transcribe controller will only be initializes when user make a 
+        # transcribe request 
         self.transcribeController = None
         self.signal = Signal()
        
