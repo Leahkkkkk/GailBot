@@ -28,6 +28,7 @@ def main():
     if exitCode == EXIT_CODE_REBOOT:  
         app.exit()
         subprocess.run(["python", "main.py"], check=True)
+        sys.exit(app)
     return exitCode
 
 
