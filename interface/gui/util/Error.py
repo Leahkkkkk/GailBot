@@ -28,7 +28,7 @@ class DBExecption(Exception):
     def __init__(self, msg = None):
         self.msg = msg
 
-class ThreadExeceptiom(Exception):
+class ThreadExeception(Exception):
     """ exeception for thread module """
     def __init__(self, msg = None):
         self.msg = msg

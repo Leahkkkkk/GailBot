@@ -7,6 +7,9 @@ Author: Siara Small  & Vivian Li
 Last Modified: Wednesday, 5th October 2022 5:24:18 pm
 Modified By:  Siara Small  & Vivian Li
 -----
+Description:
+Main controller for the app 
+Connect between the database, view object and the backend transcription process
 '''
 from typing import Set
 import logging 
@@ -16,65 +19,60 @@ from controller.MVController import MVController
 from model import Model
 from view import MainWindow
 from util import Logger
-from PyQt6.QtCore import pyqtSlot, QObject, QThreadPool 
 
+from PyQt6.QtCore import pyqtSlot, QObject, QThreadPool 
 from PyQt6.QtCore import pyqtSignal, QObject
 
 class Signal(QObject):
     """ a signal object that contains signal for communication between 
         backend transcription process and frontend view object"""
     fileProgress = pyqtSignal(tuple)
-    restart = pyqtSignal()
+    restart      = pyqtSignal()
     
 
 class Controller(QObject):
-    """ Controller for Gailbot GUI """
+    """ Controller for Gailbot GUI 
+    
+    Field:
+    1. ModelObj     : the database with file, profile and plugin data 
+    2. ThreadPool   : a threadpool to run backend function in parallel with 
+                      front-end interface 
+    3. ViewObj      : a view object that implement ths front end interface 
+    4. MVController : a model view controller that connect front-end view and 
+                      database
+    5. Transcribe controller: a controller that connect transcription process 
+                              with view object 
+    
+    Public Function: 
+    run()    : driver function to run the entire application 
+    restart(): send a signal to restart the app 
+    
+    """
     def __init__(self):
         super().__init__()
         self.ModelObj = Model.Model()
         self.ThreadPool = QThreadPool()
-        
-        # database
-        self.FileData = self.ModelObj.FileData
-        self.ProfileData = self.ModelObj.ProfileData
-        self.PluginData = self.ModelObj.PluginData
-        
-        # view object
         self.ViewObj = MainWindow.MainWindow(
             self.ModelObj.ProfileData.profilekeys)
-    
-        # connecting view and database
         self.MVController = MVController(
             self.ViewObj, 
-            self.FileData, 
-            self.ProfileData, 
-            self.PluginData)
-        
-        # transcribe controller will only be initializes when user make a 
-        # transcribe request 
+            self.ModelObj.FileData, 
+            self.ModelObj.ProfileData, 
+            self.ModelObj.PluginData)
+        # transcribe controller is initially null until user makes a transcribe 
+        # request 
         self.transcribeController = None
         self.signal = Signal()
-       
-    
-    def _initLogger(self):
-        """ initialize the loggier """
-        logDisplay = self.ViewObj.getLogDisplayer()
-        self.logHandler = Logger.ConsoleHandler(logDisplay)
-        logging.getLogger().addHandler(self.logHandler)
-        logging.getLogger().setLevel(logging.DEBUG)
-        self.logger = Logger.makeLogger("B")
-        self.logger.info("Initialize the controller")
-        
  
     def run(self):
         """ Public function that run the GUI app """
         self._initLogger()
-        self.handleViewSignal()
+        self._handleViewSignal()
         self.ViewObj.show()
         self.MVController.exec()
-        self.handleTanscribeSignal()
+        self._handleTanscribeSignal()
     
-    def handleViewSignal(self):
+    def _handleViewSignal(self):
         """ handling signal to change the interface content from view object  """
         self.ViewObj.viewSignal.restart.connect( self.restart
         )
@@ -84,10 +82,11 @@ class Controller(QObject):
         logging.getLogger().removeHandler(self.logHandler)
         
     ###################   gailbot  handler #############################   
-    def handleTanscribeSignal(self):
-        """ handle signal from View that requests to transcrib the file"""
+    def _handleTanscribeSignal(self):
+        """ handle signal from View that requests to transcribe the file"""
         self.ViewObj.fileTableSignals.transcribe.connect(self._transcribeFiles)
-        self.signal.fileProgress.connect(self.FileData.updateFileProgress)
+        self.signal.fileProgress.connect(
+            self.ModelObj.FileData.updateFileProgress)
         
     @pyqtSlot(set)
     def _transcribeFiles(self, files: Set[str]):
@@ -104,7 +103,7 @@ class Controller(QObject):
             fileData = self.ModelObj.FileData.getTranscribeData(key)
             transcribeList.append(fileData)
             
-        # run Gailbot re
+        # run gailbot 
         self._runGailBot(transcribeList)
         
     def _runGailBot(self, files):
@@ -112,7 +111,7 @@ class Controller(QObject):
 
         Args:
             files (List): a list of files stored in key data pair that will
-                          be trancribed
+                          be transcribed
         """
         self.transcribeController = TranscribeController(
             self.ThreadPool, 
@@ -120,4 +119,13 @@ class Controller(QObject):
             files)
         self.transcribeController.runGailBot()
     
+    def _initLogger(self):
+        """ initialize the loggier """
+        logDisplay = self.ViewObj.getLogDisplayer()
+        self.logHandler = Logger.ConsoleHandler(logDisplay)
+        logging.getLogger().addHandler(self.logHandler)
+        logging.getLogger().setLevel(logging.DEBUG)
+        self.logger = Logger.makeLogger("B")
+        self.logger.info("Initialize the controller")
+         
    

@@ -7,29 +7,29 @@ Author: Siara Small  & Vivian Li
 Last Modified: Wednesday, 5th October 2022 5:04:58 pm
 Modified By:  Siara Small  & Vivian Li
 -----
+Description:  Main driver for running the backend function
+NOTE: 
+- currently the function to apply customized profile is unimplemented 
+- the function that kill the thread need to be improved
 '''
-from typing import List, Tuple, Dict
+from typing import List, Tuple
 import os
 import logging
 
-
 from model.dataBase.fileDB import FileObj
-from util.GailBotData import Crendential, Directory, ProfileConfig, Plugin
+from util.GailBotData import Credential, Directory, ProfileConfig, Plugin
 from gailbot import GailBotController
 from PyQt6.QtCore import (
     QRunnable, pyqtSlot
 )
 
-# TODO: change plugin path 
-# TODO: change the workspace path
-# TODO: move this to a config file 
 
-WATSON_API_KEY = Crendential.WATSON_API_KEY
-WATSON_LANG_CUSTOM_ID = Crendential.WATSON_LANG_CUSTOM_ID
-WATSON_REGION = Crendential.WATSON_REGION
-WATSON_BASE_LANG_MODEL = Crendential.WATSON_BASE_LANG_MODEL
+WATSON_API_KEY = Credential.WATSON_API_KEY
+WATSON_LANG_CUSTOM_ID = Credential.WATSON_LANG_CUSTOM_ID
+WATSON_REGION = Credential.WATSON_REGION
+WATSON_BASE_LANG_MODEL = Credential.WATSON_BASE_LANG_MODEL
 WORKSPACE_DIRECTORY_PATH = Directory.WORKSPACE_DIRECTORY_PATH 
-#  ------------- Controller
+
 SETTINGS_PROFILE_NAME = ProfileConfig.SETTINGS_PROFILE_NAME
 SETTINGS_PROFILE_EXTENSION = ProfileConfig.SETTINGS_PROFILE_EXTENSION
 
@@ -58,35 +58,54 @@ def get_settings_dict():
     }
 
 class Worker(QRunnable):
-    """ a subclass of QRunnable class 
-        used to run GailBot function on separte thread 
-        with the added feature of handling signals
+    """ Worker 
+        A sub-class of QRunnable class that is able to run the main function 
+        on a separate thread 
+        The Worker contains the main driver to run backend function, it is also 
+        able to communicates the progress of running the backend function 
+        through pyqtsignal
+    
+        Constructor Args:
+            1.  files List[Tuple (str, FileObj)]: 
+                a list of tuples that stores the file data, 
+                the first element of tuple is file key 
+                and the second is the file object
+                
+            2.  signal: 
+                a Signal object to support communication between the runnable
+                and transcribe controller
+        
+        Field:
+            1. signals: a signal object  
+            2. killed: True if the transcription process is killed by user
+            3. files: a list of files that will be transcribed 
+        
+        Public Function:
+            1. run(): main driver for the running GailBot
+                 
     """
     def __init__(self, files: List [Tuple [str, FileObj]], signal):
-        """constructor for Worker class
-
-        Args:
-            files List[Tuple (filekey, FileObjt)]: a list of tuples that 
-            stores the file data, the first element of tuple is filekey 
-            and the second is the file object
-            signal: a Signal object to support comunication btween the runnable 
-                    and transcribe controller
-        """
         super(Worker, self).__init__()
         self.signals = signal
         self.killed = False
         self.files = files 
         self._initLogger()
-
-    def _initLogger(self):
-        """ initialize the logger  """
-        self.logExtra = {"source": "Backend"}
-        self.logger = logging.getLogger()
-        self.logger = logging.LoggerAdapter(self.logger, self.logExtra)
         
     @pyqtSlot()
     def run(self):
-        """ public function that can be called to run GailBot """
+        """ Public function to run GailBot to transcribe a list of files 
+            stored in the worker class. 
+            Emit signal to communicate transcription progress, which is 
+            expected to be handled by the caller
+            
+            Signals: 
+            - start()               : transcription started 
+            - progress(str)         : contains a string about current progress
+            - killed()              : function canceled be the suer
+            - finish()              : entire transcription finished
+            - fileTranscribed(str)  : contains a string stores the transcribed 
+                                      file file key
+        """
         self.logger.info("file ready to be transcribed" )
         profiles = set()
         
@@ -123,7 +142,6 @@ class Worker(QRunnable):
                     
     
                 if not self.killed and not gb.is_settings_profile(profile):
-                    # TODO: add costomized profile, currently unimplemented
                     gb.create_new_settings_profile(profile, get_settings_dict())
                     profiles.add(profile)
                     assert gb.is_settings_profile(profile)
@@ -146,7 +164,7 @@ class Worker(QRunnable):
                 gb.transcribe()
             
             if self.killed:
-                self.logger.info("User cancelled the trancription")
+                self.logger.info("User cancelled the transcription")
                 self.signals.killed.emit()
                          
         except Exception as e:
@@ -169,5 +187,11 @@ class Worker(QRunnable):
         self.logger.info("received request to cancel the thread")
         self.killed = True
         self.signals.killed.emit()
+    
+    def _initLogger(self):
+        """ initialize the logger  """
+        self.logExtra = {"source": "Backend"}
+        self.logger = logging.getLogger()
+        self.logger = logging.LoggerAdapter(self.logger, self.logExtra)
         
         

@@ -10,7 +10,7 @@ Modified By:  Siara Small  & Vivian Li
 '''
 import toml 
 from util.ConfigParser.GailBotDataParser import (
-    CrendentialData, 
+    CredentialData, 
     DirectoryData, 
     ProfileConfigData, 
     PluginData, 
@@ -19,7 +19,7 @@ from util.ConfigParser.GailBotDataParser import (
 
 config = toml.load("config/backend/gailbot.toml")
 
-Crendential = CrendentialData.from_dict(config["credential"])
+Credential = CredentialData.from_dict(config["credential"])
 Directory = DirectoryData.from_dict(config["directory"])
 ProfileConfig = ProfileConfigData.from_dict(config["profileConfig"])
 Plugin = PluginData.from_dict(config["plugin"])

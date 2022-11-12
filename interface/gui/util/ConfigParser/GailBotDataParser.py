@@ -20,7 +20,7 @@ from dict_to_dataclass import field_from_dict, DataclassFromDict
 config = toml.load("config/backend/gailbot.toml")
 
 @dataclass
-class CrendentialData(DataclassFromDict):
+class CredentialData(DataclassFromDict):
     """ data for watson credential """
     WATSON_API_KEY: str =  field_from_dict()
     WATSON_LANG_CUSTOM_ID: str =  field_from_dict()

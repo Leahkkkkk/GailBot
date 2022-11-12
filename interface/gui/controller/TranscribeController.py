@@ -7,17 +7,22 @@ Author: Siara Small  & Vivian Li
 Last Modified: Tuesday, 1st November 2022 7:41:01 pm
 Modified By:  Siara Small  & Vivian Li
 -----
+Description:
+connect the backend transcription process with the front end view object, 
+so that the front end is able to reflect the transcription progress
 '''
-from util.Error import ErrorMsg, ThreadExeceptiom
+from util.Error import ErrorMsg, ThreadExeception
 from view.MainWindow import MainWindow
-from controller.Thread.GBRunnable import Worker
+from controller.BackendRunnable.GBRunnable import Worker
 from util.Logger import makeLogger
 from util.GailBotData import ThreadControl
 from PyQt6.QtCore import pyqtSignal, QObject, QThreadPool
 
 
 class Signal(QObject):
-    """ a signal object that  """
+    """ a signal object to communicate the transcription process with 
+        the front end view object 
+    """
     start = pyqtSignal()
     finish = pyqtSignal()
     fileTranscribed = pyqtSignal(str)
@@ -29,13 +34,22 @@ class Signal(QObject):
 
 class TranscribeController(QObject):
     def __init__(self, ThreadPool: QThreadPool, view: MainWindow, files:list):
-        """ a controller that controls the transcription processs 
+        """ a controller that controls the transcription process
 
-        Args:
+        Constructor Args:
             ThreadPool (QThreadPool): a threadpool provided by the parent 
             view (MainWindow): view object that handle the signal from the 
                                backend
             files (list): a list of files to be transcribed
+        
+        Field:
+            1. ThreadPool: a threadpool where the function will be run 
+            2. Signal: contains pyqtSignal to communicate with the caller 
+            3. files: a list of files to be transcribed 
+        
+        Public function:
+            1. runGailbot(): wrapper function to run gailbot
+            2. cancelGailBot(): cancel the gailbot running process
         """
         super().__init__()
         self.logger = makeLogger ("B")
@@ -47,22 +61,22 @@ class TranscribeController(QObject):
         self.signal.busy.connect(view.busyThreadPool)
         
         # view handler to redirect to different pages based on the 
-        # transcibe result 
+        # transcribe result 
         self.signal.start.connect(view.showTranscribeInProgress)
         self.signal.finish.connect(view.showTranscribeSuccess)
         self.signal.killed.connect(view.showFileUploadPage)
         
-        # view handler to show transcribtion status
+        # view handler to show transcription status
         self.signal.progress.connect(view.showStatusMsg)
         self.signal.progress.connect(view.showFileProgress)
         
-        # view handler for transcription fialed 
+        # view handler for transcription field 
         self.signal.error.connect(view.TranscribeFailed)
         
         # view handler for change file display when transcription succeed
         self.signal.fileTranscribed.connect(view.changeFiletoTranscribed)
         
-        # handle view request to cancle gailbot
+        # handle view request to cancel gailbot
         view.fileTableSignals.cancel.connect(self.cancelGailBot)
 
     def runGailBot(self):
@@ -78,7 +92,7 @@ class TranscribeController(QObject):
                 self.worker = Worker(self.files, self.signal)
                 self.signal.start.emit()
                 if not self.ThreadPool.tryStart(self.worker):
-                    raise ThreadExeceptiom(ErrorMsg.RESOURCEERROR)
+                    raise ThreadExeception(ErrorMsg.RESOURCEERROR)
             except:
                 self.signal.error("failed to start transcribing")
                 self.logger.error("failed to start transcribe")

@@ -7,6 +7,8 @@ Author: Siara Small  & Vivian Li
 Last Modified: Wednesday, 5th October 2022 5:04:05 pm
 Modified By:  Siara Small  & Vivian Li
 -----
+Description: using time.sleep to run a fake backend function , for testing 
+             purpose only 
 '''
 import time
 

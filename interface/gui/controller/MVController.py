@@ -7,6 +7,8 @@ Author: Siara Small  & Vivian Li
 Last Modified: Tuesday, 1st November 2022 7:39:49 pm
 Modified By:  Siara Small  & Vivian Li
 -----
+Description:
+Model view controller than connect ths database to a front end view object 
 '''
 
 from util.Logger import makeLogger
@@ -17,21 +19,31 @@ from model.dataBase.pluginDB import PluginModel
 
 
 class MVController:
+    """ 
+    Model View controller to send requested data on view and 
+    handle request from view to modify data in the database
+
+    Constructor Args:
+        view (MainWindow): main view 
+        fileDB (FileModel): file database 
+        profileDB (ProfileModel): profile database
+        pluginDB (PluginModel): plugin database
+    
+    Field:
+        view: view object 
+        fileDB: file database 
+        profileDB: profile database
+        pluginDB: plugin database
+    
+    Public Function:
+        exec(): driver function that starts to run the model view controller
+    """
     def __init__(
         self, 
         view: MainWindow, 
         fileDB: FileModel, 
         profileDB: ProfileModel, 
-        pluginDB: PluginModel) -> None:
-        """ Model View controller to send requested data on view and 
-            handle request from view to modify data in the database
-
-        Args:
-            view (MainWindow): main view 
-            fileDB (FileModel): file database 
-            profileDB (ProfileModel): profile database
-            pluginDB (PluginModel): plugin database
-        """
+        pluginDB: PluginModel) -> None:  
         self.logger = makeLogger("Backend")
         self.view = view 
         self.fileDB = fileDB
