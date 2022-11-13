@@ -7,12 +7,10 @@ Author: Siara Small  & Vivian Li
 Last Modified: Thursday, 6th October 2022 11:08:37 am
 Modified By:  Siara Small  & Vivian Li
 -----
+Description: implementation of file upload page 
 '''
 
-""" 
-TODO: add file summary widget 
-TODO: add search bar 
-""" 
+
 
 from typing import List
 
@@ -48,17 +46,25 @@ right  = Qt.AlignmentFlag.AlignRight
 top    =  Qt.AlignmentFlag.AlignTop
 
 class FileUploadPage(QWidget):
-    """ class for the file upload page """
+    """ implement the file upload table
+    
+    Constructor Args:
+    1. profileNames: a list of profiles that is currently available in the 
+                     profile database, so that user can select a different 
+                     profile of the file through the file table
+    2. signals:      a FileSignals object that support the communication 
+                     to the file database
+    """
     def __init__(
         self, 
-        profilekeys: List[str],
+        profileNames: List[str],
         signal: FileSignals, 
         *args, 
         **kwargs) -> None:
         """ initializes file upload page """
         super().__init__(*args, **kwargs)
         self.signal = signal
-        self.profilekeys = profilekeys
+        self.profileNames = profileNames
         self._initWidget()
         self._initLayout()
         self._initStyle()
@@ -93,7 +99,7 @@ class FileUploadPage(QWidget):
         self.fileTable = FileTable.FileTable(
             FileTableHeader.fileUploadPage, 
             self.signal,
-            self.profilekeys,
+            self.profileNames,
             {"check", "delete", "details", "edit"})
         self.fileTable.resizeCol(FileTableDimension.fileUploadPage)
         

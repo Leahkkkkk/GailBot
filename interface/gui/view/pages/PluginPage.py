@@ -7,6 +7,7 @@ Author: Siara Small  & Vivian Li
 Last Modified: Sunday, 6th November 2022 11:11:19 am
 Modified By:  Siara Small  & Vivian Li
 -----
+Description: implementation of the plugin page
 '''
 
 from util.Style import FontSize, Dimension, FontFamily
@@ -109,6 +110,8 @@ class PluginPage(QWidget):
             if checkWidget.isChecked():
                 appliedPlugins.add(plugin)
         return appliedPlugins
+   
+   
                 
 class pluginCheckBox(QWidget):
     """ class for a plugin checkbox """

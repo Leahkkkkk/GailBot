@@ -7,6 +7,7 @@ Author: Siara Small  & Vivian Li
 Last Modified: Thursday, 6th October 2022 11:19:06 am
 Modified By:  Siara Small  & Vivian Li
 -----
+Description: 
 '''
 
 
@@ -20,30 +21,32 @@ from multiprocessing import Process, Queue
 
 EXIT_CODE_REBOOT = -20000
 
-exitCode = Queue()
+exitCodeQueue = Queue()
 
-def main(exitCode:Queue):
+
+def main(exitCodeQueue:Queue):
+    """ main driver function to run the app  """
     app = QApplication(sys.argv)
     controller = Controller.Controller()
     controller.signal.restart.connect(lambda: app.exit(EXIT_CODE_REBOOT))
     controller.run()
-    code = app.exec()
-    exitCode.put(code)
+    exitCode = app.exec()
+    exitCodeQueue.put(exitCode)
     controller = None 
     app = None
 
 if __name__ == '__main__':
-    process = Process(target = main, args = (exitCode,))
+    process = Process(target = main, args = (exitCodeQueue,))
     process.start()
-    code = exitCode.get()
+    exitCode = exitCodeQueue.get()
     process.join()
     del process
-    print(code)
+    print(exitCode)
     
-    while code == EXIT_CODE_REBOOT:
-        process = Process(target = main, args = (exitCode,))
+    while exitCode == EXIT_CODE_REBOOT:
+        process = Process(target = main, args = (exitCodeQueue,))
         process.start()
-        code = exitCode.get()
+        exitCode = exitCodeQueue.get()
         process.join()
         del process
     

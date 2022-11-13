@@ -7,6 +7,7 @@ Author: Siara Small  & Vivian Li
 Last Modified: Saturday, 5th November 2022 7:22:34 pm
 Modified By:  Siara Small  & Vivian Li
 -----
+Description: implementation of pages for user to create new profile 
 '''
 
 from typing import Dict
@@ -21,7 +22,7 @@ from view.widgets.TabPage import TabPage
 from view.widgets.MultipleCombo import UserForm
 from view.widgets.InputBox import InputBox
 from view.widgets.MsgBox import WarnBox
-from view.components import OutputFormatForm, SettingEngineForm
+from view.components import OutputFormatForm, SpeechEngineForm
 from view.pages.PluginPage import PluginPage
 from view.pages.PostSetPage import PostSetPage
 from view.widgets.Background import initPrimaryColorBackground
@@ -159,7 +160,7 @@ class EngineSetting(TabPage):
         self.verticallayout.addWidget(
             self.header, 
             alignment=Qt.AlignmentFlag.AlignHCenter)
-        self.mainForm = SettingEngineForm.SettingEngineForm(showBasicSet=False)
+        self.mainForm = SpeechEngineForm.SpeechEngineForm(showBasicSet=False)
         self.verticallayout.addWidget(self.mainForm)
         self.confirmBtn = ColoredBtn(Text.cofirmBtn, Color.SECONDARY_BUTTON)
         self.confirmBtn.clicked.connect(self._confirmHandler)

@@ -7,6 +7,7 @@ Author: Siara Small  & Vivian Li
 Last Modified: Sunday, 16th October 2022 1:49:44 pm
 Modified By:  Siara Small  & Vivian Li
 -----
+Description: implementation of pages for user to upload new files
 '''
 import logging 
 import datetime
@@ -16,6 +17,7 @@ import os
 
 from util.Style import Color, FontSize, Dimension
 from util.Text import FileUploadPageText as Text
+from model.dataBase.fileDB import fileDict
 from view.widgets.Button import ColoredBtn
 from view.widgets.Label import Label
 from view.widgets.TabPage import TabPage
@@ -34,14 +36,6 @@ from PyQt6.QtCore import QSize, Qt
 
 center = Qt.AlignmentFlag.AlignHCenter
 
-class FileData(TypedDict):
-    """ class representing the data of a file object """
-    Name: str
-    Type: str
-    Date: str 
-    Size: str 
-    Output: str 
-    FullPath: str
 
 class OutputPath(TypedDict):
     """ class representing the output path of a file or directory """
@@ -52,7 +46,12 @@ class Profile(TypedDict):
     Profile:str
 
 class OpenFile(TabPage):
-    """ class handling the opening of a file """
+    """ implement a page that allow use to upload file or directory 
+    
+    Public functions: 
+    1.  getFile(self) -> List[fileDict]
+        return a list of files uploaded by the user
+    """
     def __init__(self, *args, **kwargs) -> None:
         """ initializes class """
         super().__init__(*args, **kwargs)
@@ -61,6 +60,14 @@ class OpenFile(TabPage):
         self._connectSignal()
         self._initStyle()
         self._initDimension()
+    
+    def getFile(self) -> List[fileDict]:
+        """ returns a list of files object that user has selected """
+        fileList = []
+        for file in self.filePaths:
+            fileObj = self._pathToFileObj(file)
+            fileList.append(fileObj)
+        return fileList
         
     def _initWidget(self):
         """ initializes the widgets """
@@ -106,13 +113,6 @@ class OpenFile(TabPage):
         self.fileDisplayList.setFixedSize(QSize(Dimension.SMALL_TABLE_WIDTH,
                                                 Dimension.SMALL_TABLE_HEIGHT))
         
-    def getFile(self) -> List[FileData]:
-        """ returns a list of files object that user has selected """
-        fileList = []
-        for file in self.filePaths:
-            fileObj = self._pathToFileObj(file)
-            fileList.append(fileObj)
-        return fileList
     
     def _pathToFileObj(self, path):  
         """ converts the file path to a file object 
@@ -167,7 +167,15 @@ class OpenFile(TabPage):
         self.fileDisplayList.resizeRowsToContents()
 
 class ChooseSet(TabPage):
-    """ class for user to choose the setting profile """
+    """ implement a page for user to choose the setting profile
+    
+    Public Function:
+    1.  getProfile(self) -> Profile
+        return the profile chosen by the user 
+    
+    
+    """
+    
     def __init__(self, settings: List[str], *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         print(settings)
@@ -176,6 +184,13 @@ class ChooseSet(TabPage):
         self._initWidget()
         self._initLayout()
         self.setAutoFillBackground(True)
+    
+    def getProfile(self) -> Profile:
+        """ return the selected setting """
+        if self.profile:
+            return {"Profile": self.profile}
+        else:
+            logging.warn("the profile is not chosen")
         
     def _initWidget(self):
         """ initializes the widgets """
@@ -208,22 +223,28 @@ class ChooseSet(TabPage):
         else:
             logging.warn("The profile has not been chosen")
             
-    def getProfile(self) -> Profile:
-        """ return the selected setting """
-        if self.profile:
-            return {"Profile": self.profile}
-        else:
-            logging.warn("the profile is not chosen")
 
         
 class ChooseOutPut(TabPage):
-    """ for user to choose output directory  """
+    """ implement a page for user to choose output directory  
+    
+    Public Function:
+    1.  getOutputPath(self) -> OutputPath 
+        return the output path chosen by user
+    """
     def __init__(self, *args, **kwargs) -> None:
         """ initializes the class """
         super().__init__(*args, **kwargs)
         self.outPath = None
         self._iniWidget()
         self._initLayout()
+    
+          
+    def getOutputPath(self) -> OutputPath:
+        """ returns the selected output path """
+        if not self.outPath:
+            logging.error("No output direcory is chosen")
+        return {"Output": self.outPath}
         
     def _iniWidget(self):
         """ initializes the widgets """
@@ -252,9 +273,3 @@ class ChooseOutPut(TabPage):
             self.dirPathText.setText(outPath)
         else: 
             logging.warn("No output directory is chosen")
-      
-    def getOutputPath(self) -> OutputPath:
-        """ returns the selected output path """
-        if not self.outPath:
-            logging.error("No output direcory is chosen")
-        return {"Output": self.outPath}

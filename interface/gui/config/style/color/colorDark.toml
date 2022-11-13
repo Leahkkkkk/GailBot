@@ -1,4 +1,4 @@
-## config file with all style value
+## contains values for the dark mode color theme
 [colors] 
 SECONDARY_BUTTON = "#76BD46" 
 CANCEL_QUIT = "#FB7C6A"

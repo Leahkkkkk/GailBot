@@ -7,6 +7,7 @@ Author: Siara Small  & Vivian Li
 Last Modified: Thursday, 6th October 2022 11:05:38 am
 Modified By:  Siara Small  & Vivian Li
 -----
+Description: implementation of Confirm Transcription Page
 '''
 from util.Style import (
     Color, 

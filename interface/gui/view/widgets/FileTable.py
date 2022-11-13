@@ -19,7 +19,7 @@ from typing import Dict, List, Set, Tuple, TypedDict
 import logging
 
 from view.widgets import MsgBox
-from view.components.ChooseFileTab import ChooseFileTab
+from view.components.UploadFileTab import UploadFileTab
 from view.pages.FileUploadTabPages import ChooseSet
 from view.widgets.Background import initSecondaryColorBackground
 from view.Signals import FileSignals
@@ -209,7 +209,7 @@ class FileTable(QTableWidget):
            ** connected to upload file button 
         
         """
-        addFileWindow = ChooseFileTab(self.profiles)
+        addFileWindow = UploadFileTab(self.profiles)
         addFileWindow.signals.postFile.connect(self._postFile)
         addFileWindow.exec()
     
