@@ -29,7 +29,6 @@ class PostSetPage(QWidget):
     
     def setValue(self, values:dict):
         """ sets the value of the setting form
-        Args: values:dict: TODO
         """
         self.setForm.setValue(values)
     

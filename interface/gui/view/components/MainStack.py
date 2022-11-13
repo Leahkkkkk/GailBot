@@ -183,7 +183,7 @@ class MainStack(QStackedWidget):
         self.TranscribeSuccessPage.fileTable.updateFileContent(data)
     
     def changeToTranscribed(self, key: str):
-        """ public function that change the file status on all file tabless """
+        """ public function that change the file status on all file tables """
         self.FileUploadPage.fileTable.changeFileToTranscribed(key)
         self.ConfirmTranscribePage.fileTable.changeFileToTranscribed(key)
         self.TranscribeProgressPage.fileTable.changeFileToTranscribed(key)

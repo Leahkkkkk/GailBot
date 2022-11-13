@@ -115,8 +115,7 @@ class OpenFile(TabPage):
         
     
     def _pathToFileObj(self, path):  
-        """ converts the file path to a file object 
-            TODO: change the file to be stored as an object  """  
+        """ converts the file path to a file object  """  
         fullPath = path
         date = datetime.date.today().strftime("%m-%d-%y")    
         temp = str(fullPath)

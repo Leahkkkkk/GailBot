@@ -7,6 +7,7 @@ Author: Siara Small  & Vivian Li
 Last Modified: Thursday, 10th November 2022 9:58:28 am
 Modified By:  Siara Small  & Vivian Li
 -----
+Description: main siganls for view object to communicate with backend database
 '''
 
 

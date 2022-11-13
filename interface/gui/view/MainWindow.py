@@ -7,6 +7,7 @@ Author: Siara Small  & Vivian Li
 Last Modified: Thursday, 6th October 2022 1:45:53 pm
 Modified By:  Siara Small  & Vivian Li
 -----
+Description: implement the main window for the GUI interface
 '''
 
 

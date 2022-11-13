@@ -27,7 +27,7 @@ from PyQt6.QtCore import Qt
 
 class ToggleView(QWidget):
     """ 
-    A toggle view widget that show and hide content,
+    A toggle view widget that shows and hides content,
     the content is passed in as a widget 
 
     Constructor Args:

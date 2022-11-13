@@ -95,7 +95,7 @@ class PluginPage(QWidget):
     
     def setValue(self, appliedPlugins: set):
         """ sets the value of the given plugin
-        Args: appliedPlugins:set: TODO
+        Args: appliedPlugins:set: 
         """
         for plugin, checkwidget in self.pluginDict.items():
             if plugin in appliedPlugins:

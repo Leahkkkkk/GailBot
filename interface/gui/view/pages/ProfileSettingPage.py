@@ -9,15 +9,6 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
-""" 
-TODO: create new profile functionality
-TODO: save profile data functionality 
-TODO: load setting values based on a setting values dictionary
-TODO: disable edits for setting form
-TODO: change name settingdata to settingFormData 
-                  the counter part is settingValueData
-TODO: make a combobox widget
-"""
 
 from typing import List
 

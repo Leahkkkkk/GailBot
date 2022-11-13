@@ -246,7 +246,7 @@ class FileTable(QTableWidget):
                 self.setItem(newRowIdx, col, newItem)
         
         if self.rowWidgets:
-            self._addFileWidgetToTable(newRowIdx, key) #TODO:improve addwidget
+            self._addFileWidgetToTable(newRowIdx, key) 
         self.resizeRowsToContents()  
     
     def _addFileWidgetToTable(self, row:int, key:str):

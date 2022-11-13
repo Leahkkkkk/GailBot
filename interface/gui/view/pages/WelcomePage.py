@@ -26,7 +26,6 @@ from view.widgets import (
     Button
 )
 
-
 from view.widgets.Background import addLogo
 
 from PyQt6.QtWidgets import (
@@ -88,9 +87,7 @@ class WelcomePage(QWidget):
     def _initStyle(self):
         """ initializes the style  of the page """
         self.StartBtn.setMinimumSize(QtCore.QSize(Dimension.BTNWIDTH, Dimension.BTNHEIGHT))
-
-    
-    """ TODO: separate to a different file """   
+ 
     def _initInstructionText(self):
         """ adds widgets for the instructions text and icons """
 
@@ -180,7 +177,6 @@ class WelcomePage(QWidget):
         self.InstructionText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
     
         
-    """ TODO: put the link onto separate file """
     def _initLinkText(self):
         """ initializes the link text and functionality """
         self.ResourcesText = Label.Label(Text.resourcesText, 

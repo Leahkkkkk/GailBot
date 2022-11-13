@@ -10,8 +10,6 @@ Modified By:  Siara Small  & Vivian Li
 Description: implementation of file upload page 
 '''
 
-
-
 from typing import List
 
 from util.Style import (

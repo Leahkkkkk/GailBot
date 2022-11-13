@@ -7,7 +7,8 @@ Author: Siara Small  & Vivian Li
 Last Modified: Thursday, 6th October 2022 11:19:06 am
 Modified By:  Siara Small  & Vivian Li
 -----
-Description: 
+Description: main driver for a GUI app that support front and interface to 
+             allow user transcribe file using gailbot 
 '''
 
 
