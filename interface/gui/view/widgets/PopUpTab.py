@@ -1,3 +1,17 @@
+'''
+File: PopUpTab.py
+Project: GailBot GUI
+File Created: Friday, 4th November 2022 1:01:27 pm
+Author: Siara Small  & Vivian Li
+-----
+Last Modified: Sunday, 13th November 2022 2:51:26 pm
+Modified By:  Siara Small  & Vivian Li
+-----
+Description: implement tab widgets that take in different page widget as child
+             elements, and display those pages in a tab 
+'''
+
+
 from typing import Dict
 
 from util.Style import Color, Dimension, buttonStyle

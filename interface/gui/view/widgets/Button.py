@@ -269,7 +269,7 @@ class dropDownButton(QWidget):
         **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.buttonList = buttonList(buttons,btnFuns) 
-        self.btn = ColoredBtn(f"▶ {label}", 
+        self.btn = ColoredBtn(f"\u25B6 {label}", 
                               Color.PRIMARY_BUTTON,
                               FontSize.SMALL, 
                               StyleSheet.dropDownBtn)
@@ -289,11 +289,11 @@ class dropDownButton(QWidget):
         if self.hideView == True:
             self.hideView = False
             self.buttonList.show()
-            self.btn.setText(f"▼ {self.label}")
+            self.btn.setText(f"\u25BC {self.label}")
         else:
             self.hideView = True 
             self.buttonList.hide()
-            self.btn.setText(f"▶ {self.label}")
+            self.btn.setText(f"\u25B6 {self.label}")
 
 """ NOTE: currently unused on the frontend interface  """
 class buttonList(QWidget):

@@ -7,6 +7,8 @@ Author: Siara Small  & Vivian Li
 Last Modified: Thursday, 6th October 2022 1:43:52 pm
 Modified By:  Siara Small  & Vivian Li
 -----
+Description: a toggle widget with the functionalities to hide and show 
+             a view object 
 '''
 from view.widgets import Button
 from util.Style import (
@@ -28,8 +30,8 @@ class ToggleView(QWidget):
     A toggle view widget that show and hide content,
     the content is passed in as a widget 
 
-    Args:
-        label(str): 
+    Constructor Args:
+        label(str):  the label that will displayed on the toggle bar
         view(object): the content that will be toggled 
         header(bool): if set to true, the width of the label will be wider
     """

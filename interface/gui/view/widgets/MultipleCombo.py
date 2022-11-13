@@ -18,7 +18,7 @@ class ToggleCombo(QWidget):
     """ generate a list of toggle view, 
         Arg: 
             data(dict): a dictionary that stores  the toggle view data
-                        the key is the label, the value is another dictionay
+                        the key is the label, the value is another dictionary
                         that will be used to construct a combolist
             showBasicSet(bool): 
     """
@@ -32,10 +32,11 @@ class ToggleCombo(QWidget):
 
         Args:
             data (Dict[str, dict]): a dictionary that stores form data,
-                                    the key is the label, the value is another dictionay
-                                    that stores tha value in each sub-form
+                                    the key is the label, the value is another 
+                                    dictionary that stores tha value in each sub-form
             showBasicSet (bool, optional): if true, shows the user form 
-            header (str, optional): header of the entire form, Defaults to "basic setting".
+            header (str, optional): header of the entire form, Defaults to 
+                                    "basic setting".
         """
         super().__init__(*args, **kwargs)
         

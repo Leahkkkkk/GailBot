@@ -7,6 +7,8 @@ Author: Siara Small  & Vivian Li
 Last Modified: Friday, 4th November 2022 6:24:06 pm
 Modified By:  Siara Small  & Vivian Li
 -----
+Description: a form page widget that display a page with a form  that accept 
+            user input 
 '''
 from typing import Dict 
 
@@ -35,11 +37,14 @@ class SettingForm(QWidget):
                  *args, 
                  **kwargs) -> None:
         """  initializes page
-        Args:
+        Constructor Args:
             header (str): the header of the page 
             formData (dict): the form data 
-            caption (str, optional): a short discription of the form 
+            caption (str, optional): a short description of the form 
                                     Defaults to None.
+        Public Functions: 
+        1. setValue(self, values:dict)
+        2. getValue(self) -> Dict[str, str]
         """
         super().__init__(*args, **kwargs)
         
@@ -49,7 +54,7 @@ class SettingForm(QWidget):
         self._initWidget()
         self._initLayout()
 
-    def setValue(self, values:dict):
+    def setValue(self, values:dict) -> None:
         """ public function to set the values in the form  """
         self.setForm.setValues(values)
     

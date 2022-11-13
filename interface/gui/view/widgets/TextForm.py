@@ -7,6 +7,7 @@ Author: Siara Small  & Vivian Li
 Last Modified: Friday, 4th November 2022 5:57:10 pm
 Modified By:  Siara Small  & Vivian Li
 -----
+Description: a form widget that implement a form that takes in user input 
 '''
 
 from typing import Dict 
@@ -36,11 +37,17 @@ class TextForm(QWidget):
                  *args, **kwargs) -> None:
         """ Displays a form 
 
-        Args:
+        Constructor Args:
             data (Dict[str, str]): a dictionary that stores the form 
                                    and initial values of the form 
-            backgroundColor (bool)  : if true, the background is autofilled 
-                                      with difault color
+            backgroundColor (bool)  : if true, the background is auto filled 
+                                      with default color
+        
+        Public Functions:
+        1. enableForm(self) -> None
+        2. disableForm(self) -> None
+        3. getValue(self) -> Dict[str, str]
+        4. setValues(self, data: Dict[str, str])
         """
         super().__init__(*args, **kwargs)
         self.data = data
@@ -74,7 +81,7 @@ class TextForm(QWidget):
             value[key] = input.value()
         return value
             
-    def setValues(self, data: Dict[str, str]):
+    def setValues(self, data: Dict[str, str]) -> None:
         """ public function to update the widget values
         
         Args:

@@ -7,6 +7,7 @@ Author: Siara Small  & Vivian Li
 Last Modified: Thursday, 6th October 2022 10:18:15 am
 Modified By:  Siara Small  & Vivian Li
 -----
+Description implement pop up message dialogue to display message for user
 '''
 from typing import List 
 from util.Logger import makeLogger
@@ -42,12 +43,12 @@ class ConfirmBox:
         
     
     def _confirm(self, button):
-        """ Check and handle user's confrimation 
+        """ Check and handle user's confirmation 
         
         Args:
             button (QButton)
         """
-        self.logger.info("confirm message box buttonc click")
+        self.logger.info("confirm message box button click")
         print(button.text())
         if button.text() == "Cancel":
             return

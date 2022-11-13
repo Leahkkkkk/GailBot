@@ -7,6 +7,7 @@ Author: Siara Small  & Vivian Li
 Last Modified: Thursday, 6th October 2022 1:44:14 pm
 Modified By:  Siara Small  & Vivian Li
 -----
+Description: implement widgets to accept user input in a form
 '''
 from util.Style import FontSize, Dimension
 from view.widgets import Label

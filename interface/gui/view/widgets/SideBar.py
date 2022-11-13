@@ -7,6 +7,7 @@ Author: Siara Small  & Vivian Li
 Last Modified: Friday, 4th November 2022 6:10:45 pm
 Modified By:  Siara Small  & Vivian Li
 -----
+Description: a side bar widget 
 '''
 
 from view.widgets.Background import initSideBarBackground
@@ -19,8 +20,14 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt
 
 class SideBar(QWidget):
-    """ class for the sidebar of the settings page """
+    """ implementation the sidebar of the settings page 
+    
+    public function:
+    1. addWidget(self, widget: QWidget, alignment = None) -> None
+    2. addStretch(self) -> None
+    """
     def __init__(self, *args, **kwargs) -> None:
+       
         super().__init__(*args, **kwargs)
         self.verticalLayout = QVBoxLayout()
         self.setLayout(self.verticalLayout)
@@ -28,7 +35,7 @@ class SideBar(QWidget):
         self.verticalLayout.setContentsMargins(0,0,0,0)
         initSideBarBackground(self)
         
-    def addWidget(self, widget: QWidget, alignment = None):
+    def addWidget(self, widget: QWidget, alignment = None) -> None:
         """ adds a widget to the sidebar
         Args: widget(QWidget): widget to add
               alignment: alignment of the added widget
@@ -38,7 +45,7 @@ class SideBar(QWidget):
             center = center | alignment
         self.verticalLayout.addWidget(widget, alignment = center)
         
-    def addStretch(self):
+    def addStretch(self) -> None:
         """ adds a stretch to the sidebar """
         self.verticalLayout.addStretch()
         

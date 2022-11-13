@@ -7,6 +7,8 @@ Author: Siara Small  & Vivian Li
 Last Modified: Sunday, 23rd October 2022 10:40:25 am
 Modified By:  Siara Small  & Vivian Li
 -----
+Description: Tab page widget with the signal to support functionalities for 
+             control flow 
 '''
 from PyQt6.QtWidgets import QWidget
 from PyQt6.QtCore import pyqtSignal, QObject
@@ -20,7 +22,7 @@ class Signals(QObject):
     close = pyqtSignal()
     
 class TabPage(QWidget):
-    """ the wrapper class for tab pages with signals to rediect pages """
+    """ the wrapper class for tab pages with signals to redirect pages """
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.signals = Signals()

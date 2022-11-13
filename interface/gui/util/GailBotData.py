@@ -21,7 +21,6 @@ from config.ConfigPath import BackEndDataPath
 
 basedir = os.getcwd()
 config = toml.load(os.path.join(basedir,BackEndDataPath.gaiBotData))
-
 Credential = CredentialData.from_dict(config["credential"])
 Directory = DirectoryData.from_dict(config["directory"])
 ProfileConfig = ProfileConfigData.from_dict(config["profileConfig"])

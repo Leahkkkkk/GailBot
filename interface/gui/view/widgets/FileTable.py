@@ -7,12 +7,9 @@ Author: Siara Small  & Vivian Li
 Last Modified: Saturday, 15th October 2022 10:43:45 am
 Modified By:  Siara Small  & Vivian Li
 -----
+Description: implementation of file table 
 '''
 
-""" 
-    TODO: **sorting function
-    TODO: **searching function 
-"""
 KEYERROR = "File key not found"
 
 from typing import Dict, List, Set, Tuple, TypedDict
@@ -582,7 +579,7 @@ class changeProfileDialog(QDialog):
         self.setFixedSize(QSize(450, 300))
     
     def updateProfile(self):
-        """ send a signal to upldate the profile in the database
+        """ send a signal to update the profile in the database
         """
         self.logger.info("update signal send")
         newSetting = self.selectSetting.getProfile()["Profile"]

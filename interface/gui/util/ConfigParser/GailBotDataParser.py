@@ -12,7 +12,6 @@ Modified By:  Siara Small  & Vivian Li
 
 """ accesses gailbot configuration values from given dictionaries """
 
-
 from dataclasses import dataclass
 from typing import List 
 import toml 

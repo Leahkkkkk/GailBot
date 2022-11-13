@@ -7,6 +7,7 @@ Author: Siara Small  & Vivian Li
 Last Modified: Thursday, 6th October 2022 1:44:55 pm
 Modified By:  Siara Small  & Vivian Li
 -----
+Description: a image widget to support displaying image on the interface
 '''
 
 import os 
@@ -19,7 +20,7 @@ from PyQt6.QtGui import QPixmap
 from PyQt6.QtCore import  QSize
 
 class Image(QLabel):
-    """ takes in the filename of image and generates a image widgte that 
+    """ takes in the filename of image and generates a image widget that 
         can be displayed  
         
         Args:
