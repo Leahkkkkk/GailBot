@@ -20,8 +20,7 @@ from view.widgets import (
 from util.StyleSource import StyleSource, StyleTable
 from util.Text import SystemSetPageText as Text 
 from util.Text import SystemSettingForm as Form
-from util.Text import About
-from view.Text.LinkText import Links
+from util.Text import About, Links
 from view.widgets import MsgBox
 
 from PyQt6.QtWidgets import (

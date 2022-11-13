@@ -38,8 +38,8 @@ class InputBox(QWidget):
         """initialize input box"""
         super().__init__(*args, **kwargs)
         self.label = label
-        self.vetical = vertical
-        self.lableSize = labelSize
+        self.vertical = vertical
+        self.labelSize = labelSize
         self.inputText = inputText
         self.selections = selections
         self._initWidget()
@@ -67,7 +67,7 @@ class InputBox(QWidget):
     
     def _initWidget(self):
         """initialize widgets for input box"""
-        self.inputlabel = Label.Label(self.label, self.lableSize)
+        self.inputlabel = Label.Label(self.label, self.labelSize)
         self.inputFeild = InputField(self) 
         self.inputFeild.setMaximumSize(
             QSize(Dimension.INPUTWIDTH, Dimension.INPUTHEIGHT))
@@ -76,7 +76,7 @@ class InputBox(QWidget):
             
     def _initLayout(self):
         """initialize layouts for input box"""
-        if self.vetical:
+        if self.vertical:
             self.layout = QVBoxLayout(self)
         else:
             self.layout = QHBoxLayout(self)
@@ -126,7 +126,7 @@ class InputCombo(InputBox):
     
     def _initWidget(self):
         """initialize widgets for input box"""
-        self.inputlabel = Label.Label(self.label, self.lableSize)
+        self.inputlabel = Label.Label(self.label, self.labelSize)
         self.inputFeild = ComboSelection(self.selections)
         self.inputFeild.setStyleSheet("")
         
@@ -147,9 +147,9 @@ class InputCombo(InputBox):
         
 
 class ComboSelection(QComboBox):
-    """ a costomized combobox 
+    """ a customized combobox 
         Args: 
-        slections: a list of available options 
+        selections: a list of available options 
     """
     def __init__(self, selections:list, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)

@@ -82,7 +82,7 @@ class BorderBtn(QPushButton):
         color (str): hex color in string 
         fontsize (str, optional): represented in string, unit is pixel 
                                   Defaults to FontSize.BTN 
-        borderRadius (int): botton border
+        borderRadius (int): button border
         other (str): other additional style
     """
     def __init__(
@@ -121,11 +121,11 @@ class BorderBtn(QPushButton):
         self.setStyleSheet(self.defaultStyle + f"background-color:{color}")
     
 class ToggleBtn(QPushButton):
-    """ A toggle button that display different lable when being toggled 
+    """ A toggle button that display different label when being toggled 
     
     Args:
         label(tuple(str), optional): the name of the icon image being displayed
-        text: the text next to the icon on the toggle lable
+        text: the text next to the icon on the toggle label
         sate: the initial state of the toggle bar, default to False
     """
     def __init__(
@@ -243,7 +243,7 @@ class onOffButton(QWidget):
 
 class iconBtn(QPushButton):
     """ A button with icon
-    icon (str): a string that indcate the icon file name
+    icon (str): a string that indicate the icon file name
     label  (str, optional): the tex to be displayed on the icon 
     """
     def __init__(self, icon:str, label:str=None,*args, **kwargs):
@@ -270,7 +270,7 @@ class dropDownButton(QWidget):
         super().__init__(*args, **kwargs)
         self.buttonList = buttonList(buttons,btnFuns) 
         self.btn = ColoredBtn(f"▶ {label}", 
-                              Color.BLUEMEDIUM,
+                              Color.PRIMARY_BUTTON,
                               FontSize.SMALL, 
                               StyleSheet.dropDownBtn)
         self.label = label
@@ -319,7 +319,7 @@ class buttonList(QWidget):
         for i in range(len(labels)):
             newButton = ColoredBtn(
                 labels[i],
-                Color.BLUEMEDIUM, 
+                Color.PRIMARY_BUTTON, 
                 FontSize.SMALL,
                 StyleSheet.buttonList)
             self.btnList.append(newButton)

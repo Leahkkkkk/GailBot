@@ -20,8 +20,7 @@ from model import Model
 from view import MainWindow
 from util import Logger
 
-from PyQt6.QtCore import pyqtSlot, QObject, QThreadPool 
-from PyQt6.QtCore import pyqtSignal, QObject
+from PyQt6.QtCore import pyqtSlot, QObject, QThreadPool, pyqtSignal
 
 class Signal(QObject):
     """ a signal object that contains signal for communication between 

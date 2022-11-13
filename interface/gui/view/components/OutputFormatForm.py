@@ -10,7 +10,6 @@ Modified By:  Siara Small  & Vivian Li
 '''
 from typing import Dict 
 
-from view.widgets.Background import initPrimaryColorBackground
 from view.widgets import ToggleView, TextForm, Button
 from util.Text import OutputFormatForm, OutputFormatFormText
 from util.Style import Color, Dimension
@@ -125,7 +124,7 @@ class HeaderForm(QWidget):
         """ public function to set the form value
         
         Args: 
-            data (Dict[str, str]): a dutionary that stores the data value
+            data (Dict[str, str]): a dictionary that stores the data value
         """
         self.lanCombo.setCurrentText(data["language"])
         self.numCombo.setCurrentIndex(data["Number of speaker"])

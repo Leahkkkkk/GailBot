@@ -13,7 +13,7 @@ from dataclasses import dataclass
 import toml
 from util.StyleSource import StyleSource
 from util.ConfigParser import StyleParser
-
+print("reload settings")
 # reading data from toml files
 color = toml.load(StyleSource.CURRENT_COLOR)
 fontSize = toml.load(StyleSource.CURRENT_FONTSIZE)
@@ -49,3 +49,9 @@ class buttonStyle:
                     color:white;\
                     border-radius:5;\
                     font-size:{FontSize.BTN}"
+                    
+                    
+def GetDynamicAsset() -> StyleParser.Asset : 
+   print("reload")
+   colordy = toml.load(StyleSource.CURRENT_COLOR)
+   return StyleParser.Asset.from_dict(colordy["asset"]) 

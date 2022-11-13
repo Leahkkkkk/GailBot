@@ -26,9 +26,10 @@ from util.Text import ProfilePageText as Text, About
 from util.Style import FontSize as FS 
 from util.Style import StyleSheet as SS 
 from util.Text import ProfileSettingForm as Form 
+from util.Text import Links
+
 from util.Logger import makeLogger
 from view.Signals import ProfileSignals
-from view.Text.LinkText import Links
 from view.pages import (
     RequiredSetPage, 
     PostSetPage, 

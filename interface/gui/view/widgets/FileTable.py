@@ -145,12 +145,13 @@ class FileTable(QTableWidget):
         try:
             widthSum = self.width()
             if len(widths) != self.columnCount():
+                print(len(widths), self.columnCount())
                 self.logger.error("Cannot resize column")
             else:
                 for i in range(len(widths)):
-                    self.setColumnWidth(i, widths[i] * widthSum)
+                    self.setColumnWidth(i, int(widths[i] * widthSum))
         except:
-            msgBox = MsgBox.WarnBox("Failed to resize the table")
+            MsgBox.WarnBox("Failed to resize the table")
           
       
     def _setFileHeader(self) -> None:

@@ -9,7 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 import os
-from util.Style import Color, Asset, Dimension
+from util.Style import Color, Asset, Dimension, GetDynamicAsset
 from view.widgets import Image
 from util import Path
 from PyQt6.QtCore import  Qt
@@ -24,7 +24,7 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout
 
 
 class Background(QBrush):
-    """ a Qbrush object that craeates a white background """
+    """ a QBrush object that creates a white background """
     def __init__(self,color, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.setColor(QColor(color))
@@ -41,9 +41,9 @@ def _initBackground(widget:QWidget, color=Color.MAIN_BACKRGOUND):
 
 
 def _initImgBackground(widget:QWidget, background: str = Asset.homeBackground):
-    """  initialize the image background for a widgte
+    """  initialize the image background for a widget
     Args:
-    widget (QWidget): a Qwidget object 
+    widget (QWidget): a QWidget object 
     background (str): the background image name
     """
     widget.setAutoFillBackground(True)
@@ -59,14 +59,17 @@ def _initImgBackground(widget:QWidget, background: str = Asset.homeBackground):
     
 def initHomePageBackground(widget:QWidget):
     """initialize the home page background with image"""
+    Asset  = GetDynamicAsset()
     _initImgBackground(widget, Asset.homeBackground)
 
 def initSubpageBackgorund(widget:QWidget):
     """ initialize the sub pages background with image"""
+    Asset  = GetDynamicAsset()
     _initImgBackground(widget, Asset.subPageBackground)
 
 def initSideBarBackground(widget:QWidget):
     """ initialize the side bar background with image"""
+    Asset  = GetDynamicAsset()
     _initImgBackground(widget, Asset.sideBarBackground)
     
 def initPrimaryColorBackground(widget:QWidget):
