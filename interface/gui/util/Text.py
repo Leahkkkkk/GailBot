@@ -9,14 +9,15 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
-
+import os 
 from util.ConfigParser import TextParser
 import toml 
 from dataclasses import dataclass
 
-text   = toml.load("config/text/text.toml")
-forms  = toml.load("config/text/forms.toml")
-about  = toml.load("config/text/about.toml")
+basedir = os.getcwd()
+text   = toml.load(os.path.join(basedir, "config/text/text.toml"))
+forms  = toml.load(os.path.join(basedir, "config/text/forms.toml"))
+about  = toml.load(os.path.join(basedir, "config/text/about.toml"))
 
 
 """ pages text data """

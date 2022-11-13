@@ -34,7 +34,7 @@ class Image(QLabel):
         **kwargs
     ) -> None:
         super().__init__(*args, **kwargs)
-        imgpath = os.path.join(Path.getProjectRoot(), f"view/asset/{imagename}")
+        imgpath = os.path.join(Path.getProjectRoot(), f"{imagename}")
         self.img = QPixmap(imgpath)
         self.setPixmap(self.img)
         self.resize(self.img.width(), self.img.height())

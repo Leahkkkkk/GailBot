@@ -8,6 +8,7 @@ Last Modified: Sunday, 6th November 2022 1:10:02 pm
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
+import os 
 import toml 
 from util.ConfigParser.GailBotDataParser import (
     CredentialData, 
@@ -16,8 +17,10 @@ from util.ConfigParser.GailBotDataParser import (
     PluginData, 
     ThreadData
 )
+from config.ConfigPath import BackEndDataPath
 
-config = toml.load("config/backend/gailbot.toml")
+basedir = os.getcwd()
+config = toml.load(os.path.join(basedir,BackEndDataPath.gaiBotData))
 
 Credential = CredentialData.from_dict(config["credential"])
 Directory = DirectoryData.from_dict(config["directory"])

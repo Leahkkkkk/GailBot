@@ -9,7 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 import os
-from util.Style import Color, Asset, Dimension, GetDynamicAsset
+from util.Style import Color, Asset, Dimension
 from view.widgets import Image
 from util import Path
 from PyQt6.QtCore import  Qt
@@ -51,7 +51,7 @@ def _initImgBackground(widget:QWidget, background: str = Asset.homeBackground):
     brush = QBrush()
     
     brush.setTextureImage(QImage(os.path.join(Path.getProjectRoot(), 
-                                      f"view/asset/{background}")))
+                                      f"{background}")))
     backgroundTransform = QTransform()
     brush.setTransform(backgroundTransform.scale(1,1))
     palette.setBrush(QPalette.ColorRole.Window, brush) 
@@ -59,17 +59,14 @@ def _initImgBackground(widget:QWidget, background: str = Asset.homeBackground):
     
 def initHomePageBackground(widget:QWidget):
     """initialize the home page background with image"""
-    Asset  = GetDynamicAsset()
     _initImgBackground(widget, Asset.homeBackground)
 
 def initSubpageBackgorund(widget:QWidget):
     """ initialize the sub pages background with image"""
-    Asset  = GetDynamicAsset()
     _initImgBackground(widget, Asset.subPageBackground)
 
 def initSideBarBackground(widget:QWidget):
     """ initialize the side bar background with image"""
-    Asset  = GetDynamicAsset()
     _initImgBackground(widget, Asset.sideBarBackground)
     
 def initPrimaryColorBackground(widget:QWidget):

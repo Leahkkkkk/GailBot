@@ -11,9 +11,10 @@ Description: contain instance of data class with preset data
 '''
 
 
-
+import os 
 import toml 
 
 from config.ConfigPath import PresetDataPath
 
-ProfilePreset =  toml.load(PresetDataPath.profilePreset)
+basedir = os.getcwd()
+ProfilePreset =  toml.load(os.path.join(basedir, PresetDataPath.profilePreset))

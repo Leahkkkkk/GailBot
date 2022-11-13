@@ -140,10 +140,10 @@ class ToggleBtn(QPushButton):
         self.setText(self.text)
         self.rightIcon = QIcon(os.path.join(
             Path.getProjectRoot(), 
-            f"view/asset/{label[0]}"))
+            f"{label[0]}"))
         self.downIcon = QIcon(os.path.join(
             Path.getProjectRoot(), 
-            f"view/asset/{label[1]}"))
+            f"{label[1]}"))
         self.setCheckable(True)
         self.clicked.connect(self._changeSymbol)
         self.state = state
@@ -248,7 +248,7 @@ class iconBtn(QPushButton):
     """
     def __init__(self, icon:str, label:str=None,*args, **kwargs):
       super().__init__(*args, **kwargs)
-      icon = QIcon(os.path.join(Path.getProjectRoot(), f"view/asset/{icon}"))
+      icon = QIcon(os.path.join(Path.getProjectRoot(), f"{icon}"))
       self.setIcon(icon)
       self.setObjectName(Text.icon)
       if label:

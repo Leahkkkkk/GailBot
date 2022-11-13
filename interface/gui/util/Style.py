@@ -9,21 +9,27 @@ Modified By:  Siara Small  & Vivian Li
 -----
 Description: contain instances of dataclass with style data 
 '''
-
+import os 
 from dataclasses import dataclass
 import toml
+
 from config.ConfigPath import StyleDataPath
 from util.StyleSource import StyleSource
 from util.ConfigParser import StyleParser
-print("reload settings")
+
+
+basedir = os.getcwd()
+
 # reading data from toml files
-color = toml.load(StyleSource.CURRENT_COLOR)
-fontSize = toml.load(StyleSource.CURRENT_FONTSIZE)
-dimension = toml.load(StyleDataPath.dimension)
-fontFamily  = toml.load(StyleDataPath.fontFamily)
-Color = StyleParser.ColorData.from_dict(color["colors"])
+color = toml.load(os.path.join (basedir, StyleDataPath.currentColor))
+fontSize = toml.load(os.path.join (basedir, StyleDataPath.currentFontSize))
+dimension = toml.load(os.path.join(basedir, StyleDataPath.dimension))
+fontFamily  = toml.load(os.path.join (basedir, StyleDataPath.fontFamily))
+
+
 
 # parse toml files to dataclass object
+Color = StyleParser.ColorData.from_dict(color["colors"])
 FontSize = StyleParser.FontSizeData.from_dict(
     fontSize["fontSizes"])
 Dimension = StyleParser.DimensionData.from_dict(
@@ -54,8 +60,3 @@ class buttonStyle:
                     border-radius:5;\
                     font-size:{FontSize.BTN}"
                     
-                    
-def GetDynamicAsset() -> StyleParser.Asset : 
-   print("reload")
-   colordy = toml.load(StyleSource.CURRENT_COLOR)
-   return StyleParser.Asset.from_dict(colordy["asset"]) 
