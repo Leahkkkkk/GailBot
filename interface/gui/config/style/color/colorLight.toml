@@ -1,5 +1,6 @@
-## config file with all style value
+## contains values for the light mode color theme
 [colors] 
+## light mode button colors
 SECONDARY_BUTTON = "#6E9B87" 
 CANCEL_QUIT = "#EE6C4D"
 HIGHLIGHT = "#F0F6F9"
@@ -19,6 +20,7 @@ WHITE = "#FFFFFF"
 
 
 [styleSheet]
+## light mode style sheet values, to be set as css by elements
 basic               = "background-color: #fff; color: #000"
 goToMain            = "border:none; color:#3D4A80;"
 settingStackID      ="settingStack"
@@ -44,6 +46,7 @@ iconBtn             = "border:none; background-color:none;"
 
 
 [asset]
+## light mode assets
 arrowImg = "/light/arrow.png"
 trashImg = "/light/trash.png"
 headerFont =  "view/asset/Raleway.ttf"

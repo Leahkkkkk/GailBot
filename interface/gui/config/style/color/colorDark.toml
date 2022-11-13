@@ -1,5 +1,6 @@
 ## contains values for the dark mode color theme
 [colors] 
+## dark mode button colors
 SECONDARY_BUTTON = "#76BD46" 
 CANCEL_QUIT = "#FB7C6A"
 HIGHLIGHT = "#216D81"
@@ -19,6 +20,7 @@ WHITE = "#FFFFFF"
 
 
 [styleSheet]
+## dark mode style sheet values, to be set as css by elements
 basic               = "background-color: #000; color: #fff"
 goToMain            = "border:none; color:#D2E4EE;"
 settingStackID      = "settingStack"
@@ -44,6 +46,7 @@ iconBtn             = "border:none; background-color:none;"
 
 
 [asset]
+## dark mode assets
 arrowImg = "/light/arrow.png"
 trashImg = "/light/trash.png"
 headerFont =  "view/asset/Raleway.ttf"

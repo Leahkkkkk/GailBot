@@ -7,11 +7,12 @@ import datetime
 from os.path import exists
 from dict_to_dataclass import DataclassFromDict, field_from_dict
 
-
+"""accesses style configuration values from given dictionaries"""
 
 ################################## style data #############################
 @dataclass 
 class ColorData(DataclassFromDict):
+    """ class to access the color data from the currently loaded theme """
     SECONDARY_BUTTON : str = field_from_dict()
     CANCEL_QUIT: str = field_from_dict()
     HIGHLIGHT: str =  field_from_dict()
@@ -32,12 +33,14 @@ class ColorData(DataclassFromDict):
     
 @dataclass 
 class FontSource(DataclassFromDict):
+    """ class to access the font data from the currently loaded theme """
     headerFont: str =  field_from_dict()
     clockFont: str =  field_from_dict()
     
     
 @dataclass
 class FontSizeData(DataclassFromDict):
+    """ class to access the font size data from the currently loaded theme """
     BODY: str =  field_from_dict()
     TEXT_FIELD: str =  field_from_dict()
     SMALL: str =  field_from_dict()
@@ -53,12 +56,14 @@ class FontSizeData(DataclassFromDict):
     
 @dataclass
 class FontFamilyData(DataclassFromDict):
+    """ class to access the color font family from the currently loaded theme """
     MAIN: str = field_from_dict()
     OTHER: str = field_from_dict()
     CLOCK: str = field_from_dict()
     
 @dataclass 
 class DimensionData(DataclassFromDict):
+    """ class to access the dimension data from the currently loaded theme """
     WINMAXWIDTH : int = field_from_dict()
     WINMAXHEIGHT :int = field_from_dict()
     BTNWIDTH: int = field_from_dict()
@@ -105,6 +110,7 @@ class DimensionData(DataclassFromDict):
 
 @dataclass 
 class Asset(DataclassFromDict):
+    """class to access the asset data from the currently loaded theme"""
     arrowImg: str =  field_from_dict()
     trashImg: str  =  field_from_dict()
     headerFont : str  =  field_from_dict()
@@ -132,6 +138,7 @@ class Asset(DataclassFromDict):
 
 @dataclass 
 class FileTableDimension(DataclassFromDict):
+    """class to access the file table dimension data from the currently loaded theme"""
     fileUploadPage: List[float] = field_from_dict()
     confirmPage: List[float] = field_from_dict()
     transcribePage: List[float] = field_from_dict()
@@ -139,6 +146,7 @@ class FileTableDimension(DataclassFromDict):
 
 @dataclass 
 class StyleSheet(DataclassFromDict):
+    """class to access the style sheet data from the currently loaded theme"""
     goToMain: str =  field_from_dict()
     settingStackID: str = field_from_dict()
     settingStack: str = field_from_dict()

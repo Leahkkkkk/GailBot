@@ -19,7 +19,7 @@ SettingValues={
                 "CMU": {
                     '1.language model setting': {
                         '1. language model': 'English',
-                        '2. costum language model': 'Air Force Study'
+                        '2. custom language model': 'Air Force Study'
                     },
                     '2.Acoustic Model Setting': {
                         '1. acoustic model setting': 'acoustic2',
@@ -69,7 +69,7 @@ SettingValues={
                 "IBM": {
                     '1.language model setting': {
                         '1. language model': 'Spanish',
-                        '2. costum language model': 'Air Force Study'
+                        '2. custom language model': 'Air Force Study'
                     },
                     '2.Acoustic Model Setting': {
                         '1. acoustic model setting': 'acoustic2',
@@ -93,7 +93,7 @@ SettingValues={
                 'Corpus Settings': {
                     'Corpus name': 'enter corpus name',
                     'Corpus location': 'enter corpus location',
-                    'Corpus room layout': 'enter corous room layout',
+                    'Corpus room layout': 'enter corpus room layout',
                     'Corpus situation': 'enter situation'
                 },
                 'Output File Format': 'CHART'
@@ -124,7 +124,7 @@ SettingValues={
                 "IBM": {
                     '1.language model setting': {
                         '1. language model': 'IBM language',
-                        '2. costum language model': 'Air Force Study'
+                        '2. custom language model': 'Air Force Study'
                     },
                     '2.Acoustic Model Setting': {
                         '1. acoustic model setting': 'acoustic2',

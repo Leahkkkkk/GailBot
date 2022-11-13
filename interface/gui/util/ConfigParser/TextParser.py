@@ -1,4 +1,4 @@
-'''
+"""
 File: Config.py
 Project: GailBot GUI
 File Created: Tuesday, 1st November 2022 3:59:15 pm
@@ -7,7 +7,10 @@ Author: Siara Small  & Vivian Li
 Last Modified: Tuesday, 1st November 2022 5:04:12 pm
 Modified By:  Siara Small  & Vivian Li
 -----
-'''
+"""
+
+"""accesses text configuration values from given dictionaries"""
+
 from dataclasses import dataclass
 from typing import List 
 import datetime
@@ -28,6 +31,7 @@ year = datetime.date.today().strftime("%Y")
 copyRightText = f"copyright {year} © HIL Lab"
 @dataclass
 class aboutData(DataclassFromDict):
+    """class holding data about GailBot; e.g. version, title, etc."""
     version: str = field_from_dict()
     APP_TITTLE: str = field_from_dict()
     copyRight = copyRightText
@@ -35,6 +39,7 @@ class aboutData(DataclassFromDict):
 ####################### Text Data ########################################
 @dataclass 
 class WelcomePageTextData(DataclassFromDict):
+    """class holding the text for the welcome page"""
     audioInstructionText: str =  field_from_dict()
     settingsInstructionText: str =  field_from_dict()
     transcribeInstructionText: str =  field_from_dict()
@@ -52,6 +57,7 @@ class WelcomePageTextData(DataclassFromDict):
         
 @dataclass
 class TranscribeSuccessTextData(DataclassFromDict):
+    """class holding the text for the transcription success page"""
     mainLabelText: str =  field_from_dict()
     transcribedFilesText: str =  field_from_dict()
     moreBtnText: str =  field_from_dict()
@@ -60,6 +66,7 @@ class TranscribeSuccessTextData(DataclassFromDict):
 
 @dataclass
 class TranscribeProgressTextData(DataclassFromDict):
+    """class holding the text for the transcription in progress page"""
     mainLabelText: str =  field_from_dict()
     loadingText: str =  field_from_dict()
     inProgressText: str =  field_from_dict()
@@ -69,16 +76,19 @@ class TranscribeProgressTextData(DataclassFromDict):
 
 @dataclass 
 class ProfileSettingData(DataclassFromDict):
+    """class holding the text for the setting page"""
     RequiredSetting: dict = field_from_dict()
     PostTranscribe: dict = field_from_dict()
     Plugins: dict = field_from_dict()
 
 @dataclass 
 class EngineSetting(DataclassFromDict):
+    """class holding the text for the engine setting page"""
     Engine: dict = field_from_dict()
 
 @dataclass 
 class OutputFormatSetting(DataclassFromDict):
+    """class holding the text for the output functionality"""
     CorpusSettings: dict = field_from_dict()
     FileFormat: List[str] = field_from_dict()
     Language: List[str] = field_from_dict()
@@ -86,6 +96,7 @@ class OutputFormatSetting(DataclassFromDict):
 
 @dataclass 
 class FileUploadPageTextData(DataclassFromDict):
+    """class holding the text for the file upload pop-up"""
     header: str =  field_from_dict()
     returnMainText: str = field_from_dict()
     recordBtnText: str =  field_from_dict()
@@ -109,6 +120,7 @@ class FileUploadPageTextData(DataclassFromDict):
 
 @dataclass
 class RecordPageTextData(DataclassFromDict):
+    """class holding the text for the record page"""
     basic: str = field_from_dict()
     filename: str = field_from_dict()
     mp3: str = field_from_dict()
@@ -126,12 +138,14 @@ class RecordPageTextData(DataclassFromDict):
 
 @dataclass 
 class RecordPageProgressData(DataclassFromDict):
+    """class holding the text for the record in progress page"""
     start: str = field_from_dict()
     cancel : str = field_from_dict()
     end: str = field_from_dict()
 
 @dataclass 
 class ProfilePageTextData(DataclassFromDict):
+    """class holding the text for the profile page"""
     cancelBtn: str = field_from_dict()
     saveBtn : str = field_from_dict()
     newProfileBtn : str = field_from_dict()
@@ -148,6 +162,7 @@ class ProfilePageTextData(DataclassFromDict):
 
 @dataclass 
 class SystemSetPageTextData(DataclassFromDict):
+    """class holding the text for the system settings page"""
     header: str = field_from_dict()
     caption:str = field_from_dict()
     cancelBtn : str = field_from_dict()
@@ -157,12 +172,14 @@ class SystemSetPageTextData(DataclassFromDict):
     
 @dataclass
 class ConfirmTranscribeTextData(DataclassFromDict):
+    """class holding the text for the confirm transcription popup"""
     confirmLabel: str = field_from_dict()
     confirm: str = field_from_dict()
     cancel: str = field_from_dict()
 
 @dataclass 
 class CreateNewProfileTextData(DataclassFromDict):
+    """class holding the text for the create new settings profile page"""
     profileName: str = field_from_dict()
     confirmProfileNameBtn: str = field_from_dict()
     emptyNameMsg :str = field_from_dict()
@@ -173,6 +190,7 @@ class CreateNewProfileTextData(DataclassFromDict):
     
 @dataclass
 class ChooseFileTabTextData(DataclassFromDict):
+    """class holding the text for the choose file tab functionality"""
     WindowTitle : str = field_from_dict()
     TabTitle : str = field_from_dict()
     TabHeader1 : str = field_from_dict()
@@ -181,6 +199,7 @@ class ChooseFileTabTextData(DataclassFromDict):
 
 @dataclass 
 class CreateNewProfileTabTextData(DataclassFromDict):
+    """class holding the text for the create new profile tab"""
     WindowTitle : str = field_from_dict()
     TabTitle    : str = field_from_dict()
     TabHeader1  : str = field_from_dict()
@@ -193,17 +212,20 @@ class CreateNewProfileTabTextData(DataclassFromDict):
 
 @dataclass 
 class MainStackTextData(DataclassFromDict):
+    """class holding the text for the main stack"""
     ProfileSetting : str = field_from_dict()
     SystemSetting  : str = field_from_dict()
 
 @dataclass 
 class MenuBarText(DataclassFromDict):
+    """class holding the text for the menu bar"""
     console: str = field_from_dict()
     open: str = field_from_dict()
     close : str = field_from_dict()
 
 @dataclass
 class OutputFormatFormData(DataclassFromDict):
+    """class holding the text for the output functionality"""
     header : str = field_from_dict()
     CorpuFormHeader  : str = field_from_dict()
     LanguageHeader   : str = field_from_dict()
@@ -214,6 +236,7 @@ class OutputFormatFormData(DataclassFromDict):
 
 @dataclass 
 class BtnText(DataclassFromDict):
+    """class holding the text for the buttons widget"""
     on : str = field_from_dict()
     off : str = field_from_dict()
     icon  : str = field_from_dict()
@@ -223,6 +246,7 @@ class BtnText(DataclassFromDict):
 
 @dataclass
 class FileTableText(DataclassFromDict):
+    """class holding the text for the file table widget"""
     default : str = field_from_dict()
     delete : str = field_from_dict()
     changeSet : str = field_from_dict()
@@ -230,15 +254,18 @@ class FileTableText(DataclassFromDict):
 
 @dataclass 
 class MultipleComboText(DataclassFromDict):
+    """class holding the text for the combo box widget"""
     username : str = field_from_dict()
     password : str = field_from_dict()
     
 @dataclass
 class WindowTitleData(DataclassFromDict):
+    """class holding the text for the window title component"""
     consoleWindow : str = field_from_dict()
 
 @dataclass
 class PopUpText(DataclassFromDict):
+    """class holding the text for the pop-up component"""
     leftArr : str = field_from_dict()
     rightArr : str = field_from_dict()
     finish : str = field_from_dict()
@@ -246,6 +273,7 @@ class PopUpText(DataclassFromDict):
 
 @dataclass
 class TableText(DataclassFromDict):
+    """class holding the text for the table component"""
     location : str = field_from_dict()
     postSettings : str = field_from_dict()
     save : str = field_from_dict()
@@ -256,6 +284,7 @@ class TableText(DataclassFromDict):
 
 @dataclass
 class FiletableHeader(DataclassFromDict):
+    """class holding the text for the file table headers"""
     fileUploadPage: List[str] = field_from_dict()
     confirmPage: List[str] = field_from_dict()
     successPage:  List[str] = field_from_dict()
@@ -264,11 +293,13 @@ class FiletableHeader(DataclassFromDict):
 
 @dataclass
 class TableWidgetOptions(DataclassFromDict):
+    """class holding the text for options of the table widget component"""
     fileDetails: str = field_from_dict()
     
 
 @dataclass 
 class ProfileField(DataclassFromDict):
+    """class holding the text for the profile field component"""
     user: str = field_from_dict()
     engine : str = field_from_dict()
     outPutFormat: str = field_from_dict()

@@ -11,7 +11,6 @@ credit: https://thadeusb.com/weblog/2010/10/10/python_scale_hex_color/
 -----
 '''
 
-
 def _clamp(val, minimum=0, maximum=255):
     """ helper function to make sure that the rgb color is within 
         the range 0 to 255

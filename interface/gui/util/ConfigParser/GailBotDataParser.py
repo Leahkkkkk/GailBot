@@ -10,14 +10,15 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
+""" accesses gailbot configuration values from given dictionaries """
+
 
 from dataclasses import dataclass
 from typing import List 
 import toml 
 from dict_to_dataclass import field_from_dict, DataclassFromDict
 
-
-config = toml.load("config/backend/gailbot.toml")
+from config.ConfigPath import BackEndDataPath
 
 @dataclass
 class CredentialData(DataclassFromDict):

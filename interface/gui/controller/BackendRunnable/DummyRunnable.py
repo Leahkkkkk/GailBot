@@ -20,7 +20,7 @@ from PyQt6.QtCore import (
 
 
 class Signals(QObject):
-    """ contain signals in order for Qrunnable object to communicate
+    """ contain signals in order for QRunnable object to communicate
         with controller
     """
     finished = pyqtSignal()

@@ -42,7 +42,7 @@ HiLabSuite = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
 
 ["profile form"."RequiredSetting".Engine.IBM."1.language model setting"]
 "1. language model" = [ "IBM language", "English", "Spanish",]
-"2. costum language model" = [ "HRI lab", "None", "Air Force Study",]
+"2. custom language model" = [ "HRI lab", "None", "Air Force Study",]
 
 ["profile form"."RequiredSetting".Engine.IBM."2.Acoustic Model Setting"]
 "1. acoustic model setting" = [ "acoustic1", "acoustic2", "acoustic3",]
@@ -57,7 +57,7 @@ HiLabSuite = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
 
 ["profile form"."RequiredSetting".Engine.CMU."1.language model setting"]
 "1. language model" = [ "CMU language", "English", "Spanish",]
-"2. costum language model" = [ "CMU costum", "None", "Air Force Study",]
+"2. custom language model" = [ "CMU custom", "None", "Air Force Study",]
 
 ["profile form"."RequiredSetting".Engine.CMU."2.Acoustic Model Setting"]
 "1. acoustic model setting" = [ "acoustic1", "acoustic2", "acoustic3",]

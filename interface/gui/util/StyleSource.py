@@ -7,10 +7,12 @@ Author: Siara Small  & Vivian Li
 Last Modified: Sunday, 6th November 2022 10:42:36 pm
 Modified By:  Siara Small  & Vivian Li
 -----
+Description: contains instances of dataclasses with style data
 '''
 
 
 from dataclasses import dataclass
+from config.ConfigPath import StyleDataPath
 
 @dataclass
 class StyleSource:
@@ -26,12 +28,12 @@ class StyleSource:
 
 """ a search table with all style choices and the path to the source"""
 StyleTable = {
-    "dark mode"     :   StyleSource.DARK_COLOR,
-    "light mode"    :   StyleSource.LIGHT_COLOR,
-    "default"       :   StyleSource.LIGHT_COLOR,
-    "small"         :   StyleSource.S_FONTSIZE,
-    "large"         :   StyleSource.L_FONTSIZE,
-    "medium"        :   StyleSource.M_FONTSIZE 
+    "dark mode"     :   StyleDataPath.darkColor,
+    "light mode"    :   StyleDataPath.lightColor,
+    "default"       :   StyleDataPath.currentColor,
+    "small"         :   StyleDataPath.smallFontSize,
+    "large"         :   StyleDataPath.largeFontSize,
+    "medium"        :   StyleDataPath.mediumFontSize 
 }
     
     

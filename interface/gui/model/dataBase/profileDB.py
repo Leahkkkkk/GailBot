@@ -15,7 +15,7 @@ Implementation of a database that stores the profile data
 from typing import Tuple
 
 from util.Logger import makeLogger
-from model.SettingData import SettingValues
+from util.Preset import ProfilePreset
 from util.Error import ErrorMsg
 
 from PyQt6.QtCore import QObject, pyqtSignal 
@@ -56,8 +56,8 @@ class ProfileModel:
         
         
         self.logger = makeLogger("B")
-        self.data = SettingValues              
-        self.profilekeys = list(SettingValues) 
+        self.data = ProfilePreset              
+        self.profilekeys = list(ProfilePreset) 
         self.signals = Signals()
     
     def post(self, profile: Tuple[str, dict]) -> None :
