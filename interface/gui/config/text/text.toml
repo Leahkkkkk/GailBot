@@ -49,8 +49,10 @@ fileFilter = "audio file (*.wav)"
 removeWarnText = "Remove all files?"
 tabAddfile = "Add File"
 tabAddFolder = "Add Folder"
-audioLogo = "🔈"
-directoryLogo = "📁"
+## unicode for an audio icon
+audioLogo = "\u1F50A"
+## unicode for a file folder icon
+directoryLogo = "\u1F4C1"
 
 
 [RecordPageText]
@@ -181,8 +183,10 @@ username = "Username"
 password = "Password"
 
 [popUpText]
-leftArr = "▶"
-rightArr = "◀"
+## unicode of left pointing arrow 
+leftArr = "\u25B6"
+## unicode of right pointing arrow 
+rightArr = "\u25C0"
 finish = "Finish"
 window = "File Info"
 
