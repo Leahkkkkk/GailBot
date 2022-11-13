@@ -7,6 +7,7 @@ Author: Siara Small  & Vivian Li
 Last Modified: Thursday, 6th October 2022 9:59:56 am
 Modified By:  Siara Small  & Vivian Li
 -----
+Description: implementation of the main page Stack
 '''
 from typing import Tuple
 
@@ -33,17 +34,35 @@ from PyQt6.QtCore import QSize
 
 
 class MainStack(QStackedWidget):
-    """ implementation of the page stack """
+    """ Implementation of the main page stack.
+        This module contains all the pages of gui interface as child widgets. 
+        It mainly implements the logic of page redirection. 
+        
+        It also implements the functionalities to handle database signal, 
+        when the signal need to be handled by multiple pages. 
+    
+        Constructor Args:
+        1. profileKeys : a list of initial profile keys, this is  passed 
+                         down to the profile setting page in order to allow 
+                         user to load initial profiles 
+        2. fileTableSignal: a signal object to support communication between 
+                            file database and view, this is  passed down to 
+                            pages with file table 
+        3. profilSignals: a signal object to support communication between 
+                            profile database and view, this is passed down to 
+                            profile page
+        
+    """
     def __init__(
         self, 
-        profilekeys,       # a list of initial profile keys 
-        fileTableSignal,   # signals for managing file data
-        profileSignals,    # signals for manmaging profile data
+        profileKeys,       
+        fileTableSignal,   
+        profileSignals,    
         parent, 
         *args, 
         **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.profilekeys = profilekeys
+        self.profileKeys = profileKeys
         self.fileSignal = fileTableSignal
         self.profileSignals = profileSignals
         self.logger= makeLogger("F")
@@ -55,7 +74,7 @@ class MainStack(QStackedWidget):
         self._connectSignal()
         
     def _connectSignal(self):
-        """ conecting the signal  """
+        """ connecting the signal  """
         # self.logger.info("connect signal")
         self.FileUploadPage.fileTable.viewSignal.goSetting.connect(
             self.gotoSettingPage)
@@ -94,13 +113,13 @@ class MainStack(QStackedWidget):
         self.WelcomePage = WelcomePage.WelcomePage(self)
         initHomePageBackground(self.WelcomePage)
         self.FileUploadPage = FileUploadPage.FileUploadPage(
-            self.profilekeys,self.fileSignal) 
+            self.profileKeys,self.fileSignal) 
         initSubpageBackgorund(self.FileUploadPage)
         self.ConfirmTranscribePage = ConfirmTranscribePage.ConfirmTranscribePage(
             self.fileSignal)
         initSubpageBackgorund(self.ConfirmTranscribePage)
         self.ProfileSettingPage = ProfileSettingPage.ProfileSettingPage(
-            self.profilekeys, self.profileSignals)
+            self.profileKeys, self.profileSignals)
         initPrimaryColorBackground(self.ProfileSettingPage)
         self.TranscribeProgressPage = TranscribeProgressPage.TranscribeProgressPage(
             self.fileSignal)

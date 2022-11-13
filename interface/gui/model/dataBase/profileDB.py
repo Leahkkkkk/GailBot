@@ -1,3 +1,17 @@
+'''
+File: profileDB.py
+Project: GailBot GUI
+File Created: Friday, 4th November 2022 1:01:27 pm
+Author: Siara Small  & Vivian Li
+-----
+Last Modified: Sunday, 13th November 2022 9:06:38 am
+Modified By:  Siara Small  & Vivian Li
+-----
+Description:
+Implementation of a database that stores the profile data
+'''
+
+
 from typing import Tuple
 
 from util.Logger import makeLogger
@@ -16,15 +30,37 @@ class Signals(QObject):
     
     
 class ProfileModel:
-    """ database for profile  """
+    """ implementation of the Profile database
+    
+    Field:
+    1. data : a dictionary that stores the profile data 
+    2. profilekeys: a list of profile names that are currently available 
+                    in the database
+    3. signals: a signal object for communication between the database 
+                and the caller, the caller should support function from
+                view object to handle signal emitted by the profile database
+    
+    
+    Public function:
+    Database modifier: 
+    1. post(self, profile: Tuple[str, dict]) -> None 
+    2. delete(self, profilekey:str) -> None
+    
+    Profile modifier:
+    3. edit(self, profile: Tuple[str, dict]) -> None 
+    
+    Database access: 
+    4. get(self, profilekey:str) -> None 
+    """
     def __init__(self) -> None:
         
-        self.logger = makeLogger("Database")
-        self.data = SettingValues              #TODO: for testing delete 
-        self.profilekeys = list(SettingValues) #TODO: for testing delete
+        
+        self.logger = makeLogger("B")
+        self.data = SettingValues              
+        self.profilekeys = list(SettingValues) 
         self.signals = Signals()
     
-    def post(self, profile: Tuple[str, dict]):
+    def post(self, profile: Tuple[str, dict]) -> None :
         """ post a new profile to profile database
 
         Args:
@@ -38,7 +74,7 @@ class ProfileModel:
             self.signals.error.emit("duplicated profile name") 
     
 
-    def delete(self, profilekey:str):
+    def delete(self, profilekey:str) -> None :
         """ delete a file from database 
 
         Args:
@@ -52,7 +88,7 @@ class ProfileModel:
         else:
             del self.data[profilekey]
     
-    def edit(self, profile: Tuple[str, dict]):
+    def edit(self, profile: Tuple[str, dict]) -> None :
         """ update a file
         Args:
             profile (Tuple[key, dict]): a key that identified the profile 
@@ -70,7 +106,7 @@ class ProfileModel:
             self.logger.error(ErrorMsg.EDITERROR)
     
     
-    def get(self, profilekey:str):
+    def get(self, profilekey:str) -> None:
         """ 
         Args:
             profilekey (str): _description_

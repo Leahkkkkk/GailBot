@@ -7,6 +7,7 @@ Author: Siara Small  & Vivian Li
 Last Modified: Tuesday, 8th November 2022 4:01:17 pm
 Modified By:  Siara Small  & Vivian Li
 -----
+Description: implementation of the out put format form 
 '''
 from typing import Dict 
 
@@ -23,7 +24,16 @@ from PyQt6.QtWidgets import (
 )
 
 class OutPutFormat(QWidget):
-    """class for output form"""
+    """ implementation of a form that allow user to create the profile setting 
+        for output format 
+        
+        Public Functions: 
+        1. getValue() -> Dict[str, str] 
+            get the form value
+        2. setValue(data: Dict[str, str]) -> None
+            taking a dictionary that stores the form values, and load those
+            form values
+    """
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.logger = makeLogger("F")
@@ -50,13 +60,13 @@ class OutPutFormat(QWidget):
         self.layout.addWidget(self.textWrapField)
         self.layout.addSpacing(Dimension.MEDIUM_SPACING * 10)
         
-    def getValue(self):
+    def getValue(self) -> Dict[str, str]:
         """ gets current value of the form data """
         value = self.headerForm.getValue()
         value["Output File Format"] = self.formatCombo.currentText()
         return value
     
-    def setValue(self, data:dict):
+    def setValue(self, data: Dict[str, str]) -> None:
         """ gets current value of the form data 
         Args: data:dict: dictionary to update
         """
@@ -83,7 +93,7 @@ class HeaderForm(QWidget):
         self.numCombo.addItems(["1", "2", "3"])
         self.layout.addWidget(self.numCombo)
         self.corpusForm = TextForm.TextForm(data, background=False)
-    
+
     
         for i in range(3):
             newLabel = QLabel(f"Speaker {i + 1} Gender")

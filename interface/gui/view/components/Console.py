@@ -7,6 +7,7 @@ Author: Siara Small  & Vivian Li
 Last Modified: Thursday, 6th October 2022 9:54:20 am
 Modified By:  Siara Small  & Vivian Li
 -----
+Description: implementation of a console that display logging message 
 '''
 import logging
 
@@ -20,6 +21,8 @@ from PyQt6.QtWidgets import (
     QPlainTextEdit
 )
 from PyQt6.QtCore import QSize
+
+
 class Console(QWidget):
     """ A console window that display all log messages """
     def __init__(self):

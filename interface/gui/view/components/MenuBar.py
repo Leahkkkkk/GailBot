@@ -7,6 +7,7 @@ Author: Siara Small  & Vivian Li
 Last Modified: Thursday, 6th October 2022 10:17:30 am
 Modified By:  Siara Small  & Vivian Li
 -----
+Description: implementation of the menu bar 
 '''
 from util.Text import MenuBarText
 
@@ -15,7 +16,8 @@ from PyQt6 import QtGui
 
 
 class ManuBar(QMenuBar):
-    """ Gui menu bar, include open and close console option """
+    """ implementation of Gui menu bar, include open and close 
+        console option """
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.Console = QMenu(MenuBarText.console)

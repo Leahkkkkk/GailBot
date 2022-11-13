@@ -7,6 +7,7 @@ Author: Siara Small  & Vivian Li
 Last Modified: Tuesday, 8th November 2022 4:01:32 pm
 Modified By:  Siara Small  & Vivian Li
 -----
+Description: implementation of the plugin dialog for user to upload new plugin
 '''
 
 
@@ -27,11 +28,13 @@ from PyQt6.QtCore import Qt, QSize
 
 class PluginDialog(QDialog):
     def __init__(self, signal:ProfileSignals, *arg, **kwarg) -> None:
-        """  a pop up dialog to let user to load new plugin
+        """ a pop up dialog that allow  user to load new plugin
+            once the user confirms adding the plugin, the widget will 
+            send a signal to post the newly added plugin to the database
 
-        Args:
+        Constructor Args:
             signal (ProfileSignals): a signal used to post plugin data to 
-                                    profile database
+                                    database
         """
         super().__init__(*arg, **kwarg)
         self.setMinimumSize(

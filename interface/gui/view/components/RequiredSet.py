@@ -7,12 +7,13 @@ Author: Siara Small  & Vivian Li
 Last Modified: Tuesday, 8th November 2022 4:00:50 pm
 Modified By:  Siara Small  & Vivian Li
 -----
+implementation of the required setting form 
 '''
 
 from typing import Dict 
 
 from view.widgets import ToggleView
-from view.components.SettingEngineForm import SettingEngineForm
+from view.components.SpeechEngineForm import SpeechEngineForm
 from view.components.OutputFormatForm import OutPutFormat
 from util.Text import CreateNewProfilePageText as Text 
 from util.Style import Dimension
@@ -24,7 +25,16 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt
 
 class RequiredSet(QWidget):
-    """ required settings page"""
+    """ implementation of a form that allow user to create required setting 
+    
+    Public Functions: 
+    1.  getValue() -> Dict[str, dict] 
+        get the form value
+    2.  setValue(data: Dict[str, dict]) -> None
+        taking a dictionary that stores the form values, and load those
+        form values
+    
+    """
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self._initWidget()
@@ -32,7 +42,7 @@ class RequiredSet(QWidget):
          
     def _initWidget(self):
         """initialize widgets"""
-        self.engineForm = SettingEngineForm()
+        self.engineForm = SpeechEngineForm()
         self.engineSet = ToggleView.ToggleView(
             Text.engineSettingHeader,self.engineForm, header = True)
         self.outPutForm = OutPutFormat()
@@ -60,11 +70,11 @@ class RequiredSet(QWidget):
         self.engineForm.setValue(data["Engine"])
         self.outPutForm.setValue(data["Output Form Data"])
     
-    def getValue(self) -> dict:
-        """ a plublic function that get the file value
+    def getValue(self) -> Dict [str, dict]:
+        """ a public function that get the file value
 
         Returns:
-            dict: retuns a dictionary that stores the profile values
+            dict: returns a dictionary that stores the profile values
         """
         profile = dict() 
         profile["Engine"] = self.engineForm.getValue()

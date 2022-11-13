@@ -11,7 +11,7 @@ Description:
 connect the backend transcription process with the front end view object, 
 so that the front end is able to reflect the transcription progress
 '''
-from util.Error import ErrorMsg, ThreadExeception
+from util.Error import ErrorMsg, ThreadException
 from view.MainWindow import MainWindow
 from controller.BackendRunnable.GBRunnable import Worker
 from util.Logger import makeLogger
@@ -92,7 +92,7 @@ class TranscribeController(QObject):
                 self.worker = Worker(self.files, self.signal)
                 self.signal.start.emit()
                 if not self.ThreadPool.tryStart(self.worker):
-                    raise ThreadExeception(ErrorMsg.RESOURCEERROR)
+                    raise ThreadException(ErrorMsg.RESOURCEERROR)
             except:
                 self.signal.error("failed to start transcribing")
                 self.logger.error("failed to start transcribe")

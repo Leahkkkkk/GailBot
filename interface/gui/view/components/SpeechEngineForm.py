@@ -1,15 +1,4 @@
 '''
-File: DynamicNDependentCombo.py
-Project: GailBot GUI
-File Created: Wednesday, 5th October 2022 12:22:13 pm
-Author: Siara Small  & Vivian Li
------
-Last Modified: Thursday, 6th October 2022 1:44:39 pm
-Modified By:  Siara Small  & Vivian Li
------
-'''
-
-'''
 File: SettingEngineForm.py
 Project: GailBot GUI
 File Created: Friday, 4th November 2022 1:01:27 pm
@@ -18,6 +7,7 @@ Author: Siara Small  & Vivian Li
 Last Modified: Tuesday, 8th November 2022 4:00:59 pm
 Modified By:  Siara Small  & Vivian Li
 -----
+Description: implementation of a speech to engine form 
 '''
 
 from typing import Dict
@@ -33,11 +23,19 @@ from PyQt6.QtWidgets import (
 )
 
 
-class SettingEngineForm(QWidget):
-    """ Generate a dynamic list of combobox
+class SpeechEngineForm(QWidget):
+    """ Generate a dynamic list of combobox to implement the 
+        setting form that allow user to create speech to engine setting 
     
     Args:
         data (dict): a dictionary that stores the dependent logic 
+        
+    Public Functions: 
+    1.  getValue() -> Dict[str, dict] 
+        get the form value
+    2.  setValue(data: Dict[str, dict]) -> None
+        taking a dictionary that stores the form values, and load those
+        form values
     
     """
     def __init__(self, showBasicSet:bool = True,*args, **kwargs) -> None:

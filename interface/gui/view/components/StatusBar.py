@@ -7,6 +7,7 @@ Author: Siara Small  & Vivian Li
 Last Modified: Thursday, 6th October 2022 10:26:36 am
 Modified By:  Siara Small  & Vivian Li
 -----
+Description: a status bar that display the status message to user 
 '''
 
 import logging
@@ -18,14 +19,19 @@ from PyQt6.QtWidgets import  QStatusBar
 
 
 class StatusBar(QStatusBar):
-    """ A statusbar that display status message """
+    """ A statusbar that display status message 
+    
+    Public Function: 
+    showStatusMsg(msg:str, time = None) -> None
+    
+    """
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.setMinimumSize(QSize(Dimension.STATUSWIDTH, Dimension.STATUSHEIGHT))
         self.statusLog = Logger.StatusBarHandler(self.showStatusMsg)
         logging.getLogger().addHandler(self.statusLog)
     
-    def showStatusMsg(self, msg:str, time=None):
+    def showStatusMsg(self, msg:str, time = None) -> None :
         """ Public function to display message on statusbar
 
         Args:

@@ -23,12 +23,12 @@ class ErrorMsg:
     RESOURCEERROR = "Thread Resource temporarily unavailable"
     
     
-class DBExecption(Exception):
+class DBException(Exception):
     """ exception for database module """
     def __init__(self, msg = None):
         self.msg = msg
 
-class ThreadExeception(Exception):
+class ThreadException(Exception):
     """ exeception for thread module """
     def __init__(self, msg = None):
         self.msg = msg
