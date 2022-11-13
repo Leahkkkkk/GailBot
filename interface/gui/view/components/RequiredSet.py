@@ -7,7 +7,7 @@ Author: Siara Small  & Vivian Li
 Last Modified: Tuesday, 8th November 2022 4:00:50 pm
 Modified By:  Siara Small  & Vivian Li
 -----
-implementation of the required setting form 
+Description: implementation of the required setting form 
 '''
 
 from typing import Dict 

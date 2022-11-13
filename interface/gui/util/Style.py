@@ -18,7 +18,7 @@ from util.StyleSource import StyleSource
 from util.ConfigParser import StyleParser
 
 
-basedir = os.getcwd()
+basedir = os.path.dirname(__file__)
 
 # reading data from toml files
 color = toml.load(os.path.join (basedir, StyleDataPath.currentColor))

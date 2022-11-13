@@ -10,12 +10,13 @@ Modified By:  Siara Small  & Vivian Li
 Description: 
 '''
 
-
+import os 
 import toml 
 from dataclasses import dataclass
 from dict_to_dataclass import field_from_dict, DataclassFromDict
 
-data = toml.load("config/configpath.toml")
+dirname = os.path.dirname(__file__)
+data = toml.load(os.path.join (dirname, "./configpath.toml"))
 
 @dataclass 
 class BackEndData(DataclassFromDict):

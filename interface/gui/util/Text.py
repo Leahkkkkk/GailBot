@@ -14,10 +14,12 @@ from util.ConfigParser import TextParser
 import toml 
 from dataclasses import dataclass
 
-basedir = os.getcwd()
-text   = toml.load(os.path.join(basedir, "config/text/text.toml"))
-forms  = toml.load(os.path.join(basedir, "config/text/forms.toml"))
-about  = toml.load(os.path.join(basedir, "config/text/about.toml"))
+from config.ConfigPath import TextDataPath
+
+basedir = os.path.dirname(__file__)
+text   = toml.load(os.path.join(basedir, TextDataPath.string))
+forms  = toml.load(os.path.join(basedir, TextDataPath.form))
+about  = toml.load(os.path.join(basedir, TextDataPath.about))
 
 
 """ pages text data """

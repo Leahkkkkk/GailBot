@@ -16,5 +16,5 @@ import toml
 
 from config.ConfigPath import PresetDataPath
 
-basedir = os.getcwd()
+basedir = os.path.dirname(__file__)
 ProfilePreset =  toml.load(os.path.join(basedir, PresetDataPath.profilePreset))

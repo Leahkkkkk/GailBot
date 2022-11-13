@@ -73,8 +73,8 @@ class StatusBarFormatter(logging.Formatter):
     """ formatter for status bar """
     def __init__(self, fmt):
         self.fmt = fmt
-        self.warn = "⚠ "
-        self.error = "! "
+        self.warn = "\u26A0"
+        self.error = "\u2757"
         self.FORMATS = {
             logging.WARNING: f"{self.warn}{self.fmt}",
             logging.ERROR: f"{self.error}{self.fmt}",

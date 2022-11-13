@@ -27,6 +27,8 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import QSize, Qt
 from PyQt6.QtGui import QIcon
 
+
+dirname = os.path.dirname(__file__)
 class ColoredBtn(QPushButton):
     """ a button widget with colored background and white button text
 
@@ -138,12 +140,8 @@ class ToggleBtn(QPushButton):
         super().__init__(*args, **kwargs)
         self.text = text
         self.setText(self.text)
-        self.rightIcon = QIcon(os.path.join(
-            Path.getProjectRoot(), 
-            f"{label[0]}"))
-        self.downIcon = QIcon(os.path.join(
-            Path.getProjectRoot(), 
-            f"{label[1]}"))
+        self.rightIcon = QIcon(os.path.join(dirname, f"{label[0]}"))
+        self.downIcon = QIcon(os.path.join(dirname, f"{label[1]}"))
         self.setCheckable(True)
         self.clicked.connect(self._changeSymbol)
         self.state = state
@@ -248,7 +246,7 @@ class iconBtn(QPushButton):
     """
     def __init__(self, icon:str, label:str=None,*args, **kwargs):
       super().__init__(*args, **kwargs)
-      icon = QIcon(os.path.join(Path.getProjectRoot(), f"{icon}"))
+      icon = QIcon(os.path.join(dirname, f"{icon}"))
       self.setIcon(icon)
       self.setObjectName(Text.icon)
       if label:

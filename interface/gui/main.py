@@ -23,7 +23,6 @@ EXIT_CODE_REBOOT = -20000
 
 exitCodeQueue = Queue()
 
-
 def main(exitCodeQueue:Queue):
     """ main driver function to run the app  """
     app = QApplication(sys.argv)

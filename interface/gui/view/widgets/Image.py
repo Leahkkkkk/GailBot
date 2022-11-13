@@ -19,6 +19,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtCore import  QSize
 
+dirname = os.path.dirname(__file__)
 class Image(QLabel):
     """ takes in the filename of image and generates a image widget that 
         can be displayed  
@@ -35,7 +36,7 @@ class Image(QLabel):
         **kwargs
     ) -> None:
         super().__init__(*args, **kwargs)
-        imgpath = os.path.join(Path.getProjectRoot(), f"{imagename}")
+        imgpath = os.path.join(dirname, f"{imagename}")
         self.img = QPixmap(imgpath)
         self.setPixmap(self.img)
         self.resize(self.img.width(), self.img.height())

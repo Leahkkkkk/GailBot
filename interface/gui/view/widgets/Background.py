@@ -22,7 +22,7 @@ from PyQt6.QtGui import (
 )
 from PyQt6.QtWidgets import QWidget, QVBoxLayout
 
-
+dirname = os.path.dirname(__file__)
 class Background(QBrush):
     """ a QBrush object that creates a white background """
     def __init__(self,color, *args, **kwargs) -> None:
@@ -50,8 +50,7 @@ def _initImgBackground(widget:QWidget, background: str = Asset.homeBackground):
     palette = widget.palette()
     brush = QBrush()
     
-    brush.setTextureImage(QImage(os.path.join(Path.getProjectRoot(), 
-                                      f"{background}")))
+    brush.setTextureImage(QImage(os.path.join(dirname, f"{background}")))
     backgroundTransform = QTransform()
     brush.setTransform(backgroundTransform.scale(1,1))
     palette.setBrush(QPalette.ColorRole.Window, brush) 
