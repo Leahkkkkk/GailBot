@@ -17,8 +17,8 @@ from config.ConfigPath import StyleDataPath
 @dataclass
 class StyleSource:
     """ stores file paths to different style theme"""
-    CURRENT_COLOR       = "../../config/style/color/color.toml"
-    CURRENT_FONTSIZE    = "../../config/style/font/fontSize.toml"
+    CURRENT_COLOR       = StyleDataPath.currentColor
+    CURRENT_FONTSIZE    = StyleDataPath.currentFontSize
 
 
 """ a search table with all style choices and the path to the source"""

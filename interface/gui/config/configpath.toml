@@ -4,22 +4,22 @@ gaiBotData      = "config/backend/gailbot.toml"
 
 # path to config files with style data
 [style]
-dimension       = "../config/style/dimension.toml"
-fontFamily      = "../config/style/font/fontFamily.toml"
-currentColor    = "../config/style/color/color.toml"
-darkColor       = "../../config/style/color/colorDark.toml"
-lightColor      = "../../config/style/color/colorLight.toml"
-currentFontSize = "../config/style/font/fontSize.toml"
-largeFontSize   = "../../config/style/font/fontSizeLarge.toml"
-smallFontSize   = "../../config/style/font/fontSizeSmall.toml"
-mediumFontSize  = "../../config/style/font/fontSizeMedium.toml"
+dimension       = "config/style/dimension.toml"
+fontFamily      = "config/style/font/fontFamily.toml"
+currentColor    = "config/style/color/color.toml"
+darkColor       = "config/style/color/colorDark.toml"
+lightColor      = "config/style/color/colorLight.toml"
+currentFontSize = "config/style/font/fontSize.toml"
+largeFontSize   = "config/style/font/fontSizeLarge.toml"
+smallFontSize   = "config/style/font/fontSizeSmall.toml"
+mediumFontSize  = "config/style/font/fontSizeMedium.toml"
 
 # path to config files with text data
 [text]
-string          = "../config/text/text.toml"
-form            = "../config/text/forms.toml"
-about           = "../config/text/about.toml"
+string          = "config/text/text.toml"
+form            = "config/text/forms.toml"
+about           = "config/text/about.toml"
 
 # path to config files with the preset data 
 [preset]
-profilePreset   = "../config/preset/profileValues.toml"
+profilePreset   = "config/preset/profileValues.toml"

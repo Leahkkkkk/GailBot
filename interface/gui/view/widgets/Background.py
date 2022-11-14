@@ -11,6 +11,7 @@ Description: implement function for initialize background for different pages
 '''
 import os
 from util.Style import Color, Asset, Dimension
+from util.Path import getProjectRoot
 from view.widgets import Image
 from util import Path
 from PyQt6.QtCore import  Qt
@@ -23,7 +24,7 @@ from PyQt6.QtGui import (
 )
 from PyQt6.QtWidgets import QWidget, QVBoxLayout
 
-dirname = os.path.dirname(__file__)
+dirname = getProjectRoot()
 class Background(QBrush):
     """ a QBrush object that creates a white background """
     def __init__(self,color, *args, **kwargs) -> None:

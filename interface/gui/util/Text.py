@@ -13,10 +13,10 @@ import os
 from util.ConfigParser import TextParser
 import toml 
 from dataclasses import dataclass
-
+from util.Path import getProjectRoot
 from config.ConfigPath import TextDataPath
 
-basedir = os.path.dirname(__file__)
+basedir = getProjectRoot()
 text   = toml.load(os.path.join(basedir, TextDataPath.string))
 forms  = toml.load(os.path.join(basedir, TextDataPath.form))
 about  = toml.load(os.path.join(basedir, TextDataPath.about))

@@ -23,6 +23,7 @@ from util.StyleSource import StyleSource, StyleTable
 from util.Text import SystemSetPageText as Text 
 from util.Text import SystemSettingForm as Form
 from util.Text import About, Links
+from util.Path import getProjectRoot
 from view.widgets import MsgBox
 
 from PyQt6.QtWidgets import (
@@ -32,7 +33,7 @@ from PyQt6.QtWidgets import (
     QMessageBox)
 from PyQt6.QtCore import Qt, pyqtSignal, QObject
 
-dirname = os.path.dirname(__file__)
+dirname = getProjectRoot()
 class Signal(QObject):
     restart = pyqtSignal()
 

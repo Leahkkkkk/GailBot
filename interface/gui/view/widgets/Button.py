@@ -14,6 +14,7 @@ from typing import List
 from view.widgets import Label
 from util.Style import FontSize, Dimension, Color, StyleSheet, Asset
 from util.Text import BtnText as Text
+from util.Path import getProjectRoot
 from util.ColorGenerator import colorScale
 from util import Path
 
@@ -29,7 +30,7 @@ from PyQt6.QtCore import QSize, Qt
 from PyQt6.QtGui import QIcon
 
 
-dirname = os.path.dirname(__file__)
+dirname = getProjectRoot()
 class ColoredBtn(QPushButton):
     """ a button widget with colored background and white button text
 

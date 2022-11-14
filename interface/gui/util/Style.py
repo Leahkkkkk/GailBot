@@ -13,12 +13,12 @@ import os
 from dataclasses import dataclass
 import toml
 
+from util.Path import getProjectRoot
 from config.ConfigPath import StyleDataPath
-from util.StyleSource import StyleSource
 from util.ConfigParser import StyleParser
 
 
-basedir = os.path.dirname(__file__)
+basedir = getProjectRoot()
 
 # reading data from toml files
 color = toml.load(os.path.join (basedir, StyleDataPath.currentColor))

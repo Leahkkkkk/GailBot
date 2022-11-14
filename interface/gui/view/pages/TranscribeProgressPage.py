@@ -20,7 +20,7 @@ from util.Text import TranscribeProgressText as Text
 from util.Text import FileTableHeader
 from util.Style import Dimension, FileTableDimension, FontFamily
 from util.Logger import makeLogger
-from util import Path
+from util.Path import getProjectRoot
 from view.widgets.Background import addLogo
 from view.Signals import FileSignals
 from view.widgets import MsgBox
@@ -38,8 +38,6 @@ from PyQt6.QtCore import Qt
 
 top = Qt.AlignmentFlag.AlignTop
 center = Qt.AlignmentFlag.AlignHCenter
-
-
 
 
 class TranscribeProgressPage(QWidget):
@@ -73,7 +71,7 @@ class TranscribeProgressPage(QWidget):
         self.label.setAlignment(center)
         self.loadIcon = QLabel()
         self.IconImg = QMovie(
-            os.path.join(Path.getProjectRoot(), Asset.transcribing))
+            os.path.join(getProjectRoot(), Asset.transcribing))
         self.loadIcon.setMovie(self.IconImg)
         self.loadStart()
        

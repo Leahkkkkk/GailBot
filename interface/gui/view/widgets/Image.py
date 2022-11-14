@@ -12,14 +12,14 @@ Description: a image widget to support displaying image on the interface
 
 import os 
 
-from util import Path  
+from util.Path import getProjectRoot
 from util.Style import Dimension
 from PyQt6.QtWidgets import (
     QLabel)
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtCore import  QSize
 
-dirname = os.path.dirname(__file__)
+dirname = getProjectRoot()
 class Image(QLabel):
     """ takes in the filename of image and generates a image widget that 
         can be displayed  
