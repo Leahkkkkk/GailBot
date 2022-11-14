@@ -16,8 +16,7 @@ import toml
 from util.Path import getProjectRoot
 from config.ConfigPath import StyleDataPath
 from util.ConfigParser import StyleParser
-
-
+print("load style")
 basedir = getProjectRoot()
 
 # reading data from toml files

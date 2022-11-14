@@ -13,18 +13,18 @@ Description: main driver for a GUI app that support front and interface to
 
 
 import sys
-import subprocess
 
 from controller import Controller
 from PyQt6.QtWidgets import QApplication
 from multiprocessing import Process, Queue
+import multiprocessing
+
 
 
 EXIT_CODE_REBOOT = -20000
 
 exitCodeQueue = Queue()
-
-def main(exitCodeQueue:Queue):
+def main(exitCodeQueue):
     """ main driver function to run the app  """
     app = QApplication(sys.argv)
     controller = Controller.Controller()
@@ -32,11 +32,17 @@ def main(exitCodeQueue:Queue):
     controller.run()
     exitCode = app.exec()
     exitCodeQueue.put(exitCode)
-    controller = None 
-    app = None
+
 
 if __name__ == '__main__':
+    multiprocessing.set_start_method('forkserver', force=True)
+    multiprocessing.freeze_support()
+    EXIT_CODE_REBOOT = -20000
+    exitCodeQueue = Queue()
     exitCode = EXIT_CODE_REBOOT
+    print("top main")
+    main(exitCodeQueue)
+    
     while exitCode == EXIT_CODE_REBOOT:
         process = Process(target = main, args = (exitCodeQueue,))
         process.start()

@@ -64,6 +64,7 @@ class Controller(QObject):
         self.signal = Signal()
  
     def run(self):
+        print("run controller")
         """ Public function that run the GUI app """
         self._initLogger()
         self._handleViewSignal()
