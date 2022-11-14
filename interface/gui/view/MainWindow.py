@@ -10,8 +10,8 @@ Modified By:  Siara Small  & Vivian Li
 Description: implement the main window for the GUI interface
 '''
 
-
 from util import Logger 
+from typing import List 
 from view.components import (
     MainStack, 
     StatusBar, 
@@ -35,13 +35,12 @@ class MainWindow(QMainWindow):
     """ mainwindow  of the GUI App"""
     def __init__(
         self, 
-        settingkey: list
+        settingkey: List [str ]
     ):
-        """initialzie mainwindow object 
+        """initialize mainWindow object 
         
         Args:
-            controller (Controller)
-            settingform (dict)
+            settingkey: (List [str ]) a list of predefined setting profile names
         """
         super().__init__()
         self.fileTableSignals = Signals.FileSignals()

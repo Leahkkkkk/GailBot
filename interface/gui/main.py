@@ -36,13 +36,7 @@ def main(exitCodeQueue:Queue):
     app = None
 
 if __name__ == '__main__':
-    process = Process(target = main, args = (exitCodeQueue,))
-    process.start()
-    exitCode = exitCodeQueue.get()
-    process.join()
-    del process
-    print(exitCode)
-    
+    exitCode = EXIT_CODE_REBOOT
     while exitCode == EXIT_CODE_REBOOT:
         process = Process(target = main, args = (exitCodeQueue,))
         process.start()

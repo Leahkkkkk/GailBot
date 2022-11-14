@@ -46,7 +46,6 @@ from PyQt6 import QtCore
 center = QtCore.Qt.AlignmentFlag.AlignHCenter
 bottom = QtCore.Qt.AlignmentFlag.AlignBottom
 
-
 class ProfileSettingPage(QWidget):
     """ class for settings page """
     def __init__(

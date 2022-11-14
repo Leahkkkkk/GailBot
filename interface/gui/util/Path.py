@@ -7,6 +7,7 @@ Author: Siara Small  & Vivian Li
 Last Modified: Thursday, 6th October 2022 3:19:10 pm
 Modified By:  Siara Small  & Vivian Li
 -----
+Description: provides function  to get the project root path
 '''
 
 import os

@@ -7,12 +7,12 @@ gaiBotData      = "config/backend/gailbot.toml"
 dimension       = "../config/style/dimension.toml"
 fontFamily      = "../config/style/font/fontFamily.toml"
 currentColor    = "../config/style/color/color.toml"
-darkColor       = "../config/style/color/colorDark.toml"
-lightColor      = "../config/style/color/colorLight.toml"
+darkColor       = "../../config/style/color/colorDark.toml"
+lightColor      = "../../config/style/color/colorLight.toml"
 currentFontSize = "../config/style/font/fontSize.toml"
-largeFontSize   = "../config/style/font/fontSizeLarge.toml"
-smallFontSize   = "../config/style/font/fontSizeSmall.toml"
-mediumFontSize  = "../config/style/font/fontSizeMedium.toml"
+largeFontSize   = "../../config/style/font/fontSizeLarge.toml"
+smallFontSize   = "../../config/style/font/fontSizeSmall.toml"
+mediumFontSize  = "../../config/style/font/fontSizeMedium.toml"
 
 # path to config files with text data
 [text]

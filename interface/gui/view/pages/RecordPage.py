@@ -48,7 +48,8 @@ class RecordProgress(QWidget):
     def _ontime(self):
         """ slot to display timer on screen """
         self.counter += 1
-        time = datetime.datetime.fromtimestamp(self.counter/1000).strftime("%M:%S")
+        time = datetime.datetime.fromtimestamp(
+            self.counter/1000).strftime("%M:%S")
         self.timeDisplay.setText(time)
         
     def _initWidget(self):
@@ -91,7 +92,8 @@ class RecordProgress(QWidget):
         self.recording = False
         
     def recordSwitch(self):
-        """ starts the timer if not currently recording or stops the timer if currently recording """
+        """ starts the timer if not currently recording or 
+            stops the timer if currently recording """
         if not self.recording: 
             self._startTimer()
         else: 

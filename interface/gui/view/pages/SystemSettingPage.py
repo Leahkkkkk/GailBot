@@ -7,7 +7,9 @@ Author: Siara Small  & Vivian Li
 Last Modified: Saturday, 5th November 2022 7:06:32 pm
 Modified By:  Siara Small  & Vivian Li
 -----
+Description: implement the system setting page
 '''
+import os
 import shutil 
 
 from util.Style import Color, StyleSheet, FontSize
@@ -30,6 +32,7 @@ from PyQt6.QtWidgets import (
     QMessageBox)
 from PyQt6.QtCore import Qt, pyqtSignal, QObject
 
+dirname = os.path.dirname(__file__)
 class Signal(QObject):
     restart = pyqtSignal()
 
@@ -113,8 +116,10 @@ class SystemSettingPage(QWidget):
             colorDes    = StyleSource.CURRENT_COLOR
             fontSource  = StyleTable[setting["Font Size combo"]]
             fontDes     = StyleSource.CURRENT_FONTSIZE
-            shutil.copy(colorSource, colorDes)
-            shutil.copy(fontSource, fontDes)  
+            shutil.copy(
+                os.path.join(dirname, colorSource), os.path.join(dirname,colorDes))
+            shutil.copy(
+                os.path.join(dirname, fontSource), os.path.join(dirname, fontDes))  
         except:
             MsgBox.WarnBox(Text.changeError)
         self.signal.restart.emit() 
