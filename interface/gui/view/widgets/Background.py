@@ -7,6 +7,7 @@ Author: Siara Small  & Vivian Li
 Last Modified: Thursday, 6th October 2022 12:59:28 pm
 Modified By:  Siara Small  & Vivian Li
 -----
+Description: implement function for initialize background for different pages
 '''
 import os
 from util.Style import Color, Asset, Dimension
