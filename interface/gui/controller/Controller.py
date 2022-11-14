@@ -11,6 +11,7 @@ Description:
 Main controller for the app 
 Connect between the database, view object and the backend transcription process
 '''
+import sys
 from typing import Set
 import logging 
 
