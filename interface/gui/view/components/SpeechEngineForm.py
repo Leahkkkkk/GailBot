@@ -56,7 +56,6 @@ class SpeechEngineForm(QWidget):
     def setValue(self, data: Dict[str, Dict[str, dict]]):
         """ public function to set the engine form value """
         engineName = list(data)[0]
-        print(engineName)
         self.logger.info(engineName)
         self.mainCombo.setCurrentText(engineName)
         self.toggleList.setValue(data[engineName])

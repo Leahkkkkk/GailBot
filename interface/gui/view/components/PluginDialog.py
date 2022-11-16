@@ -92,6 +92,5 @@ class PluginDialog(QDialog):
             MsgBox.WarnBox("No plugin is added")
         else:
             for key, plugin in self.plugins.items():
-                print(key, plugin)
                 self.signal.addPlugin.emit((key, plugin))
             self.close()

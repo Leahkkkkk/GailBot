@@ -169,7 +169,6 @@ class EngineSetting(TabPage):
     def _confirmHandler(self):
         """" handles if user should be able to go to the next page in popup """
         self.signals.nextPage.emit()
-        print (self.mainForm.getValue())
     
     def getData(self) -> Dict[str, dict]:
         """ gets current value of key in dictionary """

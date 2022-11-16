@@ -1,14 +1,13 @@
 from typing import Dict, Tuple
 
-from util.Style import Color, Dimension
+from util.Style import Color, Dimension, FontSize
 from util.Text import MultipleComboText as Text
-from view.widgets import ToggleView
+from view.widgets import ToggleView, Label
 
 from PyQt6.QtWidgets import (
     QComboBox, 
     QWidget, 
     QVBoxLayout,
-    QLabel, 
     QGridLayout,
     QLineEdit,
 )
@@ -66,8 +65,11 @@ class ToggleCombo(QWidget):
         if self.showBasicSet:
             self.userForm = UserForm()
             self.basicSet = ToggleView.ToggleView(
-            self.header, self.userForm, 
-            headercolor = Color.WHITE, viewcolor =Color.LOW_CONTRAST)
+            self.header, 
+            self.userForm, 
+            headercolor = Color.WHITE, 
+            viewcolor =Color.LOW_CONTRAST)
+            self.basicSet.setScrollHeight(self.userForm.height())
             self.basicSet.setContentsMargins(0,0,0,0)
             self.layout.addWidget(self.basicSet)
             
@@ -76,11 +78,13 @@ class ToggleCombo(QWidget):
             newToggle = ToggleView.ToggleView(
             key, newCombo, 
             headercolor = Color.WHITE, viewcolor = Color.LOW_CONTRAST)
+            newToggle.setScrollHeight(newCombo.height())
             self.layout.addWidget(newToggle)
             newToggle.setContentsMargins(0,0,0,0)
             self.comboListDict[key] = newCombo
             
         self.layout.addStretch()
+        self.layout.addSpacing(Dimension.LARGE_SPACING)
     
     
 class ComboList(QWidget):
@@ -108,7 +112,6 @@ class ComboList(QWidget):
     def setValue(self, data:Dict[str,str]) -> None:
         """ a public function to set the form value """
         for key, value in data.items():
-            print(value)
             self.comboBoxes[key].setCurrentText(value)
     
     def _initWidget(self):
@@ -120,7 +123,7 @@ class ComboList(QWidget):
         self.labels = dict()
         
         for key, items in self.data.items():
-            newlabel = QLabel(key)
+            newlabel = Label.Label(key, FontSize.BODY)
             newCombo = QComboBox(self)
             newCombo.addItems(items)
             newCombo.setCurrentIndex(0)
@@ -129,6 +132,7 @@ class ComboList(QWidget):
             self.layout.addWidget(newlabel)
             self.layout.addWidget(newCombo)
         self.layout.addStretch()
+        self.setFixedHeight(len(self.data) * 80)
             
         
 class UserForm(QWidget):
@@ -136,13 +140,13 @@ class UserForm(QWidget):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.layout = QGridLayout()
-        self.userlabel = QLabel(Text.username)
+        self.userlabel = Label.Label(Text.username, FontSize.BODY)
         self.layout.addWidget(self.userlabel, 0,0)
         self.nameInput = QLineEdit(self)
         self.nameInput.setFixedSize(
             QSize(Dimension.INPUTWIDTH,Dimension.INPUTHEIGHT))
         self.layout.addWidget(self.nameInput, 1,0)
-        self.passwordLabel = QLabel(Text.password)
+        self.passwordLabel = Label.Label(Text.password, FontSize.BODY)
         self.layout.addWidget(self.passwordLabel, 0,1)
         self.passwordInput = QLineEdit(self)
         self.passwordInput.setFixedSize(

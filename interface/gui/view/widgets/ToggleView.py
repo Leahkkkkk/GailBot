@@ -40,8 +40,8 @@ class ToggleView(QWidget):
         label:str, 
         view: QWidget, 
         header = False, 
-        headercolor = Color.HIGHLIGHT, 
-        viewcolor = Color.HIGHLIGHT,
+        headercolor = None, 
+        viewcolor = None,
         *args, 
         **kwargs):
         
@@ -49,13 +49,14 @@ class ToggleView(QWidget):
         self.labelStr = label
         self.view = view
         self.header = header
-        self.headercolor = headercolor
-        self.viewcolor = viewcolor
+        self.headercolor = Color.HIGHLIGHT if not headercolor else Color.MAIN_BACKRGOUND
+        self.viewcolor = Color.HIGHLIGHT if not viewcolor else Color.MAIN_BACKRGOUND
         self.setContentsMargins(0,0,0,0)
         self._configHeader()
         self._configViewField()
         self._initLayout()
         self._connectSignal()
+        self.setScrollHeight(self.view.height())
     
     def setScrollHeight(self, size:int):
         """ public function to resize the scroll area height 
@@ -65,18 +66,19 @@ class ToggleView(QWidget):
         self.scroll.setMinimumHeight(size)
     
     def _configHeader(self):
-        """ configurates the toggle header """
+        """ configures the toggle header """
         self.Btn = Button.ToggleBtn(text=self.labelStr)
         self.Btn.setStyleSheet(f"{StyleSheet.toggleBtnBasic}"
                                f"background-color: {self.headercolor};"
-                               f"font-size: {FontSize.BODY}")
+                               f"font-size: {FontSize.BODY};"
+                               f"color:{Color.MAIN_TEXT}")
         if self.header:
             self.Btn.setMinimumWidth(Dimension.TOGGLEBARMAXWIDTH)
         else:
             self.Btn.setMinimumWidth(Dimension.TOGGLEBARMINWIDTH)
        
     def _configViewField(self):
-        """ configurates the toggle view """
+        """ configures the toggle view """
         self.scroll = QScrollArea()
         self.scroll.setMinimumWidth(self.Btn.width() - Dimension.TOGGLEVIEWOFFSET)
         self.scroll.setMaximumWidth(self.Btn.width())
@@ -87,9 +89,11 @@ class ToggleView(QWidget):
         self.scroll.setBaseSize(self.view.width(), self.view.height())
         self.setObjectName("viewWrapper")
         self.scroll.setObjectName("view")
-        self.scroll.setStyleSheet(f"#viewWrapper, #view {{background-color:{self.viewcolor}}}")
+        self.scroll.setStyleSheet(
+            f"#viewWrapper, #view {{background-color:{self.viewcolor}; color: {Color.MAIN_TEXT}}}")
         self.view.setObjectName("viewContainer")
-        self.view.setStyleSheet(f"#viewContainer {{background-color:{self.viewcolor}}}")
+        self.view.setStyleSheet(
+            f"#viewContainer {{background-color:{self.viewcolor}}}")
         self.scroll.hide()
         self.hide = True
     
@@ -97,8 +101,10 @@ class ToggleView(QWidget):
         """ initializes the layout """
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
-        self.layout.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
-        self.layout.addWidget(self.Btn, alignment=Qt.AlignmentFlag.AlignLeft)
+        self.layout.setAlignment(
+            Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
+        self.layout.addWidget(
+            self.Btn, alignment=Qt.AlignmentFlag.AlignLeft)
         self.layout.addWidget(self.scroll)
     
     def _connectSignal(self):

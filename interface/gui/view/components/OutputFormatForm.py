@@ -11,14 +11,13 @@ Description: implementation of the out put format form
 '''
 from typing import Dict 
 
-from view.widgets import ToggleView, TextForm, Button
+from view.widgets import ToggleView, TextForm, Button, Label
 from util.Text import OutputFormatForm, OutputFormatFormText
-from util.Style import Color, Dimension
+from util.Style import Color, Dimension, FontSize
 from util.Logger import makeLogger
 
 from PyQt6.QtWidgets import (
     QWidget, 
-    QLabel, 
     QVBoxLayout, 
     QComboBox,
 )
@@ -38,7 +37,7 @@ class OutPutFormat(QWidget):
         super().__init__(*args, **kwargs)
         self.logger = makeLogger("F")
         self.layout = QVBoxLayout(self)
-        self.header1 = QLabel(OutputFormatFormText.header)
+        self.header1 = Label.Label(OutputFormatFormText.header, FontSize.BODY)
         self.layout.addWidget(self.header1)
         self.formatCombo = QComboBox()
         self.formatCombo.addItems(OutputFormatForm.FileFormat)
@@ -52,6 +51,7 @@ class OutPutFormat(QWidget):
             viewcolor=Color.LOW_CONTRAST)
         self.layout.addWidget(self.fileHeader)
         self.textWrap = Button.onOffButton(OutputFormatFormText.TextWrap)
+        self.textWrap.setFixedHeight(Dimension.SMALL_TABLE_HEIGHT)
         self.textWrapField = ToggleView.ToggleView(
             OutputFormatFormText.FileFormatHeader, 
             self.textWrap,
@@ -81,13 +81,15 @@ class HeaderForm(QWidget):
         self.speakerCombolist = []
         self.speakerLabelList = []
         
-        self.label1 = QLabel(OutputFormatFormText.LanguageHeader)
+        self.label1 = Label.Label(
+            OutputFormatFormText.LanguageHeader, FontSize.BODY)
         self.layout.addWidget(self.label1)
             
         self.lanCombo = QComboBox(self)
         self.lanCombo.addItems(OutputFormatForm.Language)
         self.layout.addWidget(self.lanCombo)
-        self.label2 = QLabel(OutputFormatFormText.SpeakerHeader)
+        self.label2 = Label.Label(
+            OutputFormatFormText.SpeakerHeader, FontSize.BODY)
         self.layout.addWidget(self.label2)
         self.numCombo = QComboBox(self)
         self.numCombo.addItems(["1", "2", "3"])
@@ -96,7 +98,8 @@ class HeaderForm(QWidget):
 
     
         for i in range(3):
-            newLabel = QLabel(f"Speaker {i + 1} Gender")
+            newLabel = Label.Label(
+                f"Speaker {i + 1} Gender", FontSize.BODY)
             self.speakerLabelList.append(newLabel)
             self.layout.addWidget(newLabel)
             newCombo = QComboBox()

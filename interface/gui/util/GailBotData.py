@@ -10,6 +10,7 @@ Modified By:  Siara Small  & Vivian Li
 '''
 import os 
 import toml 
+from util.Path import getProjectRoot
 from util.ConfigParser.GailBotDataParser import (
     CredentialData, 
     DirectoryData, 
@@ -19,7 +20,7 @@ from util.ConfigParser.GailBotDataParser import (
 )
 from config.ConfigPath import BackEndDataPath
 
-basedir = os.getcwd()
+basedir = getProjectRoot()
 config = toml.load(os.path.join(basedir,BackEndDataPath.gaiBotData))
 Credential = CredentialData.from_dict(config["credential"])
 Directory = DirectoryData.from_dict(config["directory"])

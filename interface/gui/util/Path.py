@@ -17,7 +17,6 @@ def getProjectRoot() -> str:
     dir = os.path.dirname(os.path.dirname(__file__))
     return dir
 
-print(getProjectRoot())
 
 
 

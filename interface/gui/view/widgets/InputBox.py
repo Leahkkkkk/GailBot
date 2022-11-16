@@ -129,7 +129,6 @@ class InputCombo(InputBox):
         """initialize widgets for input box"""
         self.inputlabel = Label.Label(self.label, self.labelSize)
         self.inputFeild = ComboSelection(self.selections)
-        self.inputFeild.setStyleSheet("")
         
     def value(self):
         """ return the value of the input """

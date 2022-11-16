@@ -68,7 +68,7 @@ HiLabSuite = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
 "CMU setting option" = [ "setting option 1", "setting option 2", "setting option 3",]
 
 ["system setting form"."General Setting"]
-"Font Size combo"  = [ "small", "medium", "large"]
+"Font Size combo"  = [ "medium", "small", "large"]
 "Color Mode combo" = [ "default", "dark mode", "light mode"]
 
 [formField]

@@ -16,7 +16,6 @@ from util.Style import FontSize, Dimension, Color, StyleSheet, Asset
 from util.Text import BtnText as Text
 from util.Path import getProjectRoot
 from util.ColorGenerator import colorScale
-from util import Path
 
 from PyQt6.QtWidgets import (
     QPushButton, 
@@ -27,7 +26,7 @@ from PyQt6.QtWidgets import (
 )
 
 from PyQt6.QtCore import QSize, Qt
-from PyQt6.QtGui import QIcon
+from PyQt6.QtGui import QIcon, QCursor
 
 
 dirname = getProjectRoot()
@@ -58,6 +57,7 @@ class ColoredBtn(QPushButton):
         self.borderRadius = borderRadius
         self.fontsize = fontsize
         self.other = other
+        self.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.setFixedSize(Dimension.BTNWIDTH, Dimension.BTNHEIGHT)
         self.defaultStyle = f"border-radius:{self.borderRadius};"\
                             f"padding:1;"\
@@ -67,6 +67,7 @@ class ColoredBtn(QPushButton):
         self.pressed.connect(self._pressStyle)
         self.released.connect(self._releaseStyle)
         self._releaseStyle()
+        
     
     def _pressStyle(self):
         """ sets the button color to be darker  """
@@ -115,6 +116,7 @@ class BorderBtn(QPushButton):
                            f"font-size:{self.fontSize};"\
                            f"{self.other};"
         self.setDefaultStyle()
+        self.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
 
     def setDefaultStyle(self):
         """ sets default style sheet """
@@ -146,6 +148,7 @@ class ToggleBtn(QPushButton):
         self.downIcon = QIcon(os.path.join(dirname, f"{label[1]}"))
         self.setCheckable(True)
         self.clicked.connect(self._changeSymbol)
+        self.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.state = state
         self._changeSymbol()
         self.update()
@@ -188,10 +191,12 @@ class onOffButton(QWidget):
         self._initWidget()
         self._initLayout()
         self._connectSignal()
+    
         
     def _initWidget(self):
         """initialize widgets for on-off select"""
         self.label = Label.Label(self.label, FontSize.BTN)
+
         if self.state:
             self.onOffBtn = QPushButton(Text.on)
         else:
@@ -251,6 +256,7 @@ class iconBtn(QPushButton):
       icon = QIcon(os.path.join(dirname, f"{icon}"))
       self.setIcon(icon)
       self.setObjectName(Text.icon)
+      
       if label:
           self.setText(label)
           
@@ -280,6 +286,7 @@ class dropDownButton(QWidget):
         self.layout.setSpacing(0)
         self.layout.addWidget(self.btn)
         self.layout.addWidget(self.buttonList)
+        self.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.buttonList.hide()
         self.btn.clicked.connect(self._toggle)
 

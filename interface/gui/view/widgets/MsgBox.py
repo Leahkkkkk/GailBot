@@ -49,7 +49,6 @@ class ConfirmBox:
             button (QButton)
         """
         self.logger.info("confirm message box button click")
-        print(button.text())
         if button.text() == "Cancel":
             return
         else:

@@ -27,7 +27,7 @@ resourcesText             = "Resources"
 tutorialText              = "GailBot Beginner Tutorial"
 guideText                 = "GailBot Settings Guide"
 gbLinkText                = "GailBot.com"
-moreInfoText              = "For more information visit"
+moreInfoText              = "For more, information visit"
 
 
 [FileUploadPageText]
@@ -37,7 +37,8 @@ recordBtnText         = "Record live"
 uploadBtnText         = "Add From Device"
 transcribeBtnText     = "Transcribe"
 removeBtnText         = "Remove All"
-settingBtnText        = "⚙"
+## unicode for settings gear
+settingBtnText        = "\u2699"
 dropText              = "Drop File Here to Upload"
 chooseLocalText       = "Choose From Local"
 chooseSetHeader       = "select setting profile"
@@ -50,9 +51,9 @@ removeWarnText        = "Remove all files?"
 tabAddfile            = "Add File"
 tabAddFolder          = "Add Folder"
 ## unicode for an audio icon
-audioLogo = "\u1F50A"
+audioLogo = "🔊"
 ## unicode for a file folder icon
-directoryLogo = "\u1F4C1"
+directoryLogo = "📁"
 
 
 [RecordPageText]
@@ -78,13 +79,13 @@ newProfileBtn      = "Create New Profile"
 reuquiredSetBtn    = "Required Settings"
 postSetBtn         = "Post-Transcription Settings"
 newPluginBtn       = "Add New Plugin"
-pluginSetBtn       = "Plugin Setting"
+pluginSetBtn       = "Plugin Settings"
 postSetHeader      = "Post-Transcription Settings"
 postSetCaption     = "These settings are applied after the file is created."
 requiredSetHeader  = "Required Settings"
 requiredSetCaption = "These settings are required before transcription and cannot be edited after transcription."
 pluginHeader       = "Choose Plugins"
-pluginCaption      = "These plugins are applied to transcription process"
+pluginCaption      = "These plugins are applied to the transcription process"
 
 [SystemSettingPage]
 header        = "System Setting"
@@ -119,14 +120,14 @@ emptyNameMsg          = "The profile name cannot be empty"
 emptyUserMsg          = "Please enter user name and password"
 engineSettingHeader   = "Speech to text settings"
 outputSettingHeader   = "Output format settings"
-cofirmBtn             = "confirm"
+cofirmBtn             = "Confirm"
 
 [ChooseFileTabText]
 WindowTitle = "Upload File"
 TabTitle    = "Add New File"
-TabHeader1  = "add file"
-TabHeader2  = "choose setting"
-TabHeader3  = "select output"
+TabHeader1  = "Add file"
+TabHeader2  = "Choose settings"
+TabHeader3  = "Select output"
 
 [WindowTitle]
 consoleWindow = "Console Window"
@@ -137,14 +138,14 @@ TabTitle     = "Create New Profile"
 TabHeader1   = "Profile Name"
 TabHeader2   = "Basic Settings"
 TabHeader3   = "Optional Settings"
-TabHeader4   = "Output File Format Setting"
-TabHeader5   = "Post Transcribtion Settion"
-TabHeader6   = "Plugin Setting"
+TabHeader4   = "Output File Format Settings"
+TabHeader5   = "Post Transcription Settings"
+TabHeader6   = "Plugin Settings"
 pluginFilter = "json file (*.json) zip file (*.zip)"
 
 [MainStackText]
-ProfileSetting = "Porfile Setting"
-SystemSetting  = "System Setting"
+ProfileSetting = "Profile Settings"
+SystemSetting  = "System Settings"
 
 [OutputFormatForm]
 header           = "Output File Format"

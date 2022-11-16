@@ -45,9 +45,11 @@ class RequiredSet(QWidget):
         self.engineForm = SpeechEngineForm()
         self.engineSet = ToggleView.ToggleView(
             Text.engineSettingHeader,self.engineForm, header = True)
+        self.engineSet.setScrollHeight(self.engineForm.height())
         self.outPutForm = OutPutFormat()
         self.outPutFormatForm = ToggleView.ToggleView(
             Text.outputSettingHeader, self.outPutForm, header = True)
+        self.outPutFormatForm.setScrollHeight(self.outPutForm.height())
         self.outPutFormatForm.setScrollHeight(Dimension.DEFAULTTABHEIGHT)
         
     def _initLayout(self):

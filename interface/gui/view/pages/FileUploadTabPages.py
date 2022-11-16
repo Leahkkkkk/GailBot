@@ -143,7 +143,6 @@ class OpenFile(TabPage):
         selectedFiles = dialog.getOpenFileNames(filter = fileFilter)
         if selectedFiles:
             files, types = selectedFiles
-            print (selectedFiles)
             self.signals.nextPage.emit()
             self.filePaths = self.filePaths + files
             for file in files:
@@ -153,8 +152,11 @@ class OpenFile(TabPage):
         """ gets the current directory and displays the selected file """
         dialog = QFileDialog() 
         selectedFolder = dialog.getExistingDirectory()
+        
         if selectedFolder:
+            self.signals.nextPage.emit()
             self._addFileToFileDisplay(selectedFolder)
+            self.filePaths = self.filePaths + [selectedFolder]
 
     def _addFileToFileDisplay(self, file):
         """ add the file to the file display table """
@@ -177,7 +179,6 @@ class ChooseSet(TabPage):
     
     def __init__(self, settings: List[str], *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        print(settings)
         self.profile = settings[0]
         self.settings = settings
         self._initWidget()

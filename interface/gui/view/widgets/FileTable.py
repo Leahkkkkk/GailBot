@@ -128,6 +128,11 @@ class FileTable(QTableWidget):
     def _initStyle(self) -> None:
         """ Initialize the table style """
         self.horizontalHeader().setFixedHeight(45)
+        self.setObjectName("FileTable")
+        self.setStyleSheet("#FileTable{"
+                           f"background-color: {Color.MAIN_BACKRGOUND};"
+                           f"color:{Color.MAIN_TEXT}"
+                           "}")
         for i in range(self.columnCount()):
             self.horizontalHeader().setSectionResizeMode(
                 i,
@@ -142,7 +147,6 @@ class FileTable(QTableWidget):
         try:
             widthSum = self.width()
             if len(widths) != self.columnCount():
-                print(len(widths), self.columnCount())
                 self.logger.error("Cannot resize column")
             else:
                 for i in range(len(widths)):

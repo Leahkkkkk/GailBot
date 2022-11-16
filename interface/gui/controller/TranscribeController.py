@@ -13,7 +13,7 @@ so that the front end is able to reflect the transcription progress
 '''
 from util.Error import ErrorMsg, ThreadException
 from view.MainWindow import MainWindow
-# from controller.BackendRunnable.GBRunnable import Worker
+from controller.BackendRunnable.GBRunnable import Worker
 from util.Logger import makeLogger
 from util.GailBotData import ThreadControl
 from PyQt6.QtCore import pyqtSignal, QObject, QThreadPool
@@ -80,23 +80,23 @@ class TranscribeController(QObject):
         view.fileTableSignals.cancel.connect(self.cancelGailBot)
 
     def runGailBot(self):
-        pass 
+        # pass 
         """ function to run gailbot on a separate thread """
-        # self.logger.info(self.ThreadPool.activeThreadCount())
-        # if self.ThreadPool.activeThreadCount() >= ThreadControl.maxThread:
-        #     self.signal.busy.emit()
-        #     self.logger.warn("threadpool busy")
-        # else:
-        #     try:
-        #         self.ThreadPool.clear()
-        #         self.logger.info(self.files)
-        #         self.worker = Worker(self.files, self.signal)
-        #         self.signal.start.emit()
-        #         if not self.ThreadPool.tryStart(self.worker):
-        #             raise ThreadException(ErrorMsg.RESOURCEERROR)
-        #     except:
-        #         self.signal.error("failed to start transcribing")
-        #         self.logger.error("failed to start transcribe")
+        self.logger.info(self.ThreadPool.activeThreadCount())
+        if self.ThreadPool.activeThreadCount() >= ThreadControl.maxThread:
+            self.signal.busy.emit()
+            self.logger.warn("threadpool busy")
+        else:
+            try:
+                self.ThreadPool.clear()
+                self.logger.info(self.files)
+                self.worker = Worker(self.files, self.signal)
+                self.signal.start.emit()
+                if not self.ThreadPool.tryStart(self.worker):
+                    raise ThreadException(ErrorMsg.RESOURCEERROR)
+            except:
+                self.signal.error.emit("failed to start transcribing")
+                self.logger.error("failed to start transcribe")
     
 
     def cancelGailBot(self):

@@ -18,7 +18,6 @@ from view.widgets import (
     Button
 )
 from util.Style import (
-    Color, 
     FontFamily, 
     FontSize, 
     Dimension
