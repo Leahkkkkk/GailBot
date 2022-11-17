@@ -53,7 +53,9 @@ class WorkSapceDialog(QDialog):
     
     def _onConfirm(self):
         try:
-            workSpace = {"workSpace": self.workDir}
+            workSpace = {
+                "workSpace": self.workDir, 
+                "plugin": f"{self.workDir}/plugin"}
             with open(
                 os.path.join(os.path.abspath("."),  BackEndDataPath.workSpaceData), "w") as f:
                 toml.dump(workSpace, f)

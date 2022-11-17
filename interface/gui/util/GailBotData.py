@@ -16,7 +16,8 @@ from util.ConfigParser.GailBotDataParser import (
     DirectoryData, 
     ProfileConfigData, 
     PluginData, 
-    ThreadData
+    ThreadData,
+    WorkSpacePathData
 )
 from config.ConfigPath import BackEndDataPath
 
@@ -27,3 +28,9 @@ Directory = DirectoryData.from_dict(config["directory"])
 ProfileConfig = ProfileConfigData.from_dict(config["profileConfig"])
 Plugin = PluginData.from_dict(config["plugin"])
 ThreadControl = ThreadData.from_dict(config["threadControl"])
+
+def getWorkPath() -> WorkSpacePathData:
+    """ return the data contains workspace directory  """
+    data = toml.load(os.path.join(basedir,BackEndDataPath.workSpaceData))
+    WorkSpacePath = WorkSpacePathData.from_dict(data)
+    return WorkSpacePath
