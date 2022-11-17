@@ -38,6 +38,8 @@ class ConfirmBox:
        
         self.msgBox.setStandardButtons(
             confirmButton| QMessageBox.StandardButton.Cancel)
+        for button in self.msgBox.buttons():
+            button.setStyleSheet("color:#000;")
         self.msgBox.buttonClicked.connect(self._confirm)
         self.confirm = confirm 
         initSecondaryColorBackground(self.msgBox)
@@ -74,10 +76,12 @@ class WarnBox:
         self.msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
         self.msgBox.buttonClicked.connect(self._ok)
         self.msgBox.setStyleSheet(f"color:{Color.MAIN_TEXT};")
-        
         initSecondaryColorBackground(self.msgBox)
-        self.msgBox.exec()
+        for button in self.msgBox.buttons():
+            button.setStyleSheet("color:#000;")
         
+        self.msgBox.exec()
+         
     
     def _ok(self, button):
         """ handle event when button is clicked 
