@@ -17,7 +17,7 @@ import os
 import logging
 
 from model.dataBase.fileDB import FileObj
-from util.GailBotData import Credential, Directory, ProfileConfig, Plugin
+from util.GailBotData import Credential, ProfileConfig, Plugin, getWorkPath
 from gailbot import GailBotController
 from PyQt6.QtCore import (
     QRunnable, pyqtSlot
@@ -28,13 +28,9 @@ WATSON_API_KEY = Credential.WATSON_API_KEY
 WATSON_LANG_CUSTOM_ID = Credential.WATSON_LANG_CUSTOM_ID
 WATSON_REGION = Credential.WATSON_REGION
 WATSON_BASE_LANG_MODEL = Credential.WATSON_BASE_LANG_MODEL
-WORKSPACE_DIRECTORY_PATH = Directory.WORKSPACE_DIRECTORY_PATH 
-
 SETTINGS_PROFILE_NAME = ProfileConfig.SETTINGS_PROFILE_NAME
 SETTINGS_PROFILE_EXTENSION = ProfileConfig.SETTINGS_PROFILE_EXTENSION
 
-""" Gailbot plugins from documentation  
-"""
 PLUGINS_TO_APPLY = Plugin.PLUGINS_TO_APPLY
 
 def get_settings_dict():
@@ -108,7 +104,9 @@ class Worker(QRunnable):
         """
         self.logger.info("file ready to be transcribed" )
         profiles = set()
-        
+        workPath = getWorkPath()
+        WORKSPACE_DIRECTORY_PATH = workPath.workSpace
+        PLUGIN_DOWNLOAD_DIRECORY = workPath.plugin
         try:
             self.signals.start.emit()
             gb = GailBotController(WORKSPACE_DIRECTORY_PATH)
@@ -116,7 +114,7 @@ class Worker(QRunnable):
         
             if not self.killed:
                 plugin_suite_paths = gb.download_plugin_suite_from_url(
-                Plugin.HIL_PLUGIN_URL, Directory.PLUGIN_DOWNLOADS)  
+                Plugin.HIL_PLUGIN_URL, PLUGIN_DOWNLOAD_DIRECORY)  
                 self.signals.progress.emit(str("Plugins Downloaded"))
                 path = os.path.join(os.getcwd(), plugin_suite_paths[0])
                 self.signals.progress.emit(str("Plugins Applied"))
