@@ -142,6 +142,7 @@ class RecordPage(QWidget):
                                   FontSize.HEADER2, 
                                   FontFamily.MAIN)
         self.recordForm    = TextForm.TextForm(RecordForm)
+        self.recordForm.layout.setSpacing(5)
         self.toggleSetting = ToggleView.ToggleView(Text.recSet, 
                                                    self.recordForm,
                                                    header=True)
@@ -159,9 +160,8 @@ class RecordPage(QWidget):
                               alignment=center)
         self.layout.addWidget(self.toggleSetting,
                             alignment=center)
-        self.toggleSetting.setMaximumHeight(Dimension.DEFAULTTABHEIGHT * 4)
+        self.toggleSetting.setMaximumHeight(Dimension.DEFAULTTABHEIGHT)
         self.layout.addStretch()
-        self.toggleSetting.setContentsMargins(0,0,0, Dimension.LARGE_SPACING)
         self.layout.addWidget(self.recordInprogress)
         self.layout.addWidget(self.startRecordBtn,
                               alignment=center)

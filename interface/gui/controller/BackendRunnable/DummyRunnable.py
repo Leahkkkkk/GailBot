@@ -11,6 +11,8 @@ Description: using time.sleep to run a fake backend function , for testing
              purpose only 
 '''
 import time
+from util.GailBotData import  getWorkPath
+
 
 from PyQt6.QtCore import (
     QRunnable, 
@@ -42,10 +44,18 @@ class Worker(QRunnable):
     def run(self):
         """ public function to execute the dummy function """
         try:
+            workPath = getWorkPath()
+            WORKSPACE_DIRECTORY_PATH = workPath.workSpace
+            PLUGIN_DOWNLOAD_DIRECORY = workPath.plugin
+            self.signals.progress.emit(WORKSPACE_DIRECTORY_PATH)
+            time.sleep(2)
+            self.signals.progress.emit(PLUGIN_DOWNLOAD_DIRECORY)
+            time.sleep(2)
+
             self.signals.start.emit()
             for i in range(10):
                 self.signals.progress.emit(str(i+1))
-                time.sleep(0.3)
+                time.sleep(0.2)
 
                 if self.is_killed:
                     self.signals.killed.emit()

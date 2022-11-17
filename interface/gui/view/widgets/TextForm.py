@@ -94,7 +94,6 @@ class TextForm(QWidget):
         """ initializes the widgets """
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
-        self.layout.setSpacing(Dimension.STANDARDSPACING)
  
         for key, items in self.data.items():
             newLabel = Label.Label(key, FontSize.BTN, FontFamily.MAIN)
@@ -111,6 +110,7 @@ class TextForm(QWidget):
                     newInput = InputBox.InputBox(key, inputText=value)
                 self.layout.addWidget(newInput)
                 self.inputDict[keyCopy] = newInput
+        self.layout.addStretch()
        
     def _initStyle(self):
         """ initializes the widget style """

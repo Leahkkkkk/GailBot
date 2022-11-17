@@ -25,6 +25,7 @@ from view import Signals
 from view.components import WorkSpaceDialog
 from view.widgets import MsgBox
 from util.Style import Dimension
+from util.Path import getProjectRoot
 from util.Text import About
 
 
@@ -145,7 +146,8 @@ class MainWindow(QMainWindow):
         self.close()
     
     def _openWorkSpaceDialog(self):
-        while not os.path.exists(BackEndDataPath.workSpaceData):
+        basedir = getProjectRoot()
+        while not os.path.exists(os.path.join(basedir, BackEndDataPath.workSpaceData)):
             pathDialog = WorkSpaceDialog.WorkSapceDialog()
             pathDialog.exec()
     
