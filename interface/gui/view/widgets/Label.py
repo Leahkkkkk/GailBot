@@ -45,17 +45,19 @@ class Label(QLabel):
         super().__init__(*args, **kwargs)
         self.setText(text)
         
-        self.setStyleSheet(f"font-size: {size};" 
-                           f"padding:0;" 
-                           f"color:{color};"
-                           f"background-color:none;"
-                           f"{others}")
         if font == FontFamily.MAIN:
             self.loadHeaderFont()
         elif font == FontFamily.CLOCK:
             self.loadClockFont()
         if link:
             self.setOpenExternalLinks(True)
+            
+        self.setStyleSheet(f"font-size: {size};" 
+                           f"padding:0;" 
+                           f"color:{color};"
+                           f"background-color:none;"
+                           f"{others};")
+       
         
     def loadHeaderFont(self):
         """loads font for header label (since it's not default)"""
