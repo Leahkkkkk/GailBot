@@ -99,7 +99,7 @@ class OpenFile(TabPage):
         
     def _initStyle(self):
         """ initialize the style  """
-        self.fileDisplayList.setAlternatingRowColors(True)
+        # self.fileDisplayList.setAlternatingRowColors(True)
         self.fileDisplayList.insertColumn(0)
         self.fileDisplayList.setSelectionMode(
             QAbstractItemView.SelectionMode.NoSelection)
@@ -107,6 +107,8 @@ class OpenFile(TabPage):
             QAbstractItemView.EditTrigger.NoEditTriggers)
         self.fileDisplayList.horizontalHeader().hide()
         self.fileDisplayList.verticalHeader().hide()
+        self.fileDisplayList.setStyleSheet(f"background-color:{Color.MAIN_BACKRGOUND};"
+                                           f"color:{Color.MAIN_TEXT}")
     
     def _initDimension(self):
         """ initializes the dimensions """

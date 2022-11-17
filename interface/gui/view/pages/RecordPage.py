@@ -36,7 +36,7 @@ class RecordProgress(QWidget):
         self.counter = 0
         self.recording = False
         self._initWidget()
-        self._iniLayout()
+        self._initLayout()
         self._initTimer()
         self._connectSignal()
     
@@ -65,7 +65,7 @@ class RecordProgress(QWidget):
         self.recordBar.setMinimumWidth(Dimension.PROGRESSBARWIDTH)
         self.recordBar.setMinimumHeight(Dimension.PROGRESSBARHEIGHT)
     
-    def _iniLayout(self):
+    def _initLayout(self):
         """ initalizes the layout  """
         self.verticalLayout = QVBoxLayout()
         self.horizontalLayout = QHBoxLayout()
@@ -159,6 +159,7 @@ class RecordPage(QWidget):
                               alignment=center)
         self.layout.addWidget(self.toggleSetting,
                             alignment=center)
+        self.toggleSetting.setMaximumHeight(Dimension.DEFAULTTABHEIGHT * 4)
         self.layout.addStretch()
         self.toggleSetting.setContentsMargins(0,0,0, Dimension.LARGE_SPACING)
         self.layout.addWidget(self.recordInprogress)

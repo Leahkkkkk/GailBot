@@ -9,9 +9,11 @@ Modified By:  Siara Small  & Vivian Li
 -----
 Description: implement the main window for the GUI interface
 '''
-
-from util import Logger 
 from typing import List 
+import os 
+
+from util import Logger
+from config.ConfigPath import BackEndDataPath
 from view.components import (
     MainStack, 
     StatusBar, 
@@ -20,6 +22,7 @@ from view.components import (
 )
 
 from view import Signals
+from view.components import WorkSpaceDialog
 from view.widgets import MsgBox
 from util.Style import Dimension
 from util.Text import About
@@ -68,6 +71,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.MainStack)
         self.setContentsMargins(0,0,0,0)
         self._connectSignal()
+        self._openWorkSpaceDialog()
 
     """ Functions provided to controller """
     def showTranscribeInProgress(self):
@@ -139,4 +143,9 @@ class MainWindow(QMainWindow):
         self.viewSignal.restart.emit()
         self.hide()
         self.close()
+    
+    def _openWorkSpaceDialog(self):
+        while not os.path.exists(BackEndDataPath.workSpaceData):
+            pathDialog = WorkSpaceDialog.WorkSapceDialog()
+            pathDialog.exec()
     

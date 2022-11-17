@@ -274,12 +274,11 @@ class FileTable(QTableWidget):
         """ delete one file
             ** connected to delete file button 
         Args:
-            key (str): _description_
+            key (str): file key 
         """
         if key in self.filePins:
             rowIdx = self.indexFromItem(self.filePins[key]).row()
             self.removeRow(rowIdx)
-            del self.filePins[key]
             del self.fileWidgets[key]
             if key in self.transferList:
                 self.transferList.remove(key)
@@ -433,7 +432,7 @@ class FileTable(QTableWidget):
                 self.transferList.remove(key)
                 self.selecetdList.remove(key)
                 rowIdx = self.indexFromItem(self.filePins[key]).row()
-                self._setColorRow(rowIdx, "#fff")
+                self._setColorRow(rowIdx, Color.MAIN_BACKRGOUND)
                 self.clearSelection()
                 if len(self.transferList) == 0:
                     self.viewSignal.ZeroFile.emit()

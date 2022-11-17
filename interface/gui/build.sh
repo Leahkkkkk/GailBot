@@ -1,4 +1,4 @@
-pyinstaller --onefile --noconsole --windowed app.py \
+pyinstaller --onefile --noconsole app.py --windowed  \
 --name "Test" \
 --add-data "config/:config" \
 --add-data "asset/:asset" \
