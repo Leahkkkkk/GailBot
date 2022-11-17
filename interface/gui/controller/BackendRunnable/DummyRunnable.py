@@ -23,19 +23,19 @@ class Signals(QObject):
     """ contain signals in order for QRunnable object to communicate
         with controller
     """
-    finished = pyqtSignal()
+    finish = pyqtSignal()
     start = pyqtSignal()
     progress = pyqtSignal(str)
     error = pyqtSignal(str)
-    result = pyqtSignal()
     killed = pyqtSignal()
 
 class Worker(QRunnable):
     """  contain dummy function that is able to run on a separate thread 
     """
-    def __init__(self):
+    def __init__(self, files, signals: Signals):
         super(Worker, self).__init__()
-        self.signals = Signals()
+        self.signals = signals
+        self.files = files
         self.is_killed = False
 
     @pyqtSlot()
@@ -43,7 +43,7 @@ class Worker(QRunnable):
         """ public function to execute the dummy function """
         try:
             self.signals.start.emit()
-            for i in range(30):
+            for i in range(10):
                 self.signals.progress.emit(str(i+1))
                 time.sleep(0.3)
 
@@ -55,10 +55,11 @@ class Worker(QRunnable):
             self.signals.error.emit(f"${e.__class__}fails" )
             time.sleep(5)
         else:
-            self.signals.result.emit()
+            self.signals.finish.emit()
+    
         finally:
             if not self.is_killed:
-                self.signals.finished.emit()
+                self.signals.finish.emit()
 
     def kill(self):
         """ kill the thread"""
