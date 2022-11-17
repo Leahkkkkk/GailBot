@@ -31,6 +31,10 @@ ThreadControl = ThreadData.from_dict(config["threadControl"])
 
 def getWorkPath() -> WorkSpacePathData:
     """ return the data contains workspace directory  """
-    data = toml.load(os.path.join(basedir,BackEndDataPath.workSpaceData))
-    WorkSpacePath = WorkSpacePathData.from_dict(data)
+    if os.path.exists(os.path.join(basedir,BackEndDataPath.workSpaceData)):
+        data = toml.load(os.path.join(basedir,BackEndDataPath.workSpaceData))
+        WorkSpacePath = WorkSpacePathData.from_dict(data)
+    else:
+        data = {"workSpace": os.getcwd(), "plugin": os.getcwd()}
+        WorkSpacePath = WorkSpacePathData.from_dict(data)
     return WorkSpacePath

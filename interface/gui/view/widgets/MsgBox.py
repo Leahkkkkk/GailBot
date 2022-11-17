@@ -10,6 +10,7 @@ Modified By:  Siara Small  & Vivian Li
 Description implement pop up message dialogue to display message for user
 '''
 from typing import List 
+from util.Style import Color
 from util.Logger import makeLogger
 from view.widgets.Background import initSecondaryColorBackground
 from PyQt6.QtWidgets import QMessageBox
@@ -31,6 +32,7 @@ class ConfirmBox:
         """
         self.logger = makeLogger("Frontend")
         self.msgBox = QMessageBox(text=msg)
+        self.msgBox.setStyleSheet(f"color:{Color.MAIN_TEXT};")
         self.msgBox.setIcon(QMessageBox.Icon.Warning)
         
        
@@ -71,6 +73,8 @@ class WarnBox:
         self.msgBox.setIcon(QMessageBox.Icon.Warning)
         self.msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
         self.msgBox.buttonClicked.connect(self._ok)
+        self.msgBox.setStyleSheet(f"color:{Color.MAIN_TEXT};")
+        
         initSecondaryColorBackground(self.msgBox)
         self.msgBox.exec()
         

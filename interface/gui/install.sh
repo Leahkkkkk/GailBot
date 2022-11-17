@@ -1,10 +1,10 @@
 mkdir -p dist/dmg 
-cp -r dist/Test.app dist/dmg
+cp -r dist/AppTest4.app dist/dmg
 create-dmg \
-  --volname "Test" \
+  --volname "AppTest4.app" \
   --window-pos 200 120 \
   --window-size 600 300 \
-  --hide-extension "Test.app" \
+  --hide-extension "AppTest4.app" \
   --app-drop-link 425 120 \
-  "dist/Test.dmg" \
+  "dist/AppTest4.dmg" \
   "dist/dmg/"

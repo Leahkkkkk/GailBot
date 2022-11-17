@@ -147,7 +147,10 @@ class MainWindow(QMainWindow):
     
     def _openWorkSpaceDialog(self):
         basedir = getProjectRoot()
-        while not os.path.exists(os.path.join(basedir, BackEndDataPath.workSpaceData)):
+        if not os.path.exists(os.path.join(basedir, BackEndDataPath.workSpaceData)):
             pathDialog = WorkSpaceDialog.WorkSapceDialog()
             pathDialog.exec()
+        if not os.path.exists(os.path.join(basedir, BackEndDataPath.workSpaceData)):
+            MsgBox.WarnBox("You have not selected the work space for transcription\n"
+                           f"The default work space will be {os.getcwd()}")
     
