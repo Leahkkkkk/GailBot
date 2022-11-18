@@ -63,7 +63,7 @@ class WorkSapceDialog(QDialog):
                 "workSpace": self.workDir, 
                 "plugin": f"{self.workDir}/plugin"}
             with open(
-                os.path.join(basedir,  BackEndDataPath.workSpaceData), "w") as f:
+                os.path.join(basedir, BackEndDataPath.workSpaceData), "w") as f:
                 toml.dump(workSpace, f)
             self.close()
         except :

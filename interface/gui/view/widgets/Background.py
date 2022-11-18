@@ -20,6 +20,7 @@ from PyQt6.QtGui import (
     QColor, 
     QPalette,
     QImage,
+    QPixmap,
     QTransform
 )
 from PyQt6.QtWidgets import QWidget, QVBoxLayout
@@ -51,8 +52,7 @@ def _initImgBackground(widget:QWidget, background: str = Asset.homeBackground):
     widget.setAutoFillBackground(True)
     palette = widget.palette()
     brush = QBrush()
-    
-    brush.setTextureImage(QImage(os.path.join(dirname, f"{background}")))
+    brush.setTexture(QPixmap(os.path.join(dirname, f"{background}")))
     backgroundTransform = QTransform()
     brush.setTransform(backgroundTransform.scale(1,1))
     palette.setBrush(QPalette.ColorRole.Window, brush) 

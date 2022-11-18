@@ -14,7 +14,9 @@ from util.ConfigParser import TextParser
 import toml 
 from dataclasses import dataclass
 from util.Path import getProjectRoot
+from util.Style import Color
 from config.ConfigPath import TextDataPath
+
 
 basedir = getProjectRoot()
 text   = toml.load(os.path.join(basedir, TextDataPath.string))

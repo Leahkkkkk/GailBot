@@ -83,6 +83,7 @@ class WelcomePage(QWidget):
         self.verticalLayout.addWidget(self.GBLinkText)
         self.verticalLayout.addStretch()
 
+
         
     def _initStyle(self):
         """ initializes the style  of the page """
