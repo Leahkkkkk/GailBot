@@ -95,6 +95,10 @@ class InputField(QLineEdit):
         super().__init__(*args, **kwargs)
         self.setFixedSize(
             QSize(Dimension.INPUTWIDTH, Dimension.INPUTHEIGHT))
+    
+    def mouseDoubleClickEvent(self, c):
+        print("clicked")
+        self.clear()
         
 
 class InputCombo(InputBox):
