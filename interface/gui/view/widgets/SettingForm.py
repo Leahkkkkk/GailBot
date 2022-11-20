@@ -17,7 +17,8 @@ from view.widgets.Background import initSecondaryColorBackground
 from util.Style import (
     FontFamily, 
     FontSize, 
-    Dimension
+    Dimension,
+    Color
 )
 from PyQt6.QtWidgets import (
     QWidget, 
@@ -73,8 +74,7 @@ class SettingForm(QWidget):
         self.scroll = QScrollArea()
         self.scroll.setVerticalScrollBarPolicy(
             Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
-        self.scroll.setHorizontalScrollBarPolicy(
-            Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
+        self.scroll.verticalScrollBar().setStyleSheet(f"background-color:{Color.MAIN_BACKRGOUND}")
         self.scroll.setWidget(self.setForm)
         self.scroll.setFixedWidth(Dimension.FORMWIDTH)
         self.scroll.setFixedHeight(Dimension.FORMMINHEIGHT)

@@ -88,7 +88,7 @@ SystemSettingForm = forms["system setting form"]
 @dataclass
 class Links: 
     link = text["links"]["HILAB"]
-    _linkTemplate = "<a href={0}>{1}</a>"
+    _linkTemplate = "<a style='color:#268CFC;' href={0}>{1}</a>"
     tutorialLink = _linkTemplate.format(
         link, WelcomePageText.tutorialText)
     guideLink = _linkTemplate.format(

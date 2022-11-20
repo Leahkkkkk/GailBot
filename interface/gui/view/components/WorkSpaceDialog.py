@@ -60,8 +60,10 @@ class WorkSapceDialog(QDialog):
         print(basedir)
         try:
             workSpace = {
-                "workSpace": self.workDir, 
-                "plugin": f"{self.workDir}/plugin"}
+                "workSpace": f"{self.workDir}/GailBot/workSpace", 
+                "plugin": f"{self.workDir}/GailBot/plugin",
+                "frontend": f"{self.workDir}/Frontend"
+            }
             with open(
                 os.path.join(basedir, BackEndDataPath.workSpaceData), "w") as f:
                 toml.dump(workSpace, f)

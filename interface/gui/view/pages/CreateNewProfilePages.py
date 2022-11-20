@@ -12,7 +12,7 @@ Description: implementation of pages for user to create new profile
 
 from typing import Dict
 
-from util.Style import Color, FontSize, FontFamily
+from util.Style import Color, FontSize, FontFamily, Dimension
 from util.Text import CreateNewProfilePageText as Text 
 from util.Logger import makeLogger
 
@@ -22,10 +22,11 @@ from view.widgets.TabPage import TabPage
 from view.widgets.MultipleCombo import UserForm
 from view.widgets.InputBox import InputBox
 from view.widgets.MsgBox import WarnBox
+from view.widgets.Background import initPrimaryColorBackground
 from view.components import OutputFormatForm, SpeechEngineForm
 from view.pages.PluginPage import PluginPage
 from view.pages.PostSetPage import PostSetPage
-from view.widgets.Background import initPrimaryColorBackground
+from view.widgets.Background import initSecondaryColorBackground
 
 from PyQt6.QtWidgets import  QVBoxLayout
 from PyQt6.QtCore import (
@@ -39,6 +40,7 @@ hcenter = Qt.AlignmentFlag.AlignHCenter
 vcenter = Qt.AlignmentFlag.AlignVCenter
 center = hcenter | vcenter
 bottomRight = Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignBottom
+top = Qt.AlignmentFlag.AlignTop
 
 class settingSignals(QObject):
     engineSet = pyqtSignal()
@@ -59,7 +61,7 @@ class ProfileName (TabPage):
     def _initWidget(self):
         """ initializes the widgets """
         self.header = Label(Text.profileName, 
-            FontSize.HEADER3, 
+            FontSize.HEADER2, 
             FontFamily.MAIN)
         self.profileName = InputBox(
             "", 
@@ -116,7 +118,7 @@ class BasicSetting(TabPage):
         self.mainWidget = UserForm()
         self.header = Label(
             "Basic settings", 
-            FontSize.HEADER3, 
+            FontSize.HEADER2, 
             FontFamily.MAIN)
     
     def _initLayout(self):
@@ -155,7 +157,7 @@ class EngineSetting(TabPage):
         self.setLayout(self.verticallayout)
         self.header = Label(
             Text.engineSettingHeader, 
-            FontSize.HEADER3, 
+            FontSize.HEADER2, 
             FontFamily.MAIN)
         self.verticallayout.addWidget(
             self.header, 
@@ -188,8 +190,9 @@ class OutPutFormatSetting(TabPage):
             FontFamily.MAIN)
         self.verticallayout.addWidget(
             self.header, 
-            alignment=hcenter)
-        self.verticallayout.addWidget(self.mainForm)
+            alignment=hcenter|top)
+        self.verticallayout.addWidget(self.mainForm, alignment=top)
+        self.verticallayout.addStretch()
         self.confirmBtn = ColoredBtn(
             Text.cofirmBtn, 
             Color.SECONDARY_BUTTON)
@@ -218,7 +221,8 @@ class PostTranscribeSetting(TabPage):
         self.verticallayout.addWidget(
             self.confirmBtn, 
             alignment=Qt.AlignmentFlag.AlignRight)
-        
+        initPrimaryColorBackground(self.mainForm.setForm.setForm)
+        initPrimaryColorBackground(self.mainForm.setForm.scroll)
     def getData(self):
         """ gets current value of data """
         self.logger.info(self.mainForm.getValue())
@@ -239,6 +243,7 @@ class PluginSetting(TabPage):
             self.confirmBtn,
             alignment=Qt.AlignmentFlag.AlignRight)
         initPrimaryColorBackground(self.mainForm.scrollContainer)
+        
         
     def getData(self):
         """ gets current value of data """

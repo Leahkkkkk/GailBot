@@ -11,10 +11,11 @@ Description: implementation of a speech to engine form
 '''
 
 from typing import Dict
-
+from util.Style import FontSize
 from util.Logger import makeLogger
 from util.Text import EngineSettingForm
 from view.widgets.MultipleCombo import ToggleCombo
+from view.widgets.Label import Label
 from PyQt6.QtWidgets import (
     QComboBox, 
     QWidget, 
@@ -64,7 +65,7 @@ class SpeechEngineForm(QWidget):
         
     def _initWidget(self):
         """ initialize the widget """
-        self.label = QLabel("Speech to Text Engine")
+        self.label = Label("Speech to Text Engine", FontSize.BODY)
         self.mainCombo = QComboBox(self)
         self.toggleList = None
         for key, value in self.data.items():
@@ -92,7 +93,7 @@ class SpeechEngineForm(QWidget):
             
         self.toggleList = ToggleCombo(data, self.showBasicSet)
         self.toggleList.setContentsMargins(0,0,0,0)
-        self.verticalLayout.addWidget(self.toggleList, alignment = center)
+        self.verticalLayout.addWidget(self.toggleList)
  
     
   

@@ -1,2 +1,3 @@
-workSpace = "/Users/yike/Documents/GitHub/GailBot/interface/gui/dist"
-plugin = "/Users/yike/Documents/GitHub/GailBot/interface/gui/dist/plugin"
+workSpace = "/Users/yike/Documents/GitHub/GailBot/interface/gui/GailBot/workSpace"
+plugin = "/Users/yike/Documents/GitHub/GailBot/interface/gui/GailBot/plugin"
+frontend = "/Users/yike/Documents/GitHub/GailBot/interface/gui/Frontend"
