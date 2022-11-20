@@ -13,8 +13,8 @@ so that the front end is able to reflect the transcription progress
 '''
 from util.Error import ErrorMsg, ThreadException
 from view.MainWindow import MainWindow
-# from controller.BackendRunnable.GBRunnable import Worker
-from controller.BackendRunnable.DummyRunnable import Worker
+from controller.BackendRunnable.GBRunnable import Worker
+# from controller.BackendRunnable.DummyRunnable import Worker
 from util.Logger import makeLogger
 from util.GailBotData import ThreadControl
 from PyQt6.QtCore import pyqtSignal, QObject, QThreadPool

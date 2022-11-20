@@ -108,7 +108,7 @@ end    = "End Recording"
 [filetable.header]
 fileUploadPage = ["Select All", "Type", "Name", "Profile", 
                     "Status", "Date", "Size", "Actions"]
-confirmPage    = ["Type", "Name", "Profile", "SelectedAction", "Action"]
+confirmPage    = ["Type", "Name", "Profile", "Selected Action", "Action"]
 transcribePage = ["Type", "Name", "Progress"]
 successPage    = ["Type",  "Name", "Status", "Output"]
 
@@ -153,7 +153,7 @@ CorpuFormHeader  = "Corpus Settings"
 LanguageHeader   = "language"
 FileHeaderView   = "File Header Views"
 FileFormatHeader = "File Format"
-SpeakerHeader    = "Number of Speaker"
+SpeakerHeader    = "Number of Speakers"
 TextWrap         = "Text-Wrapping"
 
 [RequiredSettingForm]
@@ -175,7 +175,7 @@ down  = "down.png"
 
 [fileTableText]
 default    = "Default"
-delete     = "Delete"
+delete     = "Remove"
 changeSet  = "Change Setting"
 profileDet = "Profile Details"
 

@@ -77,7 +77,7 @@ class MVController:
         """ connect the signal from the view to file database  
             store, delete or edit the database based on the view's request
         """
-        self.logger.info("initailize model&view connection")
+        self.logger.info("initialize model&view connection")
         viewSignal = self.view.fileTableSignals
         db = self.fileDB
         # handle view's request to post new file
@@ -93,7 +93,7 @@ class MVController:
         """ connect the signal from the view to plugin database  
             store, delete or edit the database based on the view's request
         """
-        self.logger.info("initailize model&view connection")
+        self.logger.info("initialize model&view connection")
         viewSignal = self.view.profileSignals
         # handle view's request to load new plugin
         viewSignal.addPlugin.connect(self.pluginDB.post)
@@ -102,7 +102,7 @@ class MVController:
         """ connect the signal from the plugin database to view
             change the presentation of data on the view
         """
-        self.logger.info("initailize model&view connection")
+        self.logger.info("initialize model&view connection")
         dbSignal = self.pluginDB.signals
         view = self.view.MainStack.ProfileSettingPage
         # reflect the plugin database's changes on view
@@ -112,7 +112,7 @@ class MVController:
         """ connect the signal from the view to profile database  
             store, delete or edit the database based on the view's request
         """
-        self.logger.info("initailize model&view connection")
+        self.logger.info("initialize model&view connection")
         viewSignal = self.view.profileSignals
         db = self.profileDB
         # handle view's request to post new profile
@@ -126,7 +126,7 @@ class MVController:
         """ connect the signal from the profile database to view
             change the presentation of data on the view
         """
-        self.logger.info("initailize model&view connection")
+        self.logger.info("initialize model&view connection")
         dbSignal = self.profileDB.signals
         profileView = self.view.MainStack.ProfileSettingPage
         fileView = self.view.MainStack.FileUploadPage.fileTable

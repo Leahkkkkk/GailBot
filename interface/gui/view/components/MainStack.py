@@ -84,7 +84,7 @@ class MainStack(QStackedWidget):
             self.ConfirmTranscribePage.fileTable.filterFile)
         self.ConfirmTranscribePage.fileTable.viewSignal.transferState.connect(
             self.TranscribeProgressPage.fileTable.filterFile)
-        self.TranscribeProgressPage.fileTable.viewSignal.transferState.connect(
+        self.ConfirmTranscribePage.fileTable.viewSignal.transferState.connect(
             self.TranscribeSuccessPage.fileTable.filterFile)
  
     def gotoTranscribeInProgress(self):

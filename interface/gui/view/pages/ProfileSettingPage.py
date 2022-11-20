@@ -143,7 +143,7 @@ class ProfileSettingPage(QWidget):
         self.newPluginBtn.clicked.connect(self.addPluginRequest)
     
     def _activatePostSet(self):
-        """ switches current page from required settings page to post trancription settings page """
+        """ switches current page from required settings page to post transcription settings page """
         self._setBtnDefault()
         self.postSetBtn.setActiveStyle(Color.HIGHLIGHT)
         self.settingStack.setCurrentWidget(self.PostSetPage)

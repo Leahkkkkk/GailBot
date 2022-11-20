@@ -9,6 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 Description: implement function for initialize background for different pages
 '''
+import random
 import os
 from util.Style import Color, Asset, Dimension
 from util.Path import getProjectRoot
@@ -21,7 +22,8 @@ from PyQt6.QtGui import (
     QPalette,
     QImage,
     QPixmap,
-    QTransform
+    QTransform,
+    QPainter
 )
 from PyQt6.QtWidgets import QWidget, QVBoxLayout
 

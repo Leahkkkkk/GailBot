@@ -43,14 +43,18 @@ class RequiredSet(QWidget):
     def _initWidget(self):
         """initialize widgets"""
         self.engineForm = SpeechEngineForm()
-        self.engineSet = ToggleView.ToggleView(
+        self.engineFormView = ToggleView.ToggleView(
             Text.engineSettingHeader,self.engineForm, header = True)
-        self.engineSet.setScrollHeight(self.engineForm.height())
+        self.engineFormView.setScrollHeight(self.engineForm.height())
         self.outPutForm = OutPutFormat()
-        self.outPutFormatForm = ToggleView.ToggleView(
+        self.outPutFormView = ToggleView.ToggleView(
             Text.outputSettingHeader, self.outPutForm, header = True)
-        self.outPutFormatForm.setScrollHeight(self.outPutForm.height())
-        self.outPutFormatForm.setScrollHeight(Dimension.DEFAULTTABHEIGHT)
+        self.outPutFormView.setScrollHeight(self.outPutForm.height())
+        self.outPutFormView.setScrollHeight(Dimension.DEFAULTTABHEIGHT)
+        self.engineFormView.Btn.clicked.connect(self.outPutFormView.hideView)
+        self.outPutFormView.Btn.clicked.connect(self.engineFormView.hideView)
+
+        
         
     def _initLayout(self):
         """initialize layout"""
@@ -58,9 +62,9 @@ class RequiredSet(QWidget):
         self.setLayout(self.verticalLayout)
         """ add widget to layout """
         self.verticalLayout.addWidget(
-            self.engineSet, alignment=Qt.AlignmentFlag.AlignTop)
+            self.engineFormView, alignment=Qt.AlignmentFlag.AlignTop)
         self.verticalLayout.addWidget(
-            self.outPutFormatForm, stretch = 2, alignment=Qt.AlignmentFlag.AlignTop)  
+            self.outPutFormView, stretch = 2, alignment=Qt.AlignmentFlag.AlignTop)  
     
     def setValue(self, data: Dict [str, dict]):
         """ a public function to set the form value

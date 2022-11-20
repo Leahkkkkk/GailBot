@@ -78,7 +78,7 @@ class UploadFileTab(QDialog):
         for fileObj in fileList:
             fileData = {**fileObj, **profile, **outputPath, **status}
             self.signals.postFile.emit(fileData)
-            self.logger.info("file added")
+            self.logger.info("File added")
             self.logger.info(fileData)
 
         self.close()

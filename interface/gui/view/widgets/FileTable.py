@@ -131,15 +131,22 @@ class FileTable(QTableWidget):
         self.setObjectName("FileTable")
         self.setStyleSheet("#FileTable{"
                            f"background-color: {Color.MAIN_BACKRGOUND};"
-                           f"color:{Color.MAIN_TEXT}"
+                           f"color:{Color.MAIN_TEXT};"
+                           f"border: 2px solid {Color.MAIN_BACKRGOUND}"
                            "}")
+
         for i in range(self.columnCount()):
             self.horizontalHeader().setSectionResizeMode(
                 i,
                 QHeaderView.ResizeMode.Fixed)
         self.setFixedWidth(Dimension.TABLEWIDTH)
         self.setMinimumHeight(Dimension.TABLEMINHEIGHT)
-        
+        self.verticalScrollBar().setStyleSheet(
+            f"background-color:{Color.MAIN_BACKRGOUND}") 
+        self.horizontalScrollBar().setStyleSheet(
+            f"background-color: {Color.MAIN_BACKRGOUND}"
+        )
+
     def resizeCol(self, widths:List[int]) -> None:
         """ takes in a list of width and resize the width of the each 
             column to the width
@@ -279,7 +286,9 @@ class FileTable(QTableWidget):
         if key in self.filePins:
             rowIdx = self.indexFromItem(self.filePins[key]).row()
             self.removeRow(rowIdx)
+            self.dbSignal.delete.emit(key)
             del self.fileWidgets[key]
+            del self.filePins[key]
             if key in self.transferList:
                 self.transferList.remove(key)
                 self.selecetdList.remove(key)
@@ -290,12 +299,14 @@ class FileTable(QTableWidget):
         """ delete all files on the file table 
             ** connected to deleteAll button 
         """
-        for key in self.filePins.keys():
+        keys = list(self.filePins)
+        for key in keys:
             self.removeFile(key)
             
         self.transferList.clear()
         self.selecetdList.clear()
         self.filePins.clear()
+        self.viewSignal.ZeroFile.emit()
         
 
     ##################### edit profile handlers #########################
@@ -337,7 +348,7 @@ class FileTable(QTableWidget):
         selectSetting.setFixedSize(QSize(200,200))
     
     def postNewFileProfile(self, newprofile: Tuple[str, str]):
-        """ post the newly updated file change to the dataabse
+        """ post the newly updated file change to the database
 
         """
         key, profilekey = newprofile
@@ -449,7 +460,7 @@ class FileTable(QTableWidget):
         """
         logging.info(self.transferList)
         self.viewSignal.transferState.emit(self.transferList)
-        self.viewSignal.ZeroFile.emit()
+        # self.viewSignal.ZeroFile.emit()
         
     def transcribeFile(self):
         """ send signal to controller to transcribe file """

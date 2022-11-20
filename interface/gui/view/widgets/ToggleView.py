@@ -65,6 +65,13 @@ class ToggleView(QWidget):
         """
         self.scroll.setMinimumHeight(size)
     
+    def hideView(self) -> None :
+        """ hide the view area """
+        self.scroll.hide()
+        self.hide = True
+        self.Btn.resetBtn()
+        
+    
     def _configHeader(self):
         """ configures the toggle header """
         self.Btn = Button.ToggleBtn(text=self.labelStr)
@@ -94,8 +101,10 @@ class ToggleView(QWidget):
         self.view.setObjectName("viewContainer")
         self.view.setStyleSheet(
             f"#viewContainer {{background-color:{self.viewcolor}}}")
+        self.scroll.verticalScrollBar().setStyleSheet(f"background-color:{Color.MAIN_BACKRGOUND};")
         self.scroll.hide()
         self.hide = True
+        
     
     def _initLayout(self):
         """ initializes the layout """
@@ -119,6 +128,5 @@ class ToggleView(QWidget):
         else:
             self.scroll.hide()
             self.hide = True
-    
     
 

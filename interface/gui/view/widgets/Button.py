@@ -256,6 +256,8 @@ class iconBtn(QPushButton):
       icon = QIcon(os.path.join(dirname, f"{icon}"))
       self.setIcon(icon)
       self.setObjectName(Text.icon)
+      self.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+      
       
       if label:
           self.setText(label)

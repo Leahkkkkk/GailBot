@@ -140,6 +140,7 @@ class FileModel:
         try:
             if key in self.data:
                 del self.data[key]
+                self._updateFileResponse(key, "Status", "deleted")
                 if key not in self.data:
                     self.signals.deleted.emit(key)
                 else:

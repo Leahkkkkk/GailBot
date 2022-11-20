@@ -71,6 +71,7 @@ class OutPutFormat(QWidget):
         Args: data:dict: dictionary to update
         """
         self.formatCombo.setCurrentText(data["Output File Format"])
+        self.headerForm.setValue(data)
         
 class HeaderForm(QWidget):
     """class for header form"""
@@ -140,7 +141,7 @@ class HeaderForm(QWidget):
             data (Dict[str, str]): a dictionary that stores the data value
         """
         self.lanCombo.setCurrentText(data["language"])
-        self.numCombo.setCurrentIndex(data["Number of speaker"])
+        self.numCombo.setCurrentText(data["Number of speaker"])
         for i in range(len(self.speakerCombolist)):
             self.speakerCombolist[i].setCurrentText(data[f"gender{i}"])
         self.corpusForm.setValues(data["Corpus Settings"])

@@ -140,7 +140,7 @@ class BasicSetting(TabPage):
         """ confirm button handler """
         res = self.mainWidget.getValue()
         if res[0] == "" or res[1] == "":
-            warn = WarnBox(Text.emptyUserMsg)
+            WarnBox(Text.emptyUserMsg)
         else:
             self.signals.nextPage.emit()
             self.signals.goToNextPage.emit()
@@ -194,7 +194,6 @@ class OutPutFormatSetting(TabPage):
             Text.cofirmBtn, 
             Color.SECONDARY_BUTTON)
         self.confirmBtn.clicked.connect(lambda: self.signals.nextPage.emit())
-        self.verticallayout.addStretch()
         self.verticallayout.addWidget(
             self.confirmBtn, 
             alignment=bottomRight)
@@ -203,7 +202,7 @@ class OutPutFormatSetting(TabPage):
         """ gets current value of data """
         return self.mainForm.getValue()
 
-     
+      
 class PostTranscribeSetting(TabPage):
     """ class for the post-transcription settings tab """
     def __init__(self, *args, **kwargs) -> None:

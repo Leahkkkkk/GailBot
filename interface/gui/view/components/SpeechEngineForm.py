@@ -21,7 +21,9 @@ from PyQt6.QtWidgets import (
     QVBoxLayout, 
     QLabel, 
 )
+from PyQt6.QtCore import Qt
 
+center = Qt.AlignmentFlag.AlignHCenter
 
 class SpeechEngineForm(QWidget):
     """ Generate a dynamic list of combobox to implement the 
@@ -90,9 +92,8 @@ class SpeechEngineForm(QWidget):
             
         self.toggleList = ToggleCombo(data, self.showBasicSet)
         self.toggleList.setContentsMargins(0,0,0,0)
-        self.verticalLayout.addWidget(self.toggleList)
-        self.verticalLayout.setSpacing(0)
-        self.verticalLayout.addStretch()
+        self.verticalLayout.addWidget(self.toggleList, alignment = center)
+ 
     
   
         
