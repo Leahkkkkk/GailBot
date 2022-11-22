@@ -52,5 +52,11 @@ class ThreadData(DataclassFromDict):
 
 @dataclass 
 class WorkSpacePathData(DataclassFromDict): 
-      workSpace : str = field_from_dict()
-      plugin    : str = field_from_dict()
+    workSpace: str = field_from_dict()
+    plugin : str = field_from_dict()
+    frontend: str = field_from_dict()
+
+@dataclass 
+class WorkSpaceBaseDirData(DataclassFromDict):
+    WORK_SPACE_BASE_DIRECTORY : str = field_from_dict()
+ 

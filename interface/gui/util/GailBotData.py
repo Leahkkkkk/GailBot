@@ -17,9 +17,12 @@ from util.ConfigParser.GailBotDataParser import (
     ProfileConfigData, 
     PluginData, 
     ThreadData,
-    WorkSpacePathData
+    WorkSpacePathData,
+    WorkSpaceBaseDirData
 )
 from config.ConfigPath import BackEndDataPath
+
+import userpaths
 
 basedir = getProjectRoot()
 config = toml.load(os.path.join(basedir,BackEndDataPath.gaiBotData))
@@ -31,10 +34,17 @@ ThreadControl = ThreadData.from_dict(config["threadControl"])
 
 def getWorkPath() -> WorkSpacePathData:
     """ return the data contains workspace directory  """
+    # get the user's defined base directory
     if os.path.exists(os.path.join(basedir,BackEndDataPath.workSpaceData)):
         data = toml.load(os.path.join(basedir,BackEndDataPath.workSpaceData))
-        WorkSpacePath = WorkSpacePathData.from_dict(data)
+        userBaseDir = WorkSpaceBaseDirData.from_dict(data).WORK_SPACE_BASE_DIRECTORY
     else:
-        data = {"workSpace": os.getcwd(), "plugin": os.getcwd()}
-        WorkSpacePath = WorkSpacePathData.from_dict(data)
+        userBaseDir = userpaths.get_my_documents()
+        
+    # get the path to the sub directory     
+    data = toml.load(os.path.join(basedir, BackEndDataPath.defaultWorkSpaceData))
+    for key, value in data.items():
+        data[key] = os.path.join(userBaseDir, value)
+    WorkSpacePath = WorkSpacePathData.from_dict(data)
+    
     return WorkSpacePath

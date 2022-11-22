@@ -11,6 +11,8 @@ Description: implement the main window for the GUI interface
 '''
 from typing import List 
 import os 
+import shutil
+import glob
 
 from util import Logger
 from config.ConfigPath import BackEndDataPath
@@ -26,6 +28,7 @@ from view.components import WorkSpaceDialog
 from view.widgets import MsgBox
 from util.Style import Dimension
 from util.Path import getProjectRoot
+from util.GailBotData import getWorkPath
 from util.Text import About
 
 
@@ -130,6 +133,10 @@ class MainWindow(QMainWindow):
             currently delete the file from the table
         """
         self.MainStack.changeToTranscribed(key)
+    
+    def closeEvent(self, a0) -> None:
+        super().closeEvent(a0)
+        self._copylog()
         
     """ private function """
     def _connectSignal(self):
@@ -148,9 +155,15 @@ class MainWindow(QMainWindow):
     def _openWorkSpaceDialog(self):
         basedir = getProjectRoot()
         if not os.path.exists(os.path.join(basedir, BackEndDataPath.workSpaceData)):
-            pathDialog = WorkSpaceDialog.WorkSapceDialog()
+            pathDialog = WorkSpaceDialog.WorkSpaceDialog()
             pathDialog.exec()
-        if not os.path.exists(os.path.join(basedir, BackEndDataPath.workSpaceData)):
-            MsgBox.WarnBox("You have not selected the work space for transcription\n"
-                           f"The default work space will be {os.getcwd()}")
+
+    def _copylog(self):
+        frontEndDir = getWorkPath().frontend
+        files = glob.iglob(os.path.join(getProjectRoot(), "*.log"))
+        for file in files:
+            if os.path.isfile(file):
+                name = os.path.basename(file)
+                shutil.copy(file, os.path.join(frontEndDir, name))
+                os.remove(file)
     

@@ -1,3 +1,1 @@
-workSpace = "/Users/yike/Documents/GitHub/GailBot/interface/gui/GailBot/workSpace"
-plugin = "/Users/yike/Documents/GitHub/GailBot/interface/gui/GailBot/plugin"
-frontend = "/Users/yike/Documents/GitHub/GailBot/interface/gui/Frontend"
+WORK_SPACE_BASE_DIRECTORY = "/Users/yike/Documents"

@@ -1,0 +1,3 @@
+workSpace = "GailBot/transcription/workSpace"
+plugin = "GailBot/transcription/plugin"
+frontend = "GailBot/Frontend"

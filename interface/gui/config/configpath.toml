@@ -1,7 +1,8 @@
 # path to config files with backend data
 [backend]
-gaiBotData      = "config/backend/gailbot.toml"
-workSpaceData   = "config/backend/workSpace.toml"
+gaiBotData           = "config/backend/gailbot.toml"
+workSpaceData        = "config/backend/workSpace.toml"
+defaultWorkSpaceData = "config/backend/defaultWorkSpace.toml"
 
 # path to config files with style data
 [style]

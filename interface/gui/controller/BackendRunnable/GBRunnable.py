@@ -12,13 +12,16 @@ NOTE:
 - currently the function to apply customized profile is unimplemented 
 - the function that kill the thread need to be improved
 '''
+import sys
 from typing import List, Tuple
 import os
+sys.path.insert(0, os.path.dirname(os.path.abspath(os.path.join(__file__, os.pardir))))
 import logging
-
 from model.dataBase.fileDB import FileObj
 from util.GailBotData import Credential, ProfileConfig, Plugin, getWorkPath
-from gailbot import GailBotController
+
+from gailbot.controller import GailBotController
+
 from PyQt6.QtCore import (
     QRunnable, pyqtSlot
 )

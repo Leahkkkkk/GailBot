@@ -14,19 +14,18 @@ Description: main driver for a GUI app that support front and interface to
 
 if __name__ == '__main__':
     
-    # import multiprocessing
-    # multiprocessing.freeze_support()
-    # from multiprocessing import Process, Queue
+    import multiprocessing
+    multiprocessing.freeze_support()
+    from multiprocessing import Process, Queue
     from controller.Driver import run 
-    run()
-    # EXIT_CODE_REBOOT = -20000
+    EXIT_CODE_REBOOT = -20000
 
-    # exitCodeQueue = Queue()
-    # exitCode = EXIT_CODE_REBOOT   
-    # while exitCode == EXIT_CODE_REBOOT:
-    #     process = Process(target = run, args = (exitCodeQueue,))
-    #     process.start()
-    #     exitCode = exitCodeQueue.get()
-    #     process.join()
-    #     del process
+    exitCodeQueue = Queue()
+    exitCode = EXIT_CODE_REBOOT   
+    while exitCode == EXIT_CODE_REBOOT:
+        process = Process(target = run, args = (exitCodeQueue,))
+        process.start()
+        exitCode = exitCodeQueue.get()
+        process.join()
+        del process
     
