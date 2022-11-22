@@ -22,6 +22,8 @@ from view.widgets.Button import ColoredBtn
 from view.widgets.Label import Label
 from view.widgets.TabPage import TabPage
 
+import userpaths
+
 from PyQt6.QtWidgets import (
     QWidget,
     QFileDialog, 
@@ -141,6 +143,7 @@ class OpenFile(TabPage):
     def _getFiles (self):
         """ select current file paths """
         dialog = QFileDialog()
+        dialog.setDirectory(userpaths.get_desktop())
         fileFilter = Text.fileFilter
         selectedFiles = dialog.getOpenFileNames(filter = fileFilter)
         if selectedFiles:

@@ -12,6 +12,9 @@ NOTE:
 - currently the function to apply customized profile is unimplemented 
 - the function that kill the thread need to be improved
 '''
+import multiprocessing
+""" declared at the top level for multi-processing support """
+multiprocessing.freeze_support()  
 import sys
 from typing import List, Tuple
 import os

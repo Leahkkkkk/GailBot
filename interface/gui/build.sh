@@ -1,5 +1,6 @@
 rm -r dist 
 rm -r build
+rm *spec
 pyinstaller --noconsole --windowed app.py   \
 --name "AppTest5" \
 --add-data "config/:config" \
