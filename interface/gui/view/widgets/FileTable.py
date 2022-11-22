@@ -132,7 +132,7 @@ class FileTable(QTableWidget):
         self.setStyleSheet("#FileTable{"
                            f"background-color: {Color.MAIN_BACKRGOUND};"
                            f"color:{Color.MAIN_TEXT};"
-                           f"border: 2px solid {Color.MAIN_BACKRGOUND}"
+                           f"border: 2px solid {Color.SUB_BACKGROUND}"
                            "}")
 
         for i in range(self.columnCount()):
