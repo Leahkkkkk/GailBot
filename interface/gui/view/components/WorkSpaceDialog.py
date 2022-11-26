@@ -56,17 +56,23 @@ class WorkSpaceDialog(QDialog):
     
     def _onConfirm(self):
         basedir = getProjectRoot()
+        print(basedir)
+        # try:
+        workSpace = { "WORK_SPACE_BASE_DIRECTORY" : self.workDir }
         try:
-            workSpace = { "WORK_SPACE_BASE_DIRECTORY" : self.workDir }
-            with open(
-                os.path.join(basedir, BackEndDataPath.workSpaceData), "w") as f:
+            with open(os.path.join(basedir, BackEndDataPath.workSpaceData), "w") as f:
                 toml.dump(workSpace, f)
-            if not os.path.isdir(f"{self.workDir}/GailBot"):
-                os.mkdir(f"{self.workDir}/GailBot")
-            if not os.path.isdir(f"{self.workDir}/GailBot/Frontend"):
-                os.mkdir(f"{self.workDir}/GailBot/Frontend")
-        except :
-            WarnBox("cannot find the valid file path")
+                print("toml file is written")
+        except:
+            print("toml file cannot be written")
+            
+                
+        if not os.path.isdir(f"{self.workDir}/GailBot"):
+            os.mkdir(f"{self.workDir}/GailBot")
+        if not os.path.isdir(f"{self.workDir}/GailBot/Frontend"):
+            os.mkdir(f"{self.workDir}/GailBot/Frontend")
+        # except :
+        # WarnBox("cannot find the valid file path")
         
         self.close()
     

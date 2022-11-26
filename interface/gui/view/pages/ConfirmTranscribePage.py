@@ -13,7 +13,8 @@ from util.Style import (
     Color, 
     FontSize, 
     FileTableDimension,
-    FontFamily)
+    FontFamily,
+    Dimension)
 from util.Text import ConfirmTranscribeText as Text
 from util.Text import FileTableHeader 
 from util.Logger import makeLogger
@@ -84,7 +85,8 @@ class ConfirmTranscribePage(QWidget):
             self.cancelBtn, alignment = center)
         self.bottomButton.setContentsMargins(0,0,0,0)
         self.verticalLayout.addWidget(self.bottomButton, alignment=center)
-     
+        self.horizontalLayout.setSpacing(Dimension.LARGE_SPACING)
+        
     def _sendTranscribeSignal(self):
         """sends a signal with a set of file keys that will be transcribed """
         self.logger.info("here")

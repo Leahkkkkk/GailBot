@@ -1,21 +1,36 @@
 ## contains values for the dark mode color theme
 [colors] 
 ## dark mode button colors
+##secondary button color, used in save, continue, and get started buttons
 SECONDARY_BUTTON = "#76BD46"
+##cancel and quit button color
 CANCEL_QUIT      = "#FB7C6A"
+##highlight background color, primarily used in the background of the file table
 HIGHLIGHT        = "#4A6680"
+##color of the header of the file table
 TABLE_HEADER     = "#4A6680"
+##main button color, used in most continue and main menu buttons
 PRIMARY_BUTTON   = "#027BFE"
+##primary contrast color: white in dark mode
 PRIMARY_INTENSE  = "#FFFFFF"
+##low contrast- gray color close to black
 LOW_CONTRAST     = "#686C71"
+##low contrast- gray color less close to black
 LOW_CONTRAST2    = "#F0F6F9"
+##outline of the file table
 OUTLINE          = "#F0F6F9"
 GREYDARK         = "#F0F6F9"
+##file table border
 BORDER           = "#797979"
+##high contrast color
 GREYEXTRALIGHT   = "#F0F6F9"
+##main text
 MAIN_TEXT        = "#FFFFFF"
+##main background color
 MAIN_BACKRGOUND  = "#222C3A"
+##secondary background color, used in the background of popups and the upload page
 SUB_BACKGROUND   = "#35495F"
+##highest contrast- white in dark mode
 WHITE            = "#FFFFFF"
 
 

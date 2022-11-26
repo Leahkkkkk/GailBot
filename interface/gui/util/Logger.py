@@ -8,10 +8,12 @@ Last Modified: Thursday, 6th October 2022 3:09:55 pm
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
-
+import os
 import datetime
 import logging
 import re
+
+from util.Path import getProjectRoot
 
 from PyQt6 import QtCore
 from PyQt6.QtWidgets import QLineEdit
@@ -109,7 +111,7 @@ class ConsoleHandler(logging.Handler, QtCore.QObject):
     
     def _initLogFile(self,fmt):
         """ export all log information to a separate file """
-        fh = logging.FileHandler(f"GailBot-GUI-Log-Report-{current_time}.log")
+        fh = logging.FileHandler(os.path.join(getProjectRoot(), f"GailBot-GUI-Log-Report-{current_time}.log"))
         fh.setLevel(logging.DEBUG)
         fh.setFormatter(CustomFileFormatter(fmt))
         logging.getLogger().addHandler(fh)
