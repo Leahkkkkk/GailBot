@@ -59,12 +59,15 @@ class WorkSpaceDialog(QDialog):
         print(basedir)
         # try:
         workSpace = { "WORK_SPACE_BASE_DIRECTORY" : self.workDir }
+        print(os.path.join(basedir, BackEndDataPath.workSpaceData))
         try:
-            with open(os.path.join(basedir, BackEndDataPath.workSpaceData), "w") as f:
+            with open(os.path.join(basedir, BackEndDataPath.workSpaceData), "w+") as f:
                 toml.dump(workSpace, f)
                 print("toml file is written")
         except:
             print("toml file cannot be written")
+            WarnBox(f"cannot find the valid file path, {os.path.join(basedir, BackEndDataPath.workSpaceData)}")
+            
             
                 
         if not os.path.isdir(f"{self.workDir}/GailBot"):
