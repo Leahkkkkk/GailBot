@@ -1,3 +1,5 @@
-workSpace = "GailBot/transcription/workSpace"
-plugin = "GailBot/transcription/plugin"
+workSpace = "GailBot/Transcription/WorkSpace"
+plugin = "GailBot/Transcription/Plugin"
 frontend = "GailBot/Frontend"
+logFiles = "GailBot/Frontend/LogFiles"
+

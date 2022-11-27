@@ -159,11 +159,15 @@ class MainWindow(QMainWindow):
             pathDialog.exec()
 
     def _copylog(self):
-        frontEndDir = getWorkPath().frontend
+        frontEndDir = getWorkPath().logFiles
+        
+        if not os.path.isdir(frontEndDir):
+            os.makedirs(frontEndDir)
+            
         files = glob.iglob(os.path.join(getProjectRoot(), "*.log"))
         for file in files:
             if os.path.isfile(file):
                 name = os.path.basename(file)
-                shutil.copy(file, os.path.join(frontEndDir, name))
+                shutil.copy2(file, os.path.join(frontEndDir, name))
                 os.remove(file)
     

@@ -11,15 +11,18 @@ Description:
 Main controller for the app 
 Connect between the database, view object and the backend transcription process
 '''
-import sys
+import glob
+import os
 from typing import Set
 import logging 
+import time
 
 from controller.TranscribeController import TranscribeController
 from controller.MVController import MVController
 from model import Model
 from view import MainWindow
 from util import Logger
+from util.GailBotData import getWorkPath, FileManage
 
 from PyQt6.QtCore import pyqtSlot, QObject, QThreadPool, pyqtSignal
 
@@ -71,6 +74,7 @@ class Controller(QObject):
         self.ViewObj.show()
         self.MVController.exec()
         self._handleTanscribeSignal()
+        self._clearLog()
     
     def _handleViewSignal(self):
         """ handling signal to change the interface content from view object  """
@@ -128,4 +132,14 @@ class Controller(QObject):
         self.logger = Logger.makeLogger("B")
         self.logger.info("Initialize the controller")
          
-   
+    def _clearLog(self):
+        """ clear the log that is  """
+        currentTime = int(time.time())
+        deleteTime = currentTime - FileManage.AUTO_DELETE_TIME
+        logdir = getWorkPath().logFiles
+        files = glob.iglob(os.path.join(logdir, "*.log"))
+        for file in files:
+            fileTime = int(os.path.getctime(file))
+            if fileTime <= deleteTime :
+                os.remove(file)
+            

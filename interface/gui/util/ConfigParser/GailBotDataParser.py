@@ -55,6 +55,7 @@ class WorkSpacePathData(DataclassFromDict):
     workSpace: str = field_from_dict()
     plugin : str = field_from_dict()
     frontend: str = field_from_dict()
+    logFiles: str = field_from_dict()
 
 @dataclass 
 class WorkSpaceBaseDirData(DataclassFromDict):

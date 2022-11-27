@@ -16,7 +16,7 @@ center = Qt.AlignmentFlag.AlignHCenter
 class WorkSpaceDialog(QDialog):
     def __init__(self, *arg, **kwargs) -> None:
         super().__init__(*arg, **kwargs)
-        self.workDir = f"{userpaths.get_my_documents()}"
+        self.workDir = f"{userpaths.get_profile()}"
         self._initWidget()
         self._initLayout()
         self._connectSignal()

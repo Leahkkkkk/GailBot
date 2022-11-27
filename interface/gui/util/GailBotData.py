@@ -9,6 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 import os 
+from dataclasses import dataclass
 import toml 
 from util.Path import getProjectRoot
 from util.ConfigParser.GailBotDataParser import (
@@ -48,3 +49,8 @@ def getWorkPath() -> WorkSpacePathData:
     WorkSpacePath = WorkSpacePathData.from_dict(data)
     
     return WorkSpacePath
+
+
+@dataclass
+class FileManage:
+    AUTO_DELETE_TIME = 2628000
