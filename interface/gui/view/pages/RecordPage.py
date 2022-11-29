@@ -27,6 +27,9 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt, QTimer, QSize
 
 center = Qt.AlignmentFlag.AlignHCenter
+top = Qt.AlignmentFlag.AlignTop
+right = Qt.AlignmentFlag.AlignRight
+left = Qt.AlignmentFlag.AlignLeft
 
 class RecordProgress(QWidget):
     """ class for the record in progress page """
@@ -60,11 +63,14 @@ class RecordProgress(QWidget):
         self.iconBtn.setFixedSize(QSize(Dimension.SMALLICONBTN,Dimension.SMALLICONBTN))
         self.iconBtn.setIconSize(QSize(Dimension.SMALLICONBTN, Dimension.SMALLICONBTN))
         self.iconBtn.setStyleSheet(StyleSheet.iconBtn)
-        self.endBtn  = Button.ColoredBtn(Text.end, Color.CANCEL_QUIT)
+        self.endIconBtn = Button.iconBtn(Asset.endRecording)
+        self.endIconBtn.setFixedSize(QSize(Dimension.SMALLICONBTN,Dimension.SMALLICONBTN))
+        self.endIconBtn.setIconSize(QSize(Dimension.SMALLICONBTN, Dimension.SMALLICONBTN))
+        self.endIconBtn.setStyleSheet(StyleSheet.iconBtn)
         self.recordBar = ProgressBar()
         self.recordBar.setMinimumWidth(Dimension.PROGRESSBARWIDTH)
         self.recordBar.setMinimumHeight(Dimension.PROGRESSBARHEIGHT)
-    
+
     def _initLayout(self):
         """ initalizes the layout  """
         self.verticalLayout = QVBoxLayout()
@@ -72,17 +78,21 @@ class RecordProgress(QWidget):
         self.horizontalContainer = QWidget()
         self.horizontalContainer.setLayout(self.horizontalLayout)
         self.setLayout(self.verticalLayout)
-        self.horizontalLayout.addWidget(self.iconBtn, alignment=center)
+        self.horizontalLayout.addStretch()
+        self.horizontalLayout.addWidget(self.iconBtn, alignment=left)
+        self.horizontalLayout.addWidget(self.endIconBtn, alignment=left)
         self.horizontalLayout.addWidget(self.recordBar, alignment=center)
-        self.horizontalLayout.addWidget(self.endBtn, alignment=center)
+        self.horizontalLayout.setSpacing(Dimension.LARGE_SPACING)
+        self.horizontalLayout.addStretch()
+        self.verticalLayout.addStretch()
         self.verticalLayout.addWidget(self.timeDisplay, 
                                       alignment=Qt.AlignmentFlag.AlignHCenter)
         self.verticalLayout.addWidget(self.horizontalContainer)
-        self.verticalLayout.addStretch()
+
     
     def _connectSignal(self):
         """ connects the button signal when clicked """
-        self.endBtn.clicked.connect(self.endRecording)
+        self.endIconBtn.clicked.connect(self.endRecording)
         self.iconBtn.clicked.connect(self.recordSwitch)
         
     def endRecording(self):
@@ -120,6 +130,7 @@ class ProgressBar(QProgressBar):
     def __init__(self, *args, **kwargs):
         """ initializes progress bar """
         super(ProgressBar, self).__init__(*args, **kwargs)
+        self.setStyleSheet(f"background-color:{Color.SUB_BACKGROUND}")
         self.setValue(0)
     
     def start(self):
@@ -133,6 +144,7 @@ class RecordPage(QWidget):
         """ initializes the class """
         super().__init__(*args, **kwargs)
         self._initWidget()
+        self._initHorizontalLayout()
         self._initLayout()
         self._connectSignal()
         
@@ -150,6 +162,15 @@ class RecordPage(QWidget):
         self.cancelBtn = Button.ColoredBtn(Text.cancel, Color.CANCEL_QUIT)
         self.recordInprogress =  RecordProgress()
         self.recordInprogress.hide()
+
+    def _initHorizontalLayout(self):
+        """ initializes the horizontal layout of buttons to 
+            be added to the vertical layout """
+        self.horizontal = QWidget()
+        self.horizontalLayout = QHBoxLayout()
+        self.horizontal.setLayout(self.horizontalLayout)
+        self.horizontalLayout.addWidget(self.startRecordBtn, alignment = right)
+        self.horizontalLayout.addWidget(self.cancelBtn, alignment = left)
     
     def _initLayout(self):
         """ initializes the layout """
@@ -163,10 +184,7 @@ class RecordPage(QWidget):
         self.toggleSetting.setMaximumHeight(Dimension.DEFAULTTABHEIGHT)
         self.layout.addStretch()
         self.layout.addWidget(self.recordInprogress)
-        self.layout.addWidget(self.startRecordBtn,
-                              alignment=center)
-        self.layout.addWidget(self.cancelBtn,
-                              alignment=center)
+        self.layout.addWidget(self.horizontal)
 
     
     def _connectSignal(self):
@@ -175,7 +193,7 @@ class RecordPage(QWidget):
             self.startRecord)
         self.cancelBtn.clicked.connect(
             self.cancelRecord)
-        self.recordInprogress.endBtn.clicked.connect(
+        self.recordInprogress.endIconBtn.clicked.connect(
             self.cancelRecord)
         
     def startRecord(self):

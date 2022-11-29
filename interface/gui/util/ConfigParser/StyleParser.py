@@ -137,6 +137,7 @@ class Asset(DataclassFromDict):
     rightImg              : str = field_from_dict()
     hilLabLogo            : str = field_from_dict()
     transcribing          : str = field_from_dict()
+    endRecording          : str = field_from_dict()
 
 
 @dataclass 

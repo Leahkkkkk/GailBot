@@ -35,10 +35,11 @@ from PyQt6.QtWidgets import QVBoxLayout, QWidget
 from PyQt6 import QtCore
 from PyQt6.QtCore import Qt
 
-
+right = Qt.AlignmentFlag.AlignRight
+left = Qt.AlignmentFlag.AlignLeft
 
 class TranscribeSuccessPage(QWidget):
-    """ class for trancription success page """
+    """ class for transcription success page """
     def __init__(self, signal:FileSignals, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.signal = signal
@@ -47,7 +48,7 @@ class TranscribeSuccessPage(QWidget):
         self._initLayout()
         
     def _initWidget(self):
-        """ intializes widgets on the page """
+        """ initializes widgets on the page """
         self.label = Label.Label(
             Text.mainLabelText,
             FS.HEADER2,
@@ -90,8 +91,9 @@ class TranscribeSuccessPage(QWidget):
         self.horizontal = QWidget()
         self.horizontalLayout = QHBoxLayout()
         self.horizontal.setLayout(self.horizontalLayout)
-        self.horizontalLayout.addWidget(self.moreBtn)
-        self.horizontalLayout.addWidget(self.returnBtn)
+        self.horizontalLayout.addWidget(self.moreBtn, alignment = right)
+        self.horizontalLayout.addWidget(self.returnBtn, alignment = left)
+        self.horizontalLayout.setSpacing(Dimension.LARGE_SPACING)
 
     def _initStyle(self):
         """ initializes the style of the buttons on the page """
