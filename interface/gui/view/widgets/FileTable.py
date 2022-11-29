@@ -105,7 +105,7 @@ class FileTable(QTableWidget):
                                         
         self.allSelected = False        # True if all files are selected 
         self.rowWidgets = rowWidgets
-        self.logger =  makeLogger("Frontend")
+        self.logger =  makeLogger("F")
         
         self.viewSignal = Signals()
         self.dbSignal = dbSignal
@@ -137,8 +137,7 @@ class FileTable(QTableWidget):
 
         for i in range(self.columnCount()):
             self.horizontalHeader().setSectionResizeMode(
-                i,
-                QHeaderView.ResizeMode.Fixed)
+                i, QHeaderView.ResizeMode.Fixed)
         self.setFixedWidth(Dimension.TABLEWIDTH)
         self.setMinimumHeight(Dimension.TABLEMINHEIGHT)
         self.verticalScrollBar().setStyleSheet(
@@ -177,7 +176,7 @@ class FileTable(QTableWidget):
                 self._headerClickedHandler)
             self.verticalHeader().hide()
         except:
-            msgBox = MsgBox.WarnBox("Failed to set file header")
+            MsgBox.WarnBox("An error occurred when setting the file table header")
         
         self.horizontalHeader().setStyleSheet(f"background-color:{Color.TABLE_HEADER};"
                                               f"font-size:{FontSize.SMALL};"
@@ -191,7 +190,7 @@ class FileTable(QTableWidget):
             if idx == 0:
                 self._toggleAllSelect()
         except:
-            msgBox = MsgBox.WarnBox("Failed to select all item")
+            MsgBox.WarnBox("Failed to select all item")
    
     def _toggleAllSelect(self, clear = False):
         """ select or unselect all items in the table """
@@ -217,9 +216,12 @@ class FileTable(QTableWidget):
            ** connected to upload file button 
         
         """
-        addFileWindow = UploadFileTab(self.profiles)
-        addFileWindow.signals.postFile.connect(self._postFile)
-        addFileWindow.exec()
+        try:
+            addFileWindow = UploadFileTab(self.profiles)
+            addFileWindow.signals.postFile.connect(self._postFile)
+            addFileWindow.exec()
+        except: 
+            MsgBox.WarnBox("An error occurred when uploading the file")
     
     def addFiles(self, files: List[Tuple]):
         """ adding a list of files to file table
@@ -346,8 +348,11 @@ class FileTable(QTableWidget):
             
     def changeAllFileProgress(self, progress: str):
         """ change the file progress for all files on the table """
-        for key in self.filePins:
-            self.updateFileContent((key, "Progress", progress))
+        try:
+            for key in self.filePins:
+                self.updateFileContent((key, "Progress", progress))
+        except:
+            MsgBox.WarnBox("An error occurred when updating the transcription progress")
         
     def changeProfile(self, key:str):
         """ open a pop up for user to change file setting 
@@ -355,10 +360,13 @@ class FileTable(QTableWidget):
         Args:
             key (str): a key to identify file
         """
-        selectSetting = changeProfileDialog(self.profiles, key)
-        selectSetting.signals.changeProfile.connect(self.postNewFileProfile)
-        selectSetting.exec()
-        selectSetting.setFixedSize(QSize(200,200))
+        try:
+            selectSetting = changeProfileDialog(self.profiles, key)
+            selectSetting.signals.changeProfile.connect(self.postNewFileProfile)
+            selectSetting.exec()
+            selectSetting.setFixedSize(QSize(200,200))
+        except:
+            MsgBox.WarnBox("An error occurred when updating the file profile")
     
     def postNewFileProfile(self, newprofile: Tuple[str, str]):
         """ post the newly updated file change to the database
@@ -376,7 +384,7 @@ class FileTable(QTableWidget):
             else:
                 self.viewSignal.error.emit(KEYERROR)
         except:
-            MsgBox.WarnBox("an error occurred when changing the file profile")
+            MsgBox.WarnBox("an error occurred when updating the file profile")
     
     def addProfile(self, profileName:str)->None:
         """ add profile keys 
@@ -390,7 +398,7 @@ class FileTable(QTableWidget):
         """ update the file content on the table
 
         Args:
-            file (Tuple[key, field, value]): _description_
+            file (Tuple[key, field, value]): 
         """
         key, field, value = file 
         if key in self.filePins:
