@@ -29,7 +29,7 @@ class WorkSpaceDialog(QDialog):
         
     def _initWidget(self):
         self.header = Label.Label("Welcome to the first launch on GailBot", FontSize.HEADER2, FontFamily.MAIN)
-        self.label = Label.Label("The first step is to choose the path to GailBot's"
+        self.label = Label.Label("The first step is to choose the path to GailBot's "
                                  "workspace directory on your computer.\n This will be where the "
                                  "file generated during transcription stored in", FontSize.BODY, others="text-align:center;")
         self.displayPath = Label.Label(f"GailBot Work Space Path: {self.workDir}/GailBot", FontSize.BODY, FontFamily.MAIN, others=f"border: 1px solid {Color.MAIN_TEXT}; text-align:center;")
@@ -64,19 +64,12 @@ class WorkSpaceDialog(QDialog):
             with open(os.path.join(basedir, BackEndDataPath.workSpaceData), "w+") as f:
                 toml.dump(workSpace, f)
                 print("toml file is written")
+            if not os.path.isdir(f"{self.workDir}/GailBot"):
+                os.mkdir(f"{self.workDir}/GailBot")
         except:
             print("toml file cannot be written")
-            WarnBox(f"cannot find the valid file path, {os.path.join(basedir, BackEndDataPath.workSpaceData)}")
-            
-            
-                
-        if not os.path.isdir(f"{self.workDir}/GailBot"):
-            os.mkdir(f"{self.workDir}/GailBot")
-        if not os.path.isdir(f"{self.workDir}/GailBot/Frontend"):
-            os.mkdir(f"{self.workDir}/GailBot/Frontend")
-        # except :
-        # WarnBox("cannot find the valid file path")
-        
+            WarnBox(f"cannot find the file path: {os.path.join(basedir, BackEndDataPath.workSpaceData)}")
+
         self.close()
     
     def _initStyle(self):

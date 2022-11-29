@@ -58,7 +58,7 @@ class SystemSettingPage(QWidget):
             Text.header, self.data, Text.caption)
         self.Mainstack.addWidget(self.SysSetForm)
         self.GuideLink = Label.Label(Links.guideLink, FontSize.LINK, link=True)
-        self.cancelBtn = Button.BorderBtn(
+        self.cancelBtn = Button.ColoredBtn(
             Text.cancelBtn, Color.CANCEL_QUIT)
         self.saveBtn = Button.ColoredBtn(
             Text.saveBtn, Color.SECONDARY_BUTTON)

@@ -11,58 +11,60 @@ from dict_to_dataclass import DataclassFromDict, field_from_dict
 
 ################################## style data #############################
 @dataclass 
-class ColorData(DataclassFromDict):
+class ColorData(DataclassFromDict): 
     """ class to access the color data from the currently loaded theme """
     SECONDARY_BUTTON : str = field_from_dict()
-    CANCEL_QUIT: str = field_from_dict()
-    HIGHLIGHT: str =  field_from_dict()
-    TABLE_HEADER: str =  field_from_dict()
-    PRIMARY_BUTTON : str =  field_from_dict()
-    PRIMARY_INTENSE: str =  field_from_dict()
-    LOW_CONTRAST: str =  field_from_dict()
-    LOW_CONTRAST2: str =  field_from_dict()
-    OUTLINE: str =  field_from_dict()
-    BORDER: str =  field_from_dict()
-    MAIN_TEXT: str =  field_from_dict()
-    MAIN_BACKRGOUND: str =  field_from_dict()
-    SUB_BACKGROUND: str =  field_from_dict()
-    WHITE: str =  field_from_dict()
-    GREYDARK: str =  field_from_dict()
-    GREYEXTRALIGHT: str =  field_from_dict()
+    CANCEL_QUIT      : str = field_from_dict()
+    HIGHLIGHT        : str = field_from_dict()
+    TABLE_HEADER     : str = field_from_dict()
+    PRIMARY_BUTTON   : str = field_from_dict()
+    PRIMARY_INTENSE  : str = field_from_dict()
+    LOW_CONTRAST     : str = field_from_dict()
+    LOW_CONTRAST2    : str = field_from_dict()
+    OUTLINE          : str = field_from_dict()
+    BORDER           : str = field_from_dict()
+    SCORLL_BAR       : str = field_from_dict()
+    MAIN_TEXT        : str = field_from_dict()
+    MAIN_BACKRGOUND  : str = field_from_dict()
+    SUB_BACKGROUND   : str = field_from_dict()
+    WHITE            : str = field_from_dict()
+    GREYDARK         : str = field_from_dict()
+    GREYEXTRALIGHT   : str = field_from_dict()
+    TABLE_BORDER     : str = field_from_dict()
     
     
 @dataclass 
-class FontSource(DataclassFromDict):
+class FontSource(DataclassFromDict): 
     """ class to access the font data from the currently loaded theme """
-    headerFont: str =  field_from_dict()
-    clockFont: str =  field_from_dict()
+    headerFont: str = field_from_dict()
+    clockFont : str = field_from_dict()
     
     
 @dataclass
-class FontSizeData(DataclassFromDict):
+class FontSizeData(DataclassFromDict): 
     """ class to access the font size data from the currently loaded theme """
-    BODY: str =  field_from_dict()
-    TEXT_FIELD: str =  field_from_dict()
-    SMALL: str =  field_from_dict()
-    LINK: str =  field_from_dict()
-    HEADER1: str =  field_from_dict()
-    HEADER2: str =  field_from_dict()
-    HEADER3: str =  field_from_dict()
-    TABLE_ROW: str =  field_from_dict()
-    DESCRIPTION: str =  field_from_dict()
-    INSTRUCTION_CAPTION: str =  field_from_dict()
-    BTN: str =  field_from_dict()
-    SETTINGICON: str = field_from_dict()
+    BODY               : str = field_from_dict()
+    TEXT_FIELD         : str = field_from_dict()
+    SMALL              : str = field_from_dict()
+    LINK               : str = field_from_dict()
+    HEADER1            : str = field_from_dict()
+    HEADER2            : str = field_from_dict()
+    HEADER3            : str = field_from_dict()
+    TABLE_ROW          : str = field_from_dict()
+    DESCRIPTION        : str = field_from_dict()
+    INSTRUCTION_CAPTION: str = field_from_dict()
+    BTN                : str = field_from_dict()
+    SETTINGICON        : str = field_from_dict()
     
 @dataclass
-class FontFamilyData(DataclassFromDict):
+class FontFamilyData(DataclassFromDict): 
     """ class to access the color font family from the currently loaded theme """
-    MAIN: str = field_from_dict()
+    MAIN : str = field_from_dict()
     OTHER: str = field_from_dict()
     CLOCK: str = field_from_dict()
     
 @dataclass 
-class DimensionData(DataclassFromDict):
+class DimensionData(DataclassFromDict): 
     """ class to access the dimension data from the currently loaded theme """
     WINMAXWIDTH         : int = field_from_dict()
     WINMAXHEIGHT        : int = field_from_dict()
@@ -109,43 +111,43 @@ class DimensionData(DataclassFromDict):
     
 
 @dataclass 
-class Asset(DataclassFromDict):
+class Asset(DataclassFromDict): 
     """class to access the asset data from the currently loaded theme"""
-    arrowImg: str =  field_from_dict()
-    trashImg                : str  =  field_from_dict()
-    sidebarColor          : str  =  field_from_dict()
-    tabSettings           : str  =  field_from_dict()
-    tabTrash              : str  =  field_from_dict()
-    tabDisk               : str  =  field_from_dict()
-    fileIcon              : str  =  field_from_dict()
-    instructionSound      : str  =  field_from_dict()
-    instructionSetting    : str  =  field_from_dict()
-    instructionTranscribe : str  =  field_from_dict()
-    instructionFile: str  =  field_from_dict()
-    instructionEdit: str  =  field_from_dict()
-    recordStop: str  =  field_from_dict()
-    recordPlay: str  =  field_from_dict()
-    homeBackground: str = field_from_dict()
-    subPageBackground: str = field_from_dict()
-    sideBarBackground: str = field_from_dict()
-    downImg:str = field_from_dict()
-    rightImg: str = field_from_dict()
-    hilLabLogo: str = field_from_dict()
-    transcribing: str = field_from_dict()
+    arrowImg              : str = field_from_dict()
+    trashImg              : str = field_from_dict()
+    sidebarColor          : str = field_from_dict()
+    tabSettings           : str = field_from_dict()
+    tabTrash              : str = field_from_dict()
+    tabDisk               : str = field_from_dict()
+    fileIcon              : str = field_from_dict()
+    instructionSound      : str = field_from_dict()
+    instructionSetting    : str = field_from_dict()
+    instructionTranscribe : str = field_from_dict()
+    instructionFile       : str = field_from_dict()
+    instructionEdit       : str = field_from_dict()
+    recordStop            : str = field_from_dict()
+    recordPlay            : str = field_from_dict()
+    homeBackground        : str = field_from_dict()
+    subPageBackground     : str = field_from_dict()
+    sideBarBackground     : str = field_from_dict()
+    downImg               :str  = field_from_dict()
+    rightImg              : str = field_from_dict()
+    hilLabLogo            : str = field_from_dict()
+    transcribing          : str = field_from_dict()
 
 
 @dataclass 
-class FileTableDimension(DataclassFromDict):
+class FileTableDimension(DataclassFromDict): 
     """class to access the file table dimension data from the currently loaded theme"""
     fileUploadPage: List[float] = field_from_dict()
-    confirmPage: List[float] = field_from_dict()
+    confirmPage   : List[float] = field_from_dict()
     transcribePage: List[float] = field_from_dict()
-    successPage: List[float] = field_from_dict()
+    successPage   : List[float] = field_from_dict()
 
 @dataclass 
-class StyleSheet(DataclassFromDict):
+class StyleSheet(DataclassFromDict): 
     """class to access the style sheet data from the currently loaded theme"""
-    goToMain          : str =  field_from_dict()
+    goToMain          : str = field_from_dict()
     settingStackID    : str = field_from_dict()
     settingStack      : str = field_from_dict()
     sysSettingStackID : str = field_from_dict()

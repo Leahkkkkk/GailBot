@@ -10,6 +10,8 @@ Modified By:  Siara Small  & Vivian Li
 '''
 
 from view.widgets import SettingForm
+from view.widgets.MsgBox import WarnBox
+from util.Logger import makeLogger
 from util.Text import ProfilePageText as Text 
 from util.Text import PostSettingForm as Form
 
@@ -20,6 +22,7 @@ class PostSetPage(QWidget):
     def __init__(self, *args, **kwargs) -> None:
         """ initializes class """
         super().__init__(*args, **kwargs)
+        self.logger  = makeLogger("F")
         self.setForm = SettingForm.SettingForm(
         Text.postSetHeader, Form, Text.postSetCaption)
         self.layout = QVBoxLayout()
@@ -30,10 +33,16 @@ class PostSetPage(QWidget):
     def setValue(self, values:dict):
         """ sets the value of the setting form
         """
-        self.setForm.setValue(values)
+        try:
+            self.setForm.setValue(values)
+        except:
+            WarnBox("An error occurred when loading the post transcription profile data")
     
     def getValue(self) -> dict:
         """ gets the value in the setting form """
-        return self.setForm.getValue()
+        try:
+            return self.setForm.getValue()
+        except:
+            WarnBox("An error occurred when retrieving post transcription profile data")
         
     

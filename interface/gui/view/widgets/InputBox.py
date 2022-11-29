@@ -97,7 +97,6 @@ class InputField(QLineEdit):
             QSize(Dimension.INPUTWIDTH, Dimension.INPUTHEIGHT))
     
     def mouseDoubleClickEvent(self, c):
-        print("clicked")
         self.clear()
         
 

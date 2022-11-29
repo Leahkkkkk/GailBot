@@ -56,7 +56,12 @@ class ProfileName (TabPage):
     
     def getData(self) -> str:
         """ return the user's input of profile name """
-        return self.profileName.value()
+        try:
+            self.logger.info("")
+            return self.profileName.value()
+        except:
+            self.logger.error("An error occurred when reading the profile name")
+            WarnBox("An error occurred when reading the profile name")
         
     def _initWidget(self):
         """ initializes the widgets """
@@ -91,7 +96,7 @@ class ProfileName (TabPage):
     def _confirmHandler(self):
         """ event hander for confirm button  """
         if self.profileName.value() == "":
-            warn = WarnBox(Text.emptyNameMsg)
+            WarnBox(Text.emptyNameMsg)
         else:
             self.signals.goToNextPage.emit()
         
@@ -101,6 +106,7 @@ class BasicSetting(TabPage):
         """ path with input fields for user to define basic setting
         """
         super().__init__(*args, **kwargs)
+        self.logger = makeLogger("F")
         self._initWidget()
         self._initLayout()
         
@@ -110,11 +116,17 @@ class BasicSetting(TabPage):
         Returns:
             Dict[str, str]: a dictionary that stores the basic setting values
         """
-        info = self.mainWidget.getValue()
-        return {"username": info[0], "password":info[1]}
+        try:
+            self.logger.info("")
+            info = self.mainWidget.getValue()
+            return {"username": info[0], "password":info[1]} 
+        except:
+            self.logger.error("An error occurred when reading the username and password")
+            WarnBox("An error occurred when reading the username and password")
     
     def _initWidget(self):
         """ initialize the widget """
+        self.logger.info("")
         self.mainWidget = UserForm()
         self.header = Label(
             "Basic settings", 
@@ -123,6 +135,7 @@ class BasicSetting(TabPage):
     
     def _initLayout(self):
         """ initialize the layout """
+        self.logger.info("")
         self.verticallayout = QVBoxLayout()
         self.setLayout(self.verticallayout)
         self.verticallayout.addStretch()
@@ -140,6 +153,7 @@ class BasicSetting(TabPage):
     
     def _confirmHandler(self):
         """ confirm button handler """
+        self.logger("")
         res = self.mainWidget.getValue()
         if res[0] == "" or res[1] == "":
             WarnBox(Text.emptyUserMsg)
@@ -174,7 +188,10 @@ class EngineSetting(TabPage):
     
     def getData(self) -> Dict[str, dict]:
         """ gets current value of key in dictionary """
-        return self.mainForm.getValue()
+        try:
+            return self.mainForm.getValue()
+        except:
+            WarnBox("an error occurred when getting the form data")
 
 class OutPutFormatSetting(TabPage):
     """ class for the output of settings """
@@ -203,7 +220,12 @@ class OutPutFormatSetting(TabPage):
         
     def getData(self):
         """ gets current value of data """
-        return self.mainForm.getValue()
+        try:
+            return self.mainForm.getValue()
+        except:
+            WarnBox("an error occurred when getting the form data")
+            
+
 
       
 class PostTranscribeSetting(TabPage):
@@ -225,9 +247,12 @@ class PostTranscribeSetting(TabPage):
         initPrimaryColorBackground(self.mainForm.setForm.scroll)
     def getData(self):
         """ gets current value of data """
-        self.logger.info(self.mainForm.getValue())
-        return self.mainForm.getValue() 
-            
+        try:
+            self.logger.info(self.mainForm.getValue())
+            return self.mainForm.getValue() 
+        except:
+            WarnBox("an error occurred when getting the form data")
+                
 class PluginSetting(TabPage):
     """ class for the plugin settings tab """
     def __init__(self, plugins, *args, **kwargs) -> None:
@@ -247,7 +272,13 @@ class PluginSetting(TabPage):
         
     def getData(self):
         """ gets current value of data """
-        return self.mainForm.getValue()
+        try:
+            return self.mainForm.getValue()
+        except:
+            WarnBox("an error occurred when getting the form data")
+            
+            
+            
 
         
         

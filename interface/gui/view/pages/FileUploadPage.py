@@ -25,6 +25,7 @@ from util.Text import FileTableHeader
 from util.Text import FileUploadPageText as Text 
 from util.Style import FontSize as FS
 from util.Style import buttonStyle
+from util.Logger import makeLogger
 from view.Signals import FileSignals
 from view.widgets import Label, Button, FileTable
 from view.widgets.Background import addLogo
@@ -63,6 +64,7 @@ class FileUploadPage(QWidget):
         super().__init__(*args, **kwargs)
         self.signal = signal
         self.profileNames = profileNames
+        self.logger = makeLogger("F")
         self._initWidget()
         self._initLayout()
         self._initStyle()
@@ -70,6 +72,7 @@ class FileUploadPage(QWidget):
         
     def _connectSignal(self):
         """ connects signals to different functions upon button clicks """
+        self.logger.info("")
         self.uploadFileBtn.clicked.connect(self.fileTable.uploadFile)
         self.transcribeBtn.clicked.connect(self.fileTable.transferState) 
         self.removeAll.clicked.connect(self._confirmRemove)
@@ -79,6 +82,7 @@ class FileUploadPage(QWidget):
         
     def _initWidget(self):
         """ initializes widgets """
+        self.logger.info("")
         self.label = Label.Label(Text.header, FS.HEADER2, FontFamily.MAIN)
         self.gotoMainBtn = Button.iconBtn(
             Asset.arrowImg, Text.returnMainText) 
@@ -103,6 +107,7 @@ class FileUploadPage(QWidget):
         
     def _initLayout(self):
         """ initializes layout """
+        self.logger.info("")
         self.verticalLayout = QVBoxLayout()
         self.setLayout(self.verticalLayout)
         """ adds widget to layout """
@@ -140,23 +145,25 @@ class FileUploadPage(QWidget):
         
     def _initStyle(self):
         """ initializes the style """
+        self.logger.info("")
         self.gotoMainBtn.setFixedSize(
             QSize(Dimension.LBTNWIDTH,Dimension.BTNHEIGHT))
         self.gotoMainBtn.setStyleSheet(StyleSheet.goToMain)
 
     def _allowTranscribe(self):
         """ activates the transcribe button """
+        self.logger.info("")
         self.transcribeBtn.setEnabled(True)
         self.transcribeBtn.setStyleSheet(buttonStyle.ButtonActive)
         
     def _disallowTranscribe(self):
         """ deactivates the transcribe button """
+        self.logger.info("")
         self.transcribeBtn.setDisabled(True)
         self.transcribeBtn.setStyleSheet(buttonStyle.ButtonInactive)
         
     def _confirmRemove(self):
         """ open pop up message to confirm removal of all files """
-        confirmPopUp = MsgBox.ConfirmBox(Text.removeWarnText, 
-                                         self.fileTable.removeAll)
-        
+        self.logger.info("")
+        MsgBox.ConfirmBox(Text.removeWarnText, self.fileTable.removeAll)
     

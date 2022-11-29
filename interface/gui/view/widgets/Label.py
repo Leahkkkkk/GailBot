@@ -72,8 +72,8 @@ class Label(QLabel):
         id = QFontDatabase.addApplicationFont(os.path.join (Path.getProjectRoot(),
                                                             FontSource.clockFont))
         if id < 0 : logging.warn("Font cannot be loaded")
-        Cockfont =  QFontDatabase.applicationFontFamilies(id)
-        self.setFont(QFont(Cockfont[0], weight=600))
+        ClockFont =  QFontDatabase.applicationFontFamilies(id)
+        self.setFont(QFont(ClockFont[0], weight=600))
 
     def changeText(self, text):
         """ changes the current text

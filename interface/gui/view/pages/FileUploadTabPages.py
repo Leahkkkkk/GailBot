@@ -17,10 +17,12 @@ import os
 
 from util.Style import Color, FontSize, Dimension
 from util.Text import FileUploadPageText as Text
+from util.Logger import makeLogger
 from model.dataBase.fileDB import fileDict
 from view.widgets.Button import ColoredBtn
 from view.widgets.Label import Label
 from view.widgets.TabPage import TabPage
+from view.widgets.MsgBox import WarnBox
 
 import userpaths
 
@@ -37,7 +39,6 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import QSize, Qt
 
 center = Qt.AlignmentFlag.AlignHCenter
-
 
 class OutputPath(TypedDict):
     """ class representing the output path of a file or directory """
@@ -57,6 +58,7 @@ class OpenFile(TabPage):
     def __init__(self, *args, **kwargs) -> None:
         """ initializes class """
         super().__init__(*args, **kwargs)
+        self.logger = makeLogger("F")
         self._initWidget()
         self._initLayout()
         self._connectSignal()
@@ -65,14 +67,19 @@ class OpenFile(TabPage):
     
     def getFile(self) -> List[fileDict]:
         """ returns a list of files object that user has selected """
+        self.logger.info("")
         fileList = []
-        for file in self.filePaths:
-            fileObj = self._pathToFileObj(file)
-            fileList.append(fileObj)
-        return fileList
+        try:
+            for file in self.filePaths:
+                fileObj = self._pathToFileObj(file)
+                fileList.append(fileObj)
+            return fileList
+        except:
+            WarnBox("An error ocurred in getting the files to be transcribed")
         
     def _initWidget(self):
         """ initializes the widgets """
+        self.logger.info("")
         self.fileDisplayList = QTableWidget()
         self.filePaths = []
         self.uploadFileBtn = ColoredBtn(
@@ -84,6 +91,7 @@ class OpenFile(TabPage):
        
     def _initLayout(self):
         """ initializes the layout  """
+        self.logger.info("")
         self.mainLayout = QVBoxLayout()
         self.setLayout(self.mainLayout)
         self.buttonContainer = QWidget()
@@ -96,12 +104,13 @@ class OpenFile(TabPage):
         
     def _connectSignal(self):
         """ connects the signals upon button clicks """
+        self.logger.info("")
         self.uploadFileBtn.clicked.connect(self._getFiles)
         self.uploadFolderBtn.clicked.connect(self._getFolders)
         
     def _initStyle(self):
         """ initialize the style  """
-        # self.fileDisplayList.setAlternatingRowColors(True)
+        self.logger.info("")
         self.fileDisplayList.insertColumn(0)
         self.fileDisplayList.setSelectionMode(
             QAbstractItemView.SelectionMode.NoSelection)
@@ -114,12 +123,14 @@ class OpenFile(TabPage):
     
     def _initDimension(self):
         """ initializes the dimensions """
+        self.logger.info("")
         self.fileDisplayList.setFixedSize(QSize(Dimension.SMALL_TABLE_WIDTH,
                                                 Dimension.SMALL_TABLE_HEIGHT))
         
     
     def _pathToFileObj(self, path):  
         """ converts the file path to a file object  """  
+        self.logger.info("")
         fullPath = path
         date = datetime.date.today().strftime("%m-%d-%y")    
         temp = str(fullPath)
@@ -142,35 +153,52 @@ class OpenFile(TabPage):
 
     def _getFiles (self):
         """ select current file paths """
-        dialog = QFileDialog()
-        dialog.setDirectory(userpaths.get_desktop())
-        fileFilter = Text.fileFilter
-        selectedFiles = dialog.getOpenFileNames(filter = fileFilter)
-        if selectedFiles:
-            files, types = selectedFiles
-            self.signals.nextPage.emit()
-            self.filePaths = self.filePaths + files
-            for file in files:
-                self._addFileToFileDisplay(file)
+        self.logger.info("")
+        try:
+            dialog = QFileDialog()
+            dialog.setDirectory(userpaths.get_desktop())
+            fileFilter = Text.fileFilter
+            selectedFiles = dialog.getOpenFileNames(filter = fileFilter)
+            if selectedFiles:
+                files, types = selectedFiles
+                self.signals.nextPage.emit()
+                self.filePaths = self.filePaths + files
+                for file in files:
+                    self._addFileToFileDisplay(file)
+            else:
+                WarnBox("No file is uploaded")
+                self.logger.warn("No file is uploaded by user")
+        except:
+            WarnBox("An error occurred when getting the uploaded file")
             
     def _getFolders (self):
         """ gets the current directory and displays the selected file """
-        dialog = QFileDialog() 
-        selectedFolder = dialog.getExistingDirectory()
-        
-        if selectedFolder:
-            self.signals.nextPage.emit()
-            self._addFileToFileDisplay(selectedFolder)
-            self.filePaths = self.filePaths + [selectedFolder]
+        self.logger.info("")
+        try:
+            dialog = QFileDialog() 
+            selectedFolder = dialog.getExistingDirectory()
+            
+            if selectedFolder:
+                self.signals.nextPage.emit()
+                self._addFileToFileDisplay(selectedFolder)
+                self.filePaths = self.filePaths + [selectedFolder]
+            else:
+                WarnBox("No file is uploaded by user")
+        except:
+            WarnBox("An error occurred when getting the uploaded folder")
 
     def _addFileToFileDisplay(self, file):
         """ add the file to the file display table """
-        row = self.fileDisplayList.rowCount()
-        self.fileDisplayList.insertRow(row)
-        newfile = QTableWidgetItem(file)
-        self.fileDisplayList.setItem(row, 0, newfile)
-        self.fileDisplayList.resizeColumnsToContents()
-        self.fileDisplayList.resizeRowsToContents()
+        self.logger.info("")
+        try:
+            row = self.fileDisplayList.rowCount()
+            self.fileDisplayList.insertRow(row)
+            newFile = QTableWidgetItem(file)
+            self.fileDisplayList.setItem(row, 0, newFile)
+            self.fileDisplayList.resizeColumnsToContents()
+            self.fileDisplayList.resizeRowsToContents()
+        except:
+            WarnBox("An error occurred when displaying the added file")
 
 class ChooseSet(TabPage):
     """ implement a page for user to choose the setting profile
@@ -178,20 +206,19 @@ class ChooseSet(TabPage):
     Public Function:
     1.  getProfile(self) -> Profile
         return the profile chosen by the user 
-    
-    
     """
-    
     def __init__(self, settings: List[str], *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.profile = settings[0]
         self.settings = settings
+        self.logger = makeLogger("F")
         self._initWidget()
         self._initLayout()
         self.setAutoFillBackground(True)
     
     def getProfile(self) -> Profile:
         """ return the selected setting """
+        self.logger.info("")
         if self.profile:
             return {"Profile": self.profile}
         else:
@@ -199,6 +226,7 @@ class ChooseSet(TabPage):
         
     def _initWidget(self):
         """ initializes the widgets """
+        self.logger.info("")
         self.label = Label("select setting profile", FontSize.HEADER3)
         self.selectSettings = QComboBox(self)
         self.selectSettings.addItem(Text.selectSetText)
@@ -209,6 +237,7 @@ class ChooseSet(TabPage):
    
     def _initLayout(self):
         """ initializes the layouts """
+        self.logger.info("")
         self.layout = QHBoxLayout()
         self.setLayout(self.layout)
         self.layout.addWidget(self.label)
@@ -218,11 +247,13 @@ class ChooseSet(TabPage):
         """ updates the settings
         Args: setting: new settings value with which to update
         """
+        self.logger.info("")
         if setting:
             self.profile = setting
             
     def _toNextPage(self, idx):
         """ takes user to the next page in the tab popup """
+        self.logger.info("")
         if idx != 0:
             self.signals.nextPage.emit()
         else:
@@ -240,6 +271,7 @@ class ChooseOutPut(TabPage):
     def __init__(self, *args, **kwargs) -> None:
         """ initializes the class """
         super().__init__(*args, **kwargs)
+        self.logger = makeLogger("F")
         self.outPath = None
         self._iniWidget()
         self._initLayout()
@@ -247,12 +279,18 @@ class ChooseOutPut(TabPage):
           
     def getOutputPath(self) -> OutputPath:
         """ returns the selected output path """
-        if not self.outPath:
-            logging.error("No output direcory is chosen")
-        return {"Output": self.outPath}
+        try: 
+            if not self.outPath:
+                logging.error("No output directory is chosen")
+                WarnBox("No output directory is chosen")
+            else:
+                return {"Output": self.outPath}
+        except:
+            WarnBox("An error occurred when reading output directory")
         
     def _iniWidget(self):
         """ initializes the widgets """
+        self.logger.info("")
         self.chooseDirBtn = ColoredBtn("...", Color.PRIMARY_BUTTON, FontSize.HEADER2)
         self.chooseDirBtn.setFixedWidth(70)
         self.dirPathText = QLineEdit(self)
@@ -263,13 +301,15 @@ class ChooseOutPut(TabPage):
         
     def _initLayout(self):
         """ initializes the layout """
+        self.logger.info("")
         self.layout = QHBoxLayout()
         self.setLayout(self.layout)
         self.layout.addWidget(self.dirPathText)
         self.layout.addWidget(self.chooseDirBtn)
     
     def _addDir(self):
-        """ adds existing directpry as output directory """
+        """ adds existing directory as output directory """
+        self.logger.info("")
         fileDialog = QFileDialog()
         outPath = fileDialog.getExistingDirectory(None, Text.selectFolderText)
         if outPath:

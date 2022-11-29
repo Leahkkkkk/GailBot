@@ -9,11 +9,13 @@ Modified By:  Siara Small  & Vivian Li
 -----
 Description: implementation of the plugin page
 '''
-
+from typing import Dict 
+from util.Logger import makeLogger
 from util.Style import FontSize, Dimension, FontFamily
 from util.Text import ProfilePageText as Text
 from util.Text import ProfileSettingForm as Form
 from view.widgets import Label 
+from view.widgets.MsgBox import WarnBox
 from view.widgets.Background import initSecondaryColorBackground
 
 from PyQt6.QtWidgets import (
@@ -37,13 +39,15 @@ class PluginPage(QWidget):
         super().__init__( *args, **kwargs)
         """ initializes class """
         self.plugins = plugins
-        self.pluginDict = dict()
+        self.pluginDict : Dict[str, pluginCheckBox] = dict()
+        self.logger = makeLogger("F")
         self._initWidget()
         self._initlayout()
         self._initPlugins()
         
     def _initWidget(self):
         """ initializes widgets """
+        self.logger.info("")
         self.header = Label.Label(
             Text.pluginHeader, FontSize.HEADER2, FontFamily.MAIN, 
             alignment= center)
@@ -52,72 +56,87 @@ class PluginPage(QWidget):
 
     def _initlayout(self):
         """" initializes layout """
+        self.logger.info("")
         self.verticalLayout = QVBoxLayout()
         self.setLayout(self.verticalLayout)
         self.scrollContainer = QWidget()
         self.scrollLayout = QVBoxLayout()
         self.scrollContainer.setLayout(self.scrollLayout)
         self.scrollLayout.setSpacing(10)
-        self.scroll = QScrollArea()
-        self.scroll.setFixedWidth(Dimension.FORMWIDTH)
-        self.scroll.setMinimumHeight(Dimension.FORMMINHEIGHT)
-        self.scroll.setMaximumHeight(Dimension.FORMMAXHEIGHT)
-        self.scroll.setWidgetResizable(True)
+        self.scrollArea = QScrollArea()
+        self.scrollArea.setFixedWidth(Dimension.FORMWIDTH)
+        self.scrollArea.setMinimumHeight(Dimension.FORMMINHEIGHT)
+        self.scrollArea.setMaximumHeight(Dimension.FORMMAXHEIGHT)
+        self.scrollArea.setWidgetResizable(True)
         self.verticalLayout.addWidget(self.header)
         self.verticalLayout.addWidget(
             self.caption, 
             alignment = center)
         self.verticalLayout.setSpacing(Dimension.SMALL_SPACING)
         self.verticalLayout.addWidget(
-            self.scroll, 
+            self.scrollArea, 
             alignment=center)
         self.verticalLayout.addStretch()
-        initSecondaryColorBackground(self.scroll)
+        initSecondaryColorBackground(self.scrollArea)
         initSecondaryColorBackground(self.scrollContainer)
 
     def _initPlugins(self):
         """ initializes plugins to be shown on screen """
-        for plugin in self.plugins:
-            newPlugin = pluginCheckBox(plugin)
-            self.pluginDict[plugin] = newPlugin
-            self.scrollLayout.addWidget(
-                newPlugin, alignment=Qt.AlignmentFlag.AlignTop)
-        self.scroll.setWidget(self.scrollContainer)
+        try:
+            self.logger.info("")
+            for plugin in self.plugins:
+                newPlugin = pluginCheckBox(plugin)
+                self.pluginDict[plugin] = newPlugin
+                self.scrollLayout.addWidget(
+                    newPlugin, alignment=Qt.AlignmentFlag.AlignTop)
+            self.scrollArea.setWidget(self.scrollContainer)
+        except:
+            WarnBox("An error occurred when loading the plugins")
     
     def addNewPlugin(self, plugin):
         """ adds new plugin as an option on the page
         Args: plugin: plugin to be added
         """
+        self.logger.info("")
         newPlugin = pluginCheckBox(plugin)
         self.pluginDict[plugin] = newPlugin
         self.scrollLayout.addWidget(newPlugin)
-        self.scroll.setWidget(self.scrollContainer)
+        self.scrollArea.setWidget(self.scrollContainer)
     
     def setValue(self, appliedPlugins: set):
         """ sets the value of the given plugin
         Args: appliedPlugins:set: 
         """
-        for plugin, checkwidget in self.pluginDict.items():
-            if plugin in appliedPlugins:
-                checkwidget.setCheck()
-            else:
-                checkwidget.setUncheck()
+        try: 
+            self.logger.info("")
+            for plugin, checkwidget in self.pluginDict.items():
+                if plugin in appliedPlugins:
+                    checkwidget.setCheck()
+                else:
+                    checkwidget.setUncheck()
+        except:
+            WarnBox("An error occurred when loading the plugins")
+            
     
     def getValue(self) -> set:
         """ gets the value of the given plugin """
-        appliedPlugins = set()
-        for plugin, checkWidget in self.pluginDict.items():
-            if checkWidget.isChecked():
-                appliedPlugins.add(plugin)
-        return appliedPlugins
+        try:
+            self.logger.info("")
+            appliedPlugins = set()
+            for plugin, checkWidget in self.pluginDict.items():
+                if checkWidget.isChecked():
+                    appliedPlugins.add(plugin)
+            return appliedPlugins
+        except:
+            WarnBox("An error occurred when retrieving the plugins")
    
    
-                
 class pluginCheckBox(QWidget):
     """ class for a plugin checkbox """
     def __init__(self, plugin:str, *args, **kwargs) -> None:
         """ initializes the class """
         super().__init__( *args, **kwargs)
+        self.logger = makeLogger("F")
         self.plugin  = plugin
         self.layout = QHBoxLayout()
         self.checkBox = QCheckBox()
@@ -130,12 +149,15 @@ class pluginCheckBox(QWidget):
 
     def isChecked(self):
         """ determines if the given checkbox is currently checked """
+        self.logger.info("")
         return self.checkBox.checkState() == Qt.CheckState.Checked 
     
     def setCheck(self):
         """ check the current checkbox """
+        self.logger.info("")
         self.checkBox.setChecked(True)
     
     def setUncheck(self):
         """ uncheck the current checkbox """
+        self.logger.info("")
         self.checkBox.setChecked(False)

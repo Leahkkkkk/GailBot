@@ -1,6 +1,6 @@
 ## contains values for the dark mode color theme
 [colors] 
-## dark mode button colors
+##dark mode button colors
 ##secondary button color, used in save, continue, and get started buttons
 SECONDARY_BUTTON = "#76BD46"
 ##cancel and quit button color
@@ -11,6 +11,8 @@ HIGHLIGHT        = "#4A6680"
 TABLE_HEADER     = "#4A6680"
 ##main button color, used in most continue and main menu buttons
 PRIMARY_BUTTON   = "#027BFE"
+##scroll bar 
+SCORLL_BAR       = "#4A6680"
 ##primary contrast color: white in dark mode
 PRIMARY_INTENSE  = "#FFFFFF"
 ##low contrast- gray color close to black
@@ -32,6 +34,9 @@ MAIN_BACKRGOUND  = "#222C3A"
 SUB_BACKGROUND   = "#35495F"
 ##highest contrast- white in dark mode
 WHITE            = "#FFFFFF"
+##color for table border 
+TABLE_BORDER     = "#35495F"   
+
 
 
 [styleSheet]

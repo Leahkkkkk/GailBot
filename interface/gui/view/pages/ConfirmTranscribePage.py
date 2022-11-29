@@ -42,7 +42,7 @@ class ConfirmTranscribePage(QWidget):
         """ initializes page """
         super().__init__(*args, **kwargs)
         self.signal = signal
-        self.logger = makeLogger("Frontend")
+        self.logger = makeLogger("F")
         self._initWidget()
         self._initLayout()
         self._connectSignal()
@@ -50,9 +50,11 @@ class ConfirmTranscribePage(QWidget):
     def _connectSignal(self):
         """ connects signals upon button clicks """
         self.confirmBtn.clicked.connect(self._sendTranscribeSignal)
+        self.logger.info("")
 
     def _initWidget(self):
         """ initializes widgets """
+        self.logger.info("")
         self.label = Label.Label(Text.confirmLabel, 
                                  FontSize.HEADER2, 
                                  FontFamily.MAIN)
@@ -70,6 +72,7 @@ class ConfirmTranscribePage(QWidget):
         
     def _initLayout(self):
         """ initializes layout"""
+        self.logger.info("")
         self.verticalLayout = QVBoxLayout()
         self.horizontalLayout = QHBoxLayout()
         self.bottomButton.setLayout(self.horizontalLayout)
@@ -89,7 +92,6 @@ class ConfirmTranscribePage(QWidget):
         
     def _sendTranscribeSignal(self):
         """sends a signal with a set of file keys that will be transcribed """
-        self.logger.info("here")
         self.logger.info(self.fileTable.transferList)
         self.signal.transcribe.emit(self.fileTable.transferList)
         self.fileTable.transferState()

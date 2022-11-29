@@ -18,8 +18,8 @@ from util.Style import FontSize as FS
 from util.Style import StyleSheet as SS 
 from util.Text import ProfileSettingForm as Form 
 from util.Text import Links
-
 from util.Logger import makeLogger
+
 from view.Signals import ProfileSignals
 from view.pages import (
     RequiredSetPage, 
@@ -32,6 +32,7 @@ from view.widgets import (
     ComboBox, 
     SideBar
 )
+from view.widgets.MsgBox import WarnBox
 from view.components.CreateNewSettingTab import CreateNewSetting
 from view.components.PluginDialog import PluginDialog
 
@@ -60,7 +61,7 @@ class ProfileSettingPage(QWidget):
         self.signals = signals
         self.profilekeys = profilekeys
         self.plugins = list(Form.Plugins)
-        self.logger = makeLogger("Frontend")
+        self.logger = makeLogger("F")
         self._initWidget()
         self._initLayout()
         self._connectSignal()
@@ -72,8 +73,7 @@ class ProfileSettingPage(QWidget):
         self.sideBar = SideBar.SideBar()
         self.selectSettings = ComboBox.ComboBox()
         self.selectSettings.addItems(self.profilekeys)
-        
-        self.cancelBtn = Button.BorderBtn(
+        self.cancelBtn = Button.ColoredBtn(
             Text.cancelBtn, Color.CANCEL_QUIT)
         self.saveBtn = Button.ColoredBtn(
             Text.saveBtn, Color.SECONDARY_BUTTON)
@@ -120,7 +120,7 @@ class ProfileSettingPage(QWidget):
         self.sidebarTopLayout.addWidget(self.pluginBtn)
         self.sidebarTopLayout.setSpacing(0)
         self.sideBar.addWidget(self.topSelectionContainer)
-        # self.sideBar.addWidget(self.newPluginBtn)  
+        # self.sideBar.addWidget(self.newPluginBtn)  NOTE: currently unused
         self.sideBar.addWidget(self.newProfileBtn)
         self.sideBar.addWidget(self.saveBtn)
         self.sideBar.addWidget(self.cancelBtn)
@@ -193,19 +193,25 @@ class ProfileSettingPage(QWidget):
         
     def loadProfile(self, profile:tuple):
         """ loads the profile data to be presented onto the table """
-        self.logger.info(profile)
-        key, data = profile 
-        self.selectSettings.setCurrentText(key)
-        self.PostSetPage.setValue(data["PostTranscribe"])
-        self.RequiredSetPage.setValue(data["RequiredSetting"])
-        self.PluginPage.setValue(data["Plugins"])
-    
+        try:
+            self.logger.info(profile)
+            key, data = profile 
+            self.selectSettings.setCurrentText(key)
+            self.PostSetPage.setValue(data["PostTranscribe"])
+            self.RequiredSetPage.setValue(data["RequiredSetting"])
+            self.PluginPage.setValue(data["Plugins"])
+        except:
+            WarnBox("An error occurred when loading the profile")
+            
     def addProfile (self, profileName:str):
         """ adding a new profile option to the settings page 
         Arg:
             profileName(str): name to be added as profile name to the new profile entry
         """
-        self.selectSettings.addItem(profileName)
+        try:
+            self.selectSettings.addItem(profileName)
+        except: 
+            WarnBox("An error occurred when adding the profile")
     
     def addPluginRequest(self):
         """ opens a pop up window to add plugin """
@@ -221,10 +227,13 @@ class ProfileSettingPage(QWidget):
         
     def updateProfile(self):
         """ updates the new profile setting """
-        newSetting = dict()
-        newSetting["RequiredSetting"] = self.RequiredSetPage.getValue()
-        newSetting["PostTranscribe"]  = self.PostSetPage.getValue()
-        newSetting["Plugins"] = self.PluginPage.getValue()
-        self.logger.info(newSetting)
-        profileKey = self.selectSettings.currentText()
-        self.signals.edit.emit((profileKey, newSetting))
+        try:
+            newSetting = dict()
+            newSetting["RequiredSetting"] = self.RequiredSetPage.getValue()
+            newSetting["PostTranscribe"]  = self.PostSetPage.getValue()
+            newSetting["Plugins"] = self.PluginPage.getValue()
+            self.logger.info(newSetting)
+            profileKey = self.selectSettings.currentText()
+            self.signals.edit.emit((profileKey, newSetting))
+        except:
+            WarnBox("An error occurred when updating the profile")

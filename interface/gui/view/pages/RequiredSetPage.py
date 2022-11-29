@@ -13,6 +13,7 @@ from util.Style import FontSize,FontFamily
 from util.Text import ProfilePageText as Text
 from view.widgets import  Label
 from view.components import RequiredSet
+from view.widgets.MsgBox import WarnBox
 
 from PyQt6.QtWidgets import (
     QWidget, 
@@ -34,11 +35,17 @@ class RequiredSetPage(QWidget):
         """ sets the value of data
         Args: data:dict: dictionary that is passed in to be updated
         """
-        self.form.setValue(data)
+        try:
+            self.form.setValue(data)
+        except:
+            raise ValueError("Set Required Setting Data Error")
     
     def getValue(self) -> dict:
         """ gets the value of data """
-        return self.form.getValue()
+        try:
+            return self.form.getValue()
+        except:
+            raise ValueError("Get Required Setting Data Error")
         
     def _initWidget(self):
         """ initializes the widgets on the page """

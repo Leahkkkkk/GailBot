@@ -132,7 +132,7 @@ class FileTable(QTableWidget):
         self.setStyleSheet("#FileTable{"
                            f"background-color: {Color.MAIN_BACKRGOUND};"
                            f"color:{Color.MAIN_TEXT};"
-                           f"border: 2px solid {Color.SUB_BACKGROUND}"
+                           f"border: 1px solid {Color.TABLE_BORDER};"
                            "}")
 
         for i in range(self.columnCount()):
@@ -142,9 +142,9 @@ class FileTable(QTableWidget):
         self.setFixedWidth(Dimension.TABLEWIDTH)
         self.setMinimumHeight(Dimension.TABLEMINHEIGHT)
         self.verticalScrollBar().setStyleSheet(
-            f"background-color:{Color.MAIN_BACKRGOUND}") 
+            f"background-color:{Color.SCORLL_BAR}") 
         self.horizontalScrollBar().setStyleSheet(
-            f"background-color: {Color.MAIN_BACKRGOUND}"
+            f"background-color: {Color.SCORLL_BAR}"
         )
 
     def resizeCol(self, widths:List[int]) -> None:
@@ -229,6 +229,7 @@ class FileTable(QTableWidget):
         """
         for file in files:
             self.addFile(file)
+                
     
     def _postFile(self, file: fileObject):
         """ send signals to post file to the database 
@@ -246,19 +247,22 @@ class FileTable(QTableWidget):
         self.logger.info(file[0])
         self.logger.info(file[1])
         key, data = file
-        newRowIdx = self.rowCount()
-        self.insertRow(newRowIdx)
-        for col in range(len(self.headers)):
-            if self.headers[col] in data.keys():
-                newItem = QTableWidgetItem(str(data[self.headers[col]]))
-                if col == 1: 
-                    filePin = newItem
-                    self.filePins[key] = filePin
-                self.setItem(newRowIdx, col, newItem)
-        
-        if self.rowWidgets:
-            self._addFileWidgetToTable(newRowIdx, key) 
-        self.resizeRowsToContents()  
+        try:
+            newRowIdx = self.rowCount()
+            self.insertRow(newRowIdx)
+            for col in range(len(self.headers)):
+                if self.headers[col] in data.keys():
+                    newItem = QTableWidgetItem(str(data[self.headers[col]]))
+                    if col == 1: 
+                        filePin = newItem
+                        self.filePins[key] = filePin
+                    self.setItem(newRowIdx, col, newItem)
+            
+            if self.rowWidgets:
+                self._addFileWidgetToTable(newRowIdx, key) 
+            self.resizeRowsToContents()  
+        except: 
+            MsgBox.WarnBox("An error occurred when uploading the file")
     
     def _addFileWidgetToTable(self, row:int, key:str):
         """ Add the widget that manipulates each file in a certain row 
@@ -283,17 +287,20 @@ class FileTable(QTableWidget):
         Args:
             key (str): file key 
         """
-        if key in self.filePins:
-            rowIdx = self.indexFromItem(self.filePins[key]).row()
-            self.removeRow(rowIdx)
-            self.dbSignal.delete.emit(key)
-            del self.fileWidgets[key]
-            del self.filePins[key]
-            if key in self.transferList:
-                self.transferList.remove(key)
-                self.selecetdList.remove(key)
-        else:
-            self.viewSignal.error(KEYERROR)
+        try:
+            if key in self.filePins:
+                rowIdx = self.indexFromItem(self.filePins[key]).row()
+                self.removeRow(rowIdx)
+                self.dbSignal.delete.emit(key)
+                del self.fileWidgets[key]
+                del self.filePins[key]
+                if key in self.transferList:
+                    self.transferList.remove(key)
+                    self.selecetdList.remove(key)
+            else:
+                self.viewSignal.error(KEYERROR)
+        except:
+            MsgBox.WarnBox("An error occurred when removing the file")
     
     def removeAll(self):
         """ delete all files on the file table 
@@ -316,9 +323,12 @@ class FileTable(QTableWidget):
             
         Args: ket(str): a file key 
         """
-        self.dbSignal.requestprofile.emit(key) # make request to load profile data 
-        self.viewSignal.goSetting.emit()
-   
+        try:
+            self.dbSignal.requestprofile.emit(key) # make request to load profile data 
+            self.viewSignal.goSetting.emit()
+        except:
+            MsgBox.WarnBox("An error occurred when retrieving the file's profile setting")
+        
     def changeFileToTranscribed(self, key:str):
         """ change one file's status to be transcribed, and delete the file
             from the file table
@@ -326,10 +336,13 @@ class FileTable(QTableWidget):
         Args:
             key (str): a file key that identifies the file
         """
-        if key in self.filePins:
-            self.updateFileContent((key, "Status", "Transcribed"))
-        else:
-            self.viewSignal.error.emit(KEYERROR)
+        try:
+            if key in self.filePins:
+                self.updateFileContent((key, "Status", "Transcribed"))
+            else:
+                self.viewSignal.error.emit(KEYERROR)
+        except:
+            MsgBox.WarnBox("An error occurred when updating the file status")
             
     def changeAllFileProgress(self, progress: str):
         """ change the file progress for all files on the table """
@@ -351,16 +364,19 @@ class FileTable(QTableWidget):
         """ post the newly updated file change to the database
 
         """
-        key, profilekey = newprofile
-        self.dbSignal.changeProfile.emit(newprofile) 
-        if key in self.filePins:
-            row = self.indexFromItem(self.filePins[key]).row()
-            newitem = QTableWidgetItem(profilekey)
-            self.setItem(row, 3, newitem)
-            if key in self.selecetdList: 
-                newitem.setBackground(QColor(Color.HIGHLIGHT))
-        else:
-            self.viewSignal.error.emit(KEYERROR)
+        try:
+            key, profilekey = newprofile
+            self.dbSignal.changeProfile.emit(newprofile) 
+            if key in self.filePins:
+                row = self.indexFromItem(self.filePins[key]).row()
+                newitem = QTableWidgetItem(profilekey)
+                self.setItem(row, 3, newitem)
+                if key in self.selecetdList: 
+                    newitem.setBackground(QColor(Color.HIGHLIGHT))
+            else:
+                self.viewSignal.error.emit(KEYERROR)
+        except:
+            MsgBox.WarnBox("an error occurred when changing the file profile")
     
     def addProfile(self, profileName:str)->None:
         """ add profile keys 
