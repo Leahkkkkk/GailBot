@@ -126,6 +126,7 @@ class FileUploadPage(QWidget):
         
         self.addFileBtnContainer = QWidget(self)
         self.containerLayout = QHBoxLayout()
+        self.containerLayout.setSpacing(Dimension.LARGE_SPACING)
         self.addFileBtnContainer.setLayout(self.containerLayout)
         self.containerLayout.addWidget(self.recordBtn,
                                        alignment = center)
