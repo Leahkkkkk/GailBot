@@ -23,6 +23,7 @@ from view.widgets.Button import ColoredBtn
 from view.widgets.Label import Label
 from view.widgets.TabPage import TabPage
 from view.widgets.MsgBox import WarnBox
+from view.widgets.ComboBox import ComboBox
 
 import userpaths
 
@@ -32,7 +33,6 @@ from PyQt6.QtWidgets import (
     QLineEdit,
     QHBoxLayout,
     QVBoxLayout,
-    QComboBox,
     QAbstractItemView,
     QTableWidget,
     QTableWidgetItem)
@@ -228,7 +228,7 @@ class ChooseSet(TabPage):
         """ initializes the widgets """
         self.logger.info("")
         self.label = Label("select setting profile", FontSize.HEADER3)
-        self.selectSettings = QComboBox(self)
+        self.selectSettings = ComboBox(self)
         self.selectSettings.addItem(Text.selectSetText)
         self.selectSettings.addItems(self.settings)
         self.selectSettings.setCurrentText("None")

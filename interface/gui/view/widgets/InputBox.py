@@ -9,11 +9,10 @@ Modified By:  Siara Small  & Vivian Li
 -----
 Description: implement widgets to accept user input in a form
 '''
-from util.Style import FontSize, Dimension
+from util.Style import FontSize, Dimension, Color
 from view.widgets import Label
-
+from view.widgets.ComboBox import ComboBox
 from PyQt6.QtWidgets import (
-    QComboBox, 
     QWidget, 
     QHBoxLayout, 
     QLineEdit,
@@ -95,7 +94,10 @@ class InputField(QLineEdit):
         super().__init__(*args, **kwargs)
         self.setFixedSize(
             QSize(Dimension.INPUTWIDTH, Dimension.INPUTHEIGHT))
-    
+        self.setStyleSheet(f"color:{Color.INPUT_TEXT};"
+                           f"border:1px solid {Color.INPUT_BORDER};"
+                           f"background-color:{Color.INPUT_BACKGROUND}")
+         
     def mouseDoubleClickEvent(self, c):
         self.clear()
         
@@ -149,7 +151,7 @@ class InputCombo(InputBox):
         self.inputFeild.setDisabled(False)
         
 
-class ComboSelection(QComboBox):
+class ComboSelection(ComboBox):
     """ a customized combobox 
         Args: 
         selections: a list of available options 

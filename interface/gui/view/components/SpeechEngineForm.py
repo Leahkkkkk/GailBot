@@ -16,11 +16,10 @@ from util.Logger import makeLogger
 from util.Text import EngineSettingForm
 from view.widgets.MultipleCombo import ToggleCombo
 from view.widgets.Label import Label
+from view.widgets.ComboBox import ComboBox
 from PyQt6.QtWidgets import (
-    QComboBox, 
     QWidget, 
     QVBoxLayout, 
-    QLabel, 
 )
 from PyQt6.QtCore import Qt
 
@@ -66,7 +65,7 @@ class SpeechEngineForm(QWidget):
     def _initWidget(self):
         """ initialize the widget """
         self.label = Label("Speech to Text Engine", FontSize.BODY)
-        self.mainCombo = QComboBox(self)
+        self.mainCombo = ComboBox(self)
         self.toggleList = None
         for key, value in self.data.items():
             self.mainCombo.addItem(key, value)

@@ -2,10 +2,9 @@ from typing import Dict, Tuple
 
 from util.Style import Color, Dimension, FontSize
 from util.Text import MultipleComboText as Text
-from view.widgets import ToggleView, Label
+from view.widgets import ToggleView, Label, ComboBox
 
 from PyQt6.QtWidgets import (
-    QComboBox, 
     QWidget, 
     QVBoxLayout,
     QGridLayout,
@@ -124,7 +123,7 @@ class ComboList(QWidget):
         
         for key, items in self.data.items():
             newlabel = Label.Label(key, FontSize.BODY)
-            newCombo = QComboBox(self)
+            newCombo = ComboBox.ComboBox(self)
             newCombo.addItems(items)
             newCombo.setCurrentIndex(0)
             self.labels[key] = newlabel
@@ -155,6 +154,7 @@ class UserForm(QWidget):
         self.layout.addWidget(self.passwordInput, 1,1)
         self.setLayout(self.layout)
         self.setFixedHeight(100)
+        self._initStyle()
     
     def getValue(self)-> Tuple[str, str]:
         """ a public function to get the form value """
@@ -164,5 +164,9 @@ class UserForm(QWidget):
         """ a public function to set the form value """
         self.nameInput.setText(data["username"])
         self.passwordInput.setText(data["password"])
-    
-    
+  
+    def _initStyle(self):
+        for widget in [self.nameInput, self.passwordInput]:
+            widget.setStyleSheet(f"color:{Color.INPUT_TEXT};"
+                                 f"border:1px solid {Color.INPUT_BORDER};"
+                                 f"background-color:{Color.INPUT_BACKGROUND}")

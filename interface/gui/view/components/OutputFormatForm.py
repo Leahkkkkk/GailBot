@@ -11,7 +11,7 @@ Description: implementation of the out put format form
 '''
 from typing import Dict 
 
-from view.widgets import ToggleView, TextForm, Button, Label
+from view.widgets import ToggleView, TextForm, Button, Label, ComboBox
 from util.Text import OutputFormatForm, OutputFormatFormText
 from util.Style import Color, Dimension, FontSize
 from util.Logger import makeLogger
@@ -19,7 +19,6 @@ from util.Logger import makeLogger
 from PyQt6.QtWidgets import (
     QWidget, 
     QVBoxLayout, 
-    QComboBox,
 )
 
 class OutPutFormat(QWidget):
@@ -39,7 +38,7 @@ class OutPutFormat(QWidget):
         self.layout = QVBoxLayout(self)
         self.header1 = Label.Label(OutputFormatFormText.header, FontSize.BODY)
         self.layout.addWidget(self.header1)
-        self.formatCombo = QComboBox()
+        self.formatCombo = ComboBox.ComboBox()
         self.formatCombo.addItems(OutputFormatForm.FileFormat)
         self.layout.addWidget(self.formatCombo)
         self.headerForm = HeaderForm(
@@ -85,13 +84,13 @@ class HeaderForm(QWidget):
             OutputFormatFormText.LanguageHeader, FontSize.BODY)
         self.layout.addWidget(self.label1)
             
-        self.lanCombo = QComboBox(self)
+        self.lanCombo = ComboBox.ComboBox(self)
         self.lanCombo.addItems(OutputFormatForm.Language)
         self.layout.addWidget(self.lanCombo)
         self.label2 = Label.Label(
             OutputFormatFormText.SpeakerHeader, FontSize.BODY)
         self.layout.addWidget(self.label2)
-        self.numCombo = QComboBox(self)
+        self.numCombo = ComboBox.ComboBox(self)
         self.numCombo.addItems(["1", "2", "3"])
         self.layout.addWidget(self.numCombo)
         self.corpusForm = TextForm.TextForm(data, background=False)
@@ -102,7 +101,7 @@ class HeaderForm(QWidget):
                 f"Speaker {i + 1} Gender", FontSize.BODY)
             self.speakerLabelList.append(newLabel)
             self.layout.addWidget(newLabel)
-            newCombo = QComboBox()
+            newCombo = ComboBox.ComboBox()
             newCombo.addItems(["Female", "Male"])
             self.speakerCombolist.append(newCombo)
             self.layout.addWidget(newCombo)

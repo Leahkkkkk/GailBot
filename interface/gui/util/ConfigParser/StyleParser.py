@@ -31,6 +31,9 @@ class ColorData(DataclassFromDict):
     GREYDARK         : str = field_from_dict()
     GREYEXTRALIGHT   : str = field_from_dict()
     TABLE_BORDER     : str = field_from_dict()
+    INPUT_TEXT       : str = field_from_dict()
+    INPUT_BORDER     : str = field_from_dict()
+    INPUT_BACKGROUND : str = field_from_dict()
     
     
 @dataclass 

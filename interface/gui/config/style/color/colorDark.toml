@@ -37,6 +37,10 @@ WHITE            = "#FFFFFF"
 ##color for table border 
 TABLE_BORDER     = "#35495F"   
 
+INPUT_TEXT       = "#FFFFFF"
+INPUT_BORDER     = "#7F8487"
+INPUT_BACKGROUND = "#7F8487"
+
 
 
 [styleSheet]

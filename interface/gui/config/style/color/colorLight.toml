@@ -19,7 +19,9 @@ MAIN_BACKRGOUND  = "#FFFFFF"
 SUB_BACKGROUND   = "#F0F6F9"
 WHITE            = "#FFFFFF"
 TABLE_BORDER     = "#000000"
-
+INPUT_TEXT       = "#000000"
+INPUT_BORDER     = "#000000"
+INPUT_BACKGROUND = "#FFFFFF"
 
 [styleSheet]
 ## light mode style sheet values, to be set as css by elements
