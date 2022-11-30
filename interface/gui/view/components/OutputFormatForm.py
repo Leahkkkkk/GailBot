@@ -57,6 +57,7 @@ class OutPutFormat(QWidget):
             headercolor= Color.WHITE,
             viewcolor= Color.LOW_CONTRAST)
         self.layout.addWidget(self.textWrapField)
+        self.layout.addStretch()
         
     def getValue(self) -> Dict[str, str]:
         """ gets current value of the form data """

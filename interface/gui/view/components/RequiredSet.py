@@ -50,7 +50,7 @@ class RequiredSet(QWidget):
         self.outPutFormView = ToggleView.ToggleView(
             Text.outputSettingHeader, self.outPutForm, header = True)
         self.outPutFormView.setScrollHeight(self.outPutForm.height())
-        self.outPutFormView.setScrollHeight(Dimension.DEFAULTTABHEIGHT)
+        self.outPutFormView.setScrollHeight(Dimension.OUTPUT_FORM_HEIGHT)
         self.engineFormView.Btn.clicked.connect(self.outPutFormView.hideView)
         self.outPutFormView.Btn.clicked.connect(self.engineFormView.hideView)
 

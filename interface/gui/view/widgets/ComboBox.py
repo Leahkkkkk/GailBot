@@ -17,6 +17,5 @@ class ComboBox(QComboBox):
     def __init__(self, *args, **kwargs) -> None:
         """ initializes widget """
         super().__init__(*args, **kwargs)
-        self.setObjectName("Combo")
-        
+
         

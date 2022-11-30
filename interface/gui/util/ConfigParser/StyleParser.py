@@ -111,7 +111,7 @@ class DimensionData(DataclassFromDict):
     LARGE_ICON          : int = field_from_dict()
     WIN_MIN_WIDTH       : int = field_from_dict()
     WIN_MIN_HEIGHT      : int = field_from_dict()
-    
+    OUTPUT_FORM_HEIGHT  : int = field_from_dict()
 
 @dataclass 
 class Asset(DataclassFromDict): 
