@@ -1,3 +1,16 @@
+'''
+File: WorkSpaceDialog.py
+Project: GailBot GUI
+File Created: Tuesday, 22nd November 2022 2:09:54 pm
+Author: Siara Small  & Vivian Li
+-----
+Last Modified: Tuesday, 29th November 2022 8:34:12 pm
+Modified By:  Siara Small  & Vivian Li
+-----
+Description: a pop up dialogue that opens during the first launch of the 
+             app to ask user for the path the gailbot work directory
+'''
+
 import os 
 import toml 
 
@@ -7,6 +20,7 @@ from PyQt6.QtWidgets import QDialog, QFileDialog, QVBoxLayout
 from config.ConfigPath import BackEndDataPath
 from util.Style import Color, FontFamily, FontSize, Dimension
 from util.Path import getProjectRoot
+from util.Text import WelcomePageText as Text 
 from PyQt6.QtCore import QSize, Qt
 
 import userpaths
@@ -28,15 +42,20 @@ class WorkSpaceDialog(QDialog):
         self.confirm.clicked.connect(self._onConfirm)
         
     def _initWidget(self):
-        self.header = Label.Label("Welcome to the first launch on GailBot", FontSize.HEADER2, FontFamily.MAIN)
-        self.label = Label.Label("The first step is to choose the path to GailBot's "
-                                 "workspace directory on your computer.\n This will be where the "
-                                 "file generated during transcription stored in", FontSize.BODY, others="text-align:center;")
-        self.displayPath = Label.Label(f"GailBot Work Space Path: {self.workDir}/GailBot", FontSize.BODY, FontFamily.MAIN, others=f"border: 1px solid {Color.MAIN_TEXT}; text-align:center;")
+        """ initialize the widget """
+        self.header = Label.Label(
+            Text.firstLaunchHeader, FontSize.HEADER2, FontFamily.MAIN)
+        self.label = Label.Label(
+            Text.firstLaunchInstruction, FontSize.BODY, others="text-align:center;")
+        self.displayPath = Label.Label(
+            f"GailBot Work Space Path: {self.workDir}/GailBot", 
+            FontSize.BODY, FontFamily.MAIN, 
+            others=f"border: 1px solid {Color.MAIN_TEXT}; text-align:center;")
         self.confirm = Button.ColoredBtn("Confirm", Color.SECONDARY_BUTTON)
         self.choose  = Button.ColoredBtn("Change Directory", Color.PRIMARY_BUTTON)
     
     def _initLayout(self):
+        """ initialize the layout """
         self.verticalLayout = QVBoxLayout()
         self.setLayout(self.verticalLayout)
         self.verticalLayout.addWidget(self.header, alignment=center)
@@ -52,7 +71,8 @@ class WorkSpaceDialog(QDialog):
         selectedFolder = dialog.getExistingDirectory()
         if selectedFolder:
             self.workDir = selectedFolder
-            self.displayPath.setText(f"GailBot Work Space Path:\n {self.workDir}/GailBot")
+            self.displayPath.setText(
+                f"GailBot Work Space Path:\n {self.workDir}/GailBot")
     
     def _onConfirm(self):
         basedir = getProjectRoot()
@@ -61,18 +81,21 @@ class WorkSpaceDialog(QDialog):
         workSpace = { "WORK_SPACE_BASE_DIRECTORY" : self.workDir }
         print(os.path.join(basedir, BackEndDataPath.workSpaceData))
         try:
-            with open(os.path.join(basedir, BackEndDataPath.workSpaceData), "w+") as f:
+            with open(
+                os.path.join(basedir, BackEndDataPath.workSpaceData), "w+") as f:
                 toml.dump(workSpace, f)
                 print("toml file is written")
             if not os.path.isdir(f"{self.workDir}/GailBot"):
                 os.mkdir(f"{self.workDir}/GailBot")
         except:
             print("toml file cannot be written")
-            WarnBox(f"cannot find the file path: {os.path.join(basedir, BackEndDataPath.workSpaceData)}")
+            WarnBox(f"cannot find the file path: " 
+                    f"{os.path.join(basedir, BackEndDataPath.workSpaceData)}")
 
         self.close()
     
     def _initStyle(self):
+        """ initialize the style """
         self.setStyleSheet(f"background-color:{Color.MAIN_BACKRGOUND}")
         self.setFixedSize(QSize(600,450))
 

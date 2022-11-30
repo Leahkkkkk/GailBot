@@ -20,7 +20,9 @@ transcribeInstructionText = "3. Transcribe"
 fileInstructionText       = "4. Get a transcribed file"
 editInstructionText       = "5. Edit settings \n or retranscribe"
 welcomeText               = "Welcome to GailBot"
-captionText               = "GailBot is the world's first application that lets you convert audio and\n video files into customized transcripts."
+captionText               = """GailBot is the world's first application that lets \
+                             you convert audio and\n video files into customized \
+                             transcripts."""
 startBtnText              = "Get Started"
 instructionText           = "How GailBot Works"
 resourcesText             = "Resources"
@@ -28,6 +30,10 @@ tutorialText              = "GailBot Beginner Tutorial"
 guideText                 = "GailBot Settings Guide"
 gbLinkText                = "GailBot.com"
 moreInfoText              = "For more, information visit"
+firstLaunchHeader         = "Welcom to the first launch on GailBot"
+firstLaunchInstruction    = """The first step is to choose the path to GailBot's \
+                             workspace directory on your computer.\n This will be \ 
+                             where the file generated during transcription stored in"""
 
 
 [FileUploadPageText]
@@ -83,7 +89,8 @@ pluginSetBtn       = "Plugin Settings"
 postSetHeader      = "Post-Transcription Settings"
 postSetCaption     = "These settings are applied after the file is created."
 requiredSetHeader  = "Required Settings"
-requiredSetCaption = "These settings are required before transcription and cannot be edited after transcription."
+requiredSetCaption = """These settings are required before transcription and \
+                        cannot be edited after transcription."""
 pluginHeader       = "Choose Plugins"
 pluginCaption      = "These plugins are applied to the transcription process"
 
@@ -92,7 +99,8 @@ header        = "System Setting"
 caption       = "These settings are applied for system setting"
 cancelBtn     = "Cancel"
 saveBtn       = "Save and Exit"
-confirmChange = "This change will relaunch GailBot and all uploaded files will be lost. Do you want to relaunch and change system settings?"
+confirmChange = """This change will relaunch GailBot and all uploaded files will be \
+                 lost. Do you want to relaunch and change system settings?"""
 changeError   = "Change system setting failed"
 
 [ConfirmTranscriptionPageText]
