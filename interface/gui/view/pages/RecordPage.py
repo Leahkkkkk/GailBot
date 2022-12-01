@@ -1,4 +1,5 @@
 import datetime
+import time 
 
 from util.Style import (
     Color, 
@@ -24,12 +25,41 @@ from PyQt6.QtWidgets import (
     QHBoxLayout, 
     QProgressBar
 )
-from PyQt6.QtCore import Qt, QTimer, QSize
+from PyQt6.QtCore import Qt, QTimer, QSize, QThread, pyqtSignal
 
 center = Qt.AlignmentFlag.AlignHCenter
 top = Qt.AlignmentFlag.AlignTop
 right = Qt.AlignmentFlag.AlignRight
 left = Qt.AlignmentFlag.AlignLeft
+
+
+class Thread(QThread):
+    """ Thread to control the value displayed on the progressbar """
+    _signal = pyqtSignal(int)
+    def __init__(self):
+        super(Thread, self).__init__()
+        self.kill = False
+        self.current = 0
+
+    def __del__(self):
+        self.wait()
+
+    def run(self):
+        self.kill = False
+        for i in range(100):
+            if not self.kill:
+                time.sleep(0.5)
+                self.current += 1
+                self._signal.emit(self.current)
+            else:
+                break
+            
+    def cancel(self):
+        self.kill = True
+   
+    def restart(self):
+        self.kill = False 
+        self.current = 0 
 
 class RecordProgress(QWidget):
     """ class for the record in progress page """
@@ -41,6 +71,7 @@ class RecordProgress(QWidget):
         self._initWidget()
         self._initLayout()
         self._initTimer()
+        self._initThread()
         self._connectSignal()
     
     def _initTimer(self):
@@ -71,6 +102,11 @@ class RecordProgress(QWidget):
         self.recordBar.setMinimumWidth(Dimension.PROGRESSBARWIDTH)
         self.recordBar.setMinimumHeight(Dimension.PROGRESSBARHEIGHT)
 
+    def _initThread(self):
+        """ initialize the thread that controls the progress bar """
+        self.thread = Thread()
+        self.thread._signal.connect(self.setProgressBar)
+
     def _initLayout(self):
         """ initalizes the layout  """
         self.verticalLayout = QVBoxLayout()
@@ -98,6 +134,8 @@ class RecordProgress(QWidget):
     def endRecording(self):
         """ handler for ending recording """
         self.clearTimer()
+        self.thread.restart()
+        self.setProgressBar(0)
         self.iconBtn.resetBtn()
         self.recording = False
         
@@ -106,8 +144,10 @@ class RecordProgress(QWidget):
             stops the timer if currently recording """
         if not self.recording: 
             self._startTimer()
+            self.thread.start()
         else: 
             self._stopTimer()
+            self.thread.cancel()
         self.recording = not self.recording
         
     def _startTimer(self):
@@ -123,6 +163,10 @@ class RecordProgress(QWidget):
     def _stopTimer(self):
         """ "private" function that stops the timer """
         self.timer.stop()
+    
+    def setProgressBar(self, msg):
+        """ set the value of the progress bar to the msg """
+        self.recordBar.setValue(int(msg))
 
 
 class ProgressBar(QProgressBar):
@@ -130,10 +174,8 @@ class ProgressBar(QProgressBar):
     def __init__(self, *args, **kwargs):
         """ initializes progress bar """
         super(ProgressBar, self).__init__(*args, **kwargs)
-        self.setStyleSheet(f"background-color:{Color.SUB_BACKGROUND}")
-        self.setValue(200)
-        self.setValue(0)
     
+
     def start(self):
         """ starts the timer """
         self.startTimer(0)
@@ -159,7 +201,7 @@ class RecordPage(QWidget):
         self.toggleSetting = ToggleView.ToggleView(Text.recSet, 
                                                    self.recordForm,
                                                    header=True)
-        self.startRecordBtn = Button.ColoredBtn(Text.start, Color.SECONDARY_BUTTON)
+        self.startRecordBtn = Button.ColoredBtn(Text.start, Color.PRIMARY_BUTTON)
         self.cancelBtn = Button.ColoredBtn(Text.cancel, Color.CANCEL_QUIT)
         self.recordInprogress =  RecordProgress()
         self.recordInprogress.hide()
@@ -173,6 +215,7 @@ class RecordPage(QWidget):
         self.horizontalLayout.addWidget(self.startRecordBtn, alignment = right)
         self.horizontalLayout.addWidget(self.cancelBtn, alignment = left)
         self.horizontalLayout.setSpacing(Dimension.LARGE_SPACING) 
+        
     def _initLayout(self):
         """ initializes the layout """
         self.layout = QVBoxLayout()
@@ -207,6 +250,7 @@ class RecordPage(QWidget):
         """ handler to cancel recording in progress """
         self.recordInprogress.hide()
         self.recordInprogress.clearTimer()
+        self.recordInprogress.endRecording()
         self.recordForm.enableForm()
         
 
