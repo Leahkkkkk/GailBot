@@ -6,9 +6,9 @@ SECONDARY_BUTTON = "#416E52"
 ##cancel and quit button color
 CANCEL_QUIT      = "#B8542D"
 ##highlight background color, primarily used in the background of the file table
-HIGHLIGHT        = "#494949"
+HIGHLIGHT        = "#363636"
 ##color of the header of the file table
-TABLE_HEADER     = "#92979E"
+TABLE_HEADER     = "#686C71"
 ##main button color, used in most continue and main menu buttons
 PRIMARY_BUTTON   = "#364389"
 ##scroll bar 

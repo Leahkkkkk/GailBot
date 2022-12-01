@@ -120,7 +120,7 @@ class OpenFile(TabPage):
         self.fileDisplayList.verticalHeader().hide()
         self.fileDisplayList.setStyleSheet(f"background-color:{Color.MAIN_BACKRGOUND};"
                                            f"color:{Color.MAIN_TEXT}")
-    
+        self.fileDisplayList.setColumnWidth(0,Dimension.SMALL_TABLE_WIDTH) 
     def _initDimension(self):
         """ initializes the dimensions """
         self.logger.info("")
@@ -195,7 +195,7 @@ class OpenFile(TabPage):
             self.fileDisplayList.insertRow(row)
             newFile = QTableWidgetItem(file)
             self.fileDisplayList.setItem(row, 0, newFile)
-            self.fileDisplayList.resizeColumnsToContents()
+            # self.fileDisplayList.resizeColumnsToContents()
             self.fileDisplayList.resizeRowsToContents()
         except:
             WarnBox("An error occurred when displaying the added file")
