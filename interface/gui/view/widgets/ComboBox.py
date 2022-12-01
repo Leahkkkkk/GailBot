@@ -17,5 +17,14 @@ class ComboBox(QComboBox):
     def __init__(self, *args, **kwargs) -> None:
         """ initializes widget """
         super().__init__(*args, **kwargs)
-
+        self.setStyleSheet("QComboBox {"
+                           f"background-color: {Color.INPUT_BACKGROUND};"
+                           f"color:{Color.INPUT_TEXT};"
+                           f"border:1px solid {Color.INPUT_BORDER};"
+                           f"padding: 3px 12px 3px 12px;"
+                           f"border-radius: 7px;"
+                           f"margin: 5px;"
+                           "}"
+                        )
+       
         

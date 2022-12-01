@@ -117,12 +117,13 @@ class TranscribeProgressPage(QWidget):
         self.verticalLayout.addWidget(self.cancelBtn, 
                                       alignment = center)
         self.Caption.setContentsMargins(0, 0, 0, 0)
-        self.verticalLayout.setSpacing(Dimension.MEDIUM_SPACING)
+        # self.verticalLayout.setSpacing(Dimension.MEDIUM_SPACING)
         self.verticalLayout.addStretch()
         
     def _connectSignal(self):
         """ connects signal. change enableCancel to true when backend functionality allows for it. """
         enableCancel = False
+        self.cancelBtn.setDisabled(True)
         if (enableCancel):
             self.cancelBtn.clicked.connect(self._confirm)
         self.signals.progressChanged.connect(self.editFileProgess)

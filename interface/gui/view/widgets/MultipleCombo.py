@@ -10,7 +10,8 @@ from PyQt6.QtWidgets import (
     QGridLayout,
     QLineEdit,
 )
-from PyQt6.QtCore import QSize
+from PyQt6.QtCore import QSize, Qt
+
 
 class ToggleCombo(QWidget):
     """ generate a list of toggle view, 
@@ -59,6 +60,8 @@ class ToggleCombo(QWidget):
     def _initWidget(self):
         """ initialize the widget """
         self.layout = QVBoxLayout()
+        self.layout.setContentsMargins(0,0,0,0)
+        self.layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
         self.layout.setSpacing(0)
         self.setLayout(self.layout)
         if self.showBasicSet:

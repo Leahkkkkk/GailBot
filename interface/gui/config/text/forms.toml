@@ -36,7 +36,7 @@ HiLabSuite = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
 "Corpus situation"   = "enter situation"
 
 ["profile form"."RequiredSetting"."Output Format"]
-"FileFormat" = ["CHART", "TXT", "RTF"]
+"FileFormat" = [".CHAT", ".TXT", ".RTF"]
 "Language"   = ["English", "French", "Spanish", "German", "Chinese(Madarin)", "Chinese(Cantonese)"]
 
 

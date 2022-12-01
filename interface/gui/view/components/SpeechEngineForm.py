@@ -11,7 +11,7 @@ Description: implementation of a speech to engine form
 '''
 
 from typing import Dict
-from util.Style import FontSize
+from util.Style import FontSize, Dimension
 from util.Logger import makeLogger
 from util.Text import EngineSettingForm
 from view.widgets.MultipleCombo import ToggleCombo
@@ -66,6 +66,7 @@ class SpeechEngineForm(QWidget):
         """ initialize the widget """
         self.label = Label("Speech to Text Engine", FontSize.BODY)
         self.mainCombo = ComboBox(self)
+        self.mainCombo.setMaximumWidth(Dimension.TOGGLEBARMINWIDTH + 20)
         self.toggleList = None
         for key, value in self.data.items():
             self.mainCombo.addItem(key, value)

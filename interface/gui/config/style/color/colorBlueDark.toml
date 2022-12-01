@@ -6,13 +6,13 @@ SECONDARY_BUTTON = "#76BD46"
 ##cancel and quit button color
 CANCEL_QUIT      = "#FB7C6A"
 ##highlight background color, primarily used in the background of the file table
-HIGHLIGHT        = "#363636"
+HIGHLIGHT        = "#4A6680"
 ##color of the header of the file table
-TABLE_HEADER     = "#686C71"
+TABLE_HEADER     = "#4A6680"
 ##main button color, used in most continue and main menu buttons
 PRIMARY_BUTTON   = "#027BFE"
 ##scroll bar 
-SCORLL_BAR       = "#363636"
+SCORLL_BAR       = "#4A6680"
 ##primary contrast color: white in dark mode
 PRIMARY_INTENSE  = "#FFFFFF"
 ##low contrast- gray color close to black
@@ -29,17 +29,17 @@ GREYEXTRALIGHT   = "#F0F6F9"
 ##main text
 MAIN_TEXT        = "#FFFFFF"
 ##main background color
-MAIN_BACKRGOUND  = "#424242"
+MAIN_BACKRGOUND  = "#222C3A"
 ##secondary background color, used in the background of popups and the upload page
-SUB_BACKGROUND   = "#363636"
+SUB_BACKGROUND   = "#35495F"
 ##highest contrast- white in dark mode
 WHITE            = "#FFFFFF"
 ##color for table border 
-TABLE_BORDER     = "#363636"   
+TABLE_BORDER     = "#35495F"   
 
-INPUT_TEXT       = "#000000"
-INPUT_BORDER     = "#363636"
-INPUT_BACKGROUND = "#CECECE"
+INPUT_TEXT       = "#FFFFFF"
+INPUT_BORDER     = "#7F8487"
+INPUT_BACKGROUND = "#7F8487"
 
 
 
@@ -87,9 +87,9 @@ recordStop            = "asset/dark/stop.png"
 recordPlay            = "asset/dark/play.png"
 downImg               = "asset/dark/down.png"
 rightImg              = "asset/dark/right.png"
-homeBackground        = "asset/darkGray/background.png"
-subPageBackground     = "asset/darkGray/backgroundSubPages.png"
-sideBarBackground     = "asset/darkGray/sidebarBackground.png"
+homeBackground        = "asset/dark/background.png"
+subPageBackground     = "asset/dark/backgroundSubPages.png"
+sideBarBackground     = "asset/dark/sidebarBackground.png"
 hilLabLogo            = "asset/dark/hillogo.png"
 transcribing          = "asset/dark/gbloading.gif"
 endRecording          = "asset/dark/endRecording.png"

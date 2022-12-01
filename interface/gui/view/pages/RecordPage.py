@@ -131,6 +131,7 @@ class ProgressBar(QProgressBar):
         """ initializes progress bar """
         super(ProgressBar, self).__init__(*args, **kwargs)
         self.setStyleSheet(f"background-color:{Color.SUB_BACKGROUND}")
+        self.setValue(200)
         self.setValue(0)
     
     def start(self):
@@ -171,7 +172,7 @@ class RecordPage(QWidget):
         self.horizontal.setLayout(self.horizontalLayout)
         self.horizontalLayout.addWidget(self.startRecordBtn, alignment = right)
         self.horizontalLayout.addWidget(self.cancelBtn, alignment = left)
-    
+        self.horizontalLayout.setSpacing(Dimension.LARGE_SPACING) 
     def _initLayout(self):
         """ initializes the layout """
         self.layout = QVBoxLayout()
