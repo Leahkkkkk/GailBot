@@ -60,4 +60,7 @@ class WorkSpacePathData(DataclassFromDict):
 @dataclass 
 class WorkSpaceBaseDirData(DataclassFromDict):
     WORK_SPACE_BASE_DIRECTORY : str = field_from_dict()
- 
+
+@dataclass
+class FileManageData(DataclassFromDict):
+    AUTO_DELETE_TIME: int = field_from_dict() 

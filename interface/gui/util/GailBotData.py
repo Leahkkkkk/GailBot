@@ -19,19 +19,22 @@ from util.ConfigParser.GailBotDataParser import (
     PluginData, 
     ThreadData,
     WorkSpacePathData,
-    WorkSpaceBaseDirData
+    WorkSpaceBaseDirData,
+    FileManageData
 )
 from config.ConfigPath import BackEndDataPath
 
 import userpaths
 
 basedir = getProjectRoot()
-config = toml.load(os.path.join(basedir,BackEndDataPath.gaiBotData))
+config = toml.load(os.path.join(basedir, BackEndDataPath.gailBotData))
+fileManage = toml.load(os.path.join(basedir, BackEndDataPath.fileManageData))
 Credential = CredentialData.from_dict(config["credential"])
 Directory = DirectoryData.from_dict(config["directory"])
 ProfileConfig = ProfileConfigData.from_dict(config["profileConfig"])
 Plugin = PluginData.from_dict(config["plugin"])
 ThreadControl = ThreadData.from_dict(config["threadControl"])
+FileManage = FileManageData.from_dict(fileManage)
 
 def getWorkPath() -> WorkSpacePathData:
     """ return the data contains workspace directory  """

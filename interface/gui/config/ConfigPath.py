@@ -21,10 +21,10 @@ data    = toml.load(os.path.join (basedir, "config/configpath.toml"))
 
 @dataclass 
 class BackEndData(DataclassFromDict): 
-    gaiBotData                   : str = field_from_dict()
+    gailBotData                  : str = field_from_dict()
     workSpaceData                : str = field_from_dict()
     defaultWorkSpaceData         : str = field_from_dict()
-
+    fileManageData               : str = field_from_dict()
 
 @dataclass 
 class StyleData(DataclassFromDict): 

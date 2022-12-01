@@ -38,3 +38,5 @@ PLUGINS_TO_APPLY = [
 
 [threadControl]
 maxThread = 1
+
+
