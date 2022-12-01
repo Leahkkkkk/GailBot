@@ -480,16 +480,14 @@ class FileTable(QTableWidget):
         
     def transferState(self) -> None:
         """ send a signal that includes all the files that will be 
-            transfered to the next state
+            transfer to the next state
         """
         logging.info(self.transferList)
         self.viewSignal.transferState.emit(self.transferList)
-        # self.viewSignal.ZeroFile.emit()
         
     def transcribeFile(self):
         """ send signal to controller to transcribe file """
         self.dbSignal.transcribe.emit(self.transferList)  
-        
         
     def _setColorRow(self, rowIdx, color):
         """ change the color of the row at rowIdx """

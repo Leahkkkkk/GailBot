@@ -2,15 +2,15 @@
 [colors] 
 ##dark mode button colors
 ##secondary button color, used in save, continue, and get started buttons
-SECONDARY_BUTTON = "#76BD46"
+SECONDARY_BUTTON = "#416E52"
 ##cancel and quit button color
-CANCEL_QUIT      = "#FB7C6A"
+CANCEL_QUIT      = "#B8542D"
 ##highlight background color, primarily used in the background of the file table
-HIGHLIGHT        = "#363636"
+HIGHLIGHT        = "#494949"
 ##color of the header of the file table
-TABLE_HEADER     = "#686C71"
+TABLE_HEADER     = "#92979E"
 ##main button color, used in most continue and main menu buttons
-PRIMARY_BUTTON   = "#027BFE"
+PRIMARY_BUTTON   = "#364389"
 ##scroll bar 
 SCORLL_BAR       = "#363636"
 ##primary contrast color: white in dark mode

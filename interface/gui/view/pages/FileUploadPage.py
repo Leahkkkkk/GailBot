@@ -91,7 +91,7 @@ class FileUploadPage(QWidget):
         self.uploadFileBtn = Button.ColoredBtn(
             Text.uploadBtnText, Color.PRIMARY_BUTTON, FontSize.BTN)
         self.transcribeBtn = Button.ColoredBtn(
-            Text.transcribeBtnText, Color.LOW_CONTRAST, FontSize.BTN)
+            Text.transcribeBtnText, Color.SECONDARY_BUTTON, FontSize.BTN)
         self.settingBtn = Button.ColoredBtn(
             Text.settingBtnText, Color.PRIMARY_BUTTON, FS.SETTINGICON)
         self.settingBtn.setFixedSize(

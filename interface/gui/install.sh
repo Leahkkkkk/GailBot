@@ -1,10 +1,10 @@
 mkdir -p dist/dmg 
-cp -r dist/AppTest1130.app dist/dmg
+cp -r dist/GailBotTest.app dist/dmg
 create-dmg \
-  --volname "AppTest1130.app" \
+  --volname "GailBotTest.app" \
   --window-pos 200 120 \
   --window-size 600 300 \
-  --hide-extension "AppTest1130.app" \
+  --hide-extension "GailBotTest.app" \
   --app-drop-link 425 120 \
-  "dist/AppTest1130.dmg" \
+  "dist/GailBotTest.dmg" \
   "dist/dmg/"
