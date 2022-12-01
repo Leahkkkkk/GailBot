@@ -51,11 +51,20 @@ class ToggleCombo(QWidget):
         for key, comboList in self.comboListDict.items():
             value[key] = comboList.getValue()
         return value
+     
+    def getUserValue(self)-> Dict[str, dict]:
+        """ return the data of user information """
+        return self.userForm.getValue()
 
     def setValue(self, data : Dict[str, dict]):
-        """ a public function to set the form value """
+        """ a public function to set the user form value """
         for key, values in data.items():
             self.comboListDict[key].setValue(values)
+    
+    def setUserValue(self, data : Dict [str, str]):
+        """ set the value of user data """
+        if self.showBasicSet:
+            self.userForm.setValue(data)
 
     def _initWidget(self):
         """ initialize the widget """
@@ -159,9 +168,10 @@ class UserForm(QWidget):
         self.setFixedHeight(100)
         self._initStyle()
     
-    def getValue(self)-> Tuple[str, str]:
+    def getValue(self)-> Dict[str, str]:
         """ a public function to get the form value """
-        return (self.nameInput.text(), self.passwordInput.text())
+        return {"username": self.nameInput.text(), 
+                "password": self.passwordInput.text()}
     
     def setValue(self, data: dict):
         """ a public function to set the form value """

@@ -118,8 +118,7 @@ class BasicSetting(TabPage):
         """
         try:
             self.logger.info("")
-            info = self.mainWidget.getValue()
-            return {"username": info[0], "password":info[1]} 
+            return self.mainWidget.getValue() 
         except:
             self.logger.error("An error occurred when reading the username and password")
             WarnBox("An error occurred when reading the username and password")
@@ -153,9 +152,9 @@ class BasicSetting(TabPage):
     
     def _confirmHandler(self):
         """ confirm button handler """
-        self.logger("")
+        self.logger.info("")
         res = self.mainWidget.getValue()
-        if res[0] == "" or res[1] == "":
+        if res["password"] == "" or res["username"] == "":
             WarnBox(Text.emptyUserMsg)
         else:
             self.signals.nextPage.emit()

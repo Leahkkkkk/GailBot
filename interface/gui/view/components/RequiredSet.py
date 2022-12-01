@@ -54,8 +54,6 @@ class RequiredSet(QWidget):
         self.engineFormView.Btn.clicked.connect(self.outPutFormView.hideView)
         self.outPutFormView.Btn.clicked.connect(self.engineFormView.hideView)
 
-        
-        
     def _initLayout(self):
         """initialize layout"""
         self.verticalLayout = QVBoxLayout()

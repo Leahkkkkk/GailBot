@@ -39,6 +39,7 @@ class OutPutFormat(QWidget):
         self.header1 = Label.Label(OutputFormatFormText.header, FontSize.BODY)
         self.layout.addWidget(self.header1)
         self.formatCombo = ComboBox.ComboBox()
+        self.formatCombo.setFixedWidth(Dimension.TOGGLEBARMINWIDTH + 20)
         self.formatCombo.addItems(OutputFormatForm.FileFormat)
         self.layout.addWidget(self.formatCombo)
         self.headerForm = HeaderForm(

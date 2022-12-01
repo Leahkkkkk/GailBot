@@ -25,6 +25,7 @@ from view.pages.CreateNewProfilePages import (
     PluginSetting
 )
 from view.widgets.PopUpTab import Tab
+from view.widgets.MsgBox import WarnBox
 from PyQt6.QtWidgets import (
     QVBoxLayout,
     QDialog
@@ -86,8 +87,11 @@ class CreateNewSetting(QDialog):
         
     def _postSetting(self):
         """ a function that send the new setting data through signal"""
+    
         profileData = dict()
         requiredData = dict()
+        
+        
         profileName = self.addProfileName.getData()
         basicData = self.basicSetting.getData()
         engineData = self.engineSetting.getData()
@@ -95,16 +99,20 @@ class CreateNewSetting(QDialog):
         postFormData = self.postTranscribeSetting.getData()
         plugins = self.pluginSetting.getData()
         
-        requiredData["User Info"] = basicData
-        requiredData["Engine"] = engineData
-        requiredData["Output Form Data"] = outputFormData
-        profileData ["PostTranscribe"] = postFormData
-        profileData ["RequiredSetting"] = requiredData
-        profileData ["Plugins"] = plugins
-        
-        self.signals.newSetting.emit((profileName, profileData))
-        self.logger.info(profileData)
-        self.close()
+        try:
+            requiredData["Engine"] = engineData
+            requiredData["Engine"]["User Info"] = basicData
+            requiredData["Output Form Data"] = outputFormData
+            profileData ["PostTranscribe"] = postFormData
+            profileData ["RequiredSetting"] = requiredData
+            profileData ["Plugins"] = plugins
+            
+            self.signals.newSetting.emit((profileName, profileData))
+            self.logger.info(profileData)
+            self.close()
+        except:
+            WarnBox("an error occurred when posting the form data")
+            
         
         
         

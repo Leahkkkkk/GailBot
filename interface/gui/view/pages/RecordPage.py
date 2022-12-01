@@ -1,3 +1,15 @@
+'''
+File: RecordPage.py
+Project: GailBot GUI
+File Created: Tuesday, 22nd November 2022 2:09:54 pm
+Author: Siara Small  & Vivian Li
+-----
+Last Modified: Thursday, 1st December 2022 8:31:49 am
+Modified By:  Siara Small  & Vivian Li
+-----
+'''
+
+
 import datetime
 import time 
 

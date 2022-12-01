@@ -42,7 +42,7 @@ class SpeechEngineForm(QWidget):
     """
     def __init__(self, showBasicSet:bool = True,*args, **kwargs) -> None:
         super().__init__( *args, **kwargs)
-        self.logger = makeLogger("Frontend")
+        self.logger = makeLogger("F")
         self.data = EngineSettingForm.Engine
         self.showBasicSet = showBasicSet
         self._initWidget()
@@ -52,8 +52,12 @@ class SpeechEngineForm(QWidget):
     
     def getValue(self) -> dict:
         """ public function to get engine form value """
+        value = dict()
         engine = self.mainCombo.currentText()
-        return {engine: self.toggleList.getValue()}
+        value[engine] = self.toggleList.getValue()
+        if self.showBasicSet: 
+            value["User Info"] = self.toggleList.getUserValue()
+        return value
     
     def setValue(self, data: Dict[str, Dict[str, dict]]):
         """ public function to set the engine form value """
@@ -61,6 +65,7 @@ class SpeechEngineForm(QWidget):
         self.logger.info(engineName)
         self.mainCombo.setCurrentText(engineName)
         self.toggleList.setValue(data[engineName])
+        self.toggleList.setUserValue(data["User Info"])
         
     def _initWidget(self):
         """ initialize the widget """

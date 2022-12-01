@@ -102,6 +102,11 @@ gender2              = "Female"
 [Default.RequiredSetting.Engine.CMU."3.CMU specialised setting"]
 "CMU setting option" = "setting option 1"
 
+[Default.RequiredSetting.Engine."User Info"]
+"username" = "HIL Lab"
+"password" = "*********"
+
+
 ["Coffee Study".RequiredSetting.Engine.IBM."1.language model setting"]
 "1. language model"        = "Spanish"
 "2. custom language model" = "Air Force Study"
@@ -117,6 +122,10 @@ gender2              = "Female"
 ["Coffee Study".RequiredSetting.Engine.IBM."4.IBM specialised setting"]
 "IBM setting option" = "setting option 2"
 
+["Coffee Study".RequiredSetting.Engine."User Info"]
+"username" = "HIL Lab"
+"password" = "*********"
+
 ["HRI lab study".RequiredSetting.Engine.IBM."1.language model setting"]
 "1. language model"        = "IBM language"
 "2. custom language model" = "Air Force Study"
@@ -131,3 +140,7 @@ gender2              = "Female"
 
 ["HRI lab study".RequiredSetting.Engine.IBM."4.IBM specialised setting"]
 "IBM setting option" = "setting option 3"
+
+["HRI lab study".RequiredSetting.Engine."User Info"]
+"username" = "HIL Lab"
+"password" = "*********"
