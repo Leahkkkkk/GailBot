@@ -53,7 +53,3 @@ def getWorkPath() -> WorkSpacePathData:
     
     return WorkSpacePath
 
-
-@dataclass
-class FileManage:
-    AUTO_DELETE_TIME = 2628000

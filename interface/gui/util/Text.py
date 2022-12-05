@@ -83,7 +83,7 @@ EngineSettingForm = TextParser.EngineSetting.from_dict(
 OutputFormatForm = TextParser.OutputFormatSetting.from_dict(
     forms["profile form"]["RequiredSetting"]["Output Format"])
 SystemSettingForm = forms["system setting form"]
-
+LogDeleteTimeDict = forms["log deletion"]
 
 @dataclass
 class Links: 

@@ -11,7 +11,7 @@ Description: implement the system setting page
 '''
 import os
 import shutil 
-
+import toml
 from util.Style import Color, StyleSheet, FontSize
 from view.widgets import (
     SideBar, 
@@ -19,10 +19,12 @@ from view.widgets import (
     Label, 
     Button
 )
+
+from config.ConfigPath import BackEndDataPath
 from util.StyleSource import StyleSource, StyleTable
 from util.Text import SystemSetPageText as Text 
 from util.Text import SystemSettingForm as Form
-from util.Text import About, Links
+from util.Text import About, Links, LogDeleteTimeDict
 from util.Path import getProjectRoot
 from util.FileManage import clearAllLog
 from view.widgets import MsgBox
@@ -122,15 +124,18 @@ class SystemSettingPage(QWidget):
         """ rewrite the current setting file based on the user's choice"""
         setting = self.SysSetForm.getValue()
         
-        try:
-            colorSource = StyleTable[setting["Color Mode combo"]]
-            colorDes    = StyleSource.CURRENT_COLOR
-            fontSource  = StyleTable[setting["Font Size combo"]]
-            fontDes     = StyleSource.CURRENT_FONTSIZE
-            shutil.copy(
-                os.path.join(dirname, colorSource), os.path.join(dirname,colorDes))
-            shutil.copy(
-                os.path.join(dirname, fontSource), os.path.join(dirname, fontDes))  
-        except:
-            MsgBox.WarnBox(Text.changeError)
+        # try:
+        colorSource = StyleTable[setting["Color Mode combo"]]
+        colorDes    = StyleSource.CURRENT_COLOR
+        fontSource  = StyleTable[setting["Font Size combo"]]
+        fontDes     = StyleSource.CURRENT_FONTSIZE
+        logDeleteTime = LogDeleteTimeDict[setting["Log file auto deletion time combo"]]
+        f = open (f"{os.path.join(dirname, BackEndDataPath.fileManageData)}", "w+")
+        toml.dump({"AUTO_DELETE_TIME" : logDeleteTime}, f)
+        shutil.copy(
+            os.path.join(dirname, colorSource), os.path.join(dirname, colorDes))
+        shutil.copy(
+            os.path.join(dirname, fontSource), os.path.join(dirname, fontDes))  
+        # except:
+            # MsgBox.WarnBox(Text.changeError)
         self.signal.restart.emit() 

@@ -55,7 +55,7 @@ class InputBox(QWidget):
         Args:
             text (str): text content
         """
-        self.inputFeild.setText(text)
+        self.inputFeild.setText(str(text))
     
     def disable(self):
         """ a public function to disable the edit """

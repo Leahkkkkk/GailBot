@@ -40,8 +40,8 @@ class ProgressBar (QSlider):
         self.setEnabled(False)
     
     def updateValue(self, value: int):
-        if value >= self.maximum() // 1.5:
-            self.setMaximum(int (value + 10))
+        if value >= self.maximum() // 1.1:
+            self.setMaximum(int (self.maximum() + 10))
         self.setValue(value)
     
     def resetRange(self):

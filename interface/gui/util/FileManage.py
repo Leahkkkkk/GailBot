@@ -19,7 +19,7 @@ from util.GailBotData import getWorkPath, FileManage
 def clearLog():
     """ clear the log that is  """
     currentTime = int(time.time())
-    deleteTime = currentTime - FileManage.AUTO_DELETE_TIME
+    deleteTime = currentTime - FileManage.AUTO_DELETE_TIME * 24 * 60 * 60
     logdir = getWorkPath().logFiles
     files = glob.iglob(os.path.join(logdir, "*.log"))
     for file in files:
