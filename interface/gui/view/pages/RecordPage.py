@@ -98,7 +98,7 @@ class RecordProgress(QWidget):
     def _initWidget(self):
         """ initializes the widgets """
         self.timeDisplay = Label.Label(
-            str(self.counter), FontSize.HEADER1, FontFamily.CLOCK )
+            str(self.counter), FontSize.HEADER1, FontFamily.CLOCK, others="text-align:center;" )
         self.iconBtn = Button.ToggleBtn((Asset.recordStop, Asset.recordPlay))
         self.iconBtn.setFixedSize(QSize(Dimension.SMALLICONBTN,Dimension.SMALLICONBTN))
         self.iconBtn.setIconSize(QSize(Dimension.SMALLICONBTN, Dimension.SMALLICONBTN))
@@ -108,7 +108,7 @@ class RecordProgress(QWidget):
         self.endIconBtn.setIconSize(QSize(Dimension.SMALLICONBTN, Dimension.SMALLICONBTN))
         self.endIconBtn.setStyleSheet(StyleSheet.iconBtn)
         self.recordBar = ProgressBar.ProgressBar(Qt.Orientation.Horizontal)
-        
+        # self.recordBar = ProgressBar.SimpleDial()
     def _initThread(self):
         """ initialize the thread that controls the progress bar """
         self.thread = Thread()
@@ -116,6 +116,7 @@ class RecordProgress(QWidget):
 
     def _initLayout(self):
         """ initalizes the layout  """
+        # self.timeDisplay.setFixedWidth(65)
         self.verticalLayout = QVBoxLayout()
         self.horizontalLayout = QHBoxLayout()
         self.horizontalContainer = QWidget()
