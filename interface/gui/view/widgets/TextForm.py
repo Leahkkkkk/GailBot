@@ -92,12 +92,12 @@ class TextForm(QWidget):
     
     def _initWidget(self):
         """ initializes the widgets """
-        self.layout = QVBoxLayout()
-        self.setLayout(self.layout)
- 
+        self.verticalLayout = QVBoxLayout()
+        self.setLayout(self.verticalLayout)
+        self.verticalLayout.setSpacing(10)
         for key, items in self.data.items():
             newLabel = Label.Label(key, FontSize.BTN, FontFamily.MAIN)
-            self.layout.addWidget(newLabel)
+            self.verticalLayout.addWidget(newLabel)
             for key, value in items.items():
                 keyCopy = key
                 if "bool" in key:
@@ -106,15 +106,20 @@ class TextForm(QWidget):
                 elif "combo" in key:
                     key = key.replace("combo","")
                     newInput = InputBox.InputCombo(label=key, selections=value)
+                    newInput.setMinimumHeight(80)
                 else:
                     newInput = InputBox.InputBox(key, inputText=value)
-                self.layout.addWidget(newInput)
+                self.verticalLayout.addWidget(newInput)
                 self.inputDict[keyCopy] = newInput
-        self.layout.addStretch()
+    
        
     def _initStyle(self):
         """ initializes the widget style """
         initSecondaryColorBackground(self)
+    
+    def addWidget(self, widget):
+        self.verticalLayout.addWidget(widget)
+   
         
 
         

@@ -89,3 +89,9 @@ class SettingForm(QWidget):
             self.verticalLayout.addWidget(self.caption, alignment = center )
         self.verticalLayout.addWidget(self.scroll, alignment = center)
         self.verticalLayout.addStretch()
+    
+    def addWidget(self, widget: QWidget):
+        self.setForm.addWidget(widget)
+
+    
+        

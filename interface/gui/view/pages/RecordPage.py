@@ -28,14 +28,14 @@ from view.widgets import (
     Button, 
     Label, 
     ToggleView, 
-    TextForm
+    TextForm,
+    ProgressBar
 )
 
 from PyQt6.QtWidgets import (
     QWidget, 
     QVBoxLayout, 
     QHBoxLayout, 
-    QProgressBar
 )
 from PyQt6.QtCore import Qt, QTimer, QSize, QThread, pyqtSignal
 
@@ -58,14 +58,11 @@ class Thread(QThread):
 
     def run(self):
         self.kill = False
-        for i in range(100):
-            if not self.kill:
-                time.sleep(0.5)
-                self.current += 1
-                self._signal.emit(self.current)
-            else:
-                break
-            
+        while not self.kill:
+            time.sleep(1)
+            self.current += 1
+            self._signal.emit(self.current)
+    
     def cancel(self):
         self.kill = True
    
@@ -110,10 +107,8 @@ class RecordProgress(QWidget):
         self.endIconBtn.setFixedSize(QSize(Dimension.SMALLICONBTN,Dimension.SMALLICONBTN))
         self.endIconBtn.setIconSize(QSize(Dimension.SMALLICONBTN, Dimension.SMALLICONBTN))
         self.endIconBtn.setStyleSheet(StyleSheet.iconBtn)
-        self.recordBar = ProgressBar()
-        self.recordBar.setMinimumWidth(Dimension.PROGRESSBARWIDTH)
-        self.recordBar.setMinimumHeight(Dimension.PROGRESSBARHEIGHT)
-
+        self.recordBar = ProgressBar.ProgressBar(Qt.Orientation.Horizontal)
+        
     def _initThread(self):
         """ initialize the thread that controls the progress bar """
         self.thread = Thread()
@@ -178,20 +173,7 @@ class RecordProgress(QWidget):
     
     def setProgressBar(self, msg):
         """ set the value of the progress bar to the msg """
-        self.recordBar.setValue(int(msg))
-
-
-class ProgressBar(QProgressBar):
-    """ bar that shows progress of current recording """
-    def __init__(self, *args, **kwargs):
-        """ initializes progress bar """
-        super(ProgressBar, self).__init__(*args, **kwargs)
-    
-
-    def start(self):
-        """ starts the timer """
-        self.startTimer(0)
-
+        self.recordBar.updateValue(int(msg))
 
 class RecordPage(QWidget):
     """ class for the record page """
@@ -209,7 +191,6 @@ class RecordPage(QWidget):
                                   FontSize.HEADER2, 
                                   FontFamily.MAIN)
         self.recordForm    = TextForm.TextForm(RecordForm)
-        self.recordForm.layout.setSpacing(5)
         self.toggleSetting = ToggleView.ToggleView(Text.recSet, 
                                                    self.recordForm,
                                                    header=True)

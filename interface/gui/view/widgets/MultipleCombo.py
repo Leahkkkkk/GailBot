@@ -14,13 +14,6 @@ from PyQt6.QtCore import QSize, Qt
 
 
 class ToggleCombo(QWidget):
-    """ generate a list of toggle view, 
-        Arg: 
-            data(dict): a dictionary that stores  the toggle view data
-                        the key is the label, the value is another dictionary
-                        that will be used to construct a combolist
-            showBasicSet(bool): 
-    """
     def __init__(self, 
                  data:Dict[str, dict],  
                  showBasicSet:bool = True, 

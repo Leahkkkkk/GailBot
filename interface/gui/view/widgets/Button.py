@@ -154,7 +154,6 @@ class ToggleBtn(QPushButton):
         self.update()
         self.show()
 
-    
     def _changeSymbol(self):
         """ changes the button symbol """
         if self.state:
@@ -167,8 +166,6 @@ class ToggleBtn(QPushButton):
         """ reset teh button's state to initial state"""
         self.setIcon(self.rightIcon)
         self.state = True
-
-    
 
 class onOffButton(QWidget):
     """ a toggle button that displays "on" or "off" text while being toggled
@@ -262,7 +259,6 @@ class iconBtn(QPushButton):
       if label:
           self.setText(label)
           
-  
 """ NOTE: currently unused in the interface  """  
 class dropDownButton(QWidget):
     """ a dropdown button widget, when the button is clicked,
@@ -292,7 +288,6 @@ class dropDownButton(QWidget):
         self.buttonList.hide()
         self.btn.clicked.connect(self._toggle)
 
-    
     def _toggle(self):
         """ change the state and the sign of the button """
         if self.hideView == True:

@@ -46,7 +46,7 @@ class Tab(QWidget):
         *args,
         **kwargs
         ):
-        """  A tab with the built-in logic of sequntial dependencies among 
+        """  A tab with the built-in logic of sequential dependencies among 
             different pages 
 
         Args:

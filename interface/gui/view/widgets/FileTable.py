@@ -227,7 +227,7 @@ class FileTable(QTableWidget):
         """ adding a list of files to file table
             ** connected to sendfile signal from file database
         Args:
-            files (List[Tuple]): _description_
+            files (List[Tuple])
         """
         for file in files:
             self.addFile(file)
@@ -497,8 +497,7 @@ class FileTable(QTableWidget):
                 self.item(rowIdx, i).setBackground(QColor(color))
             else:
                 self.logger.info("failed to set row color")
-    
-     
+       
 class TableCellButtons(QObject):
     def __init__(
         self, 
@@ -528,7 +527,7 @@ class TableCellButtons(QObject):
         self._initWidgets()
 
     def _initWidgets(self):
-        """ iniatialize the widget """
+        """ initialize the widget """
         if "check" in self.widgets:
             # create the widget
             self.checkBoxContainer = QWidget()

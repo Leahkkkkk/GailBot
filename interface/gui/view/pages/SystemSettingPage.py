@@ -24,6 +24,7 @@ from util.Text import SystemSetPageText as Text
 from util.Text import SystemSettingForm as Form
 from util.Text import About, Links
 from util.Path import getProjectRoot
+from util.FileManage import clearAllLog
 from view.widgets import MsgBox
 
 from PyQt6.QtWidgets import (
@@ -48,33 +49,34 @@ class SystemSettingPage(QWidget):
         self._initWidget()
         self._initLayout()
         self._initStyle()
+        self._connectSignal()
         
     def _initWidget(self):
         """ initializes widgets to be shown """
         self.sideBar = SideBar.SideBar()
-       
         self.Mainstack = QStackedWidget()
         self.SysSetForm = SettingForm.SettingForm(
             Text.header, self.data, Text.caption)
+        self.DeleteLog = Button.ColoredBtn("Clear log files", Color.PRIMARY_BUTTON)
+       
         self.Mainstack.addWidget(self.SysSetForm)
         self.GuideLink = Label.Label(Links.guideLink, FontSize.LINK, link=True)
         self.cancelBtn = Button.ColoredBtn(
             Text.cancelBtn, Color.CANCEL_QUIT)
         self.saveBtn = Button.ColoredBtn(
             Text.saveBtn, Color.SECONDARY_BUTTON)
-        self.saveBtn.clicked.connect(self.confirmChangeSetting)
         self.versionLabel = Label.Label(About.version, FontSize.SMALL)
         self.copyRightLabel = Label.Label(About.copyRight, FontSize.SMALL)
-        
-        self.sideBar.addStretch()
-        self.sideBar.addWidget(self.saveBtn)
-        self.sideBar.addWidget(self.cancelBtn)
-        self.sideBar.addStretch()
-        self.sideBar.addWidget(self.GuideLink, alignment=bottom)
-        self.sideBar.addWidget(self.versionLabel, alignment=bottom)
-        self.sideBar.addWidget(self.copyRightLabel, alignment=bottom)
-        
-        
+    
+    def _connectSignal(self):
+        """ connect the signal to slots """
+        self.DeleteLog.clicked.connect(self.clearLog)
+        self.saveBtn.clicked.connect(self.confirmChangeSetting)
+    
+    def clearLog(self):
+        MsgBox.ConfirmBox("Confirm clearing all log files", clearAllLog)
+
+
     def _initLayout(self):
         """ initializes the layout of the page """
         self.horizontalLayout = QHBoxLayout()
@@ -85,6 +87,14 @@ class SystemSettingPage(QWidget):
         """ add widgets to horizontal layout """
         self.horizontalLayout.addWidget(self.sideBar)
         self.horizontalLayout.addWidget(self.Mainstack)
+        self.sideBar.addStretch()
+        self.sideBar.addWidget(self.DeleteLog)
+        self.sideBar.addWidget(self.saveBtn)
+        self.sideBar.addWidget(self.cancelBtn)
+        self.sideBar.addStretch()
+        self.sideBar.addWidget(self.GuideLink, alignment=bottom)
+        self.sideBar.addWidget(self.versionLabel, alignment=bottom)
+        self.sideBar.addWidget(self.copyRightLabel, alignment=bottom)
 
     def _initStyle(self):
         self.Mainstack.setObjectName(StyleSheet.sysSettingStackID)
