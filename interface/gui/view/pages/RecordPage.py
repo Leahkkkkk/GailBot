@@ -107,8 +107,8 @@ class RecordProgress(QWidget):
         self.endIconBtn.setFixedSize(QSize(Dimension.SMALLICONBTN,Dimension.SMALLICONBTN))
         self.endIconBtn.setIconSize(QSize(Dimension.SMALLICONBTN, Dimension.SMALLICONBTN))
         self.endIconBtn.setStyleSheet(StyleSheet.iconBtn)
-        self.recordBar = ProgressBar.ProgressBar(Qt.Orientation.Horizontal)
-        # self.recordBar = ProgressBar.SimpleDial()
+        # self.recordBar = ProgressBar.ProgressBar(Qt.Orientation.Horizontal)
+        self.recordBar = ProgressBar.SimpleDial()
     def _initThread(self):
         """ initialize the thread that controls the progress bar """
         self.thread = Thread()
@@ -116,7 +116,7 @@ class RecordProgress(QWidget):
 
     def _initLayout(self):
         """ initalizes the layout  """
-        # self.timeDisplay.setFixedWidth(65)
+        self.timeDisplay.setFixedWidth(65)
         self.verticalLayout = QVBoxLayout()
         self.horizontalLayout = QHBoxLayout()
         self.horizontalContainer = QWidget()
@@ -124,12 +124,12 @@ class RecordProgress(QWidget):
         self.setLayout(self.verticalLayout)
         self.horizontalLayout.addStretch()
         self.horizontalLayout.addWidget(self.iconBtn, alignment=left)
+        self.horizontalLayout.addWidget(self.timeDisplay, alignment=center)
         self.horizontalLayout.addWidget(self.endIconBtn, alignment=left)
-        self.horizontalLayout.addWidget(self.recordBar, alignment=center)
         self.horizontalLayout.setSpacing(Dimension.LARGE_SPACING)
         self.horizontalLayout.addStretch()
         self.verticalLayout.addStretch()
-        self.verticalLayout.addWidget(self.timeDisplay, 
+        self.verticalLayout.addWidget(self.recordBar, 
                                       alignment=Qt.AlignmentFlag.AlignHCenter)
         self.verticalLayout.addWidget(self.horizontalContainer)
 
