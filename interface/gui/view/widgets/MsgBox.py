@@ -91,4 +91,3 @@ class WarnBox:
         if self.ok:
             self.ok()
 
-
