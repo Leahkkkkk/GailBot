@@ -17,7 +17,7 @@ from util.GailBotData import getWorkPath, FileManage
 
 
 def clearLog():
-    """ clear the log that is  """
+    """ clear the expired log file"""
     currentTime = int(time.time())
     deleteTime = currentTime - FileManage.AUTO_DELETE_TIME * 24 * 60 * 60
     logdir = getWorkPath().logFiles
@@ -28,6 +28,7 @@ def clearLog():
             os.remove(file)
 
 def clearAllLog():
+    """ clear all the log file  """
     logdir = getWorkPath().logFiles
     files = glob.iglob(os.path.join(logdir, "*.log"))
     for file in files:

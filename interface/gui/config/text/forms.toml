@@ -73,9 +73,9 @@ HiLabSuite = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
 "Log file auto deletion time combo" = ["every day", "every week", "every month", "every 2 months"]
 
 ["log deletion"]
-"every day" = 1
-"every week" = 7
-"every month" = 30
+"every day"      = 1
+"every week"     = 7
+"every month"    = 30
 "every 2 months" = 60
 
 [formField]

@@ -26,8 +26,10 @@ from view.widgets.Background import initSecondaryColorBackground
 
 from PyQt6.QtWidgets import (
     QWidget, 
-    QVBoxLayout
+    QVBoxLayout,
+    QHBoxLayout
 )
+from PyQt6.QtCore import Qt
 
 class TextForm(QWidget):
     def __init__(self, 
@@ -52,6 +54,7 @@ class TextForm(QWidget):
         self.data = data
         self.inputDict = dict()
         self._initWidget()
+        self._initLayout()
         if background:
             self._initStyle()
     
@@ -92,12 +95,14 @@ class TextForm(QWidget):
     
     def _initWidget(self):
         """ initializes the widgets """
-        self.verticalLayout = QVBoxLayout()
-        self.setLayout(self.verticalLayout)
-        self.verticalLayout.setSpacing(10)
+        self.mainContainer = QWidget()
+        self.mainContainer.setMinimumWidth(Dimension.INPUTWIDTH * 2)
+        self.mainVertical = QVBoxLayout()
+        self.mainContainer.setLayout(self.mainVertical)
+        self.mainVertical.setSpacing(10)
         for key, items in self.data.items():
             newLabel = Label.Label(key, FontSize.BTN, FontFamily.MAIN)
-            self.verticalLayout.addWidget(newLabel)
+            self.mainVertical.addWidget(newLabel)
             for key, value in items.items():
                 keyCopy = key
                 if "bool" in key:
@@ -109,18 +114,33 @@ class TextForm(QWidget):
                     newInput.setMinimumHeight(80)
                 else:
                     newInput = InputBox.InputBox(key, inputText=value)
-                self.verticalLayout.addWidget(newInput)
+                self.mainVertical.addWidget(newInput)
                 self.inputDict[keyCopy] = newInput
-    
+                
+    def _initLayout(self):
+        """ initialize the layout """
+        self.horizontalLayout = QHBoxLayout()
+        self.setLayout(self.horizontalLayout)
+        self.sideVertical = QVBoxLayout()
+        self.sideContainer = QWidget()
+        self.sideContainer.setLayout(self.sideVertical)
+        self.horizontalLayout.addWidget(self.mainContainer, stretch=3)
+        self.horizontalLayout.addWidget(
+            self.sideContainer, stretch=1, alignment= Qt.AlignmentFlag.AlignRight)
+        self.horizontalLayout.setSpacing(Dimension.LARGE_SPACING * 5)
        
     def _initStyle(self):
         """ initializes the widget style """
         initSecondaryColorBackground(self)
     
-    def addWidget(self, widget):
-        self.verticalLayout.addWidget(widget)
+    def addWidget(self, widget, alignment = None):
+        """ add widget to the Text form under the same column """
+        self.mainVertical.addWidget(widget, alignment=alignment)
    
-        
+    def addWidgetToSide(self, widget, alignment = Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignAbsolute):
+        """ add widget to the form , on a separate column to the right side 
+            of the form"""
+        self.sideVertical.addWidget(widget, alignment= alignment)
 
         
     

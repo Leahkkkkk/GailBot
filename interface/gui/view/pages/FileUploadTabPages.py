@@ -18,7 +18,7 @@ import os
 from util.Style import Color, FontSize, Dimension
 from util.Text import FileUploadPageText as Text
 from util.Logger import makeLogger
-from model.dataBase.fileDB import fileDict
+from model.dataBase.FileDatabase import fileDict
 from view.widgets.Button import ColoredBtn
 from view.widgets.Label import Label
 from view.widgets.TabPage import TabPage
@@ -26,7 +26,6 @@ from view.widgets.MsgBox import WarnBox
 from view.widgets.ComboBox import ComboBox
 
 import userpaths
-
 from PyQt6.QtWidgets import (
     QWidget,
     QFileDialog, 

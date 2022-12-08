@@ -59,7 +59,12 @@ class SystemSettingPage(QWidget):
         self.Mainstack = QStackedWidget()
         self.SysSetForm = SettingForm.SettingForm(
             Text.header, self.data, Text.caption)
-        self.DeleteLog = Button.ColoredBtn("Clear log files", Color.PRIMARY_BUTTON)
+        self.DeleteLog = Button.BorderBtn(
+            "Clear log files", 
+            Color.INPUT_TEXT, 
+            other= f"background-color: {Color.INPUT_BACKGROUND}")
+        self.DeleteLog.setFixedWidth(100)
+        self.DeleteLog.setFixedHeight(30)
        
         self.Mainstack.addWidget(self.SysSetForm)
         self.GuideLink = Label.Label(Links.guideLink, FontSize.LINK, link=True)
@@ -90,13 +95,13 @@ class SystemSettingPage(QWidget):
         self.horizontalLayout.addWidget(self.sideBar)
         self.horizontalLayout.addWidget(self.Mainstack)
         self.sideBar.addStretch()
-        self.sideBar.addWidget(self.DeleteLog)
         self.sideBar.addWidget(self.saveBtn)
         self.sideBar.addWidget(self.cancelBtn)
         self.sideBar.addStretch()
         self.sideBar.addWidget(self.GuideLink, alignment=bottom)
         self.sideBar.addWidget(self.versionLabel, alignment=bottom)
         self.sideBar.addWidget(self.copyRightLabel, alignment=bottom)
+        self.SysSetForm.addWidgetTotheSide(self.DeleteLog)
 
     def _initStyle(self):
         self.Mainstack.setObjectName(StyleSheet.sysSettingStackID)
@@ -123,19 +128,18 @@ class SystemSettingPage(QWidget):
     def changeSetting(self)->None:
         """ rewrite the current setting file based on the user's choice"""
         setting = self.SysSetForm.getValue()
-        
-        # try:
-        colorSource = StyleTable[setting["Color Mode combo"]]
-        colorDes    = StyleSource.CURRENT_COLOR
-        fontSource  = StyleTable[setting["Font Size combo"]]
-        fontDes     = StyleSource.CURRENT_FONTSIZE
-        logDeleteTime = LogDeleteTimeDict[setting["Log file auto deletion time combo"]]
-        f = open (f"{os.path.join(dirname, BackEndDataPath.fileManageData)}", "w+")
-        toml.dump({"AUTO_DELETE_TIME" : logDeleteTime}, f)
-        shutil.copy(
-            os.path.join(dirname, colorSource), os.path.join(dirname, colorDes))
-        shutil.copy(
-            os.path.join(dirname, fontSource), os.path.join(dirname, fontDes))  
-        # except:
-            # MsgBox.WarnBox(Text.changeError)
+        try:
+            colorSource = StyleTable[setting["Color Mode combo"]]
+            colorDes    = StyleSource.CURRENT_COLOR
+            fontSource  = StyleTable[setting["Font Size combo"]]
+            fontDes     = StyleSource.CURRENT_FONTSIZE
+            logDeleteTime = LogDeleteTimeDict[setting["Log file auto deletion time combo"]]
+            f = open (f"{os.path.join(dirname, BackEndDataPath.fileManageData)}", "w+")
+            toml.dump({"AUTO_DELETE_TIME" : logDeleteTime}, f)
+            shutil.copy(
+                os.path.join(dirname, colorSource), os.path.join(dirname, colorDes))
+            shutil.copy(
+                os.path.join(dirname, fontSource), os.path.join(dirname, fontDes))  
+        except:
+            MsgBox.WarnBox(Text.changeError)
         self.signal.restart.emit() 

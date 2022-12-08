@@ -10,9 +10,9 @@ Modified By:  Siara Small  & Vivian Li
 '''
 
 
-from model.dataBase.fileDB import FileModel
-from model.dataBase.profileDB import ProfileModel
-from model.dataBase.pluginDB import PluginModel
+from model.dataBase.FileDatabase import FileModel
+from model.dataBase.ProfileDatabase import ProfileModel
+from model.dataBase.PluginDatabase import PluginModel
 
 class Model():
     """ a database that stores three tables: 

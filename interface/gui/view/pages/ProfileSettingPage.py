@@ -22,8 +22,8 @@ from util.Logger import makeLogger
 
 from view.Signals import ProfileSignals
 from view.pages import (
-    RequiredSetPage, 
-    PostSetPage, 
+    RequiredSettingPage, 
+    PostSettingPage, 
     PluginPage
 )
 from view.widgets import (
@@ -91,8 +91,8 @@ class ProfileSettingPage(QWidget):
         self.versionLabel = Label.Label(About.version, FS.SMALL)
         self.copyRightLabel = Label.Label(About.copyRight, FS.SMALL)
         self.settingStack = QStackedWidget(self)
-        self.RequiredSetPage = RequiredSetPage.RequiredSetPage()
-        self.PostSetPage = PostSetPage.PostSetPage()   
+        self.RequiredSetPage = RequiredSettingPage.RequiredSettingPage()
+        self.PostSetPage = PostSettingPage.PostSettingPage()   
         self.PluginPage = PluginPage.PluginPage()
         self.selectSettings.setCurrentIndex(0)     
         self.placeHolder = QWidget()

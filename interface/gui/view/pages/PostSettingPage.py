@@ -17,7 +17,7 @@ from util.Text import PostSettingForm as Form
 
 from PyQt6.QtWidgets import QWidget, QVBoxLayout
 
-class PostSetPage(QWidget):
+class PostSettingPage(QWidget):
     """ class for the post-transcription settings page """
     def __init__(self, *args, **kwargs) -> None:
         """ initializes class """
@@ -31,7 +31,7 @@ class PostSetPage(QWidget):
         self.layout.addWidget(self.setForm)
     
     def setValue(self, values:dict):
-        """ sets the value of the setting form
+        """ set the value of the setting form
         """
         try:
             self.setForm.setValue(values)
@@ -39,7 +39,7 @@ class PostSetPage(QWidget):
             WarnBox("An error occurred when loading the post transcription profile data")
     
     def getValue(self) -> dict:
-        """ gets the value in the setting form """
+        """ get the value in the setting form """
         try:
             return self.setForm.getValue()
         except:

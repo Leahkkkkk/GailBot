@@ -12,7 +12,7 @@ Modified By:  Siara Small  & Vivian Li
 from util.Style import FontSize,FontFamily
 from util.Text import ProfilePageText as Text
 from view.widgets import  Label
-from view.components import RequiredSet
+from view.components import RequiredSettingForm
 from view.widgets.MsgBox import WarnBox
 
 from PyQt6.QtWidgets import (
@@ -23,7 +23,7 @@ from PyQt6.QtCore import Qt
 
 center = Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignHCenter
 
-class RequiredSetPage(QWidget):
+class RequiredSettingPage(QWidget):
     """ class for the required settings page """
     def __init__(self, *args, **kwargs) -> None:
         """ initializes the page """
@@ -53,7 +53,7 @@ class RequiredSetPage(QWidget):
             Text.requiredSetHeader, FontSize.HEADER2, FontFamily.MAIN )
         self.description = Label.Label(
             Text.requiredSetCaption, FontSize.DESCRIPTION, FontFamily.MAIN )
-        self.form = RequiredSet.RequiredSet()
+        self.form = RequiredSettingForm.RequiredSettingForm()
     
     def _initLayout(self):
         """ initializes the layout of the page """

@@ -16,7 +16,7 @@ import os
 from view.Signals import ProfileSignals
 from view.widgets import Button, MsgBox
 from util.Style import Color, Dimension
-from util.Text import CreatNewProfileTabText as Text 
+from util.Text import CreateNewProfileTabText as Text 
 
 from PyQt6.QtWidgets import (
     QDialog, 

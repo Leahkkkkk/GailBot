@@ -13,9 +13,9 @@ Model view controller than connect ths database to a front end view object
 
 from util.Logger import makeLogger
 from view.MainWindow import MainWindow
-from model.dataBase.fileDB import FileModel
-from model.dataBase.profileDB import ProfileModel
-from model.dataBase.pluginDB import PluginModel
+from model.dataBase.FileDatabase import FileModel
+from model.dataBase.ProfileDatabase import ProfileModel
+from model.dataBase.PluginDatabase import PluginModel
 
 
 class MVController:

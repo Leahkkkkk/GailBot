@@ -1,5 +1,5 @@
 '''
-File: RequiredSet.py
+File: RequiredSettingForm.py
 Project: GailBot GUI
 File Created: Friday, 4th November 2022 1:01:27 pm
 Author: Siara Small  & Vivian Li
@@ -24,7 +24,7 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import Qt
 
-class RequiredSet(QWidget):
+class RequiredSettingForm(QWidget):
     """ implementation of a form that allow user to create required setting 
     
     Public Functions: 

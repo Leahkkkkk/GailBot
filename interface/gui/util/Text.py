@@ -47,7 +47,7 @@ SystemSetPageText = TextParser.SystemSetPageTextData.from_dict(
     text["SystemSettingPage"])
 CreateNewProfilePageText = TextParser.CreateNewProfileTextData.from_dict(
     text["CreateNewProfilePageText"])
-CreatNewProfileTabText = TextParser.CreateNewProfileTabTextData.from_dict(
+CreateNewProfileTabText = TextParser.CreateNewProfileTabTextData.from_dict(
     text["CreateNewProfileTabText"]
 )
 ChooseFileTabText = TextParser.ChooseFileTabTextData.from_dict(

@@ -20,7 +20,7 @@ from typing import List, Tuple
 import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(os.path.join(__file__, os.pardir))))
 import logging
-from model.dataBase.fileDB import FileObj
+from model.dataBase.FileDatabase import FileObj
 from util.GailBotData import Credential, ProfileConfig, Plugin, getWorkPath
 
 from gailbot.controller import GailBotController

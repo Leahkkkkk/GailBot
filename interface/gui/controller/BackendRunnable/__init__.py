@@ -6,7 +6,7 @@
         for testing 
         
     GBRunnable:
-        run actual gailbot functin
+        run actual gailbot function
         args:
             @filename: str
             @filepath: str

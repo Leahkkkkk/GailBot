@@ -7,6 +7,7 @@ Author: Siara Small  & Vivian Li
 Last Modified: Sunday, 6th November 2022 1:10:02 pm
 Modified By:  Siara Small  & Vivian Li
 -----
+Description: implement a visual component to display progress 
 '''
 import os 
 from dataclasses import dataclass
@@ -27,6 +28,7 @@ from config.ConfigPath import BackEndDataPath
 import userpaths
 
 basedir = getProjectRoot()
+
 config = toml.load(os.path.join(basedir, BackEndDataPath.gailBotData))
 fileManage = toml.load(os.path.join(basedir, BackEndDataPath.fileManageData))
 Credential = CredentialData.from_dict(config["credential"])

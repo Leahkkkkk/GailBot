@@ -25,7 +25,7 @@ from view.widgets.MsgBox import WarnBox
 from view.widgets.Background import initPrimaryColorBackground
 from view.components import OutputFormatForm, SpeechEngineForm
 from view.pages.PluginPage import PluginPage
-from view.pages.PostSetPage import PostSetPage
+from view.pages.PostSettingPage import PostSettingPage
 from view.widgets.Background import initSecondaryColorBackground
 
 from PyQt6.QtWidgets import  QVBoxLayout
@@ -225,15 +225,13 @@ class OutPutFormatSetting(TabPage):
             WarnBox("an error occurred when getting the form data")
             
 
-
-      
 class PostTranscribeSetting(TabPage):
     """ class for the post-transcription settings tab """
     def __init__(self, *args, **kwargs) -> None:
         """ initializes tab """
         super().__init__(*args, **kwargs)
         self.logger = makeLogger("F")
-        self.mainForm = PostSetPage()
+        self.mainForm = PostSettingPage()
         self.confirmBtn = ColoredBtn(Text.cofirmBtn, Color.SECONDARY_BUTTON)
         self.confirmBtn.clicked.connect(lambda: self.signals.nextPage.emit())
         self.verticallayout = QVBoxLayout()
@@ -244,6 +242,7 @@ class PostTranscribeSetting(TabPage):
             alignment=Qt.AlignmentFlag.AlignRight)
         initPrimaryColorBackground(self.mainForm.setForm.setForm)
         initPrimaryColorBackground(self.mainForm.setForm.scroll)
+        
     def getData(self):
         """ gets current value of data """
         try:
