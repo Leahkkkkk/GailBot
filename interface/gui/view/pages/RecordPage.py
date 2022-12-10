@@ -44,7 +44,80 @@ top = Qt.AlignmentFlag.AlignTop
 right = Qt.AlignmentFlag.AlignRight
 left = Qt.AlignmentFlag.AlignLeft
 
+class RecordPage(QWidget):
+    """ class for the record page """
+    def __init__(self, *args, **kwargs) -> None:
+        """ initializes the class """
+        super().__init__(*args, **kwargs)
+        self._initWidget()
+        self._initHorizontalLayout()
+        self._initLayout()
+        self._connectSignal()
+        
+    def _initWidget(self):
+        """ initializes the widgets """
+        self.header = Label.Label(Text.record, 
+                                  FontSize.HEADER2, 
+                                  FontFamily.MAIN)
+        self.recordForm    = TextForm.TextForm(RecordForm)
+        self.toggleSetting = ToggleView.ToggleView(Text.recSet, 
+                                                   self.recordForm,
+                                                   header=True)
+        self.startRecordBtn = Button.ColoredBtn(Text.start, Color.PRIMARY_BUTTON)
+        self.cancelBtn = Button.ColoredBtn(Text.cancel, Color.CANCEL_QUIT)
+        self.recordInprogress =  RecordProgress()
+        self.recordInprogress.hide()
+        self.toggleSetting.setScrollHeight(Dimension.DEFAULTTABHEIGHT - 80)
 
+    def _initHorizontalLayout(self):
+        """ initializes the horizontal layout of buttons to 
+            be added to the vertical layout """
+        self.horizontal = QWidget()
+        self.horizontalLayout = QHBoxLayout()
+        self.horizontal.setLayout(self.horizontalLayout)
+        self.horizontalLayout.addWidget(self.startRecordBtn, alignment = right)
+        self.horizontalLayout.addWidget(self.cancelBtn, alignment = left)
+        self.horizontalLayout.setSpacing(Dimension.LARGE_SPACING) 
+        
+    def _initLayout(self):
+        """ initializes the layout """
+        self.layout = QVBoxLayout()
+        self.setLayout(self.layout)
+        addLogo(self.layout)
+        self.layout.addWidget(self.header, 
+                              alignment=center)
+        self.layout.addWidget(self.toggleSetting,
+                            alignment=center)
+        self.toggleSetting.setMaximumHeight(Dimension.DEFAULTTABHEIGHT)
+        self.layout.addStretch()
+        self.layout.addWidget(self.recordInprogress)
+        self.layout.addWidget(self.horizontal)
+
+    
+    def _connectSignal(self):
+        """ connects signals upon button clicks """
+        self.startRecordBtn.clicked.connect(
+            self.startRecord)
+        self.cancelBtn.clicked.connect(
+            self.cancelRecord)
+        self.recordInprogress.endIconBtn.clicked.connect(
+            self.cancelRecord)
+        
+    def startRecord(self):
+        """ handler to start recording """
+        self.recordInprogress.recordSwitch()
+        self.recordInprogress.show()
+        self.recordForm.disableForm()
+        
+    def cancelRecord(self):
+        """ handler to cancel recording in progress """
+        self.recordInprogress.hide()
+        self.recordInprogress.clearTimer()
+        self.recordInprogress.endRecording()
+        self.recordForm.enableForm()
+        
+
+        
 class Thread(QThread):
     """ Thread to control the value displayed on the progressbar """
     _signal = pyqtSignal(int)
@@ -107,8 +180,9 @@ class RecordProgress(QWidget):
         self.endIconBtn.setFixedSize(QSize(Dimension.SMALLICONBTN,Dimension.SMALLICONBTN))
         self.endIconBtn.setIconSize(QSize(Dimension.SMALLICONBTN, Dimension.SMALLICONBTN))
         self.endIconBtn.setStyleSheet(StyleSheet.iconBtn)
-        # self.recordBar = ProgressBar.ProgressBar(Qt.Orientation.Horizontal)
         self.recordBar = ProgressBar.SimpleDial()
+        
+        
     def _initThread(self):
         """ initialize the thread that controls the progress bar """
         self.thread = Thread()
@@ -175,78 +249,4 @@ class RecordProgress(QWidget):
     def setProgressBar(self, msg):
         """ set the value of the progress bar to the msg """
         self.recordBar.updateValue(int(msg))
-
-class RecordPage(QWidget):
-    """ class for the record page """
-    def __init__(self, *args, **kwargs) -> None:
-        """ initializes the class """
-        super().__init__(*args, **kwargs)
-        self._initWidget()
-        self._initHorizontalLayout()
-        self._initLayout()
-        self._connectSignal()
-        
-    def _initWidget(self):
-        """ initializes the widgets """
-        self.header = Label.Label(Text.record, 
-                                  FontSize.HEADER2, 
-                                  FontFamily.MAIN)
-        self.recordForm    = TextForm.TextForm(RecordForm)
-        self.toggleSetting = ToggleView.ToggleView(Text.recSet, 
-                                                   self.recordForm,
-                                                   header=True)
-        self.startRecordBtn = Button.ColoredBtn(Text.start, Color.PRIMARY_BUTTON)
-        self.cancelBtn = Button.ColoredBtn(Text.cancel, Color.CANCEL_QUIT)
-        self.recordInprogress =  RecordProgress()
-        self.recordInprogress.hide()
-
-    def _initHorizontalLayout(self):
-        """ initializes the horizontal layout of buttons to 
-            be added to the vertical layout """
-        self.horizontal = QWidget()
-        self.horizontalLayout = QHBoxLayout()
-        self.horizontal.setLayout(self.horizontalLayout)
-        self.horizontalLayout.addWidget(self.startRecordBtn, alignment = right)
-        self.horizontalLayout.addWidget(self.cancelBtn, alignment = left)
-        self.horizontalLayout.setSpacing(Dimension.LARGE_SPACING) 
-        
-    def _initLayout(self):
-        """ initializes the layout """
-        self.layout = QVBoxLayout()
-        self.setLayout(self.layout)
-        addLogo(self.layout)
-        self.layout.addWidget(self.header, 
-                              alignment=center)
-        self.layout.addWidget(self.toggleSetting,
-                            alignment=center)
-        self.toggleSetting.setMaximumHeight(Dimension.DEFAULTTABHEIGHT)
-        self.layout.addStretch()
-        self.layout.addWidget(self.recordInprogress)
-        self.layout.addWidget(self.horizontal)
-
-    
-    def _connectSignal(self):
-        """ connects signals upon button clicks """
-        self.startRecordBtn.clicked.connect(
-            self.startRecord)
-        self.cancelBtn.clicked.connect(
-            self.cancelRecord)
-        self.recordInprogress.endIconBtn.clicked.connect(
-            self.cancelRecord)
-        
-    def startRecord(self):
-        """ handler to start recording """
-        self.recordInprogress.recordSwitch()
-        self.recordInprogress.show()
-        self.recordForm.disableForm()
-        
-    def cancelRecord(self):
-        """ handler to cancel recording in progress """
-        self.recordInprogress.hide()
-        self.recordInprogress.clearTimer()
-        self.recordInprogress.endRecording()
-        self.recordForm.enableForm()
-        
-
-        
 

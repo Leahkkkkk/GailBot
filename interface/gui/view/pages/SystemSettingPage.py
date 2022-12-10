@@ -12,7 +12,7 @@ Description: implement the system setting page
 import os
 import shutil 
 import toml
-from util.Style import Color, StyleSheet, FontSize
+from util.Style import Color, StyleSheet, FontSize,Dimension
 from view.widgets import (
     SideBar, 
     SettingForm, 
@@ -59,12 +59,13 @@ class SystemSettingPage(QWidget):
         self.Mainstack = QStackedWidget()
         self.SysSetForm = SettingForm.SettingForm(
             Text.header, self.data, Text.caption)
-        self.DeleteLog = Button.BorderBtn(
-            "Clear log files", 
+        self.deleteLog = Button.BorderBtn(
+            "Clear", 
             Color.INPUT_TEXT, 
             other= f"background-color: {Color.INPUT_BACKGROUND}")
-        self.DeleteLog.setFixedWidth(100)
-        self.DeleteLog.setFixedHeight(30)
+        self.deleteLog.setFixedWidth(100)
+        self.deleteLog.setFixedHeight(Dimension.INPUTHEIGHT)
+        self.deleteLogLabel = Label.Label("Clear All Log Files", FontSize.BODY)
        
         self.Mainstack.addWidget(self.SysSetForm)
         self.GuideLink = Label.Label(Links.guideLink, FontSize.LINK, link=True)
@@ -74,10 +75,12 @@ class SystemSettingPage(QWidget):
             Text.saveBtn, Color.SECONDARY_BUTTON)
         self.versionLabel = Label.Label(About.version, FontSize.SMALL)
         self.copyRightLabel = Label.Label(About.copyRight, FontSize.SMALL)
+        self.deleteContainer = QWidget()
+        self.deleteLayout = QHBoxLayout()
     
     def _connectSignal(self):
         """ connect the signal to slots """
-        self.DeleteLog.clicked.connect(self.clearLog)
+        self.deleteLog.clicked.connect(self.clearLog)
         self.saveBtn.clicked.connect(self.confirmChangeSetting)
     
     def clearLog(self):
@@ -101,7 +104,13 @@ class SystemSettingPage(QWidget):
         self.sideBar.addWidget(self.GuideLink, alignment=bottom)
         self.sideBar.addWidget(self.versionLabel, alignment=bottom)
         self.sideBar.addWidget(self.copyRightLabel, alignment=bottom)
-        self.SysSetForm.addWidgetTotheSide(self.DeleteLog)
+    
+        
+        self.deleteContainer.setLayout(self.deleteLayout)
+        self.deleteLayout.addWidget(self.deleteLogLabel)
+        self.deleteLayout.addSpacing(50)
+        self.deleteLayout.addWidget(self.deleteLog)
+        self.SysSetForm.addWidget(self.deleteContainer)
 
     def _initStyle(self):
         self.Mainstack.setObjectName(StyleSheet.sysSettingStackID)

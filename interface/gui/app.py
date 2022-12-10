@@ -10,8 +10,6 @@ Modified By:  Siara Small  & Vivian Li
 Description: main driver for a GUI app that support front and interface to 
              allow user transcribe file using gailbot 
 '''
-
-
 if __name__ == '__main__':
     
     import multiprocessing

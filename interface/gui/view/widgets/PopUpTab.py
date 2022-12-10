@@ -17,7 +17,7 @@ from typing import Dict
 from util.Style import Color, Dimension, buttonStyle
 from util.Text import PopUpText as Text
 
-from view.widgets import Button 
+from view.widgets import Button, ScrollArea
 from view.widgets.TabPage import TabPage
 from view.widgets.Background import initSecondaryColorBackground
 
@@ -25,9 +25,7 @@ from PyQt6.QtWidgets import (
     QTabWidget, 
     QWidget, 
     QVBoxLayout, 
-    QHBoxLayout,
-    QScrollArea)
-
+    QHBoxLayout)
 from PyQt6.QtCore import QObject, pyqtSignal, QSize, Qt
 
 """ default tab size """
@@ -227,7 +225,7 @@ class NoControlTab(QWidget):
             container  = QWidget()
             layout = QVBoxLayout()
             container.setLayout(layout)
-            scroll = QScrollArea()
+            scroll = ScrollArea.ScrollArea()
             scroll.setWidgetResizable(True)
             scroll.setWidget(tab)
             scroll.setVerticalScrollBarPolicy(

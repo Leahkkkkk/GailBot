@@ -15,7 +15,6 @@ import glob
 
 from util.GailBotData import getWorkPath, FileManage
 
-
 def clearLog():
     """ clear the expired log file"""
     currentTime = int(time.time())

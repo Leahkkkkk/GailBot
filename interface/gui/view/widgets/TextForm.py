@@ -15,7 +15,7 @@ from typing import Dict
 from view.widgets import (
     Label, 
     InputBox, 
-    Button
+    Button,
 )
 from util.Style import (
     FontFamily, 
@@ -27,7 +27,6 @@ from view.widgets.Background import initSecondaryColorBackground
 from PyQt6.QtWidgets import (
     QWidget, 
     QVBoxLayout,
-    QHBoxLayout
 )
 from PyQt6.QtCore import Qt
 
@@ -119,28 +118,17 @@ class TextForm(QWidget):
                 
     def _initLayout(self):
         """ initialize the layout """
-        self.horizontalLayout = QHBoxLayout()
-        self.setLayout(self.horizontalLayout)
-        self.sideVertical = QVBoxLayout()
-        self.sideContainer = QWidget()
-        self.sideContainer.setLayout(self.sideVertical)
-        self.horizontalLayout.addWidget(self.mainContainer, stretch=3)
-        self.horizontalLayout.addWidget(
-            self.sideContainer, stretch=1, alignment= Qt.AlignmentFlag.AlignRight)
-        self.horizontalLayout.setSpacing(Dimension.LARGE_SPACING * 5)
+        self.setLayout(self.mainVertical)
+        
        
     def _initStyle(self):
         """ initializes the widget style """
         initSecondaryColorBackground(self)
     
-    def addWidget(self, widget, alignment = None):
+    def addWidget(self, widget, alignment = Qt.AlignmentFlag.AlignLeft):
         """ add widget to the Text form under the same column """
         self.mainVertical.addWidget(widget, alignment=alignment)
    
-    def addWidgetToSide(self, widget, alignment = Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignAbsolute):
-        """ add widget to the form , on a separate column to the right side 
-            of the form"""
-        self.sideVertical.addWidget(widget, alignment= alignment)
 
         
     

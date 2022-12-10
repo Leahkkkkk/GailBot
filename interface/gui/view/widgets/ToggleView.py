@@ -10,7 +10,7 @@ Modified By:  Siara Small  & Vivian Li
 Description: a toggle widget with the functionalities to hide and show 
              a view object 
 '''
-from view.widgets import Button
+from view.widgets import Button, ScrollArea
 from util.Style import (
     Color, 
     FontSize, 
@@ -20,7 +20,6 @@ from util.Style import (
 
 from PyQt6.QtWidgets import (
     QWidget, 
-    QScrollArea, 
     QVBoxLayout
 )
 from PyQt6.QtCore import Qt
@@ -56,7 +55,7 @@ class ToggleView(QWidget):
         self._configViewField()
         self._initLayout()
         self._connectSignal()
-        self.setScrollHeight(self.view.height())
+        self.setScrollHeight(min(self.view.height(), self.height()))
     
     def setScrollHeight(self, size:int):
         """ public function to resize the scroll area height 
@@ -86,7 +85,7 @@ class ToggleView(QWidget):
        
     def _configViewField(self):
         """ configures the toggle view """
-        self.scroll = QScrollArea()
+        self.scroll = ScrollArea.ScrollArea()
         self.scroll.setMinimumWidth(self.Btn.width() - Dimension.TOGGLEVIEWOFFSET)
         self.scroll.setMaximumWidth(self.Btn.width())
         self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
@@ -97,7 +96,7 @@ class ToggleView(QWidget):
         self.setObjectName("viewWrapper")
         self.scroll.setObjectName("view")
         self.scroll.setStyleSheet(
-            f"#viewWrapper, #view {{background-color:{self.viewcolor}; color: {Color.MAIN_TEXT}}}")
+            f"#viewWrapper, #view {{background-color:{Color.SCORLL_BAR}; color: {Color.MAIN_TEXT}}}")
         self.view.setObjectName("viewContainer")
         self.view.setStyleSheet(
             f"#viewContainer {{background-color:{self.viewcolor}}}")

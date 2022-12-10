@@ -16,6 +16,7 @@ from util.Style import Color, FontSize, FontFamily, Dimension
 from util.Text import CreateNewProfilePageText as Text 
 from util.Logger import makeLogger
 
+from view.widgets.ScrollArea import ScrollArea
 from view.widgets.Button import ColoredBtn
 from view.widgets.Label import Label
 from view.widgets.TabPage import TabPage
@@ -176,7 +177,11 @@ class EngineSetting(TabPage):
             self.header, 
             alignment=Qt.AlignmentFlag.AlignHCenter)
         self.mainForm = SpeechEngineForm.SpeechEngineForm(showBasicSet=False)
-        self.verticallayout.addWidget(self.mainForm)
+        self.scrollArea  = ScrollArea()
+        self.scrollArea.setWidget(self.mainForm)
+        self.verticallayout.addWidget(self.scrollArea)
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollArea.setMaximumHeight(Dimension.LARGEDIALOGHEIGHT//4 * 3)
         self.confirmBtn = ColoredBtn(Text.cofirmBtn, Color.SECONDARY_BUTTON)
         self.confirmBtn.clicked.connect(self._confirmHandler)
         self.verticallayout.addWidget(self.confirmBtn, alignment=bottomRight)
@@ -198,17 +203,18 @@ class OutPutFormatSetting(TabPage):
         """ initializes class """
         super().__init__(*args, **kwargs)
         self.mainForm = OutputFormatForm.OutPutFormat()
+        self.scrollArea  = ScrollArea()
+        self.scrollArea.setWidget(self.mainForm)
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollArea.setFixedHeight(Dimension.LARGEDIALOGHEIGHT//4 * 3)
+       
         self.verticallayout = QVBoxLayout()
         self.setLayout(self.verticallayout)
         self.header = Label(
-            Text.outputSettingHeader, 
-            FontSize.HEADER2, 
-            FontFamily.MAIN)
+            Text.outputSettingHeader, FontSize.HEADER2, FontFamily.MAIN)
         self.verticallayout.addWidget(
-            self.header, 
-            alignment=hcenter|top)
-        self.verticallayout.addWidget(self.mainForm, alignment=top)
-        self.verticallayout.addStretch()
+            self.header, alignment=hcenter|top)
+        self.verticallayout.addWidget(self.scrollArea)
         self.confirmBtn = ColoredBtn(
             Text.cofirmBtn, 
             Color.SECONDARY_BUTTON)
