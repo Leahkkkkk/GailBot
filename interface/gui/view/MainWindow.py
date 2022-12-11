@@ -153,12 +153,14 @@ class MainWindow(QMainWindow):
         self.close()
     
     def _openWorkSpaceDialog(self):
+        """ open a dialog to ask user for the path to work space directory """
         basedir = getProjectRoot()
         if not os.path.exists(os.path.join(basedir, BackEndDataPath.workSpaceData)):
             pathDialog = WorkSpaceDialog.WorkSpaceDialog()
             pathDialog.exec()
 
     def _copylog(self):
+        """ copy log file to the frontend/logfiles folder """
         frontEndDir = getWorkPath().logFiles
         
         if not os.path.isdir(frontEndDir):
