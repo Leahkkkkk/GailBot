@@ -45,7 +45,7 @@ def getWorkPath() -> WorkSpacePathData:
         data = toml.load(os.path.join(basedir,BackEndDataPath.workSpaceData))
         userBaseDir = WorkSpaceBaseDirData.from_dict(data).WORK_SPACE_BASE_DIRECTORY
     else:
-        userBaseDir = userpaths.get_my_documents()
+        userBaseDir = userpaths.get_profile()
         
     # get the path to the sub directory     
     data = toml.load(os.path.join(basedir, BackEndDataPath.defaultWorkSpaceData))

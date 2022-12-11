@@ -145,10 +145,20 @@ class SystemSettingPage(QWidget):
             logDeleteTime = LogDeleteTimeDict[setting["Log file auto deletion time combo"]]
             f = open (f"{os.path.join(dirname, BackEndDataPath.fileManageData)}", "w+")
             toml.dump({"AUTO_DELETE_TIME" : logDeleteTime}, f)
-            shutil.copy(
-                os.path.join(dirname, colorSource), os.path.join(dirname, colorDes))
-            shutil.copy(
-                os.path.join(dirname, fontSource), os.path.join(dirname, fontDes))  
+            f.close()
+            self._copyTomlFile(colorSource, colorDes, dirname)
+            self._copyTomlFile(fontSource, fontDes, dirname) 
+        except shutil.SameFileError:
+            MsgBox.WarnBox("No setting is changed")
+        except KeyError:
+            MsgBox.WarnBox("Error loading File")
         except:
             MsgBox.WarnBox(Text.changeError)
         self.signal.restart.emit() 
+        
+    def _copyTomlFile(self, source, des, base):
+        """ private helper function for copying the toml file """
+        s = toml.load(os.path.join(base,source))
+        with open(os.path.join(base, des), "w+") as f:
+            toml.dump(s, f)
+    

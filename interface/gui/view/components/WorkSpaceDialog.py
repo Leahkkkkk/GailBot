@@ -84,7 +84,6 @@ class WorkSpaceDialog(QDialog):
             with open(
                 os.path.join(basedir, BackEndDataPath.workSpaceData), "w+") as f:
                 toml.dump(workSpace, f)
-                print("toml file is written")
             if not os.path.isdir(f"{self.workDir}/GailBot"):
                 os.mkdir(f"{self.workDir}/GailBot")
         except:
