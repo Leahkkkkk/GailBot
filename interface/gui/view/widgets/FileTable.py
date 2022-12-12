@@ -285,7 +285,7 @@ class FileTable(QTableWidget):
     ####################### delete file handlers  #########################
     def _confirmRemoveFile(self, key:str):
         """ open a pop up for confirm to remove file """
-        MsgBox.ConfirmBox("Are you sure to remove the file", 
+        MsgBox.ConfirmBox("Are you sure to remove the file?", 
                           lambda: self.removeFile(key))
         
     def removeFile(self, key:str):
