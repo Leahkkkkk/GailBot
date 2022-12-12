@@ -165,13 +165,16 @@ class RecordProgress(QWidget):
         """ slot to display timer on screen """
         self.counter += 1
         time = datetime.datetime.fromtimestamp(
-            self.counter/1000).strftime("%M:%S")
+            self.counter // 1000).strftime("%M:%S")
         self.timeDisplay.setText(time)
         
     def _initWidget(self):
         """ initializes the widgets """
         self.timeDisplay = Label.Label(
-            str(self.counter), FontSize.HEADER1, FontFamily.CLOCK, others="text-align:center;" )
+            str(self.counter), 
+            FontSize.HEADER1, 
+            FontFamily.CLOCK, 
+            others="text-align:center;")
         self.iconBtn = Button.ToggleBtn((Asset.recordStop, Asset.recordPlay))
         self.iconBtn.setFixedSize(QSize(Dimension.SMALLICONBTN,Dimension.SMALLICONBTN))
         self.iconBtn.setIconSize(QSize(Dimension.SMALLICONBTN, Dimension.SMALLICONBTN))
@@ -181,7 +184,6 @@ class RecordProgress(QWidget):
         self.endIconBtn.setIconSize(QSize(Dimension.SMALLICONBTN, Dimension.SMALLICONBTN))
         self.endIconBtn.setStyleSheet(StyleSheet.iconBtn)
         self.recordBar = ProgressBar.SimpleDial()
-        
         
     def _initThread(self):
         """ initialize the thread that controls the progress bar """
@@ -239,6 +241,7 @@ class RecordProgress(QWidget):
     def clearTimer(self):
         """ "private" function that resumes the timer """
         self.counter = 0
+        self.timeDisplay.setText(str("00:00"))
         self.recording = False
         self.hide()
 
