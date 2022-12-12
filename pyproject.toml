@@ -62,7 +62,7 @@ version = {attr = "gailbot.__version__"}
 # pyproject.toml
 [tool.pytest.ini_options]
 minversion = "6.0"
-addopts = "-ra -q"
+addopts = "-rA"
 testpaths = [
     "tests",
 ]
