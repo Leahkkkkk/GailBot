@@ -160,8 +160,9 @@ class OpenFile(TabPage):
             selectedFiles = dialog.getOpenFileNames(filter = fileFilter)
             if selectedFiles:
                 files, types = selectedFiles
-                self.signals.nextPage.emit()
                 self.filePaths = self.filePaths + files
+                if self.filePaths:
+                    self.signals.nextPage.emit()
                 for file in files:
                     self._addFileToFileDisplay(file)
             else:
@@ -178,9 +179,10 @@ class OpenFile(TabPage):
             selectedFolder = dialog.getExistingDirectory()
             
             if selectedFolder:
-                self.signals.nextPage.emit()
-                self._addFileToFileDisplay(selectedFolder)
                 self.filePaths = self.filePaths + [selectedFolder]
+                self._addFileToFileDisplay(selectedFolder)
+                if self.filePaths:
+                    self.signals.nextPage.emit()
             else:
                 WarnBox("No file is uploaded by user")
         except:

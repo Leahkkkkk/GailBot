@@ -9,10 +9,6 @@ WATSON_BASE_LANG_MODEL = "en-US_NarrowbandModel"
 SETTINGS_PROFILE_NAME      = "default"
 SETTINGS_PROFILE_EXTENSION = "json"
 
-[directory]
-WORKSPACE_DIRECTORY_PATH = "/Users/yike/Desktop/GB-UI/workdir"
-PLUGIN_DOWNLOADS         = "/Users/yike/Desktop/GB-UI/plugin"
-
 [plugin]
 HIL_PLUGIN_URL = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
 

@@ -119,7 +119,7 @@ class FileTable(QTableWidget):
     ########################  table initialier    #########################
     def  _connectViewSignal(self):
         """ connects the signals upon button clicks """
-        self.viewSignal.delete.connect(self.removeFile)
+        self.viewSignal.delete.connect(self._confirmRemoveFile)
         self.viewSignal.select.connect(self.addToNextState)
         self.viewSignal.unselect.connect(self.removeFromNextState)
         self.viewSignal.requestChangeProfile.connect(self.changeProfile)  
@@ -283,6 +283,11 @@ class FileTable(QTableWidget):
         self.fileWidgets[key] = newFileWidget
 
     ####################### delete file handlers  #########################
+    def _confirmRemoveFile(self, key:str):
+        """ open a pop up for confirm to remove file """
+        MsgBox.ConfirmBox("Are you sure to remove the file", 
+                          lambda: self.removeFile(key))
+        
     def removeFile(self, key:str):
         """ delete one file
             ** connected to delete file button 

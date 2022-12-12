@@ -168,3 +168,4 @@ class FileUploadPage(QWidget):
         self.logger.info("")
         MsgBox.ConfirmBox(Text.removeWarnText, self.fileTable.removeAll)
     
+    
