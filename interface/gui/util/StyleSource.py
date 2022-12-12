@@ -25,7 +25,6 @@ class StyleSource:
 StyleTable = {
     "dark mode"     :   StyleDataPath.darkColor,
     "light mode"    :   StyleDataPath.lightColor,
-    "default"       :   StyleDataPath.lightColor,
     "small"         :   StyleDataPath.smallFontSize,
     "large"         :   StyleDataPath.largeFontSize,
     "medium"        :   StyleDataPath.mediumFontSize 
