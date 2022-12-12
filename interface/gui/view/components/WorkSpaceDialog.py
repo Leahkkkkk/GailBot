@@ -72,7 +72,7 @@ class WorkSpaceDialog(QDialog):
         if selectedFolder:
             self.workDir = selectedFolder
             self.displayPath.setText(
-                f"GailBot Work Space Path:\n {self.workDir}/GailBot")
+                f"GailBot Work Space Path: {self.workDir}/GailBot")
     
     def _onConfirm(self):
         basedir = getProjectRoot()
@@ -98,3 +98,24 @@ class WorkSpaceDialog(QDialog):
         self.setStyleSheet(f"background-color:{Color.MAIN_BACKRGOUND}")
         self.setFixedSize(QSize(600,450))
 
+class ChangeWorkSpace(WorkSpaceDialog):
+    def __init__(self, *arg, **kwargs) -> None:
+        super().__init__(*arg, **kwargs)
+    
+    def _initWidget(self):
+        """ initialize the widget """
+        self.header = Label.Label(
+           "Change Path to GailBot Work Space", FontSize.HEADER3, FontFamily.MAIN)
+        self.label = Label.Label(
+            " ", FontSize.BODY, others="text-align:center;")
+        self.displayPath = Label.Label(
+            f"GailBot Work Space Path: {self.workDir}/GailBot", 
+            FontSize.BODY, FontFamily.MAIN, 
+            others=f"border: 1px solid {Color.MAIN_TEXT}; text-align:center;")
+        self.confirm = Button.ColoredBtn("Confirm", Color.SECONDARY_BUTTON)
+        self.choose  = Button.ColoredBtn("Change Directory", Color.PRIMARY_BUTTON)
+
+    def _initStyle(self):
+        """ initialize the style """
+        self.setStyleSheet(f"background-color:{Color.MAIN_BACKRGOUND}")
+        self.setFixedSize(QSize(400,350))

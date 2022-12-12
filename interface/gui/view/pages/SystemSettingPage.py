@@ -19,6 +19,7 @@ from view.widgets import (
     Label, 
     Button
 )
+from view.components.WorkSpaceDialog import ChangeWorkSpace
 
 from config.ConfigPath import BackEndDataPath
 from util.StyleSource import StyleSource, StyleTable
@@ -66,6 +67,15 @@ class SystemSettingPage(QWidget):
         self.deleteLog.setFixedWidth(100)
         self.deleteLog.setFixedHeight(Dimension.INPUTHEIGHT)
         self.deleteLogLabel = Label.Label("Clear All Log Files", FontSize.BODY)
+
+        self.changeDir = Button.BorderBtn(
+            "Change", 
+            Color.INPUT_TEXT, 
+            other= f"background-color: {Color.INPUT_BACKGROUND}")
+        self.changeDir.setFixedWidth(100)
+        self.changeDir.setFixedHeight(Dimension.INPUTHEIGHT)
+        self.changeDirLabel = Label.Label(
+            "Change the WorkSpace Directory", FontSize.BODY)
        
         self.Mainstack.addWidget(self.SysSetForm)
         self.GuideLink = Label.Label(Links.guideLink, FontSize.LINK, link=True)
@@ -77,11 +87,18 @@ class SystemSettingPage(QWidget):
         self.copyRightLabel = Label.Label(About.copyRight, FontSize.SMALL)
         self.deleteContainer = QWidget()
         self.deleteLayout = QHBoxLayout()
+        self.changeDirContainer = QWidget()
+        self.changeDirLayout = QHBoxLayout()
     
     def _connectSignal(self):
         """ connect the signal to slots """
         self.deleteLog.clicked.connect(self.clearLog)
         self.saveBtn.clicked.connect(self.confirmChangeSetting)
+        self.changeDir.clicked.connect(self._changeDirHandler)
+    
+    def _changeDirHandler(self):
+        dialog = ChangeWorkSpace()
+        dialog.exec()
     
     def clearLog(self):
         MsgBox.ConfirmBox("Confirm clearing all log files", clearAllLog)
@@ -105,12 +122,17 @@ class SystemSettingPage(QWidget):
         self.sideBar.addWidget(self.versionLabel, alignment=bottom)
         self.sideBar.addWidget(self.copyRightLabel, alignment=bottom)
     
-        
         self.deleteContainer.setLayout(self.deleteLayout)
         self.deleteLayout.addWidget(self.deleteLogLabel)
         self.deleteLayout.addSpacing(50)
         self.deleteLayout.addWidget(self.deleteLog)
         self.SysSetForm.addWidget(self.deleteContainer)
+    
+        self.changeDirContainer.setLayout(self.changeDirLayout)
+        self.changeDirLayout.addWidget(self.changeDirLabel)
+        self.changeDirLayout.addWidget(self.changeDir)
+        self.SysSetForm.addWidget(self.changeDirContainer)
+        
 
     def _initStyle(self):
         self.Mainstack.setObjectName(StyleSheet.sysSettingStackID)
@@ -155,6 +177,7 @@ class SystemSettingPage(QWidget):
         except:
             MsgBox.WarnBox(Text.changeError)
         self.signal.restart.emit() 
+        
         
     def _copyTomlFile(self, source, des, base):
         """ private helper function for copying the toml file """
