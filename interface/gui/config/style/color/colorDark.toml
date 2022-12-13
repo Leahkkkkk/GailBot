@@ -2,23 +2,23 @@
 [colors] 
 ##dark mode button colors
 ##secondary button color, used in save, continue, and get started buttons
-SECONDARY_BUTTON = "#7A999E"
+SECONDARY_BUTTON = "#BED8D7"
 ##cancel and quit button color
-CANCEL_QUIT      = "#C3D7D7"
+CANCEL_QUIT      = "#A25952"
 ##highlight background color, primarily used in the background of the file table
-HIGHLIGHT        = "#7A999E"
+HIGHLIGHT        = "#729A9F"
 ##color of the header of the file table
 TABLE_HEADER     = "#C3D7D7"
 ##main button color, used in most continue and main menu buttons
-PRIMARY_BUTTON   = "#7A999E"
+PRIMARY_BUTTON   = "#729A9F"
 ##scroll bar 
-SCORLL_BAR       = "#AEABA9"
+SCORLL_BAR       = "#AFABA9"
 ##primary contrast color: white in dark mode
-PRIMARY_INTENSE  = "#212F3E"
+PRIMARY_INTENSE  = "#1D303F"
 ##low contrast- gray color close to black
 LOW_CONTRAST     = "#686C71"
 ##low contrast- gray color less close to black
-LOW_CONTRAST2    = "#797979"
+LOW_CONTRAST2    = "#5B5B5B"
 ##outline of the file table
 OUTLINE          = "#F0F6F9"
 GREYDARK         = "#F0F6F9"
@@ -29,13 +29,13 @@ GREYEXTRALIGHT   = "#F0F6F9"
 ##main text
 MAIN_TEXT        = "#FFFFFF"
 ##main background color
-MAIN_BACKRGOUND  = "#212F3E"
+MAIN_BACKRGOUND  = "#1D303F"
 ##secondary background color, used in the background of popups and the upload page
-SUB_BACKGROUND   = "#AEABA9"
+SUB_BACKGROUND   = "#AFABA9"
 ##highest contrast- white in dark mode
 WHITE            = "#FFFFFF"
 ##color for table border 
-TABLE_BORDER     = "#AEABA9"   
+TABLE_BORDER     = "#AFABA9"   
 
 INPUT_TEXT       = "#000000"
 INPUT_BORDER     = "#363636"

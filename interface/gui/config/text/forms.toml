@@ -69,7 +69,7 @@ HiLabSuite = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
 
 ["system setting form"."View Setting"]
 "Font Size combo"  = [ "medium", "small", "large"]
-"Color Mode combo" = [ "dark mode", "light mode"]
+"Color Mode combo" = [ "light mode", "dark mode"]
 "Log file auto deletion time combo" = ["every day", "every week", "every month", "every 2 months"]
 
 ["system setting form"."GailBot Work Space Setting"]
