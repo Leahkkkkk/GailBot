@@ -28,6 +28,7 @@ from util.Text import SystemSettingForm as Form
 from util.Text import About, Links, LogDeleteTimeDict
 from util.Path import getProjectRoot
 from util.FileManage import clearAllLog
+from util.GailBotData import getWorkBasePath
 from view.widgets import MsgBox
 
 from PyQt6.QtWidgets import (
@@ -75,7 +76,11 @@ class SystemSettingPage(QWidget):
         self.changeDir.setFixedWidth(100)
         self.changeDir.setFixedHeight(Dimension.INPUTHEIGHT)
         self.changeDirLabel = Label.Label(
-            "Change the WorkSpace Directory", FontSize.BODY)
+            "Change GailBot Work Space", FontSize.BODY)
+        directory = getWorkBasePath()
+        self.directoryDisplay = Label.Label(
+            f"    Current work space: {directory}/GailBot", FontSize.SMALL, Color.PRIMARY_INTENSE
+        )
        
         self.Mainstack.addWidget(self.SysSetForm)
         self.GuideLink = Label.Label(Links.guideLink, FontSize.LINK, link=True)
@@ -92,18 +97,18 @@ class SystemSettingPage(QWidget):
     
     def _connectSignal(self):
         """ connect the signal to slots """
-        self.deleteLog.clicked.connect(self.clearLog)
-        self.saveBtn.clicked.connect(self.confirmChangeSetting)
+        self.deleteLog.clicked.connect(self._clearLog)
+        self.saveBtn.clicked.connect(self._confirmChangeSetting)
         self.changeDir.clicked.connect(self._changeDirHandler)
     
     def _changeDirHandler(self):
         dialog = ChangeWorkSpace()
         dialog.exec()
+        directory = getWorkBasePath()
+        self.directoryDisplay.setText(
+            f"    Current work space: {directory}/GailBot"
+        )
     
-    def clearLog(self):
-        MsgBox.ConfirmBox("Confirm clearing all log files", clearAllLog)
-
-
     def _initLayout(self):
         """ initializes the layout of the page """
         self.horizontalLayout = QHBoxLayout()
@@ -124,16 +129,17 @@ class SystemSettingPage(QWidget):
     
         self.deleteContainer.setLayout(self.deleteLayout)
         self.deleteLayout.addWidget(self.deleteLogLabel)
-        self.deleteLayout.addSpacing(50)
+        self.deleteLayout.addSpacing(55)
         self.deleteLayout.addWidget(self.deleteLog)
         self.SysSetForm.addWidget(self.deleteContainer)
     
         self.changeDirContainer.setLayout(self.changeDirLayout)
         self.changeDirLayout.addWidget(self.changeDirLabel)
         self.changeDirLayout.addWidget(self.changeDir)
-        self.SysSetForm.addWidget(self.changeDirContainer)
         
-
+        self.SysSetForm.addWidget(self.changeDirContainer)
+        self.SysSetForm.addWidget(self.directoryDisplay)
+        
     def _initStyle(self):
         self.Mainstack.setObjectName(StyleSheet.sysSettingStackID)
         """ add this to an external stylesheet"""
@@ -150,13 +156,13 @@ class SystemSettingPage(QWidget):
         """ public function to get the system setting form value"""
         return self.SysSetForm.getValue()
 
-    def confirmChangeSetting(self)->None:
+    def _confirmChangeSetting(self)->None:
         """ open a pop up box to confirm restarting the app and change the setting"""
         MsgBox.ConfirmBox(
-            Text.confirmChange, self.changeSetting, QMessageBox.StandardButton.Reset)
+            Text.confirmChange, self._changeSetting, QMessageBox.StandardButton.Reset)
         
         
-    def changeSetting(self)->None:
+    def _changeSetting(self)->None:
         """ rewrite the current setting file based on the user's choice"""
         setting = self.SysSetForm.getValue()
         try:
@@ -177,11 +183,12 @@ class SystemSettingPage(QWidget):
         except:
             MsgBox.WarnBox(Text.changeError)
         self.signal.restart.emit() 
-        
-        
+               
     def _copyTomlFile(self, source, des, base):
         """ private helper function for copying the toml file """
         s = toml.load(os.path.join(base,source))
         with open(os.path.join(base, des), "w+") as f:
             toml.dump(s, f)
-    
+
+    def _clearLog(self):
+        MsgBox.ConfirmBox("Confirm clearing all log files", clearAllLog)

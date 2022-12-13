@@ -53,7 +53,7 @@ class buttonStyle:
                     border-radius:5;\
                     font-size:{FontSize.BTN}"
                     
-    ButtonInactive = f"background-color:{Color.LOW_CONTRAST};\
+    ButtonInactive = f"background-color:{Color.LOW_CONTRAST2};\
                     color:white;\
                     border-radius:5;\
                     font-size:{FontSize.BTN}"

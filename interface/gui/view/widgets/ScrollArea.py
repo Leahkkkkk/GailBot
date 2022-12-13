@@ -19,9 +19,11 @@ class ScrollArea(QScrollArea):
         """ initializes widget """
         super().__init__(*args, **kwargs)
         self.verticalScrollBar().setStyleSheet(
-            f"background-color:{Color.SCORLL_BAR};")
+            f"background-color:{Color.SCORLL_BAR};"
+            f"border: 1px {Color.MAIN_BACKRGOUND} solid")
         self.horizontalScrollBar().setStyleSheet(
-            f"background-color:{Color.SCORLL_BAR};")
+            f"background-color:{Color.SCORLL_BAR};"
+            f"border: 1px {Color.MAIN_BACKRGOUND} solid")
         self.setWidgetResizable(True)
         
 

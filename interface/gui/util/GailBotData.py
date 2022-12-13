@@ -15,7 +15,6 @@ import toml
 from util.Path import getProjectRoot
 from util.ConfigParser.GailBotDataParser import (
     CredentialData, 
-    DirectoryData, 
     ProfileConfigData, 
     PluginData, 
     ThreadData,
@@ -37,14 +36,22 @@ Plugin = PluginData.from_dict(config["plugin"])
 ThreadControl = ThreadData.from_dict(config["threadControl"])
 FileManage = FileManageData.from_dict(fileManage)
 
-def getWorkPath() -> WorkSpacePathData:
-    """ return the data contains workspace directory  """
-    # get the user's defined base directory
+
+def getWorkBasePath() -> str:
+    """  return the base directory of the gailbot workspace """
     if os.path.exists(os.path.join(basedir,BackEndDataPath.workSpaceData)):
         data = toml.load(os.path.join(basedir,BackEndDataPath.workSpaceData))
         userBaseDir = WorkSpaceBaseDirData.from_dict(data).WORK_SPACE_BASE_DIRECTORY
     else:
         userBaseDir = userpaths.get_profile()
+    
+    return userBaseDir
+
+
+def getWorkPath() -> WorkSpacePathData:
+    """ return the data contains workspace directory  """
+    # get the user's defined base directory
+    userBaseDir = getWorkBasePath()
         
     # get the path to the sub directory     
     data = toml.load(os.path.join(basedir, BackEndDataPath.defaultWorkSpaceData))

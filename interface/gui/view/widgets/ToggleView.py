@@ -39,8 +39,8 @@ class ToggleView(QWidget):
         label:str, 
         view: QWidget, 
         header = False, 
-        headercolor = None, 
-        viewcolor = None,
+        headercolor = Color.SUB_BACKGROUND, 
+        viewcolor = Color.SUB_BACKGROUND,
         *args, 
         **kwargs):
         
@@ -48,8 +48,8 @@ class ToggleView(QWidget):
         self.labelStr = label
         self.view = view
         self.header = header
-        self.headercolor = Color.HIGHLIGHT if not headercolor else Color.MAIN_BACKRGOUND
-        self.viewcolor = Color.HIGHLIGHT if not viewcolor else Color.MAIN_BACKRGOUND
+        self.headercolor = headercolor
+        self.viewcolor = viewcolor
         self.setContentsMargins(0,0,0,0)
         self._configHeader()
         self._configViewField()
@@ -96,11 +96,11 @@ class ToggleView(QWidget):
         self.setObjectName("viewWrapper")
         self.scroll.setObjectName("view")
         self.scroll.setStyleSheet(
-            f"#viewWrapper, #view {{background-color:{Color.SCORLL_BAR}; color: {Color.MAIN_TEXT}}}")
+            f"#viewWrapper, #view {{background-color:{self.viewcolor}; color: {Color.MAIN_TEXT}}}")
         self.view.setObjectName("viewContainer")
         self.view.setStyleSheet(
             f"#viewContainer {{background-color:{self.viewcolor}}}")
-        self.scroll.verticalScrollBar().setStyleSheet(f"background-color:{Color.SCORLL_BAR};")
+        self.scroll.verticalScrollBar().setStyleSheet(f"background-color:{Color.SCORLL_BAR}; border: 1px solid {Color.MAIN_BACKRGOUND}")
         self.scroll.hide()
         self.hide = True
         

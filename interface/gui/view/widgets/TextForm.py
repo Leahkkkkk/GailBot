@@ -52,6 +52,8 @@ class TextForm(QWidget):
         super().__init__(*args, **kwargs)
         self.data = data
         self.inputDict = dict()
+        self.setMinimumHeight(Dimension.WIN_MIN_HEIGHT // 3 * 2)
+        self.setMinimumWidth(Dimension.WIN_MIN_WIDTH // 2)
         self._initWidget()
         self._initLayout()
         if background:
@@ -99,7 +101,11 @@ class TextForm(QWidget):
         self.mainVertical = QVBoxLayout()
         self.mainContainer.setLayout(self.mainVertical)
         self.mainVertical.setSpacing(10)
+        count = 0
         for key, items in self.data.items():
+            if count != 0:
+                self.mainVertical.addSpacing(Dimension.LARGE_SPACING)
+            count += 1
             newLabel = Label.Label(key, FontSize.BTN, FontFamily.MAIN)
             self.mainVertical.addWidget(newLabel)
             for key, value in items.items():
@@ -115,6 +121,7 @@ class TextForm(QWidget):
                     newInput = InputBox.InputBox(key, inputText=value)
                 self.mainVertical.addWidget(newInput)
                 self.inputDict[keyCopy] = newInput
+            
                 
     def _initLayout(self):
         """ initialize the layout """
@@ -128,6 +135,7 @@ class TextForm(QWidget):
     def addWidget(self, widget, alignment = Qt.AlignmentFlag.AlignLeft):
         """ add widget to the Text form under the same column """
         self.mainVertical.addWidget(widget, alignment=alignment)
+
    
 
         

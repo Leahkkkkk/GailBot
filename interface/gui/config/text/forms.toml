@@ -67,10 +67,12 @@ HiLabSuite = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
 ["profile form"."RequiredSetting".Engine.CMU."3.CMU specialised setting"]
 "CMU setting option" = [ "setting option 1", "setting option 2", "setting option 3",]
 
-["system setting form"."General Setting"]
+["system setting form"."View Setting"]
 "Font Size combo"  = [ "medium", "small", "large"]
 "Color Mode combo" = [ "dark mode", "light mode"]
 "Log file auto deletion time combo" = ["every day", "every week", "every month", "every 2 months"]
+
+["system setting form"."GailBot Work Space Setting"]
 
 ["log deletion"]
 "every day"      = 1

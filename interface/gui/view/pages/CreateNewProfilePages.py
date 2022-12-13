@@ -23,11 +23,11 @@ from view.widgets.TabPage import TabPage
 from view.widgets.MultipleCombo import UserForm
 from view.widgets.InputBox import InputBox
 from view.widgets.MsgBox import WarnBox
-from view.widgets.Background import initPrimaryColorBackground
+from view.widgets.Background import initSecondaryColorBackground
 from view.components import OutputFormatForm, SpeechEngineForm
 from view.pages.PluginPage import PluginPage
 from view.pages.PostSettingPage import PostSettingPage
-from view.widgets.Background import initSecondaryColorBackground
+
 
 from PyQt6.QtWidgets import  QVBoxLayout
 from PyQt6.QtCore import (
@@ -179,6 +179,7 @@ class EngineSetting(TabPage):
         self.mainForm = SpeechEngineForm.SpeechEngineForm(showBasicSet=False)
         self.scrollArea  = ScrollArea()
         self.scrollArea.setWidget(self.mainForm)
+        initSecondaryColorBackground(self.scrollArea)
         self.verticallayout.addWidget(self.scrollArea)
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setMaximumHeight(Dimension.LARGEDIALOGHEIGHT//4 * 3)
@@ -207,7 +208,7 @@ class OutPutFormatSetting(TabPage):
         self.scrollArea.setWidget(self.mainForm)
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setFixedHeight(Dimension.LARGEDIALOGHEIGHT//4 * 3)
-       
+        initSecondaryColorBackground(self.scrollArea)
         self.verticallayout = QVBoxLayout()
         self.setLayout(self.verticallayout)
         self.header = Label(
@@ -246,8 +247,7 @@ class PostTranscribeSetting(TabPage):
         self.verticallayout.addWidget(
             self.confirmBtn, 
             alignment=Qt.AlignmentFlag.AlignRight)
-        initPrimaryColorBackground(self.mainForm.setForm.setForm)
-        initPrimaryColorBackground(self.mainForm.setForm.scroll)
+
         
     def getData(self):
         """ gets current value of data """
@@ -271,7 +271,7 @@ class PluginSetting(TabPage):
         self.verticalLayout.addWidget(
             self.confirmBtn,
             alignment=Qt.AlignmentFlag.AlignRight)
-        initPrimaryColorBackground(self.mainForm.scrollContainer)
+  
         
         
     def getData(self):

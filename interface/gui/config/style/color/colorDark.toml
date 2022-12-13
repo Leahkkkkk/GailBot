@@ -2,23 +2,23 @@
 [colors] 
 ##dark mode button colors
 ##secondary button color, used in save, continue, and get started buttons
-SECONDARY_BUTTON = "#416E52"
+SECONDARY_BUTTON = "#7A999E"
 ##cancel and quit button color
-CANCEL_QUIT      = "#B8542D"
+CANCEL_QUIT      = "#C3D7D7"
 ##highlight background color, primarily used in the background of the file table
-HIGHLIGHT        = "#363636"
+HIGHLIGHT        = "#7A999E"
 ##color of the header of the file table
-TABLE_HEADER     = "#686C71"
+TABLE_HEADER     = "#C3D7D7"
 ##main button color, used in most continue and main menu buttons
-PRIMARY_BUTTON   = "#364389"
+PRIMARY_BUTTON   = "#7A999E"
 ##scroll bar 
-SCORLL_BAR       = "#363636"
+SCORLL_BAR       = "#AEABA9"
 ##primary contrast color: white in dark mode
-PRIMARY_INTENSE  = "#FFFFFF"
+PRIMARY_INTENSE  = "#212F3E"
 ##low contrast- gray color close to black
 LOW_CONTRAST     = "#686C71"
 ##low contrast- gray color less close to black
-LOW_CONTRAST2    = "#F0F6F9"
+LOW_CONTRAST2    = "#797979"
 ##outline of the file table
 OUTLINE          = "#F0F6F9"
 GREYDARK         = "#F0F6F9"
@@ -29,13 +29,13 @@ GREYEXTRALIGHT   = "#F0F6F9"
 ##main text
 MAIN_TEXT        = "#FFFFFF"
 ##main background color
-MAIN_BACKRGOUND  = "#424242"
+MAIN_BACKRGOUND  = "#212F3E"
 ##secondary background color, used in the background of popups and the upload page
-SUB_BACKGROUND   = "#363636"
+SUB_BACKGROUND   = "#AEABA9"
 ##highest contrast- white in dark mode
 WHITE            = "#FFFFFF"
 ##color for table border 
-TABLE_BORDER     = "#363636"   
+TABLE_BORDER     = "#AEABA9"   
 
 INPUT_TEXT       = "#000000"
 INPUT_BORDER     = "#363636"
@@ -77,19 +77,19 @@ sidebarColor          = "asset/dark/settingBackground.png"
 tabSettings           = "asset/dark/settings.png"
 tabTrash              = "asset/dark/trash.png"
 tabDisk               = "asset/dark/disk.png"
-fileIcon              = "asset/dark/file.jpeg"
-instructionSound      = "asset/dark/sound.jpeg"
+fileIcon              = "asset/dark/file.png"
+instructionSound      = "asset/dark/sound.png"
 instructionSetting    = "asset/dark/settings.png"
-instructionTranscribe = "asset/dark/loading.jpeg"
-instructionFile       = "asset/dark/file.jpeg"
-instructionEdit       = "asset/dark/edit.jpeg"
+instructionTranscribe = "asset/dark/loading.png"
+instructionFile       = "asset/dark/file.png"
+instructionEdit       = "asset/dark/edit.png"
 recordStop            = "asset/dark/stop.png"
 recordPlay            = "asset/dark/play.png"
 downImg               = "asset/dark/down.png"
 rightImg              = "asset/dark/right.png"
-homeBackground        = "asset/darkGray/background.png"
-subPageBackground     = "asset/darkGray/backgroundSubPages.png"
-sideBarBackground     = "asset/darkGray/sidebarBackground.png"
+homeBackground        = "asset/dark/background.png"
+subPageBackground     = "asset/dark/backgroundSubPages.png"
+sideBarBackground     = "asset/dark/sidebarBackground.png"
 hilLabLogo            = "asset/dark/hillogo.png"
 transcribing          = "asset/dark/gbloading.gif"
 endRecording          = "asset/dark/endRecording.png"

@@ -168,7 +168,7 @@ class WelcomePage(QWidget):
         self.CaptionText = Label.Label(Text.captionText,
                                        FS.BODY, 
                                        FontFamily.OTHER,
-                                       Color.LOW_CONTRAST2)
+                                       Color.GREYDARK)
         
         self.CaptionText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
         self.StartBtn = Button.ColoredBtn(Text.startBtnText, Color.SECONDARY_BUTTON)

@@ -26,5 +26,5 @@ class ComboBox(QComboBox):
                            f"margin: 5px;"
                            "}"
                         )
-       
+        self.setFixedHeight(40)
         

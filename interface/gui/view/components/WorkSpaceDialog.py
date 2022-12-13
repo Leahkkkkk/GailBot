@@ -14,13 +14,14 @@ Description: a pop up dialogue that opens during the first launch of the
 import os 
 import toml 
 
-from view.widgets import Label, Button
+from view.widgets import Label, Button, MsgBox
 from view.widgets.MsgBox import WarnBox
 from PyQt6.QtWidgets import QDialog, QFileDialog, QVBoxLayout
 from config.ConfigPath import BackEndDataPath
 from util.Style import Color, FontFamily, FontSize, Dimension
 from util.Path import getProjectRoot
 from util.Text import WelcomePageText as Text 
+from util.GailBotData import getWorkBasePath
 from PyQt6.QtCore import QSize, Qt
 
 import userpaths
@@ -90,7 +91,6 @@ class WorkSpaceDialog(QDialog):
             print("toml file cannot be written")
             WarnBox(f"cannot find the file path: " 
                     f"{os.path.join(basedir, BackEndDataPath.workSpaceData)}")
-
         self.close()
     
     def _initStyle(self):
@@ -99,11 +99,13 @@ class WorkSpaceDialog(QDialog):
         self.setFixedSize(QSize(600,450))
 
 class ChangeWorkSpace(WorkSpaceDialog):
+    """  a subclass of the original workspace dialog, with changed labels """
     def __init__(self, *arg, **kwargs) -> None:
         super().__init__(*arg, **kwargs)
-    
+        
     def _initWidget(self):
         """ initialize the widget """
+        self.workDir = getWorkBasePath()
         self.header = Label.Label(
            "Change Path to GailBot Work Space", FontSize.HEADER3, FontFamily.MAIN)
         self.label = Label.Label(
@@ -118,4 +120,5 @@ class ChangeWorkSpace(WorkSpaceDialog):
     def _initStyle(self):
         """ initialize the style """
         self.setStyleSheet(f"background-color:{Color.MAIN_BACKRGOUND}")
-        self.setFixedSize(QSize(400,350))
+        self.setFixedSize(QSize(500,350))
+    
