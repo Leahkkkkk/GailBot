@@ -67,7 +67,7 @@ class SystemSettingPage(QWidget):
             other= f"background-color: {Color.INPUT_BACKGROUND}")
         self.deleteLog.setFixedWidth(100)
         self.deleteLog.setFixedHeight(Dimension.INPUTHEIGHT)
-        self.deleteLogLabel = Label.Label("Clear All Log Files", FontSize.BODY)
+        self.deleteLogLabel = Label.Label(Text.clearLog, FontSize.BODY)
 
         self.changeDir = Button.BorderBtn(
             "Change", 
@@ -76,7 +76,7 @@ class SystemSettingPage(QWidget):
         self.changeDir.setFixedWidth(100)
         self.changeDir.setFixedHeight(Dimension.INPUTHEIGHT)
         self.changeDirLabel = Label.Label(
-            "Change GailBot Work Space", FontSize.BODY)
+            Text.changeWorkSpace, FontSize.BODY)
         directory = getWorkBasePath()
         self.directoryDisplay = Label.Label(
             f"    Current work space: {directory}/GailBot", FontSize.SMALL, Color.PRIMARY_INTENSE
@@ -191,4 +191,4 @@ class SystemSettingPage(QWidget):
             toml.dump(s, f)
 
     def _clearLog(self):
-        MsgBox.ConfirmBox("Confirm clearing all log files", clearAllLog)
+        MsgBox.ConfirmBox(Text.confirmClear, clearAllLog)

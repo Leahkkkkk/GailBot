@@ -171,6 +171,9 @@ class SystemSetPageTextData(DataclassFromDict):
     saveBtn       : str  = field_from_dict()
     confirmChange : str  = field_from_dict()
     changeError   : str  = field_from_dict()
+    clearLog      : str  = field_from_dict()
+    confirmClear  : str  = field_from_dict()
+    changeWorkSpace: str  = field_from_dict()
     
 @dataclass
 class ConfirmTranscribeTextData(DataclassFromDict):

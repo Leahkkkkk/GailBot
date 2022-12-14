@@ -102,6 +102,9 @@ saveBtn       = "Save and Exit"
 confirmChange = """This change will relaunch GailBot and all uploaded files will be \
                  lost. Do you want to relaunch and change system settings?"""
 changeError   = "Change system setting failed"
+clearLog      = "Clear All Log Files"
+confirmClear  = "Confirm clearing all log files"
+changeWorkSpace = "Change GailBot Work Space"
 
 [ConfirmTranscriptionPageText]
 confirmLabel = "Confirm Files and Settings"
