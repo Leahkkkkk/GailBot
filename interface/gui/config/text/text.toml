@@ -119,7 +119,7 @@ end    = "End Recording"
 [filetable.header]
 fileUploadPage = ["Select All", "Type", "Name", "Profile", 
                     "Status", "Date", "Size", "Actions"]
-confirmPage    = ["Type", "Name", "Profile", "Selected Action", "Action"]
+confirmPage    = ["Type", "Name", "Profile", "Action"]
 transcribePage = ["Type", "Name", "Progress"]
 successPage    = ["Type",  "Name", "Status", "Output"]
 

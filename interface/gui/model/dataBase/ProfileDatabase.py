@@ -15,7 +15,7 @@ Implementation of a database that stores the profile data
 from typing import Tuple
 
 from util.Logger import makeLogger
-from util.Preset import ProfilePreset
+from util.Setting import ProfilePreset
 from util.Error import ErrorMsg
 
 from PyQt6.QtCore import QObject, pyqtSignal 

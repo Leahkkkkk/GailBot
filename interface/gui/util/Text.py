@@ -85,18 +85,19 @@ OutputFormatForm = TextParser.OutputFormatSetting.from_dict(
 SystemSettingForm = forms["system setting form"]
 LogDeleteTimeDict = forms["log deletion"]
 
+
 @dataclass
 class Links: 
     link = text["links"]["HILAB"]
-    _linkTemplate = "<a style='color:#3B5D78; font-weight: 500;' href={0}>{1}</a>"
+    _linkTemplate = "<a style='color:{0}; font-weight: 500;' href={1}>{2}</a>"
     tutorialLink = _linkTemplate.format(
-        link, WelcomePageText.tutorialText)
+        Color.LINK, link, WelcomePageText.tutorialText)
     guideLink = _linkTemplate.format(
-        link, WelcomePageText.guideText)
+        Color.LINK, link, WelcomePageText.guideText)
     gbWebLink = _linkTemplate.format(
-        link, WelcomePageText.gbLinkText)
+        Color.LINK,link, WelcomePageText.gbLinkText)
     gbWebLink = _linkTemplate.format(
-        link, WelcomePageText.guideText)
+        Color.LINK,link, WelcomePageText.guideText)
 
 
 

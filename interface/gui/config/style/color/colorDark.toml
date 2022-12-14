@@ -21,7 +21,7 @@ LOW_CONTRAST     = "#686C71"
 LOW_CONTRAST2    = "#5B5B5B"
 ##outline of the file table
 OUTLINE          = "#F0F6F9"
-GREYDARK         = "#F0F6F9"
+GREYDARK         = "#5B5B5B"
 ##file table border
 BORDER           = "#797979"
 ##high contrast color
@@ -40,6 +40,7 @@ TABLE_BORDER     = "#AFABA9"
 INPUT_TEXT       = "#000000"
 INPUT_BORDER     = "#363636"
 INPUT_BACKGROUND = "#CECECE"
+LINK             = "#D1F5F5"
 
 
 

@@ -86,6 +86,7 @@ class MainStack(QStackedWidget):
             self.TranscribeProgressPage.fileTable.filterFile)
         self.ConfirmTranscribePage.fileTable.viewSignal.transferState.connect(
             self.TranscribeSuccessPage.fileTable.filterFile)
+        
  
     def gotoTranscribeInProgress(self):
         """ redirect to transcribe in progress page """
@@ -154,6 +155,8 @@ class MainStack(QStackedWidget):
         self.TranscribeSuccessPage.moreBtn.clicked.connect(self.gotoFileUploadPage)
         self.TranscribeSuccessPage.returnBtn.clicked.connect(lambda: 
                 self.setCurrentWidget(self.WelcomePage))
+        self.ConfirmTranscribePage.confirmBtn.clicked.connect(
+            self.FileUploadPage._disallowTranscribe)
         self.ProfileSettingPage.cancelBtn.clicked.connect(self.gotoFileUploadPage)
         self.FileUploadPage.gotoMainBtn.clicked.connect(lambda:
                 self.setCurrentWidget(self.WelcomePage))
@@ -166,6 +169,7 @@ class MainStack(QStackedWidget):
         self.ProfileSettingPage.saveBtn.clicked.connect(self.gotoFileUploadPage)
         self.SystemSettingPage.cancelBtn.clicked.connect(self.gotoFileUploadPage)
         self.SystemSettingPage.saveBtn.clicked.connect(self.gotoFileUploadPage)
+        
         
     
     def addFileToTables(self, file:dict):

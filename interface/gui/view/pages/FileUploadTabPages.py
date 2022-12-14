@@ -163,10 +163,12 @@ class OpenFile(TabPage):
                 self.filePaths = self.filePaths + files
                 if self.filePaths:
                     self.signals.nextPage.emit()
+                else:
+                    WarnBox("No file is uploaded is uploaded by user")   
                 for file in files:
                     self._addFileToFileDisplay(file)
             else:
-                WarnBox("No file is uploaded")
+                WarnBox("No file is uploaded is uploaded by user")
                 self.logger.warn("No file is uploaded by user")
         except:
             WarnBox("An error occurred when getting the uploaded file")

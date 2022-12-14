@@ -34,7 +34,7 @@ class ColorData(DataclassFromDict):
     INPUT_TEXT       : str = field_from_dict()
     INPUT_BORDER     : str = field_from_dict()
     INPUT_BACKGROUND : str = field_from_dict()
-    
+    LINK             : str = field_from_dict()
     
 @dataclass 
 class FontSource(DataclassFromDict): 
@@ -58,6 +58,7 @@ class FontSizeData(DataclassFromDict):
     INSTRUCTION_CAPTION: str = field_from_dict()
     BTN                : str = field_from_dict()
     SETTINGICON        : str = field_from_dict()
+    
     
 @dataclass
 class FontFamilyData(DataclassFromDict): 

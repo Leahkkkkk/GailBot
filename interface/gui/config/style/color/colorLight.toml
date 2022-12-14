@@ -20,6 +20,7 @@ TABLE_BORDER     = "#484847"
 INPUT_TEXT       = "#000000"
 INPUT_BORDER     = "#000000"
 INPUT_BACKGROUND = "#FFFFFF"
+LINK             = "#729A9F"
 
 [styleSheet]
 basic             = "background-color: #fff; color: #000"

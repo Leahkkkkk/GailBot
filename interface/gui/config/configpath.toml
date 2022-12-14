@@ -24,5 +24,6 @@ form            = "config/text/forms.toml"
 about           = "config/text/about.toml"
 
 # path to config files with the preset data 
-[preset]
-profilePreset   = "config/preset/profileValues.toml"
+[setting]
+profilePreset   = "config/setting/profileValues.toml"
+systemSetting   = "config/setting/settingValues.toml"

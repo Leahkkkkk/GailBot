@@ -14,7 +14,8 @@ Description: contain instance of data class with preset data
 import os 
 import toml 
 from util.Path import getProjectRoot
-from config.ConfigPath import PresetDataPath
+from config.ConfigPath import SettingDataPath
 
 basedir = getProjectRoot()
-ProfilePreset =  toml.load(os.path.join(basedir, PresetDataPath.profilePreset))
+ProfilePreset =  toml.load(os.path.join(basedir, SettingDataPath.profilePreset))
+SystemSetting = toml.load(os.path.join(basedir, SettingDataPath.systemSetting))

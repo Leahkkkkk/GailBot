@@ -21,7 +21,8 @@ from view.widgets import (
 )
 from view.components.WorkSpaceDialog import ChangeWorkSpace
 
-from config.ConfigPath import BackEndDataPath
+from config.ConfigPath import BackEndDataPath, SettingDataPath
+from util.Setting import SystemSetting
 from util.StyleSource import StyleSource, StyleTable
 from util.Text import SystemSetPageText as Text 
 from util.Text import SystemSettingForm as Form
@@ -54,6 +55,7 @@ class SystemSettingPage(QWidget):
         self._initLayout()
         self._initStyle()
         self._connectSignal()
+        self._loadValue()
         
     def _initWidget(self):
         """ initializes widgets to be shown """
@@ -176,6 +178,10 @@ class SystemSettingPage(QWidget):
             f.close()
             self._copyTomlFile(colorSource, colorDes, dirname)
             self._copyTomlFile(fontSource, fontDes, dirname) 
+            
+            f = open (f"{os.path.join(dirname, SettingDataPath.systemSetting)}", "w+")
+            toml.dump(setting, f)
+            f.close()
         except shutil.SameFileError:
             MsgBox.WarnBox("No setting is changed")
         except KeyError:
@@ -191,4 +197,9 @@ class SystemSettingPage(QWidget):
             toml.dump(s, f)
 
     def _clearLog(self):
+        """ open confirm box to confirm clearing the log file """
         MsgBox.ConfirmBox(Text.confirmClear, clearAllLog)
+    
+    def _loadValue(self):
+        """ initialize the setting value """
+        self.SysSetForm.setValue(SystemSetting)

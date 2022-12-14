@@ -1,6 +1,6 @@
 # contains all the predefined profile setting values
 
-[Default]
+["Air Force Study"]
 Plugins = [ "constructTree",]
 
 ["Coffee Study"]
@@ -9,7 +9,7 @@ Plugins = [ "conversationDict", "utteranceDict", "constructTree",]
 ["HRI lab study"]
 Plugins = [ "overlaps", "XMLtoCSV", "constructTree",]
 
-[Default.PostTranscribe]
+["Air Force Study".PostTranscribe]
 "Gap Length"                                         = "0"
 "Turn End Threshold"                                 = "0"
 "Large Pause - Lower Bound"                          = "0"
@@ -48,7 +48,7 @@ Plugins = [ "overlaps", "XMLtoCSV", "constructTree",]
 "FTO (Floor Transfer offset)Transcription Mode bool" = "OFF"
 "Syllable Rate mode bool"                            = "OFF"
 
-[Default.RequiredSetting."Output Form Data"]
+["Air Force Study".RequiredSetting."Output Form Data"]
 language             = "Spanish"
 "Number of speaker"  = "1"
 gender0              = "Female"
@@ -72,7 +72,7 @@ gender1              = "Female"
 gender2              = "Female"
 "Output File Format" = "CHART"
 
-[Default.RequiredSetting."Output Form Data"."Corpus Settings"]
+["Air Force Study".RequiredSetting."Output Form Data"."Corpus Settings"]
 "Corpus name"        = "enter corpus name"
 "Corpus location"    = "enter corpus location"
 "Corpus room layout" = "enter corpus room layout"
@@ -90,19 +90,19 @@ gender2              = "Female"
 "Corpus room layout" = "enter corpus room layout"
 "Corpus situation"   = "enter situation"
 
-[Default.RequiredSetting.Engine.CMU."1.language model setting"]
+["Air Force Study".RequiredSetting.Engine.CMU."1.language model setting"]
 "1. language model"        = "English"
 "2. custom language model" = "Air Force Study"
 
-[Default.RequiredSetting.Engine.CMU."2.Acoustic Model Setting"]
+["Air Force Study".RequiredSetting.Engine.CMU."2.Acoustic Model Setting"]
 "1. acoustic model setting"           = "acoustic2"
 "2. acoustic model setting(optional)" = "3"
 "3. plugin"                           = "plugin 1"
 
-[Default.RequiredSetting.Engine.CMU."3.CMU specialised setting"]
+["Air Force Study".RequiredSetting.Engine.CMU."3.CMU specialised setting"]
 "CMU setting option" = "setting option 1"
 
-[Default.RequiredSetting.Engine."User Info"]
+["Air Force Study".RequiredSetting.Engine."User Info"]
 "username" = "HIL Lab"
 "password" = "*********"
 

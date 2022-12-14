@@ -45,10 +45,11 @@ class TextData(DataclassFromDict):
     about                      : str = field_from_dict()
 
 @dataclass 
-class PresetData(DataclassFromDict): 
+class SettingData(DataclassFromDict): 
     profilePreset               : str = field_from_dict()
+    systemSetting               : str = field_from_dict()
 
 BackEndDataPath = BackEndData.from_dict(data["backend"])
 StyleDataPath   = StyleData.from_dict(data["style"])
 TextDataPath    = TextData.from_dict(data["text"])
-PresetDataPath  = PresetData.from_dict(data["preset"])
+SettingDataPath  = SettingData.from_dict(data["setting"])
