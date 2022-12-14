@@ -187,7 +187,7 @@ down  = "down.png"
 [fileTableText]
 default    = "Default"
 delete     = "Remove"
-changeSet  = "Change Setting"
+changeSet  = "Change Profile"
 profileDet = "Profile Details"
 
 [multipleComboText]
