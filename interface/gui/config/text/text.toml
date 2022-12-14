@@ -33,7 +33,7 @@ moreInfoText              = "For more, information visit"
 firstLaunchHeader         = "Welcom to the first launch on GailBot"
 firstLaunchInstruction    = """The first step is to choose the path to GailBot's \
                              workspace directory on your computer.\n This will be \ 
-                             where the file generated during transcription stored in"""
+                             where the file generated during transcription stored in."""
 
 
 [FileUploadPageText]

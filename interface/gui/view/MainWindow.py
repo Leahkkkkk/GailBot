@@ -62,8 +62,7 @@ class MainWindow(QMainWindow):
         
         self.setWindowTitle(About.APP_TITTLE)
         self.setMinimumSize(QSize(Dimension.WIN_MIN_WIDTH, Dimension.WIN_MIN_HEIGHT))
-        self.setMaximumSize(
-            QSize(Dimension.WINMAXWIDTH, Dimension.WINMAXHEIGHT))
+        self.setMaximumSize(QSize(Dimension.WINMAXWIDTH, Dimension.WINMAXHEIGHT))
 
     
         self.MainStack = MainStack.MainStack(
