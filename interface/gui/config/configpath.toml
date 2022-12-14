@@ -26,4 +26,5 @@ about           = "config/text/about.toml"
 # path to config files with the preset data 
 [setting]
 profilePreset   = "config/setting/profileValues.toml"
-systemSetting   = "config/setting/settingValues.toml"
+systemSetting   = "config/setting/systemSettingValues.toml"
+defaultSetting   = "config/setting/defaultSetting.toml"

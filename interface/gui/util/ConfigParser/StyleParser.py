@@ -35,6 +35,7 @@ class ColorData(DataclassFromDict):
     INPUT_BORDER     : str = field_from_dict()
     INPUT_BACKGROUND : str = field_from_dict()
     LINK             : str = field_from_dict()
+    LINKLIGHT        : str = field_from_dict()
     
 @dataclass 
 class FontSource(DataclassFromDict): 

@@ -48,6 +48,7 @@ class TextData(DataclassFromDict):
 class SettingData(DataclassFromDict): 
     profilePreset               : str = field_from_dict()
     systemSetting               : str = field_from_dict()
+    defaultSetting              : str = field_from_dict()
 
 BackEndDataPath = BackEndData.from_dict(data["backend"])
 StyleDataPath   = StyleData.from_dict(data["style"])

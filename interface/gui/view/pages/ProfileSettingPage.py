@@ -83,7 +83,7 @@ class ProfileSettingPage(QWidget):
             Text.reuquiredSetBtn, Color.GREYDARK, FS.BTN, 0, SS.onlyTopBorder)
         self.postSetBtn = Button.BorderBtn(
             Text.postSetBtn,Color.GREYDARK, FS.BTN, 0,SS.noSideBorder)
-        self.GuideLink = Label.Label(Links.guideLink, FS.LINK, link=True)
+        self.GuideLink = Label.Label(Links.guideLinkSideBar, FS.LINK, link=True)
         self.newPluginBtn = Button.ColoredBtn(
             Text.newPluginBtn, Color.PRIMARY_BUTTON)
         self.pluginBtn = Button.BorderBtn(

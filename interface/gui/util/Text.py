@@ -96,8 +96,8 @@ class Links:
         Color.LINK, link, WelcomePageText.guideText)
     gbWebLink = _linkTemplate.format(
         Color.LINK,link, WelcomePageText.gbLinkText)
-    gbWebLink = _linkTemplate.format(
-        Color.LINK,link, WelcomePageText.guideText)
+    guideLinkSideBar = _linkTemplate.format(
+        Color.LINKLIGHT,link, WelcomePageText.guideText)
 
 
 

@@ -22,7 +22,7 @@ from view.widgets import (
 from view.components.WorkSpaceDialog import ChangeWorkSpace
 
 from config.ConfigPath import BackEndDataPath, SettingDataPath
-from util.Setting import SystemSetting
+from util.Setting import SystemSetting, DefaultSetting
 from util.StyleSource import StyleSource, StyleTable
 from util.Text import SystemSetPageText as Text 
 from util.Text import SystemSettingForm as Form
@@ -55,7 +55,7 @@ class SystemSettingPage(QWidget):
         self._initLayout()
         self._initStyle()
         self._connectSignal()
-        self._loadValue()
+        self._loadValue(SystemSetting)
         
     def _initWidget(self):
         """ initializes widgets to be shown """
@@ -81,11 +81,24 @@ class SystemSettingPage(QWidget):
             Text.changeWorkSpace, FontSize.BODY)
         directory = getWorkBasePath()
         self.directoryDisplay = Label.Label(
-            f"    Current work space: {directory}/GailBot", FontSize.SMALL, Color.PRIMARY_INTENSE
+            f"    Current work space: {directory}/GailBot",
+            FontSize.SMALL, 
+            Color.PRIMARY_INTENSE
         )
+        
+        self.restoreBtnContainer = QWidget()
+        self.restoreBtnLayout = QHBoxLayout()
+        self.restoreBtnContainer.setLayout(self.restoreBtnLayout)
+        self.restoreBtn = Button.BorderBtn(
+            "Restore Defaults", 
+            Color.INPUT_TEXT, 
+            other= f"background-color: {Color.INPUT_BACKGROUND}")
+        self.restoreBtn.setFixedHeight(Dimension.INPUTHEIGHT)
+        self.restoreBtnLayout.addWidget(
+            self.restoreBtn, alignment=Qt.AlignmentFlag.AlignRight)
        
         self.Mainstack.addWidget(self.SysSetForm)
-        self.GuideLink = Label.Label(Links.guideLink, FontSize.LINK, link=True)
+        self.GuideLink = Label.Label(Links.guideLinkSideBar, FontSize.LINK, link=True)
         self.cancelBtn = Button.ColoredBtn(
             Text.cancelBtn, Color.CANCEL_QUIT)
         self.saveBtn = Button.ColoredBtn(
@@ -102,6 +115,8 @@ class SystemSettingPage(QWidget):
         self.deleteLog.clicked.connect(self._clearLog)
         self.saveBtn.clicked.connect(self._confirmChangeSetting)
         self.changeDir.clicked.connect(self._changeDirHandler)
+        self.restoreBtn.clicked.connect(self._confirmRestore)
+        
     
     def _changeDirHandler(self):
         dialog = ChangeWorkSpace()
@@ -141,6 +156,8 @@ class SystemSettingPage(QWidget):
         
         self.SysSetForm.addWidget(self.changeDirContainer)
         self.SysSetForm.addWidget(self.directoryDisplay)
+        self.restoreBtn.setContentsMargins(10,50,10,20)
+        self.SysSetForm.addWidget(self.restoreBtnContainer)
         
     def _initStyle(self):
         self.Mainstack.setObjectName(StyleSheet.sysSettingStackID)
@@ -161,7 +178,9 @@ class SystemSettingPage(QWidget):
     def _confirmChangeSetting(self)->None:
         """ open a pop up box to confirm restarting the app and change the setting"""
         MsgBox.ConfirmBox(
-            Text.confirmChange, self._changeSetting, QMessageBox.StandardButton.Reset)
+            Text.confirmChange, 
+            self._changeSetting, 
+            QMessageBox.StandardButton.Reset)
         
         
     def _changeSetting(self)->None:
@@ -200,6 +219,12 @@ class SystemSettingPage(QWidget):
         """ open confirm box to confirm clearing the log file """
         MsgBox.ConfirmBox(Text.confirmClear, clearAllLog)
     
-    def _loadValue(self):
+    def _loadValue(self, setting):
         """ initialize the setting value """
-        self.SysSetForm.setValue(SystemSetting)
+        self.SysSetForm.setValue(setting)
+    
+    def _confirmRestore(self):
+        """ open confirm box to confirm restoring to the defaults """
+        MsgBox.ConfirmBox(
+            "Confirm to restore to default setting", 
+            lambda: self._loadValue(DefaultSetting))

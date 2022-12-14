@@ -41,6 +41,8 @@ INPUT_TEXT       = "#000000"
 INPUT_BORDER     = "#363636"
 INPUT_BACKGROUND = "#CECECE"
 LINK             = "#D1F5F5"
+LINKLIGHT        = "#CBE1E0"
+
 
 
 
