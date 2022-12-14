@@ -164,7 +164,7 @@ class OpenFile(TabPage):
                 if self.filePaths:
                     self.signals.nextPage.emit()
                 else:
-                    WarnBox("No file is uploaded is uploaded by user")   
+                    WarnBox("No file is uploaded by user")   
                 for file in files:
                     self._addFileToFileDisplay(file)
             else:
@@ -257,8 +257,10 @@ class ChooseSet(TabPage):
     def _toNextPage(self, idx):
         """ takes user to the next page in the tab popup """
         self.logger.info("")
-        if idx != 0:
+        if self.selectSettings.currentText != Text.selectSetText:
             self.signals.nextPage.emit()
+            if self.selectSettings.itemText(0) == Text.selectSetText:
+                self.selectSettings.removeItem(0)
         else:
             logging.warn("The profile has not been chosen")
             
