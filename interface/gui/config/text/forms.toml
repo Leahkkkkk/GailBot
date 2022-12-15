@@ -1,0 +1,93 @@
+###### form values
+["record form".Basic]
+Filename             = "filename"
+"Audio format combo" = [".Wav"]
+
+["record form".Advanced]
+"Recording Rate (Hertz)" = "4800"
+"Max Recording Duration" = "1h"
+
+["profile form".Plugins]
+HiLabSuite = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
+
+["profile form"."PostTranscribe".General]
+"Gap Length"                = "0s"
+"Turn End Threshold"        = "0s"
+"Large Pause - Lower Bound" = "0s"
+
+["profile form"."PostTranscribe"."Laghter Settings"]
+"Laughter Detection Module bool"     = "ON"
+"Laughter Probability - Lower Bound" = "0s"
+"Laughter Length - Lower Bound"      = "0s"
+
+["profile form"."PostTranscribe"."MicroPause Bound"]
+"Upper Bound" = "0s"
+"Lower Bound" = "0s"
+
+["profile form"."PostTranscribe"."Transcription Model"]
+"Beat Transcription Mode bool"                       = "ON"
+"FTO (Floor Transfer offset)Transcription Mode bool" = "ON"
+"Syllable Rate mode bool"                            = "ON"
+
+["profile form"."RequiredSetting"."Output Format".CorpusSettings]
+"Corpus name"        = "enter corpus name"
+"Corpus location"    = "enter corpus location"
+"Corpus room layout" = "enter corous room layout"
+"Corpus situation"   = "enter situation"
+
+["profile form"."RequiredSetting"."Output Format"]
+"FileFormat" = [".CHAT", ".TXT", ".RTF"]
+"Language"   = ["English", "French", "Spanish", "German", "Chinese(Madarin)", "Chinese(Cantonese)"]
+
+
+["profile form"."RequiredSetting".Engine.IBM."1.language model setting"]
+"1. language model"        = [ "IBM language", "English", "Spanish",]
+"2. custom language model" = [ "HRI lab", "None", "Air Force Study",]
+
+["profile form"."RequiredSetting".Engine.IBM."2.Acoustic Model Setting"]
+"1. acoustic model setting"           = [ "acoustic1", "acoustic2", "acoustic3",]
+"2. acoustic model setting(optional)" = [ "1", "2", "3",]
+
+["profile form"."RequiredSetting".Engine.IBM."3.advanced setting"]
+"1. Advanced Setting Option 1" = [ "advanced 1", "advanced 2", "advanced 3",]
+"2. plugin"                    = [ "plugin 1", "plugin 2",]
+
+["profile form"."RequiredSetting".Engine.IBM."4.IBM specialised setting"]
+"IBM setting option" = [ "setting option 1", "setting option 2", "setting option 3",]
+
+["profile form"."RequiredSetting".Engine.CMU."1.language model setting"]
+"1. language model"        = [ "CMU language", "English", "Spanish",]
+"2. custom language model" = [ "CMU custom", "None", "Air Force Study",]
+
+["profile form"."RequiredSetting".Engine.CMU."2.Acoustic Model Setting"]
+"1. acoustic model setting"           = [ "acoustic1", "acoustic2", "acoustic3",]
+"2. acoustic model setting(optional)" = [ "1", "2", "3",]
+"3. plugin"                           = [ "plugin 1", "plugin 2",]
+
+["profile form"."RequiredSetting".Engine.CMU."3.CMU specialised setting"]
+"CMU setting option" = [ "setting option 1", "setting option 2", "setting option 3",]
+
+["system setting form"."View Setting"]
+"Font Size combo"  = [ "medium", "small", "large"]
+"Color Mode combo" = [ "light mode", "dark mode"]
+"Log file auto deletion time combo" = ["every day", "every week", "every month", "every 2 months"]
+
+["system setting form"."GailBot Work Space Setting"]
+
+["log deletion"]
+"every day"      = 1
+"every week"     = 7
+"every month"    = 30
+"every 2 months" = 60
+
+[formField]
+user             = "User Info"
+engine           = "Engine"
+outPutFormat     = "Output Form Data"
+postTranscribe   = "PostTranscribe"
+reuquiredSetting = "RequiredSetting"
+plugin           = "Plugins"
+
+
+
+
