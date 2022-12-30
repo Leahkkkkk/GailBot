@@ -35,10 +35,10 @@ class RequiredSettingPage(QWidget):
         """ sets the value of data
         Args: data:dict: dictionary that is passed in to be updated
         """
-        try:
-            self.form.setValue(data)
-        except:
-            raise ValueError("Set Required Setting Data Error")
+        # try:
+        self.form.setValue(data)
+        # except:
+            # raise ValueError("Set Required Setting Data Error")
     
     def getValue(self) -> dict:
         """ gets the value of data """

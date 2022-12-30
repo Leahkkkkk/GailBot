@@ -27,7 +27,8 @@ from util.Style import FontSize as FS
 from util.Style import buttonStyle
 from util.Logger import makeLogger
 from view.Signals import FileSignals
-from view.widgets import Label, Button, FileTable
+from view.widgets import Label, Button
+from view.widgets.FileTable import FileTable, TableWidget
 from view.widgets.Background import addLogo
 from view.widgets import MsgBox
 
@@ -98,11 +99,15 @@ class FileUploadPage(QWidget):
             QSize(Dimension.ICONBTN,Dimension.ICONBTN))
         self.removeAll = Button.ColoredBtn(
             Text.removeBtnText, Color.PRIMARY_BUTTON, FontSize.BTN)
-        self.fileTable = FileTable.FileTable(
+        
+        self.fileTable = FileTable(
             FileTableHeader.fileUploadPage, 
             self.signal,
             self.profileNames,
-            {"check", "delete", "details", "edit"})
+            {TableWidget.CHECK, 
+             TableWidget.PROFILE_DETAIL, 
+             TableWidget.CHANGE_PROFILE, 
+             TableWidget.REMOVE})
         self.fileTable.resizeCol(FileTableDimension.fileUploadPage)
         
     def _initLayout(self):

@@ -13,40 +13,40 @@ Plugins = [ "overlaps", "XMLtoCSV", "constructTree",]
 "Gap Length"                                         = "0"
 "Turn End Threshold"                                 = "0"
 "Large Pause - Lower Bound"                          = "0"
-"Laughter Detection Module bool"                     = "OFF"
+"Laughter Detection Module"                          = "OFF"
 "Laughter Probability - Lower Bound"                 = "0"
 "Laughter Length - Lower Bound"                      = "0"
 "Upper Bound"                                        = "0"
 "Lower Bound"                                        = "0"
-"Beat Transcription Mode bool"                       = "OFF"
-"FTO (Floor Transfer offset)Transcription Mode bool" = "OFF"
-"Syllable Rate mode bool"                            = "OFF"
+"Beat Transcription Mode"                            = "OFF"
+"FTO (Floor Transfer offset)Transcription Mode"      = "OFF"
+"Syllable Rate mode"                                 = "OFF"
 
 ["Coffee Study".PostTranscribe]
 "Gap Length"                                         = "0s"
 "Turn End Threshold"                                 = "0s"
 "Large Pause - Lower Bound"                          = "0s"
-"Laughter Detection Module bool"                     = "ON"
+"Laughter Detection Module"                          = "ON"
 "Laughter Probability - Lower Bound"                 = "0s"
 "Laughter Length - Lower Bound"                      = "0s"
 "Upper Bound"                                        = "0s"
 "Lower Bound"                                        = "0s"
-"Beat Transcription Mode bool"                       = "ON"
-"FTO (Floor Transfer offset)Transcription Mode bool" = "ON"
-"Syllable Rate mode bool"                            = "ON"
+"Beat Transcription Mode"                            = "ON"
+"FTO (Floor Transfer offset)Transcription Mode"      = "ON"
+"Syllable Rate mode"                                 = "ON"
 
 ["HRI lab study".PostTranscribe]
 "Gap Length"                                         = "0s"
 "Turn End Threshold"                                 = "0s"
 "Large Pause - Lower Bound"                          = "0s"
-"Laughter Detection Module bool"                     = "OFF"
+"Laughter Detection Module"                          = "OFF"
 "Laughter Probability - Lower Bound"                 = "0s"
 "Laughter Length - Lower Bound"                      = "0s"
 "Upper Bound"                                        = "0s"
 "Lower Bound"                                        = "0s"
-"Beat Transcription Mode bool"                       = "OFF"
-"FTO (Floor Transfer offset)Transcription Mode bool" = "OFF"
-"Syllable Rate mode bool"                            = "OFF"
+"Beat Transcription Mode"                            = "OFF"
+"FTO (Floor Transfer offset)Transcription Mode"      = "OFF"
+"Syllable Rate mode"                                 = "OFF"
 
 ["Air Force Study".RequiredSetting."Output Form Data"]
 language             = "Spanish"
@@ -90,57 +90,34 @@ gender2              = "Female"
 "Corpus room layout" = "enter corpus room layout"
 "Corpus situation"   = "enter situation"
 
-["Air Force Study".RequiredSetting.Engine.CMU."1.language model setting"]
-"1. language model"        = "English"
-"2. custom language model" = "Air Force Study"
-
-["Air Force Study".RequiredSetting.Engine.CMU."2.Acoustic Model Setting"]
-"1. acoustic model setting"           = "acoustic2"
-"2. acoustic model setting(optional)" = "3"
-"3. plugin"                           = "plugin 1"
-
-["Air Force Study".RequiredSetting.Engine.CMU."3.CMU specialised setting"]
+["Air Force Study".RequiredSetting.Engine.CMU]
+"language model"        = "English"
+"custom language model" = "Air Force Study"
+"acoustic model setting"           = "acoustic2"
+"acoustic model setting(optional)" = "3"
+"plugin"                           = "plugin 1"
 "CMU setting option" = "setting option 1"
-
-["Air Force Study".RequiredSetting.Engine."User Info"]
 "username" = "HIL Lab"
 "password" = "*********"
 
-
-["Coffee Study".RequiredSetting.Engine.IBM."1.language model setting"]
-"1. language model"        = "Spanish"
-"2. custom language model" = "Air Force Study"
-
-["Coffee Study".RequiredSetting.Engine.IBM."2.Acoustic Model Setting"]
-"1. acoustic model setting"           = "acoustic2"
-"2. acoustic model setting(optional)" = "3"
-
-["Coffee Study".RequiredSetting.Engine.IBM."3.advanced setting"]
-"1. Advanced Setting Option 1" = "advanced 1"
-"2. plugin"                    = "plugin 1"
-
-["Coffee Study".RequiredSetting.Engine.IBM."4.IBM specialised setting"]
+["Coffee Study".RequiredSetting.Engine.IBM]
+"language model"        = "Spanish"
+"custom language model" = "Air Force Study"
+"acoustic model setting"           = "acoustic2"
+"acoustic model setting(optional)" = "3"
+"Advanced Setting Option 1" = "advanced 1"
+"plugin"                    = "plugin 1"
 "IBM setting option" = "setting option 2"
-
-["Coffee Study".RequiredSetting.Engine."User Info"]
 "username" = "HIL Lab"
 "password" = "*********"
 
-["HRI lab study".RequiredSetting.Engine.IBM."1.language model setting"]
-"1. language model"        = "IBM language"
-"2. custom language model" = "Air Force Study"
-
-["HRI lab study".RequiredSetting.Engine.IBM."2.Acoustic Model Setting"]
-"1. acoustic model setting"           = "acoustic2"
-"2. acoustic model setting(optional)" = "3"
-
-["HRI lab study".RequiredSetting.Engine.IBM."3.advanced setting"]
-"1. Advanced Setting Option 1" = "advanced 1"
-"2. plugin"                    = "plugin 1"
-
-["HRI lab study".RequiredSetting.Engine.IBM."4.IBM specialised setting"]
+["HRI lab study".RequiredSetting.Engine.IBM]
+"language model"        = "IBM language"
+"custom language model" = "Air Force Study"
+"acoustic model setting"           = "acoustic2"
+"acoustic model setting(optional)" = "3"
+"Advanced Setting Option 1" = "advanced 1"
+"plugin"                    = "plugin 1"
 "IBM setting option" = "setting option 3"
-
-["HRI lab study".RequiredSetting.Engine."User Info"]
 "username" = "HIL Lab"
 "password" = "*********"

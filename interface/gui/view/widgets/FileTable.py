@@ -14,6 +14,7 @@ KEYERROR = "File key not found"
 
 from typing import Dict, List, Set, Tuple, TypedDict
 import logging
+from enum import Enum 
 
 from view.widgets import MsgBox
 from view.components.UploadFileTab import UploadFileTab
@@ -43,7 +44,14 @@ from PyQt6.QtCore import (
 )
 from PyQt6.QtGui import QColor
 
+class TableWidget(Enum):
+    REMOVE = 1
+    CHANGE_PROFILE = 2 
+    PROFILE_DETAIL = 3
+    CHECK = 4
+
 class fileObject(TypedDict):
+    """ interface for file dictionary """
     Name: str
     Type: str
     Profile: str
@@ -73,7 +81,7 @@ class FileTable(QTableWidget):
                  headers: List[str], 
                  dbSignal: FileSignals,
                  profiles: List[str] = [Text.default],  
-                 rowWidgets: Set[str] = None, 
+                 tableWidgetsSet: Set[TableWidget] = None, 
                  *args, 
                  **kwargs):
         """_summary_
@@ -83,7 +91,7 @@ class FileTable(QTableWidget):
             filedata (Dict[str, fileObject]): initial file data
             dbSignal (FileSignals): signals to communicate with database
             profiles (List[str]): a list of available profile names
-            rowWidgets (Set[str]): a set of widgets name that will be displayed
+            tableWidgetsSet (Set[TableWidget]): a set of widgets name that will be displayed
                                    on each row
         """
         super().__init__(0, (len(headers)), *args, **kwargs)
@@ -96,15 +104,13 @@ class FileTable(QTableWidget):
         self.transferList: set[str] = set()  
                                         # a set of keys of the file that will
                                         # be transferred to the next state
-        self.selecetdList: set[str] = set()
-                                        # a set of currently selected files
                                    
-        self.fileWidgets: Dict[str, TableCellButtons] = dict()      
+        self.fileWidgets: Dict[str, _TableCellWidgets] = dict()      
                                         # a dictionary to keep track of current
                                         # widget on the table 
                                         
         self.allSelected = False        # True if all files are selected 
-        self.rowWidgets = rowWidgets
+        self.tableWidgetsSet = tableWidgetsSet
         self.logger =  makeLogger("F")
         
         self.viewSignal = Signals()
@@ -115,8 +121,21 @@ class FileTable(QTableWidget):
         self.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)  
         self.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         
+    def resizeCol(self, widths:List[int]) -> None:
+        """ takes in a list of width and resize the width of the each 
+            column to the width
+        """
+        try:
+            widthSum = self.width()
+            if len(widths) != self.columnCount():
+                self.logger.error("Cannot resize column")
+            else:
+                for i in range(len(widths)):
+                    self.setColumnWidth(i, int(widths[i] * widthSum))
+        except:
+            MsgBox.WarnBox("Failed to resize the table")
     
-    ########################  table initialier    #########################
+    ########################  table initializer    #########################
     def  _connectViewSignal(self):
         """ connects the signals upon button clicks """
         self.viewSignal.delete.connect(self._confirmRemoveFile)
@@ -146,21 +165,7 @@ class FileTable(QTableWidget):
             f"background-color: {Color.SCORLL_BAR}"
         )
 
-    def resizeCol(self, widths:List[int]) -> None:
-        """ takes in a list of width and resize the width of the each 
-            column to the width
-        """
-        try:
-            widthSum = self.width()
-            if len(widths) != self.columnCount():
-                self.logger.error("Cannot resize column")
-            else:
-                for i in range(len(widths)):
-                    self.setColumnWidth(i, int(widths[i] * widthSum))
-        except:
-            MsgBox.WarnBox("Failed to resize the table")
           
-      
     def _setFileHeader(self) -> None:
         """ initialize file headers
         
@@ -199,18 +204,15 @@ class FileTable(QTableWidget):
                 widget.setCheckState(False)
                 if key in self.transferList:
                     self.transferList.remove(key) 
-                    self.selecetdList.remove(key)
         else:
             for key, widget in self.fileWidgets.items():
                 widget.setCheckState(True)
                 if not key in self.transferList:
                     self.transferList.add(key)
-                    self.selecetdList.add(key)
         
         self.allSelected = not self.allSelected
     
     ########################  upload file handlers ########################
-    
     def uploadFile(self):
         """ open up a pop up dialog for user to upload file 
            ** connected to upload file button 
@@ -223,6 +225,12 @@ class FileTable(QTableWidget):
         except: 
             MsgBox.WarnBox("An error occurred when uploading the file")
     
+    def _postFile(self, file: fileObject):
+        """ send signals to post file to the database 
+            ** connected to the upload file button 
+        """
+        self.dbSignal.postFile.emit(file)
+    
     def addFiles(self, files: List[Tuple]):
         """ adding a list of files to file table
             ** connected to sendfile signal from file database
@@ -231,15 +239,7 @@ class FileTable(QTableWidget):
         """
         for file in files:
             self.addFile(file)
-                
     
-    def _postFile(self, file: fileObject):
-        """ send signals to post file to the database 
-            ** connected to the upload file button 
-        """
-        self.dbSignal.postFile.emit(file)
-    
-               
     def addFile(self, file: Tuple[str, fileObject]):
         """ given a file object, adding it to the file table
             
@@ -260,7 +260,7 @@ class FileTable(QTableWidget):
                         self.filePins[key] = filePin
                     self.setItem(newRowIdx, col, newItem)
             
-            if self.rowWidgets:
+            if self.tableWidgetsSet:
                 self._addFileWidgetToTable(newRowIdx, key) 
             self.resizeRowsToContents()  
         except: 
@@ -273,12 +273,12 @@ class FileTable(QTableWidget):
         Args:
             pin (QTableWidgetItem): _description_
         """
-        newFileWidget = TableCellButtons(
+        newFileWidget = _TableCellWidgets(
             self,
             key,
             self.viewSignal,
             row,
-            self.rowWidgets)
+            self.tableWidgetsSet)
         
         self.fileWidgets[key] = newFileWidget
 
@@ -289,8 +289,7 @@ class FileTable(QTableWidget):
                           lambda: self.removeFile(key))
         
     def removeFile(self, key:str):
-        """ delete one file
-            ** connected to delete file button 
+        """ remove one file from the table
         Args:
             key (str): file key 
         """
@@ -303,32 +302,29 @@ class FileTable(QTableWidget):
                 del self.filePins[key]
                 if key in self.transferList:
                     self.transferList.remove(key)
-                    self.selecetdList.remove(key)
             else:
                 self.viewSignal.error(KEYERROR)
         except:
             MsgBox.WarnBox("An error occurred when removing the file")
     
     def removeAll(self):
-        """ delete all files on the file table 
-            ** connected to deleteAll button 
+        """ remove all the file from table
         """
         keys = list(self.filePins)
         for key in keys:
             self.removeFile(key)
             
         self.transferList.clear()
-        self.selecetdList.clear()
         self.filePins.clear()
         self.viewSignal.ZeroFile.emit()
         
 
     ##################### edit profile handlers #########################
     def settingDetails(self, key:str):
-        """ send a reqeust to see file details
+        """ send a request to see file details
             *** connected to setting details page
             
-        Args: ket(str): a file key 
+        Args: key(str): a file key 
         """
         try:
             self.dbSignal.requestprofile.emit(key) # make request to load profile data 
@@ -366,7 +362,7 @@ class FileTable(QTableWidget):
             key (str): a key to identify file
         """
         try:
-            selectSetting = changeProfileDialog(self.profiles, key)
+            selectSetting = _ChangeProfileDialog(self.profiles, key)
             selectSetting.signals.changeProfile.connect(self.postNewFileProfile)
             selectSetting.exec()
             selectSetting.setFixedSize(QSize(200,200))
@@ -375,7 +371,6 @@ class FileTable(QTableWidget):
     
     def postNewFileProfile(self, newprofile: Tuple[str, str]):
         """ post the newly updated file change to the database
-
         """
         try:
             key, profilekey = newprofile
@@ -384,7 +379,7 @@ class FileTable(QTableWidget):
                 row = self.indexFromItem(self.filePins[key]).row()
                 newitem = QTableWidgetItem(profilekey)
                 self.setItem(row, 3, newitem)
-                if key in self.selecetdList: 
+                if key in self.transferList: 
                     newitem.setBackground(QColor(Color.HIGHLIGHT))
             else:
                 self.viewSignal.error.emit(KEYERROR)
@@ -412,7 +407,7 @@ class FileTable(QTableWidget):
                 col = self.headers.index(field)
                 newitem = QTableWidgetItem(value)
                 self.setItem(row, col, newitem)
-                if key in self.selecetdList:
+                if key in self.transferList:
                     newitem.setBackground(QColor(Color.HIGHLIGHT))
         else:
             self.logger.error("File is not found")
@@ -447,7 +442,6 @@ class FileTable(QTableWidget):
         try:
             if key in self.filePins:
                 self.transferList.add(key)
-                self.selecetdList.add(key)
                 rowIdx = self.indexFromItem(self.filePins[key]).row()
                 self._setColorRow(rowIdx, Color.HIGHLIGHT)
                 self.viewSignal.nonZeroFile.emit()
@@ -457,8 +451,7 @@ class FileTable(QTableWidget):
             self.logger.error(err)
         else:
             return
-        
-            
+             
     def removeFromNextState(self, key:str) -> None:
         """ remove the file from the transcribe list 
 
@@ -470,7 +463,6 @@ class FileTable(QTableWidget):
         try:
             if key in self.transferList:
                 self.transferList.remove(key)
-                self.selecetdList.remove(key)
                 rowIdx = self.indexFromItem(self.filePins[key]).row()
                 self._setColorRow(rowIdx, Color.MAIN_BACKRGOUND)
                 self.clearSelection()
@@ -503,14 +495,14 @@ class FileTable(QTableWidget):
             else:
                 self.logger.info("failed to set row color")
        
-class TableCellButtons(QObject):
+class _TableCellWidgets(QObject):
     def __init__(
         self, 
         table: QTableWidget,
         key: str,
-        signals:Signals,
-        rowidx:int,
-        widgets: Set[str],
+        signals: Signals,
+        rowidx: int,
+        widgets: Set[TableWidget],
         *args, 
         **kwargs):
         """ A wrapper class that contains all widgets in one row of filetable
@@ -533,53 +525,70 @@ class TableCellButtons(QObject):
 
     def _initWidgets(self):
         """ initialize the widget """
-        if "check" in self.widgets:
-            # create the widget
-            self.checkBoxContainer = QWidget()
-            self.checkBoxLayout = QVBoxLayout()
-            self.checkBoxContainer.setLayout(self.checkBoxLayout)
-            self.checkBox = QCheckBox()
-            # connect widget signal to function
-            self.checkBox.stateChanged.connect(self.checkStateChanged)
-            self.checkBoxLayout.addWidget(
-                self.checkBox, 
-                alignment=Qt.AlignmentFlag.AlignCenter)
-            # add widget to table
-            firstCell = QTableWidgetItem()
-            self.table.setItem(self.rowidx, 0, firstCell)
-            self.table.setCellWidget(self.rowidx, 0, self.checkBoxContainer)
-        
+            
         if self.widgets:
-            #creat the widget
+            #create the widget
             self.Action = QWidget()
             self.ActionLayout = QVBoxLayout()
             self.Action.setLayout(self.ActionLayout)
-            if "delete" in self.widgets:
-                self.deleteBtn = QPushButton(Text.delete)
-                self.ActionLayout.addWidget(self.deleteBtn)
-                self.deleteBtn.clicked.connect(
-                    lambda: self.signals.delete.emit(self.key))
-            if "edit" in self.widgets:
-                self.editBtn = QPushButton(Text.changeSet)
-                self.ActionLayout.addWidget(self.editBtn)
-                self.editBtn.clicked.connect(
-                    lambda: self.signals.requestChangeProfile.emit(self.key)
-                )
-            if "details" in self.widgets:
-                self.detailBtn = QPushButton(Text.profileDet)
-                self.ActionLayout.addWidget(self.detailBtn)
-                self.detailBtn.clicked.connect(
-                    lambda: self.signals.requestProfile.emit(self.key)
-                )
+            
+            if TableWidget.CHECK in self.widgets:
+                self._addCheckWidget()
+                
+            if TableWidget.REMOVE in self.widgets:
+                self._addRemoveWidget()
+                
+            if TableWidget.CHANGE_PROFILE in self.widgets:
+                self._addChangeProfileWidget()
+                
+            if TableWidget.PROFILE_DETAIL in self.widgets:
+                self._addProfileDetailWidget()
+                
             self.ActionLayout.setSpacing(1)
             self.ActionLayout.addStretch()
-            #add widget to table
+            
+            # add widget to table
             lastCell = QTableWidgetItem()
             lastCol = self.table.columnCount() - 1
             self.table.setItem(self.rowidx, lastCol, lastCell)
             self.table.setCellWidget(self.rowidx, lastCol, self.Action)
 
-    def checkStateChanged(self, state:bool):
+    def _addCheckWidget(self):     
+        self.checkBoxContainer = QWidget()
+        self.checkBoxLayout = QVBoxLayout()
+        self.checkBoxContainer.setLayout(self.checkBoxLayout)
+        self.checkBox = QCheckBox()
+        # connect widget signal to function
+        self.checkBox.stateChanged.connect(self._checkStateChanged)
+        self.checkBoxLayout.addWidget(
+            self.checkBox, 
+            alignment=Qt.AlignmentFlag.AlignCenter)
+        # add widget to table
+        firstCell = QTableWidgetItem()
+        self.table.setItem(self.rowidx, 0, firstCell)
+        self.table.setCellWidget(self.rowidx, 0, self.checkBoxContainer)
+    
+    def _addRemoveWidget(self):
+        self.removeBtn = QPushButton(Text.delete)
+        self.ActionLayout.addWidget(self.removeBtn)
+        self.removeBtn.clicked.connect(
+            lambda: self.signals.delete.emit(self.key))
+    
+    def _addChangeProfileWidget(self):
+        self.editBtn = QPushButton(Text.changeSet)
+        self.ActionLayout.addWidget(self.editBtn)
+        self.editBtn.clicked.connect(
+            lambda: self.signals.requestChangeProfile.emit(self.key)
+        )
+        
+    def _addProfileDetailWidget(self):
+        self.detailBtn = QPushButton(Text.profileDet)
+        self.ActionLayout.addWidget(self.detailBtn)
+        self.detailBtn.clicked.connect(
+            lambda: self.signals.requestProfile.emit(self.key)
+        )
+        
+    def _checkStateChanged(self, state:bool):
         """ emit signal to store the checked file to the transfer list """
         if state:
             self.signals.select.emit(self.key)
@@ -593,7 +602,7 @@ class TableCellButtons(QObject):
         else: 
             self.checkBox.setCheckState(Qt.CheckState.Unchecked)
             
-class changeProfileDialog(QDialog):
+class _ChangeProfileDialog(QDialog):
     def __init__(self, 
                  profiles: List[str], 
                  fileKey:str, 
@@ -607,7 +616,7 @@ class changeProfileDialog(QDialog):
         """
         super().__init__(*args, **kwargs)
         self.signals = Signals()
-        self.logger = makeLogger("Frontend")
+        self.logger = makeLogger("F")
         self.fileKey = fileKey
         self.selectSetting = ChooseSet(profiles)
         self.layout = QVBoxLayout()

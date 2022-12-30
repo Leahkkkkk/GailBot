@@ -12,8 +12,9 @@ Description: implementation of the required setting form
 
 from typing import Dict 
 
-from view.widgets import ToggleView
+from view.widgets import ToggleView, DependentCombo
 from view.components.SpeechEngineForm import SpeechEngineForm
+from util.Text import EngineSettingForm
 from view.components.OutputFormatForm import OutPutFormat
 from util.Text import CreateNewProfilePageText as Text 
 from util.Style import Dimension
@@ -42,10 +43,11 @@ class RequiredSettingForm(QWidget):
          
     def _initWidget(self):
         """initialize widgets"""
-        self.engineForm = SpeechEngineForm()
+        self.engineForm = DependentCombo.DependentCombo(
+            EngineSettingForm.Engine, "Speech to Text Engine")
         self.engineFormView = ToggleView.ToggleView(
             Text.engineSettingHeader,self.engineForm, header = True)
-        self.engineFormView.setScrollHeight(200)
+        self.engineFormView.setScrollHeight(400)
         self.outPutForm = OutPutFormat()
         self.outPutFormView = ToggleView.ToggleView(
             Text.outputSettingHeader, self.outPutForm, header = True)
@@ -71,6 +73,7 @@ class RequiredSettingForm(QWidget):
             data (Dict[str, Dict[str, dict]]): a dictionary that stores the 
                                                profile values
         """
+        print(data["Engine"])
         self.engineForm.setValue(data["Engine"])
         self.outPutForm.setValue(data["Output Form Data"])
     

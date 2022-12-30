@@ -63,7 +63,7 @@ class ConfirmTranscribePage(QWidget):
         self.fileTable = FileTable.FileTable(
             FileTableHeader.confirmPage,
             self.signal,
-            rowWidgets={"details"})
+            tableWidgetsSet={FileTable.TableWidget.PROFILE_DETAIL})
         
         self.fileTable.resizeCol(FileTableDimension.confirmPage)
         self.bottomButton = QWidget()

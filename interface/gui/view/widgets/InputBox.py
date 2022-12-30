@@ -69,8 +69,6 @@ class InputBox(QWidget):
         """initialize widgets for input box"""
         self.inputlabel = Label.Label(self.label, self.labelSize)
         self.inputFeild = InputField(self) 
-        self.inputFeild.setMaximumSize(
-            QSize(Dimension.INPUTWIDTH, Dimension.INPUTHEIGHT))
         if self.inputText:
             self.setText(self.inputText)
             
@@ -84,8 +82,7 @@ class InputBox(QWidget):
         self.setLayout(self.layout)
         self.layout.addWidget(self.inputlabel) 
         self.layout.addWidget(
-            self.inputFeild, 
-            alignment=Qt.AlignmentFlag.AlignLeft)
+            self.inputFeild)
     
 
 class InputField(QLineEdit):
@@ -159,4 +156,5 @@ class ComboSelection(ComboBox):
     def __init__(self, selections:list, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.addItems(selections)
+        
 

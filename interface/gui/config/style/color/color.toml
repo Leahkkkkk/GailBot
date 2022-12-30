@@ -21,9 +21,7 @@ INPUT_TEXT = "#000000"
 INPUT_BORDER = "#000000"
 INPUT_BACKGROUND = "#FFFFFF"
 LINK = "#91C1C7"
-LINKLIGHT        = "#D1F5F5"
-
-
+LINKLIGHT = "#D1F5F5"
 
 [styleSheet]
 basic = "background-color: #fff; color: #000"

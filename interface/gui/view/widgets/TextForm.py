@@ -9,18 +9,20 @@ Modified By:  Siara Small  & Vivian Li
 -----
 Description: a form widget that implement a form that takes in user input 
 '''
-
+from dataclasses import dataclass
 from typing import Dict 
 
 from view.widgets import (
     Label, 
     InputBox, 
     Button,
+    ToggleView
 )
 from util.Style import (
     FontFamily, 
     FontSize, 
-    Dimension
+    Dimension, 
+    Color
 )
 from view.widgets.Background import initSecondaryColorBackground
 
@@ -30,10 +32,18 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import Qt
 
+@dataclass
+class InputFormat:
+    BOOL = " bool"
+    COMBO = " combo"
+    DEPENDENT_COMBO = " dependent combo"
+    
+    
 class TextForm(QWidget):
     def __init__(self, 
                  data: Dict[str, str], 
                  background : bool = True,
+                 toggle : bool = False, 
                  *args, **kwargs) -> None:
         """ Displays a form 
 
@@ -50,8 +60,9 @@ class TextForm(QWidget):
         4. setValues(self, data: Dict[str, str])
         """
         super().__init__(*args, **kwargs)
-        self.data = data
+        self.data : Dict[str, dict] = data
         self.inputDict = dict()
+        self.toggle = toggle 
         self.setMinimumHeight(Dimension.WIN_MIN_HEIGHT // 3 * 2)
         self.setMinimumWidth(Dimension.WIN_MIN_WIDTH // 2)
         self._initWidget()
@@ -102,32 +113,68 @@ class TextForm(QWidget):
         self.mainContainer.setLayout(self.mainVertical)
         self.mainVertical.setSpacing(10)
         count = 0
-        for key, items in self.data.items():
-            if count != 0:
+        
+        for tittleKey, items in self.data.items():
+            """ adding spacing """
+            if count != 0 and not self.toggle:
                 self.mainVertical.addSpacing(Dimension.LARGE_SPACING)
             count += 1
-            newLabel = Label.Label(key, FontSize.BTN, FontFamily.MAIN)
-            self.mainVertical.addWidget(newLabel)
+            
+            """ create additional layout if the form elements are 
+            displayed in a toggle view """
+            if self.toggle:
+                toggleViewContainer = QWidget()
+                toggleViewLayout = QVBoxLayout()
+                toggleViewContainer.setLayout(toggleViewLayout)
+            
+            """ create the label  """
+            tittleKey = tittleKey.split(". ")[-1]
+            if not self.toggle:
+                newLabel = Label.Label(tittleKey, FontSize.BTN, FontFamily.MAIN)
+                self.mainVertical.addWidget(newLabel)
+            
+            """ create the form component element """
             for key, value in items.items():
                 keyCopy = key
-                if "bool" in key:
-                    key = key.replace("bool", "") 
+                if InputFormat.BOOL in key:
+                    key = key.replace( InputFormat.BOOL, "").split(". ")[-1]
                     newInput = Button.onOffButton(key, value == value)
-                elif "combo" in key:
-                    key = key.replace("combo","")
-                    newInput = InputBox.InputCombo(label=key, selections=value)
-                    newInput.setMinimumHeight(80)
+                elif InputFormat.COMBO in key:
+                    key = key.replace( InputFormat.COMBO, "").split(". ")[-1]
+                    if self.toggle:
+                        newInput = InputBox.InputCombo(
+                            label=key, selections=value, vertical=True)
+                    else:
+                        newInput = InputBox.InputCombo(
+                            label=key, selections=value)
+                        newInput.setMinimumHeight(80)
                 else:
+                    key = key.split(". ")[-1]
                     newInput = InputBox.InputBox(key, inputText=value)
-                self.mainVertical.addWidget(newInput)
-                self.inputDict[keyCopy] = newInput
+                
+                """ add element to the layout """
+                if self.toggle : 
+                    toggleViewLayout.addWidget(newInput)
+                else:
+                    self.mainVertical.addWidget(newInput)
+                self.inputDict[key] = newInput
             
+            if self.toggle:
+                toggleViewLayout.addStretch()
+                toggleViewContainer.setFixedHeight(len(items.values()) * 120)
+                toggleView = ToggleView.ToggleView (
+                    tittleKey, 
+                    toggleViewContainer,
+                    headercolor = Color.MAIN_BACKRGOUND, 
+                    viewcolor = Color.MAIN_BACKRGOUND)
+                
+                self.mainVertical.addWidget(toggleView)
+        self.mainVertical.addStretch()
                 
     def _initLayout(self):
         """ initialize the layout """
         self.setLayout(self.mainVertical)
         
-       
     def _initStyle(self):
         """ initializes the widget style """
         initSecondaryColorBackground(self)

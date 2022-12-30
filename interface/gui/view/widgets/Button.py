@@ -67,8 +67,7 @@ class ColoredBtn(QPushButton):
         self.pressed.connect(self._pressStyle)
         self.released.connect(self._releaseStyle)
         self._releaseStyle()
-        
-    
+         
     def _pressStyle(self):
         """ sets the button color to be darker  """
         self.setStyleSheet(self.defaultStyle + 

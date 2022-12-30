@@ -187,11 +187,11 @@ class SystemSettingPage(QWidget):
         """ rewrite the current setting file based on the user's choice"""
         setting = self.SysSetForm.getValue()
         try:
-            colorSource = StyleTable[setting["Color Mode combo"]]
+            colorSource = StyleTable[setting["Color Mode"]]
             colorDes    = StyleSource.CURRENT_COLOR
-            fontSource  = StyleTable[setting["Font Size combo"]]
+            fontSource  = StyleTable[setting["Font Size"]]
             fontDes     = StyleSource.CURRENT_FONTSIZE
-            logDeleteTime = LogDeleteTimeDict[setting["Log file auto deletion time combo"]]
+            logDeleteTime = LogDeleteTimeDict[setting["Log file auto deletion time"]]
             f = open (f"{os.path.join(dirname, BackEndDataPath.fileManageData)}", "w+")
             toml.dump({"AUTO_DELETE_TIME" : logDeleteTime}, f)
             f.close()

@@ -37,6 +37,7 @@ class ToggleCombo(QWidget):
         self.showBasicSet = showBasicSet
         self.comboListDict = dict()
         self._initWidget()
+        print(data)
     
     def getValue(self) -> Dict[str, dict]:
         """ a public function to get the form value """
@@ -72,7 +73,7 @@ class ToggleCombo(QWidget):
             self.header, 
             self.userForm, 
             headercolor = Color.MAIN_BACKRGOUND, 
-            viewcolor =Color.MAIN_BACKRGOUND)
+            viewcolor = Color.MAIN_BACKRGOUND)
             self.basicSet.setScrollHeight(self.userForm.height())
             self.basicSet.setContentsMargins(0,0,0,0)
             self.layout.addWidget(self.basicSet)
@@ -156,7 +157,7 @@ class UserForm(QWidget):
         self.passwordInput.setFixedSize(
             QSize(Dimension.INPUTWIDTH, Dimension.INPUTHEIGHT))
         
-        self.layout.addWidget(self.passwordInput, 1,1)
+        self.layout.addWidget(self.passwordInput, 1, 1)
         self.setLayout(self.layout)
         self.setFixedHeight(100)
         self._initStyle()

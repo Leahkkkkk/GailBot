@@ -40,32 +40,40 @@ HiLabSuite = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
 "Language"   = ["English", "French", "Spanish", "German", "Chinese(Madarin)", "Chinese(Cantonese)"]
 
 
-["profile form"."RequiredSetting".Engine.IBM."1.language model setting"]
-"1. language model"        = [ "IBM language", "English", "Spanish",]
-"2. custom language model" = [ "HRI lab", "None", "Air Force Study",]
+["profile form"."RequiredSetting".Engine.IBM."0. basic setting"]
+"1. username" = " "
+"2. password" = "******"
 
-["profile form"."RequiredSetting".Engine.IBM."2.Acoustic Model Setting"]
-"1. acoustic model setting"           = [ "acoustic1", "acoustic2", "acoustic3",]
-"2. acoustic model setting(optional)" = [ "1", "2", "3",]
+["profile form"."RequiredSetting".Engine.IBM."1. language model setting"]
+"1. language model combo"        = [ "IBM language", "English", "Spanish",]
+"2. custom language model combo" = [ "HRI lab", "None", "Air Force Study",]
 
-["profile form"."RequiredSetting".Engine.IBM."3.advanced setting"]
-"1. Advanced Setting Option 1" = [ "advanced 1", "advanced 2", "advanced 3",]
-"2. plugin"                    = [ "plugin 1", "plugin 2",]
+["profile form"."RequiredSetting".Engine.IBM."2. Acoustic Model Setting"]
+"1. acoustic model setting combo"           = [ "acoustic1", "acoustic2", "acoustic3",]
+"2. acoustic model setting(optional) combo" = [ "1", "2", "3",]
 
-["profile form"."RequiredSetting".Engine.IBM."4.IBM specialised setting"]
-"IBM setting option" = [ "setting option 1", "setting option 2", "setting option 3",]
+["profile form"."RequiredSetting".Engine.IBM."3. advanced setting"]
+"1. Advanced Setting Option 1 combo" = [ "advanced 1", "advanced 2", "advanced 3",]
+"2. plugin combo"                    = [ "plugin 1", "plugin 2",]
 
-["profile form"."RequiredSetting".Engine.CMU."1.language model setting"]
-"1. language model"        = [ "CMU language", "English", "Spanish",]
-"2. custom language model" = [ "CMU custom", "None", "Air Force Study",]
+["profile form"."RequiredSetting".Engine.IBM."4. IBM specialised setting"]
+"IBM setting option combo" = [ "setting option 1", "setting option 2", "setting option 3",]
 
-["profile form"."RequiredSetting".Engine.CMU."2.Acoustic Model Setting"]
-"1. acoustic model setting"           = [ "acoustic1", "acoustic2", "acoustic3",]
-"2. acoustic model setting(optional)" = [ "1", "2", "3",]
-"3. plugin"                           = [ "plugin 1", "plugin 2",]
+["profile form"."RequiredSetting".Engine.CMU."0. basic setting"]
+"1. username" = " "
+"2. password" = "******"
 
-["profile form"."RequiredSetting".Engine.CMU."3.CMU specialised setting"]
-"CMU setting option" = [ "setting option 1", "setting option 2", "setting option 3",]
+["profile form"."RequiredSetting".Engine.CMU."1. language model setting"]
+"1. language model combo"        = [ "CMU language", "English", "Spanish",]
+"2. custom language model combo" = [ "CMU custom", "None", "Air Force Study",]
+
+["profile form"."RequiredSetting".Engine.CMU."2. Acoustic Model Setting"]
+"1. acoustic model setting combo"           = [ "acoustic1", "acoustic2", "acoustic3",]
+"2. acoustic model setting(optional) combo" = [ "1", "2", "3",]
+"3. plugin combo"                           = [ "plugin 1", "plugin 2",]
+
+["profile form"."RequiredSetting".Engine.CMU."3. CMU specialised setting"]
+"CMU setting option combo" = [ "setting option 1", "setting option 2", "setting option 3",]
 
 ["system setting form"."View Setting"]
 "Font Size combo"  = [ "medium", "small", "large"]

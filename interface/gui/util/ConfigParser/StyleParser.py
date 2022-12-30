@@ -135,7 +135,7 @@ class Asset(DataclassFromDict):
     homeBackground        : str = field_from_dict()
     subPageBackground     : str = field_from_dict()
     sideBarBackground     : str = field_from_dict()
-    downImg               :str  = field_from_dict()
+    downImg               : str = field_from_dict()
     rightImg              : str = field_from_dict()
     hilLabLogo            : str = field_from_dict()
     transcribing          : str = field_from_dict()

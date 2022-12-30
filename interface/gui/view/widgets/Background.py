@@ -9,7 +9,6 @@ Modified By:  Siara Small  & Vivian Li
 -----
 Description: implement function for initialize background for different pages
 '''
-import random
 import os
 from util.Style import Color, Asset, Dimension
 from util.Path import getProjectRoot
@@ -20,14 +19,13 @@ from PyQt6.QtGui import (
     QBrush, 
     QColor, 
     QPalette,
-    QImage,
     QPixmap,
     QTransform,
-    QPainter
 )
 from PyQt6.QtWidgets import QWidget, QVBoxLayout
 
 dirname = getProjectRoot()
+
 class Background(QBrush):
     """ a QBrush object that creates a white background """
     def __init__(self,color, *args, **kwargs) -> None:
@@ -79,7 +77,6 @@ def initPrimaryColorBackground(widget:QWidget):
 def initSecondaryColorBackground(widget:QWidget):
     """ fill the widget with secondary color background"""
     _initBackground(widget, Color.SUB_BACKGROUND)
-
 
 def addLogo(layout: QVBoxLayout):
     """ add the logo to the top left corner on the layout """
