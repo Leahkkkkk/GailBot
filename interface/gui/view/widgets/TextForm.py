@@ -111,14 +111,13 @@ class TextForm(QWidget):
         self.mainContainer.setMinimumWidth(Dimension.INPUTWIDTH * 2)
         self.mainVertical = QVBoxLayout()
         self.mainContainer.setLayout(self.mainVertical)
-        self.mainVertical.setSpacing(10)
         count = 0
         
         for tittleKey, items in self.data.items():
             """ adding spacing """
-            if count != 0 and not self.toggle:
+            if count != 0 and (not self.toggle):
                 self.mainVertical.addSpacing(Dimension.LARGE_SPACING)
-            count += 1
+                count += 1
             
             """ create additional layout if the form elements are 
             displayed in a toggle view """
@@ -126,6 +125,9 @@ class TextForm(QWidget):
                 toggleViewContainer = QWidget()
                 toggleViewLayout = QVBoxLayout()
                 toggleViewContainer.setLayout(toggleViewLayout)
+                self.mainVertical.setSpacing(0)
+            else:
+                self.mainVertical.setSpacing(10)
             
             """ create the label  """
             tittleKey = tittleKey.split(". ")[-1]
@@ -161,14 +163,15 @@ class TextForm(QWidget):
             
             if self.toggle:
                 toggleViewLayout.addStretch()
-                toggleViewContainer.setFixedHeight(len(items.values()) * 120)
+                toggleViewContainer.setFixedHeight(len(items.values()) * 160)
+                print(len(items.values()))
                 toggleView = ToggleView.ToggleView (
                     tittleKey, 
                     toggleViewContainer,
                     headercolor = Color.MAIN_BACKRGOUND, 
                     viewcolor = Color.MAIN_BACKRGOUND)
-                
                 self.mainVertical.addWidget(toggleView)
+        
         self.mainVertical.addStretch()
                 
     def _initLayout(self):
