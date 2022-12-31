@@ -110,6 +110,7 @@ class TextForm(QWidget):
         self.mainContainer = QWidget()
         self.mainContainer.setMinimumWidth(Dimension.INPUTWIDTH * 2)
         self.mainVertical = QVBoxLayout()
+        self.mainVertical.setAlignment(Qt.AlignmentFlag.AlignLeft)
         self.mainContainer.setLayout(self.mainVertical)
         count = 0
         
@@ -126,6 +127,7 @@ class TextForm(QWidget):
                 toggleViewLayout = QVBoxLayout()
                 toggleViewContainer.setLayout(toggleViewLayout)
                 self.mainVertical.setSpacing(0)
+                self.mainVertical.setContentsMargins(0,0,0,0)
             else:
                 self.mainVertical.setSpacing(10)
             
@@ -137,7 +139,6 @@ class TextForm(QWidget):
             
             """ create the form component element """
             for key, value in items.items():
-                keyCopy = key
                 if InputFormat.BOOL in key:
                     key = key.replace( InputFormat.BOOL, "").split(". ")[-1]
                     newInput = Button.onOffButton(key, value == value)
@@ -157,22 +158,26 @@ class TextForm(QWidget):
                 """ add element to the layout """
                 if self.toggle : 
                     toggleViewLayout.addWidget(newInput)
+                    newInput.setContentsMargins(0,0,0,0)
                 else:
                     self.mainVertical.addWidget(newInput)
                 self.inputDict[key] = newInput
             
             if self.toggle:
+                height = len(items) * 120
+                toggleViewContainer.setFixedHeight(height)
+                # toggleViewLayout.
                 toggleViewLayout.addStretch()
-                toggleViewContainer.setFixedHeight(len(items.values()) * 160)
-                print(len(items.values()))
                 toggleView = ToggleView.ToggleView (
                     tittleKey, 
                     toggleViewContainer,
                     headercolor = Color.MAIN_BACKRGOUND, 
                     viewcolor = Color.MAIN_BACKRGOUND)
                 self.mainVertical.addWidget(toggleView)
-        
+                toggleView.setContentsMargins(0,0,0,0)
+        self.mainVertical.setAlignment(Qt.AlignmentFlag.AlignLeft)
         self.mainVertical.addStretch()
+        self.mainVertical.addSpacing(Dimension.LARGE_SPACING)
                 
     def _initLayout(self):
         """ initialize the layout """

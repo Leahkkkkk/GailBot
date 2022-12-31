@@ -47,7 +47,7 @@ class RequiredSettingForm(QWidget):
             EngineSettingForm.Engine, "Speech to Text Engine")
         self.engineFormView = ToggleView.ToggleView(
             Text.engineSettingHeader,self.engineForm, header = True)
-        self.engineFormView.setScrollHeight(400)
+        self.engineFormView.setScrollHeight(200)
         self.outPutForm = OutPutFormat()
         self.outPutFormView = ToggleView.ToggleView(
             Text.outputSettingHeader, self.outPutForm, header = True)

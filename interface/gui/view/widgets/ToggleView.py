@@ -56,6 +56,7 @@ class ToggleView(QWidget):
         self._initLayout()
         self._connectSignal()
         self.setScrollHeight(self.view.height())
+
     
     def setScrollHeight(self, size:int):
         """ public function to resize the scroll area height 
