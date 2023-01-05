@@ -141,12 +141,12 @@ class TextForm(QWidget):
             for key, value in items.items():
                 if InputFormat.BOOL in key:
                     key = key.replace( InputFormat.BOOL, "").split(". ")[-1]
-                    newInput = Button.onOffButton(key, value == value)
+                    newInput = Button.onOffButton(key, value = value)
                 elif InputFormat.COMBO in key:
                     key = key.replace( InputFormat.COMBO, "").split(". ")[-1]
                     if self.toggle:
                         newInput = InputBox.InputCombo(
-                            label=key, selections=value, vertical=True)
+                            label = key, selections = value, vertical=True)
                     else:
                         newInput = InputBox.InputCombo(
                             label=key, selections=value)
