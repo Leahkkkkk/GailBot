@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 13:48:55
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-08 15:48:02
+# @Last Modified time: 2023-01-08 16:23:19
 
 from typing import Union, List, Dict, Any
 from plugins import PluginManager, Plugin, Suite
@@ -38,13 +38,7 @@ class OrganizerService:
     def is_source(self, source_name : str) -> bool:
         pass
 
-    def has_profile(self, source_name : str) -> str:
-        pass
-
-    def configured_sources(self) -> List[Source]:
-        pass
-
-    def configured_source_names(self) -> List[str]:
+    def source_names(self, configured = False) -> List[str]:
         pass
 
     def get_source_details(self, source_name : str) -> Dict:
@@ -101,13 +95,11 @@ class OrganizerService:
     ) -> bool:
         pass
 
-    def get_source_settings_profile_name(self) -> str:
-        pass
 
     def get_sources_using_settings_profile(
         self,
         profile_name : str
-    ) -> List[Source]:
+    ) -> List[str]:
         pass
 
     def get_source_settings_profile(self, source_name : str) -> Settings:
@@ -118,12 +110,31 @@ class OrganizerService:
 
     ### Methods for Engines
 
-    def get_engine_instance(self) -> Engine:
+    def get_engine_instance(
+        self,
+        engine_name : str,
+        config_path : str
+    ) -> Engine:
         """
         Get an instance of an engine in case it provides additional
         configurable functionality
         """
         pass
+
+
+    ### Methods for plugins
+
+    def register_plugin_suite(
+        self,
+        suite_name : str,
+        source_path : str
+    ) -> bool:
+        pass
+
+    def get_plugin_suite_details(self, suite_name : str) -> Dict:
+        pass
+
+
 
 
 

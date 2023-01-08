@@ -2,22 +2,17 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-06 15:03:40
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-06 15:48:30
+# @Last Modified time: 2023-01-08 16:29:05
 
 
 
 from typing import List, Dict, Any, Callable
 from dataclasses import dataclass
-from enum import Enum
-
-#########
-class dtype(Enum):
-    DATA : int = 0
-    AUDIO : int = 1
-    VIDEO : int = 2
+from .types import dtype
 
 #########
 
+#########
 
 class BaseHandler:
 

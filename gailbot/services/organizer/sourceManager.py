@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 14:50:11
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-08 15:10:20
+# @Last Modified time: 2023-01-08 16:13:40
 
 from typing import List, Dict, Any
 
@@ -66,9 +66,6 @@ class SourceManager:
         pass
 
     def is_source(self, source_name : str) -> bool:
-        pass
-
-    def has_profile(self, source_name : str) -> str:
         pass
 
     def configured_sources(self) -> List[Source]:
