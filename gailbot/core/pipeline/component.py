@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 12:54:35
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-08 13:09:52
+# @Last Modified time: 2023-01-08 15:33:04
 
 
 from enum import Enum
@@ -26,12 +26,12 @@ class Component:
     Should be subclassed
     """
 
-    def __init__(self,*args, **kwargs):
+    def __init__(self, *args, **kwargs):
         pass
 
     def __repr__(self):
         raise NotImplementedError()
 
-    def __call__(self, *args, **kwargs) -> ComponentState:
+    def __call__(self, base_input ,*args, **kwargs) -> ComponentState:
         raise NotImplementedError()
 
