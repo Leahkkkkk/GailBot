@@ -1,7 +1,13 @@
-from .watson import WatsonEngine
-from .core import WatsonCore
-from .recognize_callback import customWatsonCallbacks
-from .language_model import WatsonLanguageModel
+# -*- coding: utf-8 -*-
+# @Author: Muhammad Umair
+# @Date:   2023-01-08 12:26:09
+# @Last Modified by:   Muhammad Umair
+# @Last Modified time: 2023-01-08 12:26:11
 
-from .acoustic_model import WatsonAcousticModel
 
+def main():
+    print("Hello, World!")
+
+
+if __name__ == "__main__":
+    main()

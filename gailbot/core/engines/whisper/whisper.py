@@ -2,14 +2,14 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 12:43:29
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-08 12:46:57
+# @Last Modified time: 2023-01-08 12:50:11
 
 from typing import Dict, Any
 
 from ..engine import Engine
 
 
-class Watson(Engine):
+class Whisper(Engine):
 
     def __init__(self):
         pass
