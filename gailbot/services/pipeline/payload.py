@@ -2,13 +2,13 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 15:22:32
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-08 15:27:09
+# @Last Modified time: 2023-01-09 09:43:45
 
 import logging
 from datetime import date, time
 from typing import Dict
 from dataclasses import dataclass
-from .objects import Source, Settings
+from ..organizer.objects import Source, Settings
 
 
 # @dataclass

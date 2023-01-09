@@ -1,0 +1,17 @@
+
+
+[settings.engine]
+name = "watson"
+
+[settings.engine.whisper]
+some_ley = "value"
+
+[settings.engine.watson]
+watson_api_key = 0
+watson_base_language_model = 0
+watson_region = 0
+watson_language_customization_id = 0
+
+[settings.plugins]
+suite = ""
+apply_plugins = []

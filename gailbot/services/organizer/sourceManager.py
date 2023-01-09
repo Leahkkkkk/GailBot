@@ -2,11 +2,11 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 14:50:11
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-08 16:13:40
+# @Last Modified time: 2023-01-09 10:05:44
 
 from typing import List, Dict, Any
 
-from ..baseObjects.objects import Source
+from .objects import Source
 
 
 # Loaders for sources
