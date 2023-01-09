@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 13:22:01
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-08 15:46:22
+# @Last Modified time: 2023-01-09 15:23:24
 
 
 from typing import Dict, List
@@ -23,7 +23,10 @@ class PluginManager:
     plugin objects from files.
     """
 
-    def __init__(self):
+    def __init__(self, workspace_dir : str):
+        pass
+
+    def reset_workspace(self) -> bool:
         pass
 
     def register_suite(self, suite_name : str, source_path : str) -> Dict:

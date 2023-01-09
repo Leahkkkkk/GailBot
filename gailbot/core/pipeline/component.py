@@ -2,12 +2,12 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 12:54:35
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-08 15:33:04
+# @Last Modified time: 2023-01-09 16:31:59
 
 
 from enum import Enum
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Dict
 
 class ComponentState(Enum):
     READY = 0
@@ -32,6 +32,11 @@ class Component:
     def __repr__(self):
         raise NotImplementedError()
 
-    def __call__(self, base_input ,*args, **kwargs) -> ComponentState:
+    def __call__(
+        self,
+        dependency_outputs : Dict[str, Any] ,
+        *args,
+        **kwargs
+    ) -> ComponentState:
         raise NotImplementedError()
 

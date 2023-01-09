@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 16:28:03
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-09 11:05:13
+# @Last Modified time: 2023-01-09 13:35:45
 
 
 from typing import Any, Callable, Tuple, List, Dict
@@ -17,7 +17,6 @@ from pathlib import Path
 # Local imports
 # Third party imports
 from copy import deepcopy
-from .types import dtype
 
 
 def is_directory(dir_path: str) -> bool:

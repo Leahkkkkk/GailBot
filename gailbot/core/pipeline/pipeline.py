@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 12:52:37
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-08 15:49:05
+# @Last Modified time: 2023-01-09 16:32:58
 
 from typing import List, Dict, Any
 from dataclasses import dataclass
@@ -32,11 +32,11 @@ class Pipeline:
     def __call__(
         self,
         base_input : Any
-    ):
+        # NOTE: base_input is passed only to the first component.
+    ) -> Any:
         """
         Execute the pipeline by running all components in order of the dependency
         graph. This wraps data as DataStream before passing it b/w components.
-        The base input is passed to all components.
         Additionally, each component receives the output of its dependencies
         """
         pass

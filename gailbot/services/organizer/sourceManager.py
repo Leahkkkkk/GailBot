@@ -2,77 +2,165 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 14:50:11
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-09 10:05:44
+# @Last Modified time: 2023-01-09 15:24:37
 
-from typing import List, Dict, Any
-
-from .objects import Source
+from typing import List, Dict, Any, Callable
+from core.utils.general import (
+    is_directory,
+    read_toml,
+    is_file,
+    write_toml,
+    make_dir,
+    filepaths_in_dir,
+    get_extension,
+    get_name,
+    delete
+)
+from core.utils.media import MediaHandler
+from .objects import Source, DataFile
 
 
 # Loaders for sources
 class SourceLoader:
 
-    def load(self, *args, **kwargs):
+    def __call__(self, *args, **kwargs):
         raise NotImplementedError()
 
 
 class AudioSourceLoader(SourceLoader):
 
-    def __init__(self):
-        pass
+    def __call__(
+        self,
+        source_name : str,
+        source_path : str,
+        output_dir : str,
+    ) -> Source:
 
-    def load(self):
-        pass
+        if not MediaHandler.is_audio(source_path):
+            return
+
+        data_file = DataFile(source_path)
+        return Source(
+            identifier=source_name,
+            workspace_dir=output_dir,
+            data_files=[data_file],
+            settings_profile=None
+        )
 
 class VideoSourceLoader(SourceLoader):
 
-    def __init__(self):
-        pass
+    def __call__(
+        self,
+        source_name : str,
+        source_path : str,
+        output_dir : str
+    ) -> Source:
 
-    def load(self):
-        pass
+        if not MediaHandler.is_video(source_path):
+            return
+
+        # NOTE: Any audio / video extraction happens in the pipeline, not here.
+        data_file = DataFile(source_path)
+        return Source(
+            identifier=source_name,
+            workspace_dir=output_dir,
+            data_files=[data_file],
+            settings_profile=None
+        )
+
 
 class ConversationDirectorySourceLoader(SourceLoader):
 
-    def __init__(self):
-        pass
+    def __call__(
+        self,
+        source_name : str,
+        source_path : str,
+        output_dir : str
+    ) -> Source:
 
-    def load(self):
-        pass
+        if not is_directory(source_path):
+            return
 
+        paths = filepaths_in_dir(
+            source_path,MediaHandler.supported_formats,recursive=False
+        )
+        data_files = [DataFile(path) for path in paths]
+        return Source(
+            identifier=source_name,
+            workspace_dir=output_dir,
+            data_files=data_files,
+            settings_profile=None
+        )
+
+# TODO: Implement later based on the final directory output structure.
 class TranscribedOutputSourceLoader(SourceLoader):
 
-    def __init__(self):
+    def __call__(
+        self,
+        source_name : str,
+        source_path : str,
+        output_dir : str
+    ) -> Source:
         pass
-
-    def load(self):
-        pass
-
 
 class SourceManager:
+    """Simply creates and manages the workspace for sources"""
 
-    def __init__(self):
-        pass
+    def __init__(self, workspace_dir : str):
+        self.workspace_dir = workspace_dir
+        make_dir(workspace_dir,overwrite=True)
+        self.loaders = [
+            AudioSourceLoader(),
+            VideoSourceLoader(),
+            ConversationDirectorySourceLoader(),
+            TranscribedOutputSourceLoader()
+        ]
+        self.sources : Dict[str, Source] = dict()
+
+    def reset_workspace(self) -> bool:
+        make_dir(self.workspace_dir,overwrite=True)
+        return True
+
 
     def add_source(
         self,
         source_name : str,
         source_path : str,
-        output_dir : str
     ) -> bool:
-        pass
+
+        for loader in self.loaders:
+            out_dir = f"{self.workspace_dir}/{source_name}"
+            source = loader(source_name, source_path, out_dir)
+            if isinstance(source, Source):
+                break
+        if source == None or self.is_source(source_name):
+            return False
+
+        self.sources[source_name] = source
+        return True
 
     def remove_source(self, source_name : str) -> bool:
-        pass
+        if self.is_source(source_name):
+            del self.sources[source_name]
+            return True
+        return False
 
     def is_source(self, source_name : str) -> bool:
-        pass
+        return source_name in self.sources
 
-    def configured_sources(self) -> List[Source]:
-        pass
+    def source_names(self) -> List[str]:
+        return list(self.sources.keys())
 
-    def configured_source_names(self) -> List[str]:
-        pass
+    def get_source(self, source_name : str) -> Source:
+        if self.is_source(source_name):
+            return self.sources[source_name]
+
+    def map_sources(self, fn : Callable) -> Dict:
+        res = dict()
+        for name, source in self.sources.items():
+            res[name] = fn(source)
+        return res
 
     def get_source_details(self, source_name : str) -> Dict:
-        pass
+        if self.is_source(source_name):
+            return self.sources[source_name].to_dict()
