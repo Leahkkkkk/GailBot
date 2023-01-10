@@ -2,16 +2,22 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 15:16:01
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-09 16:51:32
+# @Last Modified time: 2023-01-10 14:04:33
 
 from typing import List, Dict, Any
 from core.pipeline import Pipeline, Component
+from plugins import PluginManager
 from .objects import Payload
 from .components import TranscribeComponent, AnalysisComponent, FormatComponent
+from ..engineManager import EngineManager
 
 class PipelineService:
 
-    def __init__(self):
+    def __init__(
+        self,
+        plugin_manager : PluginManager,
+        engineManager : EngineManager
+    ):
 
         transcribeComponent = TranscribeComponent()
         analysisComponent = AnalysisComponent()

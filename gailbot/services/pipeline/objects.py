@@ -2,11 +2,11 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 15:22:32
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-09 15:58:47
+# @Last Modified time: 2023-01-10 15:16:18
 
 import logging
 from datetime import date, time
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Dict
 from dataclasses import dataclass
 from ..organizer.objects import Source, Settings
 
@@ -45,3 +45,18 @@ class Payload:
     transcription_res : TranscriptionResults = TranscriptionResults()
     analysis_res: AnalysisResults = AnalysisResults()
     format_res : FormatResults = FormatResults()
+
+
+class PayloadOutputWriter:
+
+    @staticmethod
+    def write_output(self, payload : Payload) -> bool:
+        pass
+
+    @staticmethod
+    def is_payload_output(self, dir_path : str) -> bool:
+        pass
+
+    @staticmethod
+    def read_payload_output(self, dir_path) -> Source:
+        pass

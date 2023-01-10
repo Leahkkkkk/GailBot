@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 13:22:39
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-08 13:45:41
+# @Last Modified time: 2023-01-10 15:01:03
 
 from typing import Dict, List
 from dataclasses import dataclass
@@ -20,8 +20,7 @@ class PluginSuite:
 
     def __init__(
         self,
-        dependency_map : Dict[str, str],
-        plugins : List[Plugin]
+        conf_path : str
     ):
         pass
 
@@ -57,9 +56,5 @@ class PluginSuite:
 
     def dependency_graph(self) -> Dict:
         """Return the entire dependency graph as a dictionary"""
-        pass
-
-
-    def _load_plugin(self):
         pass
 

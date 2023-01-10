@@ -2,13 +2,11 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 13:22:01
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-09 15:23:24
+# @Last Modified time: 2023-01-10 15:01:16
 
 
-from typing import Dict, List
+from typing import Dict, List, Any
 from dataclasses import dataclass
-
-
 from .plugin import Plugin
 from .suite import PluginSuite
 
@@ -23,20 +21,38 @@ class PluginManager:
     plugin objects from files.
     """
 
-    def __init__(self, workspace_dir : str):
+    def __init__(
+        self,
+        workspace_dir : str
+    ):
         pass
 
     def reset_workspace(self) -> bool:
         pass
 
-    def register_suite(self, suite_name : str, source_path : str) -> Dict:
+    def register_suite(
+        self,
+        suite_name : str,
+        conf_path : str
+    ) -> Dict:
         """Register plugin suite and return details"""
         pass
 
-    def apply_suite(self, suite_name : str, plugin_names : List[str]) -> Dict:
+    def apply_suite(
+        self,
+        suite_name : str,
+        plugin_names : List[str],
+        base_input : Any
+    ) -> Dict:
         pass
 
-    def get_suite_details(self, suite_name : str) -> Dict:
+    def get_suite_details(
+        self,
+        suite_name : str
+    ) -> Dict:
+        pass
+
+    def _download_official_plugins(self):
         pass
 
 

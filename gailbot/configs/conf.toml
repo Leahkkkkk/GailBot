@@ -1,0 +1,15 @@
+# This config file describes the path hierarchy for the config
+
+[paths.engines.confs]
+watson = "engines/watson/config.toml"
+whisper = "engines/whisper/config.toml"
+
+[paths.settings]
+default_conf_path = "settings/default.toml"
+
+[paths.workspace]
+sources_ws = "sources_ws"
+settings_ws = "settings_ws"
+plugins_ws = "plugins_ws"
+engines_ws = "engines_ws"
+

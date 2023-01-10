@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 14:50:11
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-09 15:24:37
+# @Last Modified time: 2023-01-10 15:19:44
 
 from typing import List, Dict, Any, Callable
 from core.utils.general import (
@@ -17,6 +17,7 @@ from core.utils.general import (
     delete
 )
 from core.utils.media import MediaHandler
+from services.pipeline.objects import PayloadOutputWriter
 from .objects import Source, DataFile
 
 
@@ -101,7 +102,14 @@ class TranscribedOutputSourceLoader(SourceLoader):
         source_path : str,
         output_dir : str
     ) -> Source:
-        pass
+
+
+        if not is_directory(source_path) or \
+                not PayloadOutputWriter.is_payload_output(source_path):
+            return
+
+        return PayloadOutputWriter.read_payload_output(source_path)
+
 
 class SourceManager:
     """Simply creates and manages the workspace for sources"""
@@ -116,11 +124,6 @@ class SourceManager:
             TranscribedOutputSourceLoader()
         ]
         self.sources : Dict[str, Source] = dict()
-
-    def reset_workspace(self) -> bool:
-        make_dir(self.workspace_dir,overwrite=True)
-        return True
-
 
     def add_source(
         self,

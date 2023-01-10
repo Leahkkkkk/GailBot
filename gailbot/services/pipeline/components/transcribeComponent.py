@@ -2,22 +2,26 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 15:20:28
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-09 16:47:58
+# @Last Modified time: 2023-01-10 14:23:43
 
 from typing import Dict, Any, List
-from core.pipeline import Component, ComponentState
+from core.pipeline import Component, ComponentState, ComponentResult
 from core.engines import Watson
 from services.organizer.objects import Source, Settings
 from core.utils.general import (
     get_name
 )
-from ..objects import Payload
+from ..objects import Payload, TranscriptionResults
+from ...engineManager import EngineManager
 
 
 class TranscribeComponent(Component):
 
-    def __init__(self):
-        pass
+    def __init__(
+        self,
+        engine_manager : EngineManager
+    ):
+        self.engine_manager = engine_manager
 
     def __repr__(self):
         raise NotImplementedError()
@@ -27,7 +31,7 @@ class TranscribeComponent(Component):
     def __call__(
         self,
         dependency_outputs : Dict[str, Any]
-    ) -> ComponentState:
+    ) -> ComponentResult:
         # NOTE: Each component receives the base input and the dependency inputs
         """Get a source and the associated settings objects and transcribe"""
         payloads : List[Payload] = dependency_outputs["base"]
@@ -40,13 +44,13 @@ class TranscribeComponent(Component):
             engine_configs = settings.data.engine_name.watson.transcribe
             outdir = payload.source.workspace
             # TODO: Add ability to re-transcribe - need to add access to configs
-
-            if engine_name == "watson":
-                engine = Watson(**engine_init)
-            else:
-                raise NotImplementedError(
-                    f"Engine not supported: {engine_name}"
+            if not self.engine_manager.is_engine(engine_name):
+                raise Exception(
+                    f"Not an engine: {engine_name}"
                 )
+            engine = self.engine_manager.init_engine(engine_name)
+
+
             utt_map = dict()
             for data_file in payload.source.data_files:
                 # TODO: Extract audio from the data files as required.
@@ -61,7 +65,11 @@ class TranscribeComponent(Component):
 
             res[payload.transcription_res.utterances] = utt_map
 
-        return payloads
+        return ComponentResult(
+            state=ComponentState.SUCCESS,
+            result=payloads,
+            runtime=0
+        )
 
 
 

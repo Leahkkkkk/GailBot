@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 13:48:55
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-09 15:55:56
+# @Last Modified time: 2023-01-10 14:10:39
 
 from typing import Union, List, Dict, Any
 from plugins import PluginManager, Plugin, Suite
@@ -14,13 +14,13 @@ from .objects import Settings, Source
 
 class OrganizerService:
 
-    def __init__(self, workspace_dir : str):
-        self.source_manager = SourceManager(f"{workspace_dir}/sources")
-        self.settings_manager = SettingsManager(f"{workspace_dir}/settings")
-
-    def reset_workspace(self) -> bool:
-        return self.source_manager.reset_workspace() and \
-            self.settings_manager.reset_workspace()
+    def __init__(
+        self,
+        sources_ws : str,
+        settings_ws : str
+    ):
+        self.source_manager = SourceManager(sources_ws)
+        self.settings_manager = SettingsManager(settings_ws)
 
     ## SourceManager
 
@@ -76,7 +76,7 @@ class OrganizerService:
             profile_name, output_dir
         )
 
-    def load_settings_profile(self, file_path : str) -> Settings:
+    def load_settings_profile(self, file_path : str) -> bool:
         return self.settings_manager.load_settings_profile(file_path)
 
     def remove_settings_profile(self, profile_name : str) -> bool:

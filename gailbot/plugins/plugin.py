@@ -2,12 +2,17 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 13:22:45
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-08 13:40:32
+# @Last Modified time: 2023-01-10 14:39:29
 
 from typing import Any, Dict
 from abc import ABC, abstractmethod
 # Local imports
 
+
+class Methods:
+
+    def __init__(self):
+        pass
 
 class Plugin:
     """
@@ -17,10 +22,14 @@ class Plugin:
     def __init__(self) -> None:
         pass
 
+    @property
+    def is_successful(self) -> bool:
+        return False
 
     def apply(
         self,
         dependency_outputs : Dict[str, Any],
+        methods : Methods,
         *args,
         **kwargs
     ) -> Any:
@@ -33,5 +42,3 @@ class Plugin:
         """
         raise NotImplementedError()
 
-    def is_successful(self) -> bool:
-        return False

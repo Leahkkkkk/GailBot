@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 14:50:11
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-09 15:24:50
+# @Last Modified time: 2023-01-10 14:10:33
 
 from typing import Union, List, Dict, Any
 from core.utils.general import (
@@ -30,9 +30,6 @@ class SettingsManager:
         for path in paths:
             self.load_settings_profile(path)
 
-    def reset_workspace(self) -> bool:
-        make_dir(self.workspace_dir,overwrite=True)
-        return True
 
     def create_new_settings_profile(
         self,
@@ -57,7 +54,7 @@ class SettingsManager:
         # All settings profile must be saved to disk
         return self.save_settings_profile(profile_name)
 
-    def load_settings_profile(self, file_path : str) -> Settings:
+    def load_settings_profile(self, file_path : str) -> bool:
         return self.create_new_settings_profile(get_name(file_path),file_path)
 
     def save_settings_profile(
