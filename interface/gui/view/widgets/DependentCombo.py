@@ -84,6 +84,7 @@ class MultipleCombo(QWidget):
         self.verticalLayout.setSpacing(0)
         self.setLayout(self.verticalLayout)
         self.mainForm = TextForm.TextForm(self.formData, toggle=True)
+        self.mainForm.setMinimumHeight(1400)
         self.verticalLayout.addWidget(self.mainForm)
     
     def getValue(self):

@@ -72,8 +72,10 @@ class TextForm(QWidget):
         self.setMinimumWidth(Dimension.WIN_MIN_WIDTH // 2)
         self._initWidget()
         self._initLayout()
+        self.setStyleSheet("border: 1px solid red;")
         if background:
             self._initStyle()
+        
     
     def enableForm(self) -> None:
         """ public function that enable the form edit """
@@ -112,11 +114,8 @@ class TextForm(QWidget):
     
     def _initWidget(self):
         """ initializes the widgets """
-        self.mainContainer = QWidget()
-        self.mainContainer.setMinimumWidth(Dimension.INPUTWIDTH * 2)
         self.mainVertical = QVBoxLayout()
         self.mainVertical.setAlignment(Qt.AlignmentFlag.AlignLeft)
-        self.mainContainer.setLayout(self.mainVertical)
         count = 0
         
         for tittleKey, items in self.data.items():
@@ -163,21 +162,20 @@ class TextForm(QWidget):
                 """ add element to the layout """
                 if self.toggle : 
                     toggleViewLayout.addWidget(newInput)
-                    newInput.setContentsMargins(0,0,0,0)
                 else:
                     self.mainVertical.addWidget(newInput)
                 self.inputDict[key] = newInput
             
             if self.toggle:
-                height = len(items) * 100
+                height = len(items) * 120
                 toggleViewContainer.setFixedHeight(height)
-                # toggleViewLayout.
                 toggleViewLayout.addStretch()
                 toggleView = ToggleView.ToggleView (
                     tittleKey, 
                     toggleViewContainer,
                     headercolor = Color.MAIN_BACKRGOUND, 
                     viewcolor = Color.MAIN_BACKRGOUND)
+                toggleView.setScrollHeight(height)
                 self.mainVertical.addWidget(toggleView)
                 toggleView.setContentsMargins(0,0,0,0)
         self.mainVertical.setAlignment(Qt.AlignmentFlag.AlignLeft)

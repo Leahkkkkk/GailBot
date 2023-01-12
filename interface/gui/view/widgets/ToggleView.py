@@ -51,6 +51,7 @@ class ToggleView(QWidget):
         self.headercolor = headercolor
         self.viewcolor = viewcolor
         self.setContentsMargins(0,0,0,0)
+    
         self._configHeader()
         self._configViewField()
         self._initLayout()
@@ -102,6 +103,7 @@ class ToggleView(QWidget):
         self.scroll.verticalScrollBar().setStyleSheet(f"background-color:{Color.SCORLL_BAR}; border: 1px solid {Color.MAIN_BACKRGOUND}")
         self.scroll.hide()
         self.hide = True
+        
           
     def _initLayout(self):
         """ initializes the layout """
