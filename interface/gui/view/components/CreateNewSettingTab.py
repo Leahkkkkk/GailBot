@@ -58,7 +58,6 @@ class CreateNewSetting(QDialog):
         self.logger = makeLogger("F")
         self.signals = Signals()
         self.addProfileName = ProfileName()
-        self.basicSetting = BasicSetting()
         self.engineSetting = EngineSetting()
         self.outPutFormSetting = OutPutFormatSetting()
         self.postTranscribeSetting = PostTranscribeSetting()
@@ -70,7 +69,6 @@ class CreateNewSetting(QDialog):
             Text.WindowTitle,
             {
                 Text.TabHeader1: self.addProfileName,
-                Text.TabHeader2: self.basicSetting,
                 Text.TabHeader3: self.engineSetting,
                 Text.TabHeader4: self.outPutFormSetting,
                 Text.TabHeader5: self.postTranscribeSetting,
@@ -93,7 +91,6 @@ class CreateNewSetting(QDialog):
         
         
         profileName = self.addProfileName.getData()
-        basicData = self.basicSetting.getData()
         engineData = self.engineSetting.getData()
         outputFormData = self.outPutFormSetting.getData()
         postFormData = self.postTranscribeSetting.getData()
@@ -101,7 +98,6 @@ class CreateNewSetting(QDialog):
         
         try:
             requiredData["Engine"] = engineData
-            requiredData["Engine"]["User Info"] = basicData
             requiredData["Output Form Data"] = outputFormData
             profileData ["PostTranscribe"] = postFormData
             profileData ["RequiredSetting"] = requiredData

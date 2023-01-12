@@ -99,7 +99,7 @@ class TextForm(QWidget):
         """
         value = dict()
         for key, input in self.inputDict.items():
-            value[key] = input.value()
+            value[key] =  input.getValue()
         return value
             
     def setValues(self, data: Dict[str, str]) -> None:

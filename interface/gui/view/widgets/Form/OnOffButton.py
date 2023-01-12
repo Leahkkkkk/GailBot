@@ -43,7 +43,7 @@ class onOffButton(QWidget, FormWidget):
         self.value = value 
         
     def getValue(self):
-        return self.value()
+        return self.value
     
     def connectSignal(self):
         self.onOffBtn.clicked.connect(self.buttonClickHandler)

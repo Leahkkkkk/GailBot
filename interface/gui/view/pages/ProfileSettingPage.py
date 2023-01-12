@@ -193,15 +193,15 @@ class ProfileSettingPage(QWidget):
         
     def loadProfile(self, profile:tuple):
         """ loads the profile data to be presented onto the table """
-        # try:
-        self.logger.info(profile)
-        key, data = profile 
-        self.selectSettings.setCurrentText(key)
-        self.PostSetPage.setValue(data["PostTranscribe"])
-        self.RequiredSetPage.setValue(data["RequiredSetting"])
-        self.PluginPage.setValue(data["Plugins"])
-        # except:
-            # WarnBox("An error occurred when loading the profile")
+        try:
+            self.logger.info(profile)
+            key, data = profile 
+            self.selectSettings.setCurrentText(key)
+            self.PostSetPage.setValue(data["PostTranscribe"])
+            self.RequiredSetPage.setValue(data["RequiredSetting"])
+            self.PluginPage.setValue(data["Plugins"])
+        except:
+            WarnBox("An error occurred when loading the profile")
             
     def addProfile (self, profileName:str):
         """ adding a new profile option to the settings page 
@@ -227,13 +227,13 @@ class ProfileSettingPage(QWidget):
         
     def updateProfile(self):
         """ updates the new profile setting """
-        try:
-            newSetting = dict()
-            newSetting["RequiredSetting"] = self.RequiredSetPage.getValue()
-            newSetting["PostTranscribe"]  = self.PostSetPage.getValue()
-            newSetting["Plugins"] = self.PluginPage.getValue()
-            self.logger.info(newSetting)
-            profileKey = self.selectSettings.currentText()
-            self.signals.edit.emit((profileKey, newSetting))
-        except:
-            WarnBox("An error occurred when updating the profile")
+        # try:
+        newSetting = dict()
+        newSetting["RequiredSetting"] = self.RequiredSetPage.getValue()
+        newSetting["PostTranscribe"]  = self.PostSetPage.getValue()
+        newSetting["Plugins"] = self.PluginPage.getValue()
+        self.logger.info(newSetting)
+        profileKey = self.selectSettings.currentText()
+        self.signals.edit.emit((profileKey, newSetting))
+        # except:
+        # WarnBox("An error occurred when updating the profile")

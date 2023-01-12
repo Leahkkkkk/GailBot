@@ -64,5 +64,5 @@ class TextInput(QWidget, FormWidget):
         self.inputField.setText(str(value))
     
     def getValue(self):
-        self.inputField.text()
+        return self.inputField.text()
     

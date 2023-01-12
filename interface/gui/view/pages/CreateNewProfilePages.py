@@ -14,8 +14,10 @@ from typing import Dict
 
 from util.Style import Color, FontSize, FontFamily, Dimension
 from util.Text import CreateNewProfilePageText as Text 
+from util.Text import EngineSettingForm as Form 
 from util.Logger import makeLogger
 
+from view.widgets.Form.DependentComboBox import DependentCombo
 from view.widgets.ScrollArea import ScrollArea
 from view.widgets.Button import ColoredBtn
 from view.widgets.Label import Label
@@ -100,8 +102,7 @@ class ProfileName (TabPage):
             WarnBox(Text.emptyNameMsg)
         else:
             self.signals.goToNextPage.emit()
-        
-          
+                
 class BasicSetting(TabPage):
     def __init__(self, *args, **kwargs) -> None:
         """ path with input fields for user to define basic setting
@@ -176,7 +177,7 @@ class EngineSetting(TabPage):
         self.verticallayout.addWidget(
             self.header, 
             alignment=Qt.AlignmentFlag.AlignHCenter)
-        self.mainForm = SpeechEngineForm.SpeechEngineForm(showBasicSet=False)
+        self.mainForm = DependentCombo(Form.Engine, "Speech to Text Engine")
         self.scrollArea  = ScrollArea()
         self.scrollArea.setWidget(self.mainForm)
         initSecondaryColorBackground(self.scrollArea)

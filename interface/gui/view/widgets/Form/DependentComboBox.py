@@ -66,7 +66,6 @@ class DependentCombo(QWidget, FormWidget):
         self.toggleList = MultipleCombo(data)
         self.toggleList.setContentsMargins(0,0,0,0)
         self.verticalLayout.addWidget(self.toggleList)
-        self.verticalLayout.addStretch()
     
     def connectSignal(self):
         self.mainCombo.currentIndexChanged.connect(self.updateComboBox)
