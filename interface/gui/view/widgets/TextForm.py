@@ -68,11 +68,11 @@ class TextForm(QWidget):
         self.data : Dict[str, dict] = data
         self.inputDict : Dict[str, FormWidget] = dict()
         self.toggle = toggle 
-        self.setMinimumHeight(Dimension.WIN_MIN_HEIGHT // 3 * 2)
-        self.setMinimumWidth(Dimension.WIN_MIN_WIDTH // 2)
+        if not self.toggle:
+            self.setMinimumHeight(Dimension.WIN_MIN_HEIGHT // 3 * 2)
+            self.setMinimumWidth(Dimension.WIN_MIN_WIDTH // 2)
         self._initWidget()
         self._initLayout()
-        self.setStyleSheet("border: 1px solid red;")
         if background:
             self._initStyle()
         
@@ -167,7 +167,7 @@ class TextForm(QWidget):
                 self.inputDict[key] = newInput
             
             if self.toggle:
-                height = len(items) * 120
+                height = len(items) * 100
                 toggleViewContainer.setFixedHeight(height)
                 toggleViewLayout.addStretch()
                 toggleView = ToggleView.ToggleView (

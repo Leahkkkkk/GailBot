@@ -27,7 +27,7 @@ class InputField(QLineEdit, FormWidget):
         self.setStyleSheet(INPUT_STYLE)
         
     def mouseDoubleClickEvent(self, a0) -> None:
-        super().mouseDoubleClickEvent()
+        super().mouseDoubleClickEvent(a0)
         self.clear()
           
 class TextInput(QWidget, FormWidget):
