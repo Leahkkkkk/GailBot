@@ -18,6 +18,11 @@ from view.widgets import (
     Button,
     ToggleView
 )
+from view.widgets.Form.TextInput import TextInput
+from view.widgets.Form.ComBoInput import InputCombo
+from view.widgets.Form.OnOffButton import onOffButton
+from view.widgets.Form.FormWidget import FormWidget
+
 from util.Style import (
     FontFamily, 
     FontSize, 
@@ -61,7 +66,7 @@ class TextForm(QWidget):
         """
         super().__init__(*args, **kwargs)
         self.data : Dict[str, dict] = data
-        self.inputDict = dict()
+        self.inputDict : Dict[str, FormWidget] = dict()
         self.toggle = toggle 
         self.setMinimumHeight(Dimension.WIN_MIN_HEIGHT // 3 * 2)
         self.setMinimumWidth(Dimension.WIN_MIN_WIDTH // 2)
@@ -103,7 +108,7 @@ class TextForm(QWidget):
                                    updated 
         """
         for key, input in self.inputDict.items():
-            input.setText(data[key])
+            input.setValue(data[key])
     
     def _initWidget(self):
         """ initializes the widgets """
@@ -141,19 +146,19 @@ class TextForm(QWidget):
             for key, value in items.items():
                 if InputFormat.BOOL in key:
                     key = key.replace( InputFormat.BOOL, "").split(". ")[-1]
-                    newInput = Button.onOffButton(key, value = value)
+                    newInput = onOffButton(key, state = value)
                 elif InputFormat.COMBO in key:
                     key = key.replace( InputFormat.COMBO, "").split(". ")[-1]
                     if self.toggle:
-                        newInput = InputBox.InputCombo(
+                        newInput = InputCombo(
                             label = key, selections = value, vertical=True)
                     else:
-                        newInput = InputBox.InputCombo(
+                        newInput = InputCombo(
                             label=key, selections=value)
                         newInput.setMinimumHeight(80)
                 else:
                     key = key.split(". ")[-1]
-                    newInput = InputBox.InputBox(key, inputText=value)
+                    newInput = TextInput(key, inputText=value)
                 
                 """ add element to the layout """
                 if self.toggle : 
@@ -164,7 +169,7 @@ class TextForm(QWidget):
                 self.inputDict[key] = newInput
             
             if self.toggle:
-                height = len(items) * 120
+                height = len(items) * 100
                 toggleViewContainer.setFixedHeight(height)
                 # toggleViewLayout.
                 toggleViewLayout.addStretch()

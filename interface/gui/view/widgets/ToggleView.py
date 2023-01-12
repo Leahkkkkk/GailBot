@@ -56,7 +56,6 @@ class ToggleView(QWidget):
         self._initLayout()
         self._connectSignal()
         self.setScrollHeight(self.view.height())
-
     
     def setScrollHeight(self, size:int):
         """ public function to resize the scroll area height 
@@ -71,7 +70,6 @@ class ToggleView(QWidget):
         self.hide = True
         self.Btn.resetBtn()
         
-    
     def _configHeader(self):
         """ configures the toggle header """
         self.Btn = Button.ToggleBtn(text=self.labelStr)
@@ -104,8 +102,7 @@ class ToggleView(QWidget):
         self.scroll.verticalScrollBar().setStyleSheet(f"background-color:{Color.SCORLL_BAR}; border: 1px solid {Color.MAIN_BACKRGOUND}")
         self.scroll.hide()
         self.hide = True
-        
-    
+          
     def _initLayout(self):
         """ initializes the layout """
         self.layout = QVBoxLayout()
