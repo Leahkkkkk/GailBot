@@ -100,7 +100,7 @@ class ToggleView(QWidget):
         self.view.setObjectName("viewContainer")
         self.view.setStyleSheet(
             f"#viewContainer {{background-color:{self.viewcolor}}}")
-        self.scroll.verticalScrollBar().setStyleSheet(f"background-color:{Color.SCORLL_BAR}; border: 1px solid {Color.MAIN_BACKRGOUND}")
+        self.scroll.verticalScrollBar().setStyleSheet(f"background-color:{Color.SCROLL_BAR}; border: 1px solid {Color.MAIN_BACKGROUND}")
         self.scroll.hide()
         self.hide = True
         

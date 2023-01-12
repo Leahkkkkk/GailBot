@@ -117,7 +117,7 @@ class OpenFile(TabPage):
             QAbstractItemView.EditTrigger.NoEditTriggers)
         self.fileDisplayList.horizontalHeader().hide()
         self.fileDisplayList.verticalHeader().hide()
-        self.fileDisplayList.setStyleSheet(f"background-color:{Color.MAIN_BACKRGOUND};"
+        self.fileDisplayList.setStyleSheet(f"background-color:{Color.MAIN_BACKGROUND};"
                                            f"color:{Color.MAIN_TEXT}")
         self.fileDisplayList.setColumnWidth(0,Dimension.SMALL_TABLE_WIDTH) 
     def _initDimension(self):

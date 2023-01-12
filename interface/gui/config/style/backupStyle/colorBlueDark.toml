@@ -29,7 +29,7 @@ GREYEXTRALIGHT   = "#F0F6F9"
 ##main text
 MAIN_TEXT        = "#FFFFFF"
 ##main background color
-MAIN_BACKRGOUND  = "#222C3A"
+MAIN_BACKGROUND  = "#222C3A"
 ##secondary background color, used in the background of popups and the upload page
 SUB_BACKGROUND   = "#35495F"
 ##highest contrast- white in dark mode

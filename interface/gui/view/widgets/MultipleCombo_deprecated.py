@@ -72,8 +72,8 @@ class ToggleCombo(QWidget):
             self.basicSet = ToggleView.ToggleView(
             self.header, 
             self.userForm, 
-            headercolor = Color.MAIN_BACKRGOUND, 
-            viewcolor = Color.MAIN_BACKRGOUND)
+            headercolor = Color.MAIN_BACKGROUND, 
+            viewcolor = Color.MAIN_BACKGROUND)
             self.basicSet.setScrollHeight(self.userForm.height())
             self.basicSet.setContentsMargins(0,0,0,0)
             self.layout.addWidget(self.basicSet)
@@ -82,7 +82,7 @@ class ToggleCombo(QWidget):
             newCombo = ComboList(item)
             newToggle = ToggleView.ToggleView(
             key, newCombo, 
-            headercolor = Color.MAIN_BACKRGOUND, viewcolor = Color.MAIN_BACKRGOUND)
+            headercolor = Color.MAIN_BACKGROUND, viewcolor = Color.MAIN_BACKGROUND)
             newToggle.setScrollHeight(newCombo.height())
             self.layout.addWidget(newToggle)
             newToggle.setContentsMargins(0,0,0,0)

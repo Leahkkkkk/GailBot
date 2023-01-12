@@ -14,7 +14,7 @@ from typing import Dict, Tuple
 
 from util.Style import Dimension, FontSize
 from util.Text import MultipleComboText as Text 
-from view.widgets import ToggleView, Label, ComboBox, TextForm
+from view.widgets import  Label, ComboBox, TextForm
 
 from PyQt6.QtWidgets import (
     QWidget, 

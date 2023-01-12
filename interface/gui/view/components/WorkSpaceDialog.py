@@ -95,7 +95,7 @@ class WorkSpaceDialog(QDialog):
     
     def _initStyle(self):
         """ initialize the style """
-        self.setStyleSheet(f"background-color:{Color.MAIN_BACKRGOUND}")
+        self.setStyleSheet(f"background-color:{Color.MAIN_BACKGROUND}")
         self.setFixedSize(QSize(600,450))
 
 class ChangeWorkSpace(WorkSpaceDialog):
@@ -119,6 +119,6 @@ class ChangeWorkSpace(WorkSpaceDialog):
 
     def _initStyle(self):
         """ initialize the style """
-        self.setStyleSheet(f"background-color:{Color.MAIN_BACKRGOUND}")
+        self.setStyleSheet(f"background-color:{Color.MAIN_BACKGROUND}")
         self.setFixedSize(QSize(500,350))
     

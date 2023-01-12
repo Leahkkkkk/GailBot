@@ -22,10 +22,9 @@ from PyQt6.QtWidgets import (
     QWidget, 
     QHBoxLayout, 
     QVBoxLayout,
-    QLabel
 )
 
-from PyQt6.QtCore import QSize, Qt
+from PyQt6.QtCore import  Qt
 from PyQt6.QtGui import QIcon, QCursor
 
 
@@ -36,14 +35,14 @@ class ColoredBtn(QPushButton):
     Args:
         label (str): button text
         color (str): hex color in string 
-        fontsize (str, optional): represented in string, unit is pixel 
+        fontSIze (str, optional): represented in string, unit is pixel 
                                   Defaults to FontSize.BTN.
     """
     def __init__(
         self,
         label:str, 
         color:str, 
-        fontsize:str = FontSize.BTN , 
+        fontSIze:str = FontSize.BTN , 
         other:str = None,
         borderRadius:int =5,
         *args, 
@@ -55,14 +54,14 @@ class ColoredBtn(QPushButton):
         self.origColor = color
         self.pressColor = colorScale(color, 0.7)
         self.borderRadius = borderRadius
-        self.fontsize = fontsize
+        self.fontSIze = fontSIze
         self.other = other
         self.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.setFixedSize(Dimension.BTNWIDTH, Dimension.BTNHEIGHT)
         self.defaultStyle = f"border-radius:{self.borderRadius};"\
                             f"padding:1;"\
                             f"color:#fff;"\
-                            f"font-size:{self.fontsize};"\
+                            f"font-size:{self.fontSIze};"\
                             f"{self.other};"
         self.pressed.connect(self._pressStyle)
         self.released.connect(self._releaseStyle)
@@ -84,7 +83,7 @@ class BorderBtn(QPushButton):
     Args:
         label (str): button text
         color (str): hex color in string 
-        fontsize (str, optional): represented in string, unit is pixel 
+        fontSIze (str, optional): represented in string, unit is pixel 
                                   Defaults to FontSize.BTN 
         borderRadius (int): button border
         other (str): other additional style

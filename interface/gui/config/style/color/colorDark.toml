@@ -12,7 +12,7 @@ TABLE_HEADER     = "#C3D7D7"
 ##main button color, used in most continue and main menu buttons
 PRIMARY_BUTTON   = "#729A9F"
 ##scroll bar 
-SCORLL_BAR       = "#AFABA9"
+SCROLL_BAR       = "#AFABA9"
 ##primary contrast color: white in dark mode
 PRIMARY_INTENSE  = "#1D303F"
 ##low contrast- gray color close to black
@@ -29,7 +29,7 @@ GREYEXTRALIGHT   = "#F0F6F9"
 ##main text
 MAIN_TEXT        = "#FFFFFF"
 ##main background color
-MAIN_BACKRGOUND  = "#1D303F"
+MAIN_BACKGROUND  = "#1D303F"
 ##secondary background color, used in the background of popups and the upload page
 SUB_BACKGROUND   = "#AFABA9"
 ##highest contrast- white in dark mode

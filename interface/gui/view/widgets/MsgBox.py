@@ -13,6 +13,7 @@ from typing import List
 from util.Style import Color
 from util.Logger import makeLogger
 from view.widgets.Background import initSecondaryColorBackground
+from view.style.WidgetStyleSheet import MESSAGE_BOX, MESSAGE_BOX_BTN
 from PyQt6.QtWidgets import QMessageBox
 
 
@@ -32,14 +33,14 @@ class ConfirmBox:
         """
         self.logger = makeLogger("Frontend")
         self.msgBox = QMessageBox(text=msg)
-        self.msgBox.setStyleSheet(f"color:{Color.MAIN_TEXT};")
+        self.msgBox.setStyleSheet(MESSAGE_BOX)
         self.msgBox.setIcon(QMessageBox.Icon.Warning)
         
        
         self.msgBox.setStandardButtons(
             confirmButton| QMessageBox.StandardButton.Cancel)
         for button in self.msgBox.buttons():
-            button.setStyleSheet("color:#000;")
+            button.setStyleSheet(MESSAGE_BOX_BTN)
         self.msgBox.buttonClicked.connect(self._confirm)
         self.confirm = confirm 
         initSecondaryColorBackground(self.msgBox)

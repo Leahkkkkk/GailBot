@@ -43,6 +43,7 @@ WIN_MIN_WIDTH       = 1000
 WIN_MIN_HEIGHT      = 780
 LARGE_ICON          = 80
 OUTPUT_FORM_HEIGHT  = 420
+COMBOBOX_HEIGHT     = 40 
 
 
 [filetable.dimension]

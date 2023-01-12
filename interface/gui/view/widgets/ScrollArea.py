@@ -9,7 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
-from util.Style import Dimension, Color
+from view.style.WidgetStyleSheet import SCROLL_BAR
 from PyQt6.QtWidgets import QScrollArea 
 from PyQt6.QtCore import QSize
 
@@ -18,12 +18,8 @@ class ScrollArea(QScrollArea):
     def __init__(self, *args, **kwargs) -> None:
         """ initializes widget """
         super().__init__(*args, **kwargs)
-        self.verticalScrollBar().setStyleSheet(
-            f"background-color:{Color.SCORLL_BAR};"
-            f"border: 1px {Color.MAIN_BACKRGOUND} solid")
-        self.horizontalScrollBar().setStyleSheet(
-            f"background-color:{Color.SCORLL_BAR};"
-            f"border: 1px {Color.MAIN_BACKRGOUND} solid")
+        self.verticalScrollBar().setStyleSheet(SCROLL_BAR)
+        self.horizontalScrollBar().setStyleSheet(SCROLL_BAR)
         self.setWidgetResizable(True)
         
 

@@ -10,10 +10,11 @@ Modified By:  Siara Small  & Vivian Li
 Description: implement function for initialize background for different pages
 '''
 import os
+
 from util.Style import Color, Asset, Dimension
 from util.Path import getProjectRoot
 from view.widgets import Image
-from util import Path
+
 from PyQt6.QtCore import  Qt
 from PyQt6.QtGui import (
     QBrush, 
@@ -25,7 +26,6 @@ from PyQt6.QtGui import (
 from PyQt6.QtWidgets import QWidget, QVBoxLayout
 
 dirname = getProjectRoot()
-
 class Background(QBrush):
     """ a QBrush object that creates a white background """
     def __init__(self,color, *args, **kwargs) -> None:
@@ -34,7 +34,7 @@ class Background(QBrush):
         self.setStyle(Qt.BrushStyle.SolidPattern) 
 
 
-def _initBackground(widget:QWidget, color=Color.MAIN_BACKRGOUND):
+def _initBackground(widget:QWidget, color=Color.MAIN_BACKGROUND):
     """ make the widget background as white """
     widget.setAutoFillBackground(True)
     bg = Background(color)
@@ -62,7 +62,7 @@ def initHomePageBackground(widget:QWidget):
     """initialize the home page background with image"""
     _initImgBackground(widget, Asset.homeBackground)
 
-def initSubpageBackgorund(widget:QWidget):
+def initSubPageBackground(widget:QWidget):
     """ initialize the sub pages background with image"""
     _initImgBackground(widget, Asset.subPageBackground)
 
@@ -72,7 +72,7 @@ def initSideBarBackground(widget:QWidget):
     
 def initPrimaryColorBackground(widget:QWidget):
     """ fill the widget with primary color background"""
-    _initBackground(widget, Color.MAIN_BACKRGOUND)
+    _initBackground(widget, Color.MAIN_BACKGROUND)
 
 def initSecondaryColorBackground(widget:QWidget):
     """ fill the widget with secondary color background"""

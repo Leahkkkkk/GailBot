@@ -13,9 +13,7 @@ from dataclasses import dataclass
 from typing import Dict 
 
 from view.widgets import (
-    Label, 
-    InputBox, 
-    Button,
+    Label,
     ToggleView
 )
 from view.widgets.Form.TextInput import TextInput
@@ -173,8 +171,8 @@ class TextForm(QWidget):
                 toggleView = ToggleView.ToggleView (
                     tittleKey, 
                     toggleViewContainer,
-                    headercolor = Color.MAIN_BACKRGOUND, 
-                    viewcolor = Color.MAIN_BACKRGOUND)
+                    headercolor = Color.MAIN_BACKGROUND, 
+                    viewcolor = Color.MAIN_BACKGROUND)
                 toggleView.setScrollHeight(height)
                 self.mainVertical.addWidget(toggleView)
                 toggleView.setContentsMargins(0,0,0,0)

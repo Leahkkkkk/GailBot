@@ -26,7 +26,7 @@ from view.pages import (
 )
 from view.widgets.Background import (
     initHomePageBackground, 
-    initSubpageBackgorund,
+    initSubPageBackground,
     initPrimaryColorBackground)
 
 from PyQt6.QtWidgets import QStackedWidget, QTabWidget
@@ -115,21 +115,21 @@ class MainStack(QStackedWidget):
         initHomePageBackground(self.WelcomePage)
         self.FileUploadPage = FileUploadPage.FileUploadPage(
             self.profileKeys,self.fileSignal) 
-        initSubpageBackgorund(self.FileUploadPage)
+        initSubPageBackground(self.FileUploadPage)
         self.ConfirmTranscribePage = ConfirmTranscribePage.ConfirmTranscribePage(
             self.fileSignal)
-        initSubpageBackgorund(self.ConfirmTranscribePage)
+        initSubPageBackground(self.ConfirmTranscribePage)
         self.ProfileSettingPage = ProfileSettingPage.ProfileSettingPage(
             self.profileKeys, self.profileSignals)
         initPrimaryColorBackground(self.ProfileSettingPage)
         self.TranscribeProgressPage = TranscribeProgressPage.TranscribeProgressPage(
             self.fileSignal)
-        initSubpageBackgorund(self.TranscribeProgressPage)
+        initSubPageBackground(self.TranscribeProgressPage)
         self.TranscribeSuccessPage = TranscribeSuccessPage.TranscribeSuccessPage(
             self.fileSignal)
-        initSubpageBackgorund(self.TranscribeSuccessPage)
+        initSubPageBackground(self.TranscribeSuccessPage)
         self.RecordPage = RecordPage.RecordPage()
-        initSubpageBackgorund(self.RecordPage)
+        initSubPageBackground(self.RecordPage)
         self.SystemSettingPage = SystemSettingPage.SystemSettingPage()
         initPrimaryColorBackground(self.SystemSettingPage)
         self.MainSetting = QTabWidget()

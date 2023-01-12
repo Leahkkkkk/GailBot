@@ -47,16 +47,16 @@ class OutPutFormat(QWidget):
         self.fileHeader = ToggleView.ToggleView(
             OutputFormatFormText.FileHeaderView, 
             self.headerForm,
-            headercolor= Color.MAIN_BACKRGOUND,
-            viewcolor=Color.MAIN_BACKRGOUND)
+            headercolor= Color.MAIN_BACKGROUND,
+            viewcolor=Color.MAIN_BACKGROUND)
         self.layout.addWidget(self.fileHeader)
         self.textWrap = Button.onOffButton(OutputFormatFormText.TextWrap)
         self.textWrap.setFixedHeight(Dimension.SMALL_TABLE_HEIGHT)
         self.textWrapField = ToggleView.ToggleView(
             OutputFormatFormText.FileFormatHeader, 
             self.textWrap,
-            headercolor= Color.MAIN_BACKRGOUND,
-            viewcolor= Color.MAIN_BACKRGOUND)
+            headercolor= Color.MAIN_BACKGROUND,
+            viewcolor= Color.MAIN_BACKGROUND)
         self.layout.addWidget(self.textWrapField)
         self.layout.addStretch()
         

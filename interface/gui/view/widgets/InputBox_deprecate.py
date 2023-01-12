@@ -47,7 +47,7 @@ class InputBox(QWidget):
 
     def value(self) -> str: 
         """ public function to ge the value of the input """
-        return self.inputFeild.text()
+        return self.inputField.text()
 
     def setText(self,text:str):
         """set the current text of the input field
@@ -55,20 +55,20 @@ class InputBox(QWidget):
         Args:
             text (str): text content
         """
-        self.inputFeild.setText(str(text))
+        self.inputField.setText(str(text))
     
     def disable(self):
         """ a public function to disable the edit """
-        self.inputFeild.setReadOnly(True)
+        self.inputField.setReadOnly(True)
     
     def enable(self):
         """ a public function to enable the edit """
-        self.inputFeild.setReadOnly(False)
+        self.inputField.setReadOnly(False)
     
     def _initWidget(self):
         """initialize widgets for input box"""
-        self.inputlabel = Label.Label(self.label, self.labelSize)
-        self.inputFeild = InputField(self) 
+        self.inputLabel = Label.Label(self.label, self.labelSize)
+        self.inputField = InputField(self) 
         if self.inputText:
             self.setText(self.inputText)
             
@@ -80,9 +80,9 @@ class InputBox(QWidget):
             self.layout = QHBoxLayout(self)
 
         self.setLayout(self.layout)
-        self.layout.addWidget(self.inputlabel) 
+        self.layout.addWidget(self.inputLabel) 
         self.layout.addWidget(
-            self.inputFeild)
+            self.inputField)
     
 
 class InputField(QLineEdit):
@@ -129,23 +129,23 @@ class InputCombo(InputBox):
     
     def _initWidget(self):
         """initialize widgets for input box"""
-        self.inputlabel = Label.Label(self.label, self.labelSize)
-        self.inputFeild = ComboSelection(self.selections)
+        self.inputLabel = Label.Label(self.label, self.labelSize)
+        self.inputField = ComboSelection(self.selections)
         
     def value(self):
         """ return the value of the input """
-        return self.inputFeild.currentText()
+        return self.inputField.currentText()
     
     def setText(self,text:str):
         """ set the current text of the combo box """
-        self.inputFeild.setCurrentText(text)
+        self.inputField.setCurrentText(text)
     
     def disable(self):
         """ disable the edit of the combo box """
-        self.inputFeild.setDisabled(True)
+        self.inputField.setDisabled(True)
     
     def enable(self):
-        self.inputFeild.setDisabled(False)
+        self.inputField.setDisabled(False)
         
 
 class ComboSelection(ComboBox):

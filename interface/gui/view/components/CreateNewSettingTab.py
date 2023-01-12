@@ -18,7 +18,6 @@ from util.Text import CreateNewProfileTabText as Text
 from util.Style import Dimension
 from view.pages.CreateNewProfilePages import (
     ProfileName,
-    BasicSetting, 
     EngineSetting, 
     OutPutFormatSetting,
     PostTranscribeSetting,

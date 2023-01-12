@@ -22,11 +22,10 @@ from view.widgets.ScrollArea import ScrollArea
 from view.widgets.Button import ColoredBtn
 from view.widgets.Label import Label
 from view.widgets.TabPage import TabPage
-from view.widgets.MultipleCombo import UserForm
-from view.widgets.InputBox import InputBox
+from view.widgets.Form.TextInput import TextInput
 from view.widgets.MsgBox import WarnBox
 from view.widgets.Background import initSecondaryColorBackground
-from view.components import OutputFormatForm, SpeechEngineForm
+from view.components import OutputFormatForm
 from view.pages.PluginPage import PluginPage
 from view.pages.PostSettingPage import PostSettingPage
 
@@ -39,9 +38,9 @@ from PyQt6.QtCore import (
 )
 
 
-hcenter = Qt.AlignmentFlag.AlignHCenter
-vcenter = Qt.AlignmentFlag.AlignVCenter
-center = hcenter | vcenter
+hCenter = Qt.AlignmentFlag.AlignHCenter
+vCenter = Qt.AlignmentFlag.AlignVCenter
+center = hCenter | vCenter
 bottomRight = Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignBottom
 top = Qt.AlignmentFlag.AlignTop
 
@@ -71,10 +70,10 @@ class ProfileName (TabPage):
         self.header = Label(Text.profileName, 
             FontSize.HEADER2, 
             FontFamily.MAIN)
-        self.profileName = InputBox(
+        self.profileName = TextInput(
             "", 
-            False, 
-            labelSize = FontSize.HEADER3)
+            labelSize = FontSize.HEADER3,
+            vertical=False)
         self.confirmBtn = ColoredBtn(
             "Start", 
             Color.SECONDARY_BUTTON)
@@ -97,69 +96,10 @@ class ProfileName (TabPage):
         self.verticalLayout.addStretch()
     
     def _confirmHandler(self):
-        """ event hander for confirm button  """
+        """ event handler for confirm button  """
         if self.profileName.value() == "":
             WarnBox(Text.emptyNameMsg)
         else:
-            self.signals.goToNextPage.emit()
-                
-class BasicSetting(TabPage):
-    def __init__(self, *args, **kwargs) -> None:
-        """ path with input fields for user to define basic setting
-        """
-        super().__init__(*args, **kwargs)
-        self.logger = makeLogger("F")
-        self._initWidget()
-        self._initLayout()
-        
-    def getData(self) -> Dict[str, str]:
-        """ return a dictionary that stores the basic setting values
-
-        Returns:
-            Dict[str, str]: a dictionary that stores the basic setting values
-        """
-        try:
-            self.logger.info("")
-            return self.mainWidget.getValue() 
-        except:
-            self.logger.error("An error occurred when reading the username and password")
-            WarnBox("An error occurred when reading the username and password")
-    
-    def _initWidget(self):
-        """ initialize the widget """
-        self.logger.info("")
-        self.mainWidget = UserForm()
-        self.header = Label(
-            "Basic settings", 
-            FontSize.HEADER2, 
-            FontFamily.MAIN)
-    
-    def _initLayout(self):
-        """ initialize the layout """
-        self.logger.info("")
-        self.verticallayout = QVBoxLayout()
-        self.setLayout(self.verticallayout)
-        self.verticallayout.addStretch()
-        self.verticallayout.addWidget(self.header, alignment=hcenter)
-        self.verticallayout.addWidget(self.mainWidget, alignment=hcenter)
-        self.confirmBtn = ColoredBtn(
-            Text.cofirmBtn, 
-            Color.SECONDARY_BUTTON)
-        self.confirmBtn.clicked.connect(self._confirmHandler)
-        self.verticallayout.addWidget(
-            self.confirmBtn,
-            alignment=bottomRight)
-        self.verticallayout.addStretch()
-    
-    
-    def _confirmHandler(self):
-        """ confirm button handler """
-        self.logger.info("")
-        res = self.mainWidget.getValue()
-        if res["password"] == "" or res["username"] == "":
-            WarnBox(Text.emptyUserMsg)
-        else:
-            self.signals.nextPage.emit()
             self.signals.goToNextPage.emit()
     
 class EngineSetting(TabPage):
@@ -215,7 +155,7 @@ class OutPutFormatSetting(TabPage):
         self.header = Label(
             Text.outputSettingHeader, FontSize.HEADER2, FontFamily.MAIN)
         self.verticallayout.addWidget(
-            self.header, alignment=hcenter|top)
+            self.header, alignment=hCenter|top)
         self.verticallayout.addWidget(self.scrollArea)
         self.confirmBtn = ColoredBtn(
             Text.cofirmBtn, 

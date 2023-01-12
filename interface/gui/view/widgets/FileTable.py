@@ -24,6 +24,7 @@ from view.Signals import FileSignals
 from util.Logger import makeLogger
 from util.Style import Dimension, Color, FontFamily, FontSize
 from util.Text import FileTableText as Text
+from view.style.WidgetStyleSheet import FILE_TABLE, SCROLL_BAR, TABLE_HEADER
 
 from PyQt6.QtWidgets import (
     QTableWidget, 
@@ -148,22 +149,15 @@ class FileTable(QTableWidget):
         """ Initialize the table style """
         self.horizontalHeader().setFixedHeight(45)
         self.setObjectName("FileTable")
-        self.setStyleSheet("#FileTable{"
-                           f"background-color: {Color.MAIN_BACKRGOUND};"
-                           f"color:{Color.MAIN_TEXT};"
-                           f"border: 0.5px solid {Color.TABLE_BORDER};"
-                           "}")
+        self.setStyleSheet(f"#FileTable{FILE_TABLE}")
 
         for i in range(self.columnCount()):
             self.horizontalHeader().setSectionResizeMode(
                 i, QHeaderView.ResizeMode.Fixed)
         self.setFixedWidth(Dimension.TABLEWIDTH)
         self.setMinimumHeight(Dimension.TABLEMINHEIGHT)
-        self.verticalScrollBar().setStyleSheet(
-            f"background-color:{Color.SCORLL_BAR}") 
-        self.horizontalScrollBar().setStyleSheet(
-            f"background-color: {Color.SCORLL_BAR}"
-        )
+        self.verticalScrollBar().setStyleSheet(SCROLL_BAR) 
+        self.horizontalScrollBar().setStyleSheet(SCROLL_BAR)
 
           
     def _setFileHeader(self) -> None:
@@ -183,10 +177,7 @@ class FileTable(QTableWidget):
         except:
             MsgBox.WarnBox("An error occurred when setting the file table header")
         
-        self.horizontalHeader().setStyleSheet(f"background-color:{Color.TABLE_HEADER};"
-                                              f"font-size:{FontSize.SMALL};"
-                                              f"font-family:{FontFamily.MAIN};"
-                                              f"color:{Color.PRIMARY_INTENSE}")
+        self.horizontalHeader().setStyleSheet(TABLE_HEADER)
     
     
     def _headerClickedHandler(self, idx):
@@ -464,7 +455,7 @@ class FileTable(QTableWidget):
             if key in self.transferList:
                 self.transferList.remove(key)
                 rowIdx = self.indexFromItem(self.filePins[key]).row()
-                self._setColorRow(rowIdx, Color.MAIN_BACKRGOUND)
+                self._setColorRow(rowIdx, Color.MAIN_BACKGROUND)
                 self.clearSelection()
                 if len(self.transferList) == 0:
                     self.viewSignal.ZeroFile.emit()
