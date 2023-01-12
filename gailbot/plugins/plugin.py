@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 13:22:45
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-10 14:39:29
+# @Last Modified time: 2023-01-12 13:29:53
 
 from typing import Any, Dict
 from abc import ABC, abstractmethod
@@ -10,6 +10,11 @@ from abc import ABC, abstractmethod
 
 
 class Methods:
+    """
+    Methods that will be passed to a plugin.
+    These can be custom defined and may be useful as a wrapper around objects
+    that may want to be passed to a plugin.
+    """
 
     def __init__(self):
         pass

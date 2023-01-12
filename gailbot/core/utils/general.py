@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 16:28:03
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-10 12:37:29
+# @Last Modified time: 2023-01-12 14:55:17
 
 
 from typing import Any, Callable, Tuple, List, Dict
@@ -157,7 +157,7 @@ def write_yaml(path : str, data : Dict, mode : str) -> bool:
     pass
 
 def read_toml(path : str) -> Dict:
-    pass
+    return toml.load(path)
 
 def write_toml(path : str, data : Dict, mode : str) -> bool:
     pass

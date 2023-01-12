@@ -2,13 +2,13 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 15:20:28
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-10 14:23:43
+# @Last Modified time: 2023-01-12 14:37:29
 
 from typing import Dict, Any, List
-from core.pipeline import Component, ComponentState, ComponentResult
-from core.engines import Watson
-from services.organizer.objects import Source, Settings
-from core.utils.general import (
+from gailbot.core.pipeline import Component, ComponentState, ComponentResult
+from gailbot.core.engines import Watson
+from gailbot.services.organizer.objects import Source, Settings
+from gailbot.core.utils.general import (
     get_name
 )
 from ..objects import Payload, TranscriptionResults

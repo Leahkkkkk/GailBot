@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 15:22:32
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-10 15:16:18
+# @Last Modified time: 2023-01-12 14:41:34
 
 import logging
 from datetime import date, time
@@ -27,7 +27,7 @@ class ProcessingStats:
 
 @dataclass
 class TranscriptionResults:
-    utterances = Dict[str, List[Utterance]] = dict()
+    utterances : Dict[str, List[Utterance]] = None
     stats = ProcessingStats()
 
 @dataclass

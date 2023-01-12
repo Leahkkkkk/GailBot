@@ -2,18 +2,18 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-06 14:55:34
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-10 14:45:51
+# @Last Modified time: 2023-01-12 14:33:08
 
 
 __version__ = "0.1a8"
 
-from api import GailBot
-from core.engines import (
+from .api import GailBot
+from .core.engines import (
     Engine,
     Watson,
     WatsonAMInterface,
     WatsonLMInterface
 )
-from services import GBPluginMethods
-from plugins import Plugin
+from .services import GBPluginMethods
+from .plugins import Plugin
 

@@ -2,13 +2,13 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-10 13:29:08
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-10 14:17:44
+# @Last Modified time: 2023-01-12 14:37:57
 
 
 import sys
 import os
 from typing import Dict, List, Any
-from core.engines import Engine
+from gailbot.core.engines import Engine
 
 class EngineManager:
 

@@ -2,13 +2,13 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-10 14:06:17
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-10 14:14:13
+# @Last Modified time: 2023-01-12 14:38:24
 
 import sys
 import os
 from typing import List, Dict, Any, Union
-from core.engines import Engine
-from services import GailBotController
+from gailbot.core.engines import Engine
+from gailbot.services import GailBotController
 
 class GailBot:
     """API Wrapper"""

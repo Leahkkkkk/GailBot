@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 13:50:28
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-09 15:58:06
+# @Last Modified time: 2023-01-12 14:36:19
 
 import sys
 import os
@@ -10,7 +10,7 @@ from typing import List, Dict
 from dataclasses import dataclass
 from types import SimpleNamespace
 from dotwiz import DotWiz
-from core.utils.general import (
+from gailbot.core.utils.general import (
     make_dir
 )
 

@@ -1,5 +1,9 @@
 
 
+[plugins]
+suite = ""
+apply_plugins = []
+
 [engine]
 name = "watson"
 
@@ -15,6 +19,3 @@ base_model = 0
 anguage_customization_id = 0
 acoustic_customization_id = 0
 
-[plugins]
-suite = ""
-apply_plugins = []

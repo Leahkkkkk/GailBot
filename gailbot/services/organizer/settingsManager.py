@@ -2,10 +2,10 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 14:50:11
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-10 14:10:33
+# @Last Modified time: 2023-01-12 14:44:04
 
 from typing import Union, List, Dict, Any
-from core.utils.general import (
+from gailbot.core.utils.general import (
     read_toml,
     is_file,
     write_toml,

@@ -2,11 +2,11 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 15:35:55
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-10 14:10:45
+# @Last Modified time: 2023-01-12 14:38:55
 
 from typing import Union, Dict, Any, List
-from core.engines.engine import Engine, Watson
-from plugins import PluginManager
+from gailbot.core.engines.engine import Engine
+from gailbot.plugins import PluginManager
 from .organizer import OrganizerService, Source, Settings
 from .pipeline import PipelineService,Payload
 from .workspace import Workspace

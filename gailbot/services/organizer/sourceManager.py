@@ -2,10 +2,10 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 14:50:11
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-10 15:19:44
+# @Last Modified time: 2023-01-12 14:36:38
 
 from typing import List, Dict, Any, Callable
-from core.utils.general import (
+from gailbot.core.utils.general import (
     is_directory,
     read_toml,
     is_file,
@@ -16,8 +16,8 @@ from core.utils.general import (
     get_name,
     delete
 )
-from core.utils.media import MediaHandler
-from services.pipeline.objects import PayloadOutputWriter
+from gailbot.core.utils.media import MediaHandler
+from gailbot.services.pipeline.objects import PayloadOutputWriter
 from .objects import Source, DataFile
 
 

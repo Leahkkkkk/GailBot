@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 12:52:37
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-09 16:32:58
+# @Last Modified time: 2023-01-12 14:19:42
 
 from typing import List, Dict, Any
 from dataclasses import dataclass
@@ -19,7 +19,7 @@ class Pipeline:
     def __init__(
         self,
         dependency_map : Dict[str, str],
-        components : List[Component]
+        components : Dict[ str, Component]
     ):
         """
         Dependency map describes the execution order.
@@ -31,7 +31,7 @@ class Pipeline:
 
     def __call__(
         self,
-        base_input : Any
+        base_component_kwargs : Dict
         # NOTE: base_input is passed only to the first component.
     ) -> Any:
         """

@@ -2,14 +2,13 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 15:25:29
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-10 15:18:02
+# @Last Modified time: 2023-01-12 14:43:46
 
 
 from typing import Dict, Any, List
-from core.pipeline import Component, ComponentState, ComponentResult
-from plugins import PluginManager
-from services.organizer import Settings
-from plugins import PluginManager
+from gailbot.core.pipeline import Component, ComponentState, ComponentResult
+from gailbot.plugins import PluginManager
+from gailbot.services.organizer.objects import Settings
 from ..objects import Payload, AnalysisResults, PayloadOutputWriter
 
 class FormatComponent(Component):

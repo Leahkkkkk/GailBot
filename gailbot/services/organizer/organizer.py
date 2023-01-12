@@ -2,10 +2,10 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 13:48:55
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-10 14:10:39
+# @Last Modified time: 2023-01-12 14:40:34
 
 from typing import Union, List, Dict, Any
-from plugins import PluginManager, Plugin, Suite
+from gailbot.plugins import PluginManager, Plugin, PluginSuite
 from .sourceManager import SourceManager
 from .settingsManager import SettingsManager
 from .objects import Settings, Source
