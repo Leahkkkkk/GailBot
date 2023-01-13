@@ -227,13 +227,13 @@ class ProfileSettingPage(QWidget):
         
     def updateProfile(self):
         """ updates the new profile setting """
-        # try:
-        newSetting = dict()
-        newSetting["RequiredSetting"] = self.RequiredSetPage.getValue()
-        newSetting["PostTranscribe"]  = self.PostSetPage.getValue()
-        newSetting["Plugins"] = self.PluginPage.getValue()
-        self.logger.info(newSetting)
-        profileKey = self.selectSettings.currentText()
-        self.signals.edit.emit((profileKey, newSetting))
-        # except:
-        # WarnBox("An error occurred when updating the profile")
+        try:
+            newSetting = dict()
+            newSetting["RequiredSetting"] = self.RequiredSetPage.getValue()
+            newSetting["PostTranscribe"]  = self.PostSetPage.getValue()
+            newSetting["Plugins"] = self.PluginPage.getValue()
+            self.logger.info(newSetting)
+            profileKey = self.selectSettings.currentText()
+            self.signals.edit.emit((profileKey, newSetting))
+        except:
+            WarnBox("An error occurred when updating the profile")

@@ -90,7 +90,7 @@ class WelcomePage(QWidget):
         self.StartBtn.setMinimumSize(QtCore.QSize(Dimension.BTNWIDTH, Dimension.BTNHEIGHT))
  
     def _initInstructionText(self):
-        """ adds widgets for the instructions text and icons """
+        """ add widgets for the instructions text and icons """
 
         """ instruction text """
         self.AudioInstruction = Label.Label(Text.audioInstructionText, 
@@ -125,7 +125,7 @@ class WelcomePage(QWidget):
         
       
     def _initInstructionGrid(self):
-        """ adds a grid layout for the instruction texts and icons """
+        """ add a grid layout for the instruction texts and icons """
         self.gridBox = QWidget()
         self.gridLayout = QGridLayout()
         self.gridBox.setLayout(self.gridLayout)

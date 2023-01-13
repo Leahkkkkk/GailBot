@@ -40,9 +40,9 @@ class PostSettingPage(QWidget):
     
     def getValue(self) -> dict:
         """ get the value in the setting form """
-        # try:
-        return self.setForm.getValue()
-        # except :
-            # WarnBox("An error occurred when retrieving post transcription profile data")
+        try:
+            return self.setForm.getValue()
+        except :
+            WarnBox("An error occurred when retrieving post transcription profile data")
         
     

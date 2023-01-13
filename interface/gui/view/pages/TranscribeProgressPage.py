@@ -96,7 +96,7 @@ class TranscribeProgressPage(QWidget):
         self.loadIcon.setScaledContents(True)
         
     def _initLayout(self):
-        """ intiializes layout """
+        """ initialize layout """
         self.verticalLayout = QVBoxLayout()
         self.container = QWidget()
         self.containerLayout = QVBoxLayout()

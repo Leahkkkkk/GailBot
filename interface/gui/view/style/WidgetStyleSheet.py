@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from util.Style import FontSize, Dimension, Color, FontFamily
 
 INPUT_TEXT = f" color: {Color.INPUT_TEXT};\
