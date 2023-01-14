@@ -10,8 +10,6 @@ import requests
 from zipfile import ZipFile
 import os
 
-
-
 def download_from_urls(
     urls : List[str],
     download_dir : str,

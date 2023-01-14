@@ -2,14 +2,15 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 16:28:17
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-09 15:13:54
+# @Last Modified time: 2023-01-14 15:18:45
 
 from typing import List, Union, Dict, Any
 from dataclasses import dataclass
 from pydub import AudioSegment
 from .general import (
     get_extension,
-    get_name
+    get_name,
+    make_dir
 )
 
 @dataclass
@@ -34,16 +35,33 @@ class VideoStream(Stream):
 
 class AudioHandler:
 
+    _SUPPORTED_FORMATS = ["mp3", "mpeg", "opus", "wav"]
+    _DEFAULT_FORMAT = "wav"
+
     @property
     def supported_formats(self) -> List[str]:
-        pass
+        return self._SUPPORTED_FORMATS
 
     @staticmethod
     def is_supported(self, path : str) -> bool:
-        pass
+        return get_extension(path) in self.supported_formats
 
     def read_file(self, path : str) -> AudioStream:
-        pass
+        """
+        Read a file as a stream
+        """
+        if not self.is_supported(path):
+            return
+        format = get_extension(path)
+        segment = AudioSegment.from_file(
+            path, format=format
+        )
+        return AudioStream(
+            source=[path],
+            name=get_name(path),
+            extension=format,
+            segment=segment
+        )
 
     def record(
         self,
@@ -51,73 +69,186 @@ class AudioHandler:
         out_dir : str,
         duration_sec : float = -1,
     ) -> AudioStream:
-        pass
+        raise NotImplementedError()
 
     def write_stream(
         self,
         stream : AudioStream,
-        out_dir : str,
+        outdir : str,
         name : str = None,
-        extension : str = None
+        format : str = None
     ) -> str:
-        pass
+        """
+        Write a stream with the given format. If not format or name is specified,
+        uses the stream's default name and format.
+        """
+        if format not in self.supported_formats:
+            raise Exception(f"Format {format} not supported")
+        # Construct output file path
+        name = stream.name if name == None else name
+        ext = stream.extension if format == None else format
+        make_dir(outdir,overwrite=False)
+        path = f"{outdir}/{name}.{ext}"
+        stream.segment.export(path,format=ext)
+        return path
 
     def info(self, stream : AudioStream) -> Dict:
-        pass
+        """Get information about the given audio stream"""
+        segment = stream.segment
+        return {
+                "name" : stream.name,
+                "format" : stream.extension,
+                "source" : stream.source,
+                "decibels_relative_to_full_scale": segment.dBFS,
+                "channels": segment.channels,
+                "sample_width": segment.sample_width,
+                "frame_rate": segment.frame_rate,
+                "frame_width": segment.frame_width,
+                "root_mean_square": segment.rms,
+                "highest_amplitude": segment.max,
+                "duration_seconds": segment.duration_seconds,
+                "num_frames": segment.frame_count()
+        }
 
     def change_volume(
         self,
         stream : AudioStream,
         change_db : float
     ) -> AudioStream:
-        pass
+        """
+        Apply the specified gain to the audio stream.
+        """
+        segment = stream.segment.apply_gain(change_db)
+        stream.segment = segment
+        return stream
 
     def mono_to_stereo(
         self,
         left_stream : AudioStream,
         right_stream : AudioStream
     ) -> AudioStream:
-        pass
+        """
+        Get a new stereo stream from the mono streams
+        """
+
+        stereo_name = f"{left_stream.name}_{right_stream.name}_stereo"
+        sources = [left_stream,right_stream]
+        segment = AudioSegment.from_mono_audiosegments(
+            left_stream.segment,right_stream.segment
+        )
+        return AudioStream(
+            sources, stereo_name,self._DEFAULT_FORMAT,segment
+        )
 
     def stereo_to_mono(
         self,
         stream : AudioStream
     ) -> List[AudioStream]:
-        pass
+        """
+        Convert the given stereo stream to mono.
+        """
+
+        left_segment,right_segment = stream.segment.split_to_mono()
+        left_stream = AudioStream(
+            [stream],f"{stream.name}_left",self._DEFAULT_FORMAT,left_segment
+        )
+        right_stream = AudioStream(
+            [stream],f"{stream.name}_right", self._DEFAULT_FORMAT,right_segment
+        )
+        return left_stream, right_stream
 
     def concat(self, streams : List[AudioStream]) -> AudioStream:
-        pass
+        """
+        Concat the given stream end to end, start to finish, into a single stream.
+        """
+        concatenated = AudioSegment.empty()
+        for stream in streams:
+            concatenated += stream.segment
+        name = "_".join([stream.name for stream in streams])
+        name += "_concatenated"
+        return AudioStream(
+            sources=[streams],
+            name=name,
+            extension=self._DEFAULT_FORMAT,
+            segment=concatenated
+        )
 
     def overlay(
         self,
         left_stream : AudioStream,
-        right_stream : AudioStream
+        right_stream : AudioStream,
+        loop_shorter_stream : bool = False
     ) -> AudioStream:
-        pass
+        """
+        Overlay two audio streams on top of each other
+        """
+        # Determine which segment is longer
+        if left_stream.segment.duration_seconds > right_stream.segment.duration_seconds:
+            segments = [left_stream.segment, right_stream.segment]
+        else:
+            segments = [right_stream.segment,left_stream.segment]
+        if loop_shorter_stream:
+            overlaid_segment = segments[0].overlay(segments[1], loop=True)
+        else:
+            # Create a silent stream to cover duration difference
+            duration_diff = segments[0].duration_seconds - segments[1].duration_seconds
+            silence = AudioSegment.silent(duration=duration_diff)
+            segments[1] += silence
+            overlaid_segment = segments[0].overlay(segments[1])
+        name = f"{left_stream.name}_{right_stream.name}_overlaid"
+        return AudioStream(
+            [left_stream,right_stream], name, self._DEFAULT_FORMAT,
+            overlaid_segment
+        )
 
     def reverse(self, stream : AudioStream) -> AudioStream:
-        pass
+        """
+        Reverse the given audio stream in place
+        """
+        reversed_segment = stream.segment.reverse
+        stream.segment = reversed_segment
+        return stream
 
     def chunk(
         self,
         stream : AudioStream,
         chunk_duration_s : float
     ) -> List[AudioStream]:
-        pass
+        """
+        Generate chunks of the given audio with the provided duration.
+        """
+        assert chunk_duration_s > 0, f"Duration must be positive"
 
+        # Simply return original stream if no chunking possible.
+        if chunk_duration_s < stream.segment.duration_seconds:
+            return [stream]
 
+        duration_ms = chunk_duration_s * 1000
+        chunks = list()
+        for i, chunk_segment in enumerate(stream.segment[::duration_ms]):
+            name = f"{stream.name}_{chunk_duration_s}_chunk_{i}"
+            chunk = AudioStream(
+                [stream],name, self._DEFAULT_FORMAT,chunk_segment
+            )
+            chunks.append(chunk)
+        return chunks
+
+# TODO: Implement methods.
 class VideoHandler:
+
+    _SUPPORTED_FORMATS = "mxf"
+    _BASE_FORMAT = "mp4"
 
     @property
     def supported_formats(self) -> List[str]:
-        pass
+        return self._SUPPORTED_FORMATS
 
     @staticmethod
     def is_supported(self, path : str) -> bool:
-        pass
+        return get_extension(path) in self.supported_formats
 
     def read_file(self, path : str) -> VideoStream:
-        pass
+        raise NotImplementedError()
 
     def record(
         self,
@@ -125,7 +256,7 @@ class VideoHandler:
         out_dir : str,
         duration_sec : float = -1,
     ) -> VideoStream:
-        pass
+        raise NotImplementedError()
 
     def write_stream(
         self,
@@ -134,24 +265,23 @@ class VideoHandler:
         name : str = None,
         extension : str = None
     ) -> str:
-        pass
+        raise NotImplementedError()
 
     def info(self, stream : VideoStream) -> Dict:
-        pass
+        raise NotImplementedError()
 
     def change_volume(
         self,
         stream : VideoStream,
         change_db : float
     ) -> VideoStream:
-        pass
+        raise NotImplementedError()
 
     def extract_audio(self, stream : VideoStream) -> AudioStream:
-        pass
+        raise NotImplementedError()
 
     def remove_audio(self, stream : VideoStream) -> VideoStream:
-        pass
-
+        raise NotImplementedError()
 
 class MediaHandler:
 
@@ -208,15 +338,14 @@ class MediaHandler:
         )
 
     def info(self, stream : Stream) -> Dict:
-        pass
+        return self._get_handler(stream).info(stream)
 
     def change_volume(
         self,
         stream : Stream,
         change_db : float
     ) -> Stream:
-        pass
-
+        return self._get_handler(stream).change_volume(stream)
 
     ### Audio Methods
 
@@ -225,33 +354,38 @@ class MediaHandler:
         left_stream : AudioStream,
         right_stream : AudioStream
     ) -> AudioStream:
-        pass
+        return self.audio_h.mono_to_stereo(left_stream, right_stream)
 
     def stereo_to_mono(
         self,
         stream : AudioStream
     ) -> List[AudioStream]:
-        pass
+        return self.audio_h.stereo_to_mono(stream)
 
     def concat(self, streams : List[AudioStream]) -> AudioStream:
-        pass
+        return self.audio_h.concat(streams)
 
     def overlay(
         self,
         left_stream : AudioStream,
-        right_stream : AudioStream
+        right_stream : AudioStream,
+        loop_shorter_stream : bool = False
     ) -> AudioStream:
-        pass
+        return self.audio_h.overlay(
+            left_stream, right_stream,loop_shorter_stream
+        )
 
     def reverse(self, stream : AudioStream) -> AudioStream:
-        pass
+        return self.audio_h.reverse(stream)
 
     def chunk(
         self,
         stream : AudioStream,
         chunk_duration_s : float
     ) -> List[AudioStream]:
-        pass
+        return self.audio_h.chunk(
+            stream, chunk_duration_s
+        )
 
     ### Video Methods
     def extract_audio(self, stream : VideoStream) -> AudioStream:

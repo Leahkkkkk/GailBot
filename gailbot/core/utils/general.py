@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 16:28:03
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-12 14:55:17
+# @Last Modified time: 2023-01-14 14:08:15
 
 
 from typing import Any, Callable, Tuple, List, Dict
@@ -17,19 +17,23 @@ from pathlib import Path
 # Local imports
 # Third party imports
 from copy import deepcopy
+import subprocess
 
+
+# TODO: All of the methods below need to be tested and error handing should be
+# added.
 
 def is_directory(dir_path: str) -> bool:
     """
     Determine if the given path is a directory.
     """
-    return os.path.exists(dir_path) and os.path.isdir(dir_path)
+    return Path(dir_path).is_dir()
 
 def is_file(file_path: str) -> bool:
     """
     Determine if the given path is a file.
     """
-    return os.path.exists(file_path) and os.path.isfile(file_path)
+    return Path(file_path).is_file()
 
 def num_items_in_dir(
     path: str,
@@ -93,7 +97,12 @@ def filepaths_in_dir(
     Get paths of files with specified extension in dir.
     Raise Exception if dir_path not a dir
     """
-    pass
+    return paths_in_dir(
+        path=dir_path,
+        extensions=extensions,
+        recursive=recursive,
+        only_dirs=False
+    )
 
 def subdirs_in_dir(
     dir_path : str,
@@ -103,11 +112,16 @@ def subdirs_in_dir(
     Get paths of subdirs with specified extension in dir.
     Raise Exception if dir_path not a dir
     """
-    pass
+    return paths_in_dir(
+        path=dir_path,
+        extensions=None,
+        recursive=recursive,
+        only_dirs=True
+    )
 
 def num_subdirs(dir_path : str, recursive : bool = False) -> int:
     """Get num subdirs in dir"""
-    pass
+    return len(subdirs_in_dir(dir_path,recursive))
 
 def get_name(path : str) -> str:
     """Name of file or dir"""
@@ -120,61 +134,94 @@ def get_parent_path(path : str) -> str:
     return Path(path).parent.absolute()
 
 def get_size(path : str) -> bytes:
-    """Size of file or dir. """
-    pass
+    """Size of file or dir"""
+    if is_file(path):
+        return os.path.getsize(path)
+    else:
+        return sum([
+            os.path.getsize(p) for p in filepaths_in_dir(path,recursive=True)
+        ])
 
 def make_dir(path : str, overwrite : bool = False):
-    pass
+    if is_directory(path) and overwrite:
+        delete(path)
+    os.makedirs(path,exist_ok=True)
 
 def move(src_path : str, tgt_path : str) -> str:
-    pass
+    return shutil.move(src_path, tgt_path)
 
 def copy(src_path, tgt_path : str) -> str:
-    pass
+    return shutil.copy(src_path, tgt_path)
 
 def rename(src_path, new_name : str) -> str:
-    pass
+    return str(Path(src_path).rename(new_name).resolve())
 
-def delete(path : str) -> bool:
-    pass
+def delete(path : str) -> None:
+    if is_file(path):
+        Path(path).unlink(missing_ok=True)
+    else:
+        Path(path).rmdir()
 
 def read_json(path : str) -> Dict:
-    pass
+    with open(path, 'r') as f:
+        return json.load(f)
 
-def write_json(path : str, data : Dict, mode : str) -> bool:
-    pass
+def write_json(path : str, data : Dict, overwrite : bool = True) -> None:
+    if not overwrite:
+        d = read_json(path)
+    d.update(data)
+    with open(path, "w") as f:
+        json.dump(d,f)
 
 def read_txt(path : str) -> List:
-    pass
+    return open(path,"r").read()
 
-def write_text(path : str, data : List, mode : str) -> bool:
-    pass
+def write_text(path : str, data : List,  overwrite : bool = True) -> bool:
+    data = str(data)
+    mode = 'w' if overwrite else "a"
+    with open(path, mode) as f:
+        f.write(data)
 
 def read_yaml(path : str) -> Dict:
-    pass
+    with open(path, 'r') as f:
+        data = yaml.load(f)
+        # Data loaded must be a dictionary
+        if not type(data) == dict:
+            raise Exception
+        return data
 
-def write_yaml(path : str, data : Dict, mode : str) -> bool:
-    pass
+def write_yaml(path : str, data : Dict, overwrite : bool = True) -> bool:
+    data = dict(data)
+    if not overwrite:
+        previous_data = read_yaml(path)
+        previous_data.update(data)
+        previous_data.update(data)
+    with open(path, "w") as f:
+        # Data must be convertable to a dictionary object to be written to
+        # a yaml file.
+        yaml.dump(previous_data, f)
 
 def read_toml(path : str) -> Dict:
     return toml.load(path)
 
-def write_toml(path : str, data : Dict, mode : str) -> bool:
-    pass
+def write_toml(path : str, data : Dict) -> bool:
+    with open(path, "w") as f:
+        toml.dump(data, f)
 
+
+# TODO: Implement these later using POpen instead.
 def run_cmd(
     cmd : str,
-    stdin : Any,
-    stdout : Any,
-    on_start : Callable,
-    on_end : Callable
-) -> str:
+) -> None:
     """
     Run the command as a shell command and obtain an identifier.
     The identifier can be used to obtain the shell command  status using
     get_shell_process_status.
     """
-    pass
+    result = subprocess.run(
+        cmd,shell=True, capture_output=True
+    )
+    return result.stdout, result.stderr
 
 def get_cmd_status(identifier : str) -> str:
     """
