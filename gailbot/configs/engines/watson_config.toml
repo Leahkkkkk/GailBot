@@ -1,6 +1,8 @@
 # This file contains configurations required for basic Watson operations
 # that the user should not be able to change.
 
+[watson]
+max_file_size_bytes = 7e7
 
 [watson.regions.uris]
 dallas          = "https://api.us-south.speech-to-text.watson.cloud.ibm.com"
