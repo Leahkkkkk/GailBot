@@ -2,10 +2,15 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 13:22:39
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-12 14:34:14
+# @Last Modified time: 2023-01-15 16:02:02
 
+import sys
+import os
 from typing import Dict, List, Any
 from dataclasses import dataclass
+import time
+import importlib.util
+
 
 from gailbot.core.pipeline import Pipeline, Component, ComponentResult, ComponentState
 from gailbot.core.utils.general import (
@@ -18,8 +23,15 @@ from gailbot.core.utils.general import (
 from .plugin import Plugin, Methods
 
 class PluginComponent(Component):
+    """
+    This is an adapter because the Plugin expects different args as compared
+    to pipeline components.
+    This is needed to so that ComponentResult component is not passed to the user.
+    """
 
-    def __init__(self, plugin : Plugin):
+    def __init__(self,
+        plugin : Plugin
+    ):
         self.plugin = plugin
 
     def __call__(
@@ -27,18 +39,24 @@ class PluginComponent(Component):
         dependency_outputs : Dict[str, ComponentResult],
         methods : Methods
     ):
+        """
+        In addition to dependency outputs, this expects methods which can be
+        passed to the individual plugins.
+        """
 
-        # Extract the actual dependeny results
+        # Extract the actual dependency results
         dep_outputs = {
             k : v.result for k,v in dependency_outputs.items()
         }
         # Simply call the plugin and return its results
+        start = time.time()
         result = self.plugin.apply(dep_outputs, methods)
+        elapsed = time.time() - start
         return ComponentResult(
             state=ComponentState.SUCCESS if self.plugin.is_successful else \
                 ComponentState.FAILED,
             result=result,
-            runtime=0
+            runtime=elapsed
         )
 
 
@@ -51,46 +69,45 @@ class PluginSuite:
     Needs to store the details of each plugin (source file etc.)
     """
 
-    _SUITE_CONFIG_EXT = "toml"
-
     def __init__(
         self,
-        suite_dir_path : str
+        dict_conf : Dict
     ):
-        if not is_directory(suite_dir_path):
-            raise Exception(
-                f"Not a directory: {suite_dir_path}"
-            )
-        # Load the conf file
-        # TODO: Add a more sophisticated way - for now this just gets
-        # the first toml file.
-        self.conf_path = paths_in_dir(
-            suite_dir_path,extensions=[self._SUITE_CONFIG_EXT])[0]
-        self.name = get_name(suite_dir_path)
 
-        self.plugins : Dict[str, Plugin] = dict()
+        # TODO: Parse the dict config to generate the plugins map and
+        # dependency map.
+        self.dict_conf = dict_conf
 
-        # Generate the dependency map and load a pipeline component
-        self.dependency_map : Dict[str, List[str] ]= dict()
+        # NOTE: This is where classes should be dynamically loaded.
+        # self.plugins : Dict[str, Plugin] = dict()
+        # self.dependency_map : Dict[str, List[str] ]= dict()
+        dependency_map, plugins = self._load_from_config(dict_conf)
+
+        # Wrap the plugins in PluginComponent
         self.components = {
             k : PluginComponent(v) for k,v in self.plugins.items()
         }
+
+        # Init the pipeline based on the components
         self.pipeline = Pipeline(self.dependency_map,self.components)
+
+        # Add vars here from conf.
+        self._name = dict_conf["name"]
+
+        # TODO: Add mechanism to make sure all the required plugins were loaded.
 
 
     @property
     def name(self) -> str:
-        return self.name
+        return self._name
 
     @property
     def is_ready(self):
-        pass
+        return self._is_ready
 
-    def details(self) -> Dict:
-        pass
 
     def __repr__(self):
-        pass
+        return str(self.dependency_graph())
 
     def __call__(
         self,
@@ -101,10 +118,13 @@ class PluginSuite:
         Apply the specified plugins when possible and return the results
         summary
         """
-        result = self.pipeline({
-            "base_input" : base_input,
-            "methods" : methods
-        })
+        result = self.pipeline(
+            base_input=base_input,
+            additional_component_kwargs={
+                "methods" : methods
+            }
+        )
+
         return result# TODO: Determine exact type of result and return the correct thing/
 
     def is_plugin(self, plugin_name : str) -> bool:
@@ -122,13 +142,26 @@ class PluginSuite:
                 "dependencies" : self.dependency_map[plugin_name]
             }
 
-    # def check_potential_executions(self, plugin_names : List[str]) -> List[str]:
-    #     """
-    #     Get the names of the plugins that will actually run if the given
-    #     plugins were attempted to be executed.
-    #     """
-    #     pass
-
     def dependency_graph(self) -> Dict:
         """Return the entire dependency graph as a dictionary"""
         return self.pipeline.dependency_graph()
+
+
+    ##########
+    # PRIVATE
+    ##########
+
+    # TODO: Need to implement a robust method to load plugins.
+    def _load_from_config(self, dict_config : Dict) -> None:
+        """
+        dict_config must have the keys:
+            suite_name : Name of suite
+            module_path : Path to the module containing all plugins
+            plugins : List of all the plugin names
+            plugins : List[Dict]
+                - Each dict has:
+                    - name : Name of the plugin
+                    - dependencies : names of plugins this is dependant on.
+                    - module name : Name of module this plugin is in.
+        """
+        raise NotImplementedError()

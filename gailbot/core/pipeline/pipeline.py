@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 12:52:37
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-15 13:36:20
+# @Last Modified time: 2023-01-15 15:33:40
 
 import sys
 import os
@@ -10,7 +10,7 @@ from typing import List, Dict, Any, Tuple
 from dataclasses import dataclass
 import networkx as nx
 from copy import deepcopy
-from .component import Component, ComponentState
+from .component import Component, ComponentState, ComponentResult
 
 
 @dataclass
@@ -40,7 +40,8 @@ class Pipeline:
 
     def __call__(
         self,
-        base_component_kwargs : Dict
+        base_input : Any,
+        additional_component_kwargs : Dict = dict()
         # NOTE: base_input is passed only to the first component.
     ) -> Dict[str, ComponentState]:
 
@@ -48,6 +49,9 @@ class Pipeline:
         Execute the pipeline by running all components in order of the dependency
         graph. This wraps data as DataStream before passing it b/w components.
         Additionally, each component receives the output of its dependencies.
+
+        Additional_component_kwargs are passed as a dereferenced dictionary to
+        each component.
 
         NOTE: The components themselves are responsible for checking whether
         the parent components executed successfully.
@@ -67,14 +71,19 @@ class Pipeline:
             for executable in executables:
                 exe_name = self.component_to_name[executable]
                 if len(successors[exe_name]) > 0:
-                    inputs = {
+                    dep_outputs = {
                         k : results[k] for k in successors[exe_name]
                     }
                 else:
-                    inputs = {
-                        "base" : base_component_kwargs
+                    # Base input is also passed as a component result.
+                    dep_outputs = {
+                        "base" : ComponentResult(
+                            state=ComponentState.SUCCESS,
+                            result=base_input,
+                            runtime=0
+                        )
                     }
-                res = executable(inputs)
+                res = executable(dep_outputs, **additional_component_kwargs)
                 results[exe_name] = res
                 self.dependency_graph.remove_node(executable)
 

@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 12:54:35
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-15 12:57:49
+# @Last Modified time: 2023-01-15 15:33:47
 
 
 from enum import Enum
@@ -34,7 +34,7 @@ class Component:
 
     def __call__(
         self,
-        dependency_outputs : Dict[str, Any] ,
+        dependency_outputs : Dict[str, ComponentResult] ,
         *args,
         **kwargs
     ) -> ComponentState:
