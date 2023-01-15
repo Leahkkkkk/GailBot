@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-09 11:25:49
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-09 11:40:34
+# @Last Modified time: 2023-01-15 16:07:48
 
 
 from typing import List, Any, Dict
@@ -11,6 +11,10 @@ import time
 from ibm_watson import SpeechToTextV1, ApiException
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from ibm_watson.websocket import RecognizeCallback, AudioSource
+
+from gailbot.configs.utils import get_engine_conf
+
+ENGINE_CONF = get_engine_conf("watson")
 
 class WatsonCore:
 

@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 12:52:37
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-15 15:33:40
+# @Last Modified time: 2023-01-15 16:04:52
 
 import sys
 import os
@@ -17,6 +17,8 @@ from .component import Component, ComponentState, ComponentResult
 class DataStream:
     data : Any = None
 
+# TODO: Eventually, add configs to change multithreading options.
+# TODO: Need to implement multithreading.
 class Pipeline:
 
     def __init__(

@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-10 12:37:45
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-12 14:56:01
+# @Last Modified time: 2023-01-15 16:07:38
 
 import sys
 import os
@@ -17,6 +17,8 @@ def get_config_dir() -> str :
 def get_base_conf_path() -> str:
     return os.path.join(get_config_dir(),"conf.toml")
 
-
 def get_base_conf() -> Dict:
+    pass
+
+def get_engine_conf(engine_name : str) -> Dict:
     pass
