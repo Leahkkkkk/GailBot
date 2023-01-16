@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-09 11:25:49
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-15 16:34:11
+# @Last Modified time: 2023-01-16 11:59:32
 
 
 from typing import List, Any, Dict
@@ -70,6 +70,8 @@ class WatsonCore:
         language_customization_id : str = "",
         acoustic_customization_id : str = ""
     ) -> Any:
+
+        # TODO: Responsible for checking all the input data here.
 
         assert is_file(audio_path), f"Not a file {audio_path}"
         make_dir(outdir,overwrite=True)
