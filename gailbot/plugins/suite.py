@@ -2,15 +2,15 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 13:22:39
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-15 16:02:02
+# @Last Modified time: 2023-01-16 13:10:57
 
 import sys
 import os
 from typing import Dict, List, Any
 from dataclasses import dataclass
 import time
-import importlib.util
-
+import importlib
+import imp
 
 from gailbot.core.pipeline import Pipeline, Component, ComponentResult, ComponentState
 from gailbot.core.utils.general import (
@@ -33,6 +33,9 @@ class PluginComponent(Component):
         plugin : Plugin
     ):
         self.plugin = plugin
+
+    def __repr__(self):
+        return str(self.plugin)
 
     def __call__(
         self,
@@ -81,7 +84,7 @@ class PluginSuite:
         # NOTE: This is where classes should be dynamically loaded.
         # self.plugins : Dict[str, Plugin] = dict()
         # self.dependency_map : Dict[str, List[str] ]= dict()
-        dependency_map, plugins = self._load_from_config(dict_conf)
+        self.dependency_map, self.plugins = self._load_from_config(dict_conf)
 
         # Wrap the plugins in PluginComponent
         self.components = {
@@ -90,11 +93,12 @@ class PluginSuite:
 
         # Init the pipeline based on the components
         self.pipeline = Pipeline(self.dependency_map,self.components)
-
         # Add vars here from conf.
-        self._name = dict_conf["name"]
+        self._name = dict_conf["suiteName"]
 
         # TODO: Add mechanism to make sure all the required plugins were loaded.
+
+        self._is_ready = True
 
 
     @property
@@ -107,7 +111,10 @@ class PluginSuite:
 
 
     def __repr__(self):
-        return str(self.dependency_graph())
+        return (
+            f"Suite: {self.name}\n"
+            f"Dependency map: {self.dependency_graph()}"
+        )
 
     def __call__(
         self,
@@ -144,7 +151,7 @@ class PluginSuite:
 
     def dependency_graph(self) -> Dict:
         """Return the entire dependency graph as a dictionary"""
-        return self.pipeline.dependency_graph()
+        return self.pipeline.get_dependency_graph()
 
 
     ##########
@@ -164,4 +171,31 @@ class PluginSuite:
                     - dependencies : names of plugins this is dependant on.
                     - module name : Name of module this plugin is in.
         """
-        raise NotImplementedError()
+        # Add path to the imports
+        abs_path = dict_config["path"]
+        sys.path.append(abs_path)
+        pkg_name = dict_config["suiteName"]
+
+        dependency_map = dict()
+        plugins = dict()
+
+        for plugin, conf in dict_config["plugins"].items():
+            module_name = conf["moduleName"]
+            module_path = f"{pkg_name}.{module_name}"
+            rel_path = conf["path"]
+            path = f"{abs_path}/{rel_path}"
+            clazz_name = conf["className"]
+
+            spec = importlib.util.spec_from_file_location(
+                module_path, path)
+            module = importlib.util.module_from_spec(spec)
+            sys.modules[module_path] = module
+            spec.loader.exec_module(module)
+            clazz = getattr(module, clazz_name)
+            instance = clazz()
+
+            dependency_map[clazz_name] = conf["dependencies"]
+            plugins[clazz_name] = instance
+
+        return dependency_map, plugins
+

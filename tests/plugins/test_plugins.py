@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-15 13:37:25
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-15 14:58:13
+# @Last Modified time: 2023-01-16 13:11:27
 
 import sys
 import os
@@ -18,6 +18,7 @@ from typing import Dict, List, Any
 
 
 PLUGIN_MANAGER_WS = "./plugins_ws"
+SUITE_PATH = "/Users/muhammadumair/Documents/Repositories/mumair01-repos/GailBot/plugins/hilabSuite"
 
 class GBPluginMethods(Methods):
 
@@ -36,6 +37,14 @@ class GBPluginMethods(Methods):
     def save_dir(self) -> str:
         raise NotImplementedError()
 
-
 def test_manager():
-    pass
+    manager = PluginManager(PLUGIN_MANAGER_WS)
+    print(manager)
+    manager.register_suite(SUITE_PATH)
+    print(manager.suite_names())
+    suite = manager.get_suite("HiLab")
+    print(suite)
+    suite(
+        base_input=None,
+        methods = GBPluginMethods()
+    )

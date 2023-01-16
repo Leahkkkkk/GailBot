@@ -2,9 +2,10 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 16:28:03
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-14 14:08:15
+# @Last Modified time: 2023-01-16 12:35:24
 
 
+import sys
 from typing import Any, Callable, Tuple, List, Dict
 import os
 import glob
@@ -81,12 +82,12 @@ def paths_in_dir(
     if not is_directory(path):
         raise Exception(f"ERROR: Not a directory")
     if only_dirs:
-        return glob.glob(f"{path}/**",recursive=recursive)
+        return glob.glob(f"{path}/*/",recursive=recursive)
     else:
-        return itertools.chain(
+        return list(itertools.chain(
             *[glob.glob(f"{path}/*.{ext}",recursive=recursive) for \
                 ext in extensions]
-        )
+        ))
 
 def filepaths_in_dir(
     dir_path : str,
@@ -131,7 +132,7 @@ def get_extension(path : str) -> str:
     return os.path.splitext(os.path.basename(path))[1]
 
 def get_parent_path(path : str) -> str:
-    return Path(path).parent.absolute()
+    return str(Path(path).parent.absolute())
 
 def get_size(path : str) -> bytes:
     """Size of file or dir"""
@@ -151,7 +152,10 @@ def move(src_path : str, tgt_path : str) -> str:
     return shutil.move(src_path, tgt_path)
 
 def copy(src_path, tgt_path : str) -> str:
-    return shutil.copy(src_path, tgt_path)
+    if is_file(src_path):
+        return shutil.copy(src_path, tgt_path)
+    elif is_directory(src_path):
+        return shutil.copytree(src_path, tgt_path,dirs_exist_ok=True)
 
 def rename(src_path, new_name : str) -> str:
     return str(Path(src_path).rename(new_name).resolve())
