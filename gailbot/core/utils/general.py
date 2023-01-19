@@ -121,21 +121,24 @@ def subdirs_in_dir(
     )
 
 def num_subdirs(dir_path : str, recursive : bool = False) -> int:
-    """Get num subdirs in dir"""
+    """Get the number of subdirectory in the dir_path"""
     return len(subdirs_in_dir(dir_path,recursive))
 
 def get_name(path : str) -> str:
-    """Name of file or dir"""
+    """given the path return the name of file or dir without extension"""
     return os.path.splitext(os.path.basename(path))[0]
 
 def get_extension(path : str) -> str:
+    """ given the path to the file, return the extension of the file """
     return os.path.splitext(os.path.basename(path))[1]
 
 def get_parent_path(path : str) -> str:
+    """ given the path to the file, returns the path to the file's 
+        parent directory"""
     return str(Path(path).parent.absolute())
 
 def get_size(path : str) -> bytes:
-    """Size of file or dir"""
+    """given the path to the file, return the file size"""
     if is_file(path):
         return os.path.getsize(path)
     else:
@@ -144,87 +147,120 @@ def get_size(path : str) -> bytes:
         ])
 
 def make_dir(path : str, overwrite : bool = False):
+    """ given the path, create a directory """
     if is_directory(path) and overwrite:
         delete(path)
     os.makedirs(path,exist_ok=True)
 
 def move(src_path : str, tgt_path : str) -> str:
+    """ move the file from the source path to the target path """
     return shutil.move(src_path, tgt_path)
 
 def copy(src_path, tgt_path : str) -> str:
+    """ copy the file from the source path to the target path """
     if is_file(src_path):
         return shutil.copy(src_path, tgt_path)
     elif is_directory(src_path):
         return shutil.copytree(src_path, tgt_path,dirs_exist_ok=True)
 
 def rename(src_path, new_name : str) -> str:
+    """ rename the file in the source path to the new name """
     return str(Path(src_path).rename(new_name).resolve())
 
 def delete(path : str) -> None:
+    """ given a path, delete the file """
     if is_file(path):
         Path(path).unlink(missing_ok=True)
     else:
         Path(path).rmdir()
 
 def read_json(path : str) -> Dict:
+    """ given a path, read the json data stored in the file, return the 
+        a dictionary that stores the json data 
+    """
     with open(path, 'r') as f:
         return json.load(f)
 
 def write_json(path : str, data : Dict, overwrite : bool = True) -> None:
+    """ given the path to a file and a dictionary, output the data to the  
+        given file in the json format
+    """
     if not overwrite:
         d = read_json(path)
-    d.update(data)
-    with open(path, "w") as f:
+        d.update(data)
+    else: 
+        d = data
+    with open(path, "w+") as f:
         json.dump(d,f)
 
+""" TODO: check the format of reading and writing the text file """
 def read_txt(path : str) -> List:
+    """ given the path to a file, return the content of file as a string
+    """
     return open(path,"r").read()
 
 def write_text(path : str, data : List,  overwrite : bool = True) -> bool:
+    """ given the path to a file, and a list of data, output the list 
+        data to the file
+    """
     data = str(data)
     mode = 'w' if overwrite else "a"
     with open(path, mode) as f:
         f.write(data)
 
 def read_yaml(path : str) -> Dict:
+    """ given a path to a yaml file, return a dictionary 
+        representation of the data stored in the yaml file 
+    """
     with open(path, 'r') as f:
-        data = yaml.load(f)
+        data = yaml.load(f, Loader=yaml.Loader)  # NOTE: added the required parameter Loader
         # Data loaded must be a dictionary
         if not type(data) == dict:
             raise Exception
         return data
 
 def write_yaml(path : str, data : Dict, overwrite : bool = True) -> bool:
+    """ given a path to a yaml file and data stored in a dictionary,
+        output the data in the yaml format to the file
+    """
     data = dict(data)
     if not overwrite:
         previous_data = read_yaml(path)
         previous_data.update(data)
         previous_data.update(data)
-    with open(path, "w") as f:
+    else:
+        previous_data = data
+    with open(path, "w+") as f:
         # Data must be convertable to a dictionary object to be written to
         # a yaml file.
         yaml.dump(previous_data, f)
 
 def read_toml(path : str) -> Dict:
+    """ given the path to a to toml file, return a dictionary 
+        representation of the data stored in the toml file
+    """
     return toml.load(path)
 
 def write_toml(path : str, data : Dict) -> bool:
+    """ given the path to a toml file and data stored in a dictionary 
+        output the data in the toml format to the file
+    """
     with open(path, "w") as f:
         toml.dump(data, f)
 
 
 # TODO: Implement these later using POpen instead.
 def run_cmd(
-    cmd : str,
+    cmd : list[str],
 ) -> None:
     """
     Run the command as a shell command and obtain an identifier.
     The identifier can be used to obtain the shell command  status using
     get_shell_process_status.
     """
-    result = subprocess.run(
-        cmd,shell=True, capture_output=True
-    )
+    process = subprocess.Popen(
+        cmd, stdout = subprocess.PIPE, stderr= subprocess.PIPE)
+    result = process.communicate()
     return result.stdout, result.stderr
 
 def get_cmd_status(identifier : str) -> str:
