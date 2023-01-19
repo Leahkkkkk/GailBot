@@ -73,10 +73,18 @@ def test_get_parent_path():
     assert general.get_parent_path(__file__) == f"{os.getcwd()}/tests/core/utils"
     
 def test_get_size():
-    pass 
-
-def test_make_dir():
-    pass 
+    basedir = f"{os.getcwd()}/test_file_size"
+    os.mkdir(basedir)
+    size_sum = 0 
+    for i in range(5):
+        new_file = f"{basedir}/test{i}.txt"
+        with open(new_file, "w+") as f:
+            f.write("test" * i)
+        f.close()
+        assert general.get_size(new_file) == os.path.getsize(new_file)
+        size_sum += os.path.getsize(new_file)
+    assert general.get_size(basedir) == size_sum
+    shutil.rmtree(basedir)
 
 def test_move():
     pass 
@@ -85,10 +93,24 @@ def test_copy():
     pass 
 
 def test_rename():
-    pass 
+    new_file = f"{os.getcwd()}/test.txt"
+    open(new_file, "w+")
+    general.rename(new_file, "new_file.txt")
+    assert not general.is_file(new_file)
+    assert general.is_file(f"{os.getcwd()}/new_file.txt")
+    general.delete(f"{os.getcwd()}/new_file.txt")
 
-def test_delete():
-    pass 
+def test_make_delete_file():
+    new_file = f"{os.getcwd()}/test_file.txt"
+    open(new_file, "w+")
+    assert general.is_file(new_file)
+    general.delete(new_file)
+    assert not general.is_file(new_file)
+    new_dir = f"{os.getcwd()}/test_dir"
+    general.make_dir(new_dir)
+    assert general.is_directory(new_dir)
+    general.delete(new_dir)
+    assert not general.is_directory(new_dir)
 
 def test_read_write_json():
     test_dictionary = create_test_dictionary()

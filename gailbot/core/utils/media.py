@@ -50,7 +50,7 @@ class AudioHandler:
         """
         Read a file as a stream
         """
-        if not self.is_supported(path):
+        if not self.is_supported(self, path):
             return
         format = get_extension(path)
         segment = AudioSegment.from_file(
