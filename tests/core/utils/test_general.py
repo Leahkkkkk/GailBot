@@ -88,12 +88,34 @@ def test_get_size():
     shutil.rmtree(basedir)
 
 def test_move():
-    # src_dir  
-    pass 
+    src_dir  = os.getcwd()
+    src_file = f"{src_dir}/test.txt"
+    open(src_file, "w+")
+    des_dir = f"{src_dir}/des"
+    os.mkdir(des_dir)
+    general.move(src_file, des_dir)
+    assert general.is_file(f"{des_dir}/test.txt")
+    assert not general.is_file(src_file) 
+    shutil.rmtree(des_dir)
 
 def test_copy():
-    pass 
+    basedir = os.getcwd()
+    src_dir = f"{basedir}/src"
+    des_dir = f"{basedir}/des_dir"
+    os.mkdir(src_dir)
+    os.mkdir(des_dir)
+    for i in range(5):
+        open(f"{src_dir}/test{i}.txt", "w+")
 
+    general.copy(src_dir, des_dir)
+    
+    for i in range(5):
+        assert general.is_file(f"{src_dir}/test{i}.txt")
+        assert general.is_file(f"{des_dir}/test{i}.txt") 
+    shutil.rmtree(des_dir)
+    shutil.rmtree(src_dir)
+    
+    
 def test_rename():
     new_file = f"{os.getcwd()}/test.txt"
     open(new_file, "w+")
