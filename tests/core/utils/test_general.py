@@ -5,6 +5,7 @@ from gailbot.core.utils import general
 import yaml 
 import toml 
 import json 
+import time
 
 def create_test_dictionary() -> dict:
     test_dict = dict()
@@ -87,6 +88,7 @@ def test_get_size():
     shutil.rmtree(basedir)
 
 def test_move():
+    # src_dir  
     pass 
 
 def test_copy():
@@ -123,7 +125,6 @@ def test_read_write_json():
     general.delete(filename)
     assert not general.is_file(filename)
     
-
 def test_read_write_toml():
     test_dictionary = create_test_dictionary()
     filename = f"{os.getcwd()}/test.toml"
@@ -160,8 +161,13 @@ def test_read_write_txt():
     general.delete(filename)
     assert not general.is_file(filename)
 
-def test_run_cmd():
-    pass 
 
-def test_get_cmd_status():
-    pass 
+def test_run_cmd():
+    pid = general.run_cmd(["ls"]) 
+    status = general.get_cmd_status(pid)
+    assert status == "running"
+    time.sleep(1)
+    status = general.get_cmd_status(pid)
+    assert status == "zombie"
+    
+

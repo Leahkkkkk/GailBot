@@ -6,6 +6,7 @@
 
 
 import sys
+import psutil
 from typing import Any, Callable, Tuple, List, Dict
 import os
 import glob
@@ -252,19 +253,22 @@ def write_toml(path : str, data : Dict) -> bool:
 # TODO: Implement these later using POpen instead.
 def run_cmd(
     cmd : list[str],
-) -> None:
+) -> int:
     """
     Run the command as a shell command and obtain an identifier.
-    The identifier can be used to obtain the shell command  status using
+    The identifier can be used to obtain the shell command status using
     get_shell_process_status.
     """
     process = subprocess.Popen(
         cmd, stdout = subprocess.PIPE, stderr= subprocess.PIPE)
-    result = process.communicate()
-    return result.stdout, result.stderr
+    
+    pid = process.pid
+    return pid
 
-def get_cmd_status(identifier : str) -> str:
+def get_cmd_status(identifier : int) -> str:
     """
     Obtain the status of the shell command associated with this identifier
     """
-    pass
+    process = psutil.Process(identifier)
+    status = process.status()
+    return status
