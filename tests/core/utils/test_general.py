@@ -2,9 +2,6 @@ import pytest
 import os 
 import shutil
 from gailbot.core.utils import general 
-import yaml 
-import toml 
-import json 
 import time
 
 def create_test_dictionary() -> dict:
@@ -68,7 +65,7 @@ def test_get_name():
     assert general.get_name(__file__) == "test_general"
 
 def test_get_extension():
-    assert general.get_extension(__file__) == ".py"
+    assert general.get_extension(__file__) == "py"
 
 def test_get_parent_path():
     assert general.get_parent_path(__file__) == f"{os.getcwd()}/tests/core/utils"

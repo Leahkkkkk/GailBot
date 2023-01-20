@@ -139,7 +139,7 @@ class AudioHandler:
         return AudioStream(
             sources, stereo_name,self._DEFAULT_FORMAT,segment
         )
-
+    
     def stereo_to_mono(
         self,
         stream : AudioStream
@@ -148,7 +148,7 @@ class AudioHandler:
         Convert the given stereo stream to mono.
         """
 
-        left_segment,right_segment = stream.segment.split_to_mono()
+        left_segment, right_segment = stream.segment.split_to_mono()
         left_stream = AudioStream(
             [stream],f"{stream.name}_left",self._DEFAULT_FORMAT,left_segment
         )

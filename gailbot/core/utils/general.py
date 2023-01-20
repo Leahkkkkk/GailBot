@@ -131,7 +131,7 @@ def get_name(path : str) -> str:
 
 def get_extension(path : str) -> str:
     """ given the path to the file, return the extension of the file """
-    return os.path.splitext(os.path.basename(path))[1]
+    return os.path.splitext(os.path.basename(path))[1][1:]
 
 def get_parent_path(path : str) -> str:
     """ given the path to the file, returns the path to the file's 
