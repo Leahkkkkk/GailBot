@@ -27,7 +27,8 @@ from view.pages import (
 from view.widgets.Background import (
     initHomePageBackground, 
     initSubPageBackground,
-    initPrimaryColorBackground)
+    initPrimaryColorBackground
+)
 
 from PyQt6.QtWidgets import QStackedWidget, QTabWidget
 from PyQt6.QtCore import QSize
@@ -110,7 +111,8 @@ class MainStack(QStackedWidget):
             self.ProfileSettingPage.selectSettings.setCurrentText(setting)
     
     def _initPage(self):
-        """ initialize all pages on stack widget, using current widget to mimic the functionality of swapping pages """
+        """ initialize all pages on stack widget, using current widget to 
+            mimic the functionality of swapping pages """
         self.WelcomePage = WelcomePage.WelcomePage(self)
         initHomePageBackground(self.WelcomePage)
         self.FileUploadPage = FileUploadPage.FileUploadPage(

@@ -42,11 +42,10 @@ class CreateNewSetting(QDialog):
         """ a pop up dialog for user to create a new profile
             the tab implement below processes for creating a new profile:
             1. input for profile name
-            2. a form of basic profile setting
-            3. a form to create speech engine setting 
-            4. a form to create output format setting 
-            5. a form to create post transcription setting 
-            6. a form to create plugin setting 
+            2. a form to create speech engine setting 
+            3. a form to create output format setting 
+            4. a form to create post transcription setting 
+            5. a form to create plugin setting 
              
         Constructor Args:
             plugins (List [str]): a list of string that stores the available 
@@ -87,8 +86,6 @@ class CreateNewSetting(QDialog):
     
         profileData = dict()
         requiredData = dict()
-        
-        
         profileName = self.addProfileName.getData()
         engineData = self.engineSetting.getData()
         outputFormData = self.outPutFormSetting.getData()
