@@ -271,4 +271,5 @@ def get_cmd_status(identifier : int) -> str:
     """
     process = psutil.Process(identifier)
     status = process.status()
+    
     return status
