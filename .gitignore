@@ -144,3 +144,6 @@ dist/
 *.egg-*
 
 **/py_test_results/*
+
+*_ws/
+output/

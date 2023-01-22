@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 16:28:03
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-16 12:35:24
+# @Last Modified time: 2023-01-16 14:39:45
 
 
 import sys
@@ -129,7 +129,7 @@ def get_name(path : str) -> str:
     return os.path.splitext(os.path.basename(path))[0]
 
 def get_extension(path : str) -> str:
-    return os.path.splitext(os.path.basename(path))[1]
+    return os.path.splitext(os.path.basename(path))[1][1:]
 
 def get_parent_path(path : str) -> str:
     return str(Path(path).parent.absolute())
@@ -164,7 +164,7 @@ def delete(path : str) -> None:
     if is_file(path):
         Path(path).unlink(missing_ok=True)
     else:
-        Path(path).rmdir()
+       shutil.rmtree(path)
 
 def read_json(path : str) -> Dict:
     with open(path, 'r') as f:
@@ -211,7 +211,6 @@ def read_toml(path : str) -> Dict:
 def write_toml(path : str, data : Dict) -> bool:
     with open(path, "w") as f:
         toml.dump(data, f)
-
 
 # TODO: Implement these later using POpen instead.
 def run_cmd(

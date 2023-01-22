@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 16:28:17
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-14 15:18:45
+# @Last Modified time: 2023-01-16 14:33:08
 
 from typing import List, Union, Dict, Any
 from dataclasses import dataclass
@@ -38,13 +38,12 @@ class AudioHandler:
     _SUPPORTED_FORMATS = ["mp3", "mpeg", "opus", "wav"]
     _DEFAULT_FORMAT = "wav"
 
-    @property
+
     def supported_formats(self) -> List[str]:
         return self._SUPPORTED_FORMATS
 
-    @staticmethod
     def is_supported(self, path : str) -> bool:
-        return get_extension(path) in self.supported_formats
+        return get_extension(path) in self.supported_formats()
 
     def read_file(self, path : str) -> AudioStream:
         """
@@ -239,13 +238,12 @@ class VideoHandler:
     _SUPPORTED_FORMATS = "mxf"
     _BASE_FORMAT = "mp4"
 
-    @property
+
     def supported_formats(self) -> List[str]:
         return self._SUPPORTED_FORMATS
 
-    @staticmethod
     def is_supported(self, path : str) -> bool:
-        return get_extension(path) in self.supported_formats
+        return get_extension(path) in self.supported_formats()
 
     def read_file(self, path : str) -> VideoStream:
         raise NotImplementedError()
@@ -295,13 +293,11 @@ class MediaHandler:
 
     #### Audio and Video
 
-    @staticmethod
     def is_audio(self, path : str) -> bool:
-        return AudioHandler.is_supported(path)
+        return self.audio_h.is_supported(path)
 
-    @staticmethod
     def is_video(self, path : str) -> bool:
-        return VideoHandler.is_supported(path)
+        return self.video_h.is_supported(path)
 
     def read_file(self, path : str) -> Stream:
         if get_extension(path) in self.audio_h.supported_formats:

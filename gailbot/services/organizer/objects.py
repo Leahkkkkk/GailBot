@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 13:50:28
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-12 14:36:19
+# @Last Modified time: 2023-01-16 15:30:27
 
 import sys
 import os
@@ -10,10 +10,10 @@ from typing import List, Dict
 from dataclasses import dataclass
 from types import SimpleNamespace
 from dotwiz import DotWiz
+from enum import Enum
 from gailbot.core.utils.general import (
     make_dir
 )
-
 
 
 @dataclass
@@ -33,6 +33,7 @@ class Settings:
         save_path : str
     ):
         self.name = name
+        # NOTE: This should be accessible via dot notation
         self.data = DotWiz(data)
         self.save_path = save_path
 
@@ -56,20 +57,25 @@ class Source:
         self.workspace_dir = workspace_dir
         self.data_files = data_files
         self.settings_profile = settings_profile
-        self.workspace = workspace_dir
-        make_dir(self.workspace, overwrite=True)
+        self._workspace = workspace_dir
+        make_dir(self._workspace, overwrite=True)
 
     @property
     def workspace(self):
         """Path to the workspace for this source"""
-        return self.workspace
+        return self._workspace
 
     @property
     def configured(self):
         return self.settings_profile != None
 
     def to_dict(self) -> Dict:
-        pass
+        return {
+            "identifier" : self.identifier,
+            "workspace" : self.workspace,
+            "num_data_files" : len(self.data_files),
+            "settings_profile" : self.settings_profile
+        }
 
 
 
