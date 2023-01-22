@@ -144,3 +144,7 @@ dist/
 *.egg-*
 
 **/py_test_results/*
+
+# audio test file 
+*.mp3 
+*.wav
