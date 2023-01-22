@@ -6,6 +6,7 @@ import os
 
 """ global file path for testing  """
 INPUT_DIR = f"{os.getcwd()}/tests/test_file/audio_file_input"
+STEREO_DIR = f"{os.getcwd()}/tests/test_file/stereo_file"
 OUTPUT_DIR = f"{os.getcwd()}/tests/test_file/audio_file_output"
     
 @pytest.fixture
@@ -69,4 +70,24 @@ def test_mono_stereo_convert(audio_handler: media.AudioHandler):
         audio_handler.write_stream(mono_left, OUTPUT_DIR, format = format)
         audio_handler.write_stream(mono_right, OUTPUT_DIR, format = format)
         audio_handler.write_stream(stereo, OUTPUT_DIR, format=format)
+        
+def test_stereo_mono_convert(audio_handler: media.AudioHandler):
+    files = general.filepaths_in_dir(STEREO_DIR)
+    if general.is_directory(OUTPUT_DIR):
+        shutil.rmtree(OUTPUT_DIR)
+    os.mkdir(OUTPUT_DIR)
+    for file in files:
+        stream: media.AudioStream = audio_handler.read_file(file)
+        assert stream.segment.channels == 2
+        mono_left, mono_right = audio_handler.stereo_to_mono(stream)
+        assert mono_left, mono_right 
+        assert mono_left.segment.channels == 1
+        assert mono_right.segment.channels == 1
+        stereo: media.AudioStream = audio_handler.mono_to_stereo(mono_left, mono_right)
+        assert stereo 
+        assert stereo.segment.channels == 2
+        format = general.get_extension(file)
+        audio_handler.write_stream(mono_right, OUTPUT_DIR, format = format)
+        audio_handler.write_stream(mono_left, OUTPUT_DIR, format = format)
+        audio_handler.write_stream(stereo, OUTPUT_DIR, format = format)
         
