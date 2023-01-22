@@ -15,4 +15,3 @@
 1. static method is_supported needs to pass self as parameter when it is called in read_file() function
 **unsolved bug** 
 1. change_volume function does not seem to change the volume
-2. stereo_to_mono function does not return a list with two audio segment; with some tracing, the split_to_mono ()  function under the AudioSegment class does not return a list with two audio segments
