@@ -3,11 +3,11 @@
 1. write_test() variable d was referenced before assignment 
 2. write_yaml() variable previous_data was referenced before assignment 
 3. get_extension() return the extension without ".", which is consistent with the file type in media.py
+4. write_txt()  now reads a list of str and write to a file with each str on a separate line 
+5. read_txt() now returns a list of str read from the txt 
 
 **unsolved bug** 
-1. write_txt & read_txt()
-    - the output type of read_txt is str instead of list
-    - when the input type of the write_txt() is list, the list is casted to string as a raw string with list format
+
 
 # media.py
 **modified function after test failure** 

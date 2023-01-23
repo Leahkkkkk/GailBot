@@ -198,16 +198,19 @@ def write_json(path : str, data : Dict, overwrite : bool = True) -> None:
 def read_txt(path : str) -> List:
     """ given the path to a file, return the content of file as a string
     """
-    return open(path,"r").read()
+    with open(path, "r") as f:
+        text = f.readlines()
+    text = [s.strip() for s in text]
+    return text
 
-def write_text(path : str, data : List,  overwrite : bool = True) -> bool:
+def write_txt(path : str, data : List,  overwrite : bool = True) -> bool:
     """ given the path to a file, and a list of data, output the list 
         data to the file
     """
-    data = str(data)
     mode = 'w' if overwrite else "a"
+    data = [s + "\n" for s in data]
     with open(path, mode) as f:
-        f.write(data)
+            f.writelines(data)
 
 def read_yaml(path : str) -> Dict:
     """ given a path to a yaml file, return a dictionary 

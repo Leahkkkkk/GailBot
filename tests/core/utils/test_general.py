@@ -172,10 +172,12 @@ def test_read_write_txt():
     for i in range (10):
         test_str_list.append(str(i))
     filename = f"{os.getcwd()}/test.txt"
-    general.write_text(filename, test_str_list)
+    general.write_txt(filename, test_str_list)
     text_str_list = general.read_txt(filename)
-    # assert len(text_str_list) == len(test_str_list)
-    for s1, s2 in zip(str(test_str_list), text_str_list):
+    assert len(text_str_list) == len(test_str_list)
+    print(test_str_list)
+    print(text_str_list)
+    for s1, s2 in zip(test_str_list, text_str_list):
         assert s1 == s2
     general.delete(filename)
     assert not general.is_file(filename)
