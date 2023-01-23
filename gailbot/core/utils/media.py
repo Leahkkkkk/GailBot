@@ -235,7 +235,7 @@ class AudioHandler:
 # TODO: Implement methods.
 class VideoHandler:
 
-    _SUPPORTED_FORMATS = "mxf"
+    _SUPPORTED_FORMATS = ["mxf"]
     _BASE_FORMAT = "mp4"
 
     @property
@@ -284,18 +284,23 @@ class VideoHandler:
 
 class MediaHandler:
 
+
     def __init__(self):
         self.audio_h = AudioHandler()
         self.video_h = VideoHandler()
-
+        self._SUPPORTED_FORMATS = self.audio_h.supported_formats + self.video_h.supported_formats
     @property
     def supported_formats(self) -> List[str]:
         """ 
         Access list of supported formats
         """
-        return self.audio_h.supported_formats + self.video_h.supported_formats
+        return self._SUPPORTED_FORMATS
 
     #### Audio and Video
+    @staticmethod
+    def is_supported(self, path: str) -> bool:
+        return AudioHandler.is_supported(self, path) or \
+               VideoHandler.is_supported(self, path)
 
     @staticmethod
     def is_audio(self, path : str) -> bool:
@@ -345,13 +350,13 @@ class MediaHandler:
         stream : Stream,
         out_dir : str,
         name : str = None,
-        extension : str = None
+        format : str = None
     ) -> str:
         """
         Writes audio or video stream to give output directory
         """
         return self._get_handler(stream).write_stream(
-            stream, out_dir, name, extension
+            stream, out_dir, name, format
         )
 
     def info(self, stream : Stream) -> Dict:
@@ -367,7 +372,7 @@ class MediaHandler:
     ) -> Stream:
         """
         Change audio or video information by given scale"""
-        return self._get_handler(stream).change_volume(stream)
+        return self._get_handler(stream).change_volume(stream, change_db)
 
     ### Audio Methods
 
