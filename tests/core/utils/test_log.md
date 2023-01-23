@@ -13,5 +13,7 @@
 # media.py
 **modified function after test failure** 
 1. static method is_supported needs to pass self as parameter when it is called in read_file() function
+2. chunk method in media.py seems to check the chunk duration and the original segment duration in the opposite direction. It is changed to chunk duration should be smaller than the original segment 
+3. 
 **unsolved bug** 
 1. change_volume function does not seem to change the volume

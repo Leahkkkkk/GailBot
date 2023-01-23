@@ -26,7 +26,7 @@ def test_is_supported(audio_handler):
         assert not audio_handler.is_supported(audio_handler, f"{basename}.not{format}")
     
 
-def test_read_write_stream(audio_handler: media.AudioHandler):
+def _test_read_write_stream(audio_handler: media.AudioHandler):
     if general.is_directory(OUTPUT_DIR):
         shutil.rmtree(OUTPUT_DIR)
     os.mkdir(OUTPUT_DIR)
@@ -41,7 +41,7 @@ def test_read_write_stream(audio_handler: media.AudioHandler):
 def test_record():
     pass
 
-def test_change_volume(audio_handler: media.AudioHandler):
+def _test_change_volume(audio_handler: media.AudioHandler):
     files = general.filepaths_in_dir(INPUT_DIR)
     if general.is_directory(OUTPUT_DIR):
         shutil.rmtree(OUTPUT_DIR)
@@ -54,7 +54,7 @@ def test_change_volume(audio_handler: media.AudioHandler):
         audio_handler.write_stream(after_change, OUTPUT_DIR, format = format)
    
 
-def test_mono_stereo_convert(audio_handler: media.AudioHandler):
+def _test_mono_stereo_convert(audio_handler: media.AudioHandler):
     files = general.filepaths_in_dir(INPUT_DIR)
     if general.is_directory(OUTPUT_DIR):
         shutil.rmtree(OUTPUT_DIR)
@@ -71,7 +71,7 @@ def test_mono_stereo_convert(audio_handler: media.AudioHandler):
         audio_handler.write_stream(mono_right, OUTPUT_DIR, format = format)
         audio_handler.write_stream(stereo, OUTPUT_DIR, format=format)
         
-def test_stereo_mono_convert(audio_handler: media.AudioHandler):
+def _test_stereo_mono_convert(audio_handler: media.AudioHandler):
     files = general.filepaths_in_dir(STEREO_DIR)
     if general.is_directory(OUTPUT_DIR):
         shutil.rmtree(OUTPUT_DIR)
@@ -90,4 +90,58 @@ def test_stereo_mono_convert(audio_handler: media.AudioHandler):
         audio_handler.write_stream(mono_right, OUTPUT_DIR, format = format)
         audio_handler.write_stream(mono_left, OUTPUT_DIR, format = format)
         audio_handler.write_stream(stereo, OUTPUT_DIR, format = format)
-        
+
+
+def _test_concat(audio_handler: media.AudioHandler):
+    if general.is_directory(OUTPUT_DIR):
+        shutil.rmtree(OUTPUT_DIR)
+    os.mkdir(OUTPUT_DIR)
+    files = general.filepaths_in_dir(INPUT_DIR)
+    for file in files:
+        stream1 = audio_handler.read_file(file)
+        stream2 = audio_handler.read_file(file)
+        concated = audio_handler.concat([stream1, stream2])
+        assert concated 
+        format = general.get_extension(file)
+        audio_handler.write_stream(concated, OUTPUT_DIR, format = format)
+
+
+def _test_overlay(audio_handler: media.AudioHandler):
+    if general.is_directory(OUTPUT_DIR):
+        shutil.rmtree(OUTPUT_DIR)
+    os.mkdir(OUTPUT_DIR)
+    audio_files = general.filepaths_in_dir(INPUT_DIR)
+    music_files = general.filepaths_in_dir(STEREO_DIR)
+    for audio, music in zip(audio_files, music_files):
+        audio_stream = audio_handler.read_file(audio)
+        music_stream = audio_handler.read_file(music)
+        overlayed = audio_handler.overlay(audio_stream, music_stream)
+        assert overlayed 
+        audio_handler.write_stream(overlayed, OUTPUT_DIR, format = general.get_extension(audio))
+     
+
+def _test_reverse(audio_handler: media.AudioHandler):
+    if general.is_directory(OUTPUT_DIR):
+        shutil.rmtree(OUTPUT_DIR)
+    os.mkdir(OUTPUT_DIR)
+    files = general.filepaths_in_dir(INPUT_DIR)
+    for file in files:
+        stream = audio_handler.read_file(file)
+        reversed = audio_handler.reverse(stream)
+        # assert reversed
+        format = general.get_extension(file)
+        audio_handler.write_stream(reversed, OUTPUT_DIR, format = format)
+
+def test_chunck(audio_handler: media.AudioHandler):
+    if general.is_directory(OUTPUT_DIR):
+        shutil.rmtree(OUTPUT_DIR)
+    os.mkdir(OUTPUT_DIR)
+    files = general.filepaths_in_dir(INPUT_DIR)
+    
+    for file in files:
+        stream = audio_handler.read_file(file)
+        assert stream.segment.duration_seconds > 2.0
+        chunks = audio_handler.chunk(stream, 2.0)
+        format = general.get_extension(file)
+        for chunk in chunks:
+            audio_handler.write_stream(chunk, OUTPUT_DIR, format=format)

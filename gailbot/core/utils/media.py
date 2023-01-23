@@ -167,7 +167,7 @@ class AudioHandler:
         name = "_".join([stream.name for stream in streams])
         name += "_concatenated"
         return AudioStream(
-            sources=[streams],
+            source=[streams],
             name=name,
             extension=self._DEFAULT_FORMAT,
             segment=concatenated
@@ -205,7 +205,7 @@ class AudioHandler:
         """
         Reverse the given audio stream in place
         """
-        reversed_segment = stream.segment.reverse
+        reversed_segment = stream.segment.reverse()
         stream.segment = reversed_segment
         return stream
 
@@ -218,14 +218,13 @@ class AudioHandler:
         Generate chunks of the given audio with the provided duration.
         """
         assert chunk_duration_s > 0, f"Duration must be positive"
-
         # Simply return original stream if no chunking possible.
-        if chunk_duration_s < stream.segment.duration_seconds:
+        if chunk_duration_s > stream.segment.duration_seconds:
             return [stream]
 
         duration_ms = chunk_duration_s * 1000
         chunks = list()
-        for i, chunk_segment in enumerate(stream.segment[::duration_ms]):
+        for i, chunk_segment in enumerate(stream.segment[::int(duration_ms)]):
             name = f"{stream.name}_{chunk_duration_s}_chunk_{i}"
             chunk = AudioStream(
                 [stream],name, self._DEFAULT_FORMAT,chunk_segment
