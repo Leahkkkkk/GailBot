@@ -148,3 +148,5 @@ dist/
 # audio test file 
 *.mp3 
 *.wav
+*.mpeg
+*.opus
