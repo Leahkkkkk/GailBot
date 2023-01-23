@@ -290,19 +290,31 @@ class MediaHandler:
 
     @property
     def supported_formats(self) -> List[str]:
+        """ 
+        Access list of supported formats
+        """
         return self.audio_h.supported_formats + self.video_h.supported_formats
 
     #### Audio and Video
 
     @staticmethod
     def is_audio(self, path : str) -> bool:
+        """
+        Determines if file is audio file
+        """
         return AudioHandler.is_supported(path)
 
     @staticmethod
     def is_video(self, path : str) -> bool:
+        """
+        Determines if file is video file
+        """
         return VideoHandler.is_supported(path)
 
     def read_file(self, path : str) -> Stream:
+        """
+        Read inputted file
+        """
         if get_extension(path) in self.audio_h.supported_formats:
             return self.audio_h.read_file(path)
         elif get_extension(path) in self.video_h.supported_formats:
@@ -319,6 +331,9 @@ class MediaHandler:
         out_stream_type : Union[AudioStream, VideoStream],
         duration_sec : float = -1,
     ) -> Stream:
+        """
+        Record audio or video file from stream
+        """
         if out_stream_type == AudioStream:
             return self.audio_h.record(name, out_dir, duration_sec)
         else:
@@ -332,11 +347,17 @@ class MediaHandler:
         name : str = None,
         extension : str = None
     ) -> str:
+        """
+        Writes audio or video stream to give output directory
+        """
         return self._get_handler(stream).write_stream(
             stream, out_dir, name, extension
         )
 
     def info(self, stream : Stream) -> Dict:
+        """
+        Access audio or video information
+        """
         return self._get_handler(stream).info(stream)
 
     def change_volume(
@@ -344,6 +365,8 @@ class MediaHandler:
         stream : Stream,
         change_db : float
     ) -> Stream:
+        """
+        Change audio or video information by given scale"""
         return self._get_handler(stream).change_volume(stream)
 
     ### Audio Methods
@@ -353,15 +376,24 @@ class MediaHandler:
         left_stream : AudioStream,
         right_stream : AudioStream
     ) -> AudioStream:
+        """
+        Convert the given mono stream to stereo.
+        """
         return self.audio_h.mono_to_stereo(left_stream, right_stream)
 
     def stereo_to_mono(
         self,
         stream : AudioStream
     ) -> List[AudioStream]:
+        """
+        Convert the given stereo stream to mono.
+        """
         return self.audio_h.stereo_to_mono(stream)
 
     def concat(self, streams : List[AudioStream]) -> AudioStream:
+        """
+        Concat the given stream end to end, start to finish, into a single stream.
+        """
         return self.audio_h.concat(streams)
 
     def overlay(
@@ -370,11 +402,17 @@ class MediaHandler:
         right_stream : AudioStream,
         loop_shorter_stream : bool = False
     ) -> AudioStream:
+        """
+        Overlay two audio streams on top of each other
+        """
         return self.audio_h.overlay(
             left_stream, right_stream,loop_shorter_stream
         )
 
     def reverse(self, stream : AudioStream) -> AudioStream:
+        """
+        Reverse the given audio stream in place
+        """
         return self.audio_h.reverse(stream)
 
     def chunk(
@@ -382,6 +420,9 @@ class MediaHandler:
         stream : AudioStream,
         chunk_duration_s : float
     ) -> List[AudioStream]:
+        """
+        Generate chunks of the given audio with the provided duration.
+        """
         return self.audio_h.chunk(
             stream, chunk_duration_s
         )
@@ -395,10 +436,4 @@ class MediaHandler:
 
     def _get_handler(self, stream : Stream) -> Union[AudioHandler, VideoHandler]:
         return self.audio_h if isinstance(stream, AudioStream) else self.video_h
-
-
-
-
-
-
 

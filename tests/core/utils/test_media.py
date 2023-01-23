@@ -26,7 +26,7 @@ def test_is_supported(audio_handler):
         assert not audio_handler.is_supported(audio_handler, f"{basename}.not{format}")
     
 
-def _test_read_write_stream(audio_handler: media.AudioHandler):
+def test_read_write_stream(audio_handler: media.AudioHandler):
     if general.is_directory(OUTPUT_DIR):
         shutil.rmtree(OUTPUT_DIR)
     os.mkdir(OUTPUT_DIR)
@@ -41,7 +41,7 @@ def _test_read_write_stream(audio_handler: media.AudioHandler):
 def test_record():
     pass
 
-def _test_change_volume(audio_handler: media.AudioHandler):
+def test_change_volume(audio_handler: media.AudioHandler):
     files = general.filepaths_in_dir(INPUT_DIR)
     if general.is_directory(OUTPUT_DIR):
         shutil.rmtree(OUTPUT_DIR)
@@ -54,7 +54,7 @@ def _test_change_volume(audio_handler: media.AudioHandler):
         audio_handler.write_stream(after_change, OUTPUT_DIR, format = format)
    
 
-def _test_mono_stereo_convert(audio_handler: media.AudioHandler):
+def test_mono_stereo_convert(audio_handler: media.AudioHandler):
     files = general.filepaths_in_dir(INPUT_DIR)
     if general.is_directory(OUTPUT_DIR):
         shutil.rmtree(OUTPUT_DIR)
@@ -71,7 +71,7 @@ def _test_mono_stereo_convert(audio_handler: media.AudioHandler):
         audio_handler.write_stream(mono_right, OUTPUT_DIR, format = format)
         audio_handler.write_stream(stereo, OUTPUT_DIR, format=format)
         
-def _test_stereo_mono_convert(audio_handler: media.AudioHandler):
+def test_stereo_mono_convert(audio_handler: media.AudioHandler):
     files = general.filepaths_in_dir(STEREO_DIR)
     if general.is_directory(OUTPUT_DIR):
         shutil.rmtree(OUTPUT_DIR)
@@ -92,7 +92,7 @@ def _test_stereo_mono_convert(audio_handler: media.AudioHandler):
         audio_handler.write_stream(stereo, OUTPUT_DIR, format = format)
 
 
-def _test_concat(audio_handler: media.AudioHandler):
+def test_concat(audio_handler: media.AudioHandler):
     if general.is_directory(OUTPUT_DIR):
         shutil.rmtree(OUTPUT_DIR)
     os.mkdir(OUTPUT_DIR)
@@ -106,7 +106,7 @@ def _test_concat(audio_handler: media.AudioHandler):
         audio_handler.write_stream(concated, OUTPUT_DIR, format = format)
 
 
-def _test_overlay(audio_handler: media.AudioHandler):
+def test_overlay(audio_handler: media.AudioHandler):
     if general.is_directory(OUTPUT_DIR):
         shutil.rmtree(OUTPUT_DIR)
     os.mkdir(OUTPUT_DIR)
@@ -120,7 +120,7 @@ def _test_overlay(audio_handler: media.AudioHandler):
         audio_handler.write_stream(overlayed, OUTPUT_DIR, format = general.get_extension(audio))
      
 
-def _test_reverse(audio_handler: media.AudioHandler):
+def test_reverse(audio_handler: media.AudioHandler):
     if general.is_directory(OUTPUT_DIR):
         shutil.rmtree(OUTPUT_DIR)
     os.mkdir(OUTPUT_DIR)
