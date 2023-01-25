@@ -17,9 +17,15 @@ import os
 import json
 
 """ global file path for testing  """
+TEST_BASE =  f"{os.getcwd()}/data/test_file/"
 INPUT_DIR = f"{os.getcwd()}/data/test_file/audio_file_input"
 STEREO_DIR = f"{os.getcwd()}/data/test_file/stereo_file"
 OUTPUT_DIR = f"{os.getcwd()}/data/test_file/audio_file_output"
+
+
+def test_setup():
+    if not general.is_directory(OUTPUT_DIR):
+        os.mkdir(OUTPUT_DIR)
     
 @pytest.fixture
 def handlers () -> media.AudioHandler:

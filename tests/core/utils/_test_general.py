@@ -15,6 +15,7 @@ import shutil
 from gailbot.core.utils import general 
 import time
 
+
 def create_test_dictionary() -> dict:
     test_dict = dict()
     for i in range(10):
