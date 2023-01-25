@@ -1,3 +1,14 @@
+'''
+File: test_general.py
+Project: GailBot GUI
+File Created: Saturday, 21st January 2023 11:01:59 am
+Author: Siara Small  & Vivian Li
+-----
+Last Modified: Wednesday, 25th January 2023 6:47:38 am
+Modified By:  Siara Small  & Vivian Li
+-----
+'''
+
 import pytest
 import os 
 import shutil
@@ -30,7 +41,6 @@ def file_dir_path():
     yield file_dir_path
     shutil.rmtree(f"{file_dir_path}")
     
-
 @pytest.fixture 
 def root_dir_path():
     root_dir_path = f"{os.getcwd()}/test_num_dir"
@@ -40,7 +50,6 @@ def root_dir_path():
     yield root_dir_path
     shutil.rmtree(root_dir_path)
     
-""" NOTE: bug, if the file does not have extension, it is not counted as a file  """
 def test_num_items_in_dir(file_dir_path):
     assert general.is_directory(file_dir_path)
     assert general.num_items_in_dir(f'{file_dir_path}', ["*"]) == 5
@@ -148,7 +157,8 @@ def test_read_write_toml():
     test_dictionary = create_test_dictionary()
     filename = f"{os.getcwd()}/test.toml"
     general.write_toml(filename, test_dictionary)
-    toml_dictionary = general. read_toml(filename)
+    assert general.is_file(filename)
+    toml_dictionary = general.read_toml(filename)
     for key, value in toml_dictionary.items():
         assert value == test_dictionary[key]
     assert len(toml_dictionary) == len(test_dictionary)

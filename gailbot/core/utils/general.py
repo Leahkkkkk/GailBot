@@ -21,21 +21,25 @@ from pathlib import Path
 from copy import deepcopy
 import subprocess
 
-
-# TODO: All of the methods below need to be tested and error handing should be
-# added.
+InvalidPathError = "Error: invalid path"
 
 def is_directory(dir_path: str) -> bool:
     """
     Determine if the given path is a directory.
     """
-    return Path(dir_path).is_dir()
+    try:
+        return Path(dir_path).is_dir()
+    except:
+        raise Exception(InvalidPathError)
 
 def is_file(file_path: str) -> bool:
     """
     Determine if the given path is a file.
     """
-    return Path(file_path).is_file()
+    try:
+        return Path(file_path).is_file()
+    except:
+        raise Exception(InvalidPathError)
 
 def num_items_in_dir(
     path: str,
@@ -55,10 +59,12 @@ def num_items_in_dir(
                             False otherwise. default = False
         only_dirs (bool): Only applies to dirs.
     """
-
-    return len(paths_in_dir(
-        path, extensions,recursive,only_dirs
-    ))
+    try: 
+        return len(paths_in_dir(
+            path, extensions,recursive, only_dirs
+        ))
+    except:
+        raise Exception(InvalidPathError)
 
 
 def paths_in_dir(
@@ -99,12 +105,15 @@ def filepaths_in_dir(
     Get paths of files with specified extension in dir.
     Raise Exception if dir_path not a dir
     """
-    return paths_in_dir(
-        path=dir_path,
-        extensions=extensions,
-        recursive=recursive,
-        only_dirs=False
-    )
+    try:
+        return paths_in_dir(
+            path=dir_path,
+            extensions=extensions,
+            recursive=recursive,
+            only_dirs=False
+        )
+    except: 
+        raise Exception(InvalidPathError)
 
 def subdirs_in_dir(
     dir_path : str,
@@ -114,73 +123,115 @@ def subdirs_in_dir(
     Get paths of subdirs with specified extension in dir.
     Raise Exception if dir_path not a dir
     """
-    return paths_in_dir(
-        path=dir_path,
-        extensions=None,
-        recursive=recursive,
-        only_dirs=True
-    )
+    try: 
+        return paths_in_dir(
+            path=dir_path,
+            extensions=None,
+            recursive=recursive,
+            only_dirs=True
+        )
+    except:
+        raise Exception(InvalidPathError)
 
 def num_subdirs(dir_path : str, recursive : bool = False) -> int:
     """Get the number of subdirectory in the dir_path"""
-    return len(subdirs_in_dir(dir_path,recursive))
+    try:
+        return len(subdirs_in_dir(dir_path,recursive))
+    except:
+        raise Exception(InvalidPathError)
+        
 
 def get_name(path : str) -> str:
     """given the path return the name of file or dir without extension"""
-    return os.path.splitext(os.path.basename(path))[0]
+    try: 
+        return os.path.splitext(os.path.basename(path))[0]
+    except:
+        raise Exception(InvalidPathError)
+        
 
 def get_extension(path : str) -> str:
     """ given the path to the file, return the extension of the file """
-    return os.path.splitext(os.path.basename(path))[1][1:]
+    try: 
+        return os.path.splitext(os.path.basename(path))[1][1:]
+    except:
+        raise Exception(InvalidPathError)
 
 def get_parent_path(path : str) -> str:
     """ given the path to the file, returns the path to the file's 
         parent directory"""
-    return str(Path(path).parent.absolute())
+    try:
+        return str(Path(path).parent.absolute())
+    except:
+        raise Exception(InvalidPathError)
+
 
 def get_size(path : str) -> bytes:
     """given the path to the file, return the file size"""
-    if is_file(path):
-        return os.path.getsize(path)
-    else:
-        return sum([
-            os.path.getsize(p) for p in filepaths_in_dir(path,recursive=True)
-        ])
+    try:
+        if is_file(path):
+            return os.path.getsize(path)
+        else:
+            return sum([
+                os.path.getsize(p) for p in filepaths_in_dir(path,recursive=True)
+            ])
+    except:
+        raise Exception(InvalidPathError)
+        
 
 def make_dir(path : str, overwrite : bool = False):
     """ given the path, create a directory """
-    if is_directory(path) and overwrite:
-        delete(path)
-    os.makedirs(path,exist_ok=True)
+    try:
+        if is_directory(path) and overwrite:
+            delete(path)
+        os.makedirs(path, exist_ok=True)
+    except:
+        raise Exception("Fail to create a directory")
+        
 
 def move(src_path : str, tgt_path : str) -> str:
     """ move the file from the source path to the target path """
-    return shutil.move(src_path, tgt_path)
-
+    try:
+        return shutil.move(src_path, tgt_path)
+    except:
+        raise Exception(InvalidPathError)
+        
+        
 def copy(src_path, tgt_path : str) -> str:
     """ copy the file from the source path to the target path """
     if is_file(src_path):
         return shutil.copy(src_path, tgt_path)
     elif is_directory(src_path):
         return shutil.copytree(src_path, tgt_path,dirs_exist_ok=True)
+    else:
+        raise Exception(InvalidPathError)
+        
+        
 
 def rename(src_path, new_name : str) -> str:
     """ rename the file in the source path to the new name """
-    return str(Path(src_path).rename(new_name).resolve())
-
+    try:
+        return str(Path(src_path).rename(new_name).resolve())
+    except:
+        raise Exception(InvalidPathError)
+    
 def delete(path : str) -> None:
     """ given a path, delete the file """
     if is_file(path):
         Path(path).unlink(missing_ok=True)
-    else:
+    elif is_directory(path):
         Path(path).rmdir()
+    else:
+        raise Exception(InvalidPathError)
 
 def read_json(path : str) -> Dict:
     """ given a path, read the json data stored in the file, return the 
         a dictionary that stores the json data 
     """
-    with open(path, 'r') as f:
-        return json.load(f)
+    if is_file(path):
+        with open(path, 'r') as f:
+            return json.load(f)
+    else:
+        raise Exception(InvalidPathError)
 
 def write_json(path : str, data : Dict, overwrite : bool = True) -> None:
     """ given the path to a file and a dictionary, output the data to the  
@@ -191,17 +242,22 @@ def write_json(path : str, data : Dict, overwrite : bool = True) -> None:
         d.update(data)
     else: 
         d = data
-    with open(path, "w+") as f:
-        json.dump(d,f)
+    try:
+        with open(path, "w+") as f:
+            json.dump(d,f)
+    except:
+        raise Exception(InvalidPathError)
 
-""" TODO: check the format of reading and writing the text file """
 def read_txt(path : str) -> List:
     """ given the path to a file, return the content of file as a string
     """
-    with open(path, "r") as f:
-        text = f.readlines()
-    text = [s.strip() for s in text]
-    return text
+    if is_file(path):
+        with open(path, "r") as f:
+            text = f.readlines()
+        text = [s.strip() for s in text]
+        return text
+    else:
+        raise Exception(InvalidPathError)
 
 def write_txt(path : str, data : List,  overwrite : bool = True) -> bool:
     """ given the path to a file, and a list of data, output the list 
@@ -209,19 +265,26 @@ def write_txt(path : str, data : List,  overwrite : bool = True) -> bool:
     """
     mode = 'w' if overwrite else "a"
     data = [s + "\n" for s in data]
-    with open(path, mode) as f:
-            f.writelines(data)
+    try:
+        with open(path, mode) as f:
+                f.writelines(data)
+    except:
+        raise Exception(InvalidPathError)
+        
 
 def read_yaml(path : str) -> Dict:
     """ given a path to a yaml file, return a dictionary 
         representation of the data stored in the yaml file 
     """
-    with open(path, 'r') as f:
-        data = yaml.load(f, Loader=yaml.Loader)  # NOTE: added the required parameter Loader
-        # Data loaded must be a dictionary
-        if not type(data) == dict:
-            raise Exception
-        return data
+    if is_file(path):
+        with open(path, 'r') as f:
+            data = yaml.load(f, Loader=yaml.Loader)  # NOTE: added the required parameter Loader
+            # Data loaded must be a dictionary
+            if not type(data) == dict:
+                raise Exception
+            return data
+    else:
+        raise Exception(InvalidPathError)
 
 def write_yaml(path : str, data : Dict, overwrite : bool = True) -> bool:
     """ given a path to a yaml file and data stored in a dictionary,
@@ -234,33 +297,48 @@ def write_yaml(path : str, data : Dict, overwrite : bool = True) -> bool:
         previous_data.update(data)
     else:
         previous_data = data
-    with open(path, "w+") as f:
-        # Data must be convertable to a dictionary object to be written to
-        # a yaml file.
-        yaml.dump(previous_data, f)
+    try:
+        with open(path, "w+") as f:
+            # Data must be convertable to a dictionary object to be written to
+            # a yaml file.
+            yaml.dump(previous_data, f)
+    except:
+        raise Exception(InvalidPathError)
 
 def read_toml(path : str) -> Dict:
     """ given the path to a to toml file, return a dictionary 
         representation of the data stored in the toml file
     """
-    return toml.load(path)
+    if is_file(path):
+        return toml.load(path)
+    else:
+        raise Exception(InvalidPathError)
 
 def write_toml(path : str, data : Dict) -> bool:
     """ given the path to a toml file and data stored in a dictionary 
         output the data in the toml format to the file
     """
-    with open(path, "w") as f:
-        toml.dump(data, f)
+    try:
+        with open(path, "w") as f:
+            toml.dump(data, f)
+    except:
+        raise Exception(InvalidPathError)
 
-
-# TODO: Implement these later using POpen instead.
 def run_cmd(
-    cmd : list[str],
+    cmd : List[str],
 ) -> int:
     """
     Run the command as a shell command and obtain an identifier.
     The identifier can be used to obtain the shell command status using
-    get_shell_process_status.
+    get_cmd_process_status.
+    
+    Args:
+        cmd: List[str]
+            A list of string that stores the command 
+    
+    Return:
+        the process id that can be used to identify the process the command 
+        runs on 
     """
     process = subprocess.Popen(
         cmd, stdout = subprocess.PIPE, stderr= subprocess.PIPE)
@@ -271,8 +349,19 @@ def run_cmd(
 def get_cmd_status(identifier : int) -> str:
     """
     Obtain the status of the shell command associated with this identifier
-    """
-    process = psutil.Process(identifier)
-    status = process.status()
     
-    return status
+    Args: 
+        identifier: int 
+            the process id of a running process 
+    
+    Return 
+        a string representing the process status 
+    """
+    try:
+        process = psutil.Process(identifier)
+        status = process.status()
+    
+    except psutil.NoSuchProcess:
+        return "Process not found"
+    else:  
+        return status
