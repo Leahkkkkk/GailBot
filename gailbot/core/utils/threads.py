@@ -9,7 +9,7 @@
 # each thread can send signals or status updates.
 # Use case: We are running a process inside a thread and want to get its status
 # periodically and want to run other functions at different stages
-
+from dataclasses import dataclass
 from concurrent.futures import ThreadPoolExecutor, Future, wait
 from queue import Queue
 from enum import Enum 
@@ -18,7 +18,9 @@ from typing import Tuple, Callable, List, Dict
 TaskNotFoundError = Exception("Task not found")
 TaskNotFinishedError = Exception("Task not finished")
 TaskCancelError = Exception("Failed to cancel task")
-class Status(Enum):
+
+@dataclass
+class Status:
     running = "RUNNING"
     pending = "PENDING"
     finished = "FINISHED"
@@ -30,6 +32,7 @@ class ThreadPool(ThreadPoolExecutor):
         super().__init__(max_workers, *args, **kwargs)
         self.num_thread = max_workers
         self.task_pool: Dict[int, Future] = dict() # used to keeps track of the task status
+        self.task_name: Dict[int, str] = dict()
         self.next_key = 0 
         
     def get_num_threads(self) -> int:
@@ -62,6 +65,7 @@ class ThreadPool(ThreadPoolExecutor):
                 worker: Future = self.submit(fun)
                 
             self.task_pool[self.next_key] = worker 
+            self.task_name[self.next_key] = fun.__name__
             self.next_key += 1
         except:
             raise Exception("task cannot be submitted") 
@@ -84,8 +88,9 @@ class ThreadPool(ThreadPoolExecutor):
         Args:
             status (Status): _description_
         """
-        return [task for task in self.task_pool.keys() 
-                        if self.check_task_status(task) == status ]
+        return [(id, self.task_name[id]) 
+                for id in self.task_pool.keys() 
+                if self.check_task_status(id) == status ]
          
          
     def get_task_result(self, key: int): 
@@ -143,7 +148,7 @@ class ThreadPool(ThreadPoolExecutor):
             if not self.task_pool[key].cancelled():
                 raise TaskCancelError
         except:
-            pass 
+            print("running task cannot be cancelled") 
         
     def cancel_all(self):
         """ cancel all the running task 
@@ -171,22 +176,15 @@ class ThreadPool(ThreadPoolExecutor):
             raise TaskNotFoundError
         
     def add_callback(self, key, fun: Callable):
-        """ add a callback function to a function identified by its function 
-            name
+        """ add a function to the thread as a callback of a previous function
 
         Args:
             fun (Callable): _description_
         """
         self._task_in_pool(key)
-        if not self.task_pool[key].done():
-            try:
-                self.task_pool[key].add_done_callback(fun)
-                return key
-            except:
-                raise Exception("Failed to add callback")
-        else:
-            return self.add_task(fun, [self.task_pool[key].result()])
-                        
+        return self.add_task(fun, [self.task_pool[key].result()])
+    
+  
     def is_busy(self):
         pass 
     
