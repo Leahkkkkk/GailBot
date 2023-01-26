@@ -1,3 +1,11 @@
+""" TODO: test for callback / add_task_after
+1. with more than 1 thread  (5 - 10) - Siara
+2. make sure the callback function actually runs after the previous function finishes - Vivian
+3. make sure if we have a lot of callback, the threadpool still runs (stress test) - Vivian 
+4. test error handling function - Vivian 
+5. test passing different number of arguments to add_task_after - Siara
+"""
+
 import pytest 
 import time 
 from gailbot.core.utils.threads import ThreadPool, Status
@@ -61,13 +69,13 @@ def test_get_current_status(t, num_threads):
         pool.add_task(worker_one_param, [t])
     
     print(Status.pending)
-    print(pool.get_current(Status.pending))
+    print(pool.get_tasks_with_status(Status.pending))
     time.sleep(t - 1)
     print(Status.running)
-    print(pool.get_current(Status.running))
+    print(pool.get_tasks_with_status(Status.running))
     time.sleep((10//num_threads + 1) * t)
     print(Status.finished)
-    print(pool.get_current(Status.finished))
+    print(pool.get_tasks_with_status(Status.finished))
 
 @pytest.mark.parametrize("t", [5])
 def test_cancel(t):
@@ -77,6 +85,7 @@ def test_cancel(t):
         pool.cancel(i) 
     for i in range(1, 5):
         assert pool.check_task_status(i) == Status.cancelled
+
 
 
 @pytest.mark.parametrize("args",[[1,4], [1, "string"], [2, [1,2,3,4]]])
@@ -93,12 +102,17 @@ def test_completed():
     pass
 
 @pytest.mark.parametrize("",[])
-def test_query_thead():
+def test_query_thread():
     pass
 
 @pytest.mark.parametrize("",[])
 def test_query_thread(args):
     pass 
+
+@pytest.mark.parametrize("",[] )
+def test_add_task_after():
+    pass 
+
 
 
 

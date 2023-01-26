@@ -15,12 +15,19 @@ from queue import Queue
 from enum import Enum
 from typing import Tuple, Callable, List, Dict
 
+# TODO: 
+# 1. add documentation 
+#    class doc -> Vivian 
+#    function doc -> Siara
+# 2. testing and fix bugs 
+# 3. implement is_busy function
+
 
 
 #### Custom Exceptions for Threads ####
-
 class TaskNotFoundException(Exception):
-    pass
+    def __str__(self) -> str:
+        return super().__str__()
 
 class TaskNotFinishedException(Exception):
     pass
@@ -28,10 +35,14 @@ class TaskNotFinishedException(Exception):
 class TaskCancelException(Exception):
     pass
 
+class ThreadError(Exception):
+    pass 
+
 #####
 
 
-# TODO: Shouldn't this simply be an enum???
+# TODO: Shouldn't this simply be an enum??? (delete this)
+
 #####
 # Proposed alternative
 
@@ -72,7 +83,7 @@ class ThreadPool(ThreadPoolExecutor):
         """
         return self.num_thread
 
-
+    """ TODO: check if this can be cleaner """
     def add_task(
         self, fun, args: List = None, kwargs: Dict = None) -> int:
         """
@@ -87,7 +98,6 @@ class ThreadPool(ThreadPoolExecutor):
         """
         try:
             self.submit(fun, *args, **kwargs)
-
             if args and kwargs:
                 worker: Future = self.submit(fun, *args, **kwargs)
             elif args:
@@ -115,7 +125,7 @@ class ThreadPool(ThreadPoolExecutor):
         return self.task_pool[key]._state
 
     # TODO: Rename to something meaningful - maybe get_tasks_with_status...
-    def get_current(self, status: Status) -> List[int]:
+    def get_tasks_with_status(self, status: Status) -> List[int]:
         """ returns a list of task that matched the status passed in by caller
 
         Args:
@@ -151,11 +161,12 @@ class ThreadPool(ThreadPoolExecutor):
         self._task_in_pool(key)
         return self.task_pool[key].done()
 
-    def wait_for_completion(self):
+    def wait_for_all_completion(self):
         """ wait for all tasks to be completed
 
         """
         wait([task for task in self.task_pool.values()])
+
 
     def wait_for_task(self, key: int):
         """ wait for a certain task to be completed
@@ -197,8 +208,56 @@ class ThreadPool(ThreadPoolExecutor):
         except:
             raise TaskCancelException()
 
+    """ TODO: Test error  """
+    def add_callback(self, key, fun: Callable, error_fun: Callable = None):
+        """ add a function to the thread as a callback of a previous function
+        Args:
+            fun (Callable): _description_
+        """
+        self._task_in_pool(key)
+        future = self.task_pool[key]
+        res = [future.result()]
+        if res and future.done():
+            return self.add_task(fun, res)
+        elif error_fun:
+            error_fun()
+        else: 
+            raise ThreadError
+    
+    
+    """ TODO: Test error 
+              Test adding task with / without args and kwargs 
+              Change name
+            """
+    def add_task_after(
+        self, key, fun: Callable, args: List = None, 
+        kwargs: Dict = None,  error_fun: Callable = None):
+        """ add a task to the thread after one task finished running
+
+        Args:
+            key (_type_): _description_
+            fun (Callable): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        self._task_in_pool(key)
+        future = self.task_pool[key]
+        wait(future)
+        if future.done():
+            return self.add_task(fun, args, kwargs)
+        elif error_fun:
+            error_fun()
+        else:
+            raise ThreadError
+
+    # TODO: Raise exception or remove.
+    def is_busy(self):
+        raise NotImplementedError
+
+
     def _task_in_pool(self, key:int):
-        """ check if the given task is in the task pool
+        """ private function to check if the given task is in the task pool
 
         Args:
             key (int): _description_
@@ -208,17 +267,3 @@ class ThreadPool(ThreadPoolExecutor):
         """
         if not key in self.task_pool:
             raise TaskNotFoundException()
-
-    def add_callback(self, key, fun: Callable):
-        """ add a function to the thread as a callback of a previous function
-
-        Args:
-            fun (Callable): _description_
-        """
-        self._task_in_pool(key)
-        return self.add_task(fun, [self.task_pool[key].result()])
-
-    # TODO: Raise exception or remove.
-    def is_busy(self):
-        pass
-
