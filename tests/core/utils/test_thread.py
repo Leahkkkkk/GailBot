@@ -29,14 +29,14 @@ def test_construction(size):
 
 
 @pytest.mark.parametrize("args, kwargs", [([1], {"s": "test"}), ([2], {"s": 123})] )
-def _test_with_arg(args, kwargs):
+def test_with_arg(args, kwargs):
     pool = ThreadPool(2)
     pool.add_task(worker_one_param, args)
     pool.add_task(worker_key_param, args, kwargs)
 
 
 @pytest.mark.parametrize("arg", ["string", 1 , [1, 2, 3, 4], (1, 2), {1: 2}])
-def test_fun_with_return(arg):
+def test_get_test_result(arg):
     pool = ThreadPool(2)
     id = pool.add_task(worker_with_return, [1, arg])
     assert pool.get_task_result(id) == arg
@@ -89,6 +89,16 @@ def test_thread_callback(args):
 
 
 @pytest.mark.parametrize("",[])
+def test_completed():
+    pass
+
+@pytest.mark.parametrize("",[])
+def test_query_thead():
+    pass
+
+@pytest.mark.parametrize("",[])
 def test_query_thread(args):
     pass 
+
+
 
