@@ -29,6 +29,16 @@ def worker_with_return(n: int, result):
 def worker_test_callback(n):
     return n 
 
+def previous_worker(n, name):
+    print(f"previous worker:{name}")
+    time.sleep(n)
+    return name 
+
+def callback_worker(name):
+    print(f"callback worker:{name}")
+
+
+
 @pytest.mark.parametrize("size", [1,2,3])
 def test_construction(size):
     pool = ThreadPool(size)
@@ -87,7 +97,6 @@ def test_cancel(t):
         assert pool.check_task_status(i) == Status.cancelled
 
 
-
 @pytest.mark.parametrize("args",[[1,4], [1, "string"], [2, [1,2,3,4]]])
 def test_thread_callback(args):
     pool = ThreadPool(1)
@@ -96,6 +105,9 @@ def test_thread_callback(args):
     assert id_1 == id_0 + 1
     assert args[1] == pool.get_task_result(id_1)
 
+@pytest
+def test_multiple_thread_callback():
+    
 
 @pytest.mark.parametrize("",[])
 def test_completed():
@@ -105,13 +117,22 @@ def test_completed():
 def test_query_thread():
     pass
 
+
+""" make sure the callback function actually runs after the previous function finishes"""
 @pytest.mark.parametrize("",[])
-def test_query_thread(args):
+def test_(args):
     pass 
 
 @pytest.mark.parametrize("",[] )
 def test_add_task_after():
-    pass 
+    pool = ThreadPool(10)
+    for i in range(5):
+        pool.add_task(previous_worker, [i, f"worker {i}"])
+    
+    for i in range(5):
+        pool.add_task_after(i, lambda: callback_worker(f"worker {i}"))
+        pool.add_callback(i, callback_worker)
+        
 
 
 
