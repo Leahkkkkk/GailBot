@@ -105,9 +105,9 @@ def test_thread_callback(args):
     assert id_1 == id_0 + 1
     assert args[1] == pool.get_task_result(id_1)
 
-@pytest
+@pytest.mark.parametrize("",[])
 def test_multiple_thread_callback():
-    
+    pass
 
 @pytest.mark.parametrize("",[])
 def test_completed():
@@ -123,7 +123,7 @@ def test_query_thread():
 def test_(args):
     pass 
 
-@pytest.mark.parametrize("",[] )
+
 def test_add_task_after():
     pool = ThreadPool(10)
     for i in range(5):

@@ -97,7 +97,6 @@ class ThreadPool(ThreadPoolExecutor):
             bool: return an id that will be used to keep track of the task
         """
         try:
-            self.submit(fun, *args, **kwargs)
             if args and kwargs:
                 worker: Future = self.submit(fun, *args, **kwargs)
             elif args:
@@ -243,7 +242,7 @@ class ThreadPool(ThreadPoolExecutor):
         """
         self._task_in_pool(key)
         future = self.task_pool[key]
-        wait(future)
+        wait([future])
         if future.done():
             return self.add_task(fun, args, kwargs)
         elif error_fun:
