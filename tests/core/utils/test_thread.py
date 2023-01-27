@@ -30,42 +30,72 @@ logger.addHandler(file_handler)
 
 
 def sleep_two_sec():
+    """
+    Instantiate a thread worker with no parameters.
+    """
     time.sleep(2)
     logger.info("worker no param")
 
 def sleep_n_sec(n: int):
+    """
+    Instantiate a thread worker with one parameter.
+    """
     time.sleep(n)
     logger.info(f"worker: {n}")
 
 def sleep_n_sec_print(n: int, s = "Default"):
+    """
+    Instantiate a thread worker with default parameters.
+    """
     time.sleep(n)
     logger.info(str(n) + str(s))
 
 def sleep_n_sec_return(n: int, result):
+    """
+    Instantiate a thread worker with no return value other than itself.
+    """
     time.sleep(n)
     return result
 
 def worker_test_callback(n):
+    """
+    Instantiate a thread worker that just returns its value.
+    """
     return n 
 
 def previous_worker(n, name):
+    """
+    Instantiate a thread worker that prints the name of the previous worker.
+    """
     logger.info(f"\u25B6 previous worker start:{name}\n")
     time.sleep(n)
     logger.info(f"\u23F9 previous worker finished:{name}\n")
     return name 
 
 def callback_worker(name):
+    """
+    Instantiate a thread worker that prints the name of the callback worker.
+    """
+    print(f"callback worker:{name}")
+
+
     logger.info(f"\u23F1 callback worker:{name}\n")
 
 
 @pytest.mark.parametrize("size", [1,2,3])
 def test_construction(size):
+    """
+    Test the construction of a thread pool with various sizes and ensure it can properly add tasks.
+    """
     pool = ThreadPool(size)
     assert size == pool.get_num_threads()
     pool.add_task(sleep_two_sec)
 
 @pytest.mark.parametrize("args, kwargs", [([1], {"s": "test"}), ([2], {"s": 123})] )
 def test_with_arg(args, kwargs):
+    """
+    Test the addition of tasks with various parameters as arguments. 
+    """
     pool = ThreadPool(2)
     pool.add_task(sleep_n_sec, args)
     pool.add_task(sleep_n_sec_print, args, kwargs)
@@ -73,12 +103,18 @@ def test_with_arg(args, kwargs):
 
 @pytest.mark.parametrize("arg", ["string", 1 , [1, 2, 3, 4], (1, 2), {1: 2}])
 def test_get_test_result(arg):
+    """
+    Test the correct result is returned from various tasks in the thread pool.
+    """
     pool = ThreadPool(2)
     id = pool.add_task(sleep_n_sec_return, [1, arg])
     assert pool.get_task_result(id) == arg
 
 @pytest.mark.parametrize("t",[2,3])
 def test_thread_status(t):
+    """
+    Test the correct status is returned from various tasks in one thread.
+    """
     pool = ThreadPool(5)
     threadIds = []
     for i in range(5):
@@ -92,6 +128,9 @@ def test_thread_status(t):
 
 @pytest.mark.parametrize("t, num_threads", [(2, 2), (5, 5), (3, 10)])
 def test_get_current_status(t, num_threads):
+    """
+    Test the correct status is returned from various tasks in the thread pool.
+    """
     pool = ThreadPool(num_threads)
     for i in range(10):
         pool.add_task(sleep_n_sec, [t])
@@ -107,6 +146,9 @@ def test_get_current_status(t, num_threads):
 
 @pytest.mark.parametrize("t", [5])
 def test_cancel(t):
+    """
+    Test that the status cancelled tasks are correctly updated.
+    """
     pool = ThreadPool(1)
     for i in range(5):
         pool.add_task(sleep_n_sec_print, [t])
@@ -117,6 +159,9 @@ def test_cancel(t):
 
 @pytest.mark.parametrize("args",[[1,4], [1, "string"], [2, [1,2,3,4]]])
 def test_thread_callback(args):
+    """
+    Tests the callback function is correctly called for a pool of 1 thread.
+    """
     pool = ThreadPool(1)
     id_0 = pool.add_task(sleep_n_sec_return, args)
     id_1 = pool.add_callback(id_0, worker_test_callback)
@@ -137,9 +182,19 @@ def test_count_tasks(nthreads, nsec):
     assert pool.count_task_in_queue() == 0 
     assert not pool.is_busy()
 
-@pytest.mark.parametrize("",[])
-def test_multiple_thread_callback():
-    pass
+@pytest.mark.parametrize("args",[[1,4], [1, "string"], [2, [1,2,3,4]]])
+def test_mult_thread_callback(args):
+    """
+    Tests the callback function is correctly called for a pool of 10 threads.
+    """
+    pool = ThreadPool(10)
+    id_0 = pool.add_task(sleep_n_sec_return, args)
+    id_1 = pool.add_callback(id_0, worker_test_callback)
+    assert id_1 == id_0 + 1
+    assert args[1] == pool.get_task_result(id_1)
+    assert pool.get_num_threads() == 10
+
+
 
 @pytest.mark.parametrize("",[])
 def test_completed():
