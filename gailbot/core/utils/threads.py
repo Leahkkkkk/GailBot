@@ -63,6 +63,7 @@ class Status:
     pending = "PENDING"
     finished = "FINISHED"
     cancelled = "CANCELLED"
+    error = "ERROR"
 
 
 class ThreadPool(ThreadPoolExecutor):
@@ -101,7 +102,7 @@ class ThreadPool(ThreadPoolExecutor):
 
     """ TODO: check if this can be cleaner """
     def add_task(
-        self, fun, args: List = None, kwargs: Dict = None) -> int:
+        self, fun, args: List = None, kwargs: Dict = None, error_fun: Callable = None) -> int:
         """
         Add the task to the task pool
 
@@ -121,12 +122,13 @@ class ThreadPool(ThreadPoolExecutor):
                 worker: Future = self.submit(fun, **kwargs)
             else:
                 worker: Future = self.submit(fun)
-
+            worker.add_done_callback(self._handle_error)
             self.task_pool[self.next_key] = worker
             self.task_name[self.next_key] = fun.__name__
             self.next_key += 1
         except:
-            raise TaskCreateError
+            if error_fun: error_fun()
+            else: raise TaskCreateError
         else:
             return self.next_key - 1
 
@@ -137,6 +139,9 @@ class ThreadPool(ThreadPoolExecutor):
             a string that identify the task
         """
         self._task_in_pool(key)
+        exception = self.task_pool[key].exception()
+        if exception:
+            return Status.error
         return self.task_pool[key]._state
 
     # TODO: Rename to something meaningful - maybe get_tasks_with_status...
@@ -151,7 +156,7 @@ class ThreadPool(ThreadPoolExecutor):
                 if self.check_task_status(id) == status ]
 
     # TODO: Explain description + annotate return value.
-    def get_task_result(self, key: int):
+    def get_task_result(self, key: int, error_fun: Callable = None ):
         """ ret
 
         Args:
@@ -161,9 +166,13 @@ class ThreadPool(ThreadPoolExecutor):
             int: _description_
         """
         self._task_in_pool(key)
-        return self.task_pool[key].result()
+        try:
+            return self.task_pool[key].result()
+        except:
+            if error_fun: error_fun()
+            else: raise ThreadError
 
-    def completed(self, key)-> bool:
+    def completed(self, key, error_fun: Callable = None )-> bool:
         """ check if a given task is completed
 
         Args:
@@ -173,23 +182,33 @@ class ThreadPool(ThreadPoolExecutor):
             bool: _description_
         """
         self._task_in_pool(key)
-        return self.task_pool[key].done()
+        try:
+            return self.task_pool[key].done()
+        except: 
+            if error_fun: error_fun()
+            else: raise ThreadError
 
-    def wait_for_all_completion(self):
+    def wait_for_all_completion(self, error_fun: Callable = None ):
         """ wait for all tasks to be completed
 
         """
-        wait([task for task in self.task_pool.values()])
+        for task in self.task_pool.keys():
+            self.wait_for_task(task, error_fun)
 
-
-    def wait_for_task(self, key: int):
+    def wait_for_task(self, key: int, error_fun: Callable = None ):
         """ wait for a certain task to be completed
 
         Args:
             key (int): _description_
         """
         self._task_in_pool()
-        wait([self.task_pool[key]])
+        future = self.task_pool[key]
+        try:
+            future.result()
+            assert not future.exception()
+        except:
+            if error_fun: error_fun()
+            else: raise ThreadError
 
 
     def cancel(self, key: int):
@@ -258,17 +277,16 @@ class ThreadPool(ThreadPoolExecutor):
         self._task_in_pool(key)
         future = self.task_pool[key]
         wait([future])
-        if future.done():
+        try:
+            future.result()
             return self.add_task(fun, args, kwargs)
-        elif error_fun:
-            error_fun()
-        else:
-            raise ThreadError
+        except:
+            if error_fun: error_fun()
+            else: raise ThreadError
 
-    # TODO: Raise exception or remove.
-    def is_busy(self):
-        raise NotImplementedError
 
+
+    ############ private function  ##########
 
     def _task_in_pool(self, key:int):
         """ private function to check if the given task is in the task pool
@@ -281,3 +299,7 @@ class ThreadPool(ThreadPoolExecutor):
         """
         if not key in self.task_pool:
             raise TaskNotFoundException()
+    
+    def _handle_error(self, future: Future):
+        if future.exception():
+            raise ThreadError

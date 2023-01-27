@@ -10,6 +10,7 @@ import pytest
 import time 
 from gailbot.core.utils.threads import ThreadPool, Status
 import logging
+from queue import Queue 
 
 
 # Set up logging
@@ -48,13 +49,14 @@ def worker_test_callback(n):
     return n 
 
 def previous_worker(n, name):
-    logger.info(f"previous worker start:{name}\n")
+    logger.info(f"\u25B6 previous worker start:{name}\n")
     time.sleep(n)
-    logger.info(f"previous worker finished:{name}\n")
+    logger.info(f"\u23F9 previous worker finished:{name}\n")
     return name 
 
 def callback_worker(name):
-    logger.info(f"callback worker:{name}\n")
+    logger.info(f"\u23F1 callback worker:{name}\n")
+
 
 @pytest.mark.parametrize("size", [1,2,3])
 def test_construction(size):
@@ -141,14 +143,101 @@ def test_(args):
 
 
 def test_add_task_after():
-    logging.basicConfig(filename='thread.log', level=logging.INFO)
+    """ test add task after function runs the task in correct dependent order"""
     pool = ThreadPool(10)
-    for i in range(5):
-        pool.add_task(previous_worker, [i, f"worker {i}"])
-        pool.add_task_after(i, lambda: callback_worker(f"callback task a {i}"))
+    previous_id = []
+    for i in range(4):
+       previous_id.append(pool.add_task(previous_worker, [ (i + 1) * 5, f"worker {i}"]))
+    logger.info(previous_id)
     
-    for i in range(5):
-        pool.add_task_after(i, lambda: callback_worker(f"callback task b {i}"))
+    for id in previous_id:
+        logger.info(id)
+        pool.add_task_after(id, callback_worker, [f"callback task {id}"])
         
 
+def test_add_multi_task_after():
+    """ test the thread's ability to add multiple sequential task 
+    """
+    pool = ThreadPool(5)
+    ids = []
+    for i in range(10):
+        ids.append(pool.add_task(previous_worker, [(i + 1) * 2, f"woker {i}"]))
+    for id in ids:
+        for i in range(5):
+            pool.add_task_after(id, callback_worker, [f"callback task id: {id} - {i}"])
 
+
+TestQueue = Queue()
+def callback_check_queue(id):
+    """ Helper function for testing thread with a queue 
+    Args:
+        id: thread task id that will be logged 
+    """
+    logger.info(f"\u23F1 callback worker:{id}\n")
+    assert id == TestQueue.get()
+
+def test_callback_with_queue():
+    """ Test the sequence of the execution with a queue without manually looking
+        over the log message 
+    """
+    pool = ThreadPool(5)
+    ids = []
+    for i in range(5):
+        newid = pool.add_task(previous_worker, [(i + 1) * 2, f"worker {i}"])
+        ids.append(newid)
+        TestQueue.put(newid)
+    
+    for id in ids:
+        pool.add_task_after(id, callback_check_queue, [id])
+        
+    ids = []
+    for i in range(5):
+        newid = pool.add_task(previous_worker, [(i + 1) * 2, i])
+        ids.append(newid)
+        TestQueue.put(newid)
+    
+    for id in ids:
+        pool.add_callback(id, callback_check_queue)
+
+
+def test_multiple_callback_with_queue():
+    """ Test the sequential execution of multiple callback with a queue 
+        without manually looking over the log message 
+    """
+    pool = ThreadPool(5)
+    ids = []
+    for i in range(5):
+        newid = pool.add_task(previous_worker, [(i + 1) * 2, i])
+        ids.append(newid)
+        TestQueue.put(newid)
+    assert ids == [j for j in range(5)]
+    logger.info(ids)
+    for i in range(5):
+       newid =pool.add_task_after(i, callback_check_queue, [i])
+       ids.append(newid)
+       TestQueue.put(newid)
+    assert ids == [j for j in range(10)]
+    
+    for i in range(5, 10):
+       newid =pool.add_task_after(i, callback_check_queue, [i])
+       ids.append(newid)
+       TestQueue.put(newid)
+    assert ids == [j for j in range(15)]
+
+def error_worker():
+    time.sleep(4)
+    logger.info("error worker")
+    raise TimeoutError
+
+def error_handler():
+    logger.info("error handler")
+    logger.warn("an error detected")
+    
+def test_error():
+    """ test the thread's ability to handle error  """
+    pool = ThreadPool(2)
+    id = pool.add_task(error_worker, error_fun = error_handler)
+    res = pool.get_task_result(id, error_fun = error_handler)
+    pool.add_task_after(id, error_worker, error_fun = error_handler)
+    assert pool.check_task_status(id) == Status.error
+    
