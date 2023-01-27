@@ -69,7 +69,7 @@ class ThreadPool(ThreadPoolExecutor):
         """
         Returns the number of threads available in the thread pool.
 
-        Returns:
+        Return:
             int: Integer value representing the number of 
                  threads in the given thread pool.
         """
@@ -85,7 +85,8 @@ class ThreadPool(ThreadPoolExecutor):
             args: List (Optional): a list argument to the function
             kwargs: Dict (Optional): a list of key word arguments to the function
             error_fun: Callable (Optional): a function to handle the error 
-        Returns:
+       
+        Return:
             int: An integer id key that will be used to keep track of the task in the thread.
         """
         try:
@@ -131,7 +132,8 @@ class ThreadPool(ThreadPoolExecutor):
             status (Status): Status from set list of possible statuses
         
         Returns:
-            A List[Tuple[int, str]] of tasks in the thread pool that match the requested status. 
+            A List[Tuple[int, str]] of tasks in the thread pool that
+                match the requested status. 
         """
         return [(id, self.task_name[id])
                 for id in self.task_pool.keys()
@@ -145,7 +147,7 @@ class ThreadPool(ThreadPoolExecutor):
             key (int): Key to find the given task in the thread pool.
 
         Returns:
-            int: If result is successfully obtained, return the result of the given task.
+            If result is successfully obtained, return the result of the given task.
             Raises ThreadError if the result of the given task is not successfully obtained.
         """
         self._task_in_pool(key)
@@ -161,11 +163,15 @@ class ThreadPool(ThreadPoolExecutor):
 
         Args:
             key (int): Key to find the given task in the thread pool.
-            error_fun: Callable function used if there is an error when executing the task. 
+            error_fun: Callable function used if there is an error when 
+                       executing the task. 
 
-        Returns:
+        Raise:
+            Raise ThreadError if the result of the given task is not 
+            successfully obtained.
+        
+        Return:
             bool: True if the given task has been completed, false if not.
-            Raises ThreadError if the result of the given task is not successfully obtained.
         """
         self._task_in_pool(key)
         try:
@@ -179,12 +185,14 @@ class ThreadPool(ThreadPoolExecutor):
         Wait for all tasks in the thread pool to be completed.
 
         Args:
-            error_fun: Callable function used if there is an error when executing the task. 
+            error_fun: Callable function used if there is an error when 
+                       executing the task. 
         
-        Returns: 
-            Calls wait_for_task() for all tasks in the thread pool. Raises a ThreadError if the 
-            function cannot be properly executed.
+        Raises:
+            Raises a ThreadError if the function cannot be properly executed.
 
+        Return: 
+            Calls wait_for_task() for all tasks in the thread pool. 
         """
         for task in self.task_pool.keys():
             self.wait_for_task(task, error_fun)
@@ -195,11 +203,14 @@ class ThreadPool(ThreadPoolExecutor):
 
         Args:
             key (int): Key to find the given task in the thread pool.
-            error_fun: Callable function used if there is an error when executing the task. 
+            error_fun: Callable function used if there is an error when 
+                       executing the task. 
+        
+        Raises:
+            Raises a ThreadError if the task cannot be properly executed.
 
-        Returns:
-            Raises a ThreadError if the function cannot be properly executed. Raises an exception 
-            if the future cannot be properly obtained from the task.
+        Return:
+            None
         """
         self._task_in_pool()
         future = self.task_pool[key]
@@ -219,7 +230,11 @@ class ThreadPool(ThreadPoolExecutor):
             key (int): Key to find the given task in the thread pool.
 
         Raises:
-            TaskCancelException if the task at the given key cannot be properly cancelled.
+            TaskCancelException if the task at the given key cannot be 
+            properly cancelled.
+        
+        Return:
+            None
         """
         self._task_in_pool(key)
         try:
@@ -229,12 +244,15 @@ class ThreadPool(ThreadPoolExecutor):
         except:
             print("running task cannot be cancelled")
 
-    def cancel_all(self):
+    def cancel_all(self) -> None:
         """ 
         Cancels all the running tasks in the thread pool.
 
         Raises:
             TaskCancelException if the current task cannot be properly cancelled.
+        
+        Return: 
+            None
         """
         try:
             for task in self.task_pool.values():
@@ -243,7 +261,7 @@ class ThreadPool(ThreadPoolExecutor):
         except:
             raise TaskCancelException()
 
-    """ TODO: Test error  """
+
     def add_callback(self, key, fun: Callable, error_fun: Callable = None):
         """ 
         Adds a function to the thread as a callback of a previous function
@@ -251,7 +269,14 @@ class ThreadPool(ThreadPoolExecutor):
         Args:
             key (int): key to find the given task.
             fun (Callable): function to be called as the callback. 
-            error_fun: Callable function used if there is an error when executing the task.
+            error_fun: Callable function used if there is an error 
+                       when executing the task.
+                       
+        Raises:
+            ThreadError if the callback function cannot be added
+            
+        Return: 
+            Returns the key that identify the newly added task 
         """
         self._task_in_pool(key)
         future = self.task_pool[key]
@@ -274,7 +299,7 @@ class ThreadPool(ThreadPoolExecutor):
             fun (Callable): function to be called after the current task has been completed. 
             error_fun: Callable function used if there is an error when executing the task.
 
-        Exception: 
+        Raises: 
             Raises ThreadError if the error function is not successfully completed.
         
         Returns:
@@ -318,7 +343,11 @@ class ThreadPool(ThreadPoolExecutor):
             key (int): key with which to find the given task in the thread.
 
         Raises:
-            Raises TaskNotFoundException if the given task is not currently in the thread.
+            Raises TaskNotFoundException if the given task is not currently 
+            in the thread.
+        
+        Return:
+            None
         """
         if not key in self.task_pool:
             raise TaskNotFoundException()
@@ -330,8 +359,11 @@ class ThreadPool(ThreadPoolExecutor):
         Args:
             future: Future to determine if there is an exception raised. 
 
-        Returns:
+        Raises:
             Raises ThreadError if the given future raises an exception.
+            
+        Return:
+            None
         """
         if future.exception():
             raise ThreadError
