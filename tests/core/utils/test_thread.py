@@ -12,6 +12,8 @@ from gailbot.core.utils.threads import ThreadPool, Status, ThreadError
 import logging
 from queue import Queue 
 
+class ThreadErrorHandleException(Exception):
+    pass
 
 # Set up logging
 logger = logging.getLogger()
@@ -29,6 +31,7 @@ file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
 
+######### worker function defined that will be run on thread for testing #####
 def sleep_two_sec():
     """
     Instantiate a thread worker with no parameters.
@@ -77,15 +80,39 @@ def callback_worker(name):
     Instantiate a thread worker that prints the name of the callback worker.
     """
     print(f"callback worker:{name}")
-
-
     logger.info(f"\u23F1 callback worker:{name}\n")
+
+
+TestQueue = Queue()   # helper data structure to test the thread callback function
+def callback_check_queue(id):
+    """ Helper function for testing thread with a queue 
+    Args:
+        id: thread task id that will be logged 
+    """
+    logger.info(f"\u23F1 callback worker:{id}\n")
+    assert id == TestQueue.get()
+
+def error_worker():
+    """ a thread worker that will throw an error  """
+    time.sleep(4)
+    logger.info("error worker")
+    raise ThreadError
+
+def error_handler():
+    """ 
+    a thread error handling function that log error message and raise 
+    an ThreadError
+    """
+    logger.info("error handler")
+    logger.warn("an error detected")
+    raise ThreadErrorHandleException
 
 
 @pytest.mark.parametrize("size", [1,2,3])
 def test_construction(size):
     """
-    Test the construction of a thread pool with various sizes and ensure it can properly add tasks.
+    Test the construction of a thread pool with various sizes and ensure 
+    it can properly add tasks.
     """
     pool = ThreadPool(size)
     assert size == pool.get_num_threads()
@@ -170,16 +197,19 @@ def test_thread_callback(args):
 
 @pytest.mark.parametrize("nthreads, nsec", [(5, 3), (3, 4)] )
 def test_count_tasks(nthreads, nsec):
+    """ 
+    Test the count waiting task function in threadpool 
+    """
     pool = ThreadPool(nthreads)
     for i in range( nthreads * 2):
         pool.add_task(sleep_n_sec, [nsec])
-    assert pool.count_task_in_queue() == nthreads * 2 - pool.get_num_threads()
+    assert pool.count_waiting_tasks() == nthreads * 2 - pool.get_num_threads()
     assert pool.is_busy()
     time.sleep(nsec + 0.5)
-    assert pool.count_task_in_queue() == 0
+    assert pool.count_waiting_tasks() == 0
     assert not pool.is_busy()
     time.sleep(nsec + 1)
-    assert pool.count_task_in_queue() == 0 
+    assert pool.count_waiting_tasks() == 0 
     assert not pool.is_busy()
 
 @pytest.mark.parametrize("args",[[1,4], [1, "string"], [2, [1,2,3,4]]])
@@ -193,22 +223,6 @@ def test_mult_thread_callback(args):
     assert id_1 == id_0 + 1
     assert args[1] == pool.get_task_result(id_1)
     assert pool.get_num_threads() == 10
-
-
-
-@pytest.mark.parametrize("",[])
-def test_completed():
-    pass
-
-@pytest.mark.parametrize("",[])
-def test_query_thread():
-    pass
-
-
-""" make sure the callback function actually runs after the previous function finishes"""
-@pytest.mark.parametrize("",[])
-def test_(args):
-    pass 
 
 
 def test_add_task_after():
@@ -236,15 +250,6 @@ def test_add_multi_task_after():
             pool.add_task_after(id, callback_worker, [f"callback task id: {id} - {i}"])
 
 
-TestQueue = Queue()
-def callback_check_queue(id):
-    """ Helper function for testing thread with a queue 
-    Args:
-        id: thread task id that will be logged 
-    """
-    logger.info(f"\u23F1 callback worker:{id}\n")
-    assert id == TestQueue.get()
-
 def test_callback_with_queue():
     """ Test the sequence of the execution with a queue without manually looking
         over the log message 
@@ -267,7 +272,6 @@ def test_callback_with_queue():
     
     for id in ids:
         pool.add_callback(id, callback_check_queue)
-
 
 def test_multiple_callback_with_queue():
     """ Test the sequential execution of multiple callback with a queue 
@@ -293,23 +297,14 @@ def test_multiple_callback_with_queue():
        TestQueue.put(newid)
     assert ids == [j for j in range(15)]
 
-def error_worker():
-    time.sleep(4)
-    logger.info("error worker")
-    raise ThreadError
-
-def error_handler():
-    logger.info("error handler")
-    logger.warn("an error detected")
-    raise ThreadError
-
 def test_error():
     """ test the thread's ability to handle error  """
     pool = ThreadPool(2)
-    with pytest.raises(ThreadError):
+    with pytest.raises(ThreadErrorHandleException):
         id = pool.add_task(error_worker, error_fun = error_handler)
         res = pool.get_task_result(id, error_fun = error_handler)
         id = pool.add_task_after(id, error_worker, error_fun = error_handler)
+    with pytest.raises(ThreadError):
         pool.add_task_after(id, error_worker)
     assert pool.check_task_status(id) == Status.error
     

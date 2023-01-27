@@ -290,7 +290,7 @@ class ThreadPool(ThreadPoolExecutor):
         """
         return self._work_queue.qsize() != 0 
     
-    def count_task_in_queue(self) -> int:
+    def count_waiting_tasks(self) -> int:
         """_summary_
 
         Returns:
