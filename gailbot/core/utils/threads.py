@@ -41,21 +41,6 @@ class TaskCreateError(Exception):
 class ThreadError(Exception):
     pass 
 
-#####
-
-
-# TODO: Shouldn't this simply be an enum??? (delete this)
-
-#####
-# Proposed alternative
-
-class Status(Enum):
-    RUNNING = 0
-    PENDING = 1
-    FINISHED = 2
-    CANCELLED = 3
-#####
-
 
 @dataclass
 class Status:
@@ -72,10 +57,23 @@ class ThreadPool(ThreadPoolExecutor):
     threads, support functions to query tasks status, return task result and 
     add callback task to previous task   
       
-    Public Function 
+    Public Function:
+    - get_num_thread() -> int 
+    - add_task(fun, args, kwargs, error_fun) -> int 
+    - check_task_status(key) -> Status 
+    - get_task_with_status(status) -> List [Tuple[int, str]]
+    - get_task_result(key, error_fun) 
+    - completed(key, error_fun) -> bool 
+    - wait_for_all_completion(error_fun) -> None 
+    - wait_for_task(key, error_fun) 
+    - cancel(key)
+    - cancel_all(key)
+    - add_callback(key, fun, error_fun)
+    - add_task_after(key, fun, args, kwargs, error_fun)
+    
+    Exception: 
     
     """
-
     def __init__(self, max_workers: int, *args, **kwargs) -> None:
         """ constructing a threadpool that i sable to run tasks on different 
             thread 
@@ -145,7 +143,7 @@ class ThreadPool(ThreadPoolExecutor):
         return self.task_pool[key]._state
 
     # TODO: Rename to something meaningful - maybe get_tasks_with_status...
-    def get_tasks_with_status(self, status: Status) -> List[int]:
+    def get_tasks_with_status(self, status: Status) -> List[Tuple[int, str]]:
         """ returns a list of task that matched the status passed in by caller
 
         Args:
@@ -283,7 +281,23 @@ class ThreadPool(ThreadPoolExecutor):
         except:
             if error_fun: error_fun()
             else: raise ThreadError
+    
+    def is_busy(self) -> bool:
+        """_summary_
 
+        Returns:
+            bool: _description_
+        """
+        return self._work_queue.qsize() != 0 
+    
+    def count_task_in_queue(self) -> int:
+        """_summary_
+
+        Returns:
+            int: _description_
+        """
+        return self._work_queue.qsize()
+        
 
 
     ############ private function  ##########

@@ -8,7 +8,7 @@
 
 import pytest 
 import time 
-from gailbot.core.utils.threads import ThreadPool, Status
+from gailbot.core.utils.threads import ThreadPool, Status, ThreadError
 import logging
 from queue import Queue 
 
@@ -29,19 +29,19 @@ file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
 
-def worker_no_param():
+def sleep_two_sec():
     time.sleep(2)
     logger.info("worker no param")
 
-def worker_one_param(n: int):
+def sleep_n_sec(n: int):
     time.sleep(n)
     logger.info(f"worker: {n}")
 
-def worker_key_param(n: int, s = "Default"):
+def sleep_n_sec_print(n: int, s = "Default"):
     time.sleep(n)
     logger.info(str(n) + str(s))
 
-def worker_with_return(n: int, result):
+def sleep_n_sec_return(n: int, result):
     time.sleep(n)
     return result
 
@@ -62,19 +62,19 @@ def callback_worker(name):
 def test_construction(size):
     pool = ThreadPool(size)
     assert size == pool.get_num_threads()
-    pool.add_task(worker_no_param)
+    pool.add_task(sleep_two_sec)
 
 @pytest.mark.parametrize("args, kwargs", [([1], {"s": "test"}), ([2], {"s": 123})] )
 def test_with_arg(args, kwargs):
     pool = ThreadPool(2)
-    pool.add_task(worker_one_param, args)
-    pool.add_task(worker_key_param, args, kwargs)
+    pool.add_task(sleep_n_sec, args)
+    pool.add_task(sleep_n_sec_print, args, kwargs)
 
 
 @pytest.mark.parametrize("arg", ["string", 1 , [1, 2, 3, 4], (1, 2), {1: 2}])
 def test_get_test_result(arg):
     pool = ThreadPool(2)
-    id = pool.add_task(worker_with_return, [1, arg])
+    id = pool.add_task(sleep_n_sec_return, [1, arg])
     assert pool.get_task_result(id) == arg
 
 @pytest.mark.parametrize("t",[2,3])
@@ -82,7 +82,7 @@ def test_thread_status(t):
     pool = ThreadPool(5)
     threadIds = []
     for i in range(5):
-        threadIds.append(pool.add_task(worker_one_param, [t]))
+        threadIds.append(pool.add_task(sleep_n_sec, [t]))
         print(pool.check_task_status(i))
         assert not pool.completed(i)
     time.sleep(t + 1)
@@ -94,7 +94,7 @@ def test_thread_status(t):
 def test_get_current_status(t, num_threads):
     pool = ThreadPool(num_threads)
     for i in range(10):
-        pool.add_task(worker_one_param, [t])
+        pool.add_task(sleep_n_sec, [t])
     
     print(Status.pending)
     print(pool.get_tasks_with_status(Status.pending))
@@ -109,7 +109,7 @@ def test_get_current_status(t, num_threads):
 def test_cancel(t):
     pool = ThreadPool(1)
     for i in range(5):
-        pool.add_task(worker_key_param, [t])
+        pool.add_task(sleep_n_sec_print, [t])
         pool.cancel(i) 
     for i in range(1, 5):
         assert pool.check_task_status(i) == Status.cancelled
@@ -118,10 +118,24 @@ def test_cancel(t):
 @pytest.mark.parametrize("args",[[1,4], [1, "string"], [2, [1,2,3,4]]])
 def test_thread_callback(args):
     pool = ThreadPool(1)
-    id_0 = pool.add_task(worker_with_return, args)
+    id_0 = pool.add_task(sleep_n_sec_return, args)
     id_1 = pool.add_callback(id_0, worker_test_callback)
     assert id_1 == id_0 + 1
     assert args[1] == pool.get_task_result(id_1)
+
+@pytest.mark.parametrize("nthreads, nsec", [(5, 3), (3, 4)] )
+def test_count_tasks(nthreads, nsec):
+    pool = ThreadPool(nthreads)
+    for i in range( nthreads * 2):
+        pool.add_task(sleep_n_sec, [nsec])
+    assert pool.count_task_in_queue() == nthreads * 2 - pool.get_num_threads()
+    assert pool.is_busy()
+    time.sleep(nsec + 0.5)
+    assert pool.count_task_in_queue() == 0
+    assert not pool.is_busy()
+    time.sleep(nsec + 1)
+    assert pool.count_task_in_queue() == 0 
+    assert not pool.is_busy()
 
 @pytest.mark.parametrize("",[])
 def test_multiple_thread_callback():
@@ -227,17 +241,22 @@ def test_multiple_callback_with_queue():
 def error_worker():
     time.sleep(4)
     logger.info("error worker")
-    raise TimeoutError
+    raise ThreadError
 
 def error_handler():
     logger.info("error handler")
     logger.warn("an error detected")
-    
+    raise ThreadError
+
 def test_error():
     """ test the thread's ability to handle error  """
     pool = ThreadPool(2)
-    id = pool.add_task(error_worker, error_fun = error_handler)
-    res = pool.get_task_result(id, error_fun = error_handler)
-    pool.add_task_after(id, error_worker, error_fun = error_handler)
+    with pytest.raises(ThreadError):
+        id = pool.add_task(error_worker, error_fun = error_handler)
+        res = pool.get_task_result(id, error_fun = error_handler)
+        id = pool.add_task_after(id, error_worker, error_fun = error_handler)
+        pool.add_task_after(id, error_worker)
     assert pool.check_task_status(id) == Status.error
+    
+
     
