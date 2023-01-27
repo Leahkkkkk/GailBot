@@ -9,18 +9,36 @@
 import pytest 
 import time 
 from gailbot.core.utils.threads import ThreadPool, Status
+import logging
+
+
+# Set up logging
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
+# Create a file handler
+file_handler = logging.FileHandler('tests/core/utils/thread.log')
+file_handler.setLevel(logging.DEBUG)
+
+# Create a formatter
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(formatter)
+
+# Add the file handler to the logger
+logger.addHandler(file_handler)
+
 
 def worker_no_param():
     time.sleep(2)
-    print("worker no param")
+    logger.info("worker no param")
 
 def worker_one_param(n: int):
     time.sleep(n)
-    print(f"worker: {n}")
+    logger.info(f"worker: {n}")
 
 def worker_key_param(n: int, s = "Default"):
     time.sleep(n)
-    print(str(n) + str(s))
+    logger.info(str(n) + str(s))
 
 def worker_with_return(n: int, result):
     time.sleep(n)
@@ -30,21 +48,19 @@ def worker_test_callback(n):
     return n 
 
 def previous_worker(n, name):
-    print(f"previous worker:{name}")
+    logger.info(f"previous worker start:{name}\n")
     time.sleep(n)
+    logger.info(f"previous worker finished:{name}\n")
     return name 
 
 def callback_worker(name):
-    print(f"callback worker:{name}")
-
-
+    logger.info(f"callback worker:{name}\n")
 
 @pytest.mark.parametrize("size", [1,2,3])
 def test_construction(size):
     pool = ThreadPool(size)
     assert size == pool.get_num_threads()
     pool.add_task(worker_no_param)
-
 
 @pytest.mark.parametrize("args, kwargs", [([1], {"s": "test"}), ([2], {"s": 123})] )
 def test_with_arg(args, kwargs):
@@ -125,15 +141,14 @@ def test_(args):
 
 
 def test_add_task_after():
+    logging.basicConfig(filename='thread.log', level=logging.INFO)
     pool = ThreadPool(10)
     for i in range(5):
         pool.add_task(previous_worker, [i, f"worker {i}"])
+        pool.add_task_after(i, lambda: callback_worker(f"callback task a {i}"))
     
     for i in range(5):
-        pool.add_task_after(i, lambda: callback_worker(f"worker {i}"))
-        pool.add_callback(i, callback_worker)
+        pool.add_task_after(i, lambda: callback_worker(f"callback task b {i}"))
         
-
-
 
 
