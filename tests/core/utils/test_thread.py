@@ -1,11 +1,3 @@
-""" TODO: test for callback / add_task_after
-1. with more than 1 thread  (5 - 10) - Siara
-2. make sure the callback function actually runs after the previous function finishes - Vivian
-3. make sure if we have a lot of callback, the threadpool still runs (stress test) - Vivian 
-4. test error handling function - Vivian 
-5. test passing different number of arguments to add_task_after - Siara
-"""
-
 import pytest 
 import time 
 from gailbot.core.utils.threads import ThreadPool, Status, ThreadError
@@ -93,7 +85,10 @@ def callback_check_queue(id):
     assert id == TestQueue.get()
 
 def error_worker():
-    """ a thread worker that will throw an error  """
+    """ 
+    a thread worker that will throw an error  
+    used for testing error handling 
+    """
     time.sleep(4)
     logger.info("error worker")
     raise ThreadError
@@ -101,7 +96,8 @@ def error_worker():
 def error_handler():
     """ 
     a thread error handling function that log error message and raise 
-    an ThreadError
+    a ThreadErrorHandleException
+    used for testing error handling 
     """
     logger.info("error handler")
     logger.warn("an error detected")
@@ -226,7 +222,9 @@ def test_mult_thread_callback(args):
 
 
 def test_add_task_after():
-    """ test add task after function runs the task in correct dependent order"""
+    """ 
+    Test add_task_after function runs the task in correct dependent order
+    """
     pool = ThreadPool(10)
     previous_id = []
     for i in range(4):
@@ -239,7 +237,8 @@ def test_add_task_after():
         
 
 def test_add_multi_task_after():
-    """ test the thread's ability to add multiple sequential task 
+    """ 
+    Test the thread's ability to add multiple sequential task 
     """
     pool = ThreadPool(5)
     ids = []
@@ -251,8 +250,8 @@ def test_add_multi_task_after():
 
 
 def test_callback_with_queue():
-    """ Test the sequence of the execution with a queue without manually looking
-        over the log message 
+    """ 
+    Test the sequence of the execution with a queue
     """
     pool = ThreadPool(5)
     ids = []
@@ -273,8 +272,10 @@ def test_callback_with_queue():
     for id in ids:
         pool.add_callback(id, callback_check_queue)
 
+
 def test_multiple_callback_with_queue():
-    """ Test the sequential execution of multiple callback with a queue 
+    """ 
+    Test the sequential execution of multiple callback with a queue 
         without manually looking over the log message 
     """
     pool = ThreadPool(5)
@@ -297,8 +298,11 @@ def test_multiple_callback_with_queue():
        TestQueue.put(newid)
     assert ids == [j for j in range(15)]
 
+
 def test_error():
-    """ test the thread's ability to handle error  """
+    """ 
+    Test the thread's ability to handle errors
+    """
     pool = ThreadPool(2)
     with pytest.raises(ThreadErrorHandleException):
         id = pool.add_task(error_worker, error_fun = error_handler)

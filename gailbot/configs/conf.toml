@@ -1,5 +1,5 @@
 
-[paths.engines.confs]
+[paths.engines]
 watson = "engines/watson/config.toml"
 whisper = "engines/whisper/config.toml"
 
