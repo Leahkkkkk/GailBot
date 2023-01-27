@@ -35,6 +35,9 @@ class TaskNotFinishedException(Exception):
 class TaskCancelException(Exception):
     pass
 
+class TaskCreateError(Exception):
+    pass 
+
 class ThreadError(Exception):
     pass 
 
@@ -63,10 +66,23 @@ class Status:
 
 
 class ThreadPool(ThreadPoolExecutor):
-    # TODO: Add class desc.
+    """
+    Implement a threadpool that is able to run tasks parallel on different 
+    threads, support functions to query tasks status, return task result and 
+    add callback task to previous task   
+      
+    Public Function 
+    
+    """
 
-    def __init__(self, max_workers, *args, **kwargs) -> None:
-        # TODO: Add docstring.
+    def __init__(self, max_workers: int, *args, **kwargs) -> None:
+        """ constructing a threadpool that i sable to run tasks on different 
+            thread 
+
+        Args:
+            max_workers (int):  the maximum number of tasks that will be run 
+                                at the same time parallel
+        """
         super().__init__(max_workers, *args, **kwargs)
         self.num_thread = max_workers
         self.task_pool: Dict[int, Future] = dict() # used to keeps track of the task status
@@ -110,7 +126,7 @@ class ThreadPool(ThreadPoolExecutor):
             self.task_name[self.next_key] = fun.__name__
             self.next_key += 1
         except:
-            raise Exception("task cannot be submitted")
+            raise TaskCreateError
         else:
             return self.next_key - 1
 
@@ -133,7 +149,6 @@ class ThreadPool(ThreadPoolExecutor):
         return [(id, self.task_name[id])
                 for id in self.task_pool.keys()
                 if self.check_task_status(id) == status ]
-
 
     # TODO: Explain description + annotate return value.
     def get_task_result(self, key: int):
