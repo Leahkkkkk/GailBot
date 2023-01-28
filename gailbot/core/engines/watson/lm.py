@@ -10,43 +10,41 @@ from enum import IntEnum
 # Local imports
 
 # Third party imports
+from gailbot.configs.utils import WATSON_DATA
 from ibm_watson import SpeechToTextV1, ApiException
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from ibm_watson.speech_to_text_v1 import CustomWord
 
-# from gailbot.configs.utils import get_engine_conf
 from gailbot.core.utils.media import MediaHandler
-from gailbot.core.utils.general import (
-    make_dir,
-    get_extension,
-    get_name,
-    is_file,
-    get_size
-)
 
 import logging
 logger = logging.getLogger(__name__)
 
 from .codes import WatsonReturnCodes
 
-# _ENGINE_CONF = get_engine_conf("watson")
-
-
-
-# TODO: Should aldo directly get access to config files
+class WatsonReturnCodes(IntEnum):
+    """
+    Return codes from Watson.
+    """
+    ok = 200
+    created = 201
+    notFound = 404
+    notAcceptable = 406
+    unsupported = 415
+    
 class WatsonLMInterface:
 
     def __init__(self, apikey : str, region : str):
-
+        self.is_connected = False
         self.apikey = apikey
         self.region = region
         self.media_h = MediaHandler()
 
         # Parse confs
-        self._regions = _ENGINE_CONF["watson"]["regions"]['"uris']
-        self._format_to_content_types = _ENGINE_CONF["watson"]["format_to_content"]
-        self._defaults = _ENGINE_CONF["watson"]["defaults"]
-        self.max_size_bytes = _ENGINE_CONF["watson"]["max_file_size_bytes"]
+        self._regions = WATSON_DATA.regions_uris
+        self._format_to_content_types = WATSON_DATA.format_to_content
+        self._defaults = WATSON_DATA.defaults
+        self.max_size_bytes = WATSON_DATA.max_file_size_bytes
 
         if not self._is_api_key_valid(apikey):
             raise Exception(f"Apikey {apikey} invalid")
@@ -55,15 +53,31 @@ class WatsonLMInterface:
                 f"Region {region} not in {list(self._regions.keys())}"
             )
 
-        # Create the stt service and run
-        authenticator = IAMAuthenticator(self.apikey)
-        self.stt = SpeechToTextV1(authenticator=authenticator)
-        self.stt.set_service_url(self.regions[self.region])
-
+        try:
+            # Create the stt service and run
+            authenticator = IAMAuthenticator(self.apikey)
+            self.stt = SpeechToTextV1(authenticator=authenticator)
+            self.stt.set_service_url(self.regions[self.region])
+        except:
+            raise Exception("Connect to STT failed")
+        else:
+            self.is_connected = True 
+        
+        
     def get_base_model(self, model_name : str) -> Dict:
         """
         Obtain information regarding the given base language model.
+
+        Args:
+            model_name (str): Name of the language model.
+
+        Returns:
+            (Union[Dict[str,Any],None]):
+                Dictionary with keys: name, language, rate, url,
+                supported_features, description if successful.
+                None if unsuccessful.
         """
+        if not self.is_connected: return {}
         resp = self._execute_watson_method(
             self.stt.get_model, [WatsonReturnCodes.OK], model_name
         )
@@ -73,7 +87,11 @@ class WatsonLMInterface:
     def get_base_models(self) -> List[str]:
         """
         Obtain a list of the names of base language models that are supported.
+
+        Returns:
+            (List[str]): Names of the base language models.
         """
+        if not self.is_connected: return []
         resp = self._execute_watson_method(
             self.stt.list_models, [WatsonReturnCodes.OK]
         )
@@ -85,7 +103,19 @@ class WatsonLMInterface:
     ) -> Dict:
         """
         Obtain information regarding a custom language model.
+
+        Args:
+            customization_id (str): Unique ID of the custom language model.
+
+        Returns:
+            (Union[Dict[str,Any],None]):
+                Mapping from the following keys to their values:
+                customization_id, created, updated,language, dialect,
+                versions, owner, name, description, base_model_name, status,
+                progress
+                None if unsuccessful.
         """
+        if not self.is_connected: return []
         resp = self._execute_watson_method(
             self.stt.get_language_model, [WatsonReturnCodes.OK], customization_id
         )
@@ -94,7 +124,12 @@ class WatsonLMInterface:
     def get_custom_models(self) -> Dict[str, str]:
         """
         Get custom language models
+
+        Returns:
+            (Dict[str,str]):
+                 Mapping from custom model name to the customization id.
         """
+        if not self.is_connected: return {}
         custom_models = dict()
         resp = self._execute_watson_method(
             self.stt.list_language_models, [WatsonReturnCodes.OK]
@@ -106,29 +141,105 @@ class WatsonLMInterface:
 
     def create_custom_model(
         self,
+        name: str, 
         base_model_name : str,
         description : str
     ):
         """
         Create a new custom language model.
         Does NOT create a new model if one with the same name already exists.
+
+        Args:
+            name (str): Name of the model.
+            base_model_name (str):
+                Name of the base model. Must be a supported base model.
+            description (str): Description of the model.
+
+        Returns:
+            (bool): True if successful. False otherwise.
         """
-        raise NotImplementedError()
+        if not self.is_connected() or name in self.get_custom_models().keys():
+            return False
+        success, _ = self._execute_watson_method(
+            self.stt.create_language_model, [WatsonReturnCodes.created],
+            [name, base_model_name], {"description": description})
+        return success
 
     def delete_custom_model(self, customization_id: str) -> bool:
-        raise NotImplementedError()
+        """
+        Delete an existing custom language model.
+
+        Args:
+            customization_id (str): Unique ID of the custom language model.
+
+        Returns:
+            (bool): True if successful. False otherwise.
+        """
+        success, _ = self._execute_watson_method(
+            self.stt.delete_language_model, [WatsonReturnCodes.ok],
+            [customization_id])
+        return success
 
     def train_custom_model(self, customization_id: str) -> bool:
-        raise NotImplementedError()
+        """
+        Train a custom language model with a previously added resource.
 
+        Args:
+            customization_id (str): Unique ID of the custom language model.
+
+        Returns:
+            (bool): True if successful. False otherwise.
+        """
+        success, resp = self._execute_watson_method(
+            self.stt.train_language_model, [WatsonReturnCodes.ok],
+            [customization_id])
+        return success
+   
     def reset_custom_model(self, customization_id: str) -> bool:
-        raise NotImplementedError()
+        """
+        Reset a custom language model to remove all loaded resources.
 
+        Args:
+            customization_id (str): Unique ID of the custom language model.
+
+        Returns:
+            (bool): True if successful. False otherwise.
+        """
+        success, _ = self._execute_watson_method(
+            self.stt.reset_language_model, [WatsonReturnCodes.ok],
+            [customization_id])
+        return success
+    
     def upgrade_custom_model(self, customization_id: str) -> bool:
-        raise NotImplementedError()
+        """
+        Upgrade the base model of the custom language model to its latest
+        version.
 
+        Returns:
+            (bool): True if successful. False otherwise.
+        """
+        success, _ = self._execute_watson_method(
+            self.stt.upgrade_language_model, [WatsonReturnCodes.ok],
+            [customization_id])
+        return success
+    
     def get_corpora(self, customization_id: str) -> Dict:
-        raise NotImplementedError()
+        """
+        Obtain the corpora used to train this custom model.
+
+        Args:
+            customization_id (str): Unique ID of the custom language model.
+
+        Returns:
+            (Union[List[Dict],None]):
+                Each internal dict contains the keys: name,
+                out_of_vocabulary_words,total_words, status.
+                None if unsuccessful.
+        """
+        success, resp = self._execute_watson_method(
+            self.stt.list_corpora, [WatsonReturnCodes.ok], [customization_id])
+        if success:
+            return resp["corpora"]
 
     def add_corpus(
         self,
@@ -136,54 +247,169 @@ class WatsonLMInterface:
         corpus_name: str,
         corpus_file: BinaryIO
     ) -> bool:
-        raise NotImplementedError()
+        """
+        Add a corpus to the specified custom language model.
+
+        Args:
+            customization_id (str): Unique ID of the custom language model.
+            corpus_name (str): Name of the corpus
+            corpus_file (BinaryIO): utf-8 encoded plain text file.
+        """
+        success, _ = self._execute_watson_method(
+            self.stt.add_corpus, [WatsonReturnCodes.created],
+            [customization_id, corpus_name, corpus_file, True])
+        return success
 
     def delete_corpus(
         self,
         customization_id: str,
         corpus_name: str
     ) -> bool:
-        raise NotImplementedError()
+        """
+        Delete a corpus from a custom language model.
+
+        Args:
+            customization_id (str): Unique ID of the custom language model.
+            corpus_name (str): Name of the corpus to delete.
+
+        Returns:
+            (bool): True if successful. False otherwise.
+        """
+        success, _ = self._execute_watson_method(
+            self.stt.delete_corpus, [WatsonReturnCodes.ok]
+            [customization_id, corpus_name])
+        return success
 
     def get_corpus(
         self,
         customization_id: str,
         corpus_name: str
     ) -> Dict:
-        raise NotImplementedError()
+        """
+        Obtain information about a specific custom corpus used to train the
+        custom model.
 
+        Args:
+            customization_id (str): Unique ID of the custom language model.
+            corpus_name (str): Name of the corpus.
+
+        Returns:
+            (Union[Dict[str,Any],None]): Contains the keys: "name",
+            "out_of_vocabulary_words", "total_words","status"
+            None if unsuccessful.
+        """
+        _, resp = self._execute_watson_method(
+            self.stt.get_corpus, [WatsonReturnCodes.ok],
+            [customization_id, corpus_name])
+        return resp
+    
     def get_custom_works(
         self,
         customization_id : str
     ) -> List[Dict]:
-        raise NotImplementedError()
+        """
+        Obtain all the custom words used to train a custom model.
+
+        Args:
+            customization_id (str): Unique ID of the custom language model.
+
+        Returns:
+            (Union[List[Dict], None]):
+                Each dictionary contains the keys: "word","sounds_like",
+                "display_as","count","source"
+                None if unsuccessful.
+        """
+        success, resp = self._execute_watson_method(
+            self.stt.list_words, [WatsonReturnCodes.ok],
+            [customization_id])
+        if success:
+            return resp["words"]
 
     def add_custom_works(
         self,
         customization_id : str,
         words : List[str]
     ) -> bool:
-        raise NotImplementedError()
+        """
+        Add one or more custom words to the specified custom language model.
 
+        Args:
+            customization_id (str): Unique ID of the custom language model.
+            words (List[str]): List of words to add to the model.
+
+        Returns:
+            (bool): True if successful. False otherwise.
+        """
+        custom_words = list()
+        for word in words:
+            custom_words.append(CustomWord(word=word))
+        success, _ = self._execute_watson_method(
+            self.stt.add_words, [WatsonReturnCodes.created],
+            [customization_id, custom_words])
+        return success
+    
     def delete_custom_words(
         self,
         customization_id : str,
         word : str
     ) -> bool:
-        raise NotImplementedError()
+        """
+        Delete a word from a custom language model.
+
+        Args:
+            customization_id (str): Unique ID of the custom language model.
+            word (str): Word to delete.
+
+        Returns:
+            (bool): True if successful. False otherwise.
+        """
+        success, _ = self._execute_watson_method(
+            self.stt.delete_word, [WatsonReturnCodes.ok],
+            [customization_id, word])
+        return success
 
     def get_custom_grammars(
         self,
         customization_id : str
     ) -> List[Dict]:
-        raise NotImplementedError()
+        """
+        Obtain a list of the grammars of a custom model.
 
+        Args:
+            customization_id (str): Unique ID of the custom language model.
+
+        Returns:
+            (Union[List[Dict], None]):
+                Internal dictionaries contain the keys:
+                out_of_vocabulary_words","name","status"
+                None of unsuccessful.
+        """
+        success, resp = self._execute_watson_method(
+            self.stt.list_grammars, [customization_id])
+        if success:
+            return resp["grammars"]
+        
     def get_custom_grammar(
         self,
         customization_id: str,
         grammar_name: str
     ) -> Dict:
-        raise NotImplementedError()
+        """
+        Obtain information about a specific grammar in a custom language model.
+
+        Args:
+            customization_id (str): Unique ID of the custom language model.
+            grammar_name (str): Name of the custom grammar.
+
+        Returns:
+            (Union[Dict, None]):
+                Contains the keys: "out_of_vocabulary_words","name","status"
+                None of unsuccessful.
+        """
+        _, resp = self._execute_watson_method(
+            self.stt.get_grammar, [WatsonReturnCodes.ok],
+            [customization_id, grammar_name])
+        return resp
 
     def add_custom_grammar(
         self,
@@ -192,7 +418,24 @@ class WatsonLMInterface:
         grammar_file: TextIO,
         content_type: str
     ) -> bool:
-        raise NotImplementedError()
+        """
+        Add a grammar to the custom language model.
+
+        Args:
+            customization_id (str): Unique ID of the custom language model.
+            grammar_name (str): Name of the custom grammar.
+            grammar_file (TextIO): Plain text file containing grammar.
+            content_type (str):
+                Format of the grammar. one of:
+                    application/srgs, application/srgs+xml
+
+        Returns:
+            (bool): True if successfully added. False otherwise.
+        """
+        success, _ = self._execute_watson_method(
+            self.stt.add_grammar, [WatsonReturnCodes.created],
+            [customization_id, grammar_name, grammar_file, content_type, True])
+        return success
 
     def delete_custom_grammar(
         self,
@@ -201,11 +444,20 @@ class WatsonLMInterface:
     ) -> bool:
         """
         Delete the specific grammar from a custom language model.
+
+        Args:
+            customization_id (str): Unique ID of the custom language model.
+            grammar_name (str): Name of the custom grammar.
+
+        Returns:
+            (bool): True if successfully added. False otherwise.
         """
-        raise NotImplementedError()
+        success, _ = self._execute_watson_method(
+            self.stt.delete_grammar, [WatsonReturnCodes.ok],
+            [customization_id, grammar_name])
+        return success
 
     # Others
-
     def _execute_watson_method(
         self,
         method : Callable,
@@ -214,6 +466,20 @@ class WatsonLMInterface:
         **kwargs
 
     ) -> Any:
+        """
+        Execute a watson method only if connected to watson.
+
+        Args:
+            method (Callable): Method to execute.
+            expected_response_codes (List[WatsonReturnCodes]):
+                Watson codes that are expected for a successful response.
+            args (List): Arguments to pass to the method.
+            kwargs (Dict): Keyword arguments to method
+
+        Returns:
+            (Tuple[bool,Any]):
+                True + result if successful. False + None otherwise.
+        """
         try:
             resp = method(*args, **kwargs)
             if any([resp.get_status_code() == expected
@@ -221,3 +487,36 @@ class WatsonLMInterface:
                 return resp.get_result()
         except ApiException as e:
             logger.log(f"Exception raised: {e}")
+
+        
+    def _is_api_key_valid(self, apikey: str, url: str) -> bool:
+        """
+        Determine if the given apikey is valid.
+
+        Args:
+            apikey (str): API key for the watson STT service.
+
+        Returns:
+            (bool): True if the key is valid. False otherwise.
+        """
+        try:
+            stt = self._initialize_stt_service(apikey)
+            stt.set_service_url(url)
+            stt.list_models()
+            return True
+        except:
+            return False
+
+    def _initialize_stt_service(self, apikey: str) -> SpeechToTextV1:
+        """
+        Initialize a SpeechToTextV1 object given an apikey.
+
+        Args:
+            apikey (str): Valid API key for the watson STT service.
+
+        Returns:
+            (SpeechToTextV1)
+        """
+        authenticator = IAMAuthenticator(apikey)
+        stt = SpeechToTextV1(authenticator=authenticator)
+        return stt

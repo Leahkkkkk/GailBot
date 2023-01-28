@@ -5,6 +5,7 @@
 # @Last Modified time: 2023-01-16 12:35:24
 
 
+from enum import Enum 
 import sys
 import psutil
 from typing import Any, Callable, Tuple, List, Dict
@@ -23,6 +24,13 @@ import subprocess
 
 InvalidPathError = "Error: invalid path"
 
+class CMD_STATUS(Enum):
+    RUNNING = 0 
+    FINISHED = 1 
+    STOPPED = 2
+    ERROR = 3
+    NOTFOUND = 4
+    
 def is_directory(dir_path: str) -> bool:
     """
     Determine if the given path is a directory.
@@ -346,7 +354,7 @@ def run_cmd(
     pid = process.pid
     return pid
 
-def get_cmd_status(identifier : int) -> str:
+def get_cmd_status(identifier : int) -> CMD_STATUS:
     """
     Obtain the status of the shell command associated with this identifier
     
@@ -360,8 +368,15 @@ def get_cmd_status(identifier : int) -> str:
     try:
         process = psutil.Process(identifier)
         status = process.status()
-    
+        match status:
+            case "zombie":
+                return CMD_STATUS.FINISHED 
+            case "running":
+                return CMD_STATUS.RUNNING
+            case "stopped":
+                return CMD_STATUS.RUNNING
+            case other:
+                return CMD_STATUS.ERROR
     except psutil.NoSuchProcess:
-        return "Process not found"
-    else:  
-        return status
+        return CMD_STATUS.NOTFOUND
+    

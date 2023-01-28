@@ -1,4 +1,4 @@
-from dataclasses import dataclass 
+from dataclasses import dataclass, field
 from dict_to_dataclass import field_from_dict, DataclassFromDict
 from typing import Dict 
 import os 
@@ -56,9 +56,10 @@ watson_region_uris = WatsonRegionsUris.from_dict(watson_data["regions"]["uris"])
 watson_format_to_content = FormatToContent.from_dict(watson_data["format_to_content"])
 watson_default = Defaults.from_dict(watson_data["defaults"])
 
-@dataclass 
+@dataclass
 class Watson:
-    max_file_size_bytes = watson_data["max_file_size_bytes"]
-    regions_uris: Dict[str, str] = watson_data["regions"]["uris"]
-    format_to_content: FormatToContent  = watson_format_to_content
-    defaults: Defaults = watson_default
+    def __init__(self) -> None:
+        self.max_file_size_bytes = watson_data["max_file_size_bytes"]
+        self.regions_uris: Dict[str, str] = watson_data["regions"]["uris"]
+        self.format_to_content: Dict[str, str] = watson_data["format_to_content"]
+        self.defaults: Dict[str, str] = watson_data["defaults"]
