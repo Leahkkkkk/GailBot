@@ -1,12 +1,13 @@
 from dataclasses import dataclass 
+import os 
 from dict_to_dataclass import field_from_dict, DataclassFromDict
 from typing import List
-from configs.conf_path import SETTING_PATH
+from gailbot.configs.conf_path import SETTING_PATH, CONFIG_ROOT
 import toml 
 
 @dataclass 
 class Plugin(DataclassFromDict):
-    suit: str = field_from_dict()
+    suite: str = field_from_dict()
     apply_plugins: List[str] = field_from_dict()
 
 
@@ -29,11 +30,11 @@ class WatsonTranscribe(DataclassFromDict):
     acoustic_customization_id : int = field_from_dict()
 
 
-setting_data = toml.load(SETTING_PATH.default_conf_path)
+setting_data = toml.load(os.path.join(CONFIG_ROOT,SETTING_PATH.default_conf_path))
 
 @dataclass
-class Watson(DataclassFromDict):
-    initialize: WatsonInitialization = WatsonInitialization.from_dict(setting_data["engine"]["watson"]["initialization"])
+class Watson:
+    initialize: WatsonInitialization = WatsonInitialization.from_dict(setting_data["engine"]["watson"]["initialize"])
     transcribe: WatsonTranscribe = WatsonTranscribe.from_dict(setting_data["engine"]["watson"]["transcribe"])
     
 @dataclass 

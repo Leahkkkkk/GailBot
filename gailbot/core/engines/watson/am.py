@@ -14,7 +14,7 @@ from ibm_watson import SpeechToTextV1, ApiException
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from ibm_watson.speech_to_text_v1 import CustomWord
 
-from gailbot.configs.utils import get_engine_conf
+# from gailbot.configs.utils import get_engine_conf
 from gailbot.core.utils.media import MediaHandler
 from gailbot.core.utils.general import (
     make_dir,
@@ -29,7 +29,7 @@ logger = logging.getLogger(__name__)
 
 from .codes import WatsonReturnCodes
 
-_ENGINE_CONF = get_engine_conf("watson")
+# _ENGINE_CONF = get_engine_conf("watson")
 
 
 

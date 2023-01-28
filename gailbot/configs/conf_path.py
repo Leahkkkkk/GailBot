@@ -18,7 +18,8 @@ class WorkSpace(DataclassFromDict):
     plugins_ws: str = field_from_dict()
     engines_ws: str = field_from_dict()
 
-config = toml.load(os.path.join(os.getcwd(), "configs/conf.toml"))
+CONFIG_ROOT = os.path.dirname(__file__)
+config = toml.load(os.path.join(CONFIG_ROOT, "conf.toml"))
 ENGINE_PATH = EnginePath.from_dict(config["paths"]["engines"])
 SETTING_PATH = SettingsPath.from_dict(config["paths"]["settings"])
-WORKSPACE = WorkSpace.from_dict(config["paths"]["workspace"])
+WORKSPACE_PATH = WorkSpace.from_dict(config["paths"]["workspace"])

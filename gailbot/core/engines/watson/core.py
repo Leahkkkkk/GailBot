@@ -13,7 +13,7 @@ from ibm_watson import SpeechToTextV1, ApiException
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from ibm_watson.websocket import RecognizeCallback, AudioSource
 
-from gailbot.configs.utils import get_engine_conf
+# from gailbot.configs.utils import get_engine_conf
 from gailbot.core.utils.media import MediaHandler
 from gailbot.core.utils.general import (
     make_dir,
@@ -23,7 +23,7 @@ from gailbot.core.utils.general import (
     get_size
 )
 
-_ENGINE_CONF = get_engine_conf("watson")
+# _ENGINE_CONF = get_engine_conf("watson")
 
 class WatsonCore:
 

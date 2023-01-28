@@ -1,7 +1,10 @@
 from dataclasses import dataclass 
-from configs.conf_path import ENGINE_PATH
 from dict_to_dataclass import field_from_dict, DataclassFromDict
 from typing import Dict 
+import os 
+
+from gailbot.configs.conf_path import ENGINE_PATH, CONFIG_ROOT
+
 import toml 
 
 @dataclass
@@ -30,7 +33,6 @@ class Defaults(DataclassFromDict):
     customization_weight: float = field_from_dict()
     inactivity_timeout: int = field_from_dict()
     interim_results: bool = field_from_dict()
-
     keyword_threshold: float = field_from_dict()
     max_alternatives: int = field_from_dict()
     word_confidence: bool = field_from_dict()
@@ -46,13 +48,13 @@ class Defaults(DataclassFromDict):
     split_transcript_at_phrase_end: bool = field_from_dict()
     speech_detector_sensitivity: float = field_from_dict()
     background_audio_supression: float = field_from_dict()
-    headers: Dict[str, bool] = field_from_dict()
+    # headers: Dict[str, bool] = field_from_dict()
     
 
-watson_data = toml.load(ENGINE_PATH.watson)
+watson_data = toml.load(os.path.join(CONFIG_ROOT, ENGINE_PATH.watson))["watson"]
 watson_region_uris = WatsonRegionsUris.from_dict(watson_data["regions"]["uris"])
 watson_format_to_content = FormatToContent.from_dict(watson_data["format_to_content"])
-watson_default = FormatToContent.from_dict(watson_data["defaults"])
+watson_default = Defaults.from_dict(watson_data["defaults"])
 
 @dataclass 
 class Watson:

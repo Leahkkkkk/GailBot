@@ -146,7 +146,7 @@ class ThreadPool(ThreadPoolExecutor):
         Args:
             key (int): Key to find the given task in the thread pool.
 
-        Returns:
+        Return:
             If result is successfully obtained, return the result of the given task.
             Raises ThreadError if the result of the given task is not successfully obtained.
         """
