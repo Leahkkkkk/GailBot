@@ -12,8 +12,7 @@ from copy import deepcopy
 from ibm_watson import SpeechToTextV1, ApiException
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from ibm_watson.websocket import RecognizeCallback, AudioSource
-
-# from gailbot.configs.utils import get_engine_conf
+from gailbot.configs.utils import WATSON_DATA
 from gailbot.core.utils.media import MediaHandler
 from gailbot.core.utils.general import (
     make_dir,
@@ -37,7 +36,7 @@ class WatsonCore:
         self.media_h = MediaHandler()
 
         # Parse confs
-        self._regions = _ENGINE_CONF["watson"]["regions"]['"uris']
+        self._regions = WATSON_DATA.regions_uris
         self._format_to_content_types = _ENGINE_CONF["watson"]["format_to_content"]
         self._defaults = _ENGINE_CONF["watson"]["defaults"]
         self.max_size_bytes = _ENGINE_CONF["watson"]["max_file_size_bytes"]

@@ -290,7 +290,7 @@ class ThreadPool(ThreadPoolExecutor):
     
     def add_task_after(
         self, key, fun: Callable, args: List = None, 
-        kwargs: Dict = None,  error_fun: Callable = None):
+        kwargs: Dict = None,  error_fun: Callable = None) -> int:
         """ 
         Adds a task to the thread after one task has finished running.
 
@@ -335,7 +335,7 @@ class ThreadPool(ThreadPoolExecutor):
 
     ############ private function  ##########
 
-    def _task_in_pool(self, key:int):
+    def _task_in_pool(self, key:int) -> None :
         """ 
         Private function to determine if the given task is currently in the task pool.
 
@@ -352,7 +352,7 @@ class ThreadPool(ThreadPoolExecutor):
         if not key in self.task_pool:
             raise TaskNotFoundException()
     
-    def _handle_error(self, future: Future):
+    def _handle_error(self, future: Future) -> None :
         """
         Handles errors raised by finding the future of a task. 
 

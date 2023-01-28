@@ -59,6 +59,6 @@ watson_default = Defaults.from_dict(watson_data["defaults"])
 @dataclass 
 class Watson:
     max_file_size_bytes = watson_data["max_file_size_bytes"]
-    WatsonRegionsUris: WatsonRegionsUris  = watson_region_uris
-    FormatToContent: FormatToContent  = watson_format_to_content
-    Defaults: Defaults = watson_default
+    regions_uris: Dict[str, str] = watson_data["regions"]["uris"]
+    format_to_content: FormatToContent  = watson_format_to_content
+    defaults: Defaults = watson_default

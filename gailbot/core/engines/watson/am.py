@@ -14,7 +14,7 @@ from ibm_watson import SpeechToTextV1, ApiException
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from ibm_watson.speech_to_text_v1 import CustomWord
 
-# from gailbot.configs.utils import get_engine_conf
+from gailbot.configs.utils import Watson
 from gailbot.core.utils.media import MediaHandler
 from gailbot.core.utils.general import (
     make_dir,
@@ -29,7 +29,6 @@ logger = logging.getLogger(__name__)
 
 from .codes import WatsonReturnCodes
 
-# _ENGINE_CONF = get_engine_conf("watson")
 
 
 
@@ -42,10 +41,10 @@ class WatsonAMInterface:
         self.media_h = MediaHandler()
 
         # Parse confs
-        self._regions = _ENGINE_CONF["watson"]["regions"]['"uris']
-        self._format_to_content_types = _ENGINE_CONF["watson"]["format_to_content"]
-        self._defaults = _ENGINE_CONF["watson"]["defaults"]
-        self.max_size_bytes = _ENGINE_CONF["watson"]["max_file_size_bytes"]
+        self._regions = Watson.regions_uris
+        self._format_to_content_types = Watson.format_to_content
+        self._defaults = Watson.defaults
+        self.max_size_bytes = Watson.max_file_size_bytes
 
         if not self._is_api_key_valid(apikey):
             raise Exception(f"Apikey {apikey} invalid")
@@ -57,7 +56,7 @@ class WatsonAMInterface:
         # Create the stt service and run
         authenticator = IAMAuthenticator(self.apikey)
         self.stt = SpeechToTextV1(authenticator=authenticator)
-        self.stt.set_service_url(self.regions[self.region])
+        self.stt.set_service_url(self._regions[self.region])
 
     def get_custom_models(self) -> Dict:
         raise NotImplementedError()

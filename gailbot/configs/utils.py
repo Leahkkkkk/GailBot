@@ -10,5 +10,5 @@
 """
 from gailbot.configs.configparser import engines, settings 
 
-Watson = engines.Watson 
-Setting = settings.Setting
+WATSON_DATA = engines.Watson 
+SETTING_DATA = settings.Setting
