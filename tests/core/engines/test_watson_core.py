@@ -20,7 +20,7 @@ def test_watson_core():
         assert watson_core.is_file_supported(f"test.{format}")
 
 
-def _test_websocket_recognize():
+def test_websocket_recognize():
     callback = CustomWatsonCallbacks()
     outdir = os.path.join(os.getcwd(), "data/watson_output")
     audio_path = os.path.join(os.getcwd(), "data/test_file/audio_file_input/test.mp3")
@@ -49,7 +49,7 @@ def test_watson():
     for format in  watson.supported_formats:  
         assert watson.is_file_supported(f"test.{format}")
     assert not watson.was_transcription_successful()
-
+    os.makedirs(OUT_PATH,exist_ok=True)
     watson.transcribe(AUDIO_PATH, 
                       WATSON_BASE_LANG_MODEL, 
                       OUT_PATH,

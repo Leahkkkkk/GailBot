@@ -5,6 +5,7 @@
 # @Last Modified time: 2023-01-16 11:53:04
 # Standard imports
 from typing import Callable, Any, List, Dict
+import sys
 # Local imports
 # Third party imports
 from copy import deepcopy
@@ -27,54 +28,61 @@ class CustomWatsonCallbacks(RecognizeCallback):
                 User object that is passed as the first parameter of every
                 callback during the lifecycle of the websocket connection.
         """
-        self.callback_closure = self._init_closure()
+        self.closure = self._init_closure()
 
     def reset(self) -> None:
-        self.callback_closure = self._init_closure()
+        self.closure = self._init_closure()
 
     def get_results(self) -> Dict:
-        return deepcopy(self.callback_closure)
+        return deepcopy(self.closure)
 
     def on_transcription(self, transcript: List) -> None:
         """
         Called after the service returns the final result for the transcription.
         """
+        print("on transcription")
         try:
             closure = self.closure
-            closure[0]["callback_status"]["on_transcription"] = True
-            closure[0]["results"]["transcript"].append(transcript)
-        except:
-            pass
+            closure["callback_status"]["on_transcription"] = True
+            closure["results"]["transcript"].append(transcript)
+        except Exception as e:
+            print(e)
 
     def on_connected(self) -> None:
         """
         Called when a Websocket connection was made
         """
+        print("on connected ")
         try:
             closure = self.closure
-            closure[0]["callback_status"]["on_connected"] = True
-        except:
-            pass
-
+            closure["callback_status"]["on_connected"] = True
+        except Exception as e:
+            print(e)
+            
     def on_error(self, error: str) -> None:
         """
         Called when there is an error in the Websocket connection.
         """
+        print("on error ")
+        print(error)
         try:
             closure = self.closure
-            closure[0]["callback_status"]["on_error"] = True
-            closure[0]["results"]["error"] = error
-        except:
+            closure["callback_status"]["on_error"] = True
+            closure["results"]["error"] = error
+        except Exception as e:
+            print(e)
             pass
 
     def on_inactivity_timeout(self, error: str) -> None:
         """
         Called when there is an inactivity timeout.
         """
+        print("on timeout ")
+        
         try:
             closure = self.closure
-            closure[0]["callback_status"]["on_inactivity_timeout"] = True
-            closure[0]["results"]["error"] = error
+            closure["callback_status"]["on_inactivity_timeout"] = True
+            closure["results"]["error"] = error
         except:
             pass
 
@@ -82,9 +90,11 @@ class CustomWatsonCallbacks(RecognizeCallback):
         """
         Called when the service is listening for audio.
         """
+        print("on listening ")
+        
         try:
             closure = self.closure
-            closure[0]["callback_status"]["on_listening"] = True
+            closure["callback_status"]["on_listening"] = True
         except:
             pass
 
@@ -92,9 +102,11 @@ class CustomWatsonCallbacks(RecognizeCallback):
         """
         Called when an interim result is received.
         """
+        print("on hypothesis ")
+        
         try:
             closure = self.closure
-            closure[0]["callback_status"]["on_hypothesis"] = True
+            closure["callback_status"]["on_hypothesis"] = True
         except:
             pass
 
@@ -102,10 +114,14 @@ class CustomWatsonCallbacks(RecognizeCallback):
         """
         Called when the service returns results. The data is returned unparsed.
         """
+        print("on data ")
+        print(data)
         try:
             closure = self.closure
-            closure[0]["callback_status"]["on_data"] = True
-            closure[0]["results"]["data"].append(data)
+            closure["callback_status"]["on_data"] = True
+            closure["results"]["data"].append(data)
+            print("on data print closure")
+            print(closure)
         except:
             pass
 
@@ -113,28 +129,32 @@ class CustomWatsonCallbacks(RecognizeCallback):
         """
         Called when the Websocket connection is closed
         """
+        print("on close ")
+        
         try:
             closure = self.closure
-            closure[0]["callback_status"]["on_close"] = True
+            closure["callback_status"]["on_close"] = True
         except:
             pass
 
     def _init_closure(self) -> Dict:
-       return  {
-            "callback_status": {
-                "on_transcription": False,
-                "on_connected": False,
-                "on_error": False,
-                "on_inactivity_timeout": False,
-                "on_listening": False,
-                "on_hypothesis": False,
-                "on_data": False,
-                "on_close": False
-            },
-            "results": {
-                "error": None,
-                "transcript": list(),
-                "hypothesis": list(),
-                "data": list()
+        print("on init closure ")
+        
+        return  {
+                "callback_status": {
+                    "on_transcription": False,
+                    "on_connected": False,
+                    "on_error": False,
+                    "on_inactivity_timeout": False,
+                    "on_listening": False,
+                    "on_hypothesis": False,
+                    "on_data": False,
+                    "on_close": False
+                },
+                "results": {
+                    "error": None,
+                    "transcript": list(),
+                    "hypothesis": list(),
+                    "data": list()
+                }
             }
-        }

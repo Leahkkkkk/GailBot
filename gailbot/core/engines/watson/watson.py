@@ -110,6 +110,8 @@ class Watson(Engine):
                 language_customization_id,
                 acoustic_customization_id
             )
+            print("recognition result")
+            print(self.recognize_callbacks.get_results())
             utterances = self._prepare_utterance(
                 outdir, 
                 self.recognize_callbacks.get_results())

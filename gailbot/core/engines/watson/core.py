@@ -113,7 +113,6 @@ class WatsonCore:
         Returns:   
 
         """
-
         # Checks all the input data is valid
         assert is_file(audio_path), f"Not a file {audio_path}"
         try: 
@@ -136,22 +135,25 @@ class WatsonCore:
             # Prepare args
             source = AudioSource(f)
             content_type = self._format_to_content_types[get_extension(audio_path)]
-            kwargs = deepcopy(self.defaults)
+            # kwargs = deepcopy(self.defaults)
+            kwargs = {}
             kwargs.update({
                 "audio": source,
                 "content_type" : content_type,
                 "recognize_callback": recognize_callback,
                 "model" : base_language_model,
-                "language_customization_id": language_customization_id,
-                "acoustic_customization_id": acoustic_customization_id,
-                "base_model_version": None,
-                "keywords" : None,
+                # "language_customization_id": language_customization_id,
+                # "acoustic_customization_id": acoustic_customization_id,
             })
+            print(self.apikey, self.region)
+            print(stt.list_language_models())
+            print(kwargs)
             stt.recognize_using_websocket(**kwargs)
+            
+            
             """ TODO:  how will the outdir be used and should we delete it anytime?"""
             # delete(self.engine_workspace_dir)
             
-
 
     ###############
     # PRIVATE
@@ -215,4 +217,15 @@ class WatsonCore:
                     raise ChildProcessError
                 case CMD_STATUS.NOTFOUND:
                     raise ProcessLookupError
-        return out_path
+        return 
+    
+    
+    """ used to have two distinct things, currently , 
+        the temporary directory 
+        - at least one hour of audio 
+        - if not -> chunks 
+        
+        for lm and am that returns boolean -> change it to one parameter 
+
+        raise exception -> define customized exception 
+    """
