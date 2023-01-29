@@ -79,8 +79,8 @@ class AudioHandler:
         """ return a list of string with supported audio format"""
         return self._SUPPORTED_FORMATS
 
-    @staticmethod
-    def is_supported(self, path : str) -> bool:
+    @staticmethod    
+    def is_supported(path : str) -> bool:
         """ tell if a audio file is supported by the AudioHandler
 
         Args:
@@ -89,9 +89,9 @@ class AudioHandler:
         Returns:
             bool: return true of the file is supported 
         """
-        return get_extension(path) in self.supported_formats
+        return get_extension(path) in ["mp3", "mpeg", "opus", "wav"]
 
-    def read_file(self, path : str) -> AudioStream:
+    def read_file(self,path : str) -> AudioStream:
         """ read the audio file data
 
         Args:
@@ -373,8 +373,8 @@ class VideoHandler:
         return self._SUPPORTED_FORMATS
 
     @staticmethod
-    def is_supported(self, path : str) -> bool:
-        return get_extension(path) in self.supported_formats
+    def is_supported(path : str) -> bool:
+        return get_extension(path) in ["mxf"]
 
     def read_file(self, path : str) -> VideoStream:
         raise NotImplementedError()
@@ -440,12 +440,12 @@ class MediaHandler:
 
     #### Audio and Video
     @staticmethod
-    def is_supported(self, path: str) -> bool:
-        return AudioHandler.is_supported(self, path) or \
-               VideoHandler.is_supported(self, path)
+    def is_supported(path: str) -> bool:
+        return AudioHandler.is_supported(path) or \
+               VideoHandler.is_supported(path)
 
     @staticmethod
-    def is_audio(self, path : str) -> bool:
+    def is_audio(path : str) -> bool:
         """
         Determines if the given file is an audio file.
         
@@ -459,7 +459,7 @@ class MediaHandler:
         return AudioHandler.is_supported(path)
 
     @staticmethod
-    def is_video(self, path : str) -> bool:
+    def is_video(path : str) -> bool:
         """
         Determines if the given file is a video file.
 

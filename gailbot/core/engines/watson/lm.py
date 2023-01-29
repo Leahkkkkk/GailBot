@@ -33,7 +33,6 @@ class WatsonReturnCodes(IntEnum):
     unsupported = 415
     
 class WatsonLMInterface:
-
     def __init__(self, apikey : str, region : str):
         self.is_connected = False
         self.apikey = apikey
@@ -46,7 +45,7 @@ class WatsonLMInterface:
         self._defaults = WATSON_DATA.defaults
         self.max_size_bytes = WATSON_DATA.max_file_size_bytes
 
-        if not self._is_api_key_valid(apikey):
+        if not self._is_api_key_valid(apikey, self._regions[region]):
             raise Exception(f"Apikey {apikey} invalid")
         if not region in self._regions:
             raise Exception(
@@ -57,7 +56,7 @@ class WatsonLMInterface:
             # Create the stt service and run
             authenticator = IAMAuthenticator(self.apikey)
             self.stt = SpeechToTextV1(authenticator=authenticator)
-            self.stt.set_service_url(self.regions[self.region])
+            self.stt.set_service_url(self._regions[self.region])
         except:
             raise Exception("Connect to STT failed")
         else:
@@ -93,7 +92,7 @@ class WatsonLMInterface:
         """
         if not self.is_connected: return []
         resp = self._execute_watson_method(
-            self.stt.list_models, [WatsonReturnCodes.OK]
+            self.stt.list_models, [WatsonReturnCodes.ok]
         )
         return [model["name"] for model in resp["models"]] if resp != None else []
 
@@ -117,7 +116,7 @@ class WatsonLMInterface:
         """
         if not self.is_connected: return []
         resp = self._execute_watson_method(
-            self.stt.get_language_model, [WatsonReturnCodes.OK], customization_id
+            self.stt.get_language_model, [WatsonReturnCodes.ok], customization_id
         )
         return resp
 
@@ -132,7 +131,7 @@ class WatsonLMInterface:
         if not self.is_connected: return {}
         custom_models = dict()
         resp = self._execute_watson_method(
-            self.stt.list_language_models, [WatsonReturnCodes.OK]
+            self.stt.list_language_models, [WatsonReturnCodes.ok]
         )
         if resp != None:
             for model in resp["customizations"]:
@@ -276,7 +275,8 @@ class WatsonLMInterface:
             (bool): True if successful. False otherwise.
         """
         success, _ = self._execute_watson_method(
-            self.stt.delete_corpus, [WatsonReturnCodes.ok]
+            self.stt.delete_corpus, 
+            [WatsonReturnCodes.ok], 
             [customization_id, corpus_name])
         return success
 

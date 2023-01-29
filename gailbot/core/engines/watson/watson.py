@@ -142,7 +142,7 @@ class Watson(Engine):
         given a file path, return true if the file format is supported by 
         the Watson STT engine 
         """
-        self.core.is_file_supported(file_path)
+        return self.core.is_file_supported(file_path)
     
     def was_transcription_successful(self) -> bool:
         """ 
@@ -151,7 +151,6 @@ class Watson(Engine):
         """
         return self.is_transcribe_success
      ############################### PRIVATE METHODS ###########################
-    """ TODO: check output directory """
     def _prepare_utterance(self, outdir: str, closure: Dict[str, Any]) -> List:
         """ 
         Args:

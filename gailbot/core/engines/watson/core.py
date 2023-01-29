@@ -56,7 +56,7 @@ class WatsonCore:
         Returns:
             List[str] : list of supported formats
         """
-        return self.media_h.supported_formats()
+        return self.media_h.supported_formats
 
     @property
     def regions(self) -> Dict:
@@ -66,7 +66,7 @@ class WatsonCore:
         Returns: 
             Dict representing the regions
         """
-        return self.regions
+        return self._regions
 
     @property
     def defaults(self) -> Dict:
@@ -136,7 +136,8 @@ class WatsonCore:
             # Prepare args
             source = AudioSource(f)
             content_type = self._format_to_content_types[get_extension(audio_path)]
-            kwargs = deepcopy(self.defaults).update({
+            kwargs = deepcopy(self.defaults)
+            kwargs.update({
                 "audio": source,
                 "content_type" : content_type,
                 "recognize_callback": recognize_callback,
@@ -148,7 +149,7 @@ class WatsonCore:
             })
             stt.recognize_using_websocket(**kwargs)
             """ TODO:  how will the outdir be used and should we delete it anytime?"""
-            delete(self.engine_workspace_dir)
+            # delete(self.engine_workspace_dir)
             
 
 

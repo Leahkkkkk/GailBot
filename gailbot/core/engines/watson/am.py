@@ -46,7 +46,7 @@ class WatsonAMInterface:
         self._defaults = WATSON_DATA.defaults
         self.max_size_bytes = WATSON_DATA.max_file_size_bytes
 
-        if not self._is_api_key_valid(apikey):
+        if not self._is_api_key_valid(apikey, self._regions[region]):
             raise Exception(f"Apikey {apikey} invalid")
         if not region in self._regions:
             raise Exception(
