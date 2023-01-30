@@ -197,9 +197,9 @@ def test_read_write_txt():
 def test_run_cmd():
     pid = general.run_cmd(["ls"]) 
     status = general.get_cmd_status(pid)
-    assert status == "running"
+    assert status == general.CMD_STATUS.RUNNING
     time.sleep(1)
     status = general.get_cmd_status(pid)
-    assert status == "zombie"
+    assert status == general.CMD_STATUS.FINISHED
     
 

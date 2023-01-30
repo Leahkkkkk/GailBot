@@ -8,7 +8,7 @@ Last Modified: Wednesday, 25th January 2023 6:47:31 am
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
-
+from typing import List
 from gailbot.core.utils import media 
 from gailbot.core.utils import general
 import shutil
@@ -33,7 +33,7 @@ def handlers () -> media.AudioHandler:
     media_handler = media.MediaHandler()
     return [audio_handler, media_handler]
 
-def test_support_format(handlers):
+def test_support_format(handlers: List[media.AudioHandler]):
     for handler in handlers:
         assert handler.supported_formats == handler._SUPPORTED_FORMATS 
 
@@ -41,10 +41,10 @@ def test_is_supported(handlers):
     for handler in handlers:
         basename = "test"
         for format in handler.supported_formats:
-            assert handler.is_supported(handler, f"{basename}.{format}")
+            assert media.AudioHandler.is_supported(f"{basename}.{format}")
             
         for format in handler.supported_formats:
-            assert not handler.is_supported(handler, f"{basename}.not{format}")
+            assert not media.AudioHandler.is_supported(f"{basename}.not{format}")
     
 
 def test_read_write_stream(handlers):

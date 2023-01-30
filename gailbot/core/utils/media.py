@@ -369,7 +369,7 @@ class VideoHandler:
     _SUPPORTED_FORMATS = ["mxf"]
     _BASE_FORMAT = "mp4"
 
-
+    @property
     def supported_formats(self) -> List[str]:
         return self._SUPPORTED_FORMATS
 
