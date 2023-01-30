@@ -40,7 +40,6 @@ class CustomWatsonCallbacks(RecognizeCallback):
         """
         Called after the service returns the final result for the transcription.
         """
-        print("on transcription")
         try:
             closure = self.closure
             closure["callback_status"]["on_transcription"] = True
@@ -52,7 +51,6 @@ class CustomWatsonCallbacks(RecognizeCallback):
         """
         Called when a Websocket connection was made
         """
-        print("on connected ")
         try:
             closure = self.closure
             closure["callback_status"]["on_connected"] = True
@@ -63,7 +61,6 @@ class CustomWatsonCallbacks(RecognizeCallback):
         """
         Called when there is an error in the Websocket connection.
         """
-        print("on error ")
         print(error)
         try:
             closure = self.closure
@@ -76,9 +73,7 @@ class CustomWatsonCallbacks(RecognizeCallback):
     def on_inactivity_timeout(self, error: str) -> None:
         """
         Called when there is an inactivity timeout.
-        """
-        print("on timeout ")
-        
+        """        
         try:
             closure = self.closure
             closure["callback_status"]["on_inactivity_timeout"] = True
@@ -89,9 +84,7 @@ class CustomWatsonCallbacks(RecognizeCallback):
     def on_listening(self) -> None:
         """
         Called when the service is listening for audio.
-        """
-        print("on listening ")
-        
+        """        
         try:
             closure = self.closure
             closure["callback_status"]["on_listening"] = True
@@ -102,8 +95,6 @@ class CustomWatsonCallbacks(RecognizeCallback):
         """
         Called when an interim result is received.
         """
-        print("on hypothesis ")
-        
         try:
             closure = self.closure
             closure["callback_status"]["on_hypothesis"] = True
@@ -114,14 +105,10 @@ class CustomWatsonCallbacks(RecognizeCallback):
         """
         Called when the service returns results. The data is returned unparsed.
         """
-        print("on data ")
-        print(data)
         try:
             closure = self.closure
             closure["callback_status"]["on_data"] = True
             closure["results"]["data"].append(data)
-            print("on data print closure")
-            print(closure)
         except:
             pass
 
@@ -129,17 +116,13 @@ class CustomWatsonCallbacks(RecognizeCallback):
         """
         Called when the Websocket connection is closed
         """
-        print("on close ")
-        
         try:
             closure = self.closure
             closure["callback_status"]["on_close"] = True
         except:
             pass
 
-    def _init_closure(self) -> Dict:
-        print("on init closure ")
-        
+    def _init_closure(self) -> Dict:        
         return  {
                 "callback_status": {
                     "on_transcription": False,

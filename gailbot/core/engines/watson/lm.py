@@ -11,6 +11,7 @@ from enum import IntEnum
 
 # Third party imports
 from gailbot.configs.utils import WATSON_DATA
+from gailbot.core.engines import exception as ERR
 from ibm_watson import SpeechToTextV1, ApiException
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from ibm_watson.speech_to_text_v1 import CustomWord
@@ -61,7 +62,6 @@ class WatsonLMInterface:
             raise Exception("Connect to STT failed")
         else:
             self.is_connected = True 
-        
         
     def get_base_model(self, model_name : str) -> Dict:
         """

@@ -13,6 +13,7 @@ from .core import WatsonCore
 from .lm import WatsonLMInterface
 from .am import WatsonAMInterface
 from ..engine import Engine
+from gailbot.core.engines import exception as Err
 from gailbot.core.utils.general import write_json
 class Watson(Engine):
     """ 
@@ -81,8 +82,8 @@ class Watson(Engine):
     def transcribe(
         self,
         audio_path : str,
+        output_directory : str,
         base_model : str,
-        outdir : str,
         language_customization_id : str = "",
         acoustic_customization_id : str = ""
     ) -> str:
@@ -91,34 +92,23 @@ class Watson(Engine):
         Args: 
         audio_path: str 
             a path to the audio file that will be transcribed 
+        output_directory: str 
+            a path where the output file will be stored 
         base_model: str 
             a string that define the base model 
-        outdir: str 
-            a path where the output file will be stored 
         language_customization_id: str (optional): 
             ID of the custom language model.
         acoustic_customization_id: str (optional): 
             ID of the custom acoustic model.
         """
-        try:
-            self.recognize_callbacks.reset()
-            self.core.websockets_recognize(
-                audio_path,
-                outdir,
-                self.recognize_callbacks,
-                base_model,
-                language_customization_id,
-                acoustic_customization_id
-            )
-            print("recognition result")
-            print(self.recognize_callbacks.get_results())
-            utterances = self._prepare_utterance(
-                outdir, 
-                self.recognize_callbacks.get_results())
-            self.is_transcribe_success = True
-            return utterances
-        except:
-            self.is_transcribe_success = False
+        # try:
+        utterances = self.core.transcribe(
+            audio_path, output_directory, base_model,
+            language_customization_id, acoustic_customization_id)
+        self.is_transcribe_success = True
+        return utterances
+        # except:
+            # raise Err.ThranscriptionError
 
     def language_customization_interface(self) -> WatsonLMInterface:
         """ return the watson customized language model interface """
@@ -152,64 +142,4 @@ class Watson(Engine):
         false otherwise 
         """
         return self.is_transcribe_success
-     ############################### PRIVATE METHODS ###########################
-    def _prepare_utterance(self, outdir: str, closure: Dict[str, Any]) -> List:
-        """ 
-        Args:
-            outdir: str 
-                the output directory 
-            closure (Dict[str, Any]): 
-
-
-        Returns:
-            List: a list of dictionary that stores a stream of utterance data 
-                  in "speaker: , start time:  , end time:  , text:  ," format  
-        """
-        try:
-            utterances = list()
-            # Mapping based on (start time, end time)
-            data = dict()
-            # Aggregated data from recognition results
-            labels = list()
-            timestamps = list()
-            """ TODO: check the parent file path for the json file output  """     
-            write_json(os.path.join(outdir, "data.json"), 
-                        closure["results"]["data"])
-            write_json(os.path.join(outdir, "results.json"),
-                        closure["results"]["data"])
-            write_json(os.path.join(outdir, "closure.json"), closure)
-            # Creating RecognitionResults objects
-            for item in closure["results"]["data"]:
-                recognition_result = RecognitionResult(item)
-                if recognition_result.is_configured():
-                    labels.extend(recognition_result.get_speaker_labels())
-                    timestamps.extend(
-                        recognition_result.get_timestamps_from_alternatives(
-                            only_final=False))
-            timestamps = list(chain(*timestamps))
-            # Creating the mappings
-            for label in labels:  # Label should be a dictionary
-                key = (label["start_time"], label["end_time"])
-                if not key in data:
-                    data[key] = {"speaker": label["speaker"]}
-                else:
-                    data[key]["speaker"] = label["speaker"]
-            for timestamp in timestamps:
-                key = (timestamp[1], timestamp[2])
-                if key not in data:
-                    data[key] = {"utterance": timestamp[0]}
-                else:
-                    data[key]["utterance"] = timestamp[0]
-            # Creating utterances
-            for times, value in data.items():
-                utt = {
-                    "speaker" : value["speaker"],
-                    "start_time" : times[0],
-                    "end_time" : times[1],
-                    "text" : value["utterance"]
-                }
-                utterances.append(utt)
-            return utterances
-        except Exception as e:
-            return []
-    
+  

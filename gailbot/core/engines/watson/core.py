@@ -3,14 +3,19 @@
 # @Date:   2023-01-09 11:25:49
 # @Last Modified by:   Muhammad Umair
 # @Last Modified time: 2023-01-16 11:59:32
-
+import os 
 from typing import List, Any, Dict
+from itertools import chain
+
 import time
 from copy import deepcopy
 # Third party imports
 from ibm_watson import SpeechToTextV1, ApiException
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from ibm_watson.websocket import RecognizeCallback, AudioSource
+from .recognize_callback import CustomWatsonCallbacks
+from .recognition_results import RecognitionResult
+from gailbot.core.engines import exception as Err
 from gailbot.configs.utils import WATSON_DATA
 from gailbot.core.utils.media import MediaHandler
 from gailbot.core.utils.general import (
@@ -23,12 +28,14 @@ from gailbot.core.utils.general import (
     run_cmd, 
     get_cmd_status,
     delete,
+    write_json,
     CMD_STATUS
 )
+WORK_SPACE = "watson_workspace"
 class WatsonCore:
     """
-    TODO: documentation
-    
+    Implement core functionalities to transcribe an audio file through 
+    watson STT engine
     """
     def __init__(self, apikey : str, region : str):
         self.apikey = apikey
@@ -47,7 +54,9 @@ class WatsonCore:
             raise Exception(
                 f"Region {region} not in {list(self._regions.keys())}"
             )
-
+        # create recognize callback 
+        self.recognize_callbacks = CustomWatsonCallbacks()
+        
     @property
     def supported_formats(self) -> List[str]:
         """
@@ -89,12 +98,43 @@ class WatsonCore:
         """
         return get_extension(file) in self.supported_formats
     
-    def websockets_recognize(
+    def transcribe(self, 
+                  audio_path: str, 
+                  output_directory: str, 
+                  base_model: str, 
+                  language_customization_id: str, 
+                  acoustic_customization_id: str):
+        """
+        Transcribes the provided audio stream using a websocket connections.
+        And output the result to given output directory 
+
+        Args:
+            audio_path (str) : 
+                path to audio file that will be transcribed
+            output_directory (str) : 
+                path to directory where the transcribed data will be stored
+            base_language_model (str) : 
+                specifies the base_language_model 
+            language_customization_id (str) : 
+                ID of the custom acoustic model
+            acoustic_customization_id (str) : 
+                ID of the custom language model.
+        """
+        self._websockets_recognize(
+            audio_path, output_directory, base_model, 
+            language_customization_id, acoustic_customization_id)  
+        utterances = self._prepare_utterance(
+            output_directory, self.recognize_callbacks.get_results())   
+        return utterances   
+    
+###############
+# PRIVATE
+##############
+    def _websockets_recognize(
         self,
         audio_path : str,
-        outdir : str,
-        recognize_callback : RecognizeCallback,
-        base_language_model : str,
+        output_directory : str,
+        base_model : str,
         language_customization_id : str = "",
         acoustic_customization_id : str = ""
     ) -> Any:
@@ -103,61 +143,115 @@ class WatsonCore:
         All attributes MUST be set before using this method.
 
         Args:
-            audio_path (str) : audio_path websockets attribute
-            outdir (str) : outdir websockets attribute
-            recognize_callback (RecognizeCallback) : recognize_callback websockets attribute
-            base_language_model (str) : base_language_model websockets attribute
-            language_customization_id (str) : language_customization_id websockets attribute
-            acoustic_customization_id (str) : acoustic_customization_id websockets attribute
-
-        Returns:   
-
+            audio_path (str) : 
+                path to audio file that will be transcribed
+            output_directory (str) : 
+                path to directory where the transcribed data will be stored
+            base_language_model (str) : 
+                specifies the base_language_model 
+            language_customization_id (str) : 
+                ID of the custom acoustic model
+            acoustic_customization_id (str) : 
+                ID of the custom language model.
         """
+        # reset the callbacks
+        self.recognize_callbacks.reset()
         # Checks all the input data is valid
         assert is_file(audio_path), f"Not a file {audio_path}"
+        work_space_directory = os.path.join(output_directory, WORK_SPACE)
         try: 
-            if not is_directory(outdir): 
-                raise Exception
-            make_dir(f"{outdir}/watson_engine_ws", overwrite=True)
-            assert is_directory(outdir)
-            self.engine_workspace_dir = f"{outdir}/watson_engine_ws"
+            if not is_directory(output_directory): 
+                make_dir(output_directory, overwrite=True)
+            make_dir(work_space_directory, overwrite=True)
+            assert is_directory(output_directory)
+            self.engine_workspace_dir = work_space_directory
         except:
-            raise Exception 
-        if get_size(audio_path) >= self.max_size_bytes:
-            audio_path = self._convert_to_opus(audio_path)
+            raise FileExistsError 
+        
+        try:
+            if get_size(audio_path) >= self.max_size_bytes:
+                audio_path = self._convert_to_opus(audio_path, work_space_directory)
+        except: 
+            raise Err.AudioFileError
 
         # Create the stt service and run
-        authenticator = IAMAuthenticator(self.apikey)
-        stt = SpeechToTextV1(authenticator=authenticator)
-        stt.set_service_url(self.regions[self.region])
+        try:
+            authenticator = IAMAuthenticator(self.apikey)
+            stt = SpeechToTextV1(authenticator=authenticator)
+            stt.set_service_url(self.regions[self.region])
+        except:
+            raise Err.APIKeyError
 
         with open(audio_path, "rb") as f:
             # Prepare args
             source = AudioSource(f)
             content_type = self._format_to_content_types[get_extension(audio_path)]
+            """ TODO:  no acoustic_customization id """
             # kwargs = deepcopy(self.defaults)
             kwargs = {}
+            
             kwargs.update({
                 "audio": source,
                 "content_type" : content_type,
-                "recognize_callback": recognize_callback,
-                "model" : base_language_model,
+                "recognize_callback": self.recognize_callbacks,
+                "model" : base_model,
                 # "language_customization_id": language_customization_id,
-                # "acoustic_customization_id": acoustic_customization_id,
+                # "acoustic_customization_id": acoustic_customization_id
             })
-            print(self.apikey, self.region)
-            print(stt.list_language_models())
+            
             print(kwargs)
             stt.recognize_using_websocket(**kwargs)
+            delete(self.engine_workspace_dir)
             
+    def _prepare_utterance(self, output_directory, closure: Dict[str, Any]) -> List:
+        try:
+            utterances = list()
+            # Mapping based on (start time, end time)
+            data = dict()
+            # Aggregated data from recognition results
+            labels = list()
+            timestamps = list()
             
-            """ TODO:  how will the outdir be used and should we delete it anytime?"""
-            # delete(self.engine_workspace_dir)
+            write_json(os.path.join(output_directory, "data.json"), 
+                        closure["results"]["data"])
+            write_json(os.path.join(output_directory, "results.json"),
+                        closure["results"]["data"])
+            write_json(os.path.join(output_directory, "closure.json"), closure)
+            # Creating RecognitionResults objects
+            for item in closure["results"]["data"]:
+                recognition_result = RecognitionResult(item)
+                if recognition_result.is_configured():
+                    labels.extend(recognition_result.get_speaker_labels())
+                    timestamps.extend(
+                        recognition_result.get_timestamps_from_alternatives(
+                            only_final=False))
+            timestamps = list(chain(*timestamps))
+            # Creating the mappings
+            for label in labels:  # Label should be a dictionary
+                key = (label["start_time"], label["end_time"])
+                if not key in data:
+                    data[key] = {"speaker": label["speaker"]}
+                else:
+                    data[key]["speaker"] = label["speaker"]
+            for timestamp in timestamps:
+                key = (timestamp[1], timestamp[2])
+                if key not in data:
+                    data[key] = {"utterance": timestamp[0]}
+                else:
+                    data[key]["utterance"] = timestamp[0]
+            # Creating utterances
+            for times, value in data.items():
+                utt = {
+                    "speaker" : value["speaker"],
+                    "start_time" : times[0],
+                    "end_time" : times[1],
+                    "text" : value["utterance"]
+                }
+                utterances.append(utt)
+            return utterances
+        except Exception as e:
+            return []
             
-
-    ###############
-    # PRIVATE
-    ##############
     def _is_api_key_valid(self, apikey: str, url: str) -> bool:
         """
         Determines if given Watson API key is valid
@@ -201,11 +295,9 @@ class WatsonCore:
         Returns:
             String representing the path to the newly converted output file
         """
-        out_path = "{}/{}.opus".format(
-            workspace, get_name(audio_path)
-        )
+        out_path = "{}/{}.opus".format(workspace, get_name(audio_path))
         cmd_str = "ffmpeg -y -i {} -strict -2  {}".format(audio_path, out_path)
-        pid = run_cmd([cmd_str])
+        pid = run_cmd(["ffmpeg", "-y", "-i", audio_path, "-strict", "-2", out_path])
         
         while True:
             match get_cmd_status(pid):
@@ -217,8 +309,8 @@ class WatsonCore:
                     raise ChildProcessError
                 case CMD_STATUS.NOTFOUND:
                     raise ProcessLookupError
-        return 
-    
+        
+        return get_cmd_status(pid) == CMD_STATUS.FINISHED
     
     """ used to have two distinct things, currently , 
         the temporary directory 
