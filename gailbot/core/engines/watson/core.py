@@ -120,9 +120,13 @@ class WatsonCore:
             acoustic_customization_id (str) : 
                 ID of the custom language model.
         """
-        self._websockets_recognize(
-            audio_path, output_directory, base_model, 
-            language_customization_id, acoustic_customization_id)  
+        try:
+            self._websockets_recognize(
+                audio_path, output_directory, base_model, 
+                language_customization_id, acoustic_customization_id)  
+        except:
+           Err.ConnectionError
+           
         utterances = self._prepare_utterance(
             output_directory, self.recognize_callbacks.get_results())   
         return utterances   
@@ -188,15 +192,40 @@ class WatsonCore:
             content_type = self._format_to_content_types[get_extension(audio_path)]
             """ TODO:  no acoustic_customization id """
             # kwargs = deepcopy(self.defaults)
-            kwargs = {}
+            kwargs = {
+            "ssl_verification": True,
+            # "headers": {
+            #     "x-watson-learning-opt-out": False},
+            "base_model_version": None,
+            "inactivity_timeout": 1000,
+            "interim_results": False,
+            "keywords": None,
+            "keyword_threshold": 0.8,
+            "max_alternatives": 1,
+            "word_alternatives_threshold": None,
+            "word_confidence": True,
+            "timestamps": False,
+            "profanity_filter": False,
+            "smart_formatting": False,
+            "speaker_labels": True,
+            "http_proxy_host": None,
+            "http_proxy_port": None,
+            "grammar_name": None,
+            "redaction": False,
+            "processing_metrics": False,
+            "processing_metrics_interval": 1.0,
+            "audio_metrics": False,
+            "end_of_phrase_silence_time": 0.8,
+            "split_transcript_at_phrase_end": False,
+            "speech_detector_sensitivity": 0.5,
+            "background_audio_suppression": 0.0}
             
             kwargs.update({
                 "audio": source,
                 "content_type" : content_type,
                 "recognize_callback": self.recognize_callbacks,
                 "model" : base_model,
-                # "language_customization_id": language_customization_id,
-                # "acoustic_customization_id": acoustic_customization_id
+                "customization_id": language_customization_id,
             })
             
             print(kwargs)
@@ -312,12 +341,3 @@ class WatsonCore:
         
         return get_cmd_status(pid) == CMD_STATUS.FINISHED
     
-    """ used to have two distinct things, currently , 
-        the temporary directory 
-        - at least one hour of audio 
-        - if not -> chunks 
-        
-        for lm and am that returns boolean -> change it to one parameter 
-
-        raise exception -> define customized exception 
-    """
