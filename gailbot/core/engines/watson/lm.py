@@ -23,16 +23,6 @@ logger = logging.getLogger(__name__)
 
 from .codes import WatsonReturnCodes
 
-class WatsonReturnCodes(IntEnum):
-    """
-    Return codes from Watson.
-    """
-    ok = 200
-    created = 201
-    notFound = 404
-    notAcceptable = 406
-    unsupported = 415
-    
 class WatsonLMInterface:
     def __init__(self, apikey : str, region : str):
         self.connected_to_service = False
@@ -78,7 +68,7 @@ class WatsonLMInterface:
         """
         if not self.connected_to_service: return {}
         resp = self._execute_watson_method(
-            self.stt.get_model, [WatsonReturnCodes.ok], model_name
+            self.stt.get_model, [WatsonReturnCodes.OK], model_name
         )
         return resp
 
@@ -91,7 +81,7 @@ class WatsonLMInterface:
         """
         if not self.connected_to_service: return []
         resp = self._execute_watson_method(
-            self.stt.list_models, [WatsonReturnCodes.ok]
+            self.stt.list_models, [WatsonReturnCodes.OK]
         )
         return [model["name"] for model in resp["models"]] if resp != None else []
 
@@ -108,14 +98,14 @@ class WatsonLMInterface:
         Returns:
             (Union[Dict[str,Any],None]):
                 Mapping from the following keys to their values:
-                customization_id, created, updated,language, dialect,
+                customization_id, CREATED, updated,language, dialect,
                 versions, owner, name, description, base_model_name, status,
                 progress
                 None if unsuccessful.
         """
         if not self.connected_to_service: return []
         resp = self._execute_watson_method(
-            self.stt.get_language_model, [WatsonReturnCodes.ok], customization_id
+            self.stt.get_language_model, [WatsonReturnCodes.OK], customization_id
         )
         return resp
 
@@ -130,7 +120,7 @@ class WatsonLMInterface:
         if not self.connected_to_service: return {}
         custom_models = dict()
         resp = self._execute_watson_method(
-            self.stt.list_language_models, [WatsonReturnCodes.ok]
+            self.stt.list_language_models, [WatsonReturnCodes.OK]
         )
         if resp != None:
             for model in resp["customizations"]:
@@ -159,7 +149,7 @@ class WatsonLMInterface:
         if not self.connected_to_service or name in self.get_custom_models().keys():
             return False
         response = self._execute_watson_method(
-            self.stt.create_language_model, [WatsonReturnCodes.created],
+            self.stt.create_language_model, [WatsonReturnCodes.CREATED],
             [name, base_model_name], {"description": description})
         return response
 
@@ -174,7 +164,7 @@ class WatsonLMInterface:
             (bool): True if successful. False otherwise.
         """
         success = self._execute_watson_method(
-            self.stt.delete_language_model, [WatsonReturnCodes.ok],
+            self.stt.delete_language_model, [WatsonReturnCodes.OK],
             [customization_id])
         return success
 
@@ -189,7 +179,7 @@ class WatsonLMInterface:
             (bool): True if successful. False otherwise.
         """
         success = self._execute_watson_method(
-            self.stt.train_language_model, [WatsonReturnCodes.ok],
+            self.stt.train_language_model, [WatsonReturnCodes.OK],
             [customization_id])
         return success
    
@@ -204,7 +194,7 @@ class WatsonLMInterface:
             (bool): True if successful. False otherwise.
         """
         response = self._execute_watson_method(
-            self.stt.reset_language_model, [WatsonReturnCodes.ok],
+            self.stt.reset_language_model, [WatsonReturnCodes.OK],
             [customization_id])
         return response
     
@@ -217,7 +207,7 @@ class WatsonLMInterface:
             (bool): True if successful. False otherwise.
         """
         response = self._execute_watson_method(
-            self.stt.upgrade_language_model, [WatsonReturnCodes.ok],
+            self.stt.upgrade_language_model, [WatsonReturnCodes.OK],
             [customization_id])
         return response
     
@@ -235,7 +225,7 @@ class WatsonLMInterface:
                 None if unsuccessful.
         """
         response = self._execute_watson_method(
-            self.stt.list_corpora, [WatsonReturnCodes.ok], [customization_id])
+            self.stt.list_corpora, [WatsonReturnCodes.OK], [customization_id])
         if response:
             return response["corpora"]
 
@@ -254,7 +244,7 @@ class WatsonLMInterface:
             corpus_file (BinaryIO): utf-8 encoded plain text file.
         """
         response = self._execute_watson_method(
-            self.stt.add_corpus, [WatsonReturnCodes.created],
+            self.stt.add_corpus, [WatsonReturnCodes.CREATED],
             [customization_id, corpus_name, corpus_file, True])
         return response
 
@@ -275,7 +265,7 @@ class WatsonLMInterface:
         """
         response = self._execute_watson_method(
             self.stt.delete_corpus, 
-            [WatsonReturnCodes.ok], 
+            [WatsonReturnCodes.OK], 
             [customization_id, corpus_name])
         return response
 
@@ -298,7 +288,7 @@ class WatsonLMInterface:
             None if unsuccessful.
         """
         response = self._execute_watson_method(
-            self.stt.get_corpus, [WatsonReturnCodes.ok],
+            self.stt.get_corpus, [WatsonReturnCodes.OK],
             [customization_id, corpus_name])
         return response
     
@@ -319,7 +309,7 @@ class WatsonLMInterface:
                 None if unsuccessful.
         """
         response = self._execute_watson_method(
-            self.stt.list_words, [WatsonReturnCodes.ok],
+            self.stt.list_words, [WatsonReturnCodes.OK],
             [customization_id])
         if response:
             return response["words"]
@@ -343,7 +333,7 @@ class WatsonLMInterface:
         for word in words:
             custom_words.append(CustomWord(word=word))
         response = self._execute_watson_method(
-            self.stt.add_words, [WatsonReturnCodes.created],
+            self.stt.add_words, [WatsonReturnCodes.CREATED],
             [customization_id, custom_words])
         return response
     
@@ -363,7 +353,7 @@ class WatsonLMInterface:
             (bool): True if successful. False otherwise.
         """
         response = self._execute_watson_method(
-            self.stt.delete_word, [WatsonReturnCodes.ok],
+            self.stt.delete_word, [WatsonReturnCodes.OK],
             [customization_id, word])
         return response
 
@@ -406,7 +396,7 @@ class WatsonLMInterface:
                 None of unsuccessful.
         """
         response = self._execute_watson_method(
-            self.stt.get_grammar, [WatsonReturnCodes.ok],
+            self.stt.get_grammar, [WatsonReturnCodes.OK],
             [customization_id, grammar_name])
         return response
 
@@ -432,7 +422,7 @@ class WatsonLMInterface:
             (bool): True if successfully added. False otherwise.
         """
         response  = self._execute_watson_method(
-            self.stt.add_grammar, [WatsonReturnCodes.created],
+            self.stt.add_grammar, [WatsonReturnCodes.CREATED],
             [customization_id, grammar_name, grammar_file, content_type, True])
         return response
 
@@ -452,7 +442,7 @@ class WatsonLMInterface:
             (bool): True if successfully added. False otherwise.
         """
         response = self._execute_watson_method(
-            self.stt.delete_grammar, [WatsonReturnCodes.ok],
+            self.stt.delete_grammar, [WatsonReturnCodes.OK],
             [customization_id, grammar_name])
         return response
 
@@ -463,7 +453,7 @@ class WatsonLMInterface:
         expected_response_codes: List[WatsonReturnCodes],
         args: List = [],
         kwargs: Dict = {}
-    ) -> Any:
+    ) -> Union[bool, Any]:
         """
         Execute a watson method only if connected to watson.
 
@@ -475,8 +465,9 @@ class WatsonLMInterface:
             kwargs (Dict): Keyword arguments to method
 
         Returns:
-            (Tuple[bool,Any]):
-                True + result if successful. False + None otherwise.
+            (Union[bool,Any]):
+                result from watson if successful. 
+                False otherwise.
         """
         if not self.connected_to_service:
             raise ERR.ConnectionError
