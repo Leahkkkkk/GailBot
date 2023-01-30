@@ -145,5 +145,13 @@ dist/
 
 **/py_test_results/*
 
+# audio test file 
+*.mp3 
+*.wav
+*.mpeg
+*.opus
+
+=======
 *_ws/
 output/
+

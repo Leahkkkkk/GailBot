@@ -1,5 +1,3 @@
-
-
 [plugins]
 suite = ""
 apply_plugins = []
@@ -16,6 +14,6 @@ region = 0
 
 [engine.watson.transcribe]
 base_model = 0
-anguage_customization_id = 0
+language_customization_id = 0
 acoustic_customization_id = 0
 

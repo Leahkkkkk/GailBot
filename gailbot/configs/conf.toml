@@ -1,7 +1,7 @@
 
-[paths.engines.confs]
-watson = "engines/watson/config.toml"
-whisper = "engines/whisper/config.toml"
+[paths.engines]
+watson = "engines/watson_config.toml"
+whisper = "engines/whisper_config.toml"
 
 [paths.settings]
 default_conf_path = "settings/default.toml"

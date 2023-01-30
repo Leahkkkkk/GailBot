@@ -6,6 +6,7 @@
 
 from typing import List, Union, Dict, Any
 from dataclasses import dataclass
+from abc import ABC 
 from pydub import AudioSegment
 from .general import (
     get_extension,
@@ -14,42 +15,95 @@ from .general import (
 )
 
 @dataclass
-class Stream:
+class Stream(ABC):
+    """ Abstract class that defines the representation of a media stream 
+    
+    Attributes
+    name : str
+        the name of the stream file 
+    source : Union [List[str], List[Stream]]
+        the source of the stream, which can either be a list of paths to a media 
+        file or a list of media Stream  
+    extension : str
+        the file extension, which tells the file type 
+    """
     source : Union[List[str], List["Stream"]]
     name : str
     extension : str
 
 @dataclass
 class AudioStream(Stream):
+    """ A subclass of Steam class which defines the representation of 
+        audio stream 
+    
+    Attributes
+    segment : AudioSegment
+        stores source of an audio segment 
+        
+    """
     segment : AudioSegment
 
     def __repr__(self):
-        pass
+        print(f"audio stream {self.name}\n")
 
 @dataclass
 class VideoStream(Stream):
+    """ A subclass of Steam class which defines the representation of 
+        Video stream 
+    
+    """
     pass
 
     def __repr__(self):
-        pass
+        return f"video stream {self.name}\n"
+
 
 class AudioHandler:
+    """ Implement a class that contains functions to handle audio file 
+
+    Attributes
+        _SUPPORTED_FORMATS: List[str]
+            a list of supported audio format
+        _DEFAULT_FORMAT: 
+            the default audio format         
+    """
 
     _SUPPORTED_FORMATS = ["mp3", "mpeg", "opus", "wav"]
     _DEFAULT_FORMAT = "wav"
 
 
+    def __repr__(self) -> str:
+        return "Audio Stream handler"
+    
+    @property
     def supported_formats(self) -> List[str]:
+        """ return a list of string with supported audio format"""
         return self._SUPPORTED_FORMATS
 
-    def is_supported(self, path : str) -> bool:
-        return get_extension(path) in self.supported_formats()
+    @staticmethod    
+    def is_supported(path : str) -> bool:
+        """ tell if a audio file is supported by the AudioHandler
 
-    def read_file(self, path : str) -> AudioStream:
+        Args:
+            path (str): a path to a file
+
+        Returns:
+            bool: return true of the file is supported 
         """
-        Read a file as a stream
+        return get_extension(path) in ["mp3", "mpeg", "opus", "wav"]
+        
+    def read_file(self,path : str) -> AudioStream:
+        """ read the audio file data
+
+        Args:
+            path (str): a path to a file 
+
+        Returns:
+            AudioStream: return the audio file data as an AudioStream object 
+                         if the file type is supported, return nothing 
+                         if the file type is unsupported  
         """
-        if not self.is_supported(path):
+        if not self.is_supported(self, path):
             return
         format = get_extension(path)
         segment = AudioSegment.from_file(
@@ -68,6 +122,8 @@ class AudioHandler:
         out_dir : str,
         duration_sec : float = -1,
     ) -> AudioStream:
+        """ record the audio file 
+        """
         raise NotImplementedError()
 
     def write_stream(
@@ -77,9 +133,21 @@ class AudioHandler:
         name : str = None,
         format : str = None
     ) -> str:
-        """
-        Write a stream with the given format. If not format or name is specified,
-        uses the stream's default name and format.
+        """ write a stream with the given format. If not format or name is 
+            specified, uses the stream's default name and format.
+        
+        Args: 
+            stream: AudioStream 
+                stores the audio file data as an instance of AudioStream 
+            outdir: str 
+                a path that stores the output directory 
+            name: str (Optional)
+                file name, default to the name of stream 
+            format: str (Optional)
+                file format, default to the extension of  stream 
+        
+        Return:
+            the file path 
         """
         if format not in self.supported_formats:
             raise Exception(f"Format {format} not supported")
@@ -92,7 +160,15 @@ class AudioHandler:
         return path
 
     def info(self, stream : AudioStream) -> Dict:
-        """Get information about the given audio stream"""
+        """Get information about the given audio stream
+        
+        Args: 
+            stream: AudioStream 
+                stores the audio file data as an instance of AudioStream 
+        
+        Return:
+            a dictionary with the stream information 
+        """
         segment = stream.segment
         return {
                 "name" : stream.name,
@@ -116,6 +192,14 @@ class AudioHandler:
     ) -> AudioStream:
         """
         Apply the specified gain to the audio stream.
+        Args:
+            stream: AudioStream 
+                stores the audio file data as an instance of AudioStream 
+            change_db: float 
+                the targeting value of the volume
+        
+        Return: 
+            the resulting audio stream as an instance of AudioStream
         """
         segment = stream.segment.apply_gain(change_db)
         stream.segment = segment
@@ -127,7 +211,15 @@ class AudioHandler:
         right_stream : AudioStream
     ) -> AudioStream:
         """
-        Get a new stereo stream from the mono streams
+        Get a new stereo stream from the two mono streams
+        Args: 
+            left_stream: AudioStream
+                stores the data of a mono audio file
+            right_stream: AudioStream
+                stores the data of a mono audio file 
+        
+        Return:
+            the resulting audio stream as an instance of AudioStream
         """
 
         stereo_name = f"{left_stream.name}_{right_stream.name}_stereo"
@@ -138,16 +230,24 @@ class AudioHandler:
         return AudioStream(
             sources, stereo_name,self._DEFAULT_FORMAT,segment
         )
-
+    
     def stereo_to_mono(
         self,
         stream : AudioStream
     ) -> List[AudioStream]:
         """
         Convert the given stereo stream to mono.
+        
+        Args: 
+            stream: AudioStream 
+                stores the data of a stereo audio file 
+        
+        Returns:
+            a list of two mono audio file 
+            
         """
 
-        left_segment,right_segment = stream.segment.split_to_mono()
+        left_segment, right_segment = stream.segment.split_to_mono()
         left_stream = AudioStream(
             [stream],f"{stream.name}_left",self._DEFAULT_FORMAT,left_segment
         )
@@ -159,6 +259,14 @@ class AudioHandler:
     def concat(self, streams : List[AudioStream]) -> AudioStream:
         """
         Concat the given stream end to end, start to finish, into a single stream.
+        
+        Args: 
+            streams: List[AudioStream]
+                A list of audio streams 
+        
+        Returns: 
+            the resulting audio stream that is composed by concatenating the 
+            input streams 
         """
         concatenated = AudioSegment.empty()
         for stream in streams:
@@ -166,7 +274,7 @@ class AudioHandler:
         name = "_".join([stream.name for stream in streams])
         name += "_concatenated"
         return AudioStream(
-            sources=[streams],
+            source=[streams],
             name=name,
             extension=self._DEFAULT_FORMAT,
             segment=concatenated
@@ -180,6 +288,15 @@ class AudioHandler:
     ) -> AudioStream:
         """
         Overlay two audio streams on top of each other
+        
+        Args: 
+            left_stream:AudioStream
+                stores one audio file data that will be overlayed 
+            right_stream:AudioStream
+                stores one audio file data that will be overlayed 
+            loop_shorter_stream: bool
+                if true, the shorter audio file will be looped until it reaches
+                the length of the longer audio file 
         """
         # Determine which segment is longer
         if left_stream.segment.duration_seconds > right_stream.segment.duration_seconds:
@@ -202,9 +319,15 @@ class AudioHandler:
 
     def reverse(self, stream : AudioStream) -> AudioStream:
         """
-        Reverse the given audio stream in place
+        Reverse the given audio stream 
+        
+        Args:
+            stream: AudioStream
+                stores the data of an audio stream
+        Returns:
+            the resulting audio stream after reversed
         """
-        reversed_segment = stream.segment.reverse
+        reversed_segment = stream.segment.reverse()
         stream.segment = reversed_segment
         return stream
 
@@ -215,16 +338,24 @@ class AudioHandler:
     ) -> List[AudioStream]:
         """
         Generate chunks of the given audio with the provided duration.
+        
+        Args: 
+        stream: AudioStream
+                stores the data of an audio stream
+        
+        Returns:
+            a list of audio stream, which are the chunks of the given audio 
+            stream
+
         """
         assert chunk_duration_s > 0, f"Duration must be positive"
-
         # Simply return original stream if no chunking possible.
-        if chunk_duration_s < stream.segment.duration_seconds:
+        if chunk_duration_s > stream.segment.duration_seconds:
             return [stream]
 
         duration_ms = chunk_duration_s * 1000
         chunks = list()
-        for i, chunk_segment in enumerate(stream.segment[::duration_ms]):
+        for i, chunk_segment in enumerate(stream.segment[::int(duration_ms)]):
             name = f"{stream.name}_{chunk_duration_s}_chunk_{i}"
             chunk = AudioStream(
                 [stream],name, self._DEFAULT_FORMAT,chunk_segment
@@ -235,15 +366,18 @@ class AudioHandler:
 # TODO: Implement methods.
 class VideoHandler:
 
-    _SUPPORTED_FORMATS = "mxf"
+    _SUPPORTED_FORMATS = ["mxf"]
     _BASE_FORMAT = "mp4"
 
 
     def supported_formats(self) -> List[str]:
         return self._SUPPORTED_FORMATS
 
-    def is_supported(self, path : str) -> bool:
-        return get_extension(path) in self.supported_formats()
+
+    @staticmethod
+    def is_supported(path : str) -> bool:
+        return get_extension(path) in ["mxf"]
+
 
     def read_file(self, path : str) -> VideoStream:
         raise NotImplementedError()
@@ -282,24 +416,79 @@ class VideoHandler:
         raise NotImplementedError()
 
 class MediaHandler:
-
     def __init__(self):
+        """
+        Initializes an object of the MediaHandler class, an abstraction of the AudioHandler and 
+        VideoHandler classes.
+        """
         self.audio_h = AudioHandler()
         self.video_h = VideoHandler()
-
+        self._SUPPORTED_FORMATS = self.audio_h.supported_formats + self.video_h.supported_formats
+    
+    def __repr__(self) -> str:
+        return "Media Stream Handler"
+    
+    
     @property
     def supported_formats(self) -> List[str]:
-        return self.audio_h.supported_formats + self.video_h.supported_formats
+        """ 
+        Accesses list of supported formats.
+
+        Args:
+            Self
+        Returns:
+            A list of strings representing supported formats of the given MediaHandler object
+        """
+        return self._SUPPORTED_FORMATS
 
     #### Audio and Video
+    @staticmethod
+    def is_supported(path: str) -> bool:
+        return AudioHandler.is_supported(path) or \
+               VideoHandler.is_supported(path)
 
-    def is_audio(self, path : str) -> bool:
-        return self.audio_h.is_supported(path)
 
-    def is_video(self, path : str) -> bool:
-        return self.video_h.is_supported(path)
+    @staticmethod
+    def is_audio(path : str) -> bool:
+        """
+        Determines if the given file is an audio file.
+        
+        Args:
+            path: Path to given file in string form
+        
+        Returns:
+            True if the given file is an audio file, false if the given file 
+            is not an audio file.
+        """
+        return AudioHandler.is_supported(path)
+
+    @staticmethod
+    def is_video(path : str) -> bool:
+        """
+        Determines if the given file is a video file.
+
+        Args:
+            path: Path to given file in string form
+        
+        Returns:
+            True if the given file is a video file, false if the given file 
+            is not a video file.
+        """
+        return VideoHandler.is_supported(path)
+
 
     def read_file(self, path : str) -> Stream:
+        """
+        Reads inputted file.
+
+        Args:
+            path: Path to given file in string form
+
+        Returns:
+            An AudioStream or VideoStream containing the read stream.
+            Raises exception if path is not supported.
+
+        """
         if get_extension(path) in self.audio_h.supported_formats:
             return self.audio_h.read_file(path)
         elif get_extension(path) in self.video_h.supported_formats:
@@ -316,6 +505,18 @@ class MediaHandler:
         out_stream_type : Union[AudioStream, VideoStream],
         duration_sec : float = -1,
     ) -> Stream:
+        """
+        Records audio or video file from inputted stream.
+
+        Args:
+            name: File name as a string.
+            out_dir: Path of the desired output directory as a string.
+            out_stream_type: AudioStream or VideoStream, depending on the inputted file.
+            duration_sec: Float containing the duration to record.
+
+        Returns:
+            Currently will raise NotImplementedError.
+        """
         if out_stream_type == AudioStream:
             return self.audio_h.record(name, out_dir, duration_sec)
         else:
@@ -327,13 +528,35 @@ class MediaHandler:
         stream : Stream,
         out_dir : str,
         name : str = None,
-        extension : str = None
+        format : str = None
     ) -> str:
+        """
+        Writes audio or video stream to given output directory.
+
+        Args:
+            stream: Inputted stream, of type AudioStream or VideoStream.
+            out_dir: Path of the desired output directory as a string.
+            name: File name as a string.
+            format: Audio format as a string.
+
+        Returns:
+            Output as type stream.
+        """
         return self._get_handler(stream).write_stream(
-            stream, out_dir, name, extension
+            stream, out_dir, name, format
         )
 
     def info(self, stream : Stream) -> Dict:
+        """
+        Accesss audio or video information
+
+        Args:
+            stream: Inputted stream, of type AudioStream or VideoStream.
+
+        Returns:
+            Information pertaining to the inputted stream in the form of a dictionary 
+            with different data fields.
+        """
         return self._get_handler(stream).info(stream)
 
     def change_volume(
@@ -341,7 +564,17 @@ class MediaHandler:
         stream : Stream,
         change_db : float
     ) -> Stream:
-        return self._get_handler(stream).change_volume(stream)
+        """
+        Change audio or video information by given scale
+        
+        Args:
+            stream: Inputted stream, of type AudioStream or VideoStream.
+            change_db: Float value representing the decibals by which to change the volume.
+            
+        Returns:
+            The resulting stream as an instance of AudioStream or VideoStream.
+           """
+        return self._get_handler(stream).change_volume(stream, change_db)
 
     ### Audio Methods
 
@@ -350,15 +583,47 @@ class MediaHandler:
         left_stream : AudioStream,
         right_stream : AudioStream
     ) -> AudioStream:
+        """
+        Converts the given mono stream to stereo.
+
+         Args: 
+            left_stream: AudioStream
+                stores the data of a mono audio file
+            right_stream: AudioStream
+                stores the data of a mono audio file 
+        
+        Returns:
+            the resulting stereo audio stream as an instance of AudioStream.
+
+        """
         return self.audio_h.mono_to_stereo(left_stream, right_stream)
 
     def stereo_to_mono(
         self,
         stream : AudioStream
     ) -> List[AudioStream]:
+        """
+        Converts the given stereo stream to mono.
+
+        Args: 
+            stream: AudioStream 
+                stores the data of a stereo audio file 
+        
+        Returns:
+            a list of two mono audio streams representing the two files.
+        """
         return self.audio_h.stereo_to_mono(stream)
 
     def concat(self, streams : List[AudioStream]) -> AudioStream:
+        """
+        Concatenates the given stream end to end, start to finish, into a single stream.
+
+        Args:
+            streams: List of AudioStreams of which to concatenate together
+
+        Returns:
+            AudioStream representing the concatenated audio.
+        """
         return self.audio_h.concat(streams)
 
     def overlay(
@@ -367,11 +632,34 @@ class MediaHandler:
         right_stream : AudioStream,
         loop_shorter_stream : bool = False
     ) -> AudioStream:
+        """
+        Overlays two audio streams on top of each other
+
+        Args:
+            left_stream:AudioStream
+                stores one audio file data that will be overlayed 
+            right_stream:AudioStream
+                stores one audio file data that will be overlayed 
+            loop_shorter_stream: bool
+                if true, the shorter audio file will be looped until it reaches
+                the length of the longer audio file 
+        Returns:
+            AudioStream representing the overlaid audio files.
+        """
         return self.audio_h.overlay(
             left_stream, right_stream,loop_shorter_stream
         )
 
     def reverse(self, stream : AudioStream) -> AudioStream:
+        """
+        Reverse the given audio stream in place
+
+        Args:
+            stream: AudioStream to reverse
+
+        Returns:
+            AudioStream representing the reversed audio.
+        """
         return self.audio_h.reverse(stream)
 
     def chunk(
@@ -379,23 +667,34 @@ class MediaHandler:
         stream : AudioStream,
         chunk_duration_s : float
     ) -> List[AudioStream]:
+        """
+        Generates chunks of the given audio with the provided duration.
+
+        Args:
+            stream: AudioStream for which to generate chunks
+            chunk_duration_s: float representing the duration to make each chunk
+
+        Returns:
+            A list of AudioStreams containing each generated chunk
+        """
         return self.audio_h.chunk(
             stream, chunk_duration_s
         )
 
     ### Video Methods
     def extract_audio(self, stream : VideoStream) -> AudioStream:
-        pass
+        raise NotImplementedError
 
     def remove_audio(self, stream : VideoStream) -> VideoStream:
-        pass
+        raise NotImplementedError
 
     def _get_handler(self, stream : Stream) -> Union[AudioHandler, VideoHandler]:
+        """
+        Returns the handler of a given stream; either Audio or Video
+        
+        Args:
+            stream for which to generate the handler
+            
+        Returns:
+            AudioHandler or VideoHandler, depending on the type of the given stream. """
         return self.audio_h if isinstance(stream, AudioStream) else self.video_h
-
-
-
-
-
-
-

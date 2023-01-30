@@ -9,7 +9,6 @@ import os
 from typing import Dict
 # from config import config_from_toml
 from dotted_dict import DottedDict
-from gailbot.configs.utils import get_base_conf_path
 from gailbot.core.utils.general import (
     make_dir,
     move,

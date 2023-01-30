@@ -5,10 +5,14 @@
 # @Last Modified time: 2023-01-16 11:53:04
 # Standard imports
 from typing import Callable, Any, List, Dict
+import sys
 # Local imports
 # Third party imports
 from copy import deepcopy
 from ibm_watson.websocket import RecognizeCallback
+from tests.logger import makelogger 
+
+test_logger = makelogger("callback")
 
 
 class CustomWatsonCallbacks(RecognizeCallback):
@@ -27,64 +31,72 @@ class CustomWatsonCallbacks(RecognizeCallback):
                 User object that is passed as the first parameter of every
                 callback during the lifecycle of the websocket connection.
         """
-        self.callback_closure = self._init_closure()
+        self.closure = self._init_closure()
 
     def reset(self) -> None:
-        self.callback_closure = self._init_closure()
+        self.closure = self._init_closure()
 
     def get_results(self) -> Dict:
-        return deepcopy(self.callback_closure)
+        test_logger.info("on get result")
+        test_logger.info(self.closure)
+        return deepcopy(self.closure)
 
     def on_transcription(self, transcript: List) -> None:
         """
         Called after the service returns the final result for the transcription.
         """
+        test_logger.info("")
         try:
             closure = self.closure
-            closure[0]["callback_status"]["on_transcription"] = True
-            closure[0]["results"]["transcript"].append(transcript)
-        except:
-            pass
+            closure["callback_status"]["on_transcription"] = True
+            closure["results"]["transcript"].append(transcript)
+        except Exception as e:
+            print(e)
 
     def on_connected(self) -> None:
         """
         Called when a Websocket connection was made
         """
+        test_logger.info("connected")
+        print("connected")
         try:
             closure = self.closure
-            closure[0]["callback_status"]["on_connected"] = True
-        except:
-            pass
-
+            closure["callback_status"]["on_connected"] = True
+        except Exception as e:            
+            print(e)
+            
     def on_error(self, error: str) -> None:
         """
         Called when there is an error in the Websocket connection.
         """
+        test_logger.debug("error")
         try:
             closure = self.closure
-            closure[0]["callback_status"]["on_error"] = True
-            closure[0]["results"]["error"] = error
-        except:
-            pass
+            closure["callback_status"]["on_error"] = True
+            closure["results"]["error"] = error
+        except Exception as e:
+            test_logger.debug(e)
 
     def on_inactivity_timeout(self, error: str) -> None:
         """
         Called when there is an inactivity timeout.
-        """
+        """      
+        test_logger.info("") 
         try:
             closure = self.closure
-            closure[0]["callback_status"]["on_inactivity_timeout"] = True
-            closure[0]["results"]["error"] = error
+            closure["callback_status"]["on_inactivity_timeout"] = True
+            closure["results"]["error"] = error
         except:
-            pass
+            test_logger.debug("timeout")
 
     def on_listening(self) -> None:
         """
         Called when the service is listening for audio.
-        """
+        """   
+        test_logger.info("")   
         try:
             closure = self.closure
-            closure[0]["callback_status"]["on_listening"] = True
+            closure["callback_status"]["on_listening"] = True
         except:
             pass
 
@@ -92,9 +104,10 @@ class CustomWatsonCallbacks(RecognizeCallback):
         """
         Called when an interim result is received.
         """
+        test_logger.info("")
         try:
             closure = self.closure
-            closure[0]["callback_status"]["on_hypothesis"] = True
+            closure["callback_status"]["on_hypothesis"] = True
         except:
             pass
 
@@ -102,10 +115,11 @@ class CustomWatsonCallbacks(RecognizeCallback):
         """
         Called when the service returns results. The data is returned unparsed.
         """
+        test_logger.info("")
         try:
             closure = self.closure
-            closure[0]["callback_status"]["on_data"] = True
-            closure[0]["results"]["data"].append(data)
+            closure["callback_status"]["on_data"] = True
+            closure["results"]["data"].append(data)
         except:
             pass
 
@@ -113,28 +127,29 @@ class CustomWatsonCallbacks(RecognizeCallback):
         """
         Called when the Websocket connection is closed
         """
+        test_logger.info("")
         try:
             closure = self.closure
-            closure[0]["callback_status"]["on_close"] = True
+            closure["callback_status"]["on_close"] = True
         except:
             pass
 
-    def _init_closure(self) -> Dict:
-       return  {
-            "callback_status": {
-                "on_transcription": False,
-                "on_connected": False,
-                "on_error": False,
-                "on_inactivity_timeout": False,
-                "on_listening": False,
-                "on_hypothesis": False,
-                "on_data": False,
-                "on_close": False
-            },
-            "results": {
-                "error": None,
-                "transcript": list(),
-                "hypothesis": list(),
-                "data": list()
+    def _init_closure(self) -> Dict:      
+        return  {
+                "callback_status": {
+                    "on_transcription": False,
+                    "on_connected": False,
+                    "on_error": False,
+                    "on_inactivity_timeout": False,
+                    "on_listening": False,
+                    "on_hypothesis": False,
+                    "on_data": False,
+                    "on_close": False
+                },
+                "results": {
+                    "error": None,
+                    "transcript": list(),
+                    "hypothesis": list(),
+                    "data": list()
+                }
             }
-        }
