@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-10 14:06:17
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-12 14:38:24
+# @Last Modified time: 2023-01-18 23:00:46
 
 import sys
 import os
@@ -162,7 +162,6 @@ class GailBot:
 
     def get_plugin_suite_details(self, suite_name : str) -> Dict:
         return self.gb.get_suite_details(suite_name)
-
 
 
 

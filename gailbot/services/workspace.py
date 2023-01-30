@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 15:05:38
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-12 14:59:38
+# @Last Modified time: 2023-01-16 15:03:22
 
 import sys
 import os
@@ -39,9 +39,9 @@ class Workspace:
     def plugins_ws(self):
         return self._plugins_ws
 
-    @property
-    def engine_conf_paths(self):
-        return self._engine_conf_paths
+    # @property
+    # def engine_conf_paths(self):
+    #     return self._engine_conf_paths
 
 
     def init_workspace(self, workspace_dir : str):

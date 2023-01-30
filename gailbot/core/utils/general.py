@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 16:28:03
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-16 12:35:24
+# @Last Modified time: 2023-01-16 14:39:45
 
 
 from enum import Enum 
@@ -164,6 +164,7 @@ def get_extension(path : str) -> str:
     except:
         raise Exception(InvalidPathError)
 
+
 def get_parent_path(path : str) -> str:
     """ given the path to the file, returns the path to the file's 
         parent directory"""
@@ -227,7 +228,7 @@ def delete(path : str) -> None:
     if is_file(path):
         Path(path).unlink(missing_ok=True)
     elif is_directory(path):
-        Path(path).rmdir()
+        shutil.rmtree(path)
     else:
         raise Exception(InvalidPathError)
 
@@ -331,6 +332,7 @@ def write_toml(path : str, data : Dict) -> bool:
             toml.dump(data, f)
     except:
         raise Exception(InvalidPathError)
+
 
 def run_cmd(
     cmd : List[str],

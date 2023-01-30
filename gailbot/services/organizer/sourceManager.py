@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 14:50:11
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-12 14:36:38
+# @Last Modified time: 2023-01-16 15:32:33
 
 from typing import List, Dict, Any, Callable
 from gailbot.core.utils.general import (
@@ -21,6 +21,8 @@ from gailbot.services.pipeline.objects import PayloadOutputWriter
 from .objects import Source, DataFile
 
 
+
+# TODO: These loaders should be somewhere else.
 # Loaders for sources
 class SourceLoader:
 
@@ -30,6 +32,9 @@ class SourceLoader:
 
 class AudioSourceLoader(SourceLoader):
 
+    def __init__(self):
+        self.media_h = MediaHandler()
+
     def __call__(
         self,
         source_name : str,
@@ -37,7 +42,7 @@ class AudioSourceLoader(SourceLoader):
         output_dir : str,
     ) -> Source:
 
-        if not MediaHandler.is_audio(source_path):
+        if not self.media_h.is_audio(source_path):
             return
 
         data_file = DataFile(source_path)
@@ -50,6 +55,9 @@ class AudioSourceLoader(SourceLoader):
 
 class VideoSourceLoader(SourceLoader):
 
+    def __init__(self):
+        self.media_h = MediaHandler()
+
     def __call__(
         self,
         source_name : str,
@@ -57,7 +65,7 @@ class VideoSourceLoader(SourceLoader):
         output_dir : str
     ) -> Source:
 
-        if not MediaHandler.is_video(source_path):
+        if not self.media_h.is_video(source_path):
             return
 
         # NOTE: Any audio / video extraction happens in the pipeline, not here.
@@ -72,6 +80,9 @@ class VideoSourceLoader(SourceLoader):
 
 class ConversationDirectorySourceLoader(SourceLoader):
 
+    def __init__(self):
+        self.media_h = MediaHandler()
+
     def __call__(
         self,
         source_name : str,
@@ -83,7 +94,7 @@ class ConversationDirectorySourceLoader(SourceLoader):
             return
 
         paths = filepaths_in_dir(
-            source_path,MediaHandler.supported_formats,recursive=False
+            source_path,self.media_h.supported_formats(),recursive=False
         )
         data_files = [DataFile(path) for path in paths]
         return Source(

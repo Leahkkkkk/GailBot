@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 16:28:17
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-14 15:18:45
+# @Last Modified time: 2023-01-16 14:33:08
 
 from typing import List, Union, Dict, Any
 from dataclasses import dataclass
@@ -71,6 +71,7 @@ class AudioHandler:
     _SUPPORTED_FORMATS = ["mp3", "mpeg", "opus", "wav"]
     _DEFAULT_FORMAT = "wav"
 
+
     def __repr__(self) -> str:
         return "Audio Stream handler"
     
@@ -90,7 +91,7 @@ class AudioHandler:
             bool: return true of the file is supported 
         """
         return get_extension(path) in ["mp3", "mpeg", "opus", "wav"]
-
+        
     def read_file(self,path : str) -> AudioStream:
         """ read the audio file data
 
@@ -368,13 +369,15 @@ class VideoHandler:
     _SUPPORTED_FORMATS = ["mxf"]
     _BASE_FORMAT = "mp4"
 
-    @property
+
     def supported_formats(self) -> List[str]:
         return self._SUPPORTED_FORMATS
+
 
     @staticmethod
     def is_supported(path : str) -> bool:
         return get_extension(path) in ["mxf"]
+
 
     def read_file(self, path : str) -> VideoStream:
         raise NotImplementedError()
@@ -444,6 +447,7 @@ class MediaHandler:
         return AudioHandler.is_supported(path) or \
                VideoHandler.is_supported(path)
 
+
     @staticmethod
     def is_audio(path : str) -> bool:
         """
@@ -471,6 +475,7 @@ class MediaHandler:
             is not a video file.
         """
         return VideoHandler.is_supported(path)
+
 
     def read_file(self, path : str) -> Stream:
         """

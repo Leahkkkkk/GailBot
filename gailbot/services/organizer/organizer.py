@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 13:48:55
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-12 14:40:34
+# @Last Modified time: 2023-01-16 14:58:17
 
 from typing import Union, List, Dict, Any
 from gailbot.plugins import PluginManager, Plugin, PluginSuite
@@ -21,6 +21,7 @@ class OrganizerService:
     ):
         self.source_manager = SourceManager(sources_ws)
         self.settings_manager = SettingsManager(settings_ws)
+
 
     ## SourceManager
 
@@ -87,9 +88,19 @@ class OrganizerService:
         profile_name : str,
         new_name : str
     ) -> bool:
-        return self.settings_manager.change_profile_name(
-            profile_name, new_name
-        )
+
+        source_names = self.get_sources_using_settings_profile(profile_name)
+        if self.settings_manager.change_profile_name(
+                profile_name, new_name):
+            for name in source_names:
+
+                source = self.source_manager.get_source(name)
+
+                if not self.apply_settings_profile_to_source(
+                        source.identifier,new_name):
+                    return False
+            return True
+        return False
 
     def is_settings_profile(self, profile_name : str) -> bool:
         return self.settings_manager.is_settings_profile(profile_name)

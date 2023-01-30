@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 14:50:11
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-12 14:44:04
+# @Last Modified time: 2023-01-16 14:46:34
 
 from typing import Union, List, Dict, Any
 from gailbot.core.utils.general import (
@@ -46,6 +46,10 @@ class SettingsManager:
         if isinstance(inp, str) and is_file(inp):
             # Check file exists and load toml
             data = read_toml(inp)
+        elif isinstance(inp, dict):
+            data = inp
+        else:
+            raise NotImplementedError()
 
         path = f"{self.workspace_dir}/{profile_name}.{SETTINGS_SAVE_FORMAT}"
         obj = Settings(profile_name,data,path)
@@ -68,8 +72,14 @@ class SettingsManager:
         # Create a toml file to save the settings
         settings = self.settings[profile_name]
         # Save the data to path - overwrite if exists
-        path = settings.save_path if output_dir == None else output_dir
-        return write_toml(path, settings.to_dict(),mode="w")
+        if output_dir != None:
+            make_dir(output_dir,overwrite=False)
+            path = f"{output_dir}/{profile_name}.{SETTINGS_SAVE_FORMAT}"
+        else:
+            path = settings.save_path
+
+        write_toml(path, settings.to_dict())
+        return True
 
     def remove_settings_profile(self, profile_name : str) -> bool:
         if not profile_name in self.settings:
