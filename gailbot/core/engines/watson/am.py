@@ -12,6 +12,7 @@ from enum import IntEnum
 # Third party imports
 from ibm_watson import SpeechToTextV1, ApiException
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
+from gailbot.core.engines import exception as ERR
 from ibm_watson.speech_to_text_v1 import CustomWord
 
 from gailbot.configs.utils import WATSON_DATA
@@ -40,6 +41,7 @@ class WatsonAMInterface:
         self.apikey = apikey
         self.region = region
         self.media_h = MediaHandler()
+        self.connected_to_service = False
         # Parse confs
         self._regions = WATSON_DATA.regions_uris
         self._format_to_content_types = WATSON_DATA.format_to_content
@@ -52,12 +54,15 @@ class WatsonAMInterface:
             raise Exception(
                 f"Region {region} not in {list(self._regions.keys())}"
             )
-
-        # Create the stt service and run
-        authenticator = IAMAuthenticator(self.apikey)
-        self.stt = SpeechToTextV1(authenticator=authenticator)
-        self.stt.set_service_url(self._regions[self.region])
-
+        try:
+            # Create the stt service and run
+            authenticator = IAMAuthenticator(self.apikey)
+            self.stt = SpeechToTextV1(authenticator=authenticator)
+            self.stt.set_service_url(self._regions[self.region])
+        except: 
+            raise ERR.ConnectionError
+        else:
+            self.connected_to_service  = True
     def get_custom_model(
         self,
         customization_id: str
@@ -91,10 +96,10 @@ class WatsonAMInterface:
                 Mapping from custom acoustic model to the customization id.
         """
         custom_models = Dict()
-        success, resp = self._execute_watson_method(
+        response = self._execute_watson_method(
             self.stt.list_acoustic_models, [WatsonReturnCodes.ok])
-        if success:
-            for model in resp["customizations"]:
+        if response:
+            for model in response["customizations"]:
                 custom_models[model["name"]] = model["customization_id"]
         return custom_models
 
@@ -116,10 +121,10 @@ class WatsonAMInterface:
         Returns:
             (bool): True if successful. False otherwise.
         """
-        success, _ = self._execute_watson_method(
+        response = self._execute_watson_method(
             self.stt.create_acoustic_model, [WatsonReturnCodes.created],
             [name, base_model_name, None, description])
-        return success
+        return response
 
     def delete_custom_model(self, customization_id: str) -> bool:
         """
@@ -131,10 +136,10 @@ class WatsonAMInterface:
         Returns:
             (bool): True if successful. False otherwise.
         """
-        success, _ = self._execute_watson_method(
+        response= self._execute_watson_method(
             self.stt.delete_acoustic_model, [WatsonReturnCodes.ok],
             [customization_id])
-        return success
+        return response
 
     def train_custom_model(self, customization_id: str) -> bool:
         """
@@ -146,10 +151,10 @@ class WatsonAMInterface:
         Returns:
             (bool): True if successful. False otherwise.
         """
-        success, _ = self._execute_watson_method(
+        response = self._execute_watson_method(
             self.stt.train_acoustic_model, [WatsonReturnCodes.ok],
             [customization_id])
-        return success
+        return response
 
     def reset_custom_model(self, customization_id: str) -> bool:
         """
@@ -161,10 +166,10 @@ class WatsonAMInterface:
         Returns:
             (bool): True if successful. False otherwise.
         """
-        success, _ = self._execute_watson_method(
+        response = self._execute_watson_method(
             self.stt.reset_acoustic_model, [WatsonReturnCodes.ok],
             [customization_id])
-        return success
+        return response
 
     def upgrade_custom_model(self, customization_id: str, 
                     custom_language_model_id: str = None) -> bool:
@@ -181,10 +186,10 @@ class WatsonAMInterface:
         Returns:
             (bool): True if successful. False otherwise.
         """
-        success, _ = self._execute_watson_method(
+        response = self._execute_watson_method(
             self.stt.upgrade_acoustic_model,
             [customization_id, custom_language_model_id])
-        return success
+        return response
 
     
     def get_custom_audio_resources(self, customization_id: str) \
@@ -202,10 +207,10 @@ class WatsonAMInterface:
                 "duration","name","details","status"
                 None if unsuccessful.
         """
-        success, resp = self._execute_watson_method(
+        response = self._execute_watson_method(
             self.stt.list_audio, [customization_id])
-        if success:
-            return resp["audio"]
+        if response:
+            return response["audio"]
 
         def get_custom_audio_resource(self, customization_id: str,
                                   audio_name: str) -> Union[Dict, None]:
@@ -221,11 +226,11 @@ class WatsonAMInterface:
                         "duration","name","details","status"
                         None if unsuccessful
             """
-            success, resp = self._execute_watson_method(
+            response = self._execute_watson_method(
                 self.stt.get_audio, [WatsonReturnCodes.ok],
                 [customization_id, audio_name])
-            if success:
-                return resp
+            if response:
+                return response
 
         def add_custom_audio_resource(self, customization_id: str,
                                   audio_name: str, audio_resource: BinaryIO, content_type: str)\
@@ -249,10 +254,10 @@ class WatsonAMInterface:
             Returns:
                 (bool): True if successful. False otherwise.
             """
-            success, _ = self._execute_watson_method(
+            response = self._execute_watson_method(
                 self.stt.add_audio, [WatsonReturnCodes.created],
                 [customization_id, audio_name, audio_resource, content_type])
-            return success
+            return response
 
     def delete_custom_audio_resource(self, customization_id: str,
                                      audio_name: str) -> bool:
@@ -266,10 +271,10 @@ class WatsonAMInterface:
         Returns:
             (bool): True if successful. False otherwise.
         """
-        success, _ = self._execute_watson_method(
+        response = self._execute_watson_method(
             self.stt.delete_audio, [WatsonReturnCodes.ok],
             [customization_id, audio_name])
-        return success
+        return response
     
     ## PRIVATE ##
     
@@ -287,9 +292,11 @@ class WatsonAMInterface:
         stt = SpeechToTextV1(authenticator=authenticator)
         return stt
     
-    def _execute_watson_method(self, method: Callable,
-                               expected_response_codes: List[WatsonReturnCodes], args: List = [],
-                               kwargs: Dict = {}) -> Tuple[bool, Any]:
+    def _execute_watson_method(self, 
+                               method: Callable,
+                               expected_response_codes: List[WatsonReturnCodes], 
+                               args: List = [],
+                               kwargs: Dict = {}) -> Any:
         """
         Execute a watson method only if connected to watson.
 
@@ -305,12 +312,16 @@ class WatsonAMInterface:
                 True + result if successful. False + None otherwise.
         """
         if not self.connected_to_service:
-            return (False, None)
+            raise ERR.ConnectionError
         try:
             resp = method(*args, **kwargs)
             if any([resp.get_status_code() == expected
                     for expected in expected_response_codes]):
-                return (True, resp.get_result())
-            return (False, None)
-        except ApiException:
-            return (False, None)
+                return resp.get_result()
+            raise ERR.WatsonMethodExecutionError
+        except ApiException as e:
+            logger.info(f"Exception raised: {e}")
+            return False
+        except ERR.WatsonMethodExecutionError as e:
+            logger.info(f"Exception raised: {e}")
+            return False

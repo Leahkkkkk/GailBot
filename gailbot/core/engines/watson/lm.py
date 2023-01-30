@@ -35,7 +35,7 @@ class WatsonReturnCodes(IntEnum):
     
 class WatsonLMInterface:
     def __init__(self, apikey : str, region : str):
-        self.is_connected = False
+        self.connected_to_service = False
         self.apikey = apikey
         self.region = region
         self.media_h = MediaHandler()
@@ -61,7 +61,7 @@ class WatsonLMInterface:
         except:
             raise Exception("Connect to STT failed")
         else:
-            self.is_connected = True 
+            self.connected_to_service = True 
         
     def get_base_model(self, model_name : str) -> Dict:
         """
@@ -76,12 +76,11 @@ class WatsonLMInterface:
                 supported_features, description if successful.
                 None if unsuccessful.
         """
-        if not self.is_connected: return {}
+        if not self.connected_to_service: return {}
         resp = self._execute_watson_method(
-            self.stt.get_model, [WatsonReturnCodes.OK], model_name
+            self.stt.get_model, [WatsonReturnCodes.ok], model_name
         )
         return resp
-
 
     def get_base_models(self) -> List[str]:
         """
@@ -90,7 +89,7 @@ class WatsonLMInterface:
         Returns:
             (List[str]): Names of the base language models.
         """
-        if not self.is_connected: return []
+        if not self.connected_to_service: return []
         resp = self._execute_watson_method(
             self.stt.list_models, [WatsonReturnCodes.ok]
         )
@@ -114,7 +113,7 @@ class WatsonLMInterface:
                 progress
                 None if unsuccessful.
         """
-        if not self.is_connected: return []
+        if not self.connected_to_service: return []
         resp = self._execute_watson_method(
             self.stt.get_language_model, [WatsonReturnCodes.ok], customization_id
         )
@@ -128,7 +127,7 @@ class WatsonLMInterface:
             (Dict[str,str]):
                  Mapping from custom model name to the customization id.
         """
-        if not self.is_connected: return {}
+        if not self.connected_to_service: return {}
         custom_models = dict()
         resp = self._execute_watson_method(
             self.stt.list_language_models, [WatsonReturnCodes.ok]
@@ -157,12 +156,12 @@ class WatsonLMInterface:
         Returns:
             (bool): True if successful. False otherwise.
         """
-        if not self.is_connected() or name in self.get_custom_models().keys():
+        if not self.connected_to_service or name in self.get_custom_models().keys():
             return False
-        success, _ = self._execute_watson_method(
+        response = self._execute_watson_method(
             self.stt.create_language_model, [WatsonReturnCodes.created],
             [name, base_model_name], {"description": description})
-        return success
+        return response
 
     def delete_custom_model(self, customization_id: str) -> bool:
         """
@@ -174,7 +173,7 @@ class WatsonLMInterface:
         Returns:
             (bool): True if successful. False otherwise.
         """
-        success, _ = self._execute_watson_method(
+        success = self._execute_watson_method(
             self.stt.delete_language_model, [WatsonReturnCodes.ok],
             [customization_id])
         return success
@@ -189,7 +188,7 @@ class WatsonLMInterface:
         Returns:
             (bool): True if successful. False otherwise.
         """
-        success, resp = self._execute_watson_method(
+        success = self._execute_watson_method(
             self.stt.train_language_model, [WatsonReturnCodes.ok],
             [customization_id])
         return success
@@ -204,10 +203,10 @@ class WatsonLMInterface:
         Returns:
             (bool): True if successful. False otherwise.
         """
-        success, _ = self._execute_watson_method(
+        response = self._execute_watson_method(
             self.stt.reset_language_model, [WatsonReturnCodes.ok],
             [customization_id])
-        return success
+        return response
     
     def upgrade_custom_model(self, customization_id: str) -> bool:
         """
@@ -217,10 +216,10 @@ class WatsonLMInterface:
         Returns:
             (bool): True if successful. False otherwise.
         """
-        success, _ = self._execute_watson_method(
+        response = self._execute_watson_method(
             self.stt.upgrade_language_model, [WatsonReturnCodes.ok],
             [customization_id])
-        return success
+        return response
     
     def get_corpora(self, customization_id: str) -> Dict:
         """
@@ -235,10 +234,10 @@ class WatsonLMInterface:
                 out_of_vocabulary_words,total_words, status.
                 None if unsuccessful.
         """
-        success, resp = self._execute_watson_method(
+        response = self._execute_watson_method(
             self.stt.list_corpora, [WatsonReturnCodes.ok], [customization_id])
-        if success:
-            return resp["corpora"]
+        if response:
+            return response["corpora"]
 
     def add_corpus(
         self,
@@ -254,10 +253,10 @@ class WatsonLMInterface:
             corpus_name (str): Name of the corpus
             corpus_file (BinaryIO): utf-8 encoded plain text file.
         """
-        success, _ = self._execute_watson_method(
+        response = self._execute_watson_method(
             self.stt.add_corpus, [WatsonReturnCodes.created],
             [customization_id, corpus_name, corpus_file, True])
-        return success
+        return response
 
     def delete_corpus(
         self,
@@ -274,11 +273,11 @@ class WatsonLMInterface:
         Returns:
             (bool): True if successful. False otherwise.
         """
-        success, _ = self._execute_watson_method(
+        response = self._execute_watson_method(
             self.stt.delete_corpus, 
             [WatsonReturnCodes.ok], 
             [customization_id, corpus_name])
-        return success
+        return response
 
     def get_corpus(
         self,
@@ -298,10 +297,10 @@ class WatsonLMInterface:
             "out_of_vocabulary_words", "total_words","status"
             None if unsuccessful.
         """
-        _, resp = self._execute_watson_method(
+        response = self._execute_watson_method(
             self.stt.get_corpus, [WatsonReturnCodes.ok],
             [customization_id, corpus_name])
-        return resp
+        return response
     
     def get_custom_works(
         self,
@@ -319,11 +318,11 @@ class WatsonLMInterface:
                 "display_as","count","source"
                 None if unsuccessful.
         """
-        success, resp = self._execute_watson_method(
+        response = self._execute_watson_method(
             self.stt.list_words, [WatsonReturnCodes.ok],
             [customization_id])
-        if success:
-            return resp["words"]
+        if response:
+            return response["words"]
 
     def add_custom_works(
         self,
@@ -343,10 +342,10 @@ class WatsonLMInterface:
         custom_words = list()
         for word in words:
             custom_words.append(CustomWord(word=word))
-        success, _ = self._execute_watson_method(
+        response = self._execute_watson_method(
             self.stt.add_words, [WatsonReturnCodes.created],
             [customization_id, custom_words])
-        return success
+        return response
     
     def delete_custom_words(
         self,
@@ -363,10 +362,10 @@ class WatsonLMInterface:
         Returns:
             (bool): True if successful. False otherwise.
         """
-        success, _ = self._execute_watson_method(
+        response = self._execute_watson_method(
             self.stt.delete_word, [WatsonReturnCodes.ok],
             [customization_id, word])
-        return success
+        return response
 
     def get_custom_grammars(
         self,
@@ -384,10 +383,10 @@ class WatsonLMInterface:
                 out_of_vocabulary_words","name","status"
                 None of unsuccessful.
         """
-        success, resp = self._execute_watson_method(
+        response = self._execute_watson_method(
             self.stt.list_grammars, [customization_id])
-        if success:
-            return resp["grammars"]
+        if response:
+            return response["grammars"]
         
     def get_custom_grammar(
         self,
@@ -406,10 +405,10 @@ class WatsonLMInterface:
                 Contains the keys: "out_of_vocabulary_words","name","status"
                 None of unsuccessful.
         """
-        _, resp = self._execute_watson_method(
+        response = self._execute_watson_method(
             self.stt.get_grammar, [WatsonReturnCodes.ok],
             [customization_id, grammar_name])
-        return resp
+        return response
 
     def add_custom_grammar(
         self,
@@ -432,10 +431,10 @@ class WatsonLMInterface:
         Returns:
             (bool): True if successfully added. False otherwise.
         """
-        success, _ = self._execute_watson_method(
+        response  = self._execute_watson_method(
             self.stt.add_grammar, [WatsonReturnCodes.created],
             [customization_id, grammar_name, grammar_file, content_type, True])
-        return success
+        return response
 
     def delete_custom_grammar(
         self,
@@ -452,19 +451,18 @@ class WatsonLMInterface:
         Returns:
             (bool): True if successfully added. False otherwise.
         """
-        success, _ = self._execute_watson_method(
+        response = self._execute_watson_method(
             self.stt.delete_grammar, [WatsonReturnCodes.ok],
             [customization_id, grammar_name])
-        return success
+        return response
 
     # Others
     def _execute_watson_method(
         self,
         method : Callable,
         expected_response_codes: List[WatsonReturnCodes],
-        *args,
-        **kwargs
-
+        args: List = [],
+        kwargs: Dict = {}
     ) -> Any:
         """
         Execute a watson method only if connected to watson.
@@ -480,14 +478,20 @@ class WatsonLMInterface:
             (Tuple[bool,Any]):
                 True + result if successful. False + None otherwise.
         """
+        if not self.connected_to_service:
+            raise ERR.ConnectionError
         try:
             resp = method(*args, **kwargs)
             if any([resp.get_status_code() == expected
                         for expected in expected_response_codes]):
                 return resp.get_result()
+            raise ERR.WatsonMethodExecutionError
         except ApiException as e:
-            logger.log(f"Exception raised: {e}")
-
+            logger.info(f"Exception raised: {e}")
+            return False
+        except ERR.WatsonMethodExecutionError as e:
+            logger.info(f"Exception raised: {e}")
+            return False
         
     def _is_api_key_valid(self, apikey: str, url: str) -> bool:
         """
