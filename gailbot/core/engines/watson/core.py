@@ -190,12 +190,16 @@ class WatsonCore:
             # Prepare args
             source = AudioSource(f)
             content_type = self._format_to_content_types[get_extension(audio_path)]
-            """ TODO:  no acoustic_customization id """
+            
+            
+            """ TODO:  confirm current set of key word arguments is okay, 
+                       headers and customized weight does not work  """
             # kwargs = deepcopy(self.defaults)
             kwargs = {
             "ssl_verification": True,
             # "headers": {
             #     "x-watson-learning-opt-out": False},
+            
             "base_model_version": None,
             "inactivity_timeout": 1000,
             "interim_results": False,
