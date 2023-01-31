@@ -10,19 +10,15 @@ class Plugin(DataclassFromDict):
     suite: str = field_from_dict()
     apply_plugins: List[str] = field_from_dict()
 
-
 @dataclass 
 class Whisper(DataclassFromDict):
     some_ley: str = field_from_dict()
     
-
-
 @dataclass 
 class WatsonInitialization(DataclassFromDict):
     apikey: int = field_from_dict()
     region: int = field_from_dict()
-
-
+    
 @dataclass 
 class WatsonTranscribe(DataclassFromDict):
     base_model : int = field_from_dict()
@@ -44,6 +40,6 @@ class Engine:
     watson: Watson = Watson
     
 @dataclass 
-class Setting:
+class Default:
     plugins: Plugin = Plugin.from_dict(setting_data["plugins"])
     engine:  Engine = Engine

@@ -8,7 +8,7 @@
 """ reading the toml file and initialize the instances of the dataclass  
     whose interfaces are provided by the configparser 
 """
-from gailbot.configs.configparser import engines, settings 
+from gailbot.configs.configparser import default, watson 
 
-WATSON_DATA = engines.Watson() 
-SETTING_DATA = settings.Setting
+WATSON_DATA = watson.Watson() 
+SETTING_DATA = default.Default
