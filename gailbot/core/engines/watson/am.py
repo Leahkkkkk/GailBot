@@ -4,6 +4,11 @@
 # @Last Modified by:   Muhammad Umair
 # @Last Modified time: 2023-01-16 12:01:31
 
+""" TODO:
+1. only function to create and delete model are tested 
+   function to train the model are not tested 
+
+"""
 # Standard library imports
 from typing import Any, BinaryIO, List, TextIO, Tuple, Dict, Callable, Union
 from enum import IntEnum

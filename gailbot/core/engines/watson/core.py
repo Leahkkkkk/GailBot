@@ -3,11 +3,14 @@
 # @Date:   2023-01-09 11:25:49
 # @Last Modified by:   Muhammad Umair
 # @Last Modified time: 2023-01-16 11:59:32
+
+""" TODO:
+1. keyword arguments : headers, customization weight are removed 
+2. need to test for long audio  (1 hr)
+"""
 import os 
 from typing import List, Any, Dict
 from itertools import chain
-
-import time
 from copy import deepcopy
 # Third party imports
 from ibm_watson import SpeechToTextV1, ApiException
@@ -194,36 +197,7 @@ class WatsonCore:
             
             """ TODO:  confirm current set of key word arguments is okay, 
                        headers and customized weight does not work  """
-            # kwargs = deepcopy(self.defaults)
-            kwargs = {
-            "ssl_verification": True,
-            # "headers": {
-            #     "x-watson-learning-opt-out": False},
-            
-            "base_model_version": None,
-            "inactivity_timeout": 1000,
-            "interim_results": False,
-            "keywords": None,
-            "keyword_threshold": 0.8,
-            "max_alternatives": 1,
-            "word_alternatives_threshold": None,
-            "word_confidence": True,
-            "timestamps": False,
-            "profanity_filter": False,
-            "smart_formatting": False,
-            "speaker_labels": True,
-            "http_proxy_host": None,
-            "http_proxy_port": None,
-            "grammar_name": None,
-            "redaction": False,
-            "processing_metrics": False,
-            "processing_metrics_interval": 1.0,
-            "audio_metrics": False,
-            "end_of_phrase_silence_time": 0.8,
-            "split_transcript_at_phrase_end": False,
-            "speech_detector_sensitivity": 0.5,
-            "background_audio_suppression": 0.0}
-            
+            kwargs = deepcopy(self.defaults)
             kwargs.update({
                 "audio": source,
                 "content_type" : content_type,
@@ -236,7 +210,20 @@ class WatsonCore:
             stt.recognize_using_websocket(**kwargs)
             delete(self.engine_workspace_dir)
             
-    def _prepare_utterance(self, output_directory, closure: Dict[str, Any]) -> List:
+    def _prepare_utterance(self, output_directory: str, closure: Dict[str, Any]) -> List:
+        """ 
+         output the response data from google STT, convert the raw data to 
+        utterance data which is a list of dictionary in the format 
+        {spearker: , start_time: , end_time: , text: }
+        
+
+        Args:
+            output_directory (str):  output path 
+            closure (Dict[str, Any]): contains the result data from Watson
+
+        Returns:
+            List:  a list of dictionary that contains the output data
+        """
         try:
             utterances = list()
             # Mapping based on (start time, end time)

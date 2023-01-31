@@ -4,7 +4,7 @@ def makelogger(filename:str):
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
     # Create a file handler
-    file_handler = logging.FileHandler(f'tests/log_files/{filename}.log')
+    file_handler = logging.FileHandler(f'tests/test_message/{filename}.log')
     file_handler.setLevel(logging.INFO)
 
     # Create a formatter

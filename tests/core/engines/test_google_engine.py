@@ -6,7 +6,7 @@ import os
 import pytest 
 
 
-test_logger = makelogger("test_google_engine")
+test_logger = makelogger("pytest_google_engine")
 def _test_init_google():
     google_engine = Google()
     assert not google_engine.transcribe_success
@@ -19,7 +19,13 @@ def _test_core_run_engine(audio_path):
 
 
 @pytest.mark.parametrize("audio_path", [AudioPath.SMALL_AUDIO_WAV])
-def test_core_transcribe(audio_path):
-    core = GoogleCore()
+def _test_core_transcribe(audio_path):
+    core = GoogleCore()    
     core.transcribe(audio_path, AudioPath.GOOGLE_OUT_PATH)
     
+@pytest.mark.parametrize("audio_path", [AudioPath.SMALL_AUDIO_MP3, AudioPath.SMALL_AUDIO_WAV])
+def test_google_engine(audio_path):
+    core = Google()
+    assert not core.transcribe_success
+    core.transcribe(audio_path, AudioPath.GOOGLE_OUT_PATH)
+    assert core.transcribe_success

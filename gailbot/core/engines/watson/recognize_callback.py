@@ -12,6 +12,7 @@ from copy import deepcopy
 from ibm_watson.websocket import RecognizeCallback
 from tests.logger import makelogger 
 
+""" TODO: eventually delete the test_logger  """
 test_logger = makelogger("callback")
 
 class CustomWatsonCallbacks(RecognizeCallback):

@@ -86,7 +86,7 @@ class Watson(Engine):
         base_model : str,
         language_customization_id : str = "",
         acoustic_customization_id : str = ""
-    ) -> Dict:
+    ) -> List[Dict[str, str]]:
         """Use the engine to transcribe an item
         
         Args: 
@@ -100,6 +100,11 @@ class Watson(Engine):
             ID of the custom language model.
         acoustic_customization_id: str (optional): 
             ID of the custom acoustic model.
+        
+        Returns:
+            A list of dictionary that contains the utterance data of the 
+            audio file, each part of the audio file is stored in the format 
+            {speaker: , start_time: , end_time: , text: }
         """
         try:
             utterances = self.core.transcribe(

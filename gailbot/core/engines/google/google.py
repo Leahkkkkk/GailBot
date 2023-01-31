@@ -4,6 +4,13 @@ from ..google.core import GoogleCore
 from typing import Any, List, Dict 
 
 class Google(Engine):
+    """ 
+    An Engine that connect to Google Cloud STT, provide function to transcribe 
+    audio file with Google Cloud STT
+
+    Inheritance:
+        Engine 
+    """
     ENGINE_NAME = "Google"
     def __init__(self, api_key: Dict = None, *args, **kwargs):
         self.apikey = api_key
@@ -15,9 +22,26 @@ class Google(Engine):
     
     @property
     def supported_formats(self) -> List[str]:
+        """ 
+        a list of supported format that can be transcribe with the STT engine 
+        """
         return self.core.supported_formats
     
-    def transcribe(self, audio_path: str, output_directory: str) -> Any :
+    def transcribe(self, audio_path: str, output_directory: str) -> List[Dict[str, str]] :
+        """ use Google engine to transcribe the audio file 
+
+        Args:
+            audio_path (str): path to audio source
+            output_directory (str): path to output directory 
+
+        Raises:
+            Err.TranscriptionError
+
+        Returns:
+            A list of dictionary that contains the utterance data of the 
+            audio file, each part of the audio file is stored in the format 
+            {speaker: , start_time: , end_time: , text: }
+        """
         try:
             res = self.core.transcribe(audio_path, output_directory)
         except:
@@ -27,9 +51,17 @@ class Google(Engine):
             return res
     
     def is_file_supported(self, file_path: str) -> bool:
+        """ 
+        given a file path, return true if the file format is supported by 
+        the Google STT engine 
+        """
         return self.core.is_file_supported(file_path)
     
     def get_supported_formats(self) -> List[str]:
+        """ 
+        return a list of supported format that can be 
+        transcribe with the STT engine 
+        """
         return self.core.supported_formats
     
     def get_engine_name(self) -> str:
