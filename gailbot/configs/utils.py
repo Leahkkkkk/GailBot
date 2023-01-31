@@ -4,7 +4,6 @@
 # @Last Modified by:   Muhammad Umair
 # @Last Modified time: 2023-01-15 16:07:38
 
-
 """ reading the toml file and initialize the instances of the dataclass  
     whose interfaces are provided by the configparser 
 """
