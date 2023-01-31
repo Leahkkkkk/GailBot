@@ -1,0 +1,30 @@
+# pipeline:
+#   name: pyannote.audio.pipelines.VoiceActivityDetection
+#   params:
+#     segmentation: /Users/muhammadumair/Documents/Repositories/mumair01-repos/GailBot/gailbot/core/engines/whisperEngine/diarization/pytorch_model.bin
+
+# params:
+#   min_duration_off: 0.09791355693027545
+#   min_duration_on: 0.05537587440407595
+#   offset: 0.4806866463041527
+#   onset: 0.8104268538848918
+
+
+pipeline:
+  name: pyannote.audio.pipelines.SpeakerDiarization
+  params:
+    clustering: AgglomerativeClustering
+    embedding: speechbrain/spkrec-ecapa-voxceleb
+    embedding_batch_size: 32
+    embedding_exclude_overlap: true
+    segmentation: /Users/muhammadumair/Documents/Repositories/mumair01-repos/GailBot/gailbot/core/engines/whisperEngine/diarization/pytorch_model.bin
+    segmentation_batch_size: 32
+
+params:
+  clustering:
+    method: centroid
+    min_cluster_size: 15
+    threshold: 0.7153814381597874
+  segmentation:
+    min_duration_off: 0.5817029604921046
+    threshold: 0.4442333667381752

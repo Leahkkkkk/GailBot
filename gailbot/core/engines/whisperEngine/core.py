@@ -2,23 +2,22 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-31 11:09:26
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-31 17:02:38
+# @Last Modified time: 2023-01-31 18:19:02
 
 import sys
 import os
 import json
+from typing import List, Dict, Any
 
 import torch
 
 import gailbot.core.engines.whisperEngine.whisperTimestamped as whisper
 
-
 from gailbot.core.engines.whisperEngine.whisperTimestamped.utils import (
     force_cudnn_initialization
 )
 
-
-from typing import List, Dict, Any
+from .diarization.pyannote_diarization import DiarizationPipeline
 
 
 from gailbot.core.utils.general import (
@@ -95,6 +94,8 @@ class WhisperCore:
 
         self.model = whisper.load_model(self.model_name,device=self.device)
 
+        self.diarization_pipeline = DiarizationPipeline()
+
     def transcribe(
         self,
         audio_path : str,
@@ -112,26 +113,16 @@ class WhisperCore:
                 f"Unsupported language, must be one of: {language}"
             )
 
+        # Identify the speaker chunks
+        self.diarization_pipeline.identity_speaker_chunks(audio_path)
 
-        # Load the audio and models
-        audio = whisper.load_audio(audio_path)
+        # # Load the audio and models, transcribe, and return the parsed result
+        # audio = whisper.load_audio(audio_path)
+        # result = whisper.transcribe(self.model, audio, language=language)
 
-        result = whisper.transcribe(self.model, audio, language=language)
+        # print(json.dumps(whisper.parse_into_full_text(result), indent = 2, ensure_ascii = False))
+        # return whisper.parse_into_word_dicts(result)
 
-        parsed = whisper.parse_into_word_dicts(result)
-
-        print(json.dumps(parsed, indent = 2, ensure_ascii = False))
-
-        full_text = whisper.parse_into_full_text(result)
-
-        print(json.dumps(full_text, indent = 2, ensure_ascii = False))
-
-        # TODO: Format the result in the expected format.
-        # import json
-        # print(result)
-        # print(type(result))
-        # print(json.dumps(result, indent = 2, ensure_ascii = False))
-        # Transcribe and parse the results
 
     def get_supported_formats(self) -> List[str]:
         return list(_FORMATS)
