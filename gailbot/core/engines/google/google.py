@@ -1,24 +1,36 @@
 from ..engine import Engine
-from typing import Any, List 
+from ...engines import exception as Err
+from ..google.core import GoogleCore
+from typing import Any, List, Dict 
 
 class Google(Engine):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.ENGINE_NAME = "Google"
+    ENGINE_NAME = "Google"
+    def __init__(self, api_key: Dict = None, *args, **kwargs):
+        self.apikey = api_key
+        self.core = GoogleCore(self.apikey)
         self.transcribe_success = False
-        raise NotImplementedError 
     
     def __repr__(self):
-        return "Google Speech To Text Engine"
+        return self.ENGINE_NAME
     
-    def transcribe(self, *args, **kwargs) -> Any :
-        return super().transcribe(*args, **kwargs)
+    @property
+    def supported_formats(self) -> List[str]:
+        return self.core.supported_formats
+    
+    def transcribe(self, audio_path: str, output_directory: str) -> Any :
+        try:
+            res = self.core.transcribe(audio_path, output_directory)
+        except:
+            raise Err.TranscriptionError
+        else:
+            self.transcribe_success = True
+            return res
     
     def is_file_supported(self, file_path: str) -> bool:
-        return super().is_file_supported(file_path)
+        return self.core.is_file_supported(file_path)
     
     def get_supported_formats(self) -> List[str]:
-        return super().get_supported_formats()
+        return self.core.supported_formats
     
     def get_engine_name(self) -> str:
         return self.ENGINE_NAME

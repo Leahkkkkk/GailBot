@@ -14,7 +14,6 @@ from tests.logger import makelogger
 
 test_logger = makelogger("callback")
 
-
 class CustomWatsonCallbacks(RecognizeCallback):
     """
     Extends the watson callback class to allow custom callbacks to be executed

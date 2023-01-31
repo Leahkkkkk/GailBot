@@ -91,7 +91,6 @@ def test_change_volume(handlers):
             format = general.get_extension(file)
             handler.write_stream(after_change, output, format = format)
     
-
 def test_mono_stereo_convert(handlers):
     for handler in handlers:
         files = general.filepaths_in_dir(INPUT_DIR)

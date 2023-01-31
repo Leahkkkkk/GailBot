@@ -86,7 +86,7 @@ class Watson(Engine):
         base_model : str,
         language_customization_id : str = "",
         acoustic_customization_id : str = ""
-    ) -> str:
+    ) -> Dict:
         """Use the engine to transcribe an item
         
         Args: 
@@ -101,14 +101,14 @@ class Watson(Engine):
         acoustic_customization_id: str (optional): 
             ID of the custom acoustic model.
         """
-        # try:
-        utterances = self.core.transcribe(
-            audio_path, output_directory, base_model,
-            language_customization_id, acoustic_customization_id)
-        self.is_transcribe_success = True
-        return utterances
-        # except:
-            # raise Err.ThranscriptionError
+        try:
+            utterances = self.core.transcribe(
+                audio_path, output_directory, base_model,
+                language_customization_id, acoustic_customization_id)
+            self.is_transcribe_success = True
+            return utterances
+        except:
+            raise Err.TranscriptionError
 
     def language_customization_interface(self) -> WatsonLMInterface:
         """ return the watson customized language model interface """

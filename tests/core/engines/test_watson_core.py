@@ -12,10 +12,8 @@ WATSON_REGION          = "dallas"
 WATSON_BASE_LANG_MODEL = "en-US_NarrowbandModel"
 SMALL_AUDIO = os.path.join(os.getcwd(), "data/test_file/audio_file_input/test.mp3")
 MEDIA_AUDIO = os.path.join(os.getcwd(), "data/test_file/audio_file_input/longtest.wav")
-OPUS_AUDIO = os.path.join(os.getcwd(), "data/test_file/audio_file_input/longtest.wav")
-
+OPUS_AUDIO = os.path.join(os.getcwd(), "data/test_file/compressed/longtest.opus")
 AUDIO_INPUT = [SMALL_AUDIO, MEDIA_AUDIO, OPUS_AUDIO]
-
 OUT_PATH =  os.path.join(os.getcwd(), "data/watson_output")
 
 def test_watson_core():
@@ -49,10 +47,11 @@ def test_watson(inpath, outpath):
     for format in  watson.supported_formats:  
         assert watson.is_file_supported(f"test.{format}")
     assert not watson.was_transcription_successful()
-    watson.transcribe(inpath, 
+    utterance = watson.transcribe(inpath, 
                       outpath,
                       WATSON_BASE_LANG_MODEL, 
                       WATSON_LANG_CUSTOM_ID)
+    logger.info(utterance)
     assert watson.was_transcription_successful()
 
     
