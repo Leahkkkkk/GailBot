@@ -37,14 +37,14 @@ def test_support_format(handlers: List[media.AudioHandler]):
     for handler in handlers:
         assert handler.supported_formats == handler._SUPPORTED_FORMATS 
 
-def test_is_supported(handlers):
+def test_is_supported(handlers: List[media.MediaHandler]):
     for handler in handlers:
         basename = "test"
+        print(handler.supported_formats)
         for format in handler.supported_formats:
-            assert media.AudioHandler.is_supported(f"{basename}.{format}")
+            assert media.MediaHandler.is_supported(f"{basename}.{format}")
+            assert not media.MediaHandler.is_supported(f"{basename}.not {format}")
             
-        for format in handler.supported_formats:
-            assert not media.AudioHandler.is_supported(f"{basename}.not{format}")
     
 
 def test_read_write_stream(handlers):

@@ -103,7 +103,7 @@ class AudioHandler:
                          if the file type is supported, return nothing 
                          if the file type is unsupported  
         """
-        if not self.is_supported(self, path):
+        if not AudioHandler.is_supported(path):
             return
         format = get_extension(path)
         segment = AudioSegment.from_file(
