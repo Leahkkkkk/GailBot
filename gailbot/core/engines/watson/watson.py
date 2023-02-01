@@ -13,7 +13,7 @@ from .core import WatsonCore
 from .lm import WatsonLMInterface
 from .am import WatsonAMInterface
 from ..engine import Engine
-from gailbot.core.engines import exception as Err
+from gailbot.core.engines import exception as ERR
 from gailbot.core.utils.general import write_json
 class Watson(Engine):
     """ 
@@ -113,7 +113,7 @@ class Watson(Engine):
             self.is_transcribe_success = True
             return utterances
         except:
-            raise Err.TranscriptionError
+            raise ERR.TranscriptionError("Error raised: transcription error")
 
     def language_customization_interface(self) -> WatsonLMInterface:
         """ return the watson customized language model interface """

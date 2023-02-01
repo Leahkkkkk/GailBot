@@ -5,6 +5,7 @@ import toml
 
 @dataclass
 class WatsonConfig(DataclassFromDict):
+    """Loads data from the Watson engine configuration"""
     max_file_size_bytes: float = field_from_dict()
     regions_uris: Dict = field_from_dict()
     format_to_content: Dict = field_from_dict()
@@ -14,5 +15,10 @@ class WatsonConfig(DataclassFromDict):
 
 
 def load_watson_config(path: str):
+    """Loads data from the Watson engine configuration
+    
+    Args:
+        path (str) : path to the toml file to load
+    """
     d = toml.load(path)
     return WatsonConfig.from_dict(d["watson"])

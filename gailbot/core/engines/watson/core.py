@@ -18,7 +18,7 @@ from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from ibm_watson.websocket import RecognizeCallback, AudioSource
 from .recognize_callback import CustomWatsonCallbacks
 from .recognition_results import RecognitionResult
-from gailbot.core.engines import exception as Err
+from gailbot.core.engines import exception as ERR
 from gailbot.configs import WATSON_DATA
 from gailbot.core.utils.media import MediaHandler
 from gailbot.core.utils.general import (
@@ -34,7 +34,7 @@ from gailbot.core.utils.general import (
     write_json,
     CMD_STATUS
 )
-WORK_SPACE = "watson_workspace"
+
 class WatsonCore:
     """
     Implement core functionalities to transcribe an audio file through 
@@ -128,7 +128,7 @@ class WatsonCore:
                 audio_path, output_directory, base_model, 
                 language_customization_id, acoustic_customization_id)  
         except:
-           Err.ConnectionError
+           ERR.ConnectionError("Error: connection error")
            
         utterances = self._prepare_utterance(
             output_directory, self.recognize_callbacks.get_results())   
@@ -165,7 +165,7 @@ class WatsonCore:
         self.recognize_callbacks.reset()
         # Checks all the input data is valid
         assert is_file(audio_path), f"Not a file {audio_path}"
-        work_space_directory = os.path.join(output_directory, WORK_SPACE)
+        work_space_directory = os.path.join(output_directory, WATSON_DATA.workspace)
         try: 
             if not is_directory(output_directory): 
                 make_dir(output_directory, overwrite=True)
@@ -173,13 +173,13 @@ class WatsonCore:
             assert is_directory(output_directory)
             self.engine_workspace_dir = work_space_directory
         except:
-            raise FileExistsError()
+            raise FileExistsError("Error: file exists error")
         
         try:
             if get_size(audio_path) >= self.max_size_bytes:
                 audio_path = self._convert_to_opus(audio_path, work_space_directory)
         except: 
-            raise Err.AudioFileError()
+            raise ERR.AudioFileError("Error: Failed to compile large audio file to opus format")
 
         # Create the stt service and run
         try:
@@ -187,7 +187,7 @@ class WatsonCore:
             stt = SpeechToTextV1(authenticator=authenticator)
             stt.set_service_url(self.regions[self.region])
         except:
-            raise Err.APIKeyError()
+            raise ERR.APIKeyError("ERROR: API key error")
 
         with open(audio_path, "rb") as f:
             # Prepare args
@@ -195,7 +195,8 @@ class WatsonCore:
             content_type = self._format_to_content_types[get_extension(audio_path)]
             
             
-            """ TODO:  confirm current set of key word arguments is okay, 
+            """ 
+            :  confirm current set of key word arguments is okay, 
                        headers and customized weight does not work  """
             kwargs = deepcopy(self.defaults)
             kwargs.update({
@@ -320,13 +321,13 @@ class WatsonCore:
         while True:
             match get_cmd_status(pid):
                 case CMD_STATUS.STOPPED:
-                    raise ChildProcessError()
+                    raise ChildProcessError("ERROR: child process error")
                 case CMD_STATUS.FINISHED:
                     break 
                 case CMD_STATUS.ERROR:
-                    raise ChildProcessError()
+                    raise ChildProcessError("ERROR: child process error")
                 case CMD_STATUS.NOTFOUND:
-                    raise ProcessLookupError()
+                    raise ProcessLookupError("ERROR: process lookup error")
         
         return get_cmd_status(pid) == CMD_STATUS.FINISHED
     

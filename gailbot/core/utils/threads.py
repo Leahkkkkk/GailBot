@@ -178,7 +178,7 @@ class ThreadPool(ThreadPoolExecutor):
             return self.task_pool[key].done()
         except: 
             if error_fun: error_fun()
-            else: raise ThreadError
+            else: raise ThreadError("ERROR: failed to get thread status")
 
     def wait_for_all_completion(self, error_fun: Callable = None ):
         """ 
@@ -219,10 +219,10 @@ class ThreadPool(ThreadPoolExecutor):
             assert not future.exception()
         except:
             if error_fun: error_fun()
-            else: raise ThreadError
+            else: raise ThreadError("Err: failed to wait the thread")
 
 
-    def cancel(self, key: int):
+    def cancel(self, key: int) -> bool:
         """
         Cancels the task at the given key.
 
@@ -234,15 +234,16 @@ class ThreadPool(ThreadPoolExecutor):
             properly cancelled.
         
         Return:
-            None
+            true if the thread is canceled 
         """
         self._task_in_pool(key)
         try:
             self.task_pool[key].cancel()
             if not self.task_pool[key].cancelled():
-                raise TaskCancelException()
+                raise TaskCancelException("Failed to cancel thread")
+            return True
         except:
-            print("running task cannot be cancelled")
+            return False
 
     def cancel_all(self) -> None:
         """ 
@@ -258,8 +259,9 @@ class ThreadPool(ThreadPoolExecutor):
             for task in self.task_pool.values():
                 if not task.done():
                     task.cancel()
+            return True
         except:
-            raise TaskCancelException()
+            return False
 
 
     def add_callback(self, key, fun: Callable, error_fun: Callable = None):
@@ -286,7 +288,7 @@ class ThreadPool(ThreadPoolExecutor):
         elif error_fun:
             error_fun()
         else: 
-            raise ThreadError
+            raise ThreadError("ERROR: Failed to add callback")
     
     def add_task_after(
         self, key, fun: Callable, args: List = None, 
@@ -313,7 +315,7 @@ class ThreadPool(ThreadPoolExecutor):
             return self.add_task(fun, args, kwargs)
         except:
             if error_fun: error_fun()
-            else: raise ThreadError
+            else: raise ThreadError("ERROR: Failed to add task after")
     
     def is_busy(self) -> bool:
         """
@@ -350,7 +352,7 @@ class ThreadPool(ThreadPoolExecutor):
             None
         """
         if not key in self.task_pool:
-            raise TaskNotFoundException()
+            raise TaskNotFoundException("ERROR: task is not found")
     
     def _handle_error(self, future: Future) -> None :
         """
@@ -366,4 +368,4 @@ class ThreadPool(ThreadPoolExecutor):
             None
         """
         if future.exception():
-            raise ThreadError
+            raise ThreadError("ERROR: exception raised running the task")

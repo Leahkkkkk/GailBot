@@ -30,7 +30,7 @@ opus    = "audio/ogg;codecs=opus"
 # NOTE: Toml does not support null, so I've commented those values out for now.
 [watson.defaults]
 ssl_verification                = true
-customization_weight            = 0.3
+# customization_weight            = 0.3
 # base_model_version              = None
 inactivity_timeout              = 1000
 interim_results                 = false
@@ -55,6 +55,6 @@ split_transcript_at_phrase_end  = false
 speech_detector_sensitivity     = 0.5
 background_audio_supression     = 0.0
 
-[watson.defaults.headers]
-x-watson-learning-opt-out       = true
+# [watson.defaults.headers]
+# x-watson-learning-opt-out       = true
 

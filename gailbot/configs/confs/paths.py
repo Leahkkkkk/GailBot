@@ -12,13 +12,14 @@ import os
 CONFIG_ROOT = os.path.dirname(__file__)
 
 @dataclass 
-class EnginePath(DataclassFromDict):
+class ConfigPath(DataclassFromDict):
+    """
+    Loads paths to engine configuration files
+    """
     watson: str = field_from_dict()
     whisper: str = field_from_dict()
     google: str = field_from_dict()
     default: str = field_from_dict()
 
-
-
 path_dict = toml.load(os.path.join(CONFIG_ROOT, "paths.toml"))
-PATH = EnginePath.from_dict(path_dict["engines"]) 
+PATH = ConfigPath.from_dict(path_dict["paths"]) 

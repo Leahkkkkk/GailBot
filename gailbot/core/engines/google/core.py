@@ -54,7 +54,7 @@ class GoogleCore:
                 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = google_key
             self.client = speech.SpeechClient()   
         except:
-            raise Err.ConnectionError
+            raise Err.ConnectionError("ERROR: Failed to connect to google cloud")
         else:
             self.connected = True
             test_logger.info("Connected")
@@ -95,13 +95,13 @@ class GoogleCore:
         try:
             response = self.run_engine(audio_path)
         except:
-            raise Err.TranscriptionError
+            raise Err.TranscriptionError("ERROR: Google STT transcription failed")
         
         try:
             return self.prepare_utterance(output_directory, response)
         except Exception as e :
             test_logger.error(e)
-            raise Err.OutPutError
+            raise Err.OutPutError(f"ERROR: Output Google STT failed, error message: {e}")
        
             
     def run_engine(self, audio_path: str) -> cloud_speech.RecognizeResponse:
@@ -133,7 +133,7 @@ class GoogleCore:
         except Exception as e:
             test_logger.error(e)
             self.transcribe_error = True
-            raise Err.TranscriptionError
+            raise Err.TranscriptionError("Google STT Transcription failed")
         else:
             self.transcribing = False
             self.transcribe_success = True
@@ -165,10 +165,6 @@ class GoogleCore:
             test_logger.debug("finished making  the directory ")
 
         results = response.results
-        """ TODO: the original data from google is not json serializable, need 
-                  to convert to json serializable form 
-        """
-        # write_json(os.path.join(output_directory, "data.json"), {"results": results})
         status_result = {
             "connected": self.connected,
             "read_audio": self.read_audio, 

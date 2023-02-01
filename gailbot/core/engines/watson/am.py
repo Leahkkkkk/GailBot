@@ -53,7 +53,7 @@ class WatsonAMInterface:
             self.stt = SpeechToTextV1(authenticator=authenticator)
             self.stt.set_service_url(self._regions[self.region])
         except: 
-            raise ERR.ConnectionError
+            raise ERR.ConnectionError("ERROR: Failed to connect to the Watson STT")
         else:
             self.connected_to_service  = True
     

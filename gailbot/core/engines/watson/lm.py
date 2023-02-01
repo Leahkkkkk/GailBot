@@ -475,7 +475,7 @@ class WatsonLMInterface:
                 False otherwise.
         """
         if not self.connected_to_service:
-            raise ERR.ConnectionError
+            raise ERR.ConnectionError("Error raised: connection error")
         try:
             resp = method(*args, **kwargs)
             if any([resp.get_status_code() == expected
