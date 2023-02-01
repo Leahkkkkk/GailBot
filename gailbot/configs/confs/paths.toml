@@ -1,0 +1,16 @@
+[engines]
+watson = "engines/watson/watson_config.toml"
+whisper = "engines/whisper/whisper_config.toml"
+google = "engines/google/google_config.toml"
+default = "settings/default.toml"
+
+
+
+
+# TODO: move to individual engine
+[paths.workspace]
+sources_ws = "sources_ws"
+settings_ws = "settings_ws"
+plugins_ws = "plugins_ws"
+engines_ws = "engines_ws"
+

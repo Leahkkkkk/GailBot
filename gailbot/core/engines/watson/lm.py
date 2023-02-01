@@ -15,7 +15,7 @@ from enum import IntEnum
 # Local imports
 
 # Third party imports
-from gailbot.configs.utils import WATSON_DATA
+from gailbot.configs import WATSON_DATA
 from gailbot.core.engines import exception as ERR
 from ibm_watson import SpeechToTextV1, ApiException
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator

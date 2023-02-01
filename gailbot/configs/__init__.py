@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 # @Author: Muhammad Umair
-# @Date:   2023-01-10 12:43:07
+# @Date:   2023-01-31 15:37:50
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-10 12:43:10
-
+from .interfaces import WATSON_DATA, GOOGLE_DATA, DEFAULT_DATA

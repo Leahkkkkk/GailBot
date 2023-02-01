@@ -19,7 +19,7 @@ from ibm_watson.websocket import RecognizeCallback, AudioSource
 from .recognize_callback import CustomWatsonCallbacks
 from .recognition_results import RecognitionResult
 from gailbot.core.engines import exception as Err
-from gailbot.configs.utils import WATSON_DATA
+from gailbot.configs import WATSON_DATA
 from gailbot.core.utils.media import MediaHandler
 from gailbot.core.utils.general import (
     make_dir,
@@ -173,13 +173,13 @@ class WatsonCore:
             assert is_directory(output_directory)
             self.engine_workspace_dir = work_space_directory
         except:
-            raise FileExistsError 
+            raise FileExistsError()
         
         try:
             if get_size(audio_path) >= self.max_size_bytes:
                 audio_path = self._convert_to_opus(audio_path, work_space_directory)
         except: 
-            raise Err.AudioFileError
+            raise Err.AudioFileError()
 
         # Create the stt service and run
         try:
@@ -187,7 +187,7 @@ class WatsonCore:
             stt = SpeechToTextV1(authenticator=authenticator)
             stt.set_service_url(self.regions[self.region])
         except:
-            raise Err.APIKeyError
+            raise Err.APIKeyError()
 
         with open(audio_path, "rb") as f:
             # Prepare args
@@ -205,8 +205,6 @@ class WatsonCore:
                 "model" : base_model,
                 "customization_id": language_customization_id,
             })
-            
-            print(kwargs)
             stt.recognize_using_websocket(**kwargs)
             delete(self.engine_workspace_dir)
             
@@ -322,13 +320,13 @@ class WatsonCore:
         while True:
             match get_cmd_status(pid):
                 case CMD_STATUS.STOPPED:
-                    raise ChildProcessError
+                    raise ChildProcessError()
                 case CMD_STATUS.FINISHED:
                     break 
                 case CMD_STATUS.ERROR:
-                    raise ChildProcessError
+                    raise ChildProcessError()
                 case CMD_STATUS.NOTFOUND:
-                    raise ProcessLookupError
+                    raise ProcessLookupError()
         
         return get_cmd_status(pid) == CMD_STATUS.FINISHED
     

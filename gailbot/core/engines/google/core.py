@@ -6,6 +6,8 @@
 
 import os 
 import io
+from copy import deepcopy
+
 from google.cloud import speech_v1p1beta1 as speech
 from google.cloud.speech_v1p1beta1.types import cloud_speech
 from typing import Dict, List 
@@ -14,17 +16,18 @@ from gailbot.core.utils.general import (
     write_json, 
     is_directory, 
     make_dir)
-from tests.logger import makelogger
+from gailbot.core.utils.logger import makelogger
 from ...engines import exception as Err
 test_logger = makelogger("google")
+from gailbot.configs import GOOGLE_DATA
+
 
 """ TODO: 
-    1. Documentation 
-    2. the original data from google is not json serializable, need 
+    1. the original data from google is not json serializable, need 
        to convert to json serializable form 
-    3. test for file with mp3 and wav format passes the tests, need to test for 
+    2. test for file with mp3 and wav format passes the tests, need to test for 
         opus 
-    4. google API key  
+    3. google API key  
 
 """
 class GoogleCore: 
@@ -46,7 +49,6 @@ class GoogleCore:
         self._init_status()
         try:
             if not google_key:
-                """ TODO: replace with user credential """
                 os.environ['GOOGLE_APPLICATION_CREDENTIALS']= os.path.join(os.getcwd(),'google_key.json')
             else:
                 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = google_key
@@ -119,13 +121,11 @@ class GoogleCore:
                 audio = speech.RecognitionAudio(content = content)
                 self.read_audio = True
             encoding = self.ENCODING_TABLE[get_extension(audio_path)]
-            config = speech.RecognitionConfig(
-                encoding=encoding,
-                enable_automatic_punctuation=True,
-                enable_speaker_diarization=True,
-                enable_word_time_offsets=True,
-                language_code="en-US",
-            )
+            
+            kwargs = deepcopy(GOOGLE_DATA.defaults)
+            kwargs.update({"encoding": encoding})
+            config = speech.RecognitionConfig(**kwargs)
+            
             self.transcribing = True
             response = self.client.recognize(
                 request={"config": config, "audio": audio})
@@ -196,7 +196,9 @@ class GoogleCore:
         return utterances
     
     def _init_status(self):
-        """ initialize the status  """
+        """ 
+        Initializes the status
+        """
         self.connected = False
         self.read_audio = False
         self.transcribing = False

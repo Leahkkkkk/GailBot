@@ -4,11 +4,6 @@
 # @Last Modified by:   Muhammad Umair
 # @Last Modified time: 2023-01-16 12:01:31
 
-""" TODO:
-1. only function to create and delete model are tested 
-   function to train the model are not tested 
-
-"""
 # Standard library imports
 from typing import Any, BinaryIO, List, TextIO, Tuple, Dict, Callable, Union
 from enum import IntEnum
@@ -20,7 +15,7 @@ from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from gailbot.core.engines import exception as ERR
 from ibm_watson.speech_to_text_v1 import CustomWord
 
-from gailbot.configs.utils import WATSON_DATA
+from gailbot.configs import WATSON_DATA
 from gailbot.core.utils.media import MediaHandler
 
 import logging

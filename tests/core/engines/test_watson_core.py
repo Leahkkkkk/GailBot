@@ -2,7 +2,7 @@ import os
 from gailbot.core.engines.watson.core import WatsonCore
 from gailbot.core.engines.watson.watson import Watson
 from gailbot.core.utils.media import MediaHandler
-from ...logger import makelogger
+from gailbot.core.utils.logger import makelogger
 import pytest 
 
 logger = makelogger("watsone_engine")

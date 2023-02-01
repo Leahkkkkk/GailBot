@@ -10,10 +10,10 @@ import sys
 # Third party imports
 from copy import deepcopy
 from ibm_watson.websocket import RecognizeCallback
-from tests.logger import makelogger 
+from gailbot.core.utils.logger import makelogger
 
-""" TODO: eventually delete the test_logger  """
-test_logger = makelogger("callback")
+""" TODO: eventually delete the logger  """
+logger = makelogger("callback")
 
 class CustomWatsonCallbacks(RecognizeCallback):
     """
@@ -37,15 +37,15 @@ class CustomWatsonCallbacks(RecognizeCallback):
         self.closure = self._init_closure()
 
     def get_results(self) -> Dict:
-        test_logger.info("on get result")
-        test_logger.info(self.closure)
+        logger.info("on get result")
+        logger.info(self.closure)
         return deepcopy(self.closure)
 
     def on_transcription(self, transcript: List) -> None:
         """
         Called after the service returns the final result for the transcription.
         """
-        test_logger.info("")
+        logger.info("")
         try:
             closure = self.closure
             closure["callback_status"]["on_transcription"] = True
@@ -57,7 +57,7 @@ class CustomWatsonCallbacks(RecognizeCallback):
         """
         Called when a Websocket connection was made
         """
-        test_logger.info("connected")
+        logger.info("connected")
         print("connected")
         try:
             closure = self.closure
@@ -69,31 +69,31 @@ class CustomWatsonCallbacks(RecognizeCallback):
         """
         Called when there is an error in the Websocket connection.
         """
-        test_logger.debug("error")
+        logger.debug("error")
         try:
             closure = self.closure
             closure["callback_status"]["on_error"] = True
             closure["results"]["error"] = error
         except Exception as e:
-            test_logger.debug(e)
+            logger.debug(e)
 
     def on_inactivity_timeout(self, error: str) -> None:
         """
         Called when there is an inactivity timeout.
         """      
-        test_logger.info("") 
+        logger.info("") 
         try:
             closure = self.closure
             closure["callback_status"]["on_inactivity_timeout"] = True
             closure["results"]["error"] = error
         except:
-            test_logger.debug("timeout")
+            logger.debug("timeout")
 
     def on_listening(self) -> None:
         """
         Called when the service is listening for audio.
         """   
-        test_logger.info("")   
+        logger.info("")   
         try:
             closure = self.closure
             closure["callback_status"]["on_listening"] = True
@@ -104,7 +104,7 @@ class CustomWatsonCallbacks(RecognizeCallback):
         """
         Called when an interim result is received.
         """
-        test_logger.info("")
+        logger.info("")
         try:
             closure = self.closure
             closure["callback_status"]["on_hypothesis"] = True
@@ -115,7 +115,7 @@ class CustomWatsonCallbacks(RecognizeCallback):
         """
         Called when the service returns results. The data is returned unparsed.
         """
-        test_logger.info("")
+        logger.info("")
         try:
             closure = self.closure
             closure["callback_status"]["on_data"] = True
@@ -127,7 +127,7 @@ class CustomWatsonCallbacks(RecognizeCallback):
         """
         Called when the Websocket connection is closed
         """
-        test_logger.info("")
+        logger.info("")
         try:
             closure = self.closure
             closure["callback_status"]["on_close"] = True

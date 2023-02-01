@@ -46,7 +46,6 @@ def test_is_supported(handlers: List[media.MediaHandler]):
             assert not media.MediaHandler.is_supported(f"{basename}.not {format}")
             
     
-
 def test_read_write_stream(handlers):
     output = f"{OUTPUT_DIR}/write_stream"
     if general.is_directory(output):

@@ -1,13 +1,7 @@
 
 import pytest
-from gailbot.configs.utils import WATSON_DATA, SETTING_DATA
-from gailbot.configs.conf_path import ENGINE_PATH, SETTING_PATH, WORKSPACE_PATH 
+from gailbot.configs import WATSON_DATA, GOOGLE_DATA, DEFAULT_DATA
 
-def test_paths():
-    print(ENGINE_PATH)
-    print(SETTING_PATH)
-    print(WORKSPACE_PATH)
-
-def test_data():
+def test_config_file():
     print(WATSON_DATA)
-    print(SETTING_DATA)
+    print(GOOGLE_DATA)
