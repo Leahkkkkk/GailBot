@@ -2,10 +2,11 @@ import logging
 import os 
 from datetime import date
 from .general import make_dir, is_directory
+from gailbot.configs import log_config_loader
 """ TODO: confirm the log directory position """
 
-ROOT_PATH = "./log_files"
-log_directory = os.path.join(os.getcwd(), ROOT_PATH)
+LOG_CONFIG  = log_config_loader()
+log_directory = os.path.join(os.getcwd(), LOG_CONFIG.directory)
 if not is_directory(log_directory):
     make_dir(log_directory)
 
@@ -19,7 +20,7 @@ def makelogger(filename:str):
     file_handler.setLevel(logging.INFO)
 
     # Create a formatter
-    formatter = logging.Formatter('%(asctime)s - %(funcName)s - %(lineno)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter(LOG_CONFIG.formatter)
     file_handler.setFormatter(formatter)
 
     # Add the file handler to the logger

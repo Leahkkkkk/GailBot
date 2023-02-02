@@ -11,7 +11,10 @@ from dataclasses import dataclass
 import networkx as nx
 from copy import deepcopy
 from .component import Component, ComponentState, ComponentResult
-
+""" TESTING:
+like use  gpt2 hugging-face: 
+large number of thread: 
+"""
 
 @dataclass
 class DataStream:
@@ -24,10 +27,12 @@ class Pipeline:
     def __init__(
         self,
         dependency_map : Dict[str, List[str]],
-        components : Dict[str, Component]
+        components : Dict[str, Component],
+        num_threads: int ## TODO: 
     ):
         """
         Dependency map describes the execution order.
+
         """
 
         self.dependency_map = dependency_map

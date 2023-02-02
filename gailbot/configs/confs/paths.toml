@@ -3,4 +3,6 @@
 watson = "engines/watson/watson_config.toml"
 whisper = "engines/whisper/whisper_config.toml"
 google = "engines/google/google_config.toml"
+log = "util/log.toml"
 default = "settings/default.toml"
+config  = "config.toml"

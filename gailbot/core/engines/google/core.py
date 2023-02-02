@@ -19,15 +19,13 @@ from gailbot.core.utils.general import (
 from gailbot.core.utils.logger import makelogger
 from ...engines import exception as Err
 test_logger = makelogger("google")
-from gailbot.configs import GOOGLE_DATA
+from gailbot.configs import google_config_loader
 
-
+GOOGLE_CONFIG = google_config_loader()
 """ TODO: 
-    1. the original data from google is not json serializable, need 
-       to convert to json serializable form 
-    2. test for file with mp3 and wav format passes the tests, need to test for 
+    1.  test for file with mp3 and wav format passes the tests, need to test for 
         opus 
-    3. google API key  
+    2. google API key  
 
 """
 class GoogleCore: 
@@ -122,7 +120,7 @@ class GoogleCore:
                 self.read_audio = True
             encoding = self.ENCODING_TABLE[get_extension(audio_path)]
             
-            kwargs = deepcopy(GOOGLE_DATA.defaults)
+            kwargs = deepcopy(GOOGLE_CONFIG.defaults)
             kwargs.update({"encoding": encoding})
             config = speech.RecognitionConfig(**kwargs)
             

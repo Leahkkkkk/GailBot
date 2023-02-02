@@ -2,7 +2,6 @@ from gailbot.core.utils.logger import makelogger
 from gailbot.core.engines.google.google import Google
 from gailbot.core.engines.google.core import GoogleCore
 from .data import AudioPath
-import os 
 import pytest 
 
 

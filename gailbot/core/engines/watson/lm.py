@@ -15,7 +15,7 @@ from enum import IntEnum
 # Local imports
 
 # Third party imports
-from gailbot.configs import WATSON_DATA
+from gailbot.configs import watson_config_loader
 from gailbot.core.engines import exception as ERR
 from ibm_watson import SpeechToTextV1, ApiException
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
@@ -28,6 +28,7 @@ logger = logging.getLogger(__name__)
 
 from .codes import WatsonReturnCodes
 
+WATSON_CONFIG = watson_config_loader()
 class WatsonLMInterface:
     def __init__(self, apikey : str, region : str):
         self.connected_to_service = False
@@ -36,10 +37,10 @@ class WatsonLMInterface:
         self.media_h = MediaHandler()
 
         # Parse confs
-        self._regions = WATSON_DATA.regions_uris
-        self._format_to_content_types = WATSON_DATA.format_to_content
-        self._defaults = WATSON_DATA.defaults
-        self.max_size_bytes = WATSON_DATA.max_file_size_bytes
+        self._regions = WATSON_CONFIG.regions_uris
+        self._format_to_content_types = WATSON_CONFIG.format_to_content
+        self._defaults = WATSON_CONFIG.defaults
+        self.max_size_bytes = WATSON_CONFIG.max_file_size_bytes
 
         if not self._is_api_key_valid(apikey, self._regions[region]):
             raise Exception(f"Apikey {apikey} invalid")

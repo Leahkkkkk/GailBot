@@ -19,7 +19,7 @@ from ibm_watson.websocket import RecognizeCallback, AudioSource
 from .recognize_callback import CustomWatsonCallbacks
 from .recognition_results import RecognitionResult
 from gailbot.core.engines import exception as ERR
-from gailbot.configs import WATSON_DATA
+from gailbot.configs import watson_config_loader
 from gailbot.core.utils.media import MediaHandler
 from gailbot.core.utils.general import (
     make_dir,
@@ -35,6 +35,7 @@ from gailbot.core.utils.general import (
     CMD_STATUS
 )
 
+WATSON_CONFIG = watson_config_loader()
 class WatsonCore:
     """
     Implement core functionalities to transcribe an audio file through 
@@ -46,10 +47,10 @@ class WatsonCore:
         self.media_h = MediaHandler()
 
         # Parse confs
-        self._regions = WATSON_DATA.regions_uris
-        self._format_to_content_types = WATSON_DATA.format_to_content 
-        self._defaults = WATSON_DATA.defaults
-        self.max_size_bytes = WATSON_DATA.max_file_size_bytes
+        self._regions = WATSON_CONFIG.regions_uris
+        self._format_to_content_types = WATSON_CONFIG.format_to_content 
+        self._defaults = WATSON_CONFIG.defaults
+        self.max_size_bytes = WATSON_CONFIG.max_file_size_bytes
 
         if not self._is_api_key_valid(apikey, self._regions[region]):
             raise Exception(f"Apikey {apikey} invalid")
@@ -165,7 +166,7 @@ class WatsonCore:
         self.recognize_callbacks.reset()
         # Checks all the input data is valid
         assert is_file(audio_path), f"Not a file {audio_path}"
-        work_space_directory = os.path.join(output_directory, WATSON_DATA.workspace)
+        work_space_directory = os.path.join(output_directory, WATSON_CONFIG.workspace)
         try: 
             if not is_directory(output_directory): 
                 make_dir(output_directory, overwrite=True)
