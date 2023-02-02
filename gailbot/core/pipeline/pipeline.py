@@ -8,6 +8,7 @@ import sys
 import os
 from typing import List, Dict, Any, Tuple
 from dataclasses import dataclass
+from gailbot.core.utils.threads import ThreadPool
 import networkx as nx
 from copy import deepcopy
 from .component import Component, ComponentState, ComponentResult
@@ -28,7 +29,7 @@ class Pipeline:
         self,
         dependency_map : Dict[str, List[str]],
         components : Dict[str, Component],
-        num_threads: int ## TODO: 
+        num_threads: int ## TODO: add the logic of having multiple threads
     ):
         """
         Dependency map describes the execution order.
@@ -37,10 +38,11 @@ class Pipeline:
 
         self.dependency_map = dependency_map
         self.components = components
+        self.threadpool = ThreadPool(num_threads)
         self._generate_dependency_graph(
             dependency_map, components
         )
-
+    
 
     def __repr__(self) -> str:
         return str(self.get_dependency_graph())
@@ -66,6 +68,7 @@ class Pipeline:
 
         successors = self.get_dependency_graph()
         results = dict()
+        task_key_pool = dict() # for tracking executable in thread
         while True:
             executables = [
                 c for c, d in self.dependency_graph.in_degree if d == 0
@@ -73,8 +76,6 @@ class Pipeline:
             # Stop if no nodes left.
             if len(executables) == 0:
                 break
-
-            # TODO: All of these should be run in threads in parallel.
             for executable in executables:
                 exe_name = self.component_to_name[executable]
                 if len(successors[exe_name]) > 0:
@@ -90,10 +91,15 @@ class Pipeline:
                             runtime=0
                         )
                     }
-                res = executable(dep_outputs, **additional_component_kwargs)
-                results[exe_name] = res
+                
+                key = self.threadpool.add_task(
+                    executable, args=dep_outputs, kwargs=additional_component_kwargs)
+                task_key_pool[exe_name] = key 
                 self.dependency_graph.remove_node(executable)
-
+                
+            self.threadpool.wait_for_all_completion()
+            for name, key in task_key_pool.items():
+                results[name] = self.threadpool.get_task_result(task_key_pool[exe_name])
         # Regenerate graph
         self._generate_dependency_graph(
             self.dependency_map, self.components
