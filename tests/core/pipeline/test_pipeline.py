@@ -32,6 +32,9 @@ class TestComponent(Component):
             runtime=0
         )
 
+    @property
+    def __name__(self):
+        return self.name
 
 def test_pipeline():
     # 2 and 4 should run together
@@ -46,7 +49,8 @@ def test_pipeline():
             "4" : ["1"],
             "5" : ["1", "3"]
         },
-        components=components
+        components=components,
+        num_threads=3
     )
     print(pipeline.component_children("1"))
     print(pipeline)

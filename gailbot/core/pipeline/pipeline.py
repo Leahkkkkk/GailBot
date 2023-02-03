@@ -70,7 +70,7 @@ class Pipeline:
         results = dict()
         task_key_pool = dict() # for tracking executable in thread
         while True:
-            executables = [
+            executables: List[Component] = [
                 c for c, d in self.dependency_graph.in_degree if d == 0
             ]
             # Stop if no nodes left.
@@ -93,7 +93,10 @@ class Pipeline:
                     }
                 
                 key = self.threadpool.add_task(
-                    executable, args=dep_outputs, kwargs=additional_component_kwargs)
+                    executable, 
+                    args=[dep_outputs], 
+                    kwargs=additional_component_kwargs)
+                
                 task_key_pool[exe_name] = key 
                 self.dependency_graph.remove_node(executable)
                 

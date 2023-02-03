@@ -212,14 +212,15 @@ class ThreadPool(ThreadPoolExecutor):
         Return:
             None
         """
-        self._task_in_pool()
+        self._task_in_pool(key)
         future = self.task_pool[key]
         try:
+            wait([future])
             future.result()
             assert not future.exception()
-        except:
+        except Exception as e:
             if error_fun: error_fun()
-            else: raise ThreadError("Err: failed to wait the thread")
+            else: raise ThreadError(e)
 
 
     def cancel(self, key: int) -> bool:
