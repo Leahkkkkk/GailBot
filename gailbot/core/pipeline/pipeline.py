@@ -9,6 +9,7 @@ import os
 from typing import List, Dict, Any, Tuple
 from dataclasses import dataclass
 from gailbot.core.utils.threads import ThreadPool
+from gailbot.core.utils.logger import makelogger
 import networkx as nx
 from copy import deepcopy
 from .component import Component, ComponentState, ComponentResult
@@ -23,8 +24,12 @@ class DataStream:
 
 # TODO: Eventually, add configs to change multithreading options.
 # TODO: Need to implement multithreading.
-class Pipeline:
 
+
+logger = makelogger("pipeline")
+
+Failure = ComponentResult(ComponentState.FAILED)
+class Pipeline:
     def __init__(
         self,
         dependency_map : Dict[str, List[str]],
@@ -41,8 +46,7 @@ class Pipeline:
         self.threadpool = ThreadPool(num_threads)
         self._generate_dependency_graph(
             dependency_map, components
-        )
-    
+        ) 
 
     def __repr__(self) -> str:
         return str(self.get_dependency_graph())
@@ -64,24 +68,40 @@ class Pipeline:
 
         NOTE: The components themselves are responsible for checking whether
         the parent components executed successfully.
+        
+        TODO: we can added here
         """
 
         successors = self.get_dependency_graph()
-        results = dict()
-        task_key_pool = dict() # for tracking executable in thread
+        results : Dict[str, ComponentResult] = dict()
+        
         while True:
             executables: List[Component] = [
                 c for c, d in self.dependency_graph.in_degree if d == 0
             ]
+            
             # Stop if no nodes left.
             if len(executables) == 0:
                 break
+            
+            key_to_exe: Dict[str, Component] = dict()
+           
             for executable in executables:
                 exe_name = self.component_to_name[executable]
+                prepare = True
+                
                 if len(successors[exe_name]) > 0:
-                    dep_outputs = {
+                    dep_outputs : Dict[str, ComponentResult] = {
                         k : results[k] for k in successors[exe_name]
                     }
+                    
+                    for res in dep_outputs.values():
+                        if res.state == ComponentState.FAILED:
+                            results[exe_name] = Failure
+                            self.dependency_graph.remove_node(executable)
+                            prepare = False
+                            
+                    logger.info(f"dep_output:{dep_outputs}")
                 else:
                     # Base input is also passed as a component result.
                     dep_outputs = {
@@ -91,18 +111,28 @@ class Pipeline:
                             runtime=0
                         )
                     }
+                if prepare:
+                    key = self.threadpool.add_task(
+                        executable, 
+                        args=[dep_outputs], 
+                        kwargs=additional_component_kwargs) 
+                    key_to_exe[key] = executable           
+
+            """ wait until all tasks finishes before next iteration """
+            self.threadpool.wait_for_all_completion(error_fun=lambda:None)
+            for key, exe in key_to_exe.items():
+                """ get the task result from the thread pool """
+                exe_res = self.threadpool.get_task_result(key)
+                self.dependency_graph.remove_node(exe)
                 
-                key = self.threadpool.add_task(
-                    executable, 
-                    args=[dep_outputs], 
-                    kwargs=additional_component_kwargs)
-                
-                task_key_pool[exe_name] = key 
-                self.dependency_graph.remove_node(executable)
-                
-            self.threadpool.wait_for_all_completion()
-            for name, key in task_key_pool.items():
-                results[name] = self.threadpool.get_task_result(task_key_pool[exe_name])
+                if exe_res and exe_res.state == ComponentState.SUCCESS:
+                    """ add to result if success """
+                    results[self.component_to_name[exe]] = exe_res
+                else:
+                    """ add the failed result on failure """
+                    component_name = self.component_to_name[exe]
+                    results[component_name] = Failure
+                        
         # Regenerate graph
         self._generate_dependency_graph(
             self.dependency_map, self.components
@@ -168,7 +198,7 @@ class Pipeline:
         # Graph views
         # NOTE: These are graphs of Components, not str!
         self.dependency_graph = nx.DiGraph()
-        self.name_to_component = dict()
+        self.name_to_component: Dict[str, Component] = dict()
         # self.executed_graph_view = nx.DiGraph()
 
         # Verify that the same keys exist in both dicts
@@ -212,7 +242,7 @@ class Pipeline:
 
             self.name_to_component[name] = components[name]
 
-        self.component_to_name = {
+        self.component_to_name : Dict[Component, name] = {
             v : k for k,v in self.name_to_component.items()
         }
 
