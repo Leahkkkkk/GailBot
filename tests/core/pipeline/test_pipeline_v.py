@@ -261,12 +261,14 @@ def test_hugging_face():
     res = pipe(additional_component_kwargs={"base_filename": "hugging_face"})
 
 def test_one_hugging_face():
+    """ test the one hugging face takes around 28sec"""
     s = time.perf_counter()
     hugging_face_test(200, "one_hugging_face") 
     e = time.perf_counter()
     logger.info(f"time for one hugging face tes {e - s}")
     
 def test_ten_hugging_face():
+    """ test ten hugging face with 10 threads take around 190sec """
     s = time.perf_counter()
     
     components = {
