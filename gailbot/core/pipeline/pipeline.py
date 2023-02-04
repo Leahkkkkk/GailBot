@@ -13,6 +13,7 @@ from gailbot.core.utils.logger import makelogger
 import networkx as nx
 from copy import deepcopy
 from .component import Component, ComponentState, ComponentResult
+
 """ TESTING:
 like use  gpt2 hugging-face: 
 large number of thread: 
@@ -53,7 +54,7 @@ class Pipeline:
 
     def __call__(
         self,
-        base_input : Any,
+        base_input : Any = None,
         additional_component_kwargs : Dict = dict()
         # NOTE: base_input is passed only to the first component.
     ) -> Dict[str, ComponentState]:
@@ -230,7 +231,10 @@ class Pipeline:
             # current node. This implies that the dependencies should already
             # exist as nodes.
             for dep in dependencies:
-                if not self.is_component(dep):
+                # NOTE: original code: if not self.is_component(dep):
+                #  the original code will raise exception if the dependency graph 
+                #  does not follow the strict order 
+                if not dep in components:
                     raise Exception(
                         f"Unseen component added as dependency {dep}"
                     )
