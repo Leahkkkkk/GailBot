@@ -187,7 +187,7 @@ def test_thread_callback(args):
     """
     pool = ThreadPool(1)
     id_0 = pool.add_task(sleep_n_sec_return, args)
-    id_1 = pool.add_callback(id_0, worker_test_callback)
+    id_1 = pool.add_callback_with_arg(id_0, worker_test_callback)
     assert id_1 == id_0 + 1
     assert args[1] == pool.get_task_result(id_1)
 
@@ -215,7 +215,7 @@ def test_mult_thread_callback(args):
     """
     pool = ThreadPool(10)
     id_0 = pool.add_task(sleep_n_sec_return, args)
-    id_1 = pool.add_callback(id_0, worker_test_callback)
+    id_1 = pool.add_callback_with_arg(id_0, worker_test_callback)
     assert id_1 == id_0 + 1
     assert args[1] == pool.get_task_result(id_1)
     assert pool.get_num_threads() == 10
@@ -270,7 +270,7 @@ def test_callback_with_queue():
         TestQueue.put(newid)
     
     for id in ids:
-        pool.add_callback(id, callback_check_queue)
+        pool.add_callback_with_arg(id, callback_check_queue)
 
 
 def test_multiple_callback_with_queue():

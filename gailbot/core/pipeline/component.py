@@ -46,10 +46,3 @@ class Component:
     ) -> ComponentState:
         raise NotImplementedError()
     
-    def run(
-        self,
-        dependency_outputs : Dict[str, ComponentResult] ,
-        *args,
-        **kwargs
-    ) -> ComponentState:
-        raise NotImplementedError()

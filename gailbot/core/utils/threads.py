@@ -10,7 +10,9 @@ from concurrent.futures import ThreadPoolExecutor, Future, wait
 from queue import Queue
 from enum import Enum
 from typing import Tuple, Callable, List, Dict
+from gailbot.core.utils.logger import makelogger
 
+logger = makelogger("thread")
 
 #### Custom Exceptions for Threads ####
 class TaskNotFoundException(Exception):
@@ -61,7 +63,6 @@ class ThreadPool(ThreadPoolExecutor):
         super().__init__(max_workers, *args, **kwargs)
         self.num_thread = max_workers
         self.task_pool: Dict[int, Future] = dict() # used to keeps track of the task status
-        self.task_name: Dict[int, str] = dict()
         self.next_key = 0
 
 
@@ -98,9 +99,8 @@ class ThreadPool(ThreadPoolExecutor):
                 worker: Future = self.submit(fun, **kwargs)
             else:
                 worker: Future = self.submit(fun)
-            worker.add_done_callback(self._handle_error)
+            # worker.add_done_callback(self._handle_error)
             self.task_pool[self.next_key] = worker
-            self.task_name[self.next_key] = fun.__name__
             self.next_key += 1
         except:
             if error_fun: error_fun()
@@ -135,9 +135,7 @@ class ThreadPool(ThreadPoolExecutor):
             A List[Tuple[int, str]] of tasks in the thread pool that
                 match the requested status. 
         """
-        return [(id, self.task_name[id])
-                for id in self.task_pool.keys()
-                if self.check_task_status(id) == status ]
+        return [id for id in self.task_pool.keys() if self.check_task_status(id) == status ]
 
     def get_task_result(self, key: int, error_fun: Callable = None ):
         """ 
@@ -148,14 +146,17 @@ class ThreadPool(ThreadPoolExecutor):
 
         Return:
             If result is successfully obtained, return the result of the given task.
-            Raises ThreadError if the result of the given task is not successfully obtained.
+            else return false as default or call the error handling function passed 
+            in from user
         """
         self._task_in_pool(key)
         try:
-            return self.task_pool[key].result()
+            future = self.task_pool[key]
+            assert not future.exception()
+            return future.result()
         except:
             if error_fun: error_fun()
-            else: raise ThreadError
+            else: return False
 
     def completed(self, key, error_fun: Callable = None )-> bool:
         """ 
@@ -222,7 +223,6 @@ class ThreadPool(ThreadPoolExecutor):
             if error_fun: error_fun()
             else: raise ThreadError(e)
 
-
     def cancel(self, key: int) -> bool:
         """
         Cancels the task at the given key.
@@ -264,8 +264,7 @@ class ThreadPool(ThreadPoolExecutor):
         except:
             return False
 
-
-    def add_callback(self, key, fun: Callable, error_fun: Callable = None):
+    def add_callback_with_arg(self, key, fun: Callable, error_fun: Callable = None):
         """ 
         Adds a function to the thread as a callback of a previous function
 
@@ -290,6 +289,11 @@ class ThreadPool(ThreadPoolExecutor):
             error_fun()
         else: 
             raise ThreadError("ERROR: Failed to add callback")
+    
+    def add_callback(self, key, fun: Callable):
+        logger.info(f"add callback for {key}")
+        future = self.task_pool[key]
+        future.add_done_callback(fun)
     
     def add_task_after(
         self, key, fun: Callable, args: List = None, 
@@ -337,7 +341,6 @@ class ThreadPool(ThreadPoolExecutor):
         return self._work_queue.qsize()
 
     ############ private function  ##########
-
     def _task_in_pool(self, key:int) -> None :
         """ 
         Private function to determine if the given task is currently in the task pool.
@@ -369,4 +372,4 @@ class ThreadPool(ThreadPoolExecutor):
             None
         """
         if future.exception():
-            raise ThreadError("ERROR: exception raised running the task")
+            pass 

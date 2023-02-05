@@ -272,7 +272,7 @@ def write_txt(path : str, data : List,  overwrite : bool = True) -> bool:
     """ given the path to a file, and a list of data, output the list 
         data to the file
     """
-    mode = 'w' if overwrite else "a"
+    mode = 'w+' if overwrite else "a"
     data = [s + "\n" for s in data]
     try:
         with open(path, mode) as f:
