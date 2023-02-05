@@ -10,6 +10,10 @@ logger = makelogger("test_pipeline")
 
 
 class TestComponent(Component):
+    """
+    Class for a component on which to run tests. Defines initialization 
+        and calling functions.
+    """
     def __init__(self, name: str, testmsg: str, sleeptime: int ):
         self.name = name 
         self.testmsg = testmsg

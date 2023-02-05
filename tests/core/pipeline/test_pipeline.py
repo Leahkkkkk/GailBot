@@ -10,8 +10,10 @@ from gailbot.core.pipeline import (
 from typing import Dict, List, Any
 
 class TestComponent(Component):
-
-
+    """
+    Class for a component on which to run tests. Defines initialization 
+        and calling functions.
+    """
     def __init__(self, name : str):
         self.name = str(name)
 

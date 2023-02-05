@@ -10,12 +10,18 @@ from dataclasses import dataclass
 from typing import Any, Dict, List
 
 class ComponentState(Enum):
+    """
+    Class containing the status of a component object.
+    """
     READY = 0
     SUCCESS = 1
     FAILED = 2
 
 @dataclass
 class ComponentResult:
+    """
+    Class containing the result of a component object.
+    """
     state : ComponentState = ComponentState.FAILED
     result : Any = None
     runtime : float  = 0
@@ -23,7 +29,7 @@ class ComponentResult:
 class Component:
     """
     Wrapper for a function that is run in the pipeline.
-    Should be subclassed
+    Should be subclassed.
     """
 
     def __init__(self, *args, **kwargs):
