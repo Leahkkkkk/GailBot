@@ -1,7 +1,9 @@
+
 from ..engine import Engine
 from ...engines import exception as Err
 from ..google.core import GoogleCore
-from typing import Any, List, Dict 
+from typing import Any, List, Dict
+from typing import Dict, List, Union 
 
 class Google(Engine):
     """ 
@@ -69,3 +71,4 @@ class Google(Engine):
     
     def was_transcription_successful(self) -> bool:
         return self.transcribe_success
+    

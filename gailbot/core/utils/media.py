@@ -5,6 +5,7 @@
 # @Last Modified time: 2023-01-16 14:33:08
 
 from typing import List, Union, Dict, Any
+import os
 from dataclasses import dataclass
 from abc import ABC 
 from pydub import AudioSegment
@@ -182,7 +183,7 @@ class AudioHandler:
                 "root_mean_square": segment.rms,
                 "highest_amplitude": segment.max,
                 "duration_seconds": segment.duration_seconds,
-                "num_frames": segment.frame_count()
+                "num_frames": segment.frame_count(),
         }
 
     def change_volume(

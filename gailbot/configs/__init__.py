@@ -6,5 +6,6 @@ from .interfaces import (
     watson_config_loader, 
     google_config_loader, 
     default_config_loader,
-    log_config_loader 
+    log_config_loader,
+    top_level_config_loader
 )

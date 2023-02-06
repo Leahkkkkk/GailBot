@@ -7,7 +7,7 @@
 import os 
 import io
 from copy import deepcopy
-
+from typing import Union
 from google.cloud import speech_v1p1beta1 as speech
 from google.cloud.speech_v1p1beta1.types import cloud_speech
 from typing import Dict, List 
@@ -15,18 +15,23 @@ from gailbot.core.utils.general import (
     get_extension, 
     write_json, 
     is_directory, 
-    make_dir)
+    make_dir,
+    paths_in_dir,
+    delete,
+    get_name)
 from gailbot.core.utils.logger import makelogger
 from ...engines import exception as Err
-test_logger = makelogger("google")
-from gailbot.configs import google_config_loader
+logger = makelogger("google")
+from gailbot.configs import google_config_loader, top_level_config_loader
+from gailbot.core.utils.general import get_size
+from gailbot.core.utils.media import MediaHandler
 
 GOOGLE_CONFIG = google_config_loader()
+TOP_CONFIG = top_level_config_loader()
 """ TODO: 
     1.  test for file with mp3 and wav format passes the tests, need to test for 
         opus 
     2. google API key  
-
 """
 class GoogleCore: 
     """
@@ -43,8 +48,9 @@ class GoogleCore:
     }
     
     def __init__(self, google_key: Dict[str, str] = None ) -> None:
-        
         self._init_status()
+        self.workspace_directory = os.path.join(
+            TOP_CONFIG.root, TOP_CONFIG.workspace.google_workspace)
         try:
             if not google_key:
                 os.environ['GOOGLE_APPLICATION_CREDENTIALS']= os.path.join(os.getcwd(),'google_key.json')
@@ -55,7 +61,7 @@ class GoogleCore:
             raise Err.ConnectionError("ERROR: Failed to connect to google cloud")
         else:
             self.connected = True
-            test_logger.info("Connected")
+            logger.info("Connected")
     
     @property
     def supported_formats(self) -> List[str]:
@@ -88,8 +94,26 @@ class GoogleCore:
                 path to audio file that will be transcribed
             output_directory (str) : 
                 path to directory where the transcribed data will be stored
-        """
         
+        Return:
+            A list of dictionary that contains the utterance data of the 
+            audio file, each part of the audio file is stored in the format 
+            {speaker: , start_time: , end_time: , text: }
+        """
+        self._init_workspace(output_directory)
+        mediaHandler = MediaHandler()
+        stream = mediaHandler.read_file(audio_path)
+        length = mediaHandler.info(stream)["duration_seconds"]
+        if length >= GOOGLE_CONFIG.maximum_duration:
+            try:
+                res = self._transcribe_large_file(
+                    audio_path, self.workspace_directory, output_directory)
+                logger.info(res)
+                return res
+            except Exception as e:
+                logger.error(e)
+                raise Err.TranscriptionError(
+                    "ERROR: Failed to transcribe large file")
         try:
             response = self.run_engine(audio_path)
         except:
@@ -98,7 +122,7 @@ class GoogleCore:
         try:
             return self.prepare_utterance(output_directory, response)
         except Exception as e :
-            test_logger.error(e)
+            logger.error(e)
             raise Err.OutPutError(f"ERROR: Output Google STT failed, error message: {e}")
        
             
@@ -129,19 +153,15 @@ class GoogleCore:
                 request={"config": config, "audio": audio})
         
         except Exception as e:
-            test_logger.error(e)
+            logger.error(e)
             self.transcribe_error = True
             raise Err.TranscriptionError("Google STT Transcription failed")
         else:
             self.transcribing = False
             self.transcribe_success = True
-            test_logger.info(response.request_id)
-            test_logger.info(response.speech_adaptation_info)
-            test_logger.info(response.results)
-            test_logger.info(response.total_billed_time)
+            logger.info(response.results)
         return response
-    
-    
+      
     def prepare_utterance(self, output_directory: str, 
                           response: cloud_speech.RecognizeResponse) -> List[Dict[str, str]]:
         """
@@ -154,15 +174,18 @@ class GoogleCore:
             response (cloud_speech.RecognizeResponse): raw response from google 
         
         Return:
-            a list of dictionary that contains the output data
+            A list of dictionary that contains the utterance data of the 
+            audio file, each part of the audio file is stored in the format 
+            {speaker: , start_time: , end_time: , text: }
         """
         if not is_directory(output_directory):
-            test_logger.debug("make  the directory ")
+            logger.debug("make  the directory ")
             print(output_directory)
             make_dir(output_directory, overwrite=True)
-            test_logger.debug("finished making  the directory ")
+            logger.debug("finished making  the directory ")
 
         results = response.results
+        
         status_result = {
             "connected": self.connected,
             "read_audio": self.read_audio, 
@@ -174,7 +197,6 @@ class GoogleCore:
         }
         
         write_json(os.path.join(output_directory, "results.json"), status_result)
-
         """ Prepare Utterance """
         utterances = list()
         for result in results:
@@ -186,7 +208,8 @@ class GoogleCore:
                     "text":word.word
                 }
                 utterances.append(utt)
-        test_logger.info(utterances)
+        
+        logger.info(utterances)
         return utterances
     
     def _init_status(self):
@@ -199,3 +222,84 @@ class GoogleCore:
         self.transcribe_success = False
         self.transcribe_error = False
         self.output_success = False
+    
+    def _chunk_audio(self, audiopath: str, output: str) -> Union[str, bool]:
+        """ given the audio path, chunking the audio into a series of audio
+            segment
+        
+        Args:
+            audiopath[str]: the file path to the audio file 
+            outout[str]: the output of the chunked file 
+            
+        Return:
+            Union[str, bool]: return the output directory if the chunking is 
+            successful else return False
+        """
+        if not is_directory(output):
+            make_dir(output)
+        dir = os.path.join(output, "audio")
+        make_dir(dir)
+        basename = get_name(audiopath)
+        idx = 0
+        try:
+            mediaHandler = MediaHandler()
+            stream = mediaHandler.read_file(audiopath)
+            chunks = mediaHandler.chunk(stream, GOOGLE_CONFIG.maximum_duration)
+            
+            for chunk in chunks:
+                mediaHandler.write_stream(
+                    chunk, dir, name=f"{basename}-{idx}", 
+                    format=get_extension(audiopath))
+                idx += 1
+                
+        except Exception as e:
+            logger.error(e)
+        else:
+            return dir
+    
+    def _transcribe_large_file(self, audiopath: str, workspace: str, output: str):
+        """ 
+        transcribing large audio file that exceeds the google cloud's limit for
+        transcribing local file size
+        
+        Arg: 
+            audiopath[str]: file path to the source audio file
+            workspace[str]: workspace for storing temporary file required in the 
+                            in the transcription process
+            output[str]: the output file path of the transcription result
+            
+        Return: 
+            A list of dictionary that contains the utterance data of the 
+            audio file, each part of the audio file is stored in the format 
+            {speaker: , start_time: , end_time: , text: }
+        """
+        audio_chunks_dir = self._chunk_audio(audiopath, workspace)
+        audio_chunks = paths_in_dir(audio_chunks_dir)
+        audio_chunks = sorted(audio_chunks, key = lambda file: (len(file), file))
+        utterances = []
+        for chunk in audio_chunks:
+            logger.info(f"transcribe {chunk} in progress")
+            response = self.run_engine(chunk)
+            assert response
+            new_utt = self.prepare_utterance(output, response)
+            logger.info(new_utt)
+            utterances.append(new_utt)
+        delete(workspace)
+        return utterances
+    
+    def _init_workspace(self, output_directory) -> None :    
+        """ 
+        initialize the work space
+        
+        Args: 
+            output_directory[str]: the output path where the transcription result 
+                                    will be stored
+        """ 
+        try:
+            if not is_directory(output_directory):
+                make_dir(output_directory, overwrite=True)
+            make_dir(self.workspace_directory, overwrite=True)
+            assert is_directory(self.workspace_directory)
+        except Exception as e:
+            logger.error(e)
+            raise FileExistsError("ERROR: failed to create directory")

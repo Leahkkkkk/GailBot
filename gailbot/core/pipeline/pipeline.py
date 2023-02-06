@@ -14,10 +14,6 @@ import networkx as nx
 from copy import deepcopy
 from .component import Component, ComponentState, ComponentResult
 
-""" TESTING:
-like use  gpt2 hugging-face: 
-large number of thread: 
-"""
 
 @dataclass
 class DataStream:
@@ -39,9 +35,7 @@ class Pipeline:
     ):
         """
         Dependency map describes the execution order.
-
         """
-
         self.dependency_map = dependency_map
         self.components = components
         self.threadpool = ThreadPool(num_threads)
@@ -58,7 +52,6 @@ class Pipeline:
         additional_component_kwargs : Dict = dict()
         # NOTE: base_input is passed only to the first component.
     ) -> Dict[str, ComponentState]:
-
         """
         Execute the pipeline by running all components in order of the dependency
         graph. This wraps data as DataStream before passing it b/w components.
@@ -69,8 +62,7 @@ class Pipeline:
 
         NOTE: The components themselves are responsible for checking whether
         the parent components executed successfully.
-        
-        TODO: we can added here
+        NOTE: New implementation changed to check the dependency
         """
 
         successors = self.get_dependency_graph()
@@ -148,6 +140,7 @@ class Pipeline:
         return list(self.name_to_component.keys())
 
     def is_component(self, name : str) -> bool:
+        """ return if the component is in the dependency map """
         return name in self.component_names()
 
     def component_parents(self, name : str) -> List[str]:
@@ -212,7 +205,6 @@ class Pipeline:
         # self.name_to_dependency_node : Dict[str, Component] = dict()
 
         for name, dependencies in dependency_map.items():
-
             # This node must exist as a Component
             if not name in components:
                 raise Exception(
@@ -225,7 +217,6 @@ class Pipeline:
 
             # Create a component and add to main graph
             self.dependency_graph.add_node(components[name])
-
 
             # We want to add directed edges from all the dependencies to the
             # current node. This implies that the dependencies should already

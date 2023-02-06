@@ -10,6 +10,8 @@ class GoogleConfig(DataclassFromDict):
     defaults: Dict = field_from_dict()
     name: str      = field_from_dict()
     workspace: str = field_from_dict()
+    maximum_size: int = field_from_dict()
+    maximum_duration: int = field_from_dict()
 
 def load_google_config(path: str):
     """

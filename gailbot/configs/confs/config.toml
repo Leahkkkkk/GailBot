@@ -1,7 +1,0 @@
-# top level information 
-[organizer.pipeline]
-num_threads = 5 
-
-[path]
-top_level = "gailbot_workspace"
-
