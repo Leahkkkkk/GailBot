@@ -3,7 +3,6 @@
 # @Date:   2023-01-30 16:00
 # @Last Modified by:  Vivian Li
 # @Last Modified time: 2023-01-31 12:01:31
-
 import os 
 import io
 from copy import deepcopy
@@ -142,10 +141,15 @@ class GoogleCore:
                 content = audio.read()
                 audio = speech.RecognitionAudio(content = content)
                 self.read_audio = True
-            encoding = self.ENCODING_TABLE[get_extension(audio_path)]
-            
+            format = get_extension(audio_path).lower()
+            encoding = self.ENCODING_TABLE[format]
             kwargs = deepcopy(GOOGLE_CONFIG.defaults)
-            kwargs.update({"encoding": encoding})
+            
+            if format == "wav" or format == "flac":
+                kwargs.update({"encoding": encoding})
+            else:
+                kwargs.update({"encoding": encoding, "sample_rate_hertz": 16000})
+            
             config = speech.RecognitionConfig(**kwargs)
             
             self.transcribing = True

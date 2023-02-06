@@ -22,7 +22,7 @@ def test_core_transcribe(audio_path):
     core.transcribe(audio_path, AudioPath.GOOGLE_OUT_PATH)
     
 @pytest.mark.parametrize("audio_path", [AudioPath.SMALL_AUDIO_MP3, AudioPath.SMALL_AUDIO_WAV])
-def test_small_file_engine(audio_path):
+def test_small_file(audio_path):
     core = Google()
     assert not core.transcribe_success
     core.transcribe(audio_path, AudioPath.GOOGLE_OUT_PATH)

@@ -4,7 +4,7 @@
 # Defines default configuration settings
 [google.defaults]
 enable_automatic_punctuation    = true
-enable_speaker_diarization      = true
+enable_speaker_diarization      = false
 enable_word_time_offsets        = true
 language_code                   = "en-US" 
 

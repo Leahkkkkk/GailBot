@@ -190,7 +190,8 @@ class WatsonCore:
         
         try:
             if get_size(audio_path) >= WATSON_CONFIG.max_file_size_bytes:
-                audio_path = self._convert_to_opus(audio_path, self.work_space_directory)
+                audio_path = self._convert_to_opus(
+                    audio_path, self.work_space_directory)
                 logger.info(f"the compressed auido_path is {audio_path}")
         except: 
             raise ERR.AudioFileError("ERROR: Failed to compile large audio file to opus format")
@@ -227,7 +228,7 @@ class WatsonCore:
         """ 
          output the response data from google STT, convert the raw data to 
         utterance data which is a list of dictionary in the format 
-        {spearker: , start_time: , end_time: , text: }
+        {speaker: , start_time: , end_time: , text: }
         
 
         Args:
