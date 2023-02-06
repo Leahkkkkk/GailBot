@@ -14,24 +14,24 @@ import networkx as nx
 from copy import deepcopy
 from .component import Component, ComponentState, ComponentResult
 
-
+Failure = ComponentResult(ComponentState.FAILED, None, 0)
+logger = makelogger("pipeline")
 @dataclass
 class DataStream:
     data : Any = None
 
 # TODO: Eventually, add configs to change multithreading options.
 # TODO: Need to implement multithreading.
-
-
-logger = makelogger("pipeline")
-
-Failure = ComponentResult(ComponentState.FAILED)
 class Pipeline:
+    """
+    Defines a class for the pipeline that runs the dependency map.
+    """
     def __init__(
         self,
         dependency_map : Dict[str, List[str]],
         components : Dict[str, Component],
-        num_threads: int ## TODO: add the logic of having multiple threads
+        num_threads: int 
+        ## TODO: add the logic of having multiple threads
     ):
         """
         Dependency map describes the execution order.
@@ -41,9 +41,18 @@ class Pipeline:
         self.threadpool = ThreadPool(num_threads)
         self._generate_dependency_graph(
             dependency_map, components
-        ) 
-
+        )
+    
     def __repr__(self) -> str:
+        """
+        Accesses the pipeline's dependency graph.
+
+        Args:
+            self
+        
+        Returns:
+            String representation of the pipeline's dependency graph.d
+        """
         return str(self.get_dependency_graph())
 
     def __call__(
@@ -55,10 +64,16 @@ class Pipeline:
         """
         Execute the pipeline by running all components in order of the dependency
         graph. This wraps data as DataStream before passing it b/w components.
-        Additionally, each component receives the output of its dependencies.
+        Additionally, each component receives the output of its dependencies. 
 
-        Additional_component_kwargs are passed as a dereferenced dictionary to
-        each component.
+        Args:
+            base_input: holds the component result.
+            Additional_component_kwargs: passed as a dereferenced dictionary to
+                each component.
+
+        Returns:
+            Dictionary containing keys mapping to the component states corresponding
+             to the result of each task.
 
         NOTE: The components themselves are responsible for checking whether
         the parent components executed successfully.
@@ -136,16 +151,33 @@ class Pipeline:
         }
 
     def component_names(self) -> List[str]:
-        """Get names of all components"""
+        """
+        Gets names of all components in the dependency map.
+        
+        Args:
+            self
+        
+        Returns:
+            List of strings containing components.
+        """
         return list(self.name_to_component.keys())
 
     def is_component(self, name : str) -> bool:
-        """ return if the component is in the dependency map """
         return name in self.component_names()
 
     def component_parents(self, name : str) -> List[str]:
         """
-        Get component this component is dependant on.
+        Get the component(s) that the given component is dependent on.
+
+        Args:
+            name: string containing the name of the child component.
+
+        Returns:
+            List of strings of the names of the given component's parent 
+            components.
+
+            Raises exception if the given name doesn't correspond to an 
+            existing component.
         """
         if not self.is_component(name):
             raise Exception(f"No component named {name}")
@@ -154,7 +186,17 @@ class Pipeline:
 
     def component_children(self, name : str) -> List[str]:
         """
-        Get components that are dependant on this component
+        Gets component(s) that are dependent on the given component.
+
+        Args:
+            name: string containing the name of the child component.
+
+        Returns:
+            List of strings of the names of components that are dependent on the 
+            given component.
+
+            Raises exception if the given name doesn't correspond to an 
+            existing component.
         """
         if not self.is_component(name):
             raise Exception(f"No component named {name}")
@@ -163,7 +205,13 @@ class Pipeline:
 
     def get_dependency_graph(self) -> Dict:
         """
-        Return a map from each component to the components it is dependant on
+        Returns a map from each component to the components it is dependent on.
+
+        Args:
+            self
+        
+        Returns:
+            Dictionary mapping the given component to the components it is dependent upon.
         """
         view = dict()
         for name in self.name_to_component:
@@ -176,7 +224,13 @@ class Pipeline:
 
     def _does_cycle_exist(self, graph: nx.Graph) -> bool:
         """
-        Return True if there are any cycles in the graph. False otherwise.
+        Determines if there are existing cycles in the given graph.
+
+        Args:
+            graph: graph in which to determine if there are cycles.
+        
+        Returns:
+            True if there are any cycles in the given graph, false if not.
         """
         try:
             nx.find_cycle(graph, orientation="original")
@@ -189,21 +243,31 @@ class Pipeline:
         dependency_map : Dict[str, List[str]],
         components : Dict[str, Component]
     ) -> None:
-        # Graph views
-        # NOTE: These are graphs of Components, not str!
+        """
+        Generates a dependency graph containing components from a given dictionary.
+        Assumes that the dependency_map keys are in order i.e, a component will 
+        be seen as a key before it is seen as a dependency.
+
+        Args:
+            dependency_map: dictionary containing lists of strings to map between.
+            components: dictionary containing components to insert into the newly 
+                created dependency graph.
+
+        Returns:
+            A graph of components mapping from the component's name to its dependencies.
+
+            Raises exception if an element of the dependency graph does not correspond
+                to a valid element.
+
+        """
         self.dependency_graph = nx.DiGraph()
-        self.name_to_component: Dict[str, Component] = dict()
-        # self.executed_graph_view = nx.DiGraph()
+        self.name_to_component = dict()
 
         # Verify that the same keys exist in both dicts
         assert dependency_map.keys() == components.keys(), \
             f"Component and dependency maps should have similar keys"
 
         # # Mapping from component name to dependencies
-        # # NOTE: Assuming that the dependency_map keys are in order i.e,
-        # # a component will be seen as a key before it is seen as a dependency.
-        # self.name_to_dependency_node : Dict[str, Component] = dict()
-
         for name, dependencies in dependency_map.items():
             # This node must exist as a Component
             if not name in components:

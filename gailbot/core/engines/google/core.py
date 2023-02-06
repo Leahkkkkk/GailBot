@@ -281,6 +281,8 @@ class GoogleCore:
             logger.info(f"transcribe {chunk} in progress")
             response = self.run_engine(chunk)
             assert response
+            logger.info("geting the response in chunk")
+            logger.info(response)
             new_utt = self.prepare_utterance(output, response)
             logger.info(new_utt)
             utterances.append(new_utt)

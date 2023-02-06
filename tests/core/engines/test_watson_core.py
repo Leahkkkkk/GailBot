@@ -72,5 +72,10 @@ def test_watson_large(inpath, outpath):
 def test_watson_large_wav(inpath, outpath):
     watson_test(inpath, outpath)
 
+@pytest.mark.parametrize(
+    "inpath, outpath", [(AudioPath.CHUNK_60, AudioPath.WATSON_OUT_PATH)])
+def test_watson_60(inpath, outpath):
+    watson_test(inpath, outpath)
+
 
 
