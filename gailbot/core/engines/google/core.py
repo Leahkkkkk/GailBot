@@ -20,11 +20,11 @@ from gailbot.core.utils.general import (
     get_name)
 from gailbot.core.utils.logger import makelogger
 from ...engines import exception as Err
-logger = makelogger("google")
 from gailbot.configs import google_config_loader, top_level_config_loader
 from gailbot.core.utils.general import get_size
 from gailbot.core.utils.media import MediaHandler
 
+logger = makelogger("google")
 GOOGLE_CONFIG = google_config_loader()
 TOP_CONFIG = top_level_config_loader()
 """ TODO: 

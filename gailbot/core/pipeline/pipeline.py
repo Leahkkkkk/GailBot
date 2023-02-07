@@ -13,7 +13,7 @@ from gailbot.core.utils.logger import makelogger
 import networkx as nx
 from copy import deepcopy
 from .component import Component, ComponentState, ComponentResult
-
+""" TODO: check base is passed in as the first arg to the first component """
 Failure = ComponentResult(ComponentState.FAILED, None, 0)
 logger = makelogger("pipeline")
 @dataclass

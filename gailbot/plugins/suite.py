@@ -79,6 +79,7 @@ class PluginSuite:
 
         # TODO: Parse the dict config to generate the plugins map and
         # dependency map.
+        """ a dictionary of the dependency map  -> pipeline argument  """
         self.dict_conf = dict_conf
 
         # NOTE: This is where classes should be dynamically loaded.
@@ -86,6 +87,7 @@ class PluginSuite:
         # self.dependency_map : Dict[str, List[str] ]= dict()
         self.dependency_map, self.plugins = self._load_from_config(dict_conf)
 
+        """ we ge the plugin, wrapped in component """
         # Wrap the plugins in PluginComponent
         self.components = {
             k : PluginComponent(v) for k,v in self.plugins.items()
@@ -126,7 +128,7 @@ class PluginSuite:
         summary
         """
         result = self.pipeline(
-            base_input=base_input,
+            base_input=base_input, 
             additional_component_kwargs={
                 "methods" : methods
             }
@@ -178,7 +180,7 @@ class PluginSuite:
 
         dependency_map = dict()
         plugins = dict()
-
+        """ TODO: test this  -- path dependency / relative path & absolute path"""
         for plugin, conf in dict_config["plugins"].items():
             module_name = conf["moduleName"]
             module_path = f"{pkg_name}.{module_name}"
@@ -197,5 +199,5 @@ class PluginSuite:
             dependency_map[clazz_name] = conf["dependencies"]
             plugins[clazz_name] = instance
 
-        return dependency_map, plugins
+        return dependency_map, plugins # used to generate pipeline 
 
