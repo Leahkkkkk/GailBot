@@ -13,7 +13,7 @@ from .core import WatsonCore
 from .lm import WatsonLMInterface
 from .am import WatsonAMInterface
 from ..engine import Engine
-from gailbot.core.engines import exception as Err
+from gailbot.core.engines import exception as ERR
 from gailbot.core.utils.general import write_json
 class Watson(Engine):
     """ 
@@ -86,7 +86,7 @@ class Watson(Engine):
         base_model : str,
         language_customization_id : str = "",
         acoustic_customization_id : str = ""
-    ) -> str:
+    ) -> List[Dict[str, str]]:
         """Use the engine to transcribe an item
         
         Args: 
@@ -100,15 +100,20 @@ class Watson(Engine):
             ID of the custom language model.
         acoustic_customization_id: str (optional): 
             ID of the custom acoustic model.
+        
+        Returns:
+            A list of dictionary that contains the utterance data of the 
+            audio file, each part of the audio file is stored in the format 
+            {speaker: , start_time: , end_time: , text: }
         """
-        # try:
-        utterances = self.core.transcribe(
-            audio_path, output_directory, base_model,
-            language_customization_id, acoustic_customization_id)
-        self.is_transcribe_success = True
-        return utterances
-        # except:
-            # raise Err.ThranscriptionError
+        try:
+            utterances = self.core.transcribe(
+                audio_path, output_directory, base_model,
+                language_customization_id, acoustic_customization_id)
+            self.is_transcribe_success = True
+            return utterances
+        except:
+            raise ERR.TranscriptionError("Error raised: transcription error")
 
     def language_customization_interface(self) -> WatsonLMInterface:
         """ return the watson customized language model interface """

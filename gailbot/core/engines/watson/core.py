@@ -3,11 +3,14 @@
 # @Date:   2023-01-09 11:25:49
 # @Last Modified by:   Muhammad Umair
 # @Last Modified time: 2023-01-16 11:59:32
-import os 
-from typing import List, Any, Dict
-from itertools import chain
 
-import time
+""" TODO:
+1. keyword arguments : headers, customization weight are removed 
+2. need to test for long audio  (1 hr)
+"""
+import os 
+from typing import List, Any, Dict, Union
+from itertools import chain
 from copy import deepcopy
 # Third party imports
 from ibm_watson import SpeechToTextV1, ApiException
@@ -15,8 +18,9 @@ from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from ibm_watson.websocket import RecognizeCallback, AudioSource
 from .recognize_callback import CustomWatsonCallbacks
 from .recognition_results import RecognitionResult
-from gailbot.core.engines import exception as Err
-from gailbot.configs.utils import WATSON_DATA
+from gailbot.core.utils.logger import makelogger
+from gailbot.core.engines import exception as ERR
+from gailbot.configs import watson_config_loader, top_level_config_loader
 from gailbot.core.utils.media import MediaHandler
 from gailbot.core.utils.general import (
     make_dir,
@@ -31,7 +35,10 @@ from gailbot.core.utils.general import (
     write_json,
     CMD_STATUS
 )
-WORK_SPACE = "watson_workspace"
+
+WATSON_CONFIG = watson_config_loader()
+TOP_CONFIG = top_level_config_loader()
+logger = makelogger("watson_core")
 class WatsonCore:
     """
     Implement core functionalities to transcribe an audio file through 
@@ -43,10 +50,10 @@ class WatsonCore:
         self.media_h = MediaHandler()
 
         # Parse confs
-        self._regions = WATSON_DATA.regions_uris
-        self._format_to_content_types = WATSON_DATA.format_to_content 
-        self._defaults = WATSON_DATA.defaults
-        self.max_size_bytes = WATSON_DATA.max_file_size_bytes
+        self._regions = WATSON_CONFIG.regions_uris
+        self._format_to_content_types = WATSON_CONFIG.format_to_content 
+        self._defaults = WATSON_CONFIG.defaults
+        self.max_size_bytes = WATSON_CONFIG.max_file_size_bytes
 
         if not self._is_api_key_valid(apikey, self._regions[region]):
             raise Exception(f"Apikey {apikey} invalid")
@@ -121,11 +128,13 @@ class WatsonCore:
                 ID of the custom language model.
         """
         try:
+            self._init_workspace(output_directory)
             self._websockets_recognize(
                 audio_path, output_directory, base_model, 
                 language_customization_id, acoustic_customization_id)  
-        except:
-           Err.ConnectionError
+        except Exception as e:
+            logger.error(e)
+            ERR.ConnectionError("ERROR: connection error")
            
         utterances = self._prepare_utterance(
             output_directory, self.recognize_callbacks.get_results())   
@@ -134,13 +143,31 @@ class WatsonCore:
 ###############
 # PRIVATE
 ##############
+    def _init_workspace(self, output_directory):
+        self.recognize_callbacks.reset()
+        # Checks all the input data is valid
+        self.work_space_directory = os.path.join(
+            TOP_CONFIG.root, TOP_CONFIG.workspace.watson_workspace)
+        logger.info(self.work_space_directory)
+        logger.info(output_directory)
+        
+        try: 
+            if not is_directory(output_directory): 
+                make_dir(output_directory, overwrite=True)
+            make_dir(self.work_space_directory, overwrite=True)
+            assert is_directory(output_directory)
+            self.engine_workspace_dir = self.work_space_directory
+        except Exception as e:
+            logger.error(e)
+            raise FileExistsError("ERROR: Failed to create directory")
+    
     def _websockets_recognize(
         self,
         audio_path : str,
         output_directory : str,
         base_model : str,
-        language_customization_id : str = "",
-        acoustic_customization_id : str = ""
+        language_customization_id : str = None,
+        acoustic_customization_id : str = None
     ) -> Any:
         """
         Transcribes the provided audio stream using a websocket connections.
@@ -159,24 +186,15 @@ class WatsonCore:
                 ID of the custom language model.
         """
         # reset the callbacks
-        self.recognize_callbacks.reset()
-        # Checks all the input data is valid
         assert is_file(audio_path), f"Not a file {audio_path}"
-        work_space_directory = os.path.join(output_directory, WORK_SPACE)
-        try: 
-            if not is_directory(output_directory): 
-                make_dir(output_directory, overwrite=True)
-            make_dir(work_space_directory, overwrite=True)
-            assert is_directory(output_directory)
-            self.engine_workspace_dir = work_space_directory
-        except:
-            raise FileExistsError 
         
         try:
-            if get_size(audio_path) >= self.max_size_bytes:
-                audio_path = self._convert_to_opus(audio_path, work_space_directory)
+            if get_size(audio_path) >= WATSON_CONFIG.max_file_size_bytes:
+                audio_path = self._convert_to_opus(
+                    audio_path, self.work_space_directory)
+                logger.info(f"the compressed auido_path is {audio_path}")
         except: 
-            raise Err.AudioFileError
+            raise ERR.AudioFileError("ERROR: Failed to compile large audio file to opus format")
 
         # Create the stt service and run
         try:
@@ -184,7 +202,7 @@ class WatsonCore:
             stt = SpeechToTextV1(authenticator=authenticator)
             stt.set_service_url(self.regions[self.region])
         except:
-            raise Err.APIKeyError
+            raise ERR.APIKeyError("ERROR: API key error")
 
         with open(audio_path, "rb") as f:
             # Prepare args
@@ -192,38 +210,10 @@ class WatsonCore:
             content_type = self._format_to_content_types[get_extension(audio_path)]
             
             
-            """ TODO:  confirm current set of key word arguments is okay, 
+            """ 
+            :  confirm current set of key word arguments is okay, 
                        headers and customized weight does not work  """
-            # kwargs = deepcopy(self.defaults)
-            kwargs = {
-            "ssl_verification": True,
-            # "headers": {
-            #     "x-watson-learning-opt-out": False},
-            
-            "base_model_version": None,
-            "inactivity_timeout": 1000,
-            "interim_results": False,
-            "keywords": None,
-            "keyword_threshold": 0.8,
-            "max_alternatives": 1,
-            "word_alternatives_threshold": None,
-            "word_confidence": True,
-            "timestamps": False,
-            "profanity_filter": False,
-            "smart_formatting": False,
-            "speaker_labels": True,
-            "http_proxy_host": None,
-            "http_proxy_port": None,
-            "grammar_name": None,
-            "redaction": False,
-            "processing_metrics": False,
-            "processing_metrics_interval": 1.0,
-            "audio_metrics": False,
-            "end_of_phrase_silence_time": 0.8,
-            "split_transcript_at_phrase_end": False,
-            "speech_detector_sensitivity": 0.5,
-            "background_audio_suppression": 0.0}
-            
+            kwargs = deepcopy(self.defaults)
             kwargs.update({
                 "audio": source,
                 "content_type" : content_type,
@@ -231,12 +221,23 @@ class WatsonCore:
                 "model" : base_model,
                 "customization_id": language_customization_id,
             })
-            
-            print(kwargs)
             stt.recognize_using_websocket(**kwargs)
             delete(self.engine_workspace_dir)
             
-    def _prepare_utterance(self, output_directory, closure: Dict[str, Any]) -> List:
+    def _prepare_utterance(self, output_directory: str, closure: Dict[str, Any]) -> List:
+        """ 
+         output the response data from google STT, convert the raw data to 
+        utterance data which is a list of dictionary in the format 
+        {speaker: , start_time: , end_time: , text: }
+        
+
+        Args:
+            output_directory (str):  output path 
+            closure (Dict[str, Any]): contains the result data from Watson
+
+        Returns:
+            List:  a list of dictionary that contains the output data
+        """
         try:
             utterances = list()
             # Mapping based on (start time, end time)
@@ -315,7 +316,7 @@ class WatsonCore:
         stt = SpeechToTextV1(authenticator=authenticator)
         return stt
 
-    def _convert_to_opus(self, audio_path: str, workspace: str) -> str:
+    def _convert_to_opus(self, audio_path: str, workspace: str) -> Union[str, bool]:
         """
         Convert audio stream to .opus format 
 
@@ -326,22 +327,27 @@ class WatsonCore:
                 the newly converted file
 
         Returns:
-            String representing the path to the newly converted output file
+            String representing the path to the newly converted output file 
+            if the file is compressed successfully, else return false 
         """
+        logger.info("Converting file")
         out_path = "{}/{}.opus".format(workspace, get_name(audio_path))
-        cmd_str = "ffmpeg -y -i {} -strict -2  {}".format(audio_path, out_path)
+        logger.info(f"Converting path{out_path}")
         pid = run_cmd(["ffmpeg", "-y", "-i", audio_path, "-strict", "-2", out_path])
         
         while True:
             match get_cmd_status(pid):
                 case CMD_STATUS.STOPPED:
-                    raise ChildProcessError
+                    raise ChildProcessError("ERROR: child process error")
                 case CMD_STATUS.FINISHED:
                     break 
                 case CMD_STATUS.ERROR:
-                    raise ChildProcessError
+                    raise ChildProcessError("ERROR: child process error")
                 case CMD_STATUS.NOTFOUND:
-                    raise ProcessLookupError
+                    raise ProcessLookupError("ERROR: process lookup error")
         
-        return get_cmd_status(pid) == CMD_STATUS.FINISHED
+        if get_cmd_status(pid) == CMD_STATUS.FINISHED:
+            return out_path
+        else: 
+            return False
     

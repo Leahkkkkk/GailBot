@@ -2,7 +2,7 @@ class ConnectionError(Exception):
     def __str__(self) -> str:
         return "STT Connection Error"
 
-class ThranscriptionError(Exception):
+class TranscriptionError(Exception):
     def __str__(self) -> str:
         return "Transcription error"
 
@@ -22,4 +22,6 @@ class WatsonMethodExecutionError(Exception):
     def __str__(self) -> str:
         return "Watson method execution error"
 
-    
+class OutPutError(Exception):
+    def __str__(self) -> str:
+        return "Error writing output"

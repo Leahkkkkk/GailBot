@@ -8,10 +8,15 @@ from gailbot.core.pipeline import (
     Pipeline, Component, ComponentResult, ComponentState
 )
 from typing import Dict, List, Any
+from gailbot.core.utils.logger import makelogger
+import time 
+logger = makelogger("test-pipeline")
 
 class TestComponent(Component):
-
-
+    """
+    Class for a component on which to run tests. Defines initialization 
+        and calling functions.
+    """
     def __init__(self, name : str):
         self.name = str(name)
 
@@ -24,14 +29,18 @@ class TestComponent(Component):
     ) -> ComponentState:
 
         """Get a source and the associated settings objects and transcribe"""
-        print(f"Running component {self.name}")
-        print(f"Dependency outputs {dependency_outputs}")
+        logger.info(f"Running component {self.name}")
+        logger.info(f"Dependency outputs {dependency_outputs}")
+        # time.sleep(1)
         return ComponentResult(
             state=ComponentState.SUCCESS,
             result=self.name,
             runtime=0
         )
 
+    @property
+    def __name__(self):
+        return self.name
 
 def test_pipeline():
     # 2 and 4 should run together
@@ -41,14 +50,17 @@ def test_pipeline():
     pipeline = Pipeline(
         dependency_map={
             "1" : [],
-            "2" : ["1"],
-            "3" : ["2"],
-            "4" : ["1"],
-            "5" : ["1", "3"]
+            "2" : [],
+            "3" : [],
+            "4" : [],
+            "5" : []
         },
-        components=components
+        components=components,
+        num_threads=1
     )
-    print(pipeline.component_children("1"))
+    logger.info("get component children")
+    logger.info(pipeline.component_children("1"))
     print(pipeline)
+    logger.info("get component result")
     res = pipeline({})
-    print(res)
+    logger.info(res)

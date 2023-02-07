@@ -1,5 +1,5 @@
 from gailbot.core.engines.watson.am import WatsonAMInterface
-from ...logger import makelogger
+from gailbot.core.utils.logger import makelogger
 
 WATSON_API_KEY         = "MSgOPTS9CvbADe49nEg4wm8_gxeRuf4FGUmlHS9QqAw3"
 WATSON_LANG_CUSTOM_ID  = "41e54a38-2175-45f4-ac6a-1c11e42a2d54"

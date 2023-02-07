@@ -3,7 +3,7 @@
 # @Date:   2023-01-08 13:22:01
 # @Last Modified by:   Muhammad Umair
 # @Last Modified time: 2023-01-16 13:10:15
-
+""" TODO:  """
 import sys
 import os
 from typing import Dict, List, Any
@@ -128,7 +128,7 @@ class PluginManager:
         self.suites_dir = f"{workspace_dir}/suites"
         self.download_dir = f"{workspace_dir}/downloads"
         self.suites = dict()
-
+        """ TODO: test this - load different types of plugin source file """
         self.loaders = [
             PluginDirectoryLoader(self.suites_dir),
             PluginTOMLLoader(),
@@ -140,7 +140,8 @@ class PluginManager:
         make_dir(workspace_dir,overwrite=False)
         make_dir(self.suites_dir,overwrite=False)
         make_dir(self.download_dir,overwrite=True)
-
+        
+        """ check if the plugin has been installed  """
         if load_existing:
             # TODO:  Load any suites that may already exist
             subdirs = subdirs_in_dir(self.suites_dir)
@@ -165,6 +166,7 @@ class PluginManager:
         """
         make_dir(self.workspace_dir,overwrite=True)
 
+    
     def register_suite(
         self,
         plugin_source : str
@@ -189,7 +191,8 @@ class PluginManager:
             )
         return self.suites[suite_name]
 
-
+    def delete_suite(self, suite_name:str):
+        pass 
 
 
 

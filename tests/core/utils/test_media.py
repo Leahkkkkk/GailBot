@@ -46,7 +46,6 @@ def test_is_supported(handlers: List[media.MediaHandler]):
             assert not media.MediaHandler.is_supported(f"{basename}.not {format}")
             
     
-
 def test_read_write_stream(handlers):
     output = f"{OUTPUT_DIR}/write_stream"
     if general.is_directory(output):
@@ -91,7 +90,6 @@ def test_change_volume(handlers):
             format = general.get_extension(file)
             handler.write_stream(after_change, output, format = format)
     
-
 def test_mono_stereo_convert(handlers):
     for handler in handlers:
         files = general.filepaths_in_dir(INPUT_DIR)

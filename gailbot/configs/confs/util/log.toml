@@ -1,0 +1,3 @@
+[log]
+directory = "./log_files"
+formatter = '%(asctime)s - %(funcName)s - %(lineno)s - %(levelname)s - %(message)s'
