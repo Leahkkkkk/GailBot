@@ -6,88 +6,40 @@
 
 from typing import Dict, Any, List
 import torch
-
 from ..engine import Engine
-
 from .core import WhisperCore
-
 from gailbot.core.utils.general import (
     get_extension
 )
+from gailbot.configs import  whisper_config_loader
 
 
+WHISPER_CONFIG = whisper_config_loader()
 
 class WhisperEngine(Engine):
 
-    ENGINE_NAME = "whisper"
+    def __init__(self):
 
-    # TODO: Move most of these to the config file, since almost none
-    # of them should come from the user in our use case.
-    # TODO: These configs should be loaded directly by core.
-    def __init__(
-        self,
-        model : str,
-        model_cache_dir : str,
-        punctuations_with_words : bool = True,
-        compute_confidence : bool = True,
-        sampling_temperature : float = 0.0,
-        best_of : int = None,
-        beam_size : int = None,
-        beam_decoding_patience : float = None,
-        length_penalty : float = None,
-        suppress_tokens : str = "-1",
-        condition_on_previous_text : bool = True,
-        fp16  = None,
-        temperature_increment_on_fallback : float = 0.0,
-        compression_ratio_threshold : float = 2.4,
-        logprob_threshold : float = -1,
-        no_speech_threshold : float = 0.6,
-        num_threads : int = 0,
-        verbose = True
-    ):
-
-
-        self.core = WhisperCore(
-            model,
-            model_cache_dir,
-            punctuations_with_words,
-            compute_confidence,
-            sampling_temperature,
-            best_of,
-            beam_size,
-            beam_decoding_patience,
-            length_penalty,
-            suppress_tokens,
-            condition_on_previous_text,
-            fp16,
-            temperature_increment_on_fallback,
-            compression_ratio_threshold,
-            logprob_threshold,
-            no_speech_threshold,
-            num_threads,
-            verbose
-        )
+        self.core = WhisperCore()
         self._successful = False
 
     def __str__(self):
         """Returns the name of the function"""
-        return self.ENGINE_NAME
+        return WHISPER_CONFIG.engine_name
 
-    # TODO: Make this more informative.
     def __repr__(self):
         """Returns all the configurations and additional metadata"""
-        return f"Whisper engine using backend: {self.model} "
+        return self.core.__repr__()
 
     #### Engine API Methods
 
     def transcribe(
         self,
         audio_path : str,
-        outdir : str,
         language : str = None
     ) -> List[Dict]:
         """Use the engine to transcribe an item"""
-        results = self.core.transcribe(audio_path, outdir, language)
+        results = self.core.transcribe(audio_path,language)
         self._successful = True
         return results
 
@@ -98,7 +50,7 @@ class WhisperEngine(Engine):
         """
         Obtain the name of the current engine.
         """
-        return self.ENGINE_NAME
+        return WHISPER_CONFIG.engine_name
 
     def get_supported_formats(self) -> List[str]:
         """

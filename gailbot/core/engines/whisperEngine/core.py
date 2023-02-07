@@ -8,15 +8,14 @@ import sys
 import os
 import json
 from typing import List, Dict, Any
+from dataclasses import asdict
 
 import torch
 
 import gailbot.core.engines.whisperEngine.whisperTimestamped as whisper
-
 from gailbot.core.engines.whisperEngine.whisperTimestamped.utils import (
     force_cudnn_initialization
 )
-
 from .diarization.pyannote_diarization import DiarizationPipeline
 
 
@@ -25,14 +24,13 @@ from gailbot.core.utils.general import (
     is_directory,
     make_dir
 )
+from gailbot.configs import  top_level_config_loader, whisper_config_loader
 
+from gailbot.core.utils.logger import makelogger
+logger = makelogger("whisper")
 
-# TODO: All of the vars here should be moved to a config file.
-_WORKSPACE = "whisper_workspace"
-# TODO: Just adding this because we have not tested other formats.
-# However, the load audio method will most likely support other formats
-# as well.
-_FORMATS = ("wav",)
+WHISPER_CONFIG = whisper_config_loader()
+TOP_CONFIG = top_level_config_loader()
 
 class WhisperCore:
     """
@@ -40,117 +38,83 @@ class WhisperCore:
     multiple different instances of the underlying whisper package is required.
     """
 
-    def __init__(
-        self,
-        model_name : str,
-        model_cache_dir : str,
-        punctuations_with_words : bool = True,
-        compute_confidence : bool = True,
-        sampling_temperature : float = 0.0,
-        best_of : int = None,
-        beam_size : int = None,
-        beam_decoding_patience : float = None,
-        length_penalty : float = None,
-        suppress_tokens : str = "-1",
-        condition_on_previous_text : bool = True,
-        fp16  = None,
-        temperature_increment_on_fallback : float = 0.0,
-        compression_ratio_threshold : float = 2.4,
-        logprob_threshold : float = -1,
-        no_speech_threshold : float = 0.6,
-        num_threads : int = 0,
-        verbose = True
-    ):
-        self.model_name = model_name
+    # NOTE: Intentionally limiting the supported formats since we have
+    # not tested other formats.
+    # TODO: I'm not sure if this is the best place to define the supported
+    # formats.
+    _SUPPORTED_FORMATS = ("wav", "mp3")
 
+    def __init__(self):
 
+        # Create a cache dir in case it is required
+        self.workspace_dir = os.path.join(
+            TOP_CONFIG.root, TOP_CONFIG.workspace.whisper_workspace,
+        )
+        self.cache_dir = os.path.join(self.workspace_dir,"cache")
+        self.models_dir = os.path.join(self.cache_dir,"models")
 
-        self.model_cache_dir = model_cache_dir
+        logger.info(f"Whisper workspace path: {self.workspace_dir}")
 
+        make_dir(self.workspace_dir,overwrite=False)
+        make_dir(self.cache_dir,overwrite=False)
+        make_dir(self.models_dir,overwrite=False)
+
+        # Load a GPU is it is available
         self.device = "cuda:0" if torch.cuda.is_available() else "cpu"
-
-        #  This is where the model outputs are saved but we might not need this
-
-        self.punctuations_with_words = punctuations_with_words
-        self.compute_confidence = compute_confidence
-        self.sampling_temperature = sampling_temperature
-        self.best_of = best_of
-        self.beam_size = beam_size
-        self.beam_decoding_patience = beam_decoding_patience
-        self.length_penalty = length_penalty
-        self.suppress_tokens = suppress_tokens
-        self.condition_on_previous_text = condition_on_previous_text
-        self.fp16  = fp16,
-        self.fp16temperature_increment_on_fallback = temperature_increment_on_fallback
-        self.compression_ratio_threshold = compression_ratio_threshold
-        self.logprob_threshold = logprob_threshold
-        self.no_speech_threshold = no_speech_threshold
-        self.num_threads = num_threads
-        # If True, print out all debug messages etc.
-        self.verbose = verbose
-
         if self.device.lower().startswith("cuda"):
             force_cudnn_initialization(self.device)
+        logger.info(f"Whisper core initialized with device: {self.device}")
+        # Load / download the actual whisper model.
+        self.model = whisper.load_model(
+            name=WHISPER_CONFIG.model_name,
+            device=self.device,
+            download_root=self.models_dir
+        )
+        logger.info(f"Whisper core using whisper model: {WHISPER_CONFIG.model_name}")
 
-        self.model = whisper.load_model(self.model_name,device=self.device)
+        # TODO: Add this speaker diarization pipeline after further testing
+        # self.diarization_pipeline = DiarizationPipeline()
 
-        self.diarization_pipeline = DiarizationPipeline()
+    def __repr__(self) -> str:
+        configs = json.dumps(
+            asdict(WHISPER_CONFIG.transcribe_configs),
+            indent = 2, ensure_ascii = False
+        )
+        return (
+            f"Whisper model: {WHISPER_CONFIG.model_name}" \
+            f"Transcribe configs:\n{configs}"
+        )
 
     def transcribe(
         self,
         audio_path : str,
-        outdir : str,
         language : str = None
-    ):
-        assert is_file(audio_path), \
-            f"Not a file: {audio_path}"
-
-        outdir = os.path.join(_WORKSPACE, outdir)
-        make_dir(outdir, overwrite=True)
+    ) -> List[Dict]:
+        assert is_file(audio_path), f"ERROR: Invalid file path: {audio_path}"
 
         if language != None and not language in self.get_supported_languages():
             raise Exception(
-                f"Unsupported language, must be one of: {language}"
+                f"Unsupported language, must be one of: {self.get_supported_languages()}"
             )
 
-        # Identify the speaker chunks
-        speaker_timing_map = \
-            self.diarization_pipeline.identity_speaker_chunks(audio_path)
+        if language == None:
+            logger.info("No language specified - auto detecting language")
 
         # Load the audio and models, transcribe, and return the parsed result
         audio = whisper.load_audio(audio_path)
-        result = whisper.transcribe(self.model, audio, language=language)
+        result = whisper.transcribe(
+            self.model, audio,
+            language=language,
+            **asdict(WHISPER_CONFIG.transcribe_configs)
+        )
 
-        word_dicts : List[Dict] = whisper.parse_into_word_dicts(result)
-
+        if WHISPER_CONFIG.transcribe_configs.verbose:
+            logger.debug(whisper.parse_into_full_text(result))
         # TODO: Add speaker diarization capability once that is fixed.
-        return word_dicts
-
-        # print(word_dicts)
-        # print(speaker_timing_map)
-
-        # # Merge the result of the speaker map and the whisper results
-        # # TODO: This can def. be made more efficient.
-        # for word_dict in word_dicts:
-        #     assigned = False
-        #     # Figure out if there is a speaker label.
-        #     for label, timings in speaker_timing_map.items():
-        #         for (start, end) in timings:
-        #             if word_dict["start"] >= start and word_dict["end"] <= end:
-        #                 word_dict["speaker"] = label
-        #                 assigned = True
-        #                 break
-        #         if assigned:
-        #             break
-        # return word_dicts
-
-
-
-        # print(json.dumps(whisper.parse_into_full_text(result), indent = 2, ensure_ascii = False))
-        # return whisper.parse_into_word_dicts(result)
+        return whisper.parse_into_word_dicts(result)
 
     def get_supported_formats(self) -> List[str]:
-        return list(_FORMATS)
+        return list(self._SUPPORTED_FORMATS)
 
     def get_available_models(self) -> List[str]:
         return whisper.available_models()
