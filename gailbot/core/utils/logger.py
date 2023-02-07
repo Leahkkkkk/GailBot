@@ -2,11 +2,12 @@ import logging
 import os 
 from datetime import date
 from .general import make_dir, is_directory
-from gailbot.configs import log_config_loader
-""" TODO: confirm the log directory position """
+from gailbot.configs import log_config_loader, top_level_config_loader
+
+TOP_LEVEL = top_level_config_loader()
 
 LOG_CONFIG  = log_config_loader()
-log_directory = os.path.join(os.getcwd(), LOG_CONFIG.directory)
+log_directory = os.path.join(TOP_LEVEL.root, TOP_LEVEL.workspace.log_files)
 if not is_directory(log_directory):
     make_dir(log_directory)
 

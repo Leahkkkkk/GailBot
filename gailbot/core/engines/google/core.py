@@ -18,6 +18,7 @@ from gailbot.core.utils.general import (
     paths_in_dir,
     delete,
     get_name)
+
 from gailbot.core.utils.logger import makelogger
 from ...engines import exception as Err
 from gailbot.configs import google_config_loader, top_level_config_loader
@@ -28,9 +29,7 @@ logger = makelogger("google")
 GOOGLE_CONFIG = google_config_loader()
 TOP_CONFIG = top_level_config_loader()
 """ TODO: 
-    1.  test for file with mp3 and wav format passes the tests, need to test for 
-        opus 
-    2. google API key  
+1. google API key  
 """
 class GoogleCore: 
     """

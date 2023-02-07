@@ -55,6 +55,7 @@ def watson_test(inpath, outpath):
     "inpath, outpath", [(AudioPath.SMALL_AUDIO_MP3, AudioPath.WATSON_OUT_PATH), 
                         (AudioPath.SMALL_AUDIO_WAV, AudioPath.WATSON_OUT_PATH)])
 def test_watson_small(inpath, outpath):
+    logger.info("test watson small audio")
     watson_test(inpath, outpath)
 
 @pytest.mark.parametrize(
