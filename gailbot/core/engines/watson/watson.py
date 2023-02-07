@@ -82,7 +82,6 @@ class Watson(Engine):
     def transcribe(
         self,
         audio_path : str,
-        output_directory : str,
         base_model : str,
         language_customization_id : str = "",
         acoustic_customization_id : str = ""
@@ -108,7 +107,7 @@ class Watson(Engine):
         """
         try:
             utterances = self.core.transcribe(
-                audio_path, output_directory, base_model,
+                audio_path, base_model,
                 language_customization_id, acoustic_customization_id)
             self.is_transcribe_success = True
             return utterances

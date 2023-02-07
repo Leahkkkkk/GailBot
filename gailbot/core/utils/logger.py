@@ -1,4 +1,5 @@
 import logging
+import shutil
 import os 
 from datetime import date
 from .general import make_dir, is_directory

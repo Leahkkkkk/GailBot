@@ -107,7 +107,6 @@ class WatsonCore:
     
     def transcribe(self, 
                   audio_path: str, 
-                  output_directory: str, 
                   base_model: str, 
                   language_customization_id: str, 
                   acoustic_customization_id: str):
@@ -118,8 +117,6 @@ class WatsonCore:
         Args:
             audio_path (str) : 
                 path to audio file that will be transcribed
-            output_directory (str) : 
-                path to directory where the transcribed data will be stored
             base_language_model (str) : 
                 specifies the base_language_model 
             language_customization_id (str) : 
@@ -128,34 +125,29 @@ class WatsonCore:
                 ID of the custom language model.
         """
         try:
-            self._init_workspace(output_directory)
+            self._init_workspace()
             self._websockets_recognize(
-                audio_path, output_directory, base_model, 
+                audio_path, base_model, 
                 language_customization_id, acoustic_customization_id)  
         except Exception as e:
             logger.error(e)
             ERR.ConnectionError("ERROR: connection error")
            
         utterances = self._prepare_utterance(
-            output_directory, self.recognize_callbacks.get_results())   
+            self.recognize_callbacks.get_results())   
         return utterances   
     
 ###############
 # PRIVATE
 ##############
-    def _init_workspace(self, output_directory):
-        self.recognize_callbacks.reset()
-        # Checks all the input data is valid
+    def _init_workspace(self):
         self.work_space_directory = os.path.join(
             TOP_CONFIG.root, TOP_CONFIG.workspace.watson_workspace)
         logger.info(self.work_space_directory)
-        logger.info(output_directory)
         
         try: 
-            if not is_directory(output_directory): 
-                make_dir(output_directory, overwrite=True)
-            make_dir(self.work_space_directory, overwrite=True)
-            assert is_directory(output_directory)
+            if not is_directory(self.work_space_directory):
+                make_dir(self.work_space_directory, overwrite=True)
             self.engine_workspace_dir = self.work_space_directory
         except Exception as e:
             logger.error(e)
@@ -164,7 +156,6 @@ class WatsonCore:
     def _websockets_recognize(
         self,
         audio_path : str,
-        output_directory : str,
         base_model : str,
         language_customization_id : str = None,
         acoustic_customization_id : str = None
@@ -176,8 +167,6 @@ class WatsonCore:
         Args:
             audio_path (str) : 
                 path to audio file that will be transcribed
-            output_directory (str) : 
-                path to directory where the transcribed data will be stored
             base_language_model (str) : 
                 specifies the base_language_model 
             language_customization_id (str) : 
@@ -186,6 +175,7 @@ class WatsonCore:
                 ID of the custom language model.
         """
         # reset the callbacks
+        self.recognize_callbacks.reset()
         assert is_file(audio_path), f"Not a file {audio_path}"
         
         try:
@@ -224,7 +214,7 @@ class WatsonCore:
             stt.recognize_using_websocket(**kwargs)
             delete(self.engine_workspace_dir)
             
-    def _prepare_utterance(self, output_directory: str, closure: Dict[str, Any]) -> List:
+    def _prepare_utterance(self, closure: Dict[str, Any]) -> List:
         """ 
          output the response data from google STT, convert the raw data to 
         utterance data which is a list of dictionary in the format 
@@ -232,7 +222,6 @@ class WatsonCore:
         
 
         Args:
-            output_directory (str):  output path 
             closure (Dict[str, Any]): contains the result data from Watson
 
         Returns:
@@ -246,11 +235,12 @@ class WatsonCore:
             labels = list()
             timestamps = list()
             
-            write_json(os.path.join(output_directory, "data.json"), 
+            write_json(os.path.join(self.work_space_directory, "data.json"), 
                         closure["results"]["data"])
-            write_json(os.path.join(output_directory, "results.json"),
+            write_json(os.path.join(self.work_space_directory, "results.json"),
                         closure["results"]["data"])
-            write_json(os.path.join(output_directory, "closure.json"), closure)
+            write_json(os.path.join(self.work_space_directory, "closure.json"), 
+                       closure)
             # Creating RecognitionResults objects
             for item in closure["results"]["data"]:
                 recognition_result = RecognitionResult(item)
