@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-31 17:35:21
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-31 18:56:41
+# @Last Modified time: 2023-02-01 12:37:51
 
 
 from typing import List, Dict, Any
@@ -36,6 +36,7 @@ _SUPPORTED_FORMATS = ("wav", )
 
 _PIPELINE_CONFIG_PATH = "/Users/muhammadumair/Documents/Repositories/mumair01-repos/GailBot/gailbot/core/engines/whisperEngine/diarization/config.yaml"
 
+# TODO: The output is producing speaker labels that are overlapping.
 
 # TODO: Local models not working rn - using remote.
 
@@ -66,9 +67,14 @@ class DiarizationPipeline:
 
         # Apply the diarization pipeline on the audio
         diarization = self.pipeline(audio_path)
-        grouped_map = self._group_dz_by_speaker(diarization)
-        print(grouped_map)
 
+        for turn, _, speaker in diarization.itertracks(yield_label=True):
+            print(f"start={turn.start:.1f}s stop={turn.end:.1f}s speaker_{speaker}")
+
+        grouped_map = self._group_dz_by_speaker(diarization)
+
+
+        return grouped_map
 
     def get_supported_formats(self) -> List[str]:
         return list(_SUPPORTED_FORMATS)

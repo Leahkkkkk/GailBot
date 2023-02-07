@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-31 11:09:26
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-31 18:19:02
+# @Last Modified time: 2023-02-01 12:36:57
 
 import sys
 import os
@@ -114,15 +114,40 @@ class WhisperCore:
             )
 
         # Identify the speaker chunks
-        self.diarization_pipeline.identity_speaker_chunks(audio_path)
+        speaker_timing_map = \
+            self.diarization_pipeline.identity_speaker_chunks(audio_path)
 
-        # # Load the audio and models, transcribe, and return the parsed result
-        # audio = whisper.load_audio(audio_path)
-        # result = whisper.transcribe(self.model, audio, language=language)
+        # Load the audio and models, transcribe, and return the parsed result
+        audio = whisper.load_audio(audio_path)
+        result = whisper.transcribe(self.model, audio, language=language)
+
+        word_dicts : List[Dict] = whisper.parse_into_word_dicts(result)
+
+        # TODO: Add speaker diarization capability once that is fixed.
+        return word_dicts
+
+        # print(word_dicts)
+        # print(speaker_timing_map)
+
+        # # Merge the result of the speaker map and the whisper results
+        # # TODO: This can def. be made more efficient.
+        # for word_dict in word_dicts:
+        #     assigned = False
+        #     # Figure out if there is a speaker label.
+        #     for label, timings in speaker_timing_map.items():
+        #         for (start, end) in timings:
+        #             if word_dict["start"] >= start and word_dict["end"] <= end:
+        #                 word_dict["speaker"] = label
+        #                 assigned = True
+        #                 break
+        #         if assigned:
+        #             break
+        # return word_dicts
+
+
 
         # print(json.dumps(whisper.parse_into_full_text(result), indent = 2, ensure_ascii = False))
         # return whisper.parse_into_word_dicts(result)
-
 
     def get_supported_formats(self) -> List[str]:
         return list(_FORMATS)
