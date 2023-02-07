@@ -29,7 +29,7 @@ class Google(Engine):
         """
         return self.core.supported_formats
     
-    def transcribe(self, audio_path: str, output_directory: str) -> List[Dict[str, str]] :
+    def transcribe(self, audio_path: str) -> List[Dict[str, str]] :
         """ use Google engine to transcribe the audio file 
 
         Args:
@@ -45,7 +45,7 @@ class Google(Engine):
             {speaker: , start_time: , end_time: , text: }
         """
         try:
-            res = self.core.transcribe(audio_path, output_directory)
+            res = self.core.transcribe(audio_path)
         except:
             raise Err.TranscriptionError
         else:

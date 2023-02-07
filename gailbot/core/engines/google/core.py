@@ -82,7 +82,7 @@ class GoogleCore:
         """
         return get_extension(file) in self.supported_formats
     
-    def transcribe(self, audio_path: str, output_directory:str) -> List[Dict[str, str]]:
+    def transcribe(self, audio_path: str) -> List[Dict[str, str]]:
         """
         Transcribes the provided audio stream using a websocket connections.
         And output the result to given output directory 
@@ -98,14 +98,14 @@ class GoogleCore:
             audio file, each part of the audio file is stored in the format 
             {speaker: , start_time: , end_time: , text: }
         """
-        self._init_workspace(output_directory)
+        self._init_workspace()
         mediaHandler = MediaHandler()
         stream = mediaHandler.read_file(audio_path)
         length = mediaHandler.info(stream)["duration_seconds"]
         if length >= GOOGLE_CONFIG.maximum_duration:
             try:
                 res = self._transcribe_large_file(
-                    audio_path, self.workspace_directory, output_directory)
+                    audio_path, self.workspace_directory)
                 logger.info(res)
                 return res
             except Exception as e:
@@ -118,7 +118,7 @@ class GoogleCore:
             raise Err.TranscriptionError("ERROR: Google STT transcription failed")
         
         try:
-            return self.prepare_utterance(output_directory, response)
+            return self.prepare_utterance(response)
         except Exception as e :
             logger.error(e)
             raise Err.OutPutError(f"ERROR: Output Google STT failed, error message: {e}")
@@ -165,8 +165,7 @@ class GoogleCore:
             logger.info(response.results)
         return response
       
-    def prepare_utterance(self, output_directory: str, 
-                          response: cloud_speech.RecognizeResponse) -> List[Dict[str, str]]:
+    def prepare_utterance(self, response: cloud_speech.RecognizeResponse) -> List[Dict[str, str]]:
         """
         output the response data from google STT, convert the raw data to 
         utterance data which is a list of dictionary in the format 
@@ -181,12 +180,6 @@ class GoogleCore:
             audio file, each part of the audio file is stored in the format 
             {speaker: , start_time: , end_time: , text: }
         """
-        if not is_directory(output_directory):
-            logger.debug("make  the directory ")
-            print(output_directory)
-            make_dir(output_directory, overwrite=True)
-            logger.debug("finished making  the directory ")
-
         results = response.results
         
         status_result = {
@@ -199,7 +192,7 @@ class GoogleCore:
             "request_id": response.request_id,
         }
         
-        write_json(os.path.join(output_directory, "results.json"), status_result)
+        write_json(os.path.join(self.workspace_directory, "results.json"), status_result)
         """ Prepare Utterance """
         utterances = list()
         for result in results:
@@ -260,7 +253,7 @@ class GoogleCore:
         else:
             return dir
     
-    def _transcribe_large_file(self, audiopath: str, workspace: str, output: str):
+    def _transcribe_large_file(self, audiopath: str, workspace: str):
         """ 
         transcribing large audio file that exceeds the google cloud's limit for
         transcribing local file size
@@ -286,24 +279,19 @@ class GoogleCore:
             assert response
             logger.info("geting the response in chunk")
             logger.info(response)
-            new_utt = self.prepare_utterance(output, response)
+            new_utt = self.prepare_utterance(response)
             logger.info(new_utt)
             utterances.append(new_utt)
         delete(workspace)
         return utterances
     
-    def _init_workspace(self, output_directory) -> None :    
+    def _init_workspace(self) -> None :    
         """ 
         initialize the work space
-        
-        Args: 
-            output_directory[str]: the output path where the transcription result 
-                                    will be stored
         """ 
         try:
-            if not is_directory(output_directory):
-                make_dir(output_directory, overwrite=True)
-            make_dir(self.workspace_directory, overwrite=True)
+            if not is_directory(self.workspace_directory):
+                make_dir(self.workspace_directory, overwrite=True)
             assert is_directory(self.workspace_directory)
         except Exception as e:
             logger.error(e)

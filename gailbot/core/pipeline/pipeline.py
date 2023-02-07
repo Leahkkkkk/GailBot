@@ -92,6 +92,7 @@ class Pipeline:
             if len(executables) == 0:
                 break
             
+            """ mapping the task key in the thread to executable """
             key_to_exe: Dict[str, Component] = dict()
            
             for executable in executables:
@@ -128,6 +129,7 @@ class Pipeline:
 
             """ wait until all tasks finishes before next iteration """
             self.threadpool.wait_for_all_completion(error_fun=lambda:None)
+            
             for key, exe in key_to_exe.items():
                 """ get the task result from the thread pool """
                 exe_res = self.threadpool.get_task_result(key)

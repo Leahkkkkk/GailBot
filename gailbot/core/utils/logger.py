@@ -10,7 +10,7 @@ TOP_LEVEL = top_level_config_loader()
 LOG_CONFIG  = log_config_loader()
 log_directory = os.path.join(TOP_LEVEL.root, TOP_LEVEL.workspace.log_files)
 if not is_directory(log_directory):
-    make_dir(log_directory)
+    os.makedirs(log_directory, exist_ok=True)
 
 def makelogger(filename:str):
     today = date.today()

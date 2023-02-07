@@ -9,7 +9,7 @@ logger = makelogger("pytest_google_engine")
 def test_init_google():
     google_engine = Google()
     assert not google_engine.transcribe_success
-    google_engine.transcribe(AudioPath.SMALL_AUDIO_WAV, AudioPath.GOOGLE_OUT_PATH)
+    google_engine.transcribe(AudioPath.SMALL_AUDIO_WAV)
 
 @pytest.mark.parametrize("audio_path", [AudioPath.SMALL_AUDIO_WAV, AudioPath.SMALL_AUDIO_MP3])
 def test_core_run_engine(audio_path):
@@ -19,13 +19,13 @@ def test_core_run_engine(audio_path):
 @pytest.mark.parametrize("audio_path", [AudioPath.SMALL_AUDIO_WAV])
 def test_core_transcribe(audio_path):
     core = GoogleCore()    
-    core.transcribe(audio_path, AudioPath.GOOGLE_OUT_PATH)
+    core.transcribe(audio_path)
     
 @pytest.mark.parametrize("audio_path", [AudioPath.SMALL_AUDIO_MP3, AudioPath.SMALL_AUDIO_WAV])
 def test_small_file(audio_path):
     core = Google()
     assert not core.transcribe_success
-    core.transcribe(audio_path, AudioPath.GOOGLE_OUT_PATH)
+    core.transcribe(audio_path)
     assert core.transcribe_success
     
 @pytest.mark.parametrize("audio_path", [AudioPath.LARGE_AUDIO_MP3])
@@ -42,14 +42,14 @@ def test_chunking_large_audio(audio_path):
 def test_large_audio(audio_path):
     core = GoogleCore()
     assert not core.transcribe_success
-    core.transcribe(audio_path, AudioPath.GOOGLE_OUT_PATH)
+    core.transcribe(audio_path)
     assert core.transcribe_success
     
 @pytest.mark.parametrize("audio_path", [AudioPath.MEDIUM_AUDIO_MP3])
 def test_medium_audio(audio_path):
     core = GoogleCore()
     assert not core.transcribe_success
-    res = core.transcribe(audio_path, AudioPath.GOOGLE_OUT_PATH)
+    res = core.transcribe(audio_path)
     assert core.transcribe_success
     logger.info("the final result of the utterance")
     logger.info(res)
@@ -58,7 +58,7 @@ def test_medium_audio(audio_path):
 def test_60_sec_audio(audio_path):
     core = GoogleCore()
     assert not core.transcribe_success
-    res = core.transcribe(audio_path, AudioPath.GOOGLE_OUT_PATH)
+    res = core.transcribe(audio_path)
     assert core.transcribe_success
     logger.info("the final result of the utterance")
     logger.info(res)

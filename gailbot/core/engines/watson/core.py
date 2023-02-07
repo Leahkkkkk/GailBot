@@ -44,7 +44,7 @@ class WatsonCore:
     Implement core functionalities to transcribe an audio file through 
     watson STT engine
     """
-    def __init__(self, apikey : str, region : str):
+    def __init__(self, apikey : str, region : str): 
         self.apikey = apikey
         self.region = region
         self.media_h = MediaHandler()
