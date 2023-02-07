@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-30 22:25:13
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-31 18:18:21
+# @Last Modified time: 2023-02-07 18:12:13
 
 
 import sys
@@ -22,12 +22,13 @@ def test_whisper():
 
     start = time.time()
     result = engine.transcribe(
-        audio_path="/Users/muhammadumair/Documents/Repositories/mumair01-repos/GailBot/data/dev_test_data/media/audio/wav/0638-SP1.wav",
-        language="English"
+        audio_path="/Users/muhammadumair/Documents/Repositories/mumair01-repos/GailBot/data/dev_test_data/media/audio/wav/test_output.wav",
+        language="English",
+        detect_speakers=False
     )
     print(f"Time taken for transcription: {time.time() - start}")
-    # print(json.dumps(result, indent = 2, ensure_ascii = False))
-    write_json("./res.json",{"data" : result})
+    print(json.dumps(result, indent = 2, ensure_ascii = False))
+    # write_json("./res.json",{"data" : result})
 
 
 

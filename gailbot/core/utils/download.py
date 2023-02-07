@@ -9,6 +9,7 @@ from tqdm.auto import *
 import requests
 from zipfile import ZipFile
 import os
+import socket
 
 def download_from_urls(
     urls : List[str],
@@ -55,3 +56,21 @@ def download_from_urls(
     # Remove the temp folders
     shutil.rmtree(dataset_download_path)
     return extracted_paths
+
+
+
+def is_internet_connected() -> bool:
+    """
+    True if connected to the internet, false otherwise
+    """
+    try:
+        # connect to the host -- tells us if the host is actually
+        # reachable
+        sock = socket.create_connection(("www.google.com", 80))
+        if sock is not None:
+            print('Clossing socket')
+            sock.close
+        return True
+    except OSError:
+        pass
+    return False

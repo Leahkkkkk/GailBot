@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-31 11:09:26
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-02-01 12:36:57
+# @Last Modified time: 2023-02-07 17:53:46
 
 import sys
 import os
@@ -16,7 +16,13 @@ import gailbot.core.engines.whisperEngine.whisperTimestamped as whisper
 from gailbot.core.engines.whisperEngine.whisperTimestamped.utils import (
     force_cudnn_initialization
 )
-from .diarization.pyannote_diarization import DiarizationPipeline
+
+from .diarization.diarize import PyannoteDiarizer
+from .parsers import (
+    parse_into_full_text,
+    parse_into_word_dicts,
+    add_speaker_info_to_text
+)
 
 
 from gailbot.core.utils.general import (
@@ -25,6 +31,7 @@ from gailbot.core.utils.general import (
     make_dir
 )
 from gailbot.configs import  top_level_config_loader, whisper_config_loader
+from gailbot.core.engines.whisperEngine.diarization.diarize import PyannoteDiarizer
 
 from gailbot.core.utils.logger import makelogger
 logger = makelogger("whisper")
@@ -73,7 +80,7 @@ class WhisperCore:
         logger.info(f"Whisper core using whisper model: {WHISPER_CONFIG.model_name}")
 
         # TODO: Add this speaker diarization pipeline after further testing
-        # self.diarization_pipeline = DiarizationPipeline()
+        self.diarization_pipeline = PyannoteDiarizer(self.models_dir)
 
     def __repr__(self) -> str:
         configs = json.dumps(
@@ -88,7 +95,8 @@ class WhisperCore:
     def transcribe(
         self,
         audio_path : str,
-        language : str = None
+        language : str = None,
+        detect_speaker : bool = False
     ) -> List[Dict]:
         assert is_file(audio_path), f"ERROR: Invalid file path: {audio_path}"
 
@@ -102,16 +110,29 @@ class WhisperCore:
 
         # Load the audio and models, transcribe, and return the parsed result
         audio = whisper.load_audio(audio_path)
-        result = whisper.transcribe(
+        asr_result = whisper.transcribe(
             self.model, audio,
             language=language,
             **asdict(WHISPER_CONFIG.transcribe_configs)
         )
 
         if WHISPER_CONFIG.transcribe_configs.verbose:
-            logger.debug(whisper.parse_into_full_text(result))
-        # TODO: Add speaker diarization capability once that is fixed.
-        return whisper.parse_into_word_dicts(result)
+            logger.debug(parse_into_full_text(asr_result))
+
+        # Apply speaker diarization
+        if detect_speaker:
+            if self.device == "cpu":
+                logger.warning(
+                    f"Performing speaker diarization on {self.device} may take upto 10x "\
+                    f"the duration of the audio"
+                )
+            logger.info("Performing speaker diarization")
+            dir_result = self.diarization_pipeline(audio_path)
+            # Create and return results
+            return add_speaker_info_to_text(asr_result, dir_result)
+        else:
+            return parse_into_word_dicts(asr_result)
+
 
     def get_supported_formats(self) -> List[str]:
         return list(self._SUPPORTED_FORMATS)

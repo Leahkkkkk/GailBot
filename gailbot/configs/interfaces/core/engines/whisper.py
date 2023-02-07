@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+# @Author: Muhammad Umair
+# @Date:   2023-02-07 10:27:43
+# @Last Modified by:   Muhammad Umair
+# @Last Modified time: 2023-02-07 18:11:18
 from dataclasses import dataclass
 from dict_to_dataclass import field_from_dict, DataclassFromDict
 from typing import Any, Union
@@ -25,10 +30,19 @@ class WhisperTranscribeConfig(DataclassFromDict):
     fp16 : Any = field_from_dict(default=None)
 
 @dataclass
+class WhisperDiarizationConfig(DataclassFromDict):
+    HF_auth_token : str =  field_from_dict()
+    HF_diarization_config_repo_id : str = field_from_dict()
+    HF_diarization_model_repo_id : str = field_from_dict()
+    config_filename : str = field_from_dict()
+    model_filename : str = field_from_dict()
+
+@dataclass
 class WhisperConfig(DataclassFromDict):
     engine_name : str = field_from_dict()
     model_name : str =  field_from_dict()
     transcribe_configs : WhisperTranscribeConfig = field_from_dict()
+    diarization_configs : WhisperDiarizationConfig = field_from_dict()
 
 def load_whisper_config(path: str):
     """Loads data from the Watson engine configuration

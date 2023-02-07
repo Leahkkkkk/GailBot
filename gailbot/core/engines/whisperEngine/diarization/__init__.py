@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 # @Author: Muhammad Umair
-# @Date:   2023-01-31 17:35:11
+# @Date:   2023-02-07 16:12:46
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-31 17:53:20
-
-
+# @Last Modified time: 2023-02-07 17:42:41
+from .diarize import PyannoteDiarizer

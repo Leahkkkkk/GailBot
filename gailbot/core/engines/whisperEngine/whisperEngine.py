@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 12:43:29
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-31 16:31:47
+# @Last Modified time: 2023-02-07 17:53:15
 
 from typing import Dict, Any, List
 import torch
@@ -36,10 +36,11 @@ class WhisperEngine(Engine):
     def transcribe(
         self,
         audio_path : str,
-        language : str = None
+        language : str = None,
+        detect_speakers : bool = False
     ) -> List[Dict]:
         """Use the engine to transcribe an item"""
-        results = self.core.transcribe(audio_path,language)
+        results = self.core.transcribe(audio_path,language, detect_speakers)
         self._successful = True
         return results
 

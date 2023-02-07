@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-31 11:57:24
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-31 17:02:05
+# @Last Modified time: 2023-02-07 17:48:33
 
 
 from whisper import load_model, available_models, _download, _MODELS # defined in __init__.py
@@ -13,5 +13,3 @@ from whisper.model import Whisper, ModelDimensions
 
 from .transcribe import transcribe_timestamped as transcribe
 from .utils import supported_languages
-
-from .parsers import parse_into_word_dicts, parse_into_full_text
