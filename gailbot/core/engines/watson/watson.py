@@ -15,6 +15,8 @@ from .am import WatsonAMInterface
 from ..engine import Engine
 from gailbot.core.engines import exception as ERR
 from gailbot.core.utils.general import write_json
+from gailbot.configs import watson_config_loader
+WATSON_CONFIG = watson_config_loader()
 class Watson(Engine):
     """ 
     An Engine that connect to IBM Watson STT, provide function to transcribe 
@@ -23,7 +25,6 @@ class Watson(Engine):
     Inheritance:
         Engine 
     """
-    ENGINE_NAME = "watson"
 
     def __init__(
         self,
@@ -47,7 +48,7 @@ class Watson(Engine):
         self.is_transcribe_success = False
 
     def __str__(self):
-        return self.ENGINE_NAME
+        return WATSON_CONFIG.name
 
     def __repr__(self):
         """Returns all the configurations and additional metadata"""

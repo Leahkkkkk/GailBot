@@ -133,7 +133,9 @@ class WatsonCore:
             logger.error(e)
             ERR.ConnectionError("ERROR: connection error")
            
+        audio_name = get_name(audio_path)
         utterances = self._prepare_utterance(
+            audio_name,
             self.recognize_callbacks.get_results())   
         return utterances   
     
@@ -147,7 +149,7 @@ class WatsonCore:
         
         try: 
             if not is_directory(self.work_space_directory):
-                make_dir(self.work_space_directory, overwrite=True)
+                make_dir(self.work_space_directory, overwrite=False)
             self.engine_workspace_dir = self.work_space_directory
         except Exception as e:
             logger.error(e)
@@ -214,7 +216,7 @@ class WatsonCore:
             stt.recognize_using_websocket(**kwargs)
             delete(self.engine_workspace_dir)
             
-    def _prepare_utterance(self, closure: Dict[str, Any]) -> List:
+    def _prepare_utterance(self, audio_name: str,  closure: Dict[str, Any]) -> List:
         """ 
          output the response data from google STT, convert the raw data to 
         utterance data which is a list of dictionary in the format 
@@ -235,11 +237,11 @@ class WatsonCore:
             labels = list()
             timestamps = list()
             
-            write_json(os.path.join(self.work_space_directory, "data.json"), 
+            write_json(os.path.join(self.work_space_directory, f"{audio_name}_data.json"), 
                         closure["results"]["data"])
-            write_json(os.path.join(self.work_space_directory, "results.json"),
+            write_json(os.path.join(self.work_space_directory, f"{audio_name}_results.json"),
                         closure["results"]["data"])
-            write_json(os.path.join(self.work_space_directory, "closure.json"), 
+            write_json(os.path.join(self.work_space_directory, f"{audio_name}_closure.json"), 
                        closure)
             # Creating RecognitionResults objects
             for item in closure["results"]["data"]:

@@ -5,7 +5,7 @@ from gailbot.core.utils.media import MediaHandler
 from .data import AudioPath
 from gailbot.core.utils.logger import makelogger
 import pytest 
-
+from gailbot.core.utils.threads import ThreadPool
 logger = makelogger("watsone_engine")
 WATSON_API_KEY         = "MSgOPTS9CvbADe49nEg4wm8_gxeRuf4FGUmlHS9QqAw3"
 WATSON_LANG_CUSTOM_ID  = "41e54a38-2175-45f4-ac6a-1c11e42a2d54"
@@ -48,7 +48,8 @@ def watson_test(inpath):
                       WATSON_LANG_CUSTOM_ID)
     logger.info(utterance)
     assert watson.was_transcription_successful() 
-
+    
+    
 @pytest.mark.parametrize(
     "inpath", [AudioPath.SMALL_AUDIO_MP3, AudioPath.SMALL_AUDIO_WAV])
 def test_watson_small(inpath):
@@ -75,4 +76,8 @@ def test_watson_60(inpath):
     watson_test(inpath)
 
 
-
+def test_parallel_transcription():
+    pool = ThreadPool(3)
+    pool.add_task(watson_test, [AudioPath.MEDIUM_AUDIO])
+    pool.add_task(watson_test, [AudioPath.MEDIUM_AUDIO_MP3])
+    pool.wait_for_all_completion()

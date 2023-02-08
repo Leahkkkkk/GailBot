@@ -13,15 +13,12 @@ from gailbot.core.utils.logger import makelogger
 import networkx as nx
 from copy import deepcopy
 from .component import Component, ComponentState, ComponentResult
-""" TODO: check base is passed in as the first arg to the first component """
 Failure = ComponentResult(ComponentState.FAILED, None, 0)
 logger = makelogger("pipeline")
 @dataclass
 class DataStream:
     data : Any = None
-
-# TODO: Eventually, add configs to change multithreading options.
-# TODO: Need to implement multithreading.
+    
 class Pipeline:
     """
     Defines a class for the pipeline that runs the dependency map.
@@ -31,7 +28,6 @@ class Pipeline:
         dependency_map : Dict[str, List[str]],
         components : Dict[str, Component],
         num_threads: int 
-        ## TODO: add the logic of having multiple threads
     ):
         """
         Dependency map describes the execution order.
@@ -72,12 +68,9 @@ class Pipeline:
                 each component.
 
         Returns:
-            Dictionary containing keys mapping to the component states corresponding
-             to the result of each task.
+            Dictionary containing keys mapping to the component states 
+            corresponding to the result of each task.
 
-        NOTE: The components themselves are responsible for checking whether
-        the parent components executed successfully.
-        NOTE: New implementation changed to check the dependency
         """
 
         successors = self.get_dependency_graph()
@@ -294,9 +287,6 @@ class Pipeline:
             # current node. This implies that the dependencies should already
             # exist as nodes.
             for dep in dependencies:
-                # NOTE: original code: if not self.is_component(dep):
-                #  the original code will raise exception if the dependency graph 
-                #  does not follow the strict order 
                 if not dep in components:
                     raise Exception(
                         f"Unseen component added as dependency {dep}"
