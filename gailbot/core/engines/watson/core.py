@@ -6,7 +6,6 @@
 
 """ TODO:
 1. keyword arguments : headers, customization weight are removed 
-2. need to test for long audio  (1 hr)
 """
 import os 
 from typing import List, Any, Dict, Union
