@@ -3,7 +3,7 @@
 # @Date:   2023-01-08 12:43:29
 # @Last Modified by:   Muhammad Umair
 # @Last Modified time: 2023-01-16 11:58:57
-import os 
+import os
 from typing import Dict, Any, List
 from itertools import chain
 
@@ -18,12 +18,12 @@ from gailbot.core.utils.general import write_json
 from gailbot.configs import watson_config_loader
 WATSON_CONFIG = watson_config_loader()
 class Watson(Engine):
-    """ 
-    An Engine that connect to IBM Watson STT, provide function to transcribe 
+    """
+    An Engine that connect to IBM Watson STT, provide function to transcribe
     audio file with IBM Watson STT
 
     Inheritance:
-        Engine 
+        Engine
     """
 
     def __init__(
@@ -31,10 +31,10 @@ class Watson(Engine):
         apikey : str,
         region : str
     ):
-        """ constructor for IBM Watson STT engine 
+        """ constructor for IBM Watson STT engine
 
         Args:
-            apikey (str): User API key to Watson STT service. 
+            apikey (str): User API key to Watson STT service.
             region (str): User API region. Must be in supported regions.
         """
         self.apikey = apikey
@@ -44,7 +44,7 @@ class Watson(Engine):
         self.lm = WatsonLMInterface(apikey ,region)
         self.am = WatsonAMInterface(apikey, region)
         self.recognize_callbacks = CustomWatsonCallbacks()
-        
+
         self.is_transcribe_success = False
 
     def __str__(self):
@@ -60,22 +60,22 @@ class Watson(Engine):
 
     @property
     def supported_formats(self) -> List[str]:
-        """ 
-        a list of supported format that can be transcribe with the STT engine 
+        """
+        a list of supported format that can be transcribe with the STT engine
         """
         return self.core.supported_formats
 
     @property
     def regions(self) -> Dict:
         """
-        a dictionary of the supported regions and the regions url  
+        a dictionary of the supported regions and the regions url
         """
         return self.core.regions
 
     @property
     def defaults(self) -> Dict:
         """
-        a dictionary that contains the default settings that will be 
+        a dictionary that contains the default settings that will be
         applied to the IBM Watson STT engine
         """
         return self.core.defaults
@@ -88,22 +88,22 @@ class Watson(Engine):
         acoustic_customization_id : str = ""
     ) -> List[Dict[str, str]]:
         """Use the engine to transcribe an item
-        
-        Args: 
-        audio_path: str 
-            a path to the audio file that will be transcribed 
-        output_directory: str 
-            a path where the output file will be stored 
-        base_model: str 
-            a string that define the base model 
-        language_customization_id: str (optional): 
+
+        Args:
+        audio_path: str
+            a path to the audio file that will be transcribed
+        output_directory: str
+            a path where the output file will be stored
+        base_model: str
+            a string that define the base model
+        language_customization_id: str (optional):
             ID of the custom language model.
-        acoustic_customization_id: str (optional): 
+        acoustic_customization_id: str (optional):
             ID of the custom acoustic model.
-        
+
         Returns:
-            A list of dictionary that contains the utterance data of the 
-            audio file, each part of the audio file is stored in the format 
+            A list of dictionary that contains the utterance data of the
+            audio file, each part of the audio file is stored in the format
             {speaker: , start_time: , end_time: , text: }
         """
         try:
@@ -122,29 +122,28 @@ class Watson(Engine):
     def acoustic_customization_interface(self) -> WatsonAMInterface:
         """ return the watson customized acoustic model interface """
         return self.am
-    
+
     def get_engine_name(self) -> str:
         """ return  the name of the watson engine"""
-        return self.ENGINE_NAME 
+        return self.ENGINE_NAME
 
     def get_supported_formats(self) -> List[str]:
-        """ 
-        return a list of supported format that can be 
-        transcribe with the STT engine 
+        """
+        return a list of supported format that can be
+        transcribe with the STT engine
         """
         self.core.supported_formats
-    
+
     def is_file_supported(self, file_path: str) -> bool:
-        """ 
-        given a file path, return true if the file format is supported by 
-        the Watson STT engine 
+        """
+        given a file path, return true if the file format is supported by
+        the Watson STT engine
         """
         return self.core.is_file_supported(file_path)
-    
+
     def was_transcription_successful(self) -> bool:
-        """ 
-        return true if the transcription is finished and successful, 
-        false otherwise 
+        """
+        return true if the transcription is finished and successful,
+        false otherwise
         """
         return self.is_transcribe_success
-  
