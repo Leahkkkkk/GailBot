@@ -57,7 +57,7 @@ class Pipeline:
 
     def __call__(
         self,
-        base_input : Any = None,
+        base_input : List [Any] = None,
         additional_component_kwargs : Dict = dict()
         # NOTE: base_input is passed only to the first component.
     ) -> Dict[str, ComponentState]:
@@ -82,6 +82,7 @@ class Pipeline:
 
         successors = self.get_dependency_graph()
         results : Dict[str, ComponentResult] = dict()
+        base_sentinel = True 
         
         while True:
             executables: List[Component] = [
@@ -94,7 +95,6 @@ class Pipeline:
             
             """ mapping the task key in the thread to executable """
             key_to_exe: Dict[str, Component] = dict()
-           
             for executable in executables:
                 exe_name = self.component_to_name[executable]
                 prepare = True
@@ -120,10 +120,16 @@ class Pipeline:
                             runtime=0
                         )
                     }
+                if base_sentinel: 
+                    args = base_input + [dep_outputs] 
+                    base_sentinel = False 
+                else:
+                    args = [dep_outputs]          
+                              
                 if prepare:
                     key = self.threadpool.add_task(
                         executable, 
-                        args=[dep_outputs], 
+                        args= args, 
                         kwargs=additional_component_kwargs) 
                     key_to_exe[key] = executable           
 
