@@ -4,8 +4,11 @@ from gailbot.plugins import (
     Plugin,
     Methods
 )
+from .test_plugins_v import hilab_plugin as hilab_suite
 
-test_manager = PluginManager()
+test_manager = PluginManager(workspace_dir="/Users/yike/Documents/GitHub/GailBot",
+                            plugin_sources=hilab_suite,
+                            load_existing=False) #TODO: fix error in manager.py that occurs when load existing = true
 
 class TestManager(PluginManager):
     def __init__():
@@ -21,12 +24,13 @@ class TestManager(PluginManager):
         test_manager.suites = {"test1": 1, "test2":2, "test3":3, "test4":4, "test5": 5}
         assert(test_manager.suite_names == ["test1", "test2", "test3", "test4", "test5"])
 
-    def test_is_suite():
+    def test_not_is_suite():
         test_manager.suites = dict()
         assert(not test_manager.is_suite(test_manager, "test"))
+
+    def test_is_suite():
         test_manager.suites = {"test":1}
         assert(test_manager.is_suite(test_manager, "test"))
-
 
     def test_reset_workspace(self):
         pass

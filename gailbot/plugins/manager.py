@@ -144,6 +144,7 @@ class PluginManager:
             # TODO:  Load any suites that may already exist
             subdirs = subdirs_in_dir(self.suites_dir)
             # Treat each subdir as a plugin that can be loaded from dir.
+            # TODO: fix bug here: dict has no method extend()
             plugin_sources.extend(subdirs)
 
         # TODO: Load plugins from the specified sources.

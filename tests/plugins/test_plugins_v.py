@@ -5,7 +5,7 @@ import pytest
 from typing import Dict, Any, List
 from gailbot.core.utils.logger import makelogger
 
-logger = makelogger("test plugins")
+logger = makelogger("test_plugins")
 
 
 test_plugin_method = GBPluginMethods()
@@ -203,10 +203,13 @@ def test_plugin_component():
 def test_plugin_suite_construct():
     test_plugin_suite = PluginSuite(test_config)
     
-def test_loading_hillab():
+def test_loading_hilab():
     hilab_plugin_suite = PluginSuite(hilab_plugin)    
     logger.info(hilab_plugin_suite.dependency_map)
     logger.info(hilab_plugin_suite.plugins)
     assert hilab_plugin_suite._is_ready
     logger.info(hilab_plugin_suite.name)
     logger.info(hilab_plugin_suite.dependency_graph())
+    for plugin in hilab_plugin["plugins"]:
+        assert hilab_plugin_suite.is_plugin(plugin["plugin_name"])
+    logger.info(hilab_plugin_suite.plugin_names())                 

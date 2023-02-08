@@ -25,13 +25,14 @@ from .plugin import Plugin, Methods
 logger = makelogger("pluginSuite")
 NUM_THREAD = 5
 class PluginDict(TypedDict):
-    name: str
+    plugin_name: str
     dependencies: List[str]
     module_name: str 
+    rel_path: str
     
 class ConfDict(TypedDict):
-    name: str 
-    path: str 
+    suite_name: str 
+    suite_abs_path: str 
     plugins: List[PluginDict]
 
 
@@ -186,7 +187,8 @@ class PluginSuite:
                     - plugin_name : Name of the plugin
                     - dependencies : names of plugins this is dependant on.
                     - module_name : Name of module this plugin is in.
-                    - rel_path
+                    - rel_path: the relative path of the plugin script, 
+                                the path is relative to the suite_abs_path
         """
         # Add path to the imports
         abs_path = dict_config["suite_abs_path"]
@@ -217,8 +219,6 @@ class PluginSuite:
 
             dependency_map[clazz_name] = conf["dependencies"]
             plugins[clazz_name] = instance
-            
-
+       
         return dependency_map, plugins # used to generate pipeline
-        return None, None 
 
