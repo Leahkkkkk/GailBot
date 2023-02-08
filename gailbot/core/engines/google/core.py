@@ -47,8 +47,7 @@ class GoogleCore:
     
     def __init__(self, google_key: Dict[str, str] = None ) -> None:
         self._init_status()
-        self.workspace_directory = os.path.join(
-            TOP_CONFIG.root, TOP_CONFIG.workspace.google_workspace)
+        self._init_workspace()
         try:
             if not google_key:
                 os.environ['GOOGLE_APPLICATION_CREDENTIALS']= os.path.join(os.getcwd(),'google_key.json')
@@ -289,9 +288,16 @@ class GoogleCore:
         """ 
         initialize the work space
         """ 
+        self.workspace_directory = os.path.join(
+            TOP_CONFIG.root, TOP_CONFIG.workspace.google_workspace)
+        
+        repeat = 1 
+        while is_directory(self.workspace_directory):
+            self.workspace_directory += str(repeat)
+       
         try:
             if not is_directory(self.workspace_directory):
-                make_dir(self.workspace_directory, overwrite=True)
+                make_dir(self.workspace_directory, overwrite=False)
             assert is_directory(self.workspace_directory)
         except Exception as e:
             logger.error(e)

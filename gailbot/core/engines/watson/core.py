@@ -53,7 +53,6 @@ class WatsonCore:
         self._regions = WATSON_CONFIG.regions_uris
         self._format_to_content_types = WATSON_CONFIG.format_to_content 
         self._defaults = WATSON_CONFIG.defaults
-        self.max_size_bytes = WATSON_CONFIG.max_file_size_bytes
 
         if not self._is_api_key_valid(apikey, self._regions[region]):
             raise Exception(f"Apikey {apikey} invalid")
@@ -145,8 +144,11 @@ class WatsonCore:
     def _init_workspace(self):
         self.work_space_directory = os.path.join(
             TOP_CONFIG.root, TOP_CONFIG.workspace.watson_workspace)
+        repeat = 1
+        while is_directory(self.work_space_directory):
+            self.work_space_directory += str(repeat)
+            repeat += 1
         logger.info(self.work_space_directory)
-        
         try: 
             if not is_directory(self.work_space_directory):
                 make_dir(self.work_space_directory, overwrite=False)

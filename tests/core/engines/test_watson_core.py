@@ -75,9 +75,14 @@ def test_watson_large_wav(inpath):
 def test_watson_60(inpath):
     watson_test(inpath)
 
-
 def test_parallel_transcription():
     pool = ThreadPool(3)
-    pool.add_task(watson_test, [AudioPath.MEDIUM_AUDIO])
-    pool.add_task(watson_test, [AudioPath.MEDIUM_AUDIO_MP3])
+    key1 = pool.add_task(watson_test, [AudioPath.MEDIUM_AUDIO])
+    key2 = pool.add_task(watson_test, [AudioPath.MEDIUM_AUDIO_MP3])
+    utt1 = pool.get_task_result(key1)
+    utt2 = pool.get_task_result(key2)
+    logger.info("first utterance result")
+    logger.info(utt1)
+    logger.info("second utterance result")
+    logger.info(utt2)
     pool.wait_for_all_completion()
