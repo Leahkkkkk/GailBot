@@ -182,7 +182,7 @@ class WatsonCore:
         assert is_file(audio_path), f"Not a file {audio_path}"
         
         try:
-            if get_size(audio_path) >= WATSON_CONFIG.max_file_size_bytes:
+            if get_size(audio_path) >= 1:
                 audio_path = self._convert_to_opus(
                     audio_path, self.work_space_directory)
                 logger.info(f"the compressed auido_path is {audio_path}")

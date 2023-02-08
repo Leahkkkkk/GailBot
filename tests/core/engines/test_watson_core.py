@@ -57,7 +57,7 @@ def test_watson_small(inpath):
     watson_test(inpath)
 
 @pytest.mark.parametrize("inpath", [AudioPath.MEDIUM_AUDIO])
-def test_watson_media(inpath):
+def test_watson_medium(inpath):
     watson_test(inpath)
     
 @pytest.mark.parametrize(
