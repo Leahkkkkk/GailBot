@@ -11,6 +11,30 @@ SUCCESS_RESULT = ComponentResult(ComponentState.SUCCESS)
 FAILURE_RESULT = ComponentResult(ComponentState.FAILED)
 
 
+test_config = {
+    "name": "test_suite",
+    "path": "../../data/plugin/test",
+    "plugins": [
+       {
+           "class_name": "test1",
+           "dependencies": [],
+           "module_name": "test_module"
+       },  {
+           "class_name": "test2",
+           "dependencies": ["test1"],
+           "module_name": "test_module"
+       },  {
+           "class_name": "test3",
+           "dependencies": ["test2"],
+           "module_name": "test_module"
+       }, {
+           "class_name": "test4",
+           "dependencies": ["test3"],
+           "module_name": "test_module"
+       }, 
+    ]
+}
+
 class TestPlugin(Plugin):
     def __init__(self) -> None:
         super().__init__()
@@ -54,4 +78,5 @@ def test_plugin_suit_construct():
     }
     
     test_plugin_suite = PluginSuite(dict_conf)
+    
     

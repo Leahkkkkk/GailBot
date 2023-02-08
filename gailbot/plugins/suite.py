@@ -6,12 +6,11 @@
 
 import sys
 import os
-from typing import Dict, List, Any
+from typing import Dict, List, Any, TypedDict
 from dataclasses import dataclass
 import time
 import importlib
 import imp
-
 from gailbot.core.pipeline import Pipeline, Component, ComponentResult, ComponentState
 from gailbot.core.utils.general import (
     is_file,
@@ -21,6 +20,18 @@ from gailbot.core.utils.general import (
 )
 
 from .plugin import Plugin, Methods
+
+
+class PluginDict(TypedDict):
+    name: str
+    dependencies: List[str]
+    module_name: str 
+    
+class ConfDict(TypedDict):
+    name: str 
+    path: str 
+    plugins: List[PluginDict]
+
 
 class PluginComponent(Component):
     """
@@ -161,32 +172,33 @@ class PluginSuite:
     ##########
 
     # TODO: Need to implement a robust method to load plugins.
-    def _load_from_config(self, dict_config : Dict) -> None:
+    def _load_from_config(self, dict_config : ConfDict) -> None:
         """
         dict_config must have the keys:
             suite_name : Name of suite
-            module_path : Path to the module containing all plugins
-            plugins : List of all the plugin names
+            suite_path : Path to the module containing all plugins
             plugins : List[Dict]
                 - Each dict has:
-                    - name : Name of the plugin
+                    - class_name : Name of the plugin
                     - dependencies : names of plugins this is dependant on.
-                    - module name : Name of module this plugin is in.
+                    - module_name : Name of module this plugin is in.
         """
         # Add path to the imports
-        abs_path = dict_config["path"]
+        abs_path = dict_config["suite_path"]
         sys.path.append(abs_path)
-        pkg_name = dict_config["suiteName"]
+        pkg_name = dict_config["suite_path"]
 
         dependency_map = dict()
         plugins = dict()
+        
         """ TODO: test this  -- path dependency / relative path & absolute path"""
+        
         for plugin, conf in dict_config["plugins"].items():
-            module_name = conf["moduleName"]
+            module_name = conf["module_name"]
             module_path = f"{pkg_name}.{module_name}"
             rel_path = conf["path"]
             path = f"{abs_path}/{rel_path}"
-            clazz_name = conf["className"]
+            clazz_name = conf["class_name"]
 
             spec = importlib.util.spec_from_file_location(
                 module_path, path)
