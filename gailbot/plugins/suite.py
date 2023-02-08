@@ -11,6 +11,7 @@ from dataclasses import dataclass
 import time
 import importlib
 import imp
+from gailbot.core.utils.logger import makelogger
 from gailbot.core.pipeline import Pipeline, Component, ComponentResult, ComponentState
 from gailbot.core.utils.general import (
     is_file,
@@ -21,7 +22,8 @@ from gailbot.core.utils.general import (
 
 from .plugin import Plugin, Methods
 
-
+logger = makelogger("pluginSuite")
+NUM_THREAD = 5
 class PluginDict(TypedDict):
     name: str
     dependencies: List[str]
@@ -105,9 +107,11 @@ class PluginSuite:
         }
 
         # Init the pipeline based on the components
-        self.pipeline = Pipeline(self.dependency_map,self.components)
+        self.pipeline = Pipeline(self.dependency_map,
+                                 self.components,
+                                 num_threads=NUM_THREAD)
         # Add vars here from conf.
-        self._name = dict_conf["suiteName"]
+        self._name = dict_conf["suite_name"]
 
         # TODO: Add mechanism to make sure all the required plugins were loaded.
 
@@ -176,30 +180,33 @@ class PluginSuite:
         """
         dict_config must have the keys:
             suite_name : Name of suite
-            suite_path : Path to the module containing all plugins
+            suite_abs_path : Path to the module containing all plugins
             plugins : List[Dict]
                 - Each dict has:
-                    - class_name : Name of the plugin
+                    - plugin_name : Name of the plugin
                     - dependencies : names of plugins this is dependant on.
                     - module_name : Name of module this plugin is in.
+                    - rel_path
         """
         # Add path to the imports
-        abs_path = dict_config["suite_path"]
+        abs_path = dict_config["suite_abs_path"]
         sys.path.append(abs_path)
-        pkg_name = dict_config["suite_path"]
+        pkg_name = dict_config["suite_name"]
 
         dependency_map = dict()
         plugins = dict()
         
         """ TODO: test this  -- path dependency / relative path & absolute path"""
-        
-        for plugin, conf in dict_config["plugins"].items():
+        for conf in dict_config["plugins"]:
             module_name = conf["module_name"]
             module_path = f"{pkg_name}.{module_name}"
-            rel_path = conf["path"]
-            path = f"{abs_path}/{rel_path}"
-            clazz_name = conf["class_name"]
+            rel_path = conf["rel_path"]
+            path = os.path.join(abs_path, rel_path)
+            
+            clazz_name = conf["plugin_name"]
 
+            logger.info(module_path)
+            logger.info(path)
             spec = importlib.util.spec_from_file_location(
                 module_path, path)
             module = importlib.util.module_from_spec(spec)
@@ -210,6 +217,8 @@ class PluginSuite:
 
             dependency_map[clazz_name] = conf["dependencies"]
             plugins[clazz_name] = instance
+            
 
-        return dependency_map, plugins # used to generate pipeline 
+        return dependency_map, plugins # used to generate pipeline
+        return None, None 
 

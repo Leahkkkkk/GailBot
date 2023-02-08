@@ -4,11 +4,15 @@
 # @Last Modified by:   Muhammad Umair
 # @Last Modified time: 2023-01-12 13:29:53
 
-from typing import Any, Dict
+from typing import Any, Dict, TypedDict
 from abc import ABC, abstractmethod
 # Local imports
 
-
+class Utt(TypedDict):
+    start_time: str 
+    end_time: str
+    speaker: str 
+    text:str 
 class Methods:
     """
     Methods that will be passed to a plugin.
