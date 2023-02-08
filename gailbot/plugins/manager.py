@@ -83,8 +83,6 @@ class PluginTOMLLoader(PluginLoader):
         self.dict_config_loader = PluginDictLoader()
 
     def load(self, conf_path : str) -> PluginSuite:
-
-
         if not os.path.isfile(conf_path) and \
                 not get_extension(conf_path) == "toml":
             return

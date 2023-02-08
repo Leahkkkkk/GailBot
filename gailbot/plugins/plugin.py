@@ -12,7 +12,8 @@ from abc import ABC, abstractmethod
 class Methods:
     """
     Methods that will be passed to a plugin.
-    These can be custom defined and may be useful as a wrapper around objects
+    These can be custom defined and may be useful as 
+    a wrapper around objects
     that may want to be passed to a plugin.
     """
 
@@ -25,11 +26,12 @@ class Plugin:
     """
 
     def __init__(self) -> None:
+        self.successful = False
         pass
 
     @property
     def is_successful(self) -> bool:
-        return False
+        return self.successful
 
     def apply(
         self,
