@@ -47,14 +47,17 @@ def perform_word_alignment(
     debug=False,
 ):
     """
-    Perform word alignment on the given tokens and attention weights.
-    Returns a list of (word, start_time, end_time) tuples.
+    Performs the word alignment on the given tokens and attention weights.
 
-    tokens: list of tokens (integers)
-    attention_weights: list of attention weights (torch tensors)
-    tokenizer: tokenizer used to tokenize the text
-    use_space: whether to use spaces to split the tokens into words (should be true for all languages except Japanese, Chinese, ...)
-    refine_whisper_precision_nframes: precision time
+    Args:
+        tokens: list of tokens (integers)
+        attention_weights: list of attention weights (torch tensors)
+        tokenizer: tokenizer used to tokenize the text
+        use_space: whether to use spaces to split the tokens into words (should be true for all languages except Japanese, Chinese, ...)
+        refine_whisper_precision_nframes: precision time
+
+    Returns:
+        A list of (word, start_time, end_time) tuples.
     """
 
     assert len(tokens) > 1, f"Got unexpected sequence of tokens of length \

@@ -28,6 +28,10 @@ logger = makelogger("pyannote_diarization")
 WHISPER_CONFIG = whisper_config_loader()
 
 class PyannoteDiarizer:
+    """
+    Class containing the functionality for creating and managing the diarization 
+        for WHISPER transcripts 
+    """
 
     def __init__(
         self,
@@ -72,6 +76,13 @@ class PyannoteDiarizer:
     ) -> Any:
         """
         Get speaker diarization for the given audio.
+
+        Args:
+            audio_path = string containing the path to the audio for which 
+                to get the speaker diarization.
+        
+        Returns:
+            Pipeline containing the diarization for the given audio file.
         """
         return self.pipeline(audio_path)
 

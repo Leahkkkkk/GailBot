@@ -5,6 +5,7 @@
 # @Last Modified time: 2023-02-07 18:12:13
 
 
+""" TODO: test long audio """
 import sys
 import os
 import json
@@ -29,8 +30,4 @@ def test_whisper():
     print(f"Time taken for transcription: {time.time() - start}")
     print(json.dumps(result, indent = 2, ensure_ascii = False))
     # write_json("./res.json",{"data" : result})
-
-
-
-
     # print(json.dumps(result, indent = 2, ensure_ascii = False))

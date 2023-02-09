@@ -43,6 +43,11 @@ def _transcribe_timestamped_efficient(
     # Whisper specific options
     **whisper_options,
 ):
+    """
+    Timestamps a transcription created by the whisper engine.
+
+    
+    """
 
     # Get options
     sample_len = whisper_options["sample_len"]
