@@ -1,5 +1,5 @@
-suite_name = "hil_lab"
-suite_abs_path = "/Users/yike/Documents/GitHub/GailBot/gb_hilab_suite"
+suite_name = "gb_hilab_suite"
+suite_abs_path = "/Users/yike/Documents/GitHub/GailBot"
 [[plugins]]
 plugin_name = "WordTreePlugin"
 dependencies = []

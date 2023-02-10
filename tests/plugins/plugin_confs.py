@@ -1,55 +1,55 @@
 test_config = {
     "suite_name": "test_suite",
-    "suite_abs_path": "/Users/yike/Documents/GitHub/GailBot/data/test_suite",
+    "suite_abs_path": "/Users/yike/Documents/GitHub/GailBot/data",
     "plugins": [ 
            {
             "plugin_name": "test", 
             "dependencies": [],
             "module_name":  "test_module",
-            "rel_path": "test_src/test_module.py" 
+            "rel_path": "src/test_module.py" 
            }
             , {
                 "plugin_name": "TestDependOne",
                 "dependencies": ["TestOne", "test"],
                 "module_name": "test_d_one",
-                "rel_path":"test_src/test_d_one.py"
+                "rel_path":"src/test_d_one.py"
             }
            , {
            "plugin_name": "TestDependTwo",
            "dependencies": ["TestTwo", "TestOne", "test"],
            "module_name": "test_d_two",
-           "rel_path":"test_src/test_d_two.py"
+           "rel_path":"src/test_d_two.py"
             }  
            , {
            "plugin_name": "TestDependThree",
            "dependencies": ["TestTwo", "TestDependTwo", "test"],
-            "rel_path":"test_src/test_dd_three.py",
+            "rel_path":"src/test_dd_three.py",
             "module_name": "test_dd_three"
             }
             ,{
             "plugin_name": "TestOne",
             "dependencies": ["test"],
-            "rel_path":"test_src/test_one.py",
+            "rel_path":"src/test_one.py",
             "module_name": "test_one"
              }
             ,{
             "plugin_name": "TestTwo", 
             "dependencies": ["test"],
-            "rel_path":"test_src/test_two.py",
+            "rel_path":"src/test_two.py",
             "module_name": "test_two"
              }
             ,{
             "plugin_name": "TestThree",
             "dependencies": ["test"],
-            "rel_path":"test_src/test_three.py",
+            "rel_path":"src/test_three.py",
             "module_name": "test_three"
             }
     ]
 }
 
 hilab_plugin = {
-    "suite_name": "hil_lab",
-    "suite_abs_path": "/Users/yike/Documents/GitHub/GailBot/gb_hilab_suite",
+    "suite_name": "gb_hilab_suite",
+    "suite_abs_path": "/Users/yike/Documents/GitHub/GailBot",
     "plugins" : [
     {
       "plugin_name": "WordTreePlugin",

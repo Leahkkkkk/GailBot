@@ -9,10 +9,10 @@ from copy import deepcopy
 from typing import Dict, Any, List
 
 # Local imports
-from src.core.nodes import Word, Node
-from src.core.utterance_map import UtteranceMapPlugin
+from gb_hilab_suite.src.core.nodes import Word, Node
+from gb_hilab_suite.src.core.utterance_map import UtteranceMapPlugin
 from gailbot.plugins.plugin import Plugin, Methods, Utt
-from src.gb_hilab_suite import *
+from gb_hilab_suite.src.gb_hilab_suite import *
 
 
 class ConversationModel:

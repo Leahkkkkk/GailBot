@@ -10,7 +10,7 @@ from typing import List, Any, Dict
 #import re
 from copy import deepcopy
 # Local imports
-from src.core.nodes import Word, Node
+from gb_hilab_suite.src.core.nodes import Word, Node
 from gailbot.plugins.plugin import Plugin, Methods, Utt
 class SpeakerMapPlugin(Plugin):
 

@@ -9,9 +9,9 @@ from typing import List
 import os
 
 
-from src.core import get_dependencies as core_dependencies
-from src.analysis import get_dependencies as analysis_dependencies
-from src.format import get_dependencies as format_dependencies
+from gb_hilab_suite.src.core import get_dependencies as core_dependencies
+from gb_hilab_suite.src.analysis import get_dependencies as analysis_dependencies
+from gb_hilab_suite.src.format import get_dependencies as format_dependencies
 
 
 def generate_dependencies() -> List:

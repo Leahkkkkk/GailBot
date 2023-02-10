@@ -19,7 +19,7 @@ from gailbot.core.utils.general import (
     paths_in_dir,
     get_name
 )
-
+from pprint import pprint
 from .plugin import Plugin, Methods
 
 logger = makelogger("pluginSuite")
@@ -204,21 +204,25 @@ class PluginSuite:
         for conf in dict_config["plugins"]:
             logger.info(conf)
             module_name = conf["module_name"]
-            module_path = f"{pkg_name}.{module_name}"
+            module_full_name = f"{pkg_name}.{module_name}"
             rel_path = conf["rel_path"]
-            path = os.path.join(abs_path, rel_path)
-            
+            path = os.path.join(abs_path, pkg_name, rel_path)
+
             clazz_name = conf["plugin_name"]
 
             spec = importlib.util.spec_from_file_location(
-                module_path, path)
+                module_full_name, path)
             module = importlib.util.module_from_spec(spec)
-            # sys.modules[module_path] = module
+            sys.modules[module_full_name] = module
             spec.loader.exec_module(module)
             clazz = getattr(module, clazz_name)
             instance = clazz()
 
             dependency_map[clazz_name] = conf["dependencies"]
             plugins[clazz_name] = instance
+        
+        pprint("___________________")
+        pprint(sys.path)
+        sys.path.pop()
         return dependency_map, plugins # used to generate pipeline
 

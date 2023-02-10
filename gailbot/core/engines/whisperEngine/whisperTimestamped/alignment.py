@@ -49,12 +49,12 @@ def perform_word_alignment(
     """
     Performs the word alignment on the given tokens and attention weights.
 
-    Args:
-        tokens: list of tokens (integers)
-        attention_weights: list of attention weights (torch tensors)
-        tokenizer: tokenizer used to tokenize the text
-        use_space: whether to use spaces to split the tokens into words (should be true for all languages except Japanese, Chinese, ...)
-        refine_whisper_precision_nframes: precision time
+    A
+    tokens: list of tokens (integers)
+    attention_weights: list of attention weights (torch tensors)
+    tokenizer: tokenizer used to tokenize the text
+    use_space: whether to use spaces to split the tokens into words (should be true for all languages except Japanese, Chinese, ...)
+    refine_whisper_precision_nframes: precision time
 
     Returns:
         A list of (word, start_time, end_time) tuples.

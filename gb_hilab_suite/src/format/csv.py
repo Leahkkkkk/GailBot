@@ -9,7 +9,7 @@ from typing import Dict, Any
 import csv
 # Local imports
 from gailbot.plugins.plugin import Plugin, Methods, Utt
-from src.gb_hilab_suite import *
+from gb_hilab_suite.src.gb_hilab_suite import *
 
 class CSVPlugin(Plugin):
 

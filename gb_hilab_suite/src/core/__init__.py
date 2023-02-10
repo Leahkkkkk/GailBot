@@ -7,7 +7,7 @@
 
 from typing import List, Dict
 
-from src.core.nodes import Word, Node
+from gb_hilab_suite.src.core.nodes import Word, Node
 
 def get_dependencies() -> List[Dict]:
     return [

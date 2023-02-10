@@ -9,7 +9,7 @@ from typing import List, Any, Dict
 #import re
 from copy import deepcopy
 # Local imports
-from src.gb_hilab_suite import *
+from gb_hilab_suite.src.gb_hilab_suite import *
 from gailbot.plugins.plugin import Plugin, Methods, Utt
 
 class UtteranceMapPlugin(Plugin):

@@ -11,7 +11,7 @@ from math import floor
 
 from gailbot.plugins.plugin import Plugin, Methods, Utt
 
-from src.core.nodes import Node
+from gb_hilab_suite.src.core.nodes import Node
 
 
 class WordTreePlugin(Plugin):

@@ -8,9 +8,9 @@ import io
 from typing import Dict, Any, List
 # Local imports
 from gailbot.plugins.plugin import Plugin, Methods, Utt
-from src.core import Word
+from gb_hilab_suite.src.core import Word
 
-from src.gb_hilab_suite import *
+from gb_hilab_suite.src.gb_hilab_suite import *
 
 
 class OverlapPlugin(Plugin):

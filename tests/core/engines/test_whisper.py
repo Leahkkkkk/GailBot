@@ -10,11 +10,15 @@ import sys
 import os
 import json
 import time
-
+from .data import AudioPath
 from gailbot.core.engines.whisperEngine import WhisperEngine
 from gailbot.core.utils.general import write_json
+import pytest 
 
-def test_whisper():
+
+@pytest.mark.parametrize("audio", 
+                         [AudioPath.MEDIUM_AUDIO])
+def test_whisper(audio):
     engine = WhisperEngine()
     print(engine)
     print(engine.get_supported_formats())
@@ -23,7 +27,7 @@ def test_whisper():
 
     start = time.time()
     result = engine.transcribe(
-        audio_path="/Users/muhammadumair/Documents/Repositories/mumair01-repos/GailBot/data/dev_test_data/media/audio/wav/test_output.wav",
+        audio_path=audio,
         language="English",
         detect_speakers=False
     )
