@@ -17,7 +17,7 @@ import pytest
 
 
 @pytest.mark.parametrize("audio", 
-                         [AudioPath.MEDIUM_AUDIO])
+                        [AudioPath.LARGE_AUDIO_WAV])
 def test_whisper(audio):
     engine = WhisperEngine()
     print(engine)

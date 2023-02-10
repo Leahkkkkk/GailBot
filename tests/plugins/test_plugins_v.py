@@ -70,12 +70,18 @@ TEST_DIR_SRC = "/Users/yike/Documents/GitHub/GailBot/data/test_suite"
 HIL_CONFIG_SRC =  "/Users/yike/Documents/GitHub/GailBot/gb_hilab_suite/config.toml"
 HIL_DIR_SRC = "/Users/yike/Documents/GitHub/GailBot/gb_hilab_suite"
 
-@pytest.mark.parametrize("source", [[HIL_CONFIG_SRC, TEST_CONFIG_SRC], 
-                                    [TEST_DIR_SRC, HIL_DIR_SRC],
-                                    [test_config, hilab_plugin]])
+@pytest.mark.parametrize("source", [[TEST_DIR_SRC, HIL_DIR_SRC]])
 def test_load_config(source):
     test_manager = PluginManager(
         workspace_dir=os.path.join(TOP_CONFIG.root, TOP_CONFIG.workspace.plugin_workspace),
         plugin_sources =source,
-        load_existing=False)
+        load_existing=True)
+   
+    with pytest.raises(Exception) as e :
+        failed_manager = PluginManager(
+        workspace_dir=os.path.join(TOP_CONFIG.root, TOP_CONFIG.workspace.plugin_workspace),
+        plugin_sources=[TEST_CONFIG_SRC],
+        load_existing=False
+        )
+        logger.info(e)
     

@@ -24,6 +24,10 @@ from gailbot.core.utils.general import (
     is_directory
 )
 from gailbot.core.utils.download import download_from_urls
+from gailbot.configs import top_level_config_loader 
+from pprint import pprint
+
+TOP_LEVEL = top_level_config_loader()
 
 logger = makelogger("plugin_manager")
 class PluginLoader:
@@ -31,8 +35,8 @@ class PluginLoader:
     def load(self, *args, **kwargs) -> PluginSuite:
         raise NotImplementedError()
 
+""" TODO: test url download and path """
 class PluginURLLoader(PluginLoader):
-
     def __init__(
         self,
         download_dir : str,
@@ -42,7 +46,7 @@ class PluginURLLoader(PluginLoader):
         self.suites_dir = suites_dir
         self.dir_loader = PluginDirectoryLoader(suites_dir)
 
-    def load(self, url : str) -> PluginSuite:
+    def load(self, url : str, abs_path: str) -> PluginSuite:
          # Download from url
         if not type(url) == str: 
             return 
@@ -53,18 +57,17 @@ class PluginURLLoader(PluginLoader):
         )[0]
         # Move to the suites dir.
         suite_dir_path = move(suite_dir_path,self.suites_dir)
-        return self.dir_loader.load(suite_dir_path)
+        return self.dir_loader.load(suite_dir_path, abs_path)
 
 class PluginDirectoryLoader(PluginLoader):
-
     def __init__(
         self,
-        suites_dir : str
+        suites_dir : str, 
     ):
         self.suites_dir = suites_dir
         self.toml_loader = PluginTOMLLoader()
 
-    def load(self, suite_dir_path : str) -> PluginSuite:
+    def load(self, suite_dir_path : str, abs_path: str) -> PluginSuite:
         if not type(suite_dir_path) == str:
             return
         if not os.path.isdir(suite_dir_path):
@@ -77,15 +80,14 @@ class PluginDirectoryLoader(PluginLoader):
             suite_dir_path = copy(suite_dir_path,tgt_path)
         # Suite should only load from dict config
         conf = filepaths_in_dir(suite_dir_path,["toml"])[0]
-        return self.toml_loader.load(conf)
+        return self.toml_loader.load(conf, abs_path)
 
 
 class PluginTOMLLoader(PluginLoader):
-
     def __init__(self):
         self.dict_config_loader = PluginDictLoader()
 
-    def load(self, conf_path : str) -> PluginSuite:
+    def load(self, conf_path : str, abs_path: str) -> PluginSuite:
         if not type(conf_path) == str :
             return
         if (not os.path.isfile(conf_path)) or \
@@ -97,15 +99,16 @@ class PluginTOMLLoader(PluginLoader):
         dict_conf.update({
             "path" : get_parent_path(conf_path)
         })
-        return self.dict_config_loader.load(dict_conf)
+        return self.dict_config_loader.load(dict_conf, abs_path)
 
 class PluginDictLoader(PluginLoader):
-    def load(self, dict_conf : Dict) -> PluginSuite:
+    def load(self, dict_conf : Dict, abs_path: str) -> PluginSuite:
         # TODO: THis is where the dict conf should be parsed
         # The suite itself should dynamically load the classes.
         if not type(dict_conf) == dict:
             return
-        suite = PluginSuite(dict_conf)
+        # TODO: 
+        suite = PluginSuite(dict_conf, abs_path)
         if suite.is_ready:
             return suite
 
@@ -116,19 +119,20 @@ class PluginManager:
     storing the plugin files, parsing the config files, and instantiating
     plugin objects from files.
     """
-
     def __init__(
         self,
-        workspace_dir : str,
+        workspace_dir : str, # TODO: delete ?
         plugin_sources : List[str] = [],
         load_existing : bool = True
     ):
         """
         Init workspace and load plugins from the specified sources.
         """        
-        self.workspace_dir = workspace_dir
+        self.workspace_dir = os.path.join(TOP_LEVEL.root, TOP_LEVEL.workspace.plugin_workspace)
         self.suites_dir = f"{workspace_dir}/suites"
         self.download_dir = f"{workspace_dir}/downloads"
+        sys.path.append(self.suites_dir)
+        pprint(sys.path)
         self.suites = dict()
         """ TODO: test this - load different types of plugin source file """
         self.loaders = [
@@ -180,12 +184,13 @@ class PluginManager:
         a plugin directory, a url, a conf file, or a dictionary configuration.
         """
         logger.info("regsiter plugin")
+        if not is_directory(plugin_source):
+            raise Exception("Not a directory")
         for loader in self.loaders:
-            suite = loader.load(plugin_source)
+            suite = loader.load(plugin_source, self.suites_dir)
             if isinstance(suite, PluginSuite):
                 logger.info("get suite")
                 self.suites[suite.name] = suite
-                
                 return suite.dependency_graph()
 
     def get_suite(

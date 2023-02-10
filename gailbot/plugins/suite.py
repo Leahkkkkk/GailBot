@@ -88,7 +88,8 @@ class PluginSuite:
 
     def __init__(
         self,
-        dict_conf : Dict
+        dict_conf : Dict,
+        abs_path: str
     ):
 
         # TODO: Parse the dict config to generate the plugins map and
@@ -99,7 +100,7 @@ class PluginSuite:
         # NOTE: This is where classes should be dynamically loaded.
         # self.plugins : Dict[str, Plugin] = dict()
         # self.dependency_map : Dict[str, List[str] ]= dict()
-        self.dependency_map, self.plugins = self._load_from_config(dict_conf)
+        self.dependency_map, self.plugins = self._load_from_config(dict_conf, abs_path)
 
         """ we ge the plugin, wrapped in component """
         # Wrap the plugins in PluginComponent
@@ -177,7 +178,7 @@ class PluginSuite:
     ##########
 
     # TODO: Need to implement a robust method to load plugins.
-    def _load_from_config(self, dict_config : ConfDict) -> None:
+    def _load_from_config(self, dict_config : ConfDict, abs_path: str ) -> None:
         """
         dict_config must have the keys:
             suite_name : Name of suite
@@ -191,10 +192,7 @@ class PluginSuite:
                                 the path is relative to the suite_abs_path
         """
         # Add path to the imports
-        logger.info(dict_config)
-        abs_path = dict_config["suite_abs_path"]
-        sys.path.append(abs_path)
-        print(sys.path)
+        # sys.path.append(abs_path) TODO: delete
         pkg_name = dict_config["suite_name"]
 
         dependency_map = dict()
@@ -207,9 +205,7 @@ class PluginSuite:
             module_full_name = f"{pkg_name}.{module_name}"
             rel_path = conf["rel_path"]
             path = os.path.join(abs_path, pkg_name, rel_path)
-
             clazz_name = conf["plugin_name"]
-
             spec = importlib.util.spec_from_file_location(
                 module_full_name, path)
             module = importlib.util.module_from_spec(spec)
@@ -220,9 +216,5 @@ class PluginSuite:
 
             dependency_map[clazz_name] = conf["dependencies"]
             plugins[clazz_name] = instance
-        
-        pprint("___________________")
-        pprint(sys.path)
-        sys.path.pop()
         return dependency_map, plugins # used to generate pipeline
 

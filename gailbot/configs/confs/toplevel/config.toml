@@ -7,7 +7,7 @@ log_files = "gailbot_workspace/log_files"
 watson_workspace = "gailbot_workspace/watson_worksapce"
 google_workspace = "gailbot_workspace/google_worksapce"
 whisper_workspace = "gailbot_workspace/whisper_workspace"
-plugin_workspace = "gailbot_workspace/plugin"
+plugin_workspace = "gailbot_workspace/plugin_workspace"
 
 [output_path]
 audio = "audio"
