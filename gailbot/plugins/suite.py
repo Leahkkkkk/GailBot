@@ -191,8 +191,10 @@ class PluginSuite:
                                 the path is relative to the suite_abs_path
         """
         # Add path to the imports
+        logger.info(dict_config)
         abs_path = dict_config["suite_abs_path"]
         sys.path.append(abs_path)
+        print(sys.path)
         pkg_name = dict_config["suite_name"]
 
         dependency_map = dict()
@@ -200,6 +202,7 @@ class PluginSuite:
         
         """ TODO: test this  -- path dependency / relative path & absolute path"""
         for conf in dict_config["plugins"]:
+            logger.info(conf)
             module_name = conf["module_name"]
             module_path = f"{pkg_name}.{module_name}"
             rel_path = conf["rel_path"]
@@ -207,18 +210,15 @@ class PluginSuite:
             
             clazz_name = conf["plugin_name"]
 
-            logger.info(module_path)
-            logger.info(path)
             spec = importlib.util.spec_from_file_location(
                 module_path, path)
             module = importlib.util.module_from_spec(spec)
-            sys.modules[module_path] = module
+            # sys.modules[module_path] = module
             spec.loader.exec_module(module)
             clazz = getattr(module, clazz_name)
             instance = clazz()
 
             dependency_map[clazz_name] = conf["dependencies"]
             plugins[clazz_name] = instance
-       
         return dependency_map, plugins # used to generate pipeline
 

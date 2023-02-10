@@ -10,7 +10,7 @@ from typing import Dict, List, Any
 from dataclasses import dataclass
 from .plugin import Plugin
 from .suite import PluginSuite
-
+from gailbot.core.utils.logger import makelogger
 from gailbot.core.utils.general import (
     make_dir,
     subdirs_in_dir,
@@ -25,7 +25,7 @@ from gailbot.core.utils.general import (
 )
 from gailbot.core.utils.download import download_from_urls
 
-
+logger = makelogger("plugin_manager")
 class PluginLoader:
 
     def load(self, *args, **kwargs) -> PluginSuite:
@@ -44,6 +44,8 @@ class PluginURLLoader(PluginLoader):
 
     def load(self, url : str) -> PluginSuite:
          # Download from url
+        if not type(url) == str: 
+            return 
         suite_dir_path = download_from_urls(
             urls=[url],
             download_dir=self.download_dir,
@@ -63,7 +65,8 @@ class PluginDirectoryLoader(PluginLoader):
         self.toml_loader = PluginTOMLLoader()
 
     def load(self, suite_dir_path : str) -> PluginSuite:
-
+        if not type(suite_dir_path) == str:
+            return
         if not os.path.isdir(suite_dir_path):
             return
         # Load the first toml file in dir.
@@ -83,8 +86,10 @@ class PluginTOMLLoader(PluginLoader):
         self.dict_config_loader = PluginDictLoader()
 
     def load(self, conf_path : str) -> PluginSuite:
-        if not os.path.isfile(conf_path) and \
-                not get_extension(conf_path) == "toml":
+        if not type(conf_path) == str :
+            return
+        if (not os.path.isfile(conf_path)) or \
+                (not get_extension(conf_path) == "toml"):
             return
         dict_conf = read_toml(conf_path)
         # Adding the absolute path
@@ -95,7 +100,6 @@ class PluginTOMLLoader(PluginLoader):
         return self.dict_config_loader.load(dict_conf)
 
 class PluginDictLoader(PluginLoader):
-
     def load(self, dict_conf : Dict) -> PluginSuite:
         # TODO: THis is where the dict conf should be parsed
         # The suite itself should dynamically load the classes.
@@ -121,7 +125,7 @@ class PluginManager:
     ):
         """
         Init workspace and load plugins from the specified sources.
-        """
+        """        
         self.workspace_dir = workspace_dir
         self.suites_dir = f"{workspace_dir}/suites"
         self.download_dir = f"{workspace_dir}/downloads"
@@ -149,6 +153,7 @@ class PluginManager:
 
         # TODO: Load plugins from the specified sources.
         for plugin_source in plugin_sources:
+            logger.info(f"get plugin source {plugin_source}")
             self.register_suite(plugin_source)
 
     def suite_names(self) -> List[str]:
@@ -174,10 +179,13 @@ class PluginManager:
         Register a plugin suite from the given source, which can be
         a plugin directory, a url, a conf file, or a dictionary configuration.
         """
+        logger.info("regsiter plugin")
         for loader in self.loaders:
             suite = loader.load(plugin_source)
             if isinstance(suite, PluginSuite):
+                logger.info("get suite")
                 self.suites[suite.name] = suite
+                
                 return suite.dependency_graph()
 
     def get_suite(

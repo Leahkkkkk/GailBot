@@ -5,7 +5,12 @@ import pytest
 from typing import Dict, Any, List
 from gailbot.core.utils.logger import makelogger
 from .plugin_confs import hilab_plugin, test_config
+from gailbot.plugins.manager import PluginManager
+from gailbot.configs import top_level_config_loader 
+import pytest 
+import os
 
+TOP_CONFIG = top_level_config_loader()
 logger = makelogger("test_plugins")
 
 
@@ -48,7 +53,7 @@ def test_plugin_component():
     plugin_com(success_dep, test_plugin_method)
 
 
-@pytest.mark.parametrize("config", [test_config])    
+@pytest.mark.parametrize("config", [hilab_plugin, test_config])    
 def test_load_plugin(config):
     plugin_config = PluginSuite(config)    
     logger.info(plugin_config.dependency_map)
@@ -59,3 +64,20 @@ def test_load_plugin(config):
     for plugin in config["plugins"]:
         assert plugin_config.is_plugin(plugin["plugin_name"])
     logger.info(plugin_config.plugin_names())                 
+
+TEST_CONFIG_SRC = "/Users/yike/Documents/GitHub/GailBot/data/test_suite/conf.toml"
+TEST_DIR_SRC = "/Users/yike/Documents/GitHub/GailBot/data/test_suite"
+
+HIL_CONFIG_SRC =  "/Users/yike/Documents/GitHub/GailBot/gb_hilab_suite/config.toml"
+HIL_DIR_SRC = "/Users/yike/Documents/GitHub/GailBot/gb_hilab_suite"
+
+@pytest.mark.parametrize("source", [[TEST_CONFIG_SRC, HIL_CONFIG_SRC], 
+                                    [TEST_DIR_SRC, HIL_DIR_SRC],
+                                    [test_config, hilab_plugin]])
+def test_load_config(source):
+    test_manager = PluginManager(
+        workspace_dir=os.path.join(TOP_CONFIG.root, TOP_CONFIG.workspace.plugin_workspace),
+        plugin_sources =source,
+        load_existing=True
+    )
+    

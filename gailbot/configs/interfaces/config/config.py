@@ -9,7 +9,7 @@ class WorkSpace(DataclassFromDict):
     watson_workspace: str = field_from_dict()
     google_workspace: str = field_from_dict()
     whisper_workspace: str = field_from_dict()
-    
+    plugin_workspace: str = field_from_dict() 
 
 @dataclass
 class Output(DataclassFromDict):

@@ -5,15 +5,20 @@ from gailbot.plugins.manager import (
     PluginURLLoader,
     PluginTOMLLoader,
 )
-from .plugin_confs import hilab_plugin as hilab_suite
+from .plugin_confs import hilab_plugin 
 from .plugin_confs import test_config
 from .test_plugins_v import TestPlugin
 from gailbot.configs import top_level_config_loader 
+import pytest 
+
 TOP_CONFIG = top_level_config_loader()
 import os 
 # test_manager = PluginManager(workspace_dir="/Users/yike/Documents/GitHub/GailBot",
-#                             plugin_sources=hilab_suite,
+#                             plugin_sources=hilab_plugin,
 #                             load_existing=False) #TODO: fix error in manager.py that occurs when load existing = true
+
+
+
 
 # class TestManager(PluginManager):
 def __init__():
@@ -42,7 +47,7 @@ def test_register_suite():
 def test_dict_loader():
     # implicitly tests get_suite and is_suite
     loader = PluginDictLoader()
-    suite = loader.load(hilab_suite)
+    suite = loader.load(hilab_plugin)
     manager = PluginManager(plugin_sources=[suite], workspace_dir= os.path.join(TOP_CONFIG.root, "plugin"))
     assert(manager.is_suite(manager, "hil_lab"))
     test_suite = manager.get_suite("hil_lab")
@@ -61,10 +66,4 @@ def dont_test_directory_loader():
     # TODO need test plugins within directory
     loader = PluginDirectoryLoader()
 
-
-
-def test_construct_manager():
-    test_manager = PluginManager(os.path.join(TOP_CONFIG.root, "plugin"))
-    
-    
 
