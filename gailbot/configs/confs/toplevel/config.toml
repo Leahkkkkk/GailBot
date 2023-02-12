@@ -2,6 +2,9 @@
 [organizer]
 num_threads = 5
 
+[plugin]
+num_threads = 5
+
 [workspace_path]
 log_files = "gailbot_workspace/log_files"
 watson_workspace = "gailbot_workspace/watson_worksapce"

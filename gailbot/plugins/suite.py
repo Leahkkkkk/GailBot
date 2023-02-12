@@ -12,29 +12,31 @@ import time
 import importlib
 import imp
 from gailbot.core.utils.logger import makelogger
-from gailbot.core.pipeline import Pipeline, Component, ComponentResult, ComponentState
-from gailbot.core.utils.general import (
-    is_file,
-    is_directory,
-    paths_in_dir,
-    get_name
-)
-from pprint import pprint
 from .plugin import Plugin, Methods
+from gailbot.configs import top_level_config_loader
+
+from gailbot.core.pipeline import (
+    Pipeline, 
+    Component, 
+    ComponentResult, 
+    ComponentState)
+
+PLUGIN_CONFIG = top_level_config_loader().plugin
 
 logger = makelogger("pluginSuite")
-NUM_THREAD = 5
+
 class PluginDict(TypedDict):
+    """ dictionary type for individual plugin """
     plugin_name: str
     dependencies: List[str]
     module_name: str 
     rel_path: str
     
 class ConfDict(TypedDict):
+    """ dictionary type for plugin suite configuration dictionary"""
     suite_name: str 
     suite_abs_path: str 
     plugins: List[PluginDict]
-
 
 class PluginComponent(Component):
     """
@@ -46,6 +48,10 @@ class PluginComponent(Component):
     def __init__(self,
         plugin : Plugin
     ):
+        """ 
+        Giving a plugin, wrap it to a component class , so that it 
+        it can be executed by the pipeline 
+        """
         self.plugin = plugin
 
     def __repr__(self):
@@ -60,25 +66,29 @@ class PluginComponent(Component):
         In addition to dependency outputs, this expects methods which can be
         passed to the individual plugins.
         """
-
         # Extract the actual dependency results
+        logger.info("plugin suite is called")
         dep_outputs = {
             k : v.result for k,v in dependency_outputs.items()
         }
         # Simply call the plugin and return its results
-        start = time.time()
-        result = self.plugin.apply(dep_outputs, methods)
-        elapsed = time.time() - start
+        # start = time.time()
+        logger.info(self.plugin)
+        try:
+            result = self.plugin.apply(dep_outputs, methods)
+            logger.info(self.plugin)
+        except Exception as e:
+            logger.error(e)
+       
+        # elapsed = time.time() - start
         return ComponentResult(
             state=ComponentState.SUCCESS if self.plugin.is_successful else \
                 ComponentState.FAILED,
-            result=result,
-            runtime=elapsed
+            result="result",
+            runtime=0
         )
 
 
-# TODO: Implement mechanism for creating dependency map and dynamically loading
-# plugin classes from config files.
 class PluginSuite:
     """
     Manages a suite of plugins and responsible for loading, queries, and
@@ -92,33 +102,23 @@ class PluginSuite:
         abs_path: str
     ):
 
-        # TODO: Parse the dict config to generate the plugins map and
-        # dependency map.
         """ a dictionary of the dependency map  -> pipeline argument  """
         self.dict_conf = dict_conf
-
-        # NOTE: This is where classes should be dynamically loaded.
-        # self.plugins : Dict[str, Plugin] = dict()
-        # self.dependency_map : Dict[str, List[str] ]= dict()
         self.dependency_map, self.plugins = self._load_from_config(dict_conf, abs_path)
-
-        """ we ge the plugin, wrapped in component """
+        
         # Wrap the plugins in PluginComponent
         self.components = {
             k : PluginComponent(v) for k,v in self.plugins.items()
         }
 
         # Init the pipeline based on the components
-        self.pipeline = Pipeline(self.dependency_map,
-                                 self.components,
-                                 num_threads=NUM_THREAD)
+        self.pipeline = Pipeline(dependency_map = self.dependency_map,
+                                 components = self.components,
+                                 num_threads=PLUGIN_CONFIG.num_threads)
+        
         # Add vars here from conf.
         self._name = dict_conf["suite_name"]
-
-        # TODO: Add mechanism to make sure all the required plugins were loaded.
-
         self._is_ready = True
-
 
     @property
     def name(self) -> str:
@@ -144,6 +144,9 @@ class PluginSuite:
         Apply the specified plugins when possible and return the results
         summary
         """
+        logger.info(f"{self.name} plugin suite is being run")
+        logger.info(f"base input {base_input}")
+        logger.info(f"additional {methods}")
         result = self.pipeline(
             base_input=base_input, 
             additional_component_kwargs={
@@ -154,6 +157,7 @@ class PluginSuite:
         return result# TODO: Determine exact type of result and return the correct thing/
 
     def is_plugin(self, plugin_name : str) -> bool:
+        """ given a name , return true if the plugin is in the plugin suite """
         return plugin_name in self.plugins
 
     def plugin_names(self) -> List[str]:
@@ -162,11 +166,8 @@ class PluginSuite:
 
     def plugin_details(self, plugin_name : str) -> Dict:
         # TODO: Potentially store additional things beyond plugin dependencies
-
         if self.is_plugin(plugin_name):
-            return {
-                "dependencies" : self.dependency_map[plugin_name]
-            }
+            return {"dependencies" : self.dependency_map[plugin_name]}
 
     def dependency_graph(self) -> Dict:
         """Return the entire dependency graph as a dictionary"""
@@ -177,30 +178,34 @@ class PluginSuite:
     # PRIVATE
     ##########
 
-    # TODO: Need to implement a robust method to load plugins.
     def _load_from_config(self, dict_config : ConfDict, abs_path: str ) -> None:
         """
+        load the plugin suite, the information about the each plugin name, 
+        and its path is stored in the dict_config, all path information 
+        is relative to the abs_path
+        
+        Args: 
         dict_config must have the keys:
             suite_name : Name of suite
-            suite_abs_path : Path to the module containing all plugins
             plugins : List[Dict]
                 - Each dict has:
                     - plugin_name : Name of the plugin
                     - dependencies : names of plugins this is dependant on.
                     - module_name : Name of module this plugin is in.
                     - rel_path: the relative path of the plugin script, 
-                                the path is relative to the suite_abs_path
+                                the path is relative to the suite path
+                                
+        abs_path: the absolute path where the plugin suite directory is relative
+                  to, each plugins's absolute path can be form as 
+                  "<abs_path>/<suite_name>/<rel_path>"
         """
         # Add path to the imports
-        # sys.path.append(abs_path) TODO: delete
         pkg_name = dict_config["suite_name"]
-
         dependency_map = dict()
         plugins = dict()
         
-        """ TODO: test this  -- path dependency / relative path & absolute path"""
         for conf in dict_config["plugins"]:
-            logger.info(conf)
+            # logger.info(conf)
             module_name = conf["module_name"]
             module_full_name = f"{pkg_name}.{module_name}"
             rel_path = conf["rel_path"]
@@ -216,5 +221,6 @@ class PluginSuite:
 
             dependency_map[clazz_name] = conf["dependencies"]
             plugins[clazz_name] = instance
+            
         return dependency_map, plugins # used to generate pipeline
 

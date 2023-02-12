@@ -1,3 +1,17 @@
+
+TEST_CONFIG_SRC = "/Users/yike/Documents/GitHub/GailBot/data/test_suite/conf.toml"
+TEST_CONFIG_SRC_TWO = "/Users/yike/Documents/GitHub/GailBot/data/s_test_suite/test_two_conf.toml"
+HIL_CONFIG_SRC =  "/Users/yike/Documents/GitHub/GailBot/gb_hilab_suite/config.toml"
+
+""" using test below test files  """
+TEST_DIR_SRC = "/Users/yike/Documents/GitHub/GailBot/data/test_suite"
+HIL_DIR_SRC = "/Users/yike/Documents/GitHub/GailBot/gb_hilab_suite"
+TEST_TWO_DIR_SRC = "/Users/yike/Documents/GitHub/GailBot/data/s_test_suite"
+
+TEST_PLUGIN_URL = "https://github.com/YikeLi-Vivi/GailBotTestSuite/archive/refs/heads/main.zip"
+HIL_LAB_PLUGIN_URL = "https://github.com/YikeLi-Vivi/hillab/archive/refs/heads/main.zip"
+
+
 test_config = {
     "suite_name": "test_suite",
     "suite_abs_path": "/Users/yike/Documents/GitHub/GailBot/data",

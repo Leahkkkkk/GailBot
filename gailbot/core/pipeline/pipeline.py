@@ -100,9 +100,10 @@ class Pipeline:
                     for res in dep_outputs.values():
                         if res.state == ComponentState.FAILED:
                             results[exe_name] = Failure
-                            self.dependency_graph.remove_node(executable)
+                            if self.dependency_graph.has_node(executable):
+                                self.dependency_graph.remove_node(executable)
                             prepare = False
-                            
+                                 
                     logger.info(f"dep_output:{dep_outputs}")
                 else:
                     # Base input is also passed as a component result.
@@ -113,6 +114,7 @@ class Pipeline:
                             runtime=0
                         )
                     }
+                
                 if base_sentinel: 
                     args = base_input + [dep_outputs] 
                     base_sentinel = False 
@@ -120,10 +122,14 @@ class Pipeline:
                     args = [dep_outputs]          
                               
                 if prepare:
+                    logger.info(f"the base argument {args}")
+                    logger.info(f"additional argument {additional_component_kwargs}")
+                    
                     key = self.threadpool.add_task(
                         executable, 
                         args= args, 
                         kwargs=additional_component_kwargs) 
+                    logger.info(key)
                     key_to_exe[key] = executable           
 
             """ wait until all tasks finishes before next iteration """
@@ -132,6 +138,7 @@ class Pipeline:
             for key, exe in key_to_exe.items():
                 """ get the task result from the thread pool """
                 exe_res = self.threadpool.get_task_result(key)
+                logger.info(exe_res)
                 self.dependency_graph.remove_node(exe)
                 
                 if exe_res and exe_res.state == ComponentState.SUCCESS:
@@ -282,12 +289,12 @@ class Pipeline:
 
             # Create a component and add to main graph
             self.dependency_graph.add_node(components[name])
-
             # We want to add directed edges from all the dependencies to the
             # current node. This implies that the dependencies should already
             # exist as nodes.
             for dep in dependencies:
                 if not dep in components:
+                    logger.error("not seen")
                     raise Exception(
                         f"Unseen component added as dependency {dep}"
                     )

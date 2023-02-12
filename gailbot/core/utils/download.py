@@ -10,6 +10,9 @@ import requests
 from zipfile import ZipFile
 import os
 import socket
+from .logger import makelogger
+
+logger = makelogger("download")
 
 def download_from_urls(
     urls : List[str],
@@ -38,7 +41,7 @@ def download_from_urls(
         with requests.get(url, stream=True) as r:
             r.raise_for_status()
             pbar = tqdm(
-                total=int(r.headers['Content-Length']), desc="{}".format(name))
+                total=int(r.headers.get("content-length", 0)), desc="{}".format(name))
             with open(url_temp_path, "wb+") as f:
                 for chunk in r.iter_content(chunk_size=chunkSize):
                     if chunk:  # filter out keep-alive new chunks

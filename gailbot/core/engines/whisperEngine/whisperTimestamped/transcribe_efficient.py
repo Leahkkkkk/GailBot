@@ -46,7 +46,16 @@ def _transcribe_timestamped_efficient(
     """
     Timestamps a transcription created by the whisper engine.
 
-    
+    Args:
+            model: 
+            audio: 
+            remove_punctuation_from_words: 
+            compute_word_confidence: 
+            include_punctuation_in_confidence: 
+            refine_whisper_precision_nframes: 
+            plot_word_alignment: 
+    Returns:
+            
     """
 
     # Get options

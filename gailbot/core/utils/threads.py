@@ -77,7 +77,8 @@ class ThreadPool(ThreadPoolExecutor):
         return self.num_thread
 
     def add_task(
-        self, fun, args: List = None, kwargs: Dict = None, error_fun: Callable = None) -> int:
+        self, fun, args: List = None, kwargs: Dict = None,
+             error_fun: Callable = None) -> int:
         """
         Adds the given task to the task pool.
 
@@ -155,7 +156,9 @@ class ThreadPool(ThreadPoolExecutor):
             assert not future.exception()
             return future.result()
         except:
-            if error_fun: error_fun()
+            logger.error(future.exception())
+            if error_fun: 
+                error_fun()
             else: return False
 
     def completed(self, key, error_fun: Callable = None )-> bool:
@@ -291,7 +294,6 @@ class ThreadPool(ThreadPoolExecutor):
             raise ThreadError("ERROR: Failed to add callback")
     
     def add_callback(self, key, fun: Callable):
-        logger.info(f"add callback for {key}")
         future = self.task_pool[key]
         future.add_done_callback(fun)
     
