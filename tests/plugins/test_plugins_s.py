@@ -37,11 +37,7 @@ def test_dict_loader():
     assert(manager.is_suite(manager, "hil_lab"))
     test_suite = manager.get_suite("hil_lab")
     assert(test_suite.name == "hil_lab")
-    # assert("hil_lab" in manager.suite_names())
-
-def test_url_loader():
-    ##TODO complete this test later when we have a URL for the hilab suite
-    pass
+    # assert("hil_lab" in manager.suite_names()
 
 def dont_test_toml_loader():
     loader = PluginTOMLLoader()

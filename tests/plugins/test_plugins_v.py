@@ -82,10 +82,16 @@ def test_load_url(url):
         load_existing=False)
     logger.info(test_manager.suite_names())
 
+
+
 @pytest.mark.parametrize("source", [[TEST_DIR_SRC]])
 def test_run_plugin(source):
+    """  test running the plugin , which should return the result as 
+         successful 
+    """
     test = PluginManager(
-        workspace_dir=os.path.join(TOP_CONFIG.root, TOP_CONFIG.workspace.plugin_workspace),
+        workspace_dir=os.path.join(
+            TOP_CONFIG.root, TOP_CONFIG.workspace.plugin_workspace),
         plugin_sources=source,
         load_existing=False
     )
@@ -95,3 +101,6 @@ def test_run_plugin(source):
         assert suite.is_ready
         result = suite([], test_plugin_method)
         logger.info(result)
+        from gailbot.core.pipeline.component import ComponentState
+        for res in result.values():
+            assert res == ComponentState.SUCCESS

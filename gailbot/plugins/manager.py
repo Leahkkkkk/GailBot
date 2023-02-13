@@ -32,7 +32,6 @@ class PluginLoader:
     def load(self, *args, **kwargs) -> PluginSuite:
         raise NotImplementedError()
 
-""" TODO: test url download and path """
 class PluginURLLoader(PluginLoader):
     """ load plugin from an url source  """
     def __init__(
@@ -190,7 +189,7 @@ class PluginManager:
     """
     def __init__(
         self,
-        workspace_dir : str, # TODO: delete ?
+        workspace_dir : str, 
         plugin_sources : List[str] = [],
         load_existing : bool = True
     ):
