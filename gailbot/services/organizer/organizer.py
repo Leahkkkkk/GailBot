@@ -11,7 +11,8 @@ from .settingsManager import SettingsManager
 from .objects import Settings, Source
 
 # TODO: Look into using an ORM to manage the underlying objects, such as marshmallow.
-
+# source manager -> manage the audio file 
+# setting manager -> manage the setting profile 
 class OrganizerService:
 
     def __init__(

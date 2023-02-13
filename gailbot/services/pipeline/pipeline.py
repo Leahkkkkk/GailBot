@@ -40,6 +40,6 @@ class PipelineService:
         # Passing in one at a time - but this needs to be multithreaded.
         # Each component should be multithreading internally if possible.
         self.pipeline(
-            base_input=payloads
+            base_input=[payloads]
         )
 

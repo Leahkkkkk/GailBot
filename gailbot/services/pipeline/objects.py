@@ -4,6 +4,8 @@
 # @Last Modified by:   Muhammad Umair
 # @Last Modified time: 2023-01-12 14:41:34
 
+
+
 import logging
 from datetime import date, time
 from typing import Dict, List, Any, Dict
@@ -24,7 +26,6 @@ class ProcessingStats:
     end_time: time = None
     elapsed_time_sec: float = None
 
-
 @dataclass
 class TranscriptionResults:
     utterances : Dict[str, List[Utterance]] = None
@@ -42,7 +43,7 @@ class FormatResults:
 @dataclass
 class Payload:
     source: Source
-    transcription_res : TranscriptionResults = TranscriptionResults()
+    transcription_res: TranscriptionResults = TranscriptionResults()
     analysis_res: AnalysisResults = AnalysisResults()
     format_res : FormatResults = FormatResults()
 

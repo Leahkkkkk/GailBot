@@ -11,7 +11,6 @@ from gailbot.services.organizer.objects import Settings
 from ..objects import Payload, AnalysisResults
 
 class AnalysisComponent(Component):
-
     def __init__(
         self,
         plugin_manager : PluginManager

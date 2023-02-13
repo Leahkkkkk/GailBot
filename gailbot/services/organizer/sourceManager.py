@@ -3,7 +3,6 @@
 # @Date:   2023-01-08 14:50:11
 # @Last Modified by:   Muhammad Umair
 # @Last Modified time: 2023-01-16 15:32:33
-
 from typing import List, Dict, Any, Callable
 from gailbot.core.utils.general import (
     is_directory,
@@ -17,7 +16,8 @@ from gailbot.core.utils.general import (
     delete
 )
 from gailbot.core.utils.media import MediaHandler
-from gailbot.services.pipeline.objects import PayloadOutputWriter
+from gailbot.services.pipeline.objects import PayloadOutputWriter  
+# NOTE: want to get rid of the above line of import 
 from .objects import Source, DataFile
 
 
@@ -79,7 +79,7 @@ class VideoSourceLoader(SourceLoader):
 
 
 class ConversationDirectorySourceLoader(SourceLoader):
-
+    """ NOTE: loading the entire directory instead of just single file  """
     def __init__(self):
         self.media_h = MediaHandler()
 
@@ -106,6 +106,9 @@ class ConversationDirectorySourceLoader(SourceLoader):
 
 # TODO: Implement later based on the final directory output structure.
 class TranscribedOutputSourceLoader(SourceLoader):
+    """ loading the transcribed output - only used when we need to 
+        re-transcribe something 
+    """
 
     def __call__(
         self,
@@ -124,7 +127,6 @@ class TranscribedOutputSourceLoader(SourceLoader):
 
 class SourceManager:
     """Simply creates and manages the workspace for sources"""
-
     def __init__(self, workspace_dir : str):
         self.workspace_dir = workspace_dir
         make_dir(workspace_dir,overwrite=True)

@@ -12,12 +12,11 @@ from gailbot.services import GailBotController
 
 class GailBot:
     """API Wrapper"""
-
     def __init__(
         self,
         workspace_dir : str
     ):
-        self.gb = GailBotController(workspace_dir)
+        self.gb : GailBotController  = GailBotController(workspace_dir)
 
     def reset_workspace(self):
         self.gb.reset_workspace()

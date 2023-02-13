@@ -26,6 +26,7 @@ class GailBotController:
         self.engine_manager = EngineManager(
             self.ws.engines_ws,self.ws.engine_conf_paths
         )
+        
         self.organizer = OrganizerService(
             self.ws.sources_ws, self.ws.settings_ws
         )

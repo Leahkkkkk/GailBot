@@ -4,6 +4,9 @@
 # @Last Modified by:   Muhammad Umair
 # @Last Modified time: 2023-01-16 15:02:59
 
+# NOTE: why would engine manger be under here instead of under engine folder, 
+# mirroring the structure for plugin? 
+
 
 import sys
 import os
@@ -21,8 +24,6 @@ _ENGINES = {
 }
 
 class EngineManager:
-
-
     def __init__(
         self,
         engine_ws_path : str,
