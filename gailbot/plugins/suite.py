@@ -84,7 +84,7 @@ class PluginComponent(Component):
         return ComponentResult(
             state=ComponentState.SUCCESS if self.plugin.is_successful else \
                 ComponentState.FAILED,
-            result="result",
+            result=result,
             runtime=0
         )
 
@@ -205,7 +205,6 @@ class PluginSuite:
         plugins = dict()
         
         for conf in dict_config["plugins"]:
-            # logger.info(conf)
             module_name = conf["module_name"]
             module_full_name = f"{pkg_name}.{module_name}"
             rel_path = conf["rel_path"]

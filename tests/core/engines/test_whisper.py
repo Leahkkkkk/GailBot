@@ -15,10 +15,7 @@ from gailbot.core.engines.whisperEngine import WhisperEngine
 from gailbot.core.utils.general import write_json
 import pytest 
 
-
-@pytest.mark.parametrize("audio", 
-                        [AudioPath.LARGE_AUDIO_WAV])
-def test_whisper(audio):
+def whisper_test(audio, detect_speaker: bool, output):
     engine = WhisperEngine()
     print(engine)
     print(engine.get_supported_formats())
@@ -29,9 +26,24 @@ def test_whisper(audio):
     result = engine.transcribe(
         audio_path=audio,
         language="English",
-        detect_speakers=False
+        detect_speakers=detect_speaker
     )
     print(f"Time taken for transcription: {time.time() - start}")
     print(json.dumps(result, indent = 2, ensure_ascii = False))
-    # write_json("./res.json",{"data" : result})
-    # print(json.dumps(result, indent = 2, ensure_ascii = False))
+    write_json(f"{AudioPath.WHISPER_OUT_PATH}/{output}",{"data" : result})
+    
+
+@pytest.mark.parametrize("audio, detect_speaker, output", 
+                [(AudioPath.SHORT_PHONE_CALL, True, "short_phone_call.json")])
+def test_detect_speaker(audio, detect_speaker, output):
+    whisper_test(audio, detect_speaker, output)
+
+@pytest.mark.parametrize("audio, detect_speaker, output", 
+                [(AudioPath.LONG_PHONE_CALL, True, "long_phone_call.json")])
+def test_detect_speaker_long(audio, detect_speaker, output):
+    whisper_test(audio, detect_speaker, output)
+    
+@pytest.mark.parametrize("audio, detect_speaker, output", 
+                [(AudioPath.LARGE_AUDIO_WAV, False, "long_audio.json")])
+def test_long_audio(audio, detect_speaker, output):
+    whisper_test(audio, detect_speaker, output)

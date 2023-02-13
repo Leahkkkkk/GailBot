@@ -138,7 +138,7 @@ def test_pipeline_sequence():
         num_threads=10
     )   
     
-    res = pipe({})
+    res = pipe([],{})
     logger.info(res)
     
 def test_thread_performance():
@@ -152,7 +152,7 @@ def test_thread_performance():
         num_threads=100
     )
     
-    res = pipe({})
+    res = pipe([], {})
     for i in range(1, 101):
         assert res[str(i)] == ComponentState.SUCCESS
     
@@ -189,7 +189,7 @@ def test_pipeline_fail():
         num_threads=3
     )
     
-    res = pipe({})
+    res = pipe([], {})
     
     for i in range(1, 10):
         if i != 4:
@@ -229,7 +229,7 @@ def test_complex_dependency():
         num_threads=3
     )
     
-    res = pipe({})
+    res = pipe([], {})
     logger.info(res)
     for i in range(1, 17):
         assert(res[str(i)] == ComponentState.SUCCESS) 
@@ -258,16 +258,16 @@ def test_hugging_face():
     )
     
     base = os.path.join(basedir, f"gpt2_outout")
-    res = pipe(additional_component_kwargs={"base_filename": "hugging_face"})
+    res = pipe([],additional_component_kwargs={"base_filename": "hugging_face"})
 
-def test_one_hugging_face():
+def _test_one_hugging_face():
     """ test the one hugging face takes around 28sec"""
     s = time.perf_counter()
     hugging_face_test(200, "one_hugging_face") 
     e = time.perf_counter()
     logger.info(f"time for one hugging face tes {e - s}")
     
-def test_ten_hugging_face():
+def _test_ten_hugging_face():
     """ test ten hugging face with 10 threads take around 190sec """
     s = time.perf_counter()
     
@@ -281,7 +281,7 @@ def test_ten_hugging_face():
         num_threads=10
     )
     
-    res = pipe(additional_component_kwargs={"base_filename": "hugging_face"})
+    res = pipe([], additional_component_kwargs={"base_filename": "hugging_face"})
     e = time.perf_counter()
     logger.info(f"time for ten hugging face tes {e - s}")
     logger.info(res)

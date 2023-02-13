@@ -3,16 +3,13 @@
 # @Date:   2023-01-08 12:52:37
 # @Last Modified by:   Muhammad Umair
 # @Last Modified time: 2023-01-15 16:04:52
-
-import sys
-import os
 from typing import List, Dict, Any, Tuple
 from dataclasses import dataclass
 from gailbot.core.utils.threads import ThreadPool
 from gailbot.core.utils.logger import makelogger
 import networkx as nx
-from copy import deepcopy
 from .component import Component, ComponentState, ComponentResult
+
 Failure = ComponentResult(ComponentState.FAILED, None, 0)
 logger = makelogger("pipeline")
 @dataclass
@@ -63,21 +60,28 @@ class Pipeline:
         Additionally, each component receives the output of its dependencies. 
 
         Args:
-            base_input: holds the component result.
-            Additional_component_kwargs: passed as a dereferenced dictionary to
-                each component.
+            base_input: 
+                a list of input arguments that will be passed to the first 
+                component of the graph 
+                
+            Additional_component_kwargs: 
+                passed as a dereferenced dictionary to each component.
 
         Returns:
             Dictionary containing keys mapping to the component states 
             corresponding to the result of each task.
-
+            
+        Note: 
+            each component is contained in a Component class
         """
-
+        
         successors = self.get_dependency_graph()
-        results : Dict[str, ComponentResult] = dict()
-        base_sentinel = True 
+        results : Dict[str, ComponentResult] = dict()   # map component name to result
+        
+        base_sentinel = True # handle additional input for the first component
         
         while True:
+            
             executables: List[Component] = [
                 c for c, d in self.dependency_graph.in_degree if d == 0
             ]
@@ -86,27 +90,18 @@ class Pipeline:
             if len(executables) == 0:
                 break
             
-            """ mapping the task key in the thread to executable """
-            key_to_exe: Dict[str, Component] = dict()
+            #  mapping the task key in the thread to executable 
             for executable in executables:
+                key_to_exe: Dict[str, Component] = dict()       # map thread key to executable
                 exe_name = self.component_to_name[executable]
                 prepare = True
                 
+                # check the dependencies output 
                 if len(successors[exe_name]) > 0:
                     dep_outputs : Dict[str, ComponentResult] = {
                         k : results[k] for k in successors[exe_name]
                     }
-                    
-                    for res in dep_outputs.values():
-                        if res.state == ComponentState.FAILED:
-                            results[exe_name] = Failure
-                            if self.dependency_graph.has_node(executable):
-                                self.dependency_graph.remove_node(executable)
-                            prepare = False
-                                 
-                    logger.info(f"dep_output:{dep_outputs}")
                 else:
-                    # Base input is also passed as a component result.
                     dep_outputs = {
                         "base" : ComponentResult(
                             state=ComponentState.SUCCESS,
@@ -114,38 +109,46 @@ class Pipeline:
                             runtime=0
                         )
                     }
+                    
+                for res in dep_outputs.values():
+                    if res.state == ComponentState.FAILED:
+                        results[exe_name] = Failure
+                        if self.dependency_graph.has_node(executable):
+                            self.dependency_graph.remove_node(executable)
+                        prepare = False
+       
+                    # Base input is also passed as a component result.
                 
+                # form the arguments that will be passed to the executable
                 if base_sentinel: 
+                    """ TODO: check if this is the correct way to pass base input """
                     args = base_input + [dep_outputs] 
                     base_sentinel = False 
                 else:
                     args = [dep_outputs]          
                               
-                if prepare:
-                    logger.info(f"the base argument {args}")
-                    logger.info(f"additional argument {additional_component_kwargs}")
-                    
+                if prepare:                    
                     key = self.threadpool.add_task(
                         executable, 
-                        args= args, 
-                        kwargs=additional_component_kwargs) 
+                        args = args, 
+                        kwargs = additional_component_kwargs) 
                     logger.info(key)
                     key_to_exe[key] = executable           
 
-            """ wait until all tasks finishes before next iteration """
+            # wait until all tasks finishes before next iteration
             self.threadpool.wait_for_all_completion(error_fun=lambda:None)
             
             for key, exe in key_to_exe.items():
-                """ get the task result from the thread pool """
+                # get the task result from the thread pool
                 exe_res = self.threadpool.get_task_result(key)
                 logger.info(exe_res)
                 self.dependency_graph.remove_node(exe)
                 
                 if exe_res and exe_res.state == ComponentState.SUCCESS:
-                    """ add to result if success """
+                    # add to result if success
                     results[self.component_to_name[exe]] = exe_res
                 else:
-                    """ add the failed result on failure """
+                    # add the failed result on failure
                     component_name = self.component_to_name[exe]
                     results[component_name] = Failure
                         

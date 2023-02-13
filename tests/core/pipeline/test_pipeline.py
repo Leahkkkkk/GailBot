@@ -112,5 +112,7 @@ def test_base_input():
         components=components,
         num_threads=1
     )
-    res = pipeline(base_input= ["base1", "base2", "base3", "base4"], additional_component_kwargs={})
+    res = pipeline(
+        base_input= ["base1", "base2", "base3", "base4"], 
+        additional_component_kwargs={})
     logger.info(res) 
