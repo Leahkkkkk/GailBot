@@ -7,7 +7,6 @@ from gailbot.plugins import Methods
 from typing import Dict
 
 class GBPluginMethods(Methods):
-
     def __init__(self):
         pass
 

@@ -25,18 +25,13 @@ PLUGIN_CONFIG = top_level_config_loader().plugin
 
 logger = makelogger("pluginSuite")
 
-class PluginDict(TypedDict):
-    """ dictionary type for individual plugin """
-    plugin_name: str
-    dependencies: List[str]
-    module_name: str 
-    rel_path: str
-    
-class ConfDict(TypedDict):
-    """ dictionary type for plugin suite configuration dictionary"""
-    suite_name: str 
-    suite_abs_path: str 
-    plugins: List[PluginDict]
+class PluginResult(ComponentResult):
+    """
+    Class containing the result of a component object.
+    """
+    state: ComponentState = ComponentState.FAILED
+    result: Any = None
+    runtime: float  = 0
 
 class PluginComponent(Component):
     """
@@ -44,7 +39,6 @@ class PluginComponent(Component):
     to pipeline components.
     This is needed to so that ComponentResult component is not passed to the user.
     """
-
     def __init__(self,
         plugin : Plugin
     ):
@@ -67,25 +61,23 @@ class PluginComponent(Component):
         passed to the individual plugins.
         """
         # Extract the actual dependency results
-        logger.info("plugin suite is called")
         dep_outputs = {
             k : v.result for k,v in dependency_outputs.items()
         }
         # Simply call the plugin and return its results
-        # start = time.time()
-        logger.info(self.plugin)
+        start = time.time()
         try:
             result = self.plugin.apply(dep_outputs, methods)
-            logger.info(self.plugin)
         except Exception as e:
+            result = f"Error: {e}"
             logger.error(e)
-       
-        # elapsed = time.time() - start
-        return ComponentResult(
+            
+        elapsed = time.time() - start
+        return PluginResult(
             state=ComponentState.SUCCESS if self.plugin.is_successful else \
                 ComponentState.FAILED,
             result=result,
-            runtime=0
+            runtime=elapsed
         )
 
 
@@ -144,9 +136,6 @@ class PluginSuite:
         Apply the specified plugins when possible and return the results
         summary
         """
-        logger.info(f"{self.name} plugin suite is being run")
-        logger.info(f"base input {base_input}")
-        logger.info(f"additional {methods}")
         result = self.pipeline(
             base_input=base_input, 
             additional_component_kwargs={
@@ -178,7 +167,7 @@ class PluginSuite:
     # PRIVATE
     ##########
 
-    def _load_from_config(self, dict_config : ConfDict, abs_path: str ) -> None:
+    def _load_from_config(self, dict_config, abs_path: str ) -> None:
         """
         load the plugin suite, the information about the each plugin name, 
         and its path is stored in the dict_config, all path information 

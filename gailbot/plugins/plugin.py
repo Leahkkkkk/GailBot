@@ -7,7 +7,9 @@
 from typing import Any, Dict, TypedDict
 from abc import ABC, abstractmethod
 # Local imports
+from gailbot.core.utils.logger import makelogger
 
+logger = makelogger("plugin")
 class Utt(TypedDict):
     start_time: str 
     end_time: str

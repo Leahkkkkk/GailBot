@@ -1,4 +1,4 @@
-
+from dataclasses import dataclass
 TEST_CONFIG_SRC = "/Users/yike/Documents/GitHub/GailBot/data/test_suite/conf.toml"
 TEST_CONFIG_SRC_TWO = "/Users/yike/Documents/GitHub/GailBot/data/s_test_suite/test_two_conf.toml"
 HIL_CONFIG_SRC =  "/Users/yike/Documents/GitHub/GailBot/gb_hilab_suite/config.toml"
@@ -10,6 +10,13 @@ TEST_TWO_DIR_SRC = "/Users/yike/Documents/GitHub/GailBot/data/s_test_suite"
 
 TEST_PLUGIN_URL = "https://github.com/YikeLi-Vivi/GailBotTestSuite/archive/refs/heads/main.zip"
 HIL_LAB_PLUGIN_URL = "https://github.com/YikeLi-Vivi/hillab/archive/refs/heads/main.zip"
+
+
+@dataclass
+class Invalid:
+    InvalidConf = "/Users/yike/Documents/Github/GailBot/data/test_plugin/invalid_conf"
+    InvalidConf2 = "/Users/yike/Documents/Github/GailBot/data/test_plugin/invalid_conf2"
+    InvalidConf3 = "/Users/yike/Documents/Github/GailBot/data/test_plugin/invalid_conf3"
 
 
 test_config = {
