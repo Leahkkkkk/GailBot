@@ -1,4 +1,3 @@
-        
 import os 
 from typing import Dict, List, Union, TypedDict, Tuple
 from pydantic import BaseModel, ValidationError
@@ -96,7 +95,7 @@ class PluginURLLoader(PluginLoader):
         """ return a list of supported url downloading source """
         return ["github"] 
     
-    def load(self, url : str, overwrite : bool = True) -> Union [PluginSuite, bool]:
+    def load(self, url : str) -> Union [PluginSuite, bool]:
         """ 
         load the plugin suite from the url if the url is supported by the 
         list of the loader available, 
@@ -112,7 +111,7 @@ class PluginURLLoader(PluginLoader):
             if not loader.is_valid_url(url):
                 return False
             if loader.is_supported_url(url): 
-                return loader.load(url, overwrite)
+                return loader.load(url)
             
 class GitHubURLLoader(UrlLoader):
     """ load plugin from an url source  """
@@ -139,7 +138,7 @@ class GitHubURLLoader(UrlLoader):
         else:
             return False
         
-    def load(self, url : str, overwrite : bool = True) -> PluginSuite:
+    def load(self, url : str) -> PluginSuite:
         """ download the plugin from a given url and stored a copy of the 
             plugins in the suites directory 
 
@@ -176,7 +175,7 @@ class GitHubURLLoader(UrlLoader):
                 break
             
         # Move to the suites dir.
-        return self.dir_loader.load(suite_path, overwrite)
+        return self.dir_loader.load(suite_path)
     
 class PluginDirectoryLoader(PluginLoader):
     """ load the plugin suite from a directory that contains all source 
@@ -197,13 +196,12 @@ class PluginDirectoryLoader(PluginLoader):
         self.suites_dir = suites_dir
         self.toml_loader = PluginTOMLLoader()
 
-    def load(self, suite_dir_path: str, overwrite = True) -> Union [PluginSuite, bool]:
+    def load(self, suite_dir_path: str) -> Union [PluginSuite, bool]:
         """ load the plugin from a directory 
 
         Args:
             suite_dir_path (str): path to the source directory that contains 
-                                  the entire plugin suite 
-            overwrite(bool): if true overwrite the existing plugin                 
+                                  the entire plugin suite                
         Returns:
             return a PluginSuite object that stores the loaded suite
             if the plugin can be successfully loaded, return false otherwise
@@ -216,11 +214,11 @@ class PluginDirectoryLoader(PluginLoader):
             return False
         
         suite_dir_name = get_name(suite_dir_path)
-        
+        logger.info(f"suite name is {suite_dir_name}, suite path is {suite_dir_path}") 
         tgt_path = f"{self.suites_dir}/{get_name(suite_dir_path)}"
-        if overwrite or (not is_directory(tgt_path)):
-            suite_dir_path = copy(suite_dir_path, tgt_path)
-        # Suite should only load from dict config
+        if not is_directory(tgt_path):
+            copy(suite_dir_path, tgt_path)
+        
         conf = filepaths_in_dir(suite_dir_path,["toml"])[0]
         return self.toml_loader.load(conf, suite_dir_name, self.suites_dir)
 
@@ -279,7 +277,6 @@ class PluginTOMLLoader(PluginLoader):
                 (not get_extension(conf_path) == "toml"):
             return (False, "Invalid file path")  
         dict_conf = read_toml(conf_path)
-        
         try:
             ConfModel(**dict_conf)
         except ValidationError as e:
@@ -288,6 +285,7 @@ class PluginTOMLLoader(PluginLoader):
         if dict_conf["suite_name"] == suite_name:
             return (True, dict_conf)
         else:
+            logger.error(f"suite name is {suite_name}")
             return (False, "suite name must be the same as the folder name")
                
 class PluginDictLoader(PluginLoader):
@@ -300,4 +298,6 @@ class PluginDictLoader(PluginLoader):
         suite = PluginSuite(dict_conf, suites_directory)
         if suite.is_ready:
             return suite
+        else:
+            return False
 

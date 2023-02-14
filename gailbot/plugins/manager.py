@@ -20,7 +20,9 @@ from gailbot.core.utils.logger import makelogger
 from gailbot.core.utils.general import (
     make_dir,
     subdirs_in_dir,
-    delete
+    delete, 
+    get_name, 
+    is_directory
 )
 from gailbot.configs import top_level_config_loader 
 from pprint import pprint
@@ -37,11 +39,9 @@ class PluginManager:
         self,
         plugin_sources : List[str] = [],
         load_existing : bool = True,
-        overwrite : bool = True
     ):
         self._init_workspace()
         """ check if the plugin has been installed  """
-        self.overwrite = overwrite
         self.loaders: List[PluginLoader] = [
             PluginURLLoader(self.download_dir, self.suites_dir),
             PluginDirectoryLoader(self.suites_dir)
@@ -49,12 +49,15 @@ class PluginManager:
         
         if load_existing:
             # get a list of paths to existing suite 
-            subdirs = subdirs_in_dir(self.suites_dir)
+            subdirs = subdirs_in_dir(self.suites_dir, recursive=False)
+            logger.info(f"all sub directories are {subdirs}")
+            subdirs = [dir[:-1] for dir in subdirs] 
             plugin_sources.extend(subdirs)
 
         for plugin_source in plugin_sources:
             logger.info(f"get plugin source {plugin_source}")
-            self.register_suite(plugin_source)
+            if not self.register_suite(plugin_source):
+                logger.error(f"{get_name(plugin_source)} cannot be registered")
     
     @property
     def suite_names(self) -> List[str]:
@@ -73,18 +76,19 @@ class PluginManager:
     def register_suite(
         self,
         plugin_source : str
-    ) -> Dict:
+    ) -> bool:
         """
         Register a plugin suite from the given source, which can be
         a plugin directory, a url, a conf file, or a dictionary configuration.
         """
         logger.info("register plugin")
         for loader in self.loaders:
-            suite = loader.load(plugin_source, self.overwrite)
+            suite = loader.load(plugin_source) 
             if suite and isinstance(suite, PluginSuite):
                 logger.info("get suite")
                 self.suites[suite.name] = suite
-                return suite.dependency_graph()
+                return True
+        return False
 
     def get_suite(
         self,
@@ -125,9 +129,28 @@ class PluginManager:
         else:
             return False
 
+
+    def reload_source(self, suite_name:str, reload_src:str) -> bool:
+        """ reload a plugin that has already existed in the plugin manager """
+        try:
+            self.delete_suite(suite_name)
+            self.register_suite(reload_src)
+            assert self.is_suite(suite_name)
+            return True
+        except Exception as e:
+            logger.error(e)
+            return False
+                
     def get_suite_path(self, name:str) -> str:
-        """  """
+        """ given a name of the suite, return the suite path that is internally 
+            managed by the suite manager
+        """
         if self.is_suite(name):
-            return os.path.join(self.suites_dir, name)
+            path = os.path.join(self.suites_dir, name)
+            if is_directory(path):
+                return path
+            else:
+                del self.suite_names[name]
+                return "WARNING: suite source has been deleted"
         else:
             return "suite not found"     

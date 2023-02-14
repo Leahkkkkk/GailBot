@@ -188,10 +188,12 @@ class PluginSuite:
                   to, each plugins's absolute path can be form as 
                   "<abs_path>/<suite_name>/<rel_path>"
         """
-        # Add path to the imports
         pkg_name = dict_config["suite_name"]
         dependency_map = dict()
         plugins = dict()
+        
+        logger.info(dict_config)
+        logger.info(f"absolute path: {abs_path}")
         
         for conf in dict_config["plugins"]:
             module_name = conf["module_name"]

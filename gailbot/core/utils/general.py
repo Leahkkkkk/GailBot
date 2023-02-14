@@ -78,7 +78,7 @@ def num_items_in_dir(
 def paths_in_dir(
     path: str,
     extensions: List[str] = ["*"],
-    recursive: bool = True,
+    recursive: bool = False,
     only_dirs : bool = False
 ) -> List[str]:
     """

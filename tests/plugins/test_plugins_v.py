@@ -58,6 +58,24 @@ class TestMethod(Methods):
         # time.sleep(5)
         return True
 
+class TestGBPluginMethod(Methods):
+    def __init__(self, utterance, dir, audios):
+        super().__init__()
+        self._utterance = utterance
+        self._dir = dir
+        self._audios = audios
+    
+    @property
+    def audios(self):
+        return self._audios
+
+    @property
+    def save_dir(self):
+        return self._dir 
+
+    @property 
+    def utterances(self):
+        return self._utterance
 
 class TestMethodError(Methods):
     def __call__(self, *args: Any, **kwds: Any) -> Any:
@@ -76,7 +94,7 @@ def test_load_dir(source):
     """ test to load plugin from the directory  """
     test_manager = PluginManager(
         plugin_sources =source,
-        load_existing=False)
+        load_existing=True)
     logger.info(test_manager.suite_names)
 
     
@@ -96,11 +114,20 @@ def test_run_plugin(source):
     """
     test = PluginManager(
         plugin_sources=source,
-        load_existing=True
+        load_existing=True,
     )
-    
+    for s in source:
+        test.reload_source("test_suite", s)
+    test_method = TestGBPluginMethod(
+        dir="test_directory/test_suite",
+        utterance=[{"text": f"test{i}", 
+                    "start": str(i), 
+                    "end" : str(i), 
+                    "speaker": f"speaker{i}"} for i in range(10)],
+        audios={f"source{i}": f"name{i}" for i in range(5)})
+    # return
+
     for suite_name in test.suite_names:
-        test_method = TestMethod()
         suite = test.get_suite(suite_name)
         assert suite.is_ready
         result = suite([], test_method)
@@ -130,5 +157,4 @@ def test_invalid_configuration(source):
     test = PluginManager(
         plugin_sources=source,
         load_existing=False,
-        overwrite=True
     )
