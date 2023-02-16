@@ -41,7 +41,6 @@ class Settings:
         return self.data.to_dict()
 
 class Source:
-
     def __init__(
         self,
         identifier : str,
@@ -51,7 +50,7 @@ class Source:
     ):
         """
         Create the workspace for the source in the given workspace,
-        initialize the datafiles
+        initialize the data-files
         """
         self.identifier = identifier
         self.workspace_dir = workspace_dir

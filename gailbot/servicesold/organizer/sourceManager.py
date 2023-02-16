@@ -16,7 +16,7 @@ from gailbot.core.utils.general import (
     delete
 )
 from gailbot.core.utils.media import MediaHandler
-from gailbot.services.pipeline.objects import PayloadOutputWriter  
+from gailbot.servicesold.pipeline.objects import PayloadOutputWriter  
 # NOTE: want to get rid of the above line of import 
 from .objects import Source, DataFile
 

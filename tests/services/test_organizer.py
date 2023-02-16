@@ -4,7 +4,7 @@
 # @Last Modified by:   Muhammad Umair
 # @Last Modified time: 2023-01-16 15:16:42
 
-from gailbot.services.organizer import (
+from gailbot.servicesold.organizer import (
     OrganizerService,
     Source,
     Settings

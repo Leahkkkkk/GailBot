@@ -29,6 +29,9 @@ from pprint import pprint
 
 TOP_LEVEL = top_level_config_loader()
 logger = makelogger("plugin_manager")
+class DuplicatePlugin(Exception):
+    def __str__(self) -> str:
+        return "ERROR: loading existing plugin" 
 class PluginManager:
     """
     Manage multiple plugins suites that can be registered, including
@@ -39,6 +42,7 @@ class PluginManager:
         self,
         plugin_sources : List[str] = [],
         load_existing : bool = True,
+        over_write: bool = False
     ):
         self._init_workspace()
         """ check if the plugin has been installed  """
@@ -47,15 +51,26 @@ class PluginManager:
             PluginDirectoryLoader(self.suites_dir)
         ]
         
+        source_names = {get_name(path) for path in plugin_sources}
+        subdirs = subdirs_in_dir(self.suites_dir, recursive=False)
+       
+        for subdir in subdirs: 
+            if get_name(subdir[:-1]) in source_names:
+                logger.info("duplicate found")
+                if over_write or (not load_existing): 
+                    delete(subdir)
+                else: 
+                    raise DuplicatePlugin(f"plugin {get_name(subdir)} already exist") 
+        
         if load_existing:
             # get a list of paths to existing suite 
             subdirs = subdirs_in_dir(self.suites_dir, recursive=False)
             logger.info(f"all sub directories are {subdirs}")
             subdirs = [dir[:-1] for dir in subdirs] 
+            
             plugin_sources.extend(subdirs)
 
         for plugin_source in plugin_sources:
-            logger.info(f"get plugin source {plugin_source}")
             if not self.register_suite(plugin_source):
                 logger.error(f"{get_name(plugin_source)} cannot be registered")
     
@@ -81,11 +96,9 @@ class PluginManager:
         Register a plugin suite from the given source, which can be
         a plugin directory, a url, a conf file, or a dictionary configuration.
         """
-        logger.info("register plugin")
         for loader in self.loaders:
             suite = loader.load(plugin_source) 
             if suite and isinstance(suite, PluginSuite):
-                logger.info("get suite")
                 self.suites[suite.name] = suite
                 return True
         return False
@@ -116,29 +129,13 @@ class PluginManager:
         make_dir(self.workspace_dir,overwrite=False)
         make_dir(self.suites_dir,overwrite=False)
         make_dir(self.download_dir,overwrite=True)
-
-    def rename_suite(self):
-        """ NOTE: this will cause a problem when trying to import the suite """
-        raise NotImplementedError
-
+    
     def delete_suite(self, name:str):
         if self.is_suite(name):
             delete(os.path.join(self.suites_dir, name))
             del self.suites[name]
             return True 
         else:
-            return False
-
-
-    def reload_source(self, suite_name:str, reload_src:str) -> bool:
-        """ reload a plugin that has already existed in the plugin manager """
-        try:
-            self.delete_suite(suite_name)
-            self.register_suite(reload_src)
-            assert self.is_suite(suite_name)
-            return True
-        except Exception as e:
-            logger.error(e)
             return False
                 
     def get_suite_path(self, name:str) -> str:
@@ -154,3 +151,5 @@ class PluginManager:
                 return "WARNING: suite source has been deleted"
         else:
             return "suite not found"     
+    
+    

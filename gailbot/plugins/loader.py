@@ -14,6 +14,7 @@ from gailbot.core.utils.general import (
 )
 from gailbot.core.utils.download import download_from_urls
 from urllib.parse import urlparse
+from abc import ABC
 
 logger = makelogger("plugin_loader")
 
@@ -34,12 +35,12 @@ class ConfModel(BaseModel):
     suite_name: str 
     plugins: List[PluginDict]
 
-class PluginLoader:
+class PluginLoader(ABC):
     """ base class for plugin loader """
     def load(self, *args, **kwargs) -> PluginSuite:
         raise NotImplementedError()
 
-class UrlLoader:
+class UrlLoader(ABC):
     """ base class for loading plugin from url """
     def __init__(self, download_dir, suites_dir) -> None:
         self.download_dir = download_dir 
@@ -70,7 +71,7 @@ class UrlLoader:
         """
         raise NotImplementedError
     
-    def load(self, url: str, suites_directory: str) -> PluginSuite:
+    def load(self, url: str) -> PluginSuite:
         """ load the source from the url """
         raise NotImplementedError
     
@@ -196,7 +197,8 @@ class PluginDirectoryLoader(PluginLoader):
         self.suites_dir = suites_dir
         self.toml_loader = PluginTOMLLoader()
 
-    def load(self, suite_dir_path: str) -> Union [PluginSuite, bool]:
+    def load(self,
+             suite_dir_path: str) -> Union [PluginSuite, bool]:
         """ load the plugin from a directory 
 
         Args:
@@ -204,11 +206,11 @@ class PluginDirectoryLoader(PluginLoader):
                                   the entire plugin suite                
         Returns:
             return a PluginSuite object that stores the loaded suite
-            if the plugin can be successfully loaded, return false otherwise
-                         
+            if the plugin can be successfully loaded, return false otherwise      
         """
         if (not type(suite_dir_path) == str) \
            or (not is_directory(suite_dir_path)):
+            logger.info(suite_dir_path)
             logger.error("not a plugin")
             # check for invalid input 
             return False
@@ -216,6 +218,7 @@ class PluginDirectoryLoader(PluginLoader):
         suite_dir_name = get_name(suite_dir_path)
         logger.info(f"suite name is {suite_dir_name}, suite path is {suite_dir_path}") 
         tgt_path = f"{self.suites_dir}/{get_name(suite_dir_path)}"
+       
         if not is_directory(tgt_path):
             copy(suite_dir_path, tgt_path)
         

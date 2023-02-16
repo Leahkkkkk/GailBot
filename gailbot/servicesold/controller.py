@@ -1,25 +1,42 @@
 # -*- coding: utf-8 -*-
 # @Author: Muhammad Umair
-# @Date:   2023-01-10 14:06:17
+# @Date:   2023-01-08 15:35:55
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-18 23:00:46
+# @Last Modified time: 2023-01-12 14:38:55
 
-import sys
-import os
-from typing import List, Dict, Any, Union
-from gailbot.core.engines import Engine
-from gailbot.servicesold import GailBotController
+from typing import Union, Dict, Any, List
+from gailbot.core.engines.engine import Engine
+from gailbot.plugins import PluginManager
+from .organizer import OrganizerService, Source, Settings
+from .pipeline import PipelineService,Payload
+from .workspace import Workspace
+from .engineManager import EngineManager
 
-class GailBot:
-    """API Wrapper"""
+class GailBotController:
+
     def __init__(
         self,
         workspace_dir : str
     ):
-        self.gb : GailBotController  = GailBotController(workspace_dir)
+        self.ws = Workspace()
+        self.ws.init_workspace(workspace_dir)
+
+        # Setup components
+        self.plugin_manager = PluginManager(self.ws.plugins_ws)
+        self.engine_manager = EngineManager(
+            self.ws.engines_ws,self.ws.engine_conf_paths
+        )
+        
+        self.organizer = OrganizerService(
+            self.ws.sources_ws, self.ws.settings_ws
+        )
+        self.pipeline = PipelineService(
+            plugin_manager=self.plugin_manager
+        )
 
     def reset_workspace(self):
-        self.gb.reset_workspace()
+        self.ws.reset()
+
     ### Organizer Service
 
     def add_source(
@@ -28,22 +45,23 @@ class GailBot:
         source_path : str,
         output_dir : str
     ) -> bool:
-        return self.gb.add_source(source_name, source_path,output_dir)
+        return self.organizer.add_source(source_name, source_path,output_dir)
 
     def remove_source(self, source_name : str) -> bool:
-        return self.gb.remove_source(source_name)
+        return self.organizer.remove_source(source_name)
 
     def is_source(self, source_name : str) -> bool:
-        return self.gb.is_source(source_name)
+        return self.organizer.is_source(source_name)
 
     def is_source_ready_to_transcribe(self, source_name : str) -> bool:
-        return self.gb.is_source_configured(source_name)
+        return self.organizer.is_source_configured(source_name)
 
     def source_names(self) -> List[str]:
-        return self.gb.source_names()
+        return self.organizer.source_names()
 
     def get_names_of_sources_ready_to_transcribe(self) -> List[str]:
-        return self.gb.get_names_of_sources_ready_to_transcribe()
+        return [name for name in self.source_names() if\
+             self.organizer.is_source_configured(name)]
 
     def get_source_details(self, source_name : str) -> Dict:
         return self.organizer.get_source_details(source_name)
@@ -56,7 +74,7 @@ class GailBot:
         data : Union[str, Dict]
     ) -> bool:
         """Create profile from a config file """
-        return self.gb.create_new_settings_profile(
+        return self.organizer.create_new_settings_profile(
             profile_name, data
         )
 
@@ -65,31 +83,31 @@ class GailBot:
         profile_name : str,
         output_dir : str
     ) -> bool:
-        return self.gb.save_settings_profile(
+        return self.organizer.save_settings_profile(
             profile_name, output_dir
         )
 
     def load_settings_profile(self, file_path : str) -> bool:
-        return self.gb.load_settings_profile(file_path)
+        return self.organizer.load_settings_profile(file_path)
 
     def remove_settings_profile(self, profile_name : str) -> bool:
-        return self.gb.remove_settings_profile(profile_name)
+        return self.organizer.remove_settings_profile(profile_name)
 
     def change_profile_name(
         self,
         profile_name : str,
         new_name : str
     ) -> bool:
-        return self.gb.change_profile_name(profile_name, new_name)
+        return self.organizer.change_profile_name(profile_name, new_name)
 
     def is_settings_profile(self, profile_name : str) -> bool:
         return self.organizer.is_settings_profile(profile_name)
 
     def get_profile_names(self) -> List[str]:
-        return self.gb.get_profile_names()
+        return self.organizer.get_profile_names()
 
     def get_settings_profile_details(self, profile_name : str) -> Dict:
-        return self.gb.get_settings_profile_details(profile_name)
+        return self.organizer.get_settings_profile_details(profile_name)
 
     #### Methods for interaction b/w sources and settings
 
@@ -98,7 +116,7 @@ class GailBot:
         source_name : str,
         profile_name : str
     ) -> bool:
-        return self.gb.apply_settings_profile_to_source(
+        return self.organizer.apply_settings_profile_to_source(
             source_name, profile_name
         )
 
@@ -107,16 +125,16 @@ class GailBot:
         source_names : List[str],
         profile_name : str
     ) -> bool:
-        return self.gb.apply_settings_profile_to_sources(
-            source_names, profile_name
-        )
+        return all([self.apply_settings_profile_to_source(
+            source_name, profile_name
+        ) for source_name in source_names])
 
     def remove_settings_profile_from_source(
         self,
         source_name : str,
         profile_name : str
     ) -> bool:
-        return self.gb.remove_settings_profile_from_source(
+        return self.organizer.remove_settings_profile_from_source(
             source_name, profile_name
         )
 
@@ -124,16 +142,18 @@ class GailBot:
         self,
         profile_name : str
     ) -> List[str]:
-        return self.gb.get_sources_using_settings_profile(profile_name)
+        return self.organizer.get_sources_using_settings_profile(
+            profile_name
+        )
 
     def get_source_settings_profile_name(self, source_name : str) -> str:
-        return self.gb.get_source_settings_profile_name(source_name)
+        return self.organizer.get_source_settings_profile(source_name).name
 
 
     ### Methods for Engines
 
     def available_engines(self) -> List[str]:
-        return self.gb.available_engines()
+        return self.engine_manager.available_engines()
 
     def get_engine_instance(
         self, engine_name : str, conf : Dict = None
@@ -142,13 +162,26 @@ class GailBot:
         Get an instance of an engine in case it provides additional
         configurable functionality
         """
-        return self.gb.init_engine(engine_name,conf)
+        return self.engine_manager.init_engine(
+            engine_name,conf
+        )
+
 
     ### Pipeline Service
 
     def transcribe(self):
         # Get the sources that are configured and add to pipeline
-        return self.gb.transcribe()
+
+        configured_sources = [
+            name for name in self.organizer.source_names() \
+                if self.organizer.is_source_configured(name)
+        ]
+        sources = [
+            self.organizer.get_source(name) for name in configured_sources
+        ]
+        payloads = [Payload(source=source) for source in sources]
+
+        return self.pipeline(payloads)
 
     ### PluginManager
 
@@ -157,11 +190,12 @@ class GailBot:
         suite_name : str,
         source_path : str
     ) -> Dict:
-        return self.gb.register_suite(suite_name, source_path)
+        return self.plugin_manager.register_suite(
+            suite_name, source_path
+        )
 
     def get_plugin_suite_details(self, suite_name : str) -> Dict:
-        return self.gb.get_suite_details(suite_name)
-
+        return self.plugin_manager.get_suite_details(suite_name)
 
 
 

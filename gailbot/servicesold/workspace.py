@@ -15,6 +15,7 @@ from gailbot.core.utils.general import (
     move,
     read_toml
 )
+""" TODO: delete this from service folder """
 class Workspace:
     """Manages the entire underlying workspace for GailBot"""
 

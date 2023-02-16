@@ -1,15 +1,16 @@
 from gailbot.plugins.suite import PluginComponent, PluginSuite, ComponentResult, ComponentState
 from gailbot.plugins.plugin import Plugin
-from gailbot.services.pipeline.pluginMethods import GBPluginMethods, Methods
+from gailbot.servicesold.pipeline.pluginMethods import GBPluginMethods, Methods
 import pytest 
 from typing import Dict, Any, List
 from gailbot.core.utils.logger import makelogger
 from .plugin_data import hilab_plugin, test_config, TEST_PLUGIN_URL, HIL_LAB_PLUGIN_URL, TEST_TWO_DIR_SRC, Invalid
-from gailbot.plugins.manager import PluginManager
+from gailbot.plugins.manager import PluginManager, DuplicatePlugin
 from gailbot.configs import top_level_config_loader 
 import pytest 
 import os
 import time
+from gailbot.core.utils.general import get_name
 
 TOP_CONFIG = top_level_config_loader()
 logger = makelogger("test_plugins")
@@ -112,12 +113,16 @@ def test_run_plugin(source):
     """  test running the plugin , which should return the result as 
          successful 
     """
+    logger.info(source)
+    
     test = PluginManager(
-        plugin_sources=source,
-        load_existing=True,
+        plugin_sources = source,
+        load_existing = True,
+        over_write= True
     )
-    for s in source:
-        test.reload_source("test_suite", s)
+    
+    logger.info(source)
+    
     test_method = TestGBPluginMethod(
         dir="test_directory/test_suite",
         utterance=[{"text": f"test{i}", 
@@ -137,6 +142,53 @@ def test_run_plugin(source):
             assert res == ComponentState.SUCCESS
 
 
+
+@pytest.mark.parametrize("source", [[TEST_DIR_SRC, HIL_DIR_SRC]])
+def test_construct_manager(source):
+    """ testing different way of initialize the manager, 
+        with overwrite and load-exisiting flag set to different boolean value
+    """
+    test = PluginManager(
+        source, True, True
+    )
+    for s in source: 
+        assert test.is_suite(get_name(s))
+
+    test2 = PluginManager(
+        [], True, False
+    )
+    for s in source:
+        assert test2.is_suite(get_name(s))
+    
+    test3 = PluginManager(
+        source, False, True
+    )
+    for s in source:
+        assert test3.is_suite(get_name(s))
+    
+    test4 = PluginManager(
+        source, True, True
+    ) 
+    for s in source:
+        assert test4.is_suite(get_name(s))
+    
+    
+    test5 = PluginManager(
+        [], False, False
+    )
+    for s in source:
+        assert not test5.is_suite(get_name(s))
+        
+    test6 = PluginManager(
+        source, False, False
+    )
+    for s in source:
+        assert test6.is_suite(get_name(s))
+       
+    with pytest.raises(DuplicatePlugin) as e:
+        test7  = PluginManager(source, True, False) 
+     
+       
 @pytest.mark.parametrize("source", [[TEST_DIR_SRC, HIL_DIR_SRC]])
 def test_delete_suite(source):
     """ test function to delete the suite """
@@ -152,9 +204,14 @@ def test_delete_suite(source):
     assert(not test.is_suite(HIL_LAB_SUITE_NAME))
 
 
-@pytest.mark.parametrize("source", [[Invalid.InvalidConf, Invalid.InvalidConf2, Invalid.InvalidConf3]])
+@pytest.mark.parametrize("source", 
+                         [[Invalid.InvalidConf, 
+                           Invalid.InvalidConf2, 
+                           Invalid.InvalidConf3]])
 def test_invalid_configuration(source):
     test = PluginManager(
         plugin_sources=source,
         load_existing=False,
     )
+    
+    

@@ -12,6 +12,7 @@ class GBPluginMethods(Methods):
 
     @property
     def audios(self) -> Dict[str,str]:
+        """ map from name to audio path """
         raise NotImplementedError()
 
     @property
