@@ -8,5 +8,3 @@ class PipelineService:
     def __call__(self, payloads: List[PayLoadObject]):
         raise NotImplementedError()
     
-    def check_source_status(self, source_name: str) -> str:
-        raise NotImplementedError()

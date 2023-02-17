@@ -22,7 +22,11 @@ class PayLoadObject(ABC):
     """
     original_source : str   # path to original source, should not be modified 
     data_files: List[str]   # a list of path to data files that is free to work with
-    engine_setting: Dict [str, str] # TODO: question: does profile setting refer to engine setting?
+    """ we can abstract setting from pipeline, 
+        but transcribe component will need to have access to the interfaces 
+    
+    """
+    engine_setting: Dict [str, str] 
     plugin_setting: Dict [str, str] 
     
     status: PayLoadStatus 
@@ -92,10 +96,7 @@ class PayLoadObject(ABC):
     def load_data_files(file_path: str):
         raise NotImplementedError()
     
-    def payload_complete(self):
-        """ when called, delete the temporary directory, check if the 
-            the output is successful and original file is kept intact 
-        """
+    def save(self):
         raise NotImplementedError()
     
     def _copy_source(self) -> bool:

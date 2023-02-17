@@ -1,3 +1,5 @@
+from typing import Dict, Any
+from gailbot.core.pipeline.component import Component
 class AnalysisComponent(Component):
     def __init__():
         raise NotImplementedError()

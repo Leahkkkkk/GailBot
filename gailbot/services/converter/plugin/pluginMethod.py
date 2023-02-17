@@ -1,10 +1,5 @@
-# -*- coding: utf-8 -*-
-# @Author: Muhammad Umair
-# @Date:   2023-01-10 14:39:47
-# @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-12 14:37:44
 from gailbot.plugins import Methods
-from typing import Dict
+from typing import Dict, Union, List
 
 class GBPluginMethods(Methods):
     def __init__(self):
@@ -19,13 +14,16 @@ class GBPluginMethods(Methods):
     def utterances(self) -> Dict[str,Dict]:
         raise NotImplementedError()
 
-    """ TODO:  """
     @property
     def save_dir(self) -> str:
+        """ NOTE: if we have save item, should we delete this? """
         raise NotImplementedError()
+        
 
-    def save_item(self, temp: bool, format:str, fun: callable ) -> bool :
-        """
-        """
-        """ data; identifier;  """
+    def save_item(self, 
+                  data: Union[str, List[str]] ,  
+                  temp: bool = True, 
+                  format: str = None, 
+                  fun: callable = None ) -> bool :
+        """ function provided for the plugin to save file """
         raise NotImplementedError()

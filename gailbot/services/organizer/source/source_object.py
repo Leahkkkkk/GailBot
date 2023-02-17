@@ -19,4 +19,5 @@ class Source():
     def apply_setting(self, setting: setting_object):
         raise NotADirectoryError()
     
-    
+    def __repr__(self) -> str:
+        raise NotImplementedError()

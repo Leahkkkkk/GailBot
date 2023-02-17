@@ -1,5 +1,5 @@
 from typing import List, Dict
-
+from .source_object import Source
 class SourceManager():
     """
     Holds and handles all functionality for managing all sources
@@ -19,13 +19,11 @@ class SourceManager():
     def get_source(self, source_name:str) -> Source:
         raise NotImplementedError()
 
-    def map_sources(self, func: callable) -> Dict:
-        raise NotImplementedError()
-
-    def get_source_details(self, source_name:str) -> Dict:
-        raise NotImplementedError()
-
     def apply_setting_profile_to_source(self, setting_name:str, overwrite: bool):
         raise NotImplementedError()
     
+    def get_sources_with_setting(self, setting_name:str): 
+        raise NotImplementedError()
     
+    def __repr__(self) -> str:
+        raise NotImplementedError()

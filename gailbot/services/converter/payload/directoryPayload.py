@@ -5,7 +5,7 @@ from enum import Enum
 class DirectoryPayload(PayLoadObject):
     original_source : str   # path to original source, should not be modified 
     data_files: List[str]   # a list of path to data files that is free to work with
-    engine_setting: Dict [str, str] # TODO: question: does profile setting refer to engine setting?
+    engine_setting: Dict [str, str] 
     plugin_setting: Dict [str, str] 
     
     status: PayLoadStatus 
@@ -68,14 +68,11 @@ class DirectoryPayload(PayLoadObject):
     
     def output_transcription_result(self, out_dir: str = output_space) -> str: 
         raise NotImplementedError()
-    
-    def output_transcription_result(self, out_dir: str = output_space) -> str:
-        raise NotImplementedError()
-    
+  
     def load_data_files(file_path: str):
         raise NotImplementedError()
-    
-    def payload_complete(self):
+
+    def save(self):
         raise NotImplementedError()
     
     def _copy_source(self) -> bool:

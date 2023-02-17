@@ -1,3 +1,5 @@
+
+from .source import Source
 class Organizer:
     def __init__(self) -> None:
         raise NotImplementedError()
@@ -11,10 +13,7 @@ class Organizer:
     def is_source(self, source_name: str) -> bool:
         raise NotImplementedError()
     
-    def get_source(self, source_name: str) -> bool:
-        raise NotImplementedError()
-    
-    def get_source_setting(self, source_name:str) :
+    def get_source(self, source_name: str) -> Source:
         raise NotImplementedError()
     
     def is_setting_applied(self, source_name: str) -> bool:
@@ -28,7 +27,8 @@ class Organizer:
     
     def save_setting_profile(self, setting_name: str, output_dir: str) -> bool:
         raise NotImplementedError()
-    
+   
+    """  add validation that all source's setting and disk file are changed accordingly"""
     def change_setting_name(self, setting_name: str, new_name: str) -> bool:
         raise NotImplementedError()
     

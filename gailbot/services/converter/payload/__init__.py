@@ -1,1 +1,1 @@
-from payloadObject import PayLoadObject
+from payloadObject import PayLoadObject, PayLoadStatus

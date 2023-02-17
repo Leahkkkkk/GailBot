@@ -1,6 +1,8 @@
 from typing import Dict, Union
 from .setting_object import SettingObject
 
+
+
 class SettingManager():
     """
     Manages all available settings 
@@ -27,4 +29,7 @@ class SettingManager():
         raise NotImplementedError()
 
     def rename_setting(name: str, new_name:str) ->bool:
+        raise NotImplementedError()
+    
+    def save_setting(name:str) -> bool: 
         raise NotImplementedError()

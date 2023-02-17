@@ -1,6 +1,9 @@
 from typing import Dict
 from abc import ABC
 
+""" TODO: use a dataclass instead 
+          define in a sub-folder 
+"""
 class EngineOption(ABC):
     """
     Provides an interface to validate setting 
@@ -12,6 +15,7 @@ class EngineOption(ABC):
     def is_valid(setting : Dict [str, str]) -> bool:
         raise NotImplementedError()
 
+    @property
     def setting_schema(self) -> Dict [str, str]:
         raise NotImplementedError()
     
@@ -20,7 +24,7 @@ class EngineOption(ABC):
         raise NotImplementedError()
 
     @property
-    def engine_detail(self) -> Dict:
+    def engine_setting_detail(self) -> Dict:
         raise NotImplementedError()
 
 class PluginOption():
