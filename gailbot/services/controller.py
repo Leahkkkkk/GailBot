@@ -57,3 +57,6 @@ class ServiceController:
     
     def apply_setting_to_source(self, source: str, setting: str) -> bool:
         raise NotImplementedError()
+    
+    def check_source_status(self, source_name: str) -> str:
+        raise NotImplementedError()
