@@ -1,20 +1,22 @@
 from typing import Dict
+from ..settings import setting_object
 
 class Source():
     """
     Holds and handles all functionality for a single source object
-    TODO: workspace attribute does not have a final design
     """
     def __init__(self) -> None:
-        source_path : str
-        settings : SettingProfile
-        workspace : str
+        source_name: str
+        source_path: str
+        settings: setting_object = None  
 
-    def workspace():
+    def source_detail(self) -> Dict:
         raise NotImplementedError()
-
-    def to_dict() -> Dict:
+    
+    def configured(self) -> bool:
         raise NotImplementedError()
-
-    def configured() -> bool:
-        raise NotImplementedError()
+    
+    def apply_setting(self, setting: setting_object):
+        raise NotADirectoryError()
+    
+    

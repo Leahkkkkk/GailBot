@@ -1,33 +1,10 @@
 from typing import Dict
+from abc import ABC
 
-class SettingProfile():
+class EngineOption(ABC):
     """
-    Store a single setting item 
-    """
-    def __init__(self) -> None:
-        engine_setting : engineOption
-        plugin_setting: pluginOption
-        setting_path: str
-        name: str
-
-    def load_engine_setting(setting : Dict[str, str]) -> bool:
-        raise NotImplementedError()
-
-    def load_plugin_setting(setting : Dict[str, str]) -> bool:
-        raise NotImplementedError()
-
-    def update_setting(setting : Dict[str, str]) -> bool:
-        raise NotImplementedError()
-
-    def delete_setting() -> bool:
-        raise NotImplementedError()
-
-    def rename(name : str) -> None:
-        raise NotImplementedError()
-
-class EngineOption():
-    """
-    Provides an interface to validate setting based on setting schema 
+    Provides an interface to validate setting 
+             based on setting schema 
     """
     def __init__(self) -> None:
         pass
@@ -37,6 +14,14 @@ class EngineOption():
 
     def setting_schema(self) -> Dict [str, str]:
         raise NotImplementedError()
+    
+    @property    
+    def get_engine_name(self) -> str:
+        raise NotImplementedError()
+
+    @property
+    def engine_detail(self) -> Dict:
+        raise NotImplementedError()
 
 class PluginOption():
     """
@@ -44,8 +29,44 @@ class PluginOption():
     """
     def __init__(
         self,
-        plugin : Plugin) -> None:
+        plugin: str) -> None:
         pass
 
     def is_valid_plugin(plugin_name:str) -> bool:
         raise NotImplementedError()
+
+class SettingObject():
+    """
+    Store a single setting item 
+    """
+    engine_setting : EngineOption 
+    plugin_setting: PluginOption
+    setting_path: str
+    name: str
+    
+    def __init__(self) -> None:
+        raise NotImplementedError()
+    
+    def load_setting(self, setting: Dict[str, str]) -> bool:
+        raise NotImplementedError()
+    
+    def save_setting(self, output: str) -> bool: 
+        raise NotImplementedError()
+    
+    def _load_engine_setting(self, setting : Dict[str, str]) -> bool:
+        raise NotImplementedError()
+
+    def _load_plugin_setting(self, setting : Dict[str, str]) -> bool:
+        raise NotImplementedError()
+
+    def update_setting(self, setting: Dict[str, str]) -> bool:
+        raise NotImplementedError()
+
+    def delete_setting(self) -> bool:
+        raise NotImplementedError()
+
+    def rename(self, name: str) -> None:
+        raise NotImplementedError()
+    
+    
+

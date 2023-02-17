@@ -2,7 +2,7 @@ from .payloadObject import PayLoadObject, PayLoadStatus
 from typing import List, Dict 
 from enum import Enum
 
-class VideoPayload(PayLoadObject):
+class TranscribedDirPayload(PayLoadObject):
     original_source : str   # path to original source, should not be modified 
     data_files: List[str]   # a list of path to data files that is free to work with
     engine_setting: Dict [str, str] # TODO: question: does profile setting refer to engine setting?
@@ -12,7 +12,6 @@ class VideoPayload(PayLoadObject):
     
     workspace: str     # workspace for storing temporary file , will be deleted afterward
     output_space: str  # directory where all the output will be stored 
-    
     
     # payload result
     transcription_result: List [Dict[str, str]]
@@ -80,6 +79,4 @@ class VideoPayload(PayLoadObject):
     
     def _copy_source(self) -> bool:
         raise NotImplementedError()
-    
-    def _convert_to_audio(self) -> bool:
-        raise NotImplementedError()
+   

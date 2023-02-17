@@ -1,11 +1,12 @@
 from typing import Dict, Union
+from .setting_object import SettingObject
 
 class SettingManager():
     """
     Manages all available settings 
     """
     def __init__(self) -> None:
-        settings : Dict[str , SettingOption]
+        settings : Dict[str , SettingObject]
 
     def remove_setting(name: str) -> bool:
         raise NotImplementedError()
