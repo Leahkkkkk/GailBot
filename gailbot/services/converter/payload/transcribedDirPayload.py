@@ -5,7 +5,7 @@ from enum import Enum
 class TranscribedDirPayload(PayLoadObject):
     original_source : str   # path to original source, should not be modified 
     data_files: List[str]   # a list of path to data files that is free to work with
-    engine_setting: Dict [str, str] dw
+    engine_setting: Dict [str, str] 
     plugin_setting: Dict [str, str] 
     
     status: PayLoadStatus 

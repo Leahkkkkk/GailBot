@@ -65,7 +65,8 @@ class AudioPayload(PayLoadObject):
     def get_data(self):
         raise NotImplementedError()
     
-    def output_transcription_result(self, out_dir: str = output_space) -> str: 
+    def output_transcription_result(
+        self, out_dir: str = output_space) -> str: 
         raise NotImplementedError()
     
     def load_data_files(file_path: str):

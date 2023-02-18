@@ -1,8 +1,6 @@
 from typing import Dict, Union
 from .setting_object import SettingObject
 
-
-
 class SettingManager():
     """
     Manages all available settings 
