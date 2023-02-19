@@ -6,6 +6,8 @@ since the setting manager has the functionality to change the
 setting name, the setting object will not store the name of the 
 setting, and all the setting name will be tracked and kept by
 setting manager 
+
+setting object only stores the setting data
 """
 class PluginOption():
     """
@@ -25,9 +27,10 @@ class SettingObject():
     """
     engine_setting: EngineOption   = None
     plugin_setting: PluginOption    = None 
-    setting_path: str               = None 
-    name: str                       = None 
     valid_interfaces = [WatsonInterface, GoogleInterface, WhisperInterface]
+    
+    # setting_path: str               = None NOTE: setting path will be provided by setting manager, so setting object does not need to know about it 
+    # name: str                       = None NOTE: setting object only stores the data and not the name 
     
     def __init__(self, setting: Dict[str, str]) -> None:
         self.engine_setting = self._load_engine_setting(setting["engine"])

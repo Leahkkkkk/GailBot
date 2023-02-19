@@ -23,11 +23,11 @@ class SettingManager():
     def get_setting_path(name:str) -> str:
         raise NotImplementedError()
 
-    def add_new_setting(name: str, path: str) -> str:
+    def add_new_setting(self, name: str, path: str) -> str:
         raise NotImplementedError()
 
-    def is_setting(name: str) -> bool:
-        raise NotImplementedError()
+    def is_setting(self, name: str) -> bool:
+        return name in self.get_setting_names()
 
     def update_setting(name: str, src: Union[str, dict]) -> bool:
         raise NotImplementedError()
