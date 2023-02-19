@@ -25,5 +25,5 @@ class EngineOption(ABC):
         raise NotImplementedError()
 
     @property
-    def engine_setting_detail(self) -> Dict:
+    def get_setting_detail(self) -> Dict:
         raise NotImplementedError()
