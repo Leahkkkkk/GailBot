@@ -17,7 +17,7 @@ plugin_src = "gailbot_workspace/gailbot_data/plugin_source"
 
 # contains relative paths for the directory storing the logging files
 [workspace.log]
-log = "gailbot_workspace/logfiles"
+root = "gailbot_workspace/logfiles"
 
 # contains relative paths for the files storing temporary data
 [workspace.temporary]
