@@ -1,29 +1,88 @@
 from typing import List, Dict
 from .source_object import Source
+from ..settings import SettingObject
 class SourceManager():
     """
     Holds and handles all functionality for managing all sources
     """
     def __init__(self) -> None:
-        pass
+        self.sources : Dict[str, Source] = dict()
+    
+    def remove_source(self, source_name: str) -> bool:
+        """
+        Removes a given source from the source manager's sources
 
-    def remove_source(self) -> bool:
-        raise NotImplementedError()
+        Args:
+            self
+            source_name: str: name to remove
+
+        Returns:
+            True if given source was successfully removed, false if given source was not found
+        """
+        if not self.is_source(self, source_name):
+            return False
+        self.sources.pop(source_name)
+
+        return True
     
     def is_source(self, source_name:str) -> bool:
-        raise NotImplementedError()
+        """
+        Determines if a given source is currently in the source manager's sources
+
+        Args:
+            self
+            source_name: str: key of the source to search for
+
+        Returns:
+            True if given source was found, false if not
+        """
+        if source_name in self.sources:
+            return True
+        else:
+            return False
+
 
     def source_names(self) -> List[str]:
-        raise NotImplementedError()
+        """
+        Obtains all source names as a list
+
+        Args:
+            self
+        
+        Returns:
+            List of strings containing all source names
+        """
+        return list(self.sources.keys())
 
     def get_source(self, source_name:str) -> Source:
-        raise NotImplementedError()
+        ##TODO create exception for source not found rather than NotImplementedError
+        """
+        Gets the source associated with a given source name
 
-    def apply_setting_profile_to_source(self, setting_name:str, overwrite: bool):
+        Args:
+            self
+            source_name: str: string of name to search for
+        
+        Returns:
+            Source object associated with the given name
+            Raises exception if object with given name is not found
+        """
+        if self.is_source(self, source_name):
+            return self.sources[source_name]
+        else:
+            raise NotImplementedError()
+
+    def apply_setting_profile_to_source(self, source_name:str, setting: SettingObject, overwrite: bool):
+        if self.is_source(self, source_name):
+                self.sources[source_name].apply_setting(setting, overwrite)
         raise NotImplementedError()
     
-    def get_sources_with_setting(self, setting_name:str): 
-        raise NotImplementedError()
+    def get_sources_with_setting(self, setting_name:str) -> List[str]: 
+        ## NOTE: won't work if we don't keep setting name as a field in the setting object
+        return [k for k,v in self.sources.items() if v.setting.get_name() == setting_name]
+    
+    def is_source_configured(self, source_name:str) -> bool:
+        return self.sources[source_name].configured
     
     def __repr__(self) -> str:
-        raise NotImplementedError()
+        return (f"Source manager with sources {self.source_names}")

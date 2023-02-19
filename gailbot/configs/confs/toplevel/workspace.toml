@@ -1,0 +1,21 @@
+# contains relative paths for the output of gailbot
+[output]
+output_directory = 
+transcribe_result = 
+analysis_result = 
+format_result = 
+audio_file =
+
+# contains relative paths for the directory storing the gailbot data
+[gailbot_data]
+setting_src = 
+plugin_src = 
+
+# contains relative paths for the directory storing the logging files
+[log]
+log_directory = 
+
+# contains relative paths for the files storing temporary data
+[temporary]
+file1 = 
+data = 

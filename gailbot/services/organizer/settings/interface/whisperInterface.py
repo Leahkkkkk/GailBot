@@ -1,20 +1,15 @@
-from .settingInterface import EngineOption
-from pydantic import BaseModel 
+from pydantic import BaseModel, ValidationError
 from typing import Dict, List 
 
-class WhisperInterface(EngineOption):
-    class watson_schema(BaseModel):
-        pass 
-    
-    def __init__(self) -> None:
-        raise NotImplementedError
-   
-    @staticmethod 
-    def _is_valid(setting: Dict[str, str]) -> bool: 
-        raise NotImplementedError
-    
-    def get_engine_name(self) -> str:
-        return "Whisper Engine"
-        
-    def get_setting_detail(self) -> Dict:
-        raise NotImplementedError()
+class WhisperInterface(BaseModel):
+    recognize_speaker      : bool
+    language               : str
+    WATSON_REGION          : str
+    WATSON_BASE_LANG_MODEL : str
+
+def load_whisper_setting(setting: Dict[str, str]):
+    try:
+        setting = WhisperInterface(**setting)
+        return True
+    except ValidationError as e:
+        return False

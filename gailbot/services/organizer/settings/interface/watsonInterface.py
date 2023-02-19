@@ -1,21 +1,15 @@
-from .settingInterface import EngineOption
-from pydantic import BaseModel 
+from pydantic import BaseModel, ValidationError
 from typing import Dict, List 
 
-class WatsonInterface(EngineOption):
-    class watson_schema(BaseModel):
-        pass 
-    
-    def __init__(self) -> None:
-        raise NotImplementedError
-   
-    @staticmethod 
-    def _is_valid(setting: Dict[str, str]) -> bool: 
-        raise NotImplementedError
-    
-    def get_engine_name(self) -> str:
-        return "Watson Engine"
-    
-        
-    def get_setting_detail(self) -> Dict:
-        raise NotImplementedError()
+class WatsonInterface(BaseModel):
+    WATSON_API_KEY         : str
+    WATSON_LANG_CUSTOM_ID  : str
+    WATSON_REGION          : str
+    WATSON_BASE_LANG_MODEL : str
+
+def load_watson_setting(setting: Dict[str, str]):
+    try:
+        setting = WatsonInterface(**setting)
+        return True
+    except ValidationError as e:
+        return False

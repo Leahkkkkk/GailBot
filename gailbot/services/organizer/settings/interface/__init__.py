@@ -1,4 +1,3 @@
-from .settingInterface import EngineOption
-from .watsonInterface import WatsonInterface
-from .googleInterface import GoogleInterface
-from .whisperInterface import WhisperInterface
+from .watsonInterface import load_watson_setting
+from .googleInterface import load_google_setting
+from .whisperInterface import load_whisper_setting
