@@ -3,7 +3,7 @@ from .setting_object import SettingObject
 import os
 from gailbot.core.utils.general import is_file, is_directory, read_toml, get_name, make_dir, delete
 from gailbot.core.utils.logger import makelogger
-
+from ...organizer import PATH_CONFIG
 
 logger = makelogger("setting_manager")
 
@@ -12,7 +12,7 @@ class SettingManager():
     Manages all available settings 
     """
     settings : Dict[str , SettingObject]
-    workspace = "/Users/yike/Desktop/gailbot_workspace/setting_source" # TODO: store this in a toml file 
+    workspace = PATH_CONFIG.gailbot_data.setting_src # TODO: store this in a toml file 
     
     def __init__(self) -> None:
         if not is_directory(self.workspace):

@@ -25,6 +25,7 @@ root = "gailbot_workspace/temporary"
 transcribe_ws = "transcribe_ws"
 format_ws = "format_ws"
 analysis_ws = "analysis_ws"
+data_copy = "data_copy"
 
 
 

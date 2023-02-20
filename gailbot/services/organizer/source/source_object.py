@@ -2,13 +2,14 @@ from typing import Dict
 from ..settings import SettingObject
 from gailbot.core.utils.general import get_name
 
-class Source():
+class SourceObject():
     """
     Holds and handles all functionality for a single source object
     """
-    def __init__(self, path:str, name: str) -> None:
-        self.source_name: str = name
-        self.source_path: str = path
+    def __init__(self, path:str, name: str, output: str) -> None:
+        self.name: str = name
+        self.path: str = path
+        self.output:str = output
         self.setting: SettingObject = None  
 
     def source_details(self) -> Dict:
@@ -21,8 +22,8 @@ class Source():
         Returns:
             Dictionary containing the source name, source path, and settings profile
         """
-        return {"source_name": self.source_name, 
-                "source_path": self.source_path,
+        return {"source_name": self.name, 
+                "source_path": self.path,
                 "settings": self.setting }
     
     def source_path(self):
@@ -56,4 +57,4 @@ class Source():
         """
         Gets a message containing source details
         """
-        return (f"Source object with name {self.source_name} and path {self.source_path}")
+        return (f"Source object with name {self.name} and path {self.path}")

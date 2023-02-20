@@ -4,8 +4,7 @@ from typing import Dict, List
 class WhisperInterface(BaseModel):
     recognize_speaker      : bool
     language               : str
-    WATSON_REGION          : str
-    WATSON_BASE_LANG_MODEL : str
+
 
 def load_whisper_setting(setting: Dict[str, str]):
     try:

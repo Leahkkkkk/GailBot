@@ -12,6 +12,7 @@ class Temporary(DataclassFromDict):
     transcribe_ws: str = field_from_dict()
     format_ws: str = field_from_dict()
     analysis_ws: str = field_from_dict()
+    data_copy: str = field_from_dict()
 
 @dataclass
 class Temporary_folder:
@@ -25,9 +26,13 @@ class Temporary_folder:
             root, structure.root, file_name, structure.format_ws)
         self.analysis_ws = os.path.join(
             root, structure.root, file_name, structure.analysis_ws)
+        self.data_copy = os.path.join(
+            root, structure.root, file_name, structure.data_copy)
+        
         os.makedirs(self.transcribe_ws, exist_ok=True)
         os.makedirs(self.format_ws, exist_ok=True)
         os.makedirs(self.analysis_ws, exist_ok=True)
+        os.makedirs(self.data_copy, exist_ok=True)
 
 @dataclass
 class GailBotData(DataclassFromDict):

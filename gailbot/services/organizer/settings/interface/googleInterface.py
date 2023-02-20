@@ -3,7 +3,6 @@ from typing import Dict, List
 
 class GoogleInterface(BaseModel):
     format: str
-    
 
 def load_google_setting(setting: Dict[str, str]):
     try:

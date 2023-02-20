@@ -25,5 +25,6 @@ class ConfigPath(DataclassFromDict):
     root:str = field_from_dict()
     paths_config: str = field_from_dict()
 
+
 path_dict = toml.load(os.path.join(CONFIG_ROOT, "paths.toml"))
 PATH = ConfigPath.from_dict(path_dict["paths"]) 

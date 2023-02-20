@@ -1,12 +1,13 @@
 from .payloadObject import PayLoadObject, PayLoadStatus
+from ...organizer.source import SourceObject
+from ...organizer.settings import SettingObject
 from typing import List, Dict 
 from enum import Enum
 
 class AudioPayload(PayLoadObject):
     original_source : str   # path to original source, should not be modified 
     data_files: List[str]   # a list of path to data files that is free to work with
-    engine_setting: Dict [str, str] 
-    plugin_setting: Dict [str, str] 
+    setting: SettingObject
     
     status: PayLoadStatus 
     
@@ -18,7 +19,10 @@ class AudioPayload(PayLoadObject):
     format_result: Dict 
     analysis_result: Dict 
     
-    def __init__(self, source) -> None:
+    def __init__(self, source: SourceObject) -> None:
+        self.original_source = source.source_path
+        self.engine_setting = source.setting.engine_setting
+        self.plugin_setting = source.setting.plugin_setting
         raise NotImplementedError()
     
     @staticmethod

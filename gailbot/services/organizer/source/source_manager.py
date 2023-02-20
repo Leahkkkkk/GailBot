@@ -1,13 +1,28 @@
 from typing import List, Dict
-from .source_object import Source
+from .source_object import SourceObject
 from ..settings import SettingObject
+from gailbot.core.utils.general import get_name
+from gailbot.core.utils.logger import makelogger
+
+logger = makelogger("source_manager")
 class SourceManager():
     """
     Holds and handles all functionality for managing all sources
     """
     def __init__(self) -> None:
-        self.sources : Dict[str, Source] = dict()
+        self.sources : Dict[str, SourceObject] = dict()
     
+    def add_source(self, source_path: str, output: str) -> bool:
+        try:
+            name = get_name(source_path)
+            source  = SourceObject(source_path, name, output)
+            self.sources[name] = source  
+        except Exception as e:
+            logger.error(e)
+            return False
+        else:
+            return True
+        
     def remove_source(self, source_name: str) -> bool:
         """
         Removes a given source from the source manager's sources
@@ -22,7 +37,6 @@ class SourceManager():
         if not self.is_source(self, source_name):
             return False
         self.sources.pop(source_name)
-
         return True
     
     def is_source(self, source_name:str) -> bool:
@@ -54,8 +68,7 @@ class SourceManager():
         """
         return list(self.sources.keys())
 
-    def get_source(self, source_name:str) -> Source:
-        ##TODO create exception for source not found rather than NotImplementedError
+    def get_source(self, source_name:str) -> SourceObject:
         """
         Gets the source associated with a given source name
 
@@ -70,7 +83,7 @@ class SourceManager():
         if self.is_source(self, source_name):
             return self.sources[source_name]
         else:
-            raise NotImplementedError()
+            return False
 
     def apply_setting_profile_to_source(self, source_name:str, setting: SettingObject, overwrite: bool):
         if self.is_source(self, source_name):
@@ -78,7 +91,6 @@ class SourceManager():
         raise NotImplementedError()
     
     def get_sources_with_setting(self, setting_name:str) -> List[str]: 
-        ## NOTE: won't work if we don't keep setting name as a field in the setting object
         return [k for k,v in self.sources.items() if v.setting.get_name() == setting_name]
     
     def is_source_configured(self, source_name:str) -> bool:

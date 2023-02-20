@@ -2,16 +2,17 @@
 from .source import Source, SourceManager
 from .settings import SettingManager
 from typing import Dict
+from ..organizer import PATH_CONFIG
 class Organizer:
-    workspace :str = None # TODO: add a workspace
+    workspace :str = PATH_CONFIG.gailbot_data.root
     
     def __init__(self) -> None:
         self.setting_manager = SettingManager()
         self.source_manager  = SourceManager()
         
-    def add_source(self, source_name: str, source_path: str) -> bool:
-        raise NotImplementedError()
-    
+    def add_source(self, source_path: str, output: str) -> bool:
+        return self.source_manager.add_source(source_path, output)
+        
     def remove_source(self, source_name: str) -> bool:
         return self.source_manager.remove_source(self, source_name)
     
