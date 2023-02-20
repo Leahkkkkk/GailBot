@@ -21,4 +21,5 @@ def test_path_config():
     print(PATH_CONFIG.log_dir)
     
     temp_workspace = PATH_CONFIG.get_temp_space("temp")
+    output = PATH_CONFIG.get_output_space("test_output", "test")
     print(temp_workspace.transcribe_ws)

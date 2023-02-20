@@ -2,6 +2,8 @@ from .payloadObject import PayLoadObject, PayLoadStatus
 from typing import List, Dict 
 from enum import Enum
 
+def load_directory_payload():
+    raise NotImplementedError()
 class DirectoryPayload(PayLoadObject):
     original_source : str   # path to original source, should not be modified 
     data_files: List[str]   # a list of path to data files that is free to work with
@@ -12,8 +14,7 @@ class DirectoryPayload(PayLoadObject):
     
     workspace: str     # workspace for storing temporary file , will be deleted afterward
     output_space: str  # directory where all the output will be stored 
-    
-    
+     
     # payload result
     transcription_result: List [Dict[str, str]]
     format_result: Dict 

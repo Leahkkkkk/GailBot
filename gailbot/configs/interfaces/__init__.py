@@ -12,6 +12,7 @@ from .core.setting.defaults import load_default_config
 from .core.util.logger import load_log_config
 from .config.config import load_top_config
 from .config.path_config import load_path_config
+from .config.path_config import TemporaryFolder, OutputFolder
 import os
 
 def watson_config_loader(): return load_watson_config(

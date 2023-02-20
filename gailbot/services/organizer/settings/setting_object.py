@@ -36,8 +36,8 @@ class SettingObject():
      
     def __init__(self, setting: Dict[str, str], name: str) -> None:
         self.data = setting
-        self.engine_setting = self._load_engine_setting(setting["engine"])
-        self.plugin_setting = self._load_plugin_setting(setting["plugin"])
+        self.engine_setting = self._load_engine_setting(setting["engine_setting"])
+        self.plugin_setting = self._load_plugin_setting(setting["plugin_setting"])
         self.name = name
     
 
@@ -57,8 +57,8 @@ class SettingObject():
             return True
     
     def update_setting(self, setting: Dict[str, str]) -> bool:
-        self.engine_setting = self._load_engine_setting(setting["engine"])
-        self.plugin_setting = self._load_plugin_setting(setting["plugin"])
+        self.engine_setting = self._load_engine_setting(setting["engine_setting"])
+        self.plugin_setting = self._load_plugin_setting(setting["plugin_setting"])
         if self.engine_setting and self.plugin_setting:
             return True
         else:

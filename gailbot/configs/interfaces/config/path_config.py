@@ -5,34 +5,20 @@ from dict_to_dataclass import field_from_dict, DataclassFromDict
 import toml 
 from typing import Dict
 
+@dataclass 
+class OutputFolder(DataclassFromDict):
+    transcribe_result: str = field_from_dict()
+    analysis_result: str = field_from_dict()
+    format_result: str = field_from_dict()
+    media_file: str = field_from_dict()
 
 @dataclass
-class Temporary(DataclassFromDict):
+class TemporaryFolder(DataclassFromDict):
     root: str = field_from_dict()
     transcribe_ws: str = field_from_dict()
     format_ws: str = field_from_dict()
     analysis_ws: str = field_from_dict()
     data_copy: str = field_from_dict()
-
-@dataclass
-class Temporary_folder:
-    """ a dataclass that stores the paths for an audio file's temporary folder
-        and creates the directory for the file
-    """
-    def __init__(self, file_name, structure: Temporary, root) -> None:
-        self.transcribe_ws = os.path.join(
-            root, structure.root, file_name, structure.transcribe_ws)
-        self.format_ws = os.path.join(
-            root, structure.root, file_name, structure.format_ws)
-        self.analysis_ws = os.path.join(
-            root, structure.root, file_name, structure.analysis_ws)
-        self.data_copy = os.path.join(
-            root, structure.root, file_name, structure.data_copy)
-        
-        os.makedirs(self.transcribe_ws, exist_ok=True)
-        os.makedirs(self.format_ws, exist_ok=True)
-        os.makedirs(self.analysis_ws, exist_ok=True)
-        os.makedirs(self.data_copy, exist_ok=True)
 
 @dataclass
 class GailBotData(DataclassFromDict):
@@ -41,28 +27,45 @@ class GailBotData(DataclassFromDict):
     plugin_src: str = field_from_dict()
 
 @dataclass 
-class WorkSpace:
+class PathConfig:
     def __init__(self, config_path: str, root_path:str) -> None:
         self.root: str = toml.load(root_path)["root"]
-        config_d = toml.load(config_path)["workspace"]
+        self.output_d: Dict = toml.load(config_path)["output"]
+        self.workspace_d: Dict = toml.load(config_path)["workspace"]
         self.gailbot_data : GailBotData =  GailBotData.from_dict(
-            add_root (config_d["gailbot_data"], self.root))
-        self.log_dir: str = os.path.join(self.root, config_d["log"]["root"])
-        self.temporary_ws: Temporary = Temporary.from_dict(config_d["temporary"])
+            add_root (self.workspace_d["gailbot_data"], self.root))
+        self.log_dir: str = os.path.join(self.root, self.workspace_d["log"]["root"])
+        self.temporary_ws: TemporaryFolder = TemporaryFolder.from_dict(self.workspace_d["temporary"])
     
-    def get_temp_space(self, name:str)-> Temporary_folder:
-        return Temporary_folder(name, self.temporary_ws, self.root)
+    def get_temp_space(self, name:str)-> TemporaryFolder:
+        temp_dir: Dict[str, str] = self.workspace_d["temporary"].copy()
+        temp_dir["root"] = os.path.join(self.root, temp_dir["root"])
+        os.makedirs(temp_dir["root"], exist_ok=True)
+        for key, value in temp_dir.items():
+            if key != "root":
+                temp_dir[key] = os.path.join(temp_dir["root"], name, value)
+                os.makedirs(temp_dir[key], exist_ok=True)
+        return TemporaryFolder.from_dict(temp_dir)   
 
+    def get_output_space(self, root: str, name: str) -> OutputFolder:
+        new_output_dir = self.output_d.copy()
+        for key, value in new_output_dir.items():
+            new_output_dir[key] = os.path.join(root, name, value)
+            os.makedirs(new_output_dir[key], exist_ok=True)
+        return OutputFolder.from_dict(new_output_dir)
+        
 
-def load_path_config(config_path, root_path) -> WorkSpace:
+def load_path_config(config_path, root_path) -> PathConfig:
     """ public function that load the workspace data and return it """
-    return WorkSpace(config_path, root_path)
+    return PathConfig(config_path, root_path)
 
 
 def add_root(data: Dict[str, str], root: str) -> Dict[str, str]:
     """ given a dictionary that stores all the file paths, append root to the
        start of each path, and return the dictionary  
     """
-    for key in data.keys():
-        data[key] = os.path.join(root, data[key])
+    for key, value in data.items():
+        data[key] = os.path.join(root, value)
     return data
+
+    

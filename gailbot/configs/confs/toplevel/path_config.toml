@@ -1,9 +1,8 @@
 # contains relative paths for the output of gailbot
 [output]
-root = "result"
-transcribe_result = "transcriptio"
-analysis_result = "analysis"
-format_result = "format"
+transcribe_result = "result/transcription"
+analysis_result = "result/analysis"
+format_result = "result/format"
 media_file = "media"
 
 [workspace]

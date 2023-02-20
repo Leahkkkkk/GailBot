@@ -1,7 +1,14 @@
 from typing import Dict, Union, List
 from .setting_object import SettingObject
 import os
-from gailbot.core.utils.general import is_file, is_directory, read_toml, get_name, make_dir, delete
+from gailbot.core.utils.general import (
+    is_file, 
+    is_directory, 
+    read_toml, 
+    get_name, 
+    make_dir, 
+    delete,
+    filepaths_in_dir)
 from gailbot.core.utils.logger import makelogger
 from ...organizer import PATH_CONFIG
 
@@ -11,15 +18,19 @@ class SettingManager():
     """
     Manages all available settings 
     """
-    settings : Dict[str , SettingObject]
+    settings : Dict[str , SettingObject] = dict()
     workspace = PATH_CONFIG.gailbot_data.setting_src # TODO: store this in a toml file 
     
-    def __init__(self) -> None:
+    def __init__(self, load_exist: bool = True) -> None:
         if not is_directory(self.workspace):
             make_dir(self.workspace)
+        if load_exist: 
+            setting_files = filepaths_in_dir(self.workspace, ["toml"])
+            for file in setting_files:
+                self.load_setting_from_file(file)
     
     def get_setting_names(self) -> List[str]:
-        return self.settings.keys()
+        return list(self.settings.keys())
     
     def remove_setting(self, name: str) -> bool:
         if self.is_setting(name):
@@ -36,10 +47,11 @@ class SettingManager():
         else:
             return False
         
-    def add_new_setting(self, name: str, setting: Dict[str, str]) -> bool:
+    def add_new_setting(self, name: str, setting: Dict[str, str], overwrite: bool = False) -> Union[bool, str]:
+        if self.is_setting(name) and (not overwrite): 
+            return "ERROR: the setting name has been taken"
         try:
-            SettingObject(setting, name)
-            self.settings[name] = setting
+            self.settings[name] =  SettingObject(setting, name)
             return True
         except Exception as e:
             logger.error(e)
@@ -67,16 +79,22 @@ class SettingManager():
         else:
             return False
     
-    def save_setting(self, name:str) -> bool: 
-        out_path = self.get_setting_path(name)
-        self.settings[name].save_setting(out_path)    
+    def save_setting(self, name:str) -> Union[bool, str]:
+        try: 
+            out_path = self.get_setting_path(name)
+            self.settings[name].save_setting(out_path) 
+            return out_path
+        except Exception as e:
+            logger.error(e)
+            return False   
         
-    def load_setting_from_file(self, file_path) ->bool:
+    def load_setting_from_file(self, file_path, overwrite: bool = False) ->bool:
         if is_file(file_path):
             data = read_toml(file_path)
             try:
-                self.settings[get_name(file_path)] = data 
-                return True
+                name = get_name(file_path)
+                data = read_toml(file_path)
+                return self.add_new_setting(name, data, overwrite)
             except Exception as e:
                 logger.error(e)
                 return False

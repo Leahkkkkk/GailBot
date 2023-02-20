@@ -2,6 +2,8 @@ from .payloadObject import PayLoadObject, PayLoadStatus
 from typing import List, Dict 
 from enum import Enum
 
+def load_transcribed_directory_payload():
+    raise NotImplementedError()
 class TranscribedDirPayload(PayLoadObject):
     original_source : str   # path to original source, should not be modified 
     data_files: List[str]   # a list of path to data files that is free to work with

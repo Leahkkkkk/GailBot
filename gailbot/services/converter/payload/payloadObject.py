@@ -1,6 +1,9 @@
 from abc import ABC
 from typing import List, Dict 
-from enum import Enum
+from enum import Enum 
+from ...organizer import TemporaryFolder, OutputFolder
+
+
 
 class PayLoadStatus(Enum):
     """ For tracking the status of the file in the payload """
@@ -31,8 +34,8 @@ class PayLoadObject(ABC):
     
     status: PayLoadStatus 
     
-    workspace: str     # workspace for storing temporary file , will be deleted afterward
-    output_space: str  # directory where all the output will be stored 
+    workspace: TemporaryFolder = None     # workspace for storing temporary file , will be deleted afterward
+    output_space: OutputFolder = None # directory where all the output will be stored 
     
     
     # payload result
