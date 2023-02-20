@@ -88,12 +88,31 @@ class SourceManager():
     def apply_setting_profile_to_source(self, source_name:str, setting: SettingObject, overwrite: bool):
         if self.is_source(self, source_name):
                 self.sources[source_name].apply_setting(setting, overwrite)
-        raise NotImplementedError()
     
     def get_sources_with_setting(self, setting_name:str) -> List[str]: 
+        """
+        Accesses all sources with a given settings profile
+
+        Args:
+            self
+            setting_name: string of the settings profile to look for
+
+        Returns:
+            list of strings of all source names with the settings profile
+        """
         return [k for k,v in self.sources.items() if v.setting.get_name() == setting_name]
     
     def is_source_configured(self, source_name:str) -> bool:
+        """
+        Determines if given source has been configured with settings
+
+        Args:
+            self
+            source_name: string of the source name
+
+        Returns:
+            True if configured, false if not
+        """
         return self.sources[source_name].configured
     
     def __repr__(self) -> str:
