@@ -1,7 +1,7 @@
 from payload import (PayLoadObject, 
                      load_audio_payload, 
-                     load_directory_payload, 
                      load_transcribed_directory_payload, 
+                     load_directory_payload, 
                      load_video_payload)
 from typing import Dict
 from ..organizer.source import SourceObject

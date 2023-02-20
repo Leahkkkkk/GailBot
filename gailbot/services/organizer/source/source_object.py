@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Union
 from ..settings import SettingObject
 from gailbot.core.utils.general import get_name
 
@@ -12,7 +12,7 @@ class SourceObject():
         self.output:str = output
         self.setting: SettingObject = None  
 
-    def source_details(self) -> Dict:
+    def source_details(self) -> Dict[str, Union[str, SettingObject]]:
         """
         Accesses and returns the details about the given source.
 

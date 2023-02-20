@@ -2,7 +2,7 @@ from abc import ABC
 from typing import List, Dict 
 from enum import Enum 
 from ...organizer import TemporaryFolder, OutputFolder
-
+from ..interfaces.resultInterface import Utt, AnalysisResult, FormatResult
 
 
 class PayLoadStatus(Enum):
@@ -46,7 +46,6 @@ class PayLoadObject(ABC):
     def __init__(self, source) -> None:
         raise NotImplementedError()
     
-    @staticmethod
     def is_supported(file_path: str) -> bool:
         raise NotImplementedError()
     
@@ -69,27 +68,24 @@ class PayLoadObject(ABC):
     def get_status(self):
         raise NotImplementedError()
     
-    def set_transcription_result(self, result):
+    def set_transcription_result(self, result: Dict[str, List[Utt]]):
         raise NotImplementedError()
     
-    def set_format_result(self, result):
+    def set_format_result(self, result: Dict[str, FormatResult]):
         raise NotImplementedError()
     
-    def set_analysis_result(self, result):
+    def set_analysis_result(self, result: Dict[str, AnalysisResult]):
         raise NotImplementedError()
     
-    def get_transcription_result(self):
+    def get_transcription_result(self) -> Dict[str, List[Utt]]:
         raise NotImplementedError()
     
-    def get_format_result(self):
+    def get_format_result(self) -> Dict[str, FormatResult]:
         raise NotImplementedError()
     
-    def get_analyze_result(self):
+    def get_analyze_result(self) -> Dict[str, AnalysisResult]:
         raise NotImplementedError()
-    
-    def get_data(self):
-        raise NotImplementedError()
-    
+
     def output_transcription_result(self, out_dir: str = output_space) -> str: 
         raise NotImplementedError()
     

@@ -1,6 +1,7 @@
 from .payloadObject import PayLoadObject, PayLoadStatus
 from typing import List, Dict 
 from enum import Enum
+import os 
 
 def load_transcribed_directory_payload():
     raise NotImplementedError()

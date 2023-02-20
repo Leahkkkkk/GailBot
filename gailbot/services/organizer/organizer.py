@@ -5,7 +5,6 @@ from typing import Dict
 from ..organizer import PATH_CONFIG
 class Organizer:
     workspace :str = PATH_CONFIG.gailbot_data.root
-    
     def __init__(self) -> None:
         self.setting_manager = SettingManager()
         self.source_manager  = SourceManager()
@@ -37,10 +36,19 @@ class Organizer:
    
     """  add validation that all source's setting and disk file are changed accordingly"""
     def change_setting_name(self, setting_name: str, new_name: str) -> bool:
-        """ TODO: test  """
-        # change on setting object 
-        self.setting_manager.rename_setting(setting_name, new_name)
-        raise NotImplementedError()
+        try:
+            self.setting_manager.rename_setting(setting_name, new_name)
+            return True
+        except:
+            return False
+   
+    def remove_setting(self, setting_name: str) -> bool:
+        if not self.setting_manager.is_setting(setting_name):
+            return False 
+        self.setting_manager.remove_setting(setting_name)
+        sources = self.source_manager.get_sources_with_setting(setting_name)
+        for source in sources:
+            self.remove_setting_from_source(source)
     
     def update_setting(self, setting_name:str, new_setting: Dict[str,str]) -> bool:
         self.setting_manager.update_setting(setting_name, new_setting)

@@ -55,21 +55,19 @@ class DirectoryPayload(PayLoadObject):
     def set_analysis_result(self, result):
         raise NotImplementedError()
     
-    def get_transcription_result(self):
+    def get_transcription_result(self) -> Dict[str, Dict]:
         raise NotImplementedError()
     
-    def get_format_result(self):
+    def get_analyze_result(self) -> Dict[str, Dict]:
         raise NotImplementedError()
     
-    def get_analyze_result(self):
-        raise NotImplementedError()
-    
-    def get_data(self):
+    def get_data(self) -> Dict[str, Dict]:
         raise NotImplementedError()
     
     def output_transcription_result(self, out_dir: str = output_space) -> str: 
         raise NotImplementedError()
-  
+   
+    #TODO:  function purpose?
     def load_data_files(file_path: str):
         raise NotImplementedError()
 

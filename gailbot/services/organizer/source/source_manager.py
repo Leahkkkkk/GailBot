@@ -34,7 +34,7 @@ class SourceManager():
         Returns:
             True if given source was successfully removed, false if given source was not found
         """
-        if not self.is_source(self, source_name):
+        if not self.is_source(source_name):
             return False
         self.sources.pop(source_name)
         return True
@@ -80,13 +80,13 @@ class SourceManager():
             Source object associated with the given name
             Raises exception if object with given name is not found
         """
-        if self.is_source(self, source_name):
+        if self.is_source(source_name):
             return self.sources[source_name]
         else:
             return False
 
     def apply_setting_profile_to_source(self, source_name:str, setting: SettingObject, overwrite: bool):
-        if self.is_source(self, source_name):
+        if self.is_source(source_name):
                 self.sources[source_name].apply_setting(setting, overwrite)
     
     def get_sources_with_setting(self, setting_name:str) -> List[str]: 

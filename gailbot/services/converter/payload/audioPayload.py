@@ -1,8 +1,9 @@
 from .payloadObject import PayLoadObject, PayLoadStatus
 from ...organizer.source import SourceObject
 from ...organizer.settings import SettingObject
-from typing import List, Dict 
+from typing import List, Dict, Union
 from ...organizer import PATH_CONFIG, TemporaryFolder
+from ..interfaces.resultInterface import Utt, AnalysisResult, FormatResult
 from gailbot.core.utils.general import (
     get_extension, 
     get_name, 
@@ -15,7 +16,7 @@ import os
 
 logger = makelogger("audioPayload")
 
-def load_audio_payload(source: SourceObject) -> PayLoadObject:
+def load_audio_payload(source: SourceObject) -> Union[bool, PayLoadObject]:
     if not source.setting: return False
     if not AudioPayload.is_supported(source.source_path): return False 
     # TODO: improve the logic of validating the format based on different engine
@@ -39,16 +40,17 @@ class AudioPayload(PayLoadObject):
         self.name = source.name
         self.original_source = source.source_path
         self.setting = source.setting
-        self.status = PayLoadStatus.INITIALIZED 
+        self.status = PayLoadStatus.INITIALIZED
+         
         self.workspace = PATH_CONFIG.get_temp_space(
             f"{self.name}_temp")
         self.output_space = PATH_CONFIG.get_output_space(
             source.output, f"{self.name}_gb_output")
+        
         extension = get_extension(self.original_source)
         tgt_path =os.path.join(self.workspace.data_copy, f"{self.name},{extension}")
         copy(self.original_source, os.path.join(self.workspace.data_copy, tgt_path))
         self.data_files = [tgt_path]
-    
     
     def is_supported(self, file_path: str) -> bool:
         return get_extension(file_path) in self.supported_format
@@ -72,27 +74,31 @@ class AudioPayload(PayLoadObject):
     def get_status(self) -> PayLoadStatus:
         return self.status 
     
-    def set_transcription_result(self, result):
+    def set_transcription_result(self, result: Dict[str, List[Utt]]):
         self.transcription_result = result
     
-    def set_format_result(self, result):
+    def set_format_result(self, result: Dict[str, FormatResult]):
         self.format_result = result
         
-    def set_analysis_result(self, result):
+    def set_analysis_result(self, result: Dict[str, AnalysisResult]):
         self.analysis_result = result
-    
-    def get_format_result(self):
-        return self.format_result
-    
-    def get_analyze_result(self):
+
+    def get_analyze_result(self) -> Dict[str, AnalysisResult]:
         return self.analysis_result
     
+    def get_transcription_result(self) -> Dict[str, List[Utt]]:
+        return self.transcription_result
+    
+    def get_format_result(self)-> Dict[str, FormatResult]:
+        return self.format_result
+        
     def output_transcription_result(self) -> bool: 
         try:
-            write_toml(
-                self.transcription_result, 
-                self.output_space.transcribe_result)
-            return True
+            for key, value in self.transcription_result.items():
+                write_toml(
+                    self.output_space.transcribe_result,
+                    value) 
+                return True
         except Exception as e:
             logger.error(e)
             return False
