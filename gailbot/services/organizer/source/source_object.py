@@ -27,12 +27,39 @@ class SourceObject():
                 "settings": self.setting }
     
     def source_path(self):
+        """
+        Accesses the path of a source
+
+        Args:
+            self
+
+        Returns:
+            string containing the source path
+        """
         return self.source_path
 
     def source_setting(self):
+        """
+        Accesses the source settings
+
+        Args:
+            self
+
+        Returns:
+            Settings object of the current source
+        """
         return self.setting
 
     def setting_name(self) -> str:
+        """
+        Accesses the source name
+
+        Args:
+            self
+
+        Returns:
+            String name of the current source
+        """
         return self.setting.get_name()
 
     @property
@@ -49,6 +76,17 @@ class SourceObject():
         return self.setting != None
     
     def apply_setting(self, setting: SettingObject, overwrite: bool = True):
+        """
+        Apply setting object
+
+        Args:
+            self
+            setting: SettingObject
+            overwrite: bool
+
+        Returns:
+            None
+        """
         if overwrite or not self.setting:
             self.setting = setting
     
