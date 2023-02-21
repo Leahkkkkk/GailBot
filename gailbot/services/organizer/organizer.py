@@ -1,6 +1,6 @@
 
-from .source import Source, SourceManager
-from .settings import SettingManager
+from .source import SourceObject, SourceManager
+from .settings import SettingManager, SettingObject
 from typing import Dict
 from ..organizer import PATH_CONFIG
 class Organizer:
@@ -16,22 +16,25 @@ class Organizer:
         return self.source_manager.remove_source(self, source_name)
     
     def is_source(self, source_name: str) -> bool:
-        return self.source_manager.is_source(self, source_name)
+        return self.source_manager.is_source(source_name)
     
-    def get_source(self, source_name: str) -> Source:
-        return self.source_manager.get_source(self, source_name)
+    def get_source(self, source_name: str) -> SourceObject:
+        return self.source_manager.get_source(source_name)
+    
+    def get_source_setting(self, source_name: str) -> SettingObject:
+        return self.source_manager.get_source_setting(source_name)
     
     def is_setting_applied(self, source_name: str) -> bool:
         return self.source_manager.is_source_configured(source_name)
     
-    def apply_setting_to_source(self, source_name: str, setting_name:str) -> bool:
+    def apply_setting_to_source(self, source_name: str, setting_name:str, overwrite: bool = True) -> bool:
         return self.source_manager.apply_setting_profile_to_source(
-            source_name, self.get_setting(setting_name))
+            source_name, self.get_setting(setting_name), overwrite)
     
     def create_new_setting(self, setting_name: str, setting: Dict[str, str]) -> bool: 
         return self.setting_manager.add_new_setting(setting_name, setting)
     
-    def save_setting_profile(self, setting_name: str) -> bool:
+    def save_setting_profile(self, setting_name: str) -> str:
         return self.setting_manager.save_setting(setting_name)
    
     """  add validation that all source's setting and disk file are changed accordingly"""

@@ -1,7 +1,8 @@
 from pydantic import BaseModel, ValidationError
 from typing import Dict, List 
+from .settingInterface import SettingInterface
 
-class WatsonInterface(BaseModel):
+class WatsonInterface(SettingInterface):
     engine: str = "watson"
     WATSON_API_KEY         : str
     WATSON_LANG_CUSTOM_ID  : str

@@ -1,7 +1,8 @@
 from pydantic import BaseModel, ValidationError
 from typing import Dict, List 
+from .settingInterface import SettingInterface
 
-class GoogleInterface(BaseModel):
+class GoogleInterface(SettingInterface):
     engine: str = "google"
     format: str
 
@@ -12,3 +13,4 @@ def load_google_setting(setting: Dict[str, str]):
         return setting
     except ValidationError as e:
         return False
+    

@@ -85,9 +85,17 @@ class SourceManager():
         else:
             return False
 
+    def get_source_setting(self, source_name) -> SettingObject:
+        if self.is_source(source_name):
+            return self.sources[source_name].source_setting()
+        else:
+            return False
+
     def apply_setting_profile_to_source(self, source_name:str, setting: SettingObject, overwrite: bool):
         if self.is_source(source_name):
                 self.sources[source_name].apply_setting(setting, overwrite)
+                return self.sources[source_name].configured
+        return False
     
     def get_sources_with_setting(self, setting_name:str) -> List[str]: 
         """

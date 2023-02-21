@@ -5,6 +5,7 @@ import os
 
 def load_transcribed_directory_payload():
     raise NotImplementedError()
+
 class TranscribedDirPayload(PayLoadObject):
     original_source : str   # path to original source, should not be modified 
     data_files: List[str]   # a list of path to data files that is free to work with
@@ -71,7 +72,6 @@ class TranscribedDirPayload(PayLoadObject):
     def output_transcription_result(self, out_dir: str = output_space) -> str: 
         raise NotImplementedError()
    
-    
     def load_data_files(file_path: str):
         raise NotImplementedError()
     
