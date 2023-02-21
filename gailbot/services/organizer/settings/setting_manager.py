@@ -14,6 +14,9 @@ from ...organizer import PATH_CONFIG
 
 logger = makelogger("setting_manager")
 
+class ExistingSettingName(Exception):
+    def __str__(self) -> str:
+        return "the setting name already exist"
 class SettingManager():
     """
     Manages all available settings 
@@ -30,9 +33,23 @@ class SettingManager():
                 self.load_setting_from_file(file)
     
     def get_setting_names(self) -> List[str]:
+        """ return a list of available setting names 
+
+        Returns:
+            List[str]: a list of setting names 
+        """
         return list(self.settings.keys())
     
     def remove_setting(self, name: str) -> bool:
+        """ given the setting name, remove the setting and the local 
+            setting file
+        Args:
+            name (str): the name that identify the setting
+
+        Returns:
+            bool: return true if the removal is successful, false if
+                  the setting does not exist 
+        """
         if self.is_setting(name):
             self.settings.pop(name)
             if is_file(self.get_setting_path(name)):
@@ -42,14 +59,41 @@ class SettingManager():
             return False
     
     def get_setting(self, name:str) -> Union [SettingObject, bool]:
+        """ given the setting name, return the corresponding setting 
+
+        Args:
+            name (str): a name that identifies the setting
+
+        Returns:
+            Union [SettingObject, bool]: return the setting object if the 
+            setting is found, return false if the setting does not exist 
+        """
         if self.is_setting(name):
             return self.settings[name]
         else:
             return False
         
-    def add_new_setting(self, name: str, setting: Dict[str, str], overwrite: bool = False) -> Union[bool, str]:
+    def add_new_setting(self, name: str, setting: Dict[str, str], 
+                        overwrite: bool = False) -> Union[bool, str]:
+        """ add a new setting 
+
+        Args:
+            name (str): the setting name that identifies the setting
+            setting (Dict[str, str]): a dictionary that stores the setting
+            overwrite (bool, optional): if true, the given setting will overwrite
+            an existing setting if a setting with the same name exist.
+            Defaults to False.
+
+        Returns:
+            Union[bool, str]: True if the setting creates successfully, 
+                              False otherwise 
+        
+        Raises:
+            ExistingSettingName: raised when the setting name already exist
+                                 and the overwrite option is set to false 
+        """
         if self.is_setting(name) and (not overwrite): 
-            return "ERROR: the setting name has been taken"
+            raise ExistingSettingName(f"Setting name {name} already exist")
         try:
             self.settings[name] =  SettingObject(setting, name)
             return True
@@ -58,17 +102,47 @@ class SettingManager():
             return False
 
     def is_setting(self, name: str) -> bool:
+        """ tell if a setting exists in the setting manager
+
+        Args:
+            name (str): the setting name
+
+        Returns:
+            bool: return true if the given name is an existing setting, false
+                  otherwise 
+        """
         return name in self.get_setting_names()
 
     def update_setting(self, name: str, src: Dict[str, str]) -> bool:
+        """ update the setting
+
+        Args:
+            name (str): setting name
+            src (Dict[str, str]): the updated setting content
+
+        Returns:
+            bool:   return true if the setting is updated, false if the 
+                    setting does not exist or the new setting dictionary 
+                    cannot be validated 
+        """
         if self.is_setting(name):
             return self.settings[name].update_setting(src)
         else:
             return False
 
     def rename_setting(self, name: str, new_name:str) ->bool:
-        """ TODO: test this function """
-        if self.is_setting(name):
+        """ rename a setting 
+
+        Args:
+            name (str): the original name of the setting 
+            new_name (str): the new name of the setting 
+
+        Returns:
+            bool: return true if the setting can be renamed, false 
+                  if the setting does not exist or if the new_name
+                  has been taken by other existing setting
+        """
+        if self.is_setting(name) and not self.is_setting(new_name):
             temp = self.settings.pop(name)
             temp.name = new_name
             self.settings[new_name] = temp
@@ -80,6 +154,16 @@ class SettingManager():
             return False
     
     def save_setting(self, name:str) -> Union[bool, str]:
+        """ save the setting as a local fule
+
+        Args:
+            name (str): the setting name
+
+        Returns:
+            Union[bool, str]: return the saved file path if the setting
+                              is saved successfully, return false otherwise 
+            
+        """ 
         try: 
             out_path = self.get_setting_path(name)
             self.settings[name].save_setting(out_path) 
@@ -89,6 +173,17 @@ class SettingManager():
             return False   
         
     def load_setting_from_file(self, file_path, overwrite: bool = False) ->bool:
+        """ load the setting from local file
+
+        Args:
+            file_path (str): the file path
+            overwrite (bool, optional): if true, the loaded
+            file will overwrite existing setting with same name. Defaults to False.
+
+        Returns:
+            bool: return true if the loading is successful, false if the file
+            cannot be loaded 
+        """
         if is_file(file_path):
             data = read_toml(file_path)
             try:
@@ -100,4 +195,17 @@ class SettingManager():
                 return False
     
     def get_setting_path(self, name:str) -> str:
+        """given a setting name, return its path
+
+        Args:
+            name (str): the setting name
+
+        Returns:
+            str: a path to store the setting file
+            
+        Note:
+            This is a function to form a path to the local setting file 
+            in a unified format, the path does not guaranteed to indicate 
+            an existing setting file
+        """
         return os.path.join(self.workspace, name + ".toml")
