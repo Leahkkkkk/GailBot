@@ -13,9 +13,6 @@ import pytest
 
 TOP_CONFIG = top_level_config_loader()
 import os 
-# test_manager = PluginManager(workspace_dir="/Users/yike/Documents/GitHub/GailBot",
-#                             plugin_sources=hilab_plugin,
-#                             load_existing=False) #TODO: fix error in manager.py that occurs when load existing = true
 
 def test_suite_names(self):
     pass
@@ -24,9 +21,6 @@ def test_reset_workspace(self):
     pass
 
 def test_register_suite():
-    ## relies on load conf
-    #TODO test loaders first
-    # manager = TestManager()
     pass
     
 def test_dict_loader():
@@ -39,12 +33,5 @@ def test_dict_loader():
     assert(test_suite.name == "hil_lab")
     # assert("hil_lab" in manager.suite_names()
 
-def dont_test_toml_loader():
-    loader = PluginTOMLLoader()
-    suite = loader.load()
-
-def dont_test_directory_loader():
-    # TODO need test plugins within directory
-    loader = PluginDirectoryLoader()
 
 

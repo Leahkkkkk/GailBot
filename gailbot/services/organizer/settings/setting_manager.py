@@ -17,12 +17,13 @@ logger = makelogger("setting_manager")
 class ExistingSettingName(Exception):
     def __str__(self) -> str:
         return "the setting name already exist"
+
 class SettingManager():
     """
     Manages all available settings 
     """
     settings : Dict[str , SettingObject] = dict()
-    workspace = PATH_CONFIG.gailbot_data.setting_src # TODO: store this in a toml file 
+    workspace = PATH_CONFIG.gailbot_data.setting_src 
     
     def __init__(self, load_exist: bool = True) -> None:
         if not is_directory(self.workspace):
@@ -154,7 +155,7 @@ class SettingManager():
             return False
     
     def save_setting(self, name:str) -> Union[bool, str]:
-        """ save the setting as a local fule
+        """ save the setting as a local file
 
         Args:
             name (str): the setting name

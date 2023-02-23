@@ -36,7 +36,7 @@ class SourceObject():
         Returns:
             string containing the source path
         """
-        return self.source_path
+        return self.path
 
     def source_setting(self):
         """
@@ -61,6 +61,11 @@ class SourceObject():
             String name of the current source
         """
         return self.setting.get_name()
+
+    def get_source_name(self, name:str) -> str:
+        if name.endswith()("/"):
+            name.slice("/")
+        return name
 
     @property
     def configured(self) -> bool:

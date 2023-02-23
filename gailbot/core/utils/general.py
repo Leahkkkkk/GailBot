@@ -152,7 +152,11 @@ def num_subdirs(dir_path : str, recursive : bool = False) -> int:
 def get_name(path : str) -> str:
     """given the path return the name of file or dir without extension"""
     try: 
-        return os.path.splitext(os.path.basename(path))[0]
+        dir_path, file_name = os.path.split(path)
+        if file_name:
+            return os.path.splitext(os.path.basename(path))[0]
+        else:
+            return os.path.basename(dir_path)
     except:
         raise Exception(InvalidPathError)
         

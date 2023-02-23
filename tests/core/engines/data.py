@@ -17,4 +17,6 @@ class AudioPath:
     GOOGLE_OUT_PATH =  os.path.join(os.getcwd(), "data/google_output")
     WHISPER_OUT_PATH =  os.path.join(os.getcwd(), "data/whisper_output")
     AUDIO_INPUT = [SMALL_AUDIO_MP3, SMALL_AUDIO_WAV, MEDIUM_AUDIO, OPUS_AUDIO]
-   
+    RESULT_OUTPUT = os.path.join(os.getcwd(), "data/result_output")
+    CONVERSATION_DIR = os.path.join(os.getcwd(), "data/test_file/conversation_dir/")
+    TRANSCRIBED_DIR = os.path.join(os.getcwd(), "data/result_output/conversation_dir_gb_output")

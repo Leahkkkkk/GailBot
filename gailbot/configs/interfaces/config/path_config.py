@@ -7,6 +7,7 @@ from typing import Dict
 
 @dataclass 
 class OutputFolder(DataclassFromDict):
+    root: str = field_from_dict()
     transcribe_result: str = field_from_dict()
     analysis_result: str = field_from_dict()
     format_result: str = field_from_dict()
@@ -21,51 +22,69 @@ class TemporaryFolder(DataclassFromDict):
     data_copy: str = field_from_dict()
 
 @dataclass
-class GailBotData(DataclassFromDict):
-    root: str = field_from_dict()
-    setting_src: str = field_from_dict()
-    plugin_src: str = field_from_dict()
+class GailBotData():
+    def __init__(self, user_root: str, path_dict: Dict[str,  str]) -> None:
+        self.root:        str = path_dict["root"]
+        self.setting_src: str = os.path.join(user_root, self.root, path_dict["setting_src"])
+        self.plugin_src:  str = os.path.join(user_root, self.root, path_dict["plugin_src"])
+        self.logfiles:    str = os.path.join(user_root, self.root, path_dict["logfiles"])
 
 @dataclass 
 class PathConfig:
-    def __init__(self, config_path: str, root_path:str) -> None:
-        self.root: str = toml.load(root_path)["root"]
-        self.output_d: Dict = toml.load(config_path)["output"]
-        self.workspace_d: Dict = toml.load(config_path)["workspace"]
-        self.gailbot_data : GailBotData =  GailBotData.from_dict(
-            add_root (self.workspace_d["gailbot_data"], self.root))
-        self.log_dir: str = os.path.join(self.root, self.workspace_d["log"]["root"])
-        self.temporary_ws: TemporaryFolder = TemporaryFolder.from_dict(self.workspace_d["temporary"])
+    def __init__(self, config_path: str, user_root_conf:str) -> None:
+        self._output_d: Dict = toml.load(config_path)["output"]
+        self._workspace_d: Dict = toml.load(config_path)["workspace"]
+        self._user_root: str = toml.load(user_root_conf)["root"]
+
+        self.workspace_root = os.path.join(self._user_root, self._workspace_d["root"])
+        self.tempspace_root = os.path.join(
+            self.workspace_root, self._workspace_d["temporary"]["root"])
+        self.gailbot_data: GailBotData = GailBotData(
+            self.workspace_root, self._workspace_d["gailbot_data"] )
     
     def get_temp_space(self, name:str)-> TemporaryFolder:
-        temp_dir: Dict[str, str] = self.workspace_d["temporary"].copy()
-        temp_dir["root"] = os.path.join(self.root, temp_dir["root"])
-        os.makedirs(temp_dir["root"], exist_ok=True)
+        """ Given a name of the source, return a dataclass object that stores
+            the temporary directory structures of source, including the 
+            full paths to every subdirectory in the temporary directory 
+
+        Args:
+            name (str): the name of the source
+
+        Returns:
+            TemporaryFolder: a dataclass object that stores the full paths 
+            of every subdirectories within the temporary folders for a 
+            particular source
+        """
+        temp_dir: Dict[str, str] = self._workspace_d["temporary"].copy()
         for key, value in temp_dir.items():
-            if key != "root":
-                temp_dir[key] = os.path.join(temp_dir["root"], name, value)
-                os.makedirs(temp_dir[key], exist_ok=True)
+                temp_dir[key] = os.path.join(self.tempspace_root, name, value)
+        temp_dir["root"] = os.path.join(self.tempspace_root, name)
         return TemporaryFolder.from_dict(temp_dir)   
 
     def get_output_space(self, root: str, name: str) -> OutputFolder:
-        new_output_dir = self.output_d.copy()
+        """ Given a name of the source,  and the user selected output directory 
+            root, return a dataclass object that stores
+            the output directory structures of source, including the 
+            full paths to every subdirectory in the output directory 
+
+        Args:
+            root (str): the root the directory of the output
+            name (str): the name of the source
+
+        Returns:
+            OutputFolder: a dataclass object that stores the full paths 
+            of every subdirectories within the output folders for a 
+            particular source
+        """
+        new_output_dir = self._output_d.copy()
         for key, value in new_output_dir.items():
             new_output_dir[key] = os.path.join(root, name, value)
-            os.makedirs(new_output_dir[key], exist_ok=True)
+        new_output_dir["root"] = os.path.join(root, name)
         return OutputFolder.from_dict(new_output_dir)
         
-
 def load_path_config(config_path, root_path) -> PathConfig:
     """ public function that load the workspace data and return it """
     return PathConfig(config_path, root_path)
 
-
-def add_root(data: Dict[str, str], root: str) -> Dict[str, str]:
-    """ given a dictionary that stores all the file paths, append root to the
-       start of each path, and return the dictionary  
-    """
-    for key, value in data.items():
-        data[key] = os.path.join(root, value)
-    return data
 
     

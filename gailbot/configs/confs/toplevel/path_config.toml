@@ -5,22 +5,20 @@ analysis_result = "result/analysis"
 format_result = "result/format"
 media_file = "media"
 
+# TODO: delete the root from other paths
 [workspace]
 root = "gailbot_workspace"
 
 # contains relative paths for the directory storing the gailbot data
 [workspace.gailbot_data]
-root = "gailbot_workspace/gailbot_data"
-setting_src = "gailbot_workspace/gailbot_data/setting_source"
-plugin_src = "gailbot_workspace/gailbot_data/plugin_source"
-
-# contains relative paths for the directory storing the logging files
-[workspace.log]
-root = "gailbot_workspace/logfiles"
+root = "gailbot_data"
+setting_src = "setting_source"
+plugin_src = "plugin_source"
+logfiles = "logfiles"
 
 # contains relative paths for the files storing temporary data
 [workspace.temporary]
-root = "gailbot_workspace/temporary"
+root = "temporary"
 transcribe_ws = "transcribe_ws"
 format_ws = "format_ws"
 analysis_ws = "analysis_ws"

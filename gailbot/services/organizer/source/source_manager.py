@@ -14,8 +14,8 @@ class SourceManager():
     
     def add_source(self, source_path: str, output: str) -> bool:
         try:
-            name = get_name(source_path)
             source  = SourceObject(source_path, name, output)
+            name = source.get_source_name(get_name(source_path))
             self.sources[name] = source  
         except Exception as e:
             logger.error(e)
