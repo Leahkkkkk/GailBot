@@ -69,12 +69,15 @@ class ConversationDirectoryPayload(PayLoadObject):
         return True
      
     def _copy_file(self) -> None:
-        tgt_path = os.path.join(self.workspace.data_copy, f"{self.name}")
-        copy(self.original_source, tgt_path)
-        self.data_files = []
-        sub_paths = paths_in_dir(tgt_path)
-        for path in sub_paths:
-            self.data_files.append(path)
+        try:
+            tgt_path = os.path.join(self.workspace.data_copy, f"{self.name}")
+            copy(self.original_source, tgt_path)
+            self.data_files = []
+            sub_paths = paths_in_dir(tgt_path)
+            for path in sub_paths:
+                self.data_files.append(path)
+        except Exception as e:
+            logger.error(e)
     
     def _set_initial_status(self) -> None:
         self.status = PayLoadStatus.INITIALIZED

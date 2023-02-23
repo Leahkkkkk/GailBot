@@ -1,26 +1,27 @@
 from typing import Dict, List, Any
+from .organizer import Organizer 
+from .converter import Converter 
 """ Knows about all three sub modules """
 class ServiceController:
     def __init__(self) -> None:
-        raise NotImplementedError()
+        self.organizer = Organizer()
+        self.converter = Converter()
+        
     
-    def _init_workspace(self) -> None:
-        raise NotImplementedError()
-    
-    def add_source(self, path: str) -> str:
-        raise NotImplementedError() 
-    
+    def add_source(self, src_path: str, out_path: str) -> bool:
+        return self.organizer.add_source(src_path, out_path)
+        
     def remove_source(self, name: str) -> None:
-        raise NotImplementedError()
+        return self.organizer.remove_source(name)
     
     def is_source(self, name:str) -> None:
-        raise NotImplementedError()
+        return self.organizer.is_source(name)
     
     def create_new_setting(self, setting: Dict[str, str]) -> None:
-        raise NotImplementedError()
-    
-    def save_setting(self, setting: Dict[str, str]) -> bool:
-        raise NotImplementedError()
+        return self.organizer.create_new_setting(setting)
+        
+    def save_setting(self, setting_name: str) -> bool:
+        raise self.organizer.save_setting_profile(setting_name)
     
     def load_setting(self, path:str) -> bool:
         raise NotImplementedError()

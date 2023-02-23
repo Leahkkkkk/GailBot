@@ -10,7 +10,8 @@ from gailbot.core.utils.general import (
     delete,
     filepaths_in_dir)
 from gailbot.core.utils.logger import makelogger
-from ...organizer import PATH_CONFIG
+from gailbot.configs import path_config_loader
+PATH_CONFIG = path_config_loader()
 
 logger = makelogger("setting_manager")
 
@@ -142,16 +143,21 @@ class SettingManager():
             bool: return true if the setting can be renamed, false 
                   if the setting does not exist or if the new_name
                   has been taken by other existing setting
-        """
-        if self.is_setting(name) and not self.is_setting(new_name):
+        """        
+        if self.is_setting(name):
+            if self.is_setting(new_name):
+                logger.error(f"new name{ new_name} has been taken")
+                return False
             temp = self.settings.pop(name)
             temp.name = new_name
             self.settings[new_name] = temp
             self.save_setting(new_name)
-            if is_file(self.get_setting_path(name)):
+            if is_file(self.get_setting_path(name)): 
                 delete(self.get_setting_path(name))
+            logger.info("update_setting")
             return self.settings[new_name] != None
         else:
+            logger.error("the setting is not found")
             return False
     
     def save_setting(self, name:str) -> Union[bool, str]:

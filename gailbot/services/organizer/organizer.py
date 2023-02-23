@@ -2,7 +2,8 @@
 from .source import SourceObject, SourceManager
 from .settings import SettingManager, SettingObject
 from typing import Dict
-from ..organizer import PATH_CONFIG
+from gailbot.configs import path_config_loader, TemporaryFolder, OutputFolder
+PATH_CONFIG = path_config_loader()
 class Organizer:
     workspace :str = PATH_CONFIG.gailbot_data.root
     def __init__(self) -> None:
@@ -13,7 +14,7 @@ class Organizer:
         return self.source_manager.add_source(source_path, output)
         
     def remove_source(self, source_name: str) -> bool:
-        return self.source_manager.remove_source(self, source_name)
+        return self.source_manager.remove_source(source_name)
     
     def is_source(self, source_name: str) -> bool:
         return self.source_manager.is_source(source_name)

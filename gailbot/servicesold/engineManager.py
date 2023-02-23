@@ -6,8 +6,6 @@
 
 # NOTE: why would engine manger be under here instead of under engine folder, 
 # mirroring the structure for plugin? 
-
-
 import sys
 import os
 from typing import Dict, List, Any

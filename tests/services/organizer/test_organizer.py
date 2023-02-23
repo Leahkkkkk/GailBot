@@ -3,6 +3,10 @@ from gailbot.core.utils.general import is_file
 from tests.core.engines.data import AudioPath
 from gailbot.core.utils.general import get_name
 import os
+from gailbot.core.utils.logger import makelogger
+
+logger = makelogger("test_orgranizer")
+
 TEST_SETTING =  {"engine_setting": {"engine":"whisper"},
                 "plugin_setting": ["hilab"]}
 
@@ -13,10 +17,10 @@ def test_construct_organizer():
     organizer = Organizer()
     
 #NOTE: get_source and is_source can be tested with other functions
-
 def test_add_source():
     organizer = Organizer()
     organizer.add_source(AudioPath.MEDIUM_AUDIO, AudioPath.GOOGLE_OUT_PATH)
+    # logger.info(organizer.sour)
     assert organizer.is_source(get_name(AudioPath.MEDIUM_AUDIO))
 
 def test_remove_source():
@@ -54,13 +58,15 @@ def test_change_setting():
     newsetting = "new"
     organizer = Organizer()
     organizer.create_new_setting(oldsetting, TEST_SETTING)
+    
     dummysrc = [os.path.join(os.getcwd(), f"dummy{i}") for i in range(10)]
+   
     for dummy in dummysrc:
         assert organizer.add_source(dummy, AudioPath.GOOGLE_OUT_PATH)
         assert organizer.apply_setting_to_source(get_name(dummy), oldsetting)
         assert organizer.get_source_setting(get_name(dummy)).name == oldsetting    
+    
     organizer.change_setting_name(oldsetting, newsetting)
-   
     for dummy in dummysrc:
         assert organizer.get_source_setting(get_name(dummy)).name == newsetting
 
@@ -88,7 +94,7 @@ def test_update_setting():
         organizer.create_new_setting(name, TEST_SETTING)
         organizer.update_setting(name, UPDATED_SETTING)
         assert organizer.get_setting(name)
-        assert organizer.get_setting(name).plugin_setting == UPDATED_SETTING["plugin_setting"]
+        assert organizer.get_setting(name).plugin_setting.get_data() == UPDATED_SETTING["plugin_setting"]
 
 def test_remove_setting():
     organizer = Organizer()

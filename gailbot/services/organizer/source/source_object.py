@@ -3,6 +3,10 @@ from ..settings import SettingObject
 from gailbot.core.utils.general import get_name
 
 class SourceObject():
+    name: str
+    path: str
+    output: str
+    setting: SettingObject
     """
     Holds and handles all functionality for a single source object
     """
@@ -67,7 +71,7 @@ class SourceObject():
             name.slice("/")
         return name
 
-    @property
+    # @property
     def configured(self) -> bool:
         """
         Determines if a given source was configured or not.

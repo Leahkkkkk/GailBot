@@ -39,7 +39,6 @@ class AnalysisResults:
 class FormatResults:
     stats = ProcessingStats()
 
-
 @dataclass
 class Payload:
     source: Source

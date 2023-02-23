@@ -1,7 +1,6 @@
 from .payloadObject import PayLoadObject, PayLoadStatus
 from ...organizer.source import SourceObject
 from typing import List, Dict, Union
-from ...organizer import PATH_CONFIG, TemporaryFolder
 from gailbot.core.utils.general import (
     get_extension, 
     get_name, 
@@ -34,7 +33,8 @@ class AudioPayload(PayLoadObject):
     @staticmethod
     def is_supported(file_path: str) -> bool:
         logger.info(file_path)
-        return get_extension(file_path) in ["mp3", "wav", "opus"] 
+        #TODO this should be extracted?
+        return get_extension(file_path) in ["mp3", "wav", "opus", "mpeg"] 
     
     def _set_initial_status(self) -> None:
         self.status = PayLoadStatus.INITIALIZED

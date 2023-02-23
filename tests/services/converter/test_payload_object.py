@@ -57,40 +57,25 @@ def test_construct_payload(test_payload: PayLoadObject):
 
 @pytest.mark.parametrize("path_name", [AudioPath.SMALL_AUDIO_MP3, AudioPath.SMALL_AUDIO_WAV, AudioPath.OPUS_AUDIO])
 def test_audio_is_supported(path_name):
-    test_source_manager = SourceManager()
-    test_source_manager.add_source(path_name, AudioPath.WATSON_OUT_PATH)
-    source_name = get_name(path_name)
+    assert(audio_payload.is_supported(path_name))
+    assert(not audio_payload.is_supported(AudioPath.CONVERSATION_DIR))
 
-    test_payload = AudioPayload(test_source_manager.get_source(source_name))
-    assert(test_payload.is_supported(path_name))
-
-@pytest.mark.parametrize("path_name", [AudioPath.SMALL_AUDIO_MP3, AudioPath.SMALL_AUDIO_WAV, AudioPath.OPUS_AUDIO])
-def test_audio_set_initial_status(path_name):
-    test_source_manager = SourceManager()
-    test_source_manager.add_source(path_name, AudioPath.WATSON_OUT_PATH)
-    source_name = get_name(path_name)
-
-    test_payload = AudioPayload(test_source_manager.get_source(source_name))
-    test_payload._set_initial_status
-    assert(test_payload.status == PayLoadStatus.INITIALIZED)
+def test_audio_set_initial_status():
+    assert(audio_payload.status == PayLoadStatus.INITIALIZED)
 
 def test_audio_copy_file():
-    pass
+    audio_payload._copy_file()
+
+def test_audio_supported_format():
+    assert(audio_payload.supported_format == ["mp3", "wav", "opus", "mpeg"])
 
 @pytest.mark.parametrize("path_name", [AudioPath.SMALL_AUDIO_MP3, AudioPath.SMALL_AUDIO_WAV, AudioPath.OPUS_AUDIO])
-def test_audio_supported_format(path_name):
-    test_source_manager = SourceManager()
-    test_source_manager.add_source(path_name, AudioPath.WATSON_OUT_PATH)
-    source_name = get_name(path_name)
-
-    test_payload = AudioPayload(test_source_manager.get_source(source_name))
-    assert(test_payload.supported_format == ["mp3", "wav", "opus"])
-
-def test_dir_is_supported():
+def test_dir_is_supported(path_name):
     assert(dir_payload.is_supported(AudioPath.CONVERSATION_DIR))
+    assert(not dir_payload.is_supported(path_name))
 
 def test_dir_copy_file():
-    pass
+    dir_payload._copy_file()
 
 def test_dir_set_initial_status():
     dir_payload._set_initial_status
