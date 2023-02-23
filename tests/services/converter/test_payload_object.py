@@ -12,44 +12,11 @@ from gailbot.core.utils.logger import makelogger
 
 TEST_SETTING = SettingObject ({"engine_setting": {"engine":"whisper"},
                 "plugin_setting": ["hilab"]}, "test_setting")
-TEST_TRANSCRIBE_RESULT = [{"speaker": 1, "endtime": 1, "starttime": "2", "text": "hello"}]
-TEST_ANALYSIS_RESULT = [{"speaker-analysis": 1, "endtime-analysis": 1, "starttime-analysis": "2", "text-analysis": "hello"}]
-TEST_FORMAT_RESULT = [{"speaker-format": 1, "endtime": 1, "starttime-format": "2", "text-format": "hello"}]
+TEST_TRANSCRIBE_RESULT = { "test": [{"speaker": 1, "endtime": 1, "starttime": "2", "text": "hello"}]}
+TEST_ANALYSIS_RESULT = {"test": [{"speaker-analysis": 1, "endtime-analysis": 1, "starttime-analysis": "2", "text-analysis": "hello"}]}
+TEST_FORMAT_RESULT = {"test" : [{"speaker-format": 1, "endtime": 1, "starttime-format": "2", "text-format": "hello"}]}
 
 logger = makelogger("audiopayload_test ")
-@pytest.mark.parametrize("path_name", [AudioPath.SMALL_AUDIO_MP3, AudioPath.SMALL_AUDIO_WAV, AudioPath.OPUS_AUDIO])
-def test_is_supported(path_name):
-    test_source_manager = SourceManager()
-    test_source_manager.add_source(path_name, AudioPath.WATSON_OUT_PATH)
-    source_name = get_name(path_name)
-
-    test_payload = AudioPayload(test_source_manager.get_source(source_name))
-    assert(test_payload.is_supported(path_name))
-
-@pytest.mark.parametrize("path_name", [AudioPath.SMALL_AUDIO_MP3, AudioPath.SMALL_AUDIO_WAV, AudioPath.OPUS_AUDIO])
-def test_set_initial_status(path_name):
-    test_source_manager = SourceManager()
-    test_source_manager.add_source(path_name, AudioPath.WATSON_OUT_PATH)
-    source_name = get_name(path_name)
-
-    test_payload = AudioPayload(test_source_manager.get_source(source_name))
-    test_payload._set_initial_status
-    assert(test_payload.status == PayLoadStatus.INITIALIZED)
-
-def test_copy_file():
-    pass
-
-@pytest.mark.parametrize("path_name", [AudioPath.SMALL_AUDIO_MP3, AudioPath.SMALL_AUDIO_WAV, AudioPath.OPUS_AUDIO])
-def test_supported_format(path_name):
-    test_source_manager = SourceManager()
-    test_source_manager.add_source(path_name, AudioPath.WATSON_OUT_PATH)
-    source_name = get_name(path_name)
-
-    test_payload = AudioPayload(test_source_manager.get_source(source_name))
-    assert(test_payload.supported_format == ["mp3", "wav", "opus"])
-
-
-
     
 # create Audio payload
 audio_source = SourceObject(AudioPath.MEDIUM_AUDIO, get_name(AudioPath.MEDIUM_AUDIO), output=AudioPath.RESULT_OUTPUT)
@@ -87,3 +54,44 @@ def test_construct_payload(test_payload: PayLoadObject):
     logger.info(test_payload.get_format_result())
     logger.info(test_payload.get_transcription_result())
     test_payload.save()
+
+@pytest.mark.parametrize("path_name", [AudioPath.SMALL_AUDIO_MP3, AudioPath.SMALL_AUDIO_WAV, AudioPath.OPUS_AUDIO])
+def test_audio_is_supported(path_name):
+    test_source_manager = SourceManager()
+    test_source_manager.add_source(path_name, AudioPath.WATSON_OUT_PATH)
+    source_name = get_name(path_name)
+
+    test_payload = AudioPayload(test_source_manager.get_source(source_name))
+    assert(test_payload.is_supported(path_name))
+
+@pytest.mark.parametrize("path_name", [AudioPath.SMALL_AUDIO_MP3, AudioPath.SMALL_AUDIO_WAV, AudioPath.OPUS_AUDIO])
+def test_audio_set_initial_status(path_name):
+    test_source_manager = SourceManager()
+    test_source_manager.add_source(path_name, AudioPath.WATSON_OUT_PATH)
+    source_name = get_name(path_name)
+
+    test_payload = AudioPayload(test_source_manager.get_source(source_name))
+    test_payload._set_initial_status
+    assert(test_payload.status == PayLoadStatus.INITIALIZED)
+
+def test_audio_copy_file():
+    pass
+
+@pytest.mark.parametrize("path_name", [AudioPath.SMALL_AUDIO_MP3, AudioPath.SMALL_AUDIO_WAV, AudioPath.OPUS_AUDIO])
+def test_audio_supported_format(path_name):
+    test_source_manager = SourceManager()
+    test_source_manager.add_source(path_name, AudioPath.WATSON_OUT_PATH)
+    source_name = get_name(path_name)
+
+    test_payload = AudioPayload(test_source_manager.get_source(source_name))
+    assert(test_payload.supported_format == ["mp3", "wav", "opus"])
+
+def test_dir_is_supported():
+    assert(dir_payload.is_supported(AudioPath.CONVERSATION_DIR))
+
+def test_dir_copy_file():
+    pass
+
+def test_dir_set_initial_status():
+    dir_payload._set_initial_status
+    assert(dir_payload.status == PayLoadStatus.INITIALIZED)

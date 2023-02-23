@@ -6,7 +6,7 @@ from gailbot.configs import path_config_loader, OutputFolder, TemporaryFolder
 from gailbot.core.utils.logger import makelogger
 from ...organizer.source import SourceObject
 from ...organizer.settings import SettingObject
-from ..interfaces.resultInterface import (
+from ..result import (
     UttResult, 
     AnalysisResult, 
     FormatResult, 
@@ -52,9 +52,6 @@ class PayLoadObject(ABC):
     out_dir: OutputFolder       # directory where all the output will be stored 
     
     # payload result
-    transcription_result:  UttResult = UttResult()
-    format_result: FormatResult = FormatResult()
-    analysis_result: AnalysisResult = AnalysisResult()
     
     def __init__(self, source: SourceObject) -> None:
         self.name = source.name
@@ -77,6 +74,10 @@ class PayLoadObject(ABC):
             if not is_directory(path):
                 make_dir(path, True)
                 
+        self.transcription_result:  UttResult = UttResult(self.workspace.transcribe_ws)
+        self.format_result: FormatResult = FormatResult(self.workspace.format_ws)
+        self.analysis_result: AnalysisResult = AnalysisResult(self.workspace.analysis_ws)
+        
         self._set_initial_status()
         self._copy_file() 
         
@@ -88,7 +89,6 @@ class PayLoadObject(ABC):
         
     def is_supported(file_path: str) -> bool:
         raise NotImplementedError()
-    
     
     @property
     def supported_format(self) -> str:
@@ -122,7 +122,7 @@ class PayLoadObject(ABC):
     
     def set_transcription_result(self, result: Dict[str, List[UttDict]])-> bool:
         try:
-            self.transcription_result.set_data(result)
+            self.transcription_result.save_data(result)
             return True 
         except Exception as e:
             logger.error(e)
@@ -130,7 +130,7 @@ class PayLoadObject(ABC):
     
     def set_format_result(self, result: Dict[str, FormatResultDict]) -> bool:
         try:
-            self.format_result.set_data(result)
+            self.format_result.save_data(result)
             return True
         except Exception as e:
             logger.error(e)
@@ -138,20 +138,20 @@ class PayLoadObject(ABC):
     
     def set_analysis_result(self, result: Dict[str, AnalysisResultDict]) -> bool:
         try:
-            self.analysis_result.set_data(result)
+            self.analysis_result.save_data(result)
             return True
         except Exception as e:
             logger.error(e)
             return False
         
     def get_transcription_result(self) -> Dict[str, List[UttDict]]:
-        return self.transcription_result.to_dict()
+        return self.transcription_result.get_data()
     
     def get_format_result(self) -> FormatResultDict:
-        return self.format_result.to_dict()
+        return self.format_result.get_data()
     
     def get_analyze_result(self) -> Dict[str, AnalysisResultDict]:
-        return self.analysis_result.to_dict()
+        return self.analysis_result.get_data()
     
     def output_transcription_result(self) -> str: 
         try:

@@ -23,7 +23,8 @@ def load_transcribed_dir_payload(source: SourceObject):
 class TranscribedDirPayload(PayLoadObject):
     def __init__(self, source) -> None:
         super().__init__(source)
-        # transcribed_result = self.transcription_result.read_result()
+        
+        # transcribed_result = self.transcription_result.load_result(self.)
         # self.set_transcription_result(transcribed_result)
     
     @staticmethod

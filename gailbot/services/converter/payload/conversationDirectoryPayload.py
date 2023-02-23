@@ -6,7 +6,7 @@ from .audioPayload import load_audio_payload, AudioPayload
 import os 
 from typing import List, Dict, Union
 
-""" NOTE: for directory , if we load it as a list fo other payloads, we 
+""" NOTE: for directory , if we load it as a list of other payloads, we 
           will only needs a load_directory_payload function, and no 
           directory payload class 
 """

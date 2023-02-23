@@ -47,4 +47,4 @@ class AudioPayload(PayLoadObject):
         
     @property
     def supported_format(self) -> str:
-        return ["mp3", "wav", "opus"]
+        return ["mp3", "wav", "opus", "mpeg"]
