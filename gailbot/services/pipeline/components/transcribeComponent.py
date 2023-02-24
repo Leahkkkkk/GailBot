@@ -12,6 +12,8 @@ logger = makelogger("transcribeComponent")
 
 """ TODO by Feb 24:
 1. connect with engine and pipeline and test transcription
+2. test functions to skip trancription for transcribedpayload
+3. error handling mechanism - logging and return failed
 """
 class TrancrcibeComponent(Component):
     def __init__(self, workspace: str):

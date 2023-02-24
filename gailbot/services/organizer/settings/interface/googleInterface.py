@@ -3,6 +3,11 @@ from typing import Dict, List, Union
 from .engineSettingInterface import EngineSettingInterface
 
 class Transcribe(BaseModel):
+    """ TODO: add documention
+
+    Args:
+        BaseModel (_type_): _description_
+    """
     pass 
 
 class Init(BaseModel):

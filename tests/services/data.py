@@ -1,5 +1,14 @@
 from tests.core.engines.data import AudioPath
+""" 
+test data 
+setting: 
+    engine setting - four at least, with different setting profiles, 
+                     and one invalid profile
+                     
+    audio source - different length
+    
 
+"""
 WHISPER_SETTING = {
     "engine": "whisper", 
     "transcribe": {

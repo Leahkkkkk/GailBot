@@ -5,6 +5,7 @@ from .pipeline import PipelineService
 from ..plugins import PluginManager, PluginSuite
 from gailbot.core.utils.logger import makelogger
 
+""" TODO: plugin vs. plugin suite naming """
 logger = makelogger("service_controller")
 """ Knows about all three sub modules """
 class ServiceController:

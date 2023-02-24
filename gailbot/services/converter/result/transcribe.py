@@ -1,5 +1,5 @@
 
-from typing import TypedDict, List, Dict
+from typing import TypedDict, List, Dict, Union
 from gailbot.core.utils.general import (
     write_csv, 
     read_csv,
@@ -73,11 +73,13 @@ class UttResult(ResultInterface):
         else:
             return self.data 
     
-    def load_result(self, path: str) -> Dict[str, List[UttDict]]:
+    def load_result(self, path: str) -> bool:
         if is_file(path):
             return self._read_from_file(path)
-        else:
+        elif is_directory(path):
             return self._read_from_dir(path)
+        else: 
+            return False
     
     def _read_from_dir(self, path) -> Dict[str, List[UttDict]]:
         try:
@@ -85,10 +87,17 @@ class UttResult(ResultInterface):
             res = dict()
             for file in files:
                 res[get_name(file)] = read_csv(file)
-            return res 
+            if res:
+                assert self.save_data(res)
+            return True 
         except Exception as e:
             logger.error(e)
             return False
         
     def _read_from_file(self, path: str) -> Dict[str, List[UttDict]]:
-        return {get_name(path): read_csv(path)}
+        try:
+            res = {get_name(path): read_csv(path)}
+            assert self.save_data(res)
+        except Exception as e:
+            logger.error(e)
+            return False

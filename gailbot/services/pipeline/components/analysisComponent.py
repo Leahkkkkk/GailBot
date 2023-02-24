@@ -13,6 +13,7 @@ from gailbot.core.pipeline.component import Component
 
 """ TODO: 
 1. connect with a dummy plugin suite and test 
+
 """
 class AnalysisComponent(Component):
     def __init__(self, plugin_manager: PluginManager):

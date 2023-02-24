@@ -12,6 +12,7 @@ TODO by Feb 24
 """
 logger = makelogger("transcribed_dir_payload")
 
+# TODO: ignore other file that is not audio files
 def load_transcribed_dir_payload(source: SourceObject):
    if not source.setting:
        return False
@@ -27,13 +28,14 @@ class TranscribedDirPayload(PayLoadObject):
     def __init__(self, source) -> None:
         super().__init__(source)
         
-        # transcribed_result = self.transcription_result.load_result(self.)
-        # self.set_transcription_result(transcribed_result)
+        if not self.transcription_result.load_result(
+            os.path.join(self.workspace.data_copy, "result/transcription")):
+            self.status = PayLoadStatus.INITIALIZED
     
     @staticmethod
     def is_supported(file_path: str) -> bool:
         if not is_directory(file_path):
-            logger.info("not valid diretcory ")
+            logger.info("not valid diretcory")
             return False 
         return is_file(os.path.join(file_path, ".gailbot"))
        
