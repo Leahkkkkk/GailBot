@@ -1,8 +1,7 @@
 from .payloadObject import PayLoadObject, PayLoadStatus
 from ...organizer.source import SourceObject
 from typing import List, Dict 
-from gailbot.core.utils.general import is_directory
-from gailbot.core.utils.general import is_directory
+from gailbot.core.utils.general import is_directory, is_file, copy
 from gailbot.core.utils.logger import makelogger
 import os 
 
