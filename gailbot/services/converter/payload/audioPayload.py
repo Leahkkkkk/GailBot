@@ -12,7 +12,6 @@ logger = makelogger("audioPayload")
 """ 
 TODO by Feb 24:
 1. move string to toml file 
-
 """
 def load_audio_payload(source: SourceObject) -> Union[bool, List[PayLoadObject]]:
     if not source.setting: 
@@ -45,6 +44,6 @@ class AudioPayload(PayLoadObject):
         copy(self.original_source, tgt_path)
         self.data_files = [tgt_path]
         
-    @property
-    def supported_format(self) -> str:
+    @staticmethod
+    def supported_format() -> List[str]:
         return ["mp3", "wav", "opus", "mpeg"]

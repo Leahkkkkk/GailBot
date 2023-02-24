@@ -8,7 +8,6 @@ import os
 """ 
 TODO by Feb 24
 1. test function of loading the result file
-
 """
 logger = makelogger("transcribed_dir_payload")
 
@@ -26,8 +25,7 @@ def load_transcribed_dir_payload(source: SourceObject):
 
 class TranscribedDirPayload(PayLoadObject):
     def __init__(self, source) -> None:
-        super().__init__(source)
-        
+        super().__init__(source) 
         if not self.transcription_result.load_result(
             os.path.join(self.workspace.data_copy, "result/transcription")):
             self.status = PayLoadStatus.INITIALIZED
@@ -47,6 +45,6 @@ class TranscribedDirPayload(PayLoadObject):
     def _set_initial_status(self) -> None:
         self.status = PayLoadStatus.TRANSCRIBED
     
-    @property
-    def supported_format(self) -> str:
+    @staticmethod
+    def supported_format() -> str:
         return "transcribed directory"

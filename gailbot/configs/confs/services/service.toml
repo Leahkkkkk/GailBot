@@ -1,2 +1,42 @@
 [file.name_postfix]
 gb_output_hidden_file=".galbolt"
+
+[converter.fileExtensions]
+supported = ["mp3", "wav", "opus", "mpeg"]
+temp = "_temp"
+output = "_gb_output"
+saveGB = ".gailbot"
+
+[dir_payload]
+dir = "directory"
+
+[trans_dir_payload]
+transDir = "transcribed directory"
+
+[result]
+transResult = "transcribe_result"
+tempResult = "temporary_result"
+
+[organizer.interfaces]
+engine = "engine"
+not = "notfound"
+
+[organizer.interfaces.google]
+name = "google"
+
+[organizer.interfaces.watson]
+name = "watson"
+
+[organizer.interfaces.whisper]
+name = "whisper"
+
+[organizer.settings]
+existing = "the setting name already exists"
+update = "update_setting"
+notFound = "the setting is not found"
+
+engine = "engine_setting"
+plugin = "plugin_setting"
+
+[organizer.sources]
+logger = "source_manager"

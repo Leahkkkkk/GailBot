@@ -67,7 +67,7 @@ def test_audio_copy_file():
     audio_payload._copy_file()
 
 def test_audio_supported_format():
-    assert(audio_payload.supported_format == ["mp3", "wav", "opus", "mpeg"])
+    assert(AudioPayload.supported_format == ["mp3", "wav", "opus", "mpeg"])
 
 @pytest.mark.parametrize("path_name", [AudioPath.SMALL_AUDIO_MP3, AudioPath.SMALL_AUDIO_WAV, AudioPath.OPUS_AUDIO])
 def test_dir_is_supported(path_name):

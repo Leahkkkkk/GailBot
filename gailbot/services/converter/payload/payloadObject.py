@@ -94,8 +94,8 @@ class PayLoadObject(ABC):
     def is_supported(file_path: str) -> bool:
         raise NotImplementedError()
     
-    @property
-    def supported_format(self) -> str:
+    @staticmethod
+    def supported_format() -> str:
         raise NotImplementedError()
     
     # functions that has been implemented on abstract class 
