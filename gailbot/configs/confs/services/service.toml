@@ -1,2 +1,54 @@
 [file.name_postfix]
 gb_output_hidden_file=".galbolt"
+
+[converter.fileExtensions]
+mp3 = "mp3"
+wav = "wav"
+opus = "opus"
+mpeg = "mpeg"
+temp = "_temp"
+output = "_gb_output"
+saveGB = ".gailbot"
+saveW = "w+"
+
+[dir_payload]
+notDir = "not a directory"
+notConDir = "not a conversation directory"
+dir = "directory"
+cannotProcess = "the directory contains files that cannot be processed by gailbot"
+
+[trans_dir_payload]
+transLogger = "transcribed_dir_payload"
+invalid = "not valid diretcory "
+gb = ".gailbot"
+supported = "transcribed directory"
+
+[result]
+transResult = "transcribe_result"
+tempResult = "temporary_result"
+toml = "toml"
+
+[organizer.interfaces]
+engine = "engine"
+not = "notfound"
+
+[organizer.interfaces.google]
+name = "google"
+
+[organizer.interfaces.watson]
+name = "watson"
+
+[organizer.interfaces.whisper]
+name = "whisper"
+
+[organizer.settings]
+logger = "setting_manager"
+existing = "the setting name already exists"
+update = "update_setting"
+notFound = "the setting is not found"
+
+engine = "engine_setting"
+plugin = "plugin_setting"
+
+[organizer.sources]
+logger = "source_manager"
