@@ -1,13 +1,13 @@
 from gailbot.services.organizer.settings import SettingManager
 from gailbot.services.organizer.settings.interface import whisperInterface
 from gailbot.core.utils.general import is_directory, is_file
+from ...services.data import PROFILE
 import pytest
 
 
 def test_setting_manager():
-    manager = SettingManager()
-    test_set = {"engine_setting": {"engine":"whisper"},
-                "plugin_setting": ["hilab"]}
+    manager = SettingManager(False)
+    test_set = PROFILE
     
     manager.add_new_setting("test", test_set)
     
@@ -46,8 +46,7 @@ def test_setting_manager():
 
 def test_init_and_load():
     manager = SettingManager()
-    test_set = {"engine_setting": {"engine":"whisper"},
-            "plugin_setting": ["hilab"]} 
+    test_set = PROFILE
     settings = [f"test{i}" for i in range(5)]
     for setting in settings:
         manager.add_new_setting(setting, test_set)

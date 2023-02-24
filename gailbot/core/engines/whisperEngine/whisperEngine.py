@@ -18,9 +18,9 @@ WHISPER_CONFIG = whisper_config_loader()
 
 class WhisperEngine(Engine):
 
-    def __init__(self):
-
-        self.core = WhisperCore()
+    def __init__(self, workspace_dir: str):
+        self.workspace_dir = workspace_dir
+        self.core = WhisperCore(workspace_dir)
         self._successful = False
 
     def __str__(self):

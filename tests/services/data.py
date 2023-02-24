@@ -1,0 +1,30 @@
+from tests.core.engines.data import AudioPath
+
+WHISPER_SETTING = {
+    "engine": "whisper", 
+    "transcribe": {
+        "language": "english",
+        "detect_speakers": False
+    },
+    "init": {}
+}
+
+GOOGLE_SETTING = {
+    "engine": "google",
+    "init": {},
+    "transcribe": {}
+}
+
+PLUGIN_SETTING = ["hilab"]
+
+NEW_PLUGIN = ["testmodule"]
+
+PROFILE = {
+    "engine_setting": WHISPER_SETTING, 
+    "plugin_setting": PLUGIN_SETTING
+}
+
+NEW_PROFILE = {
+    "engine_setting": GOOGLE_SETTING, 
+    "plugin_setting": NEW_PLUGIN
+}

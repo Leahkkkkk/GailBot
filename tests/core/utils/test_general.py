@@ -14,7 +14,7 @@ import os
 import shutil
 from gailbot.core.utils import general 
 import time
-
+import logging
 
 def create_test_dictionary() -> dict:
     test_dict = dict()
@@ -203,3 +203,11 @@ def test_run_cmd():
     assert status == general.CMD_STATUS.FINISHED
     
 
+def test_csv():
+    file_path = os.path.join(os.getcwd(), "data/text_file/test.csv")
+    data = [{'name': 'John', 'age': 28, 'city': 'New York'},
+        {'name': 'Jane', 'age': 35, 'city': 'San Francisco'},
+        {'name': 'Bob', 'age': 42, 'city': 'Chicago'}]
+    general.write_csv(file_path, data)
+    result = general.read_csv(file_path)
+    logging.info(result)

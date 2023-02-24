@@ -1,5 +1,5 @@
 from typing import Dict, Union, List
-from .setting_object import SettingObject
+from .settingObject import SettingObject
 import os
 from gailbot.core.utils.general import (
     is_file, 
@@ -128,7 +128,11 @@ class SettingManager():
                     cannot be validated 
         """
         if self.is_setting(name):
-            return self.settings[name].update_setting(src)
+            try:
+                self.settings[name].update_setting(src)
+                self.save_setting(name)
+            except Exception as e:
+                logger.error(e)
         else:
             return False
 
@@ -173,6 +177,8 @@ class SettingManager():
         """ 
         try: 
             out_path = self.get_setting_path(name)
+            if is_file(out_path):
+                delete(out_path)
             self.settings[name].save_setting(out_path) 
             return out_path
         except Exception as e:

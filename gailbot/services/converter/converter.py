@@ -12,16 +12,17 @@ class Converter:
     payloads_dict: Dict[str, PayLoadObject] = dict() 
     
     loaders = [
-        load_conversation_dir_payload, 
         load_audio_payload, 
-        load_transcribed_dir_payload] 
+        load_transcribed_dir_payload,
+        load_conversation_dir_payload]
     
     """ mapping payload name to payloadObject """
     def load_source(self, source: SourceObject) -> bool:
         for loader in self.loaders:
             try: 
                 payloads: List [PayLoadObject] = loader(source)
-                if isinstance(payloads, PayLoadObject):
+                logger.info(payloads)
+                if isinstance(payloads, list):
                     self.payloads_dict[source.name] = payloads
                     return True 
             except Exception as e:
@@ -33,7 +34,7 @@ class Converter:
         try:
             for source in sources:
                 self.load_source(source)
-            return list(self.payloads_dict.values())
+            return sum (list(self.payloads_dict.values()), [])
         except Exception as e: 
             logger.error(e)
             return False

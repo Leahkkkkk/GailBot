@@ -1,12 +1,16 @@
 from .payloadObject import PayLoadObject, PayLoadStatus
 from ...organizer.source import SourceObject
 from typing import List, Dict 
-from gailbot.core.utils.general import is_directory, subdirs_in_dir, paths_in_dir
-from enum import Enum
-from gailbot.core.utils.general import paths_in_dir, is_directory, get_name, get_extension, copy, subdirs_in_dir, is_file
+from gailbot.core.utils.general import is_directory
+from gailbot.core.utils.general import is_directory
 from gailbot.core.utils.logger import makelogger
 import os 
 
+""" 
+TODO by Feb 24
+1. test function of loading the result file
+
+"""
 logger = makelogger("transcribed_dir_payload")
 
 def load_transcribed_dir_payload(source: SourceObject):

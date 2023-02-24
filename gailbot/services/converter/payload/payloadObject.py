@@ -12,11 +12,15 @@ from ..result import (
     FormatResult, 
     UttDict,
     AnalysisResultDict,
-    FormatResultDict)
+    FormatResultDict,
+    ProcessingStats)
 from gailbot.core.utils.general import (is_directory, make_dir, delete)
 logger = makelogger("payloadobject")
 
-""" TODO: move all name strings to configuration  """
+""" TODO by Feb 24:
+1. move all name strings to configuration  
+2. test save function and any functions involve i/o 
+"""
 PATH_CONFIG = path_config_loader()
 class PayLoadStatus(Enum):
     """ For tracking the status of the file in the payload """
@@ -144,6 +148,15 @@ class PayLoadObject(ABC):
             logger.error(e)
             return False
         
+    def set_transcription_process_stats(self, stats:ProcessingStats) -> Dict[str, List[UttDict]]:
+        return self.transcription_result.set_processing_stats(stats)
+    
+    def set_analysis_process_stats(self, stats:ProcessingStats) -> Dict[str, List[UttDict]]:
+        return self.analysis_result.set_processing_stats(stats)
+
+    def set_format_process_stats(self, stats:ProcessingStats) -> Dict[str, List[UttDict]]:
+        return self.format_result.set_processing_stats(stats)
+    
     def get_transcription_result(self) -> Dict[str, List[UttDict]]:
         return self.transcription_result.get_data()
     
@@ -153,14 +166,14 @@ class PayLoadObject(ABC):
     def get_analyze_result(self) -> Dict[str, AnalysisResultDict]:
         return self.analysis_result.get_data()
     
-    def output_transcription_result(self) -> str: 
+    def output_transcription_result(self) -> bool: 
         try:
             self.transcription_result.output(self.out_dir.transcribe_result)
             return True
         except Exception as e:
             return False
         
-    def output_format_result(self) -> str:
+    def output_format_result(self) -> bool:
        try:
            self.format_result.output(self.out_dir.format_result)
            return True 
@@ -175,11 +188,12 @@ class PayLoadObject(ABC):
             return False
     
     def save(self):
-        self.output_analysis_result()
-        self.output_format_result()
-        self.output_transcription_result()
+        assert self.output_analysis_result()
+        assert self.output_format_result()
+        assert self.output_transcription_result()
         delete(self.workspace.root)
         with open(os.path.join(self.out_dir.root, ".gailbot"), "w+") as f:
             f.write(f"{self.name}")
     
-    
+    def __repr__(self) -> str:
+        return f"payload object {self.name}"

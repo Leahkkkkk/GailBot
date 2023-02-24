@@ -5,9 +5,25 @@ class EngineSettingInterface(BaseModel):
     def __init__(__pydantic_self__, **data: Any) -> None:
         super().__init__(**data)
     
+    @property   
+    def engine(self):
+        return NotImplementedError()
+    
+    def get_init_kwargs(self) -> Dict[str, str]:
+        d = self.dict()["init"]
+        return d
+    
+    """ TODO. delete this """
     def to_kwargs_dict(self) -> Dict[str, str] :
         """ convert the  engine setting data to kwargs dictionary 
             which can be directly used by stt engine    
         """
-        d = self.dict()
+        d = self.dict()["transcribe"]
+        return d 
+    
+    def get_transcribe_kwargs(self) -> Dict[str, str] :
+        """ convert the  engine setting data to kwargs dictionary 
+            which can be directly used by stt engine    
+        """
+        d = self.dict()["transcribe"]
         return d 

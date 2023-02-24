@@ -7,3 +7,5 @@
 
 from .engine import Engine
 from .watson import WatsonAMInterface, WatsonLMInterface, Watson
+from .whisperEngine import WhisperEngine
+from .google import Google

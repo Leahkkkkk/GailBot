@@ -1,6 +1,9 @@
 from gailbot.plugins import Methods
 from typing import Dict, Union, List
 
+""" TODO:
+1. connection GBPluginMethods with analysis component, add testing
+"""
 class GBPluginMethods(Methods):
     def __init__(self):
         pass

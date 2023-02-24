@@ -6,9 +6,9 @@ from .audioPayload import load_audio_payload, AudioPayload
 import os 
 from typing import List, Dict, Union
 
-""" NOTE: for directory , if we load it as a list of other payloads, we 
-          will only needs a load_directory_payload function, and no 
-          directory payload class 
+""" TODO:
+1. test directory with different content
+2. test directory with large file 
 """
 logger = makelogger("conversation_payload")
 
@@ -23,11 +23,10 @@ def load_conversation_dir_payload(source: SourceObject) -> Union [bool, List[Pay
         return False
     
     if ConversationDirectoryPayload.is_supported(original_source):
-        logger.error("not a conversation directory")
         return [ConversationDirectoryPayload(source)]
    
+    # TODO: test recursively loading conversation
     sub_paths = paths_in_dir(original_source)
-    
     for path in sub_paths:
         if is_directory(path):
             new_source = SourceObject(path, get_name(path), output)
@@ -39,13 +38,7 @@ def load_conversation_dir_payload(source: SourceObject) -> Union [bool, List[Pay
     return payloads
         
         
-""" NOTE: if the above loader works for directory source, this class can be discarded """
 
-""" 
-directory with only files 
-
-directory with subdirectories 
-"""
 class ConversationDirectoryPayload(PayLoadObject):
     """ store a conversation directory with only audio files """
     def __init__(self, source) -> None:

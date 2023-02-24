@@ -1,10 +1,11 @@
 from typing import List, Dict
 from .source_object import SourceObject
 from ..settings import SettingObject
-from gailbot.core.utils.general import get_name
+from gailbot.core.utils.general import get_name, is_file, is_directory, is_path
 from gailbot.core.utils.logger import makelogger
 
 logger = makelogger("source_manager")
+
 class SourceManager():
     """
     Holds and handles all functionality for managing all sources
@@ -39,17 +40,18 @@ class SourceManager():
         self.sources.pop(source_name)
         return True
     
-    def is_source(self, source_name:str) -> bool:
+    def is_source(self, source:str) -> bool:
         """
         Determines if a given source is currently in the source manager's sources
 
         Args:
             self
-            source_name: str: key of the source to search for
+            source: str: key of the source to search for
 
         Returns:
             True if given source was found, false if not
         """
+        source_name = get_name(source) if is_path(source) else source
         if source_name in self.sources:
             return True
         else:
@@ -68,7 +70,7 @@ class SourceManager():
         """
         return list(self.sources.keys())
 
-    def get_source(self, source_name:str) -> SourceObject:
+    def get_source(self, source:str) -> SourceObject:
         """
         Gets the source associated with a given source name
 
@@ -80,18 +82,21 @@ class SourceManager():
             Source object associated with the given name
             Raises exception if object with given name is not found
         """
+        source_name = get_name(source) if is_path(source) else source
         if self.is_source(source_name):
             return self.sources[source_name]
         else:
             return False
 
-    def get_source_setting(self, source_name) -> SettingObject:
+    def get_source_setting(self, source:str) -> SettingObject:
+        source_name = get_name(source) if is_path(source) else source
         if self.is_source(source_name):
             return self.sources[source_name].source_setting()
         else:
             return False
 
-    def apply_setting_profile_to_source(self, source_name:str, setting: SettingObject, overwrite: bool):
+    def apply_setting_profile_to_source(self, source:str, setting: SettingObject, overwrite: bool):
+        source_name = get_name(source) if is_path(source) else source
         if self.is_source(source_name):
                 self.sources[source_name].apply_setting(setting, overwrite)
                 return self.sources[source_name].configured
@@ -110,7 +115,31 @@ class SourceManager():
         """
         return [k for k,v in self.sources.items() if v.setting.get_name() == setting_name]
     
-    def is_source_configured(self, source_name:str) -> bool:
+    
+    def get_configured_sources(self, sources: List[str] = None) -> List[SourceObject]:
+        """ given the source name, return a list of the sourceObject
+
+        Args:
+            sources (List[str], optional): a list of source name, if not 
+            given, return a list of configured source. Defaults to None.
+
+        Returns:
+            List[SourceObject]: a list of sources 
+        """
+        configured = []
+        if not sources:
+            for source in self.sources.values():
+                if source.setting != None:
+                    configured.append(source)
+            return configured
+        else:
+            for source in sources:
+                src = self.get_source(source)
+                if src.setting != None:
+                    configured.append(source)
+
+    
+    def is_source_configured(self, source:str) -> bool:
         """
         Determines if given source has been configured with settings
 
@@ -121,7 +150,15 @@ class SourceManager():
         Returns:
             True if configured, false if not
         """
+        source_name = get_name(source) if is_path(source) else source
         return self.sources[source_name].configured
+    
     
     def __repr__(self) -> str:
         return (f"Source manager with sources {self.source_names}")
+    
+    @staticmethod
+    def _is_path(source:str):
+        return is_file(source) or is_directory(source)
+    
+    

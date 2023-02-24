@@ -2,12 +2,23 @@ from pydantic import BaseModel, ValidationError
 from typing import Dict, List , Union
 from .engineSettingInterface import EngineSettingInterface
 
+class InitSetting(BaseModel):
+    apikey : str 
+    region: str 
+    
+class TranscribeSetting(BaseModel):
+    base_model: str 
+    language_customization_id : str = None 
+    acoustic_customization_id : str = None 
+    
 class WatsonInterface(EngineSettingInterface):
-    WATSON_API_KEY         : str
-    WATSON_LANG_CUSTOM_ID  : str
-    WATSON_REGION          : str
-    WATSON_BASE_LANG_MODEL : str
-
+    init : InitSetting
+    transcribe: TranscribeSetting
+    
+    @property
+    def engine(self):
+        return "watson"
+    
 def load_watson_setting(setting: Dict[str, str]) -> Union[bool, EngineSettingInterface]:
     """ given a dictionary, load the dictionary as a watson setting 
 

@@ -4,14 +4,11 @@ from tests.core.engines.data import AudioPath
 from gailbot.core.utils.general import get_name
 import os
 from gailbot.core.utils.logger import makelogger
-
+from ...services.data import PROFILE, NEW_PROFILE
 logger = makelogger("test_orgranizer")
 
-TEST_SETTING =  {"engine_setting": {"engine":"whisper"},
-                "plugin_setting": ["hilab"]}
-
-UPDATED_SETTING = {"engine_setting": {"engine":"whisper"},
-                "plugin_setting": ["test_module"]}
+TEST_SETTING =  PROFILE
+UPDATED_SETTING = NEW_PROFILE
 
 def test_construct_organizer():
     organizer = Organizer()
@@ -66,7 +63,7 @@ def test_change_setting():
         assert organizer.apply_setting_to_source(get_name(dummy), oldsetting)
         assert organizer.get_source_setting(get_name(dummy)).name == oldsetting    
     
-    organizer.change_setting_name(oldsetting, newsetting)
+    organizer.rename_setting(oldsetting, newsetting)
     for dummy in dummysrc:
         assert organizer.get_source_setting(get_name(dummy)).name == newsetting
 

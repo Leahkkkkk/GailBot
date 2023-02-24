@@ -15,11 +15,10 @@ TEST_SETTING =  {"engine_setting": {"engine":"whisper"},
 ## test source object
 
 def test_source_details():
-    test_source_manager = SourceManager()
-    test_source_manager.add_source(AudioPath.SMALL_AUDIO_MP3, AudioPath.WATSON_OUT_PATH)
-    name = get_name(AudioPath.SMALL_AUDIO_MP3)
-    test_source = test_source_manager.get_source(name)
+    test_source = SourceObject(path= AudioPath.SMALL_AUDIO_MP3, name= "test", output= AudioPath.GOOGLE_OUT_PATH)
     details = test_source.source_details()
+    assert(details["source_name"] == "test")
+    assert(details["source_path"] == AudioPath.SMALL_AUDIO_MP3)
     # print(f"source_name: {details["source_name"]} , source_path: {details["source_path"]}, settings: {details["settings"]}" )
     #TODO print
     
