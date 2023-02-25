@@ -10,6 +10,8 @@ class AnalysisResultDict(TypedDict):
     name: str
     plugin_suite: str
     result: Dict[str, str]
+
+
 class AnalysisResult(ResultInterface):
     def __init__(self, data: Dict[str, AnalysisResultDict] = None):
         self.data = data 

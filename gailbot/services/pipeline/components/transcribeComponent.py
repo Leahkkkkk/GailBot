@@ -15,9 +15,9 @@ logger = makelogger("transcribeComponent")
 2. test functions to skip trancription for transcribedpayload
 3. error handling mechanism - logging and return failed
 """
-class TrancrcibeComponent(Component):
-    def __init__(self, workspace: str):
-        self.engine_manager = EngineManager(workspace)
+class TranscribeComponent(Component):
+    def __init__(self):
+        self.engine_manager = EngineManager()
     
     def __call__(self, dependency_output: Dict[str, str]) -> Any:
         payloads : List[PayLoadObject] = dependency_output["base"]

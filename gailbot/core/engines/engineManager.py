@@ -27,14 +27,6 @@ _ENGINES = {
 }
 
 class EngineManager:
-    def __init__(
-        self,
-        engine_ws_path : str = None,
-    ):
-        if engine_ws_path:
-            self.engine_ws_path = engine_ws_path
-            make_dir(engine_ws_path, overwrite=True)
-
     def available_engines(self) -> List[str]:
         return list(_ENGINES.keys())
 

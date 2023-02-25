@@ -41,7 +41,7 @@ class PayLoadObject(ABC):
         the data stored in payload. 
     """
     original_source : str       # path to original source, should not be modified 
-    data_files: List[str]             # stores the path to the source that is safe to be used
+    data_files: List[str]       # stores the path to the source that is safe to be used
     """ we can abstract setting from pipeline, 
         but transcribe component will need to have access to the interfaces 
     """

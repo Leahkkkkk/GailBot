@@ -38,7 +38,6 @@ def load_conversation_dir_payload(source: SourceObject) -> Union [bool, List[Pay
                 
     return False
         
-        
 
 class ConversationDirectoryPayload(PayLoadObject):
     """ store a conversation directory with only audio files """
