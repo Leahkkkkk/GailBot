@@ -11,7 +11,7 @@ from gailbot.core.utils.general import (
     filepaths_in_dir)
 from gailbot.core.utils.logger import makelogger
 from gailbot.configs import path_config_loader
-from ...workspace import WorkspaceManager
+from gailbot.workspace import WorkspaceManager
 PATH_CONFIG = path_config_loader()
 
 logger = makelogger("setting_manager")

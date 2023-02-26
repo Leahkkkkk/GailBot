@@ -43,6 +43,6 @@ class SETTING_DATA:
     }
     
     PROFILE = {
-        "engin_setting": WHISPER_SETTING, 
+        "engine_setting": WHISPER_SETTING, 
         "plugin_setting": ["gb_test_suite"]
     }

@@ -16,7 +16,7 @@ from ..result import (
     ProcessingStats
 )
 from gailbot.core.utils.general import is_directory, make_dir, delete
-from ...workspace import WorkspaceManager
+from gailbot.workspace import WorkspaceManager
 logger = makelogger("payloadobject")
 
 """ TODO by Feb 24:
@@ -24,6 +24,7 @@ logger = makelogger("payloadobject")
 2. test save function and any functions involve i/o 
 """
 PATH_CONFIG = path_config_loader()
+OUTPUT_MARKER = ".gailbot"
 class PayLoadStatus(Enum):
     """ For tracking the status of the file in the payload """
     INITIALIZED = 0 
@@ -195,7 +196,7 @@ class PayLoadObject(ABC):
         assert self.output_format_result()
         assert self.output_transcription_result()
         delete(self.workspace.root)
-        with open(os.path.join(self.out_dir.root, ".gailbot"), "w+") as f:
+        with open(os.path.join(self.out_dir.root, OUTPUT_MARKER), "w+") as f:
             f.write(f"{self.name}")
     
     def __repr__(self) -> str:

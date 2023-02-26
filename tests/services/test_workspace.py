@@ -1,4 +1,4 @@
-from gailbot.services.workspace import WorkspaceManager
+from gailbot.workspace import WorkspaceManager
 import logging
 from gailbot.core.utils.general import is_directory
 from .test_data import PATH

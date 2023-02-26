@@ -13,7 +13,7 @@ class ServiceController:
         self.organizer = Organizer(load_exist_setting)
         self.converter = Converter()
         self.plugin_manager = PluginManager()
-        self.pipeline_service = PipelineService()
+        self.pipeline_service = PipelineService(self.plugin_manager, num_threads=5) # TODO: add this to toml file
     
     def add_sources(self, src_output_pairs: List [Tuple [str, str]]):
         try:
@@ -75,10 +75,10 @@ class ServiceController:
         # load to converter 
         payloads = self.converter(sources)
         # put the payload to the pipeline
-        self.pipeline_service(payloads)
-    
-    def register_plugin_suite(self, plugin_source) -> str:
-        self.plugin_manager.register_suite(plugin_source)
+        self.pipeline_service(payloads=payloads)
+        
+    def register_plugin_suite(self, plugin_source: str) -> str:
+        assert self.plugin_manager.register_suite(plugin_source)
         
     def get_plugin(self, suite_name) -> PluginSuite:
         return self.plugin_manager.get_suite(suite_name)

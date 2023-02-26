@@ -5,7 +5,7 @@ from gailbot.core.utils.general import get_name
 import os
 from gailbot.core.utils.logger import makelogger
 from gailbot.core.utils.general import delete
-from ..services.test_data import SETTING_DATA, PROFILE
+from ..services.test_data import SETTING_DATA, PATH 
 logger = makelogger("test_controller")
 
 TEST_SETTING = SETTING_DATA.PROFILE
@@ -16,7 +16,7 @@ SOURCES = [(A.LARGE_AUDIO_MP3, A.RESULT_OUTPUT), (A.MEDIUM_AUDIO, A.RESULT_OUTPU
            (A.TRANSCRIBED_DIR, A.RESULT_OUTPUT), [A.CONVERSATION_DIR, A.RESULT_OUTPUT]]
 
 
-def test_controller():
+def test_controller_basic():
     controller = ServiceController(False)
     logger.info(controller.organizer.setting_manager.workspace)
     controller.add_source(A.SMALL_AUDIO_MP3, A.RESULT_OUTPUT)
@@ -39,4 +39,8 @@ def test_controller():
     payloads = controller.converter(sources)
     logger.info(payloads)
     controller.remove_source(get_name(A.SMALL_AUDIO_MP3))
-    
+    controller.register_plugin_suite(PATH.GB_TEST_SUITE)
+
+
+def test_controller():
+    controller = ServiceController()

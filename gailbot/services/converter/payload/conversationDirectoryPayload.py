@@ -53,7 +53,6 @@ class ConversationDirectoryPayload(PayLoadObject):
             return False 
         sub_paths = paths_in_dir(file_path, AudioPayload.supported_format())
         if len(sub_paths) == 0:
-            logger.error("zero file ")
             return False
         return True
      

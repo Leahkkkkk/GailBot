@@ -14,6 +14,7 @@ class PipelineService:
     def __init__(
         self,
         plugin_manager : PluginManager,
+        num_threads: int
     ):
 
         transcribeComponent = TranscribeComponent()
@@ -22,15 +23,16 @@ class PipelineService:
 
         self.pipeline = Pipeline(
             dependency_map={
-                "transcription" : None,
+                "transcription" : [],
                 "analysis" : ["transcription"],
                 "format" : ["analysis"]
             },
             components ={
-                "transcription" : transcribeComponent(),
-                "analysis"      : analysisComponent(),
-                "format"        : formatComponent()
-            }
+                "transcription" : transcribeComponent,
+                "analysis"      : analysisComponent,
+                "format"        : formatComponent
+            },
+            num_threads = num_threads # TODO: add to the toml file 
         )
 
     def __call__(self, payloads : List[PayLoadObject]):
