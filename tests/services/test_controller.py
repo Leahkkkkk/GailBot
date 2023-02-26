@@ -18,7 +18,6 @@ NEW_SETTING = "new_setting"
 SOURCES = [(A.LARGE_AUDIO_MP3, A.RESULT_OUTPUT), (A.MEDIUM_AUDIO, A.RESULT_OUTPUT),
            (A.TRANSCRIBED_DIR, A.RESULT_OUTPUT), [A.CONVERSATION_DIR, A.RESULT_OUTPUT]]
 
-
 def test_controller_basic():
     controller = ServiceController(False)
     logger.info(controller.organizer.setting_manager.workspace)
@@ -50,4 +49,5 @@ def test_transcribe():
     controller.create_new_setting(SETTING_NAME, TEST_SETTING)
     logger.info(controller.organizer.get_configured_sources())
     controller.transcribe()
-    
+
+
