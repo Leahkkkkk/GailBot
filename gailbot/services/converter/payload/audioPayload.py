@@ -2,27 +2,27 @@ from .payloadObject import PayLoadObject, PayLoadStatus
 from ...organizer.source import SourceObject
 from typing import List, Dict, Union
 from gailbot.core.utils.general import (
-    get_extension, 
-    get_name, 
-    copy,
-    write_toml, 
-    write_json, 
-    write_txt)
+    get_extension,  
+    copy)
 from gailbot.core.utils.logger import makelogger
 import os 
 
 logger = makelogger("audioPayload")
 
-""" TODO: return the payload as a list """
+""" 
+TODO by Feb 24:
+1. move string to toml file 
+"""
 def load_audio_payload(source: SourceObject) -> Union[bool, List[PayLoadObject]]:
     if not source.setting: 
         return False
-    if not AudioPayload.is_supported(source.source_path()): 
+    if not AudioPayload.is_supported(source.source_path()):
         return False  
-    # TODO: improve the logic of validating the format based on different engine
+    # TODO: improve the logic of validating the format based on different engines
     try:
         return [AudioPayload(source)]
     except Exception as e:
+        logger.error(source.__class__)
         logger.error(e)
         return False
 
@@ -33,7 +33,6 @@ class AudioPayload(PayLoadObject):
     @staticmethod
     def is_supported(file_path: str) -> bool:
         logger.info(file_path)
-        #TODO this should be extracted?
         return get_extension(file_path) in ["mp3", "wav", "opus", "mpeg"] 
     
     def _set_initial_status(self) -> None:
@@ -45,6 +44,6 @@ class AudioPayload(PayLoadObject):
         copy(self.original_source, tgt_path)
         self.data_files = [tgt_path]
         
-    @property
-    def supported_format(self) -> str:
+    @staticmethod
+    def supported_format() -> List[str]:
         return ["mp3", "wav", "opus", "mpeg"]

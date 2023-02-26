@@ -25,6 +25,7 @@ from gailbot.core.utils.general import (
     is_directory
 )
 from gailbot.configs import top_level_config_loader 
+from gailbot.workspace import WorkspaceManager
 from pprint import pprint
 
 TOP_LEVEL = top_level_config_loader()
@@ -108,17 +109,15 @@ class PluginManager:
         suite_name : str
     ) -> PluginSuite:
         if not self.is_suite(suite_name):
-            raise Exception(
-                f"Suite does not exist {suite_name}"
-            )
+            logger.error(f"Suite does not exist {suite_name}")
+            return None
         return self.suites[suite_name]
 
     def _init_workspace(self):
         """
         Init workspace and load plugins from the specified sources.
         """        
-        self.workspace_dir = os.path.join(
-            TOP_LEVEL.root, TOP_LEVEL.workspace.plugin_workspace)
+        self.workspace_dir = WorkspaceManager.plugin_src
         
         self.suites_dir = f"{self.workspace_dir}/suites"
         self.download_dir = f"{self.workspace_dir}/downloads"

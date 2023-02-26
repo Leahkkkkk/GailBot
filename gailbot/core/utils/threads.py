@@ -96,6 +96,7 @@ class ThreadPool(ThreadPoolExecutor):
             if args and kwargs:
                 worker: Future = self.submit(fun, *args, **kwargs)
             elif args:
+                logger.info(*args)
                 worker: Future = self.submit(fun, *args)
             elif kwargs:
                 worker: Future = self.submit(fun, **kwargs)

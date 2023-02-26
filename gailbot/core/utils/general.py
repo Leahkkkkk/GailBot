@@ -14,6 +14,7 @@ import glob
 import json
 import yaml
 import toml
+import csv
 import shutil
 import itertools
 from pathlib import Path
@@ -75,6 +76,10 @@ def num_items_in_dir(
         raise Exception(InvalidPathError)
 
 
+def is_path(source:str):
+    return is_file(source) or is_directory(source)
+
+    
 def paths_in_dir(
     path: str,
     extensions: List[str] = ["*"],
@@ -336,6 +341,22 @@ def write_toml(path : str, data : Dict) -> bool:
     except:
         raise Exception(InvalidPathError)
 
+def write_csv(path: str, data: List[Dict[str, str]]):
+    fields = list(data[0].keys())
+    # Write the data to the CSV file
+    with open(path, mode='w+', newline='') as file:
+        writer = csv.DictWriter(file, fieldnames=fields)
+        writer.writeheader()
+        for row in data:
+            writer.writerow(row)
+
+def read_csv(path:str) -> List[Dict[str, str]]:
+    data = []
+    with open(path, mode='r') as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            data.append(row)
+    return data
 
 def run_cmd(
     cmd : List[str],

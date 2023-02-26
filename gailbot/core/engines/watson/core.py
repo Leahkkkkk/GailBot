@@ -43,10 +43,11 @@ class WatsonCore:
     Implement core functionalities to transcribe an audio file through 
     watson STT engine
     """
-    def __init__(self, apikey : str, region : str): 
+    def __init__(self, apikey : str, region : str, workspace_dir: str): 
         self.apikey = apikey
         self.region = region
         self.media_h = MediaHandler()
+        self.workspace_dir = workspace_dir
 
         # Parse confs
         self._regions = WATSON_CONFIG.regions_uris
@@ -141,17 +142,15 @@ class WatsonCore:
 # PRIVATE
 ##############
     def _init_workspace(self):
-        self.work_space_directory = os.path.join(
-            TOP_CONFIG.root, TOP_CONFIG.workspace.watson_workspace)
         repeat = 1
-        while is_directory(self.work_space_directory):
-            self.work_space_directory += str(repeat)
+        while is_directory(self.workspace_dir):
+            self.workspace_dir += str(repeat)
             repeat += 1
-        logger.info(self.work_space_directory)
+        logger.info(self.workspace_dir)
         try: 
-            if not is_directory(self.work_space_directory):
-                make_dir(self.work_space_directory, overwrite=False)
-            self.engine_workspace_dir = self.work_space_directory
+            if not is_directory(self.workspace_dir):
+                make_dir(self.workspace_dir, overwrite=False)
+            self.engine_workspace_dir = self.workspace_dir
         except Exception as e:
             logger.error(e)
             raise FileExistsError("ERROR: Failed to create directory")
@@ -184,7 +183,7 @@ class WatsonCore:
         try:
             if get_size(audio_path) >= 1:
                 audio_path = self._convert_to_opus(
-                    audio_path, self.work_space_directory)
+                    audio_path, self.workspace_dir)
                 logger.info(f"the compressed auido_path is {audio_path}")
         except: 
             raise ERR.AudioFileError("ERROR: Failed to compile large audio file to opus format")
@@ -238,11 +237,11 @@ class WatsonCore:
             labels = list()
             timestamps = list()
             
-            write_json(os.path.join(self.work_space_directory, f"{audio_name}_data.json"), 
+            write_json(os.path.join(self.workspace_dir, f"{audio_name}_data.json"), 
                         closure["results"]["data"])
-            write_json(os.path.join(self.work_space_directory, f"{audio_name}_results.json"),
+            write_json(os.path.join(self.workspace_dir, f"{audio_name}_results.json"),
                         closure["results"]["data"])
-            write_json(os.path.join(self.work_space_directory, f"{audio_name}_closure.json"), 
+            write_json(os.path.join(self.workspace_dir, f"{audio_name}_closure.json"), 
                        closure)
             # Creating RecognitionResults objects
             for item in closure["results"]["data"]:

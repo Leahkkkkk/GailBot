@@ -51,12 +51,15 @@ class WhisperCore:
     # formats.
     _SUPPORTED_FORMATS = ("wav", "mp3")
 
-    def __init__(self):
+    def __init__(self, workspace_dir: str):
 
         # Create a cache dir in case it is required
-        self.workspace_dir = os.path.join(
-            TOP_CONFIG.root, TOP_CONFIG.workspace.whisper_workspace,
-        )
+        # self.workspace_dir = os.path.join(
+        #     TOP_CONFIG.root, TOP_CONFIG.workspace.whisper_workspace,
+        # )
+        
+        #NOTE: make workspace to be dynamically passed in
+        self.workspace_dir = workspace_dir
         self.cache_dir = os.path.join(self.workspace_dir,"cache")
         self.models_dir = os.path.join(self.cache_dir,"models")
 

@@ -8,10 +8,9 @@ from gailbot.services.converter.payload.payloadObject import PayLoadObject, PayL
 import pytest
 from gailbot.core.utils.general import get_name
 from gailbot.core.utils.logger import makelogger 
+from ..test_data import SETTING_DATA
+TEST_SETTING = SettingObject (SETTING_DATA.PROFILE, "test_setting")
 
-
-TEST_SETTING = SettingObject ({"engine_setting": {"engine":"whisper"},
-                "plugin_setting": ["hilab"]}, "test_setting")
 TEST_TRANSCRIBE_RESULT = { "test": [{"speaker": 1, "endtime": 1, "starttime": "2", "text": "hello"}]}
 TEST_ANALYSIS_RESULT = {"test": [{"speaker-analysis": 1, "endtime-analysis": 1, "starttime-analysis": "2", "text-analysis": "hello"}]}
 TEST_FORMAT_RESULT = {"test" : [{"speaker-format": 1, "endtime": 1, "starttime-format": "2", "text-format": "hello"}]}
@@ -67,7 +66,7 @@ def test_audio_copy_file():
     audio_payload._copy_file()
 
 def test_audio_supported_format():
-    assert(audio_payload.supported_format == ["mp3", "wav", "opus", "mpeg"])
+    assert(AudioPayload.supported_format == ["mp3", "wav", "opus", "mpeg"])
 
 @pytest.mark.parametrize("path_name", [AudioPath.SMALL_AUDIO_MP3, AudioPath.SMALL_AUDIO_WAV, AudioPath.OPUS_AUDIO])
 def test_dir_is_supported(path_name):

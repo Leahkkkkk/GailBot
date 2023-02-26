@@ -1,15 +1,19 @@
 from .payloadObject import PayLoadObject, PayLoadStatus
 from ...organizer.source import SourceObject
-from typing import List, Dict 
-from gailbot.core.utils.general import is_directory, subdirs_in_dir, paths_in_dir
-from enum import Enum
-from gailbot.core.utils.general import paths_in_dir, is_directory, get_name, get_extension, copy, subdirs_in_dir, is_file
+from typing import List, Dict, Union
+from gailbot.core.utils.general import is_directory, is_file, copy, paths_in_dir
 from gailbot.core.utils.logger import makelogger
 import os 
 
+MAKER = "gailbot"
+""" 
+TODO by Feb 24
+1. test function of loading the result file
+"""
 logger = makelogger("transcribed_dir_payload")
 
-def load_transcribed_dir_payload(source: SourceObject):
+# TODO: ignore other file that is not audio files
+def load_transcribed_dir_payload(source: SourceObject) -> Union[bool, PayLoadObject]:
    if not source.setting:
        return False
    if not TranscribedDirPayload.is_supported(source.source_path()):
@@ -22,15 +26,15 @@ def load_transcribed_dir_payload(source: SourceObject):
 
 class TranscribedDirPayload(PayLoadObject):
     def __init__(self, source) -> None:
-        super().__init__(source)
-        
-        # transcribed_result = self.transcription_result.load_result(self.)
-        # self.set_transcription_result(transcribed_result)
+        super().__init__(source) 
+        # find a better way to load result & get the result path
+        if not self.transcription_result.load_result(
+            os.path.join(self.data_files[0], "result/transcription")):
+            self.status = PayLoadStatus.INITIALIZED
     
     @staticmethod
     def is_supported(file_path: str) -> bool:
         if not is_directory(file_path):
-            logger.info("not valid diretcory ")
             return False 
         return is_file(os.path.join(file_path, ".gailbot"))
        
@@ -42,6 +46,6 @@ class TranscribedDirPayload(PayLoadObject):
     def _set_initial_status(self) -> None:
         self.status = PayLoadStatus.TRANSCRIBED
     
-    @property
-    def supported_format(self) -> str:
+    @staticmethod
+    def supported_format() -> str:
         return "transcribed directory"

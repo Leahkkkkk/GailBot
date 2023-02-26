@@ -6,7 +6,6 @@ from gailbot.core.utils.general import (
     copy)
 import os 
 
-
 def load_video_payload(source: SourceObject) -> Union[bool, List(PayLoadObject)]:
     if not source.setting:
         return False
@@ -33,8 +32,8 @@ class VideoPayload(PayLoadObject):
     def _set_initial_status(self) -> None:
         self.status = PayLoadStatus.INITIALIZED
         
-    @property
-    def supported_format(self) -> str:
+    @staticmethod
+    def supported_format() -> str:
         """ TODO: add the format """
         return ["mp4"]
         

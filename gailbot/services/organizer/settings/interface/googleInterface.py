@@ -2,9 +2,22 @@ from pydantic import BaseModel, ValidationError
 from typing import Dict, List, Union
 from .engineSettingInterface import EngineSettingInterface
 
-class GoogleInterface(EngineSettingInterface):
-    format: str
+class Transcribe(BaseModel):
+    """ TODO: add documention
 
+    Args:
+        BaseModel (_type_): _description_
+    """
+    pass 
+
+class Init(BaseModel):
+    pass 
+
+class GoogleInterface(EngineSettingInterface):
+    init: Init = None 
+    transcribe: Transcribe = None 
+    engine: str 
+    
 def load_google_setting(setting: Dict[str, str]) -> Union[bool, EngineSettingInterface]:
     """ given a dictionary, load the dictionary as a google setting 
 
@@ -18,11 +31,10 @@ def load_google_setting(setting: Dict[str, str]) -> Union[bool, EngineSettingInt
                                         as an instance of SettingInterface, 
                                         else return false
     """
-    if not setting.pop("engine", "notfound") == "google": 
+    if  not "engine" in setting.keys() or setting["engine"] != "google": 
         return False
     try:
         setting = GoogleInterface(**setting)
         return setting
     except ValidationError as e:
         return False
-    

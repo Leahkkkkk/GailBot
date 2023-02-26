@@ -4,14 +4,11 @@ from tests.core.engines.data import AudioPath
 from gailbot.core.utils.general import get_name
 import os
 from gailbot.core.utils.logger import makelogger
-
+from ...services.test_data.data import PROFILE, NEW_PROFILE
 logger = makelogger("test_orgranizer")
 
-TEST_SETTING =  {"engine_setting": {"engine":"whisper"},
-                "plugin_setting": ["hilab"]}
-
-UPDATED_SETTING = {"engine_setting": {"engine":"whisper"},
-                "plugin_setting": ["test_module"]}
+TEST_SETTING =  PROFILE
+UPDATED_SETTING = NEW_PROFILE
 
 def test_construct_organizer():
     organizer = Organizer()
@@ -66,10 +63,9 @@ def test_change_setting():
         assert organizer.apply_setting_to_source(get_name(dummy), oldsetting)
         assert organizer.get_source_setting(get_name(dummy)).name == oldsetting    
     
-    organizer.change_setting_name(oldsetting, newsetting)
+    organizer.rename_setting(oldsetting, newsetting)
     for dummy in dummysrc:
         assert organizer.get_source_setting(get_name(dummy)).name == newsetting
-
 
 
 def test_create_and_save_setting():
@@ -85,7 +81,6 @@ def test_create_and_save_setting():
         organizer.remove_setting(name)
         assert not organizer.is_setting(name)
         assert not is_file(organizer.setting_manager.get_setting_path(name))
-
 
 def test_update_setting():
     organizer = Organizer()
@@ -105,3 +100,19 @@ def test_remove_setting():
         assert is_file(path)
         organizer.remove_setting(name)
         assert not is_file(path)
+        
+    testname = "setting_to_delete"
+    organizer.create_new_setting(testname, TEST_SETTING)
+    sources = [
+        AudioPath.MEDIUM_AUDIO, AudioPath.SMALL_AUDIO_MP3, AudioPath.LARGE_AUDIO_MP3, AudioPath.CONVERSATION_DIR]
+    for source in sources:
+        organizer.add_source(source, AudioPath.RESULT_OUTPUT)
+        assert organizer.get_source_setting(source).name == "default"
+    organizer.apply_setting_to_sources(sources, testname)
+    for source in sources:
+        assert organizer.get_source_setting(source).name == testname
+    organizer.remove_setting(testname)
+    for source in sources:
+        assert organizer.get_source_setting(source).name == "default"
+        
+        

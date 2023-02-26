@@ -2,10 +2,16 @@ from pydantic import BaseModel, ValidationError
 from typing import Dict, List , Union
 from .engineSettingInterface import EngineSettingInterface
 
-class WhisperInterface(EngineSettingInterface):
-    detect_speakers     : bool = False
+class Init(BaseModel): 
+    pass
+class TranscribeSetting(BaseModel):
     language            : str  = None
+    detect_speakers     : bool = False
     
+class WhisperInterface(EngineSettingInterface):
+    transcribe : TranscribeSetting
+    init: Init = None 
+    engine: str 
    
 def load_whisper_setting(setting: Dict[str, str]) -> Union[bool, EngineSettingInterface]:
     """ given a dictionary, load the dictionary as a whisper setting 
@@ -20,7 +26,7 @@ def load_whisper_setting(setting: Dict[str, str]) -> Union[bool, EngineSettingIn
                                         as an instance of SettingInterface, 
                                         else return false
     """
-    if not setting.pop("engine", "notfound") != "whisper" : 
+    if  not "engine" in setting.keys() or setting["engine"] != "whisper": 
         return False
     try:
         setting = WhisperInterface(**setting)

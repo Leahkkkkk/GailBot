@@ -24,6 +24,7 @@ class ConfigPath(DataclassFromDict):
     config: str = field_from_dict()
     root:str = field_from_dict()
     paths_config: str = field_from_dict()
+    services: str = field_from_dict()
 
 
 path_dict = toml.load(os.path.join(CONFIG_ROOT, "paths.toml"))

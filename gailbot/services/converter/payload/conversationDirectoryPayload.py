@@ -6,66 +6,54 @@ from .audioPayload import load_audio_payload, AudioPayload
 import os 
 from typing import List, Dict, Union
 
-""" NOTE: for directory , if we load it as a list of other payloads, we 
-          will only needs a load_directory_payload function, and no 
-          directory payload class 
+""" TODO:
+1. test directory with different content
+2. test directory with large file
+3. change the load directory only loading audio file  
 """
 logger = makelogger("conversation_payload")
 
 def load_conversation_dir_payload(source: SourceObject) -> Union [bool, List[PayLoadObject]]:
     original_source = source.source_path()
-    output = source.output
-    setting = source.setting
-    payloads = []
-    
-    if not is_directory(original_source):
-        logger.error("not a directory")
+    if not is_directory(original_source) or not source.setting:
         return False
-    
     if ConversationDirectoryPayload.is_supported(original_source):
-        logger.error("not a conversation directory")
         return [ConversationDirectoryPayload(source)]
    
-    sub_paths = paths_in_dir(original_source)
-    
-    for path in sub_paths:
-        if is_directory(path):
-            new_source = SourceObject(path, get_name(path), output)
-            new_source.apply_setting(setting)
-            new_payloads = load_conversation_dir_payload(new_source)
-            if new_payloads:
-                payloads.extend(new_payloads)
+    # NOTE: currently not support loading directory inside directory
+    # sub_paths = paths_in_dir(original_source)
+    # output = source.output
+    # setting = source.setting
+    # payloads = []
+    # for path in sub_paths:
+    #     if is_directory(path):
+    #         new_source = SourceObject(path, get_name(path), output)
+    #         new_source.apply_setting(setting)
+    #         new_payloads = load_conversation_dir_payload(new_source)
+    #         if new_payloads:
+    #             payloads.extend(new_payloads)
                 
-    return payloads
+    return False
         
-        
-""" NOTE: if the above loader works for directory source, this class can be discarded """
 
-""" 
-directory with only files 
-
-directory with subdirectories 
-"""
 class ConversationDirectoryPayload(PayLoadObject):
     """ store a conversation directory with only audio files """
     def __init__(self, source) -> None:
         super().__init__(source)
     
-    @property 
-    def supported_format(self) -> str:
+    @staticmethod 
+    def supported_format() -> str:
         return "directory"
         
     @staticmethod
     def is_supported(file_path: str) -> bool:
         """ NOTE: currently only support audio file  """
+        logger.info(file_path)
         if not is_directory(file_path):
             return False 
-        sub_paths = paths_in_dir(file_path)
-        for path in sub_paths:
-            if not AudioPayload.is_supported(path):
-                logger.warn("the directory contains files that cannot be\
-                            processed by gailbot")
-                return False
+        sub_paths = paths_in_dir(file_path, AudioPayload.supported_format())
+        if len(sub_paths) == 0:
+            return False
         return True
      
     def _copy_file(self) -> None:

@@ -138,12 +138,12 @@ class PluginSuite:
         """
         result = self.pipeline(
             base_input=base_input, 
-            additional_component_kwargs={
+            additional_component_kwargs= {
                 "methods" : methods
             }
         )
 
-        return result# TODO: Determine exact type of result and return the correct thing/
+        return result
 
     def is_plugin(self, plugin_name : str) -> bool:
         """ given a name , return true if the plugin is in the plugin suite """

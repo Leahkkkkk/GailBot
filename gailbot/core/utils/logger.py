@@ -3,12 +3,11 @@ import shutil
 import os 
 from datetime import date
 from .general import make_dir, is_directory
-from gailbot.configs import log_config_loader, top_level_config_loader
+from gailbot.configs import log_config_loader, top_level_config_loader, path_config_loader
 
-TOP_LEVEL = top_level_config_loader()
-
+log_directory = path_config_loader().gailbot_data.logfiles
 LOG_CONFIG  = log_config_loader()
-log_directory = os.path.join(TOP_LEVEL.root, TOP_LEVEL.workspace.log_files)
+
 if not is_directory(log_directory):
     os.makedirs(log_directory, exist_ok=True)
 

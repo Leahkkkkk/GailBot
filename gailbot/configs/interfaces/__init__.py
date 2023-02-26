@@ -13,6 +13,7 @@ from .core.util.logger import load_log_config
 from .config.config import load_top_config
 from .config.path_config import load_path_config
 from .config.path_config import TemporaryFolder, OutputFolder
+from .services import load_file_extensions, load_conversation_payload, load_transdir_payload, load_result, load_interfaces, load_default_settings
 import os
 
 def watson_config_loader(): return load_watson_config(
@@ -46,3 +47,7 @@ def path_config_loader():
         os.path.join(CONFIG_ROOT, PATH.paths_config),
         os.path.join(CONFIG_ROOT, PATH.root)
     )
+
+def file_extensions_loader():
+    return load_file_extensions(os.path.join(CONFIG_ROOT, PATH.services))
+    

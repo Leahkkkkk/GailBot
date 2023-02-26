@@ -121,8 +121,7 @@ class Pipeline:
                 
                 # form the arguments that will be passed to the executable
                 if base_sentinel: 
-                    """ TODO: check if this is the correct way to pass base input """
-                    args = base_input + [dep_outputs] 
+                    args = base_input 
                     base_sentinel = False 
                 else:
                     args = [dep_outputs]          

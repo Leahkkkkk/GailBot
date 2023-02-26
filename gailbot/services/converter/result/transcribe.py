@@ -1,7 +1,8 @@
 
-from typing import TypedDict, List, Dict
+from typing import TypedDict, List, Dict, Union
 from gailbot.core.utils.general import (
-    write_toml, 
+    write_csv, 
+    read_csv,
     write_json, 
     get_name, 
     make_dir,
@@ -18,6 +19,12 @@ from .resultInterface import ResultInterface
 
 logger = makelogger("transcribe_result")
 
+""" TODO by FEB 24:
+1. test the functions involve in I/O 
+
+TODO: 
+use .pickle to store temporary file to save memory
+"""
 class UttDict(TypedDict):
     speaker: str 
     start_time: str 
@@ -35,7 +42,7 @@ class UttResult(ResultInterface):
     def save_data(self, data: Dict[str, List[UttDict]]) -> bool:
         try: 
             for name, result in data.items():
-                write_json(os.path.join(self.workspace, f"{name}.toml"), result)
+                write_json(os.path.join(self.workspace, f"{name}.json"), result)
             self.saved_to_disk = True
             return True
         except Exception as e:
@@ -45,32 +52,52 @@ class UttResult(ResultInterface):
     def output(self, path) -> None:
         try:
             if self.saved_to_disk:
-                copy(self.workspace, path)
+                data = self.get_data()
             else: 
-                write_json(path, self.data)
+                data = self.data 
+                
+            for name, result in data.items():
+                write_csv(os.path.join(path, name + ".csv"), result)
             return True
         except Exception as e:
             logger.error(e)
-        return True
+        return False
     
     def get_data(self) -> Dict[str, List[UttDict]]:
         if self.saved_to_disk:
-            return self._read_from_dir(self.workspace)
+            files = paths_in_dir(self.workspace, ["json"])
+            res = dict()
+            for file in files: 
+                res[get_name(file)] = read_json(file)
+            return res 
         else:
             return self.data 
     
-    def load_result(self, path: str) -> Dict[str, List[UttDict]]:
+    def load_result(self, path: str) -> bool:
         if is_file(path):
             return self._read_from_file(path)
-        else:
+        elif is_directory(path):
             return self._read_from_dir(path)
-            
+        else: 
+            return False
+    
     def _read_from_dir(self, path) -> Dict[str, List[UttDict]]:
-        files = paths_in_dir(path, ["toml"])
-        res = dict()
-        for file in files: 
-            res[get_name(file)] = read_json(file)
-        return res 
+        try:
+            files = paths_in_dir(path, ["csv"])
+            res = dict()
+            for file in files:
+                res[get_name(file)] = read_csv(file)
+            if res:
+                assert self.save_data(res)
+            return True 
+        except Exception as e:
+            logger.error(e)
+            return False
         
     def _read_from_file(self, path: str) -> Dict[str, List[UttDict]]:
-        return {get_name(path): read_json(path)}
+        try:
+            res = {get_name(path): read_csv(path)}
+            assert self.save_data(res)
+        except Exception as e:
+            logger.error(e)
+            return False

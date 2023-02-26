@@ -29,7 +29,8 @@ class Watson(Engine):
     def __init__(
         self,
         apikey : str,
-        region : str
+        region : str, 
+        workspace_dr: str
     ):
         """ constructor for IBM Watson STT engine
 
@@ -40,7 +41,7 @@ class Watson(Engine):
         self.apikey = apikey
         self.region = region
         # NOTE: Exception raised if not connected to the service.
-        self.core = WatsonCore(apikey, region)
+        self.core = WatsonCore(apikey, region, workspace_dr)
         self.lm = WatsonLMInterface(apikey ,region)
         self.am = WatsonAMInterface(apikey, region)
         self.recognize_callbacks = CustomWatsonCallbacks()

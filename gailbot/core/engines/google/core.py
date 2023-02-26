@@ -45,7 +45,8 @@ class GoogleCore:
         "amr": speech.RecognitionConfig.AudioEncoding.AMR
     }
     
-    def __init__(self, google_key: Dict[str, str] = None ) -> None:
+    def __init__(self, workspace_dir: str, google_key: Dict[str, str] = None ) -> None:  
+        self.workspace_dir = workspace_dir
         self._init_status()
         self._init_workspace()
         try:
@@ -104,7 +105,7 @@ class GoogleCore:
         if length >= GOOGLE_CONFIG.maximum_duration:
             try:
                 res = self._transcribe_large_file(
-                    audio_path, self.workspace_directory)
+                    audio_path, self.workspace_dir)
                 logger.info(res)
                 return res
             except Exception as e:
@@ -191,7 +192,7 @@ class GoogleCore:
             "request_id": response.request_id,
         }
         
-        write_json(os.path.join(self.workspace_directory, "results.json"), status_result)
+        write_json(os.path.join(self.workspace_dir, "results.json"), status_result)
         """ Prepare Utterance """
         utterances = list()
         for result in results:
@@ -288,17 +289,14 @@ class GoogleCore:
         """ 
         initialize the work space
         """ 
-        self.workspace_directory = os.path.join(
-            TOP_CONFIG.root, TOP_CONFIG.workspace.google_workspace)
-        
         repeat = 1 
-        while is_directory(self.workspace_directory):
-            self.workspace_directory += str(repeat)
+        while is_directory(self.workspace_dir):
+            self.workspace_dir += str(repeat)
        
         try:
-            if not is_directory(self.workspace_directory):
-                make_dir(self.workspace_directory, overwrite=False)
-            assert is_directory(self.workspace_directory)
+            if not is_directory(self.workspace_dir):
+                make_dir(self.workspace_dir, overwrite=False)
+            assert is_directory(self.workspace_dir)
         except Exception as e:
             logger.error(e)
             raise FileExistsError("ERROR: failed to create directory")

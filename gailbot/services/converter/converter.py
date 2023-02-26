@@ -10,30 +10,35 @@ from ..organizer.source import SourceObject
 logger = makelogger("congerter")
 class Converter: 
     payloads_dict: Dict[str, PayLoadObject] = dict() 
-    
     loaders = [
-        load_conversation_dir_payload, 
         load_audio_payload, 
-        load_transcribed_dir_payload] 
+        load_transcribed_dir_payload,
+        load_conversation_dir_payload]
     
     """ mapping payload name to payloadObject """
     def load_source(self, source: SourceObject) -> bool:
         for loader in self.loaders:
             try: 
                 payloads: List [PayLoadObject] = loader(source)
-                if isinstance(payloads, PayLoadObject):
+                logger.info(payloads)
+                if isinstance(payloads, list):
                     self.payloads_dict[source.name] = payloads
                     return True 
             except Exception as e:
                 logger.error(e) 
-        raise False
+        return False
 
     
     def __call__(self, sources: List[SourceObject]) -> Union[bool, List[PayLoadObject]]:
+        logger.info("converter is called")
+        logger.info(sources)
         try:
             for source in sources:
+                logger.info(source)
                 self.load_source(source)
-            return list(self.payloads_dict.values())
+            logger.info(self.payloads_dict)
+            return sum(list(self.payloads_dict.values()), [])
+        
         except Exception as e: 
             logger.error(e)
             return False

@@ -14,9 +14,9 @@ class Google(Engine):
         Engine 
     """
     ENGINE_NAME = "Google"
-    def __init__(self, api_key: Dict = None, *args, **kwargs):
+    def __init__(self, workspace_dir: str = None,  api_key: Dict = None, *args, **kwargs):
         self.apikey = api_key
-        self.core = GoogleCore(self.apikey)
+        self.core = GoogleCore(workspace_dir, self.apikey)
         self.transcribe_success = False
     
     def __repr__(self):

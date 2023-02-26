@@ -1,5 +1,5 @@
 from typing import Dict, Union, List
-from .setting_object import SettingObject
+from .settingObject import SettingObject
 import os
 from gailbot.core.utils.general import (
     is_file, 
@@ -11,24 +11,29 @@ from gailbot.core.utils.general import (
     filepaths_in_dir)
 from gailbot.core.utils.logger import makelogger
 from gailbot.configs import path_config_loader
+from gailbot.workspace import WorkspaceManager
 PATH_CONFIG = path_config_loader()
 
 logger = makelogger("setting_manager")
 
 class ExistingSettingName(Exception):
+    def __init__(self, name: str, *args: object) -> None:
+        super().__init__(*args)
+        self.name = name
     def __str__(self) -> str:
-        return "the setting name already exist"
+        return f"the setting name {self.name} already exist"
 
 class SettingManager():
     """
     Manages all available settings 
     """
     settings : Dict[str , SettingObject] = dict()
-    workspace = PATH_CONFIG.gailbot_data.setting_src 
+    workspace = WorkspaceManager.setting_src
     
     def __init__(self, load_exist: bool = True) -> None:
         if not is_directory(self.workspace):
             make_dir(self.workspace)
+            
         if load_exist: 
             setting_files = filepaths_in_dir(self.workspace, ["toml"])
             for file in setting_files:
@@ -95,9 +100,11 @@ class SettingManager():
                                  and the overwrite option is set to false 
         """
         if self.is_setting(name) and (not overwrite): 
-            raise ExistingSettingName(f"Setting name {name} already exist")
+            raise ExistingSettingName(name)
         try:
-            self.settings[name] =  SettingObject(setting, name)
+            setting: SettingObject = SettingObject(setting, name)
+            assert setting.engine_setting
+            self.settings[name] = setting
             return True
         except Exception as e:
             logger.error(e)
@@ -128,7 +135,12 @@ class SettingManager():
                     cannot be validated 
         """
         if self.is_setting(name):
-            return self.settings[name].update_setting(src)
+            try:
+                assert self.settings[name].update_setting(src)
+                assert self.save_setting(name)
+                return True
+            except Exception as e:
+                logger.error(e)
         else:
             return False
 
@@ -173,6 +185,8 @@ class SettingManager():
         """ 
         try: 
             out_path = self.get_setting_path(name)
+            if is_file(out_path):
+                delete(out_path)
             self.settings[name].save_setting(out_path) 
             return out_path
         except Exception as e:
@@ -216,3 +230,18 @@ class SettingManager():
             an existing setting file
         """
         return os.path.join(self.workspace, name + ".toml")
+    
+    def delete_all_settings(self) -> bool:
+        """ delete all settings 
+
+        Returns:
+            bool: True if the deletion is successful, false if not 
+        """
+        try:
+            for setting in self.get_setting_names():
+                if setting != "default":
+                    self.remove_setting(setting)
+            return True
+        except Exception as e:
+            logger.error(e)
+            return False 

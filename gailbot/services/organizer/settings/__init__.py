@@ -1,2 +1,2 @@
-from .setting_manager import SettingManager
-from.setting_object import SettingObject
+from .settingManager import SettingManager
+from.settingObject import SettingObject
