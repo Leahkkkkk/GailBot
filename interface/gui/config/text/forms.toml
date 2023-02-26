@@ -29,52 +29,6 @@ HiLabSuite = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
 "FTO (Floor Transfer offset)Transcription Mode bool" = "ON"
 "Syllable Rate mode bool"                            = "ON"
 
-["profile form"."RequiredSetting"."Output Format".CorpusSettings]
-"Corpus name"        = "enter corpus name"
-"Corpus location"    = "enter corpus location"
-"Corpus room layout" = "enter corous room layout"
-"Corpus situation"   = "enter situation"
-
-["profile form"."RequiredSetting"."Output Format"]
-"FileFormat" = [".CHAT", ".TXT", ".RTF"]
-"Language"   = ["English", "French", "Spanish", "German", "Chinese(Madarin)", "Chinese(Cantonese)"]
-
-
-["profile form"."RequiredSetting".Engine.IBM."0. basic setting"]
-"1. username" = " "
-"2. password" = "******"
-
-["profile form"."RequiredSetting".Engine.IBM."1. language model setting"]
-"1. language model combo"        = [ "IBM language", "English", "Spanish",]
-"2. custom language model combo" = [ "HRI lab", "None", "Air Force Study",]
-
-["profile form"."RequiredSetting".Engine.IBM."2. Acoustic Model Setting"]
-"1. acoustic model setting combo"           = [ "acoustic1", "acoustic2", "acoustic3",]
-"2. acoustic model setting(optional) combo" = [ "1", "2", "3",]
-
-["profile form"."RequiredSetting".Engine.IBM."3. advanced setting"]
-"1. Advanced Setting Option 1 combo" = [ "advanced 1", "advanced 2", "advanced 3",]
-"2. plugin combo"                    = [ "plugin 1", "plugin 2",]
-
-["profile form"."RequiredSetting".Engine.IBM."4. IBM specialised setting"]
-"IBM setting option combo" = [ "setting option 1", "setting option 2", "setting option 3",]
-
-["profile form"."RequiredSetting".Engine.CMU."0. basic setting"]
-"1. username" = " "
-"2. password" = "******"
-
-["profile form"."RequiredSetting".Engine.CMU."1. language model setting"]
-"1. language model combo"        = [ "CMU language", "English", "Spanish",]
-"2. custom language model combo" = [ "CMU custom", "None", "Air Force Study",]
-
-["profile form"."RequiredSetting".Engine.CMU."2. Acoustic Model Setting"]
-"1. acoustic model setting combo"           = [ "acoustic1", "acoustic2", "acoustic3",]
-"2. acoustic model setting(optional) combo" = [ "1", "2", "3",]
-"3. plugin combo"                           = [ "plugin 1", "plugin 2",]
-
-["profile form"."RequiredSetting".Engine.CMU."3. CMU specialised setting"]
-"CMU setting option combo" = [ "setting option 1", "setting option 2", "setting option 3",]
-
 ["system setting form"."View Setting"]
 "Font Size combo"  = [ "medium", "small", "large"]
 "Color Mode combo" = [ "light mode", "dark mode"]
@@ -96,6 +50,26 @@ postTranscribe   = "PostTranscribe"
 reuquiredSetting = "RequiredSetting"
 plugin           = "Plugins"
 
+["profile form"."RequiredSetting"."Output Format".CorpusSettings]
+"Corpus name"        = "enter corpus name"
+"Corpus location"    = "enter corpus location"
+"Corpus room layout" = "enter corous room layout"
+"Corpus situation"   = "enter situation"
 
+["profile form"."RequiredSetting"."Output Format"]
+"FileFormat" = [".CHAT", ".TXT", ".RTF"]
+"Language"   = ["English", "French", "Spanish", "German", "Chinese(Madarin)", "Chinese(Cantonese)"]
 
+["profile form"."RequiredSetting".Engine.Whisper."0. basic setting"]
+"1. language combo" = ["English", "French", "Spanish", "German", "Chinese", "Japanese"]
+"2. detect speaker bool" = "OFF"
 
+["profile form"."RequiredSetting".Engine.Google."0. basic setting"]
+"1. audio format combo" = ["mp3", "wav"]
+
+["profile form"."RequiredSetting".Engine.Watson."0. basic setting"]
+"1. api key"        =  "enter your api key"
+"2. region" = "enter the resgion"
+"3. base model" = "enter the base model"
+"4. language customization id"   = "enter language customization id"
+"5. acoustic customization id" = "enter acoustic customization id"

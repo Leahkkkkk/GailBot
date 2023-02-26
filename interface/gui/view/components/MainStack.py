@@ -130,8 +130,8 @@ class MainStack(QStackedWidget):
         self.TranscribeSuccessPage = TranscribeSuccessPage.TranscribeSuccessPage(
             self.fileSignal)
         initSubPageBackground(self.TranscribeSuccessPage)
-        self.RecordPage = RecordPage.RecordPage()
-        initSubPageBackground(self.RecordPage)
+        # self.RecordPage = RecordPage.RecordPage()
+        # initSubPageBackground(self.RecordPage)
         self.SystemSettingPage = SystemSettingPage.SystemSettingPage()
         initPrimaryColorBackground(self.SystemSettingPage)
         self.MainSetting = QTabWidget()
@@ -145,7 +145,7 @@ class MainStack(QStackedWidget):
         self.addWidget(self.FileUploadPage)
         self.addWidget(self.TranscribeProgressPage)
         self.addWidget(self.TranscribeSuccessPage)
-        self.addWidget(self.RecordPage)
+        # self.addWidget(self.RecordPage)
         self.addWidget(self.MainSetting)
         self.setCurrentWidget(self.WelcomePage)
     
@@ -162,11 +162,11 @@ class MainStack(QStackedWidget):
         self.ProfileSettingPage.cancelBtn.clicked.connect(self.gotoFileUploadPage)
         self.FileUploadPage.gotoMainBtn.clicked.connect(lambda:
                 self.setCurrentWidget(self.WelcomePage))
-        self.FileUploadPage.recordBtn.clicked.connect(lambda:
-                self.setCurrentWidget(self.RecordPage))
+        # self.FileUploadPage.recordBtn.clicked.connect(lambda:
+        #         self.setCurrentWidget(self.RecordPage))
         self.FileUploadPage.transcribeBtn.clicked.connect(lambda:
             self.setCurrentWidget(self.ConfirmTranscribePage))
-        self.RecordPage.cancelBtn.clicked.connect(self.gotoFileUploadPage)
+        # self.RecordPage.cancelBtn.clicked.connect(self.gotoFileUploadPage)
         self.ConfirmTranscribePage.cancelBtn.clicked.connect(self.gotoFileUploadPage)
         self.ProfileSettingPage.saveBtn.clicked.connect(self.gotoFileUploadPage)
         self.SystemSettingPage.cancelBtn.clicked.connect(self.gotoFileUploadPage)

@@ -87,8 +87,8 @@ class FileUploadPage(QWidget):
         self.label = Label.Label(Text.header, FS.HEADER2, FontFamily.MAIN)
         self.gotoMainBtn = Button.iconBtn(
             Asset.arrowImg, Text.returnMainText) 
-        self.recordBtn = Button.ColoredBtn(
-            Text.recordBtnText, Color.PRIMARY_BUTTON, FontSize.BTN)
+        # self.recordBtn = Button.ColoredBtn(
+        #     Text.recordBtnText, Color.PRIMARY_BUTTON, FontSize.BTN)
         self.uploadFileBtn = Button.ColoredBtn(
             Text.uploadBtnText, Color.PRIMARY_BUTTON, FontSize.BTN)
         self.transcribeBtn = Button.ColoredBtn(
@@ -133,8 +133,8 @@ class FileUploadPage(QWidget):
         self.containerLayout = QHBoxLayout()
         self.containerLayout.setSpacing(Dimension.LARGE_SPACING)
         self.addFileBtnContainer.setLayout(self.containerLayout)
-        self.containerLayout.addWidget(self.recordBtn,
-                                       alignment = center)
+        # self.containerLayout.addWidget(self.recordBtn,
+        #                                alignment = center)
         
         self.containerLayout.addWidget(self.uploadFileBtn,
                                       alignment = center)

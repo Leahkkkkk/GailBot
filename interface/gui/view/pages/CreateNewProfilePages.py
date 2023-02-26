@@ -60,7 +60,7 @@ class ProfileName (TabPage):
         """ return the user's input of profile name """
         try:
             self.logger.info("")
-            return self.profileName.value()
+            return self.profileName.value
         except:
             self.logger.error("An error occurred when reading the profile name")
             WarnBox("An error occurred when reading the profile name")
@@ -97,7 +97,7 @@ class ProfileName (TabPage):
     
     def _confirmHandler(self):
         """ event handler for confirm button  """
-        if self.profileName.value() == "":
+        if self.profileName.value == "":
             WarnBox(Text.emptyNameMsg)
         else:
             self.signals.goToNextPage.emit()
@@ -127,6 +127,7 @@ class EngineSetting(TabPage):
         self.confirmBtn = ColoredBtn(Text.cofirmBtn, Color.SECONDARY_BUTTON)
         self.confirmBtn.clicked.connect(self._confirmHandler)
         self.verticallayout.addWidget(self.confirmBtn, alignment=bottomRight)
+        self.confirmBtn.clicked.connect(lambda: self.signals.close.emit())
     
     def _confirmHandler(self):
         """" handles if user should be able to go to the next page in popup """

@@ -67,10 +67,10 @@ class CreateNewSetting(QDialog):
             Text.WindowTitle,
             {
                 Text.TabHeader1: self.addProfileName,
-                Text.TabHeader3: self.engineSetting,
-                Text.TabHeader4: self.outPutFormSetting,
-                Text.TabHeader5: self.postTranscribeSetting,
-                Text.TabHeader6: self.pluginSetting
+                Text.TabHeader3: self.engineSetting
+                # Text.TabHeader4: self.outPutFormSetting,
+                # Text.TabHeader5: self.postTranscribeSetting,
+                # Text.TabHeader6: self.pluginSetting
             },
             QSize(Dimension.LARGEDIALOGWIDTH, Dimension.LARGEDIALOGHEIGHT)
         )

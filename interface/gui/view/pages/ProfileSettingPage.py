@@ -81,8 +81,8 @@ class ProfileSettingPage(QWidget):
             Text.newProfileBtn,Color.PRIMARY_BUTTON)
         self.requiredSetBtn = Button.BorderBtn(
             Text.reuquiredSetBtn, Color.GREYDARK, FS.BTN, 0, SS.onlyTopBorder)
-        self.postSetBtn = Button.BorderBtn(
-            Text.postSetBtn,Color.GREYDARK, FS.BTN, 0,SS.noSideBorder)
+        # self.postSetBtn = Button.BorderBtn(
+        #     Text.postSetBtn,Color.GREYDARK, FS.BTN, 0,SS.noSideBorder)
         self.GuideLink = Label.Label(Links.guideLinkSideBar, FS.LINK, link=True)
         self.newPluginBtn = Button.ColoredBtn(
             Text.newPluginBtn, Color.PRIMARY_BUTTON)
@@ -92,13 +92,13 @@ class ProfileSettingPage(QWidget):
         self.copyRightLabel = Label.Label(About.copyRight, FS.SMALL)
         self.settingStack = QStackedWidget(self)
         self.RequiredSetPage = RequiredSettingPage.RequiredSettingPage()
-        self.PostSetPage = PostSettingPage.PostSettingPage()   
+        # self.PostSetPage = PostSettingPage.PostSettingPage()   
         self.PluginPage = PluginPage.PluginPage()
         self.selectSettings.setCurrentIndex(0)     
         self.placeHolder = QWidget()
         self.settingStack.addWidget(self.placeHolder)
         self.settingStack.addWidget(self.RequiredSetPage)
-        self.settingStack.addWidget(self.PostSetPage)
+        # self.settingStack.addWidget(self.PostSetPage)
         self.settingStack.addWidget(self.PluginPage)
         self.settingStack.setCurrentWidget(self.RequiredSetPage)
     
@@ -116,7 +116,7 @@ class ProfileSettingPage(QWidget):
         """ adds widgets to layout """
         self.sidebarTopLayout.addWidget(self.selectSettings)
         self.sidebarTopLayout.addWidget(self.requiredSetBtn)
-        self.sidebarTopLayout.addWidget(self.postSetBtn)
+        # self.sidebarTopLayout.addWidget(self.postSetBtn)
         self.sidebarTopLayout.addWidget(self.pluginBtn)
         self.sidebarTopLayout.setSpacing(0)
         self.sideBar.addWidget(self.topSelectionContainer)
@@ -134,7 +134,7 @@ class ProfileSettingPage(QWidget):
    
     def _connectSignal(self):
         """ connects signals upon button clicks """
-        self.postSetBtn.clicked.connect(self._activatePostSet)
+        # self.postSetBtn.clicked.connect(self._activatePostSet)
         self.requiredSetBtn.clicked.connect(self._activeRequiredSet)
         self.pluginBtn.clicked.connect(self._activatePlugin)
         self.selectSettings.currentTextChanged.connect(self._getProfile)
@@ -162,7 +162,7 @@ class ProfileSettingPage(QWidget):
     
     def _setBtnDefault(self):
         """ private function that sets the default style of the buttons on the page """
-        self.postSetBtn.setDefaultStyle()
+        # self.postSetBtn.setDefaultStyle()
         self.requiredSetBtn.setDefaultStyle()
         self.pluginBtn.setDefaultStyle()
     
@@ -174,7 +174,7 @@ class ProfileSettingPage(QWidget):
     def _initDimension(self):
         """ initializes the dimensions of the buttons on the page """
         self.requiredSetBtn.setFixedWidth(Dimension.LBTNWIDTH)
-        self.postSetBtn.setFixedWidth(Dimension.LBTNWIDTH)
+        # self.postSetBtn.setFixedWidth(Dimension.LBTNWIDTH)
         self.pluginBtn.setFixedWidth(Dimension.LBTNWIDTH)
    
     def _getProfile(self, profileName:str):
@@ -197,7 +197,7 @@ class ProfileSettingPage(QWidget):
             self.logger.info(profile)
             key, data = profile 
             self.selectSettings.setCurrentText(key)
-            self.PostSetPage.setValue(data["PostTranscribe"])
+            # self.PostSetPage.setValue(data["PostTranscribe"])
             self.RequiredSetPage.setValue(data["RequiredSetting"])
             self.PluginPage.setValue(data["Plugins"])
         except:
@@ -230,7 +230,7 @@ class ProfileSettingPage(QWidget):
         try:
             newSetting = dict()
             newSetting["RequiredSetting"] = self.RequiredSetPage.getValue()
-            newSetting["PostTranscribe"]  = self.PostSetPage.getValue()
+            # newSetting["PostTranscribe"]  = self.PostSetPage.getValue()
             newSetting["Plugins"] = self.PluginPage.getValue()
             self.logger.info(newSetting)
             profileKey = self.selectSettings.currentText()

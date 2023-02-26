@@ -64,8 +64,9 @@ class RequiredSettingForm(QWidget):
         """ add widget to layout """
         self.verticalLayout.addWidget(
             self.engineFormView, alignment=Qt.AlignmentFlag.AlignTop)
-        self.verticalLayout.addWidget(
-            self.outPutFormView, stretch = 2, alignment=Qt.AlignmentFlag.AlignTop)  
+        #TODO: DELETE Eventually 
+        # self.verticalLayout.addWidget(
+        #     self.outPutFormView, stretch = 2, alignment=Qt.AlignmentFlag.AlignTop)  
     
     def setValue(self, data: Dict [str, dict]):
         """ a public function to set the form value
