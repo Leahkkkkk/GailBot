@@ -101,11 +101,23 @@ class PayLoadObject(ABC):
     @property 
     def formatted(self) -> bool:
         return self.status == PayLoadStatus.FORMATTED
+    
+    def set_transcribed(self):
+        self.status = PayLoadStatus.TRANSCRIBED
+    
+    def set_analyzed(self):
+        self.status = PayLoadStatus.ANALYZED
+        
+    def set_formatted(self):
+        self.status = PayLoadStatus.FORMATTED
    
     def get_engine(self) -> str:
         return self.setting.engine_setting.engine
-    
-    def get_engine_setting(self) -> Dict[str, str]:
+   
+    def get_engine_init_setting(self) -> Dict[str, str]:
+        return self.setting.engine_setting.get_init_kwargs()
+     
+    def get_engine_transcribe_setting(self) -> Dict[str, str]:
         return self.setting.engine_setting.to_kwargs_dict()
     
     def get_plugin_setting(self) -> List[str]:

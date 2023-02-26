@@ -32,7 +32,7 @@ class GBPluginMethods(Methods):
         self.payload: PayLoadObject = payload
         audio_files = dict()
         for audio in self.payload.data_files:
-            audio_files[get_name] = audio 
+            audio_files[get_name(audio)] = audio 
         self.audio_files = audio_files
         self.work_path = self.payload.workspace.analysis_ws
         if not is_directory(self.work_path):

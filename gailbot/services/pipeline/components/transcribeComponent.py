@@ -21,25 +21,25 @@ class TranscribeComponent(Component):
     
     def __call__(self, dependency_output: Dict[str, str]) -> Any:
         payloads : List[PayLoadObject] = dependency_output["base"]
-
         process_start_time = time.time()
         for payload in payloads:
             # Parse payload
-
+            if not payload.transcribed:
             # Transcribe
-            start_time = time.time()
-            utt_map = self._transcribe_payload(payload)
-            end_time = time.time()
+                start_time = time.time()
+                utt_map = self._transcribe_payload(payload)
+                end_time = time.time()
 
-            stats = ProcessingStats(
-                start_time=start_time,
-                end_time = end_time,
-                elapsed_time_sec= end_time - start_time
-            )
+                stats = ProcessingStats(
+                    start_time=start_time,
+                    end_time = end_time,
+                    elapsed_time_sec= end_time - start_time
+                )
 
-            # Store results
-            payload.set_transcription_result(utt_map)
-            payload.set_transcription_process_stats(stats)
+                # Store results
+                payload.set_transcription_result(utt_map)
+                payload.set_transcription_process_stats(stats)
+                payload.set_transcribed()
             
         return ComponentResult(
             state=ComponentState.SUCCESS,
@@ -50,14 +50,14 @@ class TranscribeComponent(Component):
       
     def _transcribe_payload(self, payload : PayLoadObject) -> None:
         # Parse the payload
-        settings = payload.setting
-        outdir = payload.workspace.transcribe_ws
+        transcribe_ws = payload.workspace.transcribe_ws
         data_files = payload.data_files
 
         # Parse the settings
-        engine_name = settings.engine_setting.engine
-        engine_init_kwargs = settings.engine_setting.get_init_kwargs()
-        engine_transcribe_kwargs = settings.engine_setting.get_transcribe_kwargs()
+        engine_name = payload.get_engine()
+        engine_init_kwargs = payload.get_engine_init_setting()
+        engine_transcribe_kwargs = payload.get_engine_transcribe_setting()
+        
         # Transcribe behavior is different based on the type of the input
         # For example, if source contains video files, they should first be
         # extracted into audio files here.
@@ -67,10 +67,13 @@ class TranscribeComponent(Component):
         if not self.engine_manager.is_engine(engine_name):
             raise Exception(f"Not an engine: {engine_name}")
         engine_init_kwargs.update({
-            "workspace_dir": outdir
+            "workspace_dir": transcribe_ws
         })
+        
         engine = self.engine_manager.init_engine(
             engine_name, **engine_init_kwargs)
+        
+        logger.info(engine)
 
         # Transcribe all of the data files
         utt_map = dict()

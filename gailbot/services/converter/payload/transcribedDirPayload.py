@@ -35,9 +35,7 @@ class TranscribedDirPayload(PayLoadObject):
     @staticmethod
     def is_supported(file_path: str) -> bool:
         if not is_directory(file_path):
-            logger.info("not valid diretcory")
             return False 
-        logger.error(paths_in_dir(file_path, ["gailbot"], True))
         return is_file(os.path.join(file_path, ".gailbot"))
        
     def _copy_file(self) -> None:

@@ -15,7 +15,7 @@ class SETTING_DATA:
     WHISPER_SETTING = {
         "engine": "whisper", 
         "transcribe": {
-            "language": "english",
+            "language": "English",
             "detect_speakers": False
         },
         "init": {}

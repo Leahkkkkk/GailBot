@@ -15,10 +15,8 @@ TODO by Feb 24:
 """
 def load_audio_payload(source: SourceObject) -> Union[bool, List[PayLoadObject]]:
     if not source.setting: 
-        logger.error("souce is not configured")
         return False
     if not AudioPayload.is_supported(source.source_path()):
-        logger.error(f"file {source.source_path()} is not supported") 
         return False  
     # TODO: improve the logic of validating the format based on different engines
     try:
