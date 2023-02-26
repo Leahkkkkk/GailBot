@@ -53,7 +53,11 @@ class SettingObject():
     def update_setting(self, setting: Dict[str, str]) -> bool:
         logger.info(setting)
         self._load_engine_setting(setting["engine_setting"])
-        self._load_plugin_setting(setting["plugin_setting"])
+        if "plugin_setting" in setting.keys():
+            self._load_plugin_setting(setting["plugin_setting"])
+        else:
+            self._load_plugin_setting([])
+            
         # NOTE: the plugin data is not required
         if self.engine_setting:
             self.data = setting

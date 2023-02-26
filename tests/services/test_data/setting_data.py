@@ -27,11 +27,12 @@ class SETTING_DATA:
         "transcribe": {}
     }
 
+
     PLUGIN_SETTING = ["hilab"]
-
     NEW_PLUGIN = ["testmodule"]
-
-    PROFILE = {
+    
+    # dummy profile for testing the organizer  & setting manager only 
+    DUMMY_PROFILE = {
         "engine_setting": WHISPER_SETTING, 
         "plugin_setting": PLUGIN_SETTING
     }
@@ -39,4 +40,9 @@ class SETTING_DATA:
     NEW_PROFILE = {
         "engine_setting": GOOGLE_SETTING, 
         "plugin_setting": NEW_PLUGIN
+    }
+    
+    PROFILE = {
+        "engin_setting": WHISPER_SETTING, 
+        "plugin_setting": ["gb_test_suite"]
     }

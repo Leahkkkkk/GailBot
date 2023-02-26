@@ -34,8 +34,11 @@ class AnalysisComponent(Component):
                 for plugin in plugins:
                     plugin_suite: PluginSuite = self.plugin_manager.get_suite(plugin)
                     if plugin_suite:
+                        # create a method that get passed to plugin suite
                         method = GBPluginMethods(payload)
-                        res = plugin_suite(base_input = None, methods = method)
+                        res : ComponentResult = plugin_suite(base_input = None, methods = method)
+                        assert res.state == ComponentState.SUCCESS
+                        
                 end_time = time.time()
                 stats = ProcessingStats(
                     start_time=start_time,
@@ -47,7 +50,7 @@ class AnalysisComponent(Component):
             return ComponentResult(
                 state=ComponentState.SUCCESS,
                 result=None,
-                runtime=0
+                runtime=time.time() - process_start_time
             )
             
         except Exception as e:
