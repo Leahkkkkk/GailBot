@@ -2,12 +2,7 @@ from pydantic import BaseModel, ValidationError
 from typing import Any, Dict
 
 class EngineSettingInterface(BaseModel):
-    def __init__(__pydantic_self__, **data: Any) -> None:
-        super().__init__(**data)
-    
-    @property   
-    def engine(self):
-        return NotImplementedError()
+    engine: str 
     
     def get_init_kwargs(self) -> Dict[str, str]:
         d = self.dict()["init"]
@@ -26,4 +21,6 @@ class EngineSettingInterface(BaseModel):
             which can be directly used by stt engine    
         """
         d = self.dict()["transcribe"]
-        return d 
+        return d
+    
+ 

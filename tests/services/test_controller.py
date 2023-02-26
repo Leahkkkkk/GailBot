@@ -5,13 +5,11 @@ from gailbot.core.utils.general import get_name
 import os
 from gailbot.core.utils.logger import makelogger
 from gailbot.core.utils.general import delete
-from ..services.data import NEW_PROFILE, PROFILE
+from ..services.test_data import SETTING_DATA, PROFILE
 logger = makelogger("test_controller")
 
-TEST_SETTING = NEW_PROFILE
-
-UPDATED_SETTING = PROFILE
-
+TEST_SETTING = SETTING_DATA.PROFILE
+UPDATED_SETTING = SETTING_DATA.NEW_PROFILE
 SETTING_NAME = "test_setting"
 NEW_SETTING = "new_setting"
 SOURCES = [(A.LARGE_AUDIO_MP3, A.RESULT_OUTPUT), (A.MEDIUM_AUDIO, A.RESULT_OUTPUT),

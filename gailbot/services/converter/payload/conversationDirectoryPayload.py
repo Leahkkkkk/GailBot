@@ -15,12 +15,11 @@ logger = makelogger("conversation_payload")
 
 def load_conversation_dir_payload(source: SourceObject) -> Union [bool, List[PayLoadObject]]:
     original_source = source.source_path()
-    
-    if not is_directory(original_source):
+    if not is_directory(original_source) or not source.setting:
         logger.error("not a directory")
         return False
-    
     if ConversationDirectoryPayload.is_supported(original_source):
+        logger.error("supported")
         return [ConversationDirectoryPayload(source)]
    
     # NOTE: currently not support loading directory inside directory
@@ -51,16 +50,13 @@ class ConversationDirectoryPayload(PayLoadObject):
     @staticmethod
     def is_supported(file_path: str) -> bool:
         """ NOTE: currently only support audio file  """
+        logger.info(file_path)
         if not is_directory(file_path):
             return False 
-        sub_paths = paths_in_dir(file_path, [AudioPayload.supported_format()])
+        sub_paths = paths_in_dir(file_path, AudioPayload.supported_format())
         if len(sub_paths) == 0:
+            logger.error("zero file ")
             return False
-        # for path in sub_paths:
-        #     if not AudioPayload.is_supported(path):
-        #         logger.warn("the directory contains files that cannot be\
-        #                     processed by gailbot")
-        #         return False
         return True
      
     def _copy_file(self) -> None:

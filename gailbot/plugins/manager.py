@@ -108,9 +108,8 @@ class PluginManager:
         suite_name : str
     ) -> PluginSuite:
         if not self.is_suite(suite_name):
-            raise Exception(
-                f"Suite does not exist {suite_name}"
-            )
+            logger.error(f"Suite does not exist {suite_name}")
+            return None
         return self.suites[suite_name]
 
     def _init_workspace(self):

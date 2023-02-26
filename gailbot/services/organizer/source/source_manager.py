@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List, Dict, Union
 from .source_object import SourceObject
 from ..settings import SettingObject
 from gailbot.core.utils.general import get_name, is_file, is_directory, is_path
@@ -13,7 +13,7 @@ class SourceManager():
     def __init__(self) -> None:
         self.sources : Dict[str, SourceObject] = dict()
     
-    def add_source(self, source_path: str, output: str) -> bool:
+    def add_source(self, source_path: str, output: str) -> Union [str, bool]:
         try:
             source  = SourceObject(source_path, get_name(source_path), output)
             name = source.name
@@ -22,7 +22,7 @@ class SourceManager():
             logger.error(e)
             return False
         else:
-            return True
+            return name
         
     def remove_source(self, source_name: str) -> bool:
         """
@@ -70,7 +70,7 @@ class SourceManager():
         """
         return list(self.sources.keys())
 
-    def get_source(self, source:str) -> SourceObject:
+    def get_source(self, source:str) -> Union[bool, SourceObject]:
         """
         Gets the source associated with a given source name
 

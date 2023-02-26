@@ -16,11 +16,7 @@ class Init(BaseModel):
 class GoogleInterface(EngineSettingInterface):
     init: Init = None 
     transcribe: Transcribe = None 
-    
-    @property
-    def engine(self):
-        return "google"
-    
+    engine: str 
     
 def load_google_setting(setting: Dict[str, str]) -> Union[bool, EngineSettingInterface]:
     """ given a dictionary, load the dictionary as a google setting 
@@ -35,7 +31,7 @@ def load_google_setting(setting: Dict[str, str]) -> Union[bool, EngineSettingInt
                                         as an instance of SettingInterface, 
                                         else return false
     """
-    if not setting.pop("engine", "notfound") == "google": 
+    if  not "engine" in setting.keys() or setting["engine"] != "google": 
         return False
     try:
         setting = GoogleInterface(**setting)

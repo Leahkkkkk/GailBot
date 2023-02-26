@@ -138,7 +138,7 @@ class PluginSuite:
         """
         result = self.pipeline(
             base_input=base_input, 
-            additional_component_kwargs={
+            additional_component_kwargs= {
                 "methods" : methods
             }
         )

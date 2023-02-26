@@ -66,11 +66,6 @@ class SourceObject():
         """
         return self.setting.get_name()
 
-    def get_source_name(self, name:str) -> str:
-        if name.endswith()("/"):
-            name.slice("/")
-        return name
-
     # @property
     def configured(self) -> bool:
         """

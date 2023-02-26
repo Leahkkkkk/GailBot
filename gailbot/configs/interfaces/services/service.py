@@ -15,3 +15,7 @@ class ConversationDirText(DataclassFromDict):
 class TransDirTest(DataclassFromDict):
     transDir: str = field_from_dict()
 
+class ResultText(DataclassFromDict):
+    transResult: str = field_from_dict()
+    tempResult: str = field_from_dict()
+    

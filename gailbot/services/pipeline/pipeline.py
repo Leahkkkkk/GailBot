@@ -11,7 +11,6 @@ from ..converter import PayLoadObject
 from .components import TranscribeComponent, AnalysisComponent, FormatComponent
 
 class PipelineService:
-
     def __init__(
         self,
         plugin_manager : PluginManager,
@@ -29,8 +28,8 @@ class PipelineService:
             },
             components ={
                 "transcription" : transcribeComponent(),
-                "analysis" : analysisComponent(),
-                "format" : formatComponent()
+                "analysis"      : analysisComponent(),
+                "format"        : formatComponent()
             }
         )
 

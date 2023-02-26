@@ -4,7 +4,6 @@ from dataclasses import dataclass
 from dict_to_dataclass import field_from_dict, DataclassFromDict
 import toml 
 from typing import Dict
-
 @dataclass 
 class OutputFolder(DataclassFromDict):
     root: str = field_from_dict()

@@ -13,8 +13,10 @@ from ..result import (
     UttDict,
     AnalysisResultDict,
     FormatResultDict,
-    ProcessingStats)
-from gailbot.core.utils.general import (is_directory, make_dir, delete)
+    ProcessingStats
+)
+from gailbot.core.utils.general import is_directory, make_dir, delete
+from ...workspace import WorkspaceManager
 logger = makelogger("payloadobject")
 
 """ TODO by Feb 24:
@@ -61,27 +63,13 @@ class PayLoadObject(ABC):
         self.name = source.name
         self.original_source: str = source.source_path()
         self.setting: SettingObject = source.setting
-        self.workspace: TemporaryFolder =  PATH_CONFIG.get_temp_space(
-            f"{self.name}_temp"
-        )
-        
-        self.out_dir: OutputFolder = PATH_CONFIG.get_output_space(
-            source.output, f"{self.name}_gb_output"
-        )
-        
-        # create the directory 
-        for path in self.workspace.__dict__.values():
-            if not is_directory(path):
-                make_dir(path, True)
-        
-        for path in self.out_dir.__dict__.values():
-            if not is_directory(path):
-                make_dir(path, True)
-                
+        self.workspace: TemporaryFolder = \
+            WorkspaceManager.get_file_temp_space(self.name)        
+        self.out_dir: OutputFolder = \
+            WorkspaceManager.get_output_space(source.output, self.name)
         self.transcription_result:  UttResult = UttResult(self.workspace.transcribe_ws)
         self.format_result: FormatResult = FormatResult(self.workspace.format_ws)
         self.analysis_result: AnalysisResult = AnalysisResult(self.workspace.analysis_ws)
-        
         self._set_initial_status()
         self._copy_file() 
         
@@ -113,6 +101,9 @@ class PayLoadObject(ABC):
     @property 
     def formatted(self) -> bool:
         return self.status == PayLoadStatus.FORMATTED
+   
+    def get_engine(self) -> str:
+        return self.setting.engine_setting.engine
     
     def get_engine_setting(self) -> Dict[str, str]:
         return self.setting.engine_setting.to_kwargs_dict()

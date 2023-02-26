@@ -51,6 +51,7 @@ class SettingObject():
             return True
     
     def update_setting(self, setting: Dict[str, str]) -> bool:
+        logger.info(setting)
         self._load_engine_setting(setting["engine_setting"])
         self._load_plugin_setting(setting["plugin_setting"])
         # NOTE: the plugin data is not required
@@ -69,4 +70,5 @@ class SettingObject():
             if isinstance(set_obj, EngineSettingInterface):
                 self.engine_setting = set_obj
                 return True
+        logger.error(f"setting {setting} cannot be loaded")
         return False

@@ -12,6 +12,7 @@ class TranscribeSetting(BaseModel):
     acoustic_customization_id : str = None 
     
 class WatsonInterface(EngineSettingInterface):
+    engine: str 
     init : InitSetting
     transcribe: TranscribeSetting
     
@@ -31,8 +32,8 @@ def load_watson_setting(setting: Dict[str, str]) -> Union[bool, EngineSettingInt
                                         return the google setting interface 
                                         as an instance of SettingInterface, 
                                         else return false
-    """
-    if not setting.pop("engine", "notfound") == "watson": 
+    """ 
+    if "engine" not in setting.keys() or setting["engine"] != "watson":
         return False
     try:
         setting = WatsonInterface(**setting)
