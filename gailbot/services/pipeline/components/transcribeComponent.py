@@ -20,6 +20,8 @@ class TranscribeComponent(Component):
         self.engine_manager = EngineManager()
     
     def __call__(self, dependency_output: Dict[str, str]) -> Any:
+        logger.info(dependency_output)
+        # TODO: improve the way of getting the dependency result
         payloads : List[PayLoadObject] = dependency_output["base"]
         process_start_time = time.time()
         for payload in payloads:

@@ -1,6 +1,7 @@
 from gailbot.services.controller import ServiceController
 from gailbot.core.utils.general import is_file, paths_in_dir
 from tests.core.engines.data import AudioPath as A
+from .test_data import PATH
 from gailbot.core.utils.general import get_name
 import os
 from gailbot.core.utils.logger import makelogger
@@ -45,7 +46,7 @@ def test_controller_basic():
 
 def test_transcribe():
     controller = ServiceController()
-    controller.add_sources([(A.MEDIUM_AUDIO_MP3, A.RESULT_OUTPUT)])
+    controller.add_sources([(A.MEDIUM_AUDIO_MP3, PATH.OUTPUT_ROOT)])
     controller.create_new_setting(SETTING_NAME, TEST_SETTING)
     logger.info(controller.organizer.get_configured_sources())
     controller.transcribe()

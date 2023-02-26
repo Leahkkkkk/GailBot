@@ -27,15 +27,15 @@ whisperName = "whisper"
 engine = "engine_setting"
 plugin = "plugin_setting"
 
-[settings.default]
-{
-    "engine_setting": {
-     "engine": "whisper",
-     "transcribe": {
-         "language": "English",
-         "detect_speakers": False,
-     },
-     "init": {}
-    },
-    "plugin_setting": []
-}
+# [settings.default]
+# {
+#     "engine_setting": {
+#      "engine": "whisper",
+#      "transcribe": {
+#          "language": "English",
+#          "detect_speakers": False,
+#      },
+#      "init": {}
+#     },
+#     "plugin_setting": []
+# }

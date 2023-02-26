@@ -22,3 +22,7 @@ class FormatResult(ResultInterface):
         
     def get_data(self):
         return self.data
+    
+    def output(self, path: str) -> bool:
+        """ TODO: currently no data will be written as format result """
+        return True 

@@ -37,6 +37,6 @@ class PipelineService:
 
     def __call__(self, payloads : List[PayLoadObject]):
         self.pipeline(
-            base_input=[payloads]
+            base_input= payloads
         )
 

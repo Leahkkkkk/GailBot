@@ -192,6 +192,7 @@ class PayLoadObject(ABC):
             return False
     
     def save(self):
+        """ TODO: test the output format and output_analysis """
         assert self.output_analysis_result()
         assert self.output_format_result()
         assert self.output_transcription_result()

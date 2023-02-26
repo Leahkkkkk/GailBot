@@ -2,6 +2,9 @@ from typing import TypedDict, List, Dict
 from dataclasses import dataclass
 from .resultInterface import ResultInterface
 from gailbot.core.utils.general import write_toml, write_json, write_txt
+from gailbot.core.utils.logger import makelogger
+import os 
+logger = makelogger("analysis-result")
 
 """ TODO:
 1. update the interface after the plugin suite is connected 
@@ -21,11 +24,13 @@ class AnalysisResult(ResultInterface):
         return True
 
     def output(self, path) -> bool:
+        """ TODO: currently no data for analysis will be written """
         try:
-            write_json(self.data, path)
+            # write_json(self.data, os.path.join(path, "analysis.json"))
             return True
         except Exception as e:
-            return False
-    
+            logger.error(e)
+            return True
+        
     def get_data(self):
         return self.data 

@@ -50,7 +50,7 @@ class Pipeline:
 
     def __call__(
         self,
-        base_input : List [Any] = None,
+        base_input : Any,
         additional_component_kwargs : Dict = dict()
         # NOTE: base_input is passed only to the first component.
     ) -> Dict[str, ComponentState]:
@@ -76,6 +76,7 @@ class Pipeline:
         """
         
         successors = self.get_dependency_graph()
+        
         results : Dict[str, ComponentResult] = dict()   # map component name to result
         
         base_sentinel = True # handle additional input for the first component
@@ -121,7 +122,7 @@ class Pipeline:
                 
                 # form the arguments that will be passed to the executable
                 if base_sentinel: 
-                    args = base_input 
+                    args = [{"base": base_input }]
                     base_sentinel = False 
                 else:
                     args = [dep_outputs]          

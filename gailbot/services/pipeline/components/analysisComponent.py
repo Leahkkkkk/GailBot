@@ -26,8 +26,13 @@ class AnalysisComponent(Component):
         dependency_outputs : Dict[str, Any]
     ) :
         process_start_time = time.time()
-        payloads: List[PayLoadObject] = dependency_outputs["transcription"]
+        logger.info(dependency_outputs)
+            
+
         try: 
+            dependency_res: ComponentResult = dependency_outputs["transcription"]
+            assert dependency_res.state == ComponentState.SUCCESS
+            payloads: List [PayLoadObject] = dependency_res.result
             for payload in payloads:
                 logger.info(payload)
                 start_time = time.time()
@@ -50,9 +55,9 @@ class AnalysisComponent(Component):
                 payload.set_analysis_process_stats(stats)    
             
             return ComponentResult(
-                state=ComponentState.SUCCESS,
-                result=None,
-                runtime=time.time() - process_start_time
+                state  = ComponentState.SUCCESS,
+                result = payloads,
+                runtime = time.time() - process_start_time
             )
             
         except Exception as e:
