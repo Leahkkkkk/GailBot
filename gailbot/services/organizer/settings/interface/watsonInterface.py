@@ -1,6 +1,10 @@
 from pydantic import BaseModel, ValidationError
 from typing import Dict, List , Union
 from .engineSettingInterface import EngineSettingInterface
+from gailbot.configs import interface_loader
+
+INTERFACE_CONFIG = interface_loader()
+name = INTERFACE_CONFIG.watsonName
 
 class InitSetting(BaseModel):
     apikey : str 
@@ -18,7 +22,7 @@ class WatsonInterface(EngineSettingInterface):
     
     @property
     def engine(self):
-        return "watson"
+        return name
     
 def load_watson_setting(setting: Dict[str, str]) -> Union[bool, EngineSettingInterface]:
     """ given a dictionary, load the dictionary as a watson setting 

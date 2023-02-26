@@ -24,8 +24,22 @@ googleName = "google"
 watsonName = "watson"
 whisperName = "whisper"
 
-engine = "engine_setting"
-plugin = "plugin_setting"
+
+engine_setting = "engine_setting"
+plugin_setting = "plugin_setting"
 
 [organizer.sources]
 logger = "source_manager"
+
+[settings.default]
+# {
+#     "engine_setting": {
+#      "engine": "whisper",
+#      "transcribe": {
+#          "language": "English",
+#          "detect_speakers": False,
+#      },
+#      "init": {}
+#     },
+#     "plugin_setting": []
+# }

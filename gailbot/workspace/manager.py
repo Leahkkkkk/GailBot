@@ -3,12 +3,13 @@ from typing import Union, List, Dict, Any
 from gailbot.core.utils.general import is_directory, make_dir, delete, paths_in_dir, subdirs_in_dir
 from gailbot.core.utils.logger import makelogger
 from dataclasses import dataclass
-TEMP = "_gb_temp"
-OUTPUT = "_gb_output"
-logger = makelogger("workspace")
 
 PATH_CONFIG = path_config_loader()
 FILE_CONFIG = file_extensions_loader()
+
+TEMP = FILE_CONFIG.temp
+OUTPUT = FILE_CONFIG.output
+logger = makelogger("workspace")
 
 @dataclass
 class WorkspaceManager:
