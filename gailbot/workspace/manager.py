@@ -1,4 +1,4 @@
-from gailbot.configs import path_config_loader, TemporaryFolder, OutputFolder
+from gailbot.configs import path_config_loader, TemporaryFolder, OutputFolder, file_extensions_loader
 from typing import Union, List, Dict, Any
 from gailbot.core.utils.general import is_directory, make_dir, delete, paths_in_dir, subdirs_in_dir
 from gailbot.core.utils.logger import makelogger
@@ -8,6 +8,7 @@ OUTPUT = "_gb_output"
 logger = makelogger("workspace")
 
 PATH_CONFIG = path_config_loader()
+FILE_CONFIG = file_extensions_loader()
 
 @dataclass
 class WorkspaceManager:

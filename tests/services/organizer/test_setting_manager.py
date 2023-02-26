@@ -1,5 +1,5 @@
 from gailbot.services.organizer.settings import SettingManager
-from gailbot.services.workspace import WorkspaceManager
+from gailbot.workspace import WorkspaceManager
 from gailbot.services.organizer.settings.interface import whisperInterface
 from gailbot.core.utils.general import is_directory, is_file, read_toml
 from gailbot.core.utils.logger import makelogger 

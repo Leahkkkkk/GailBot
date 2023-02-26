@@ -46,3 +46,8 @@ class SETTING_DATA:
         "engine_setting": WHISPER_SETTING, 
         "plugin_setting": ["gb_test_suite"]
     }
+    
+    PROFILE_NO_PLUGIN = {
+        "engine_setting": WHISPER_SETTING, 
+        "plugin_setting": []
+    }

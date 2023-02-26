@@ -19,24 +19,23 @@ tempResult = "temporary_result"
 
 [organizer.interfaces]
 engine = "engine"
-not = "notfound"
-
-[organizer.interfaces.google]
-name = "google"
-
-[organizer.interfaces.watson]
-name = "watson"
-
-[organizer.interfaces.whisper]
-name = "whisper"
-
-[organizer.settings]
-existing = "the setting name already exists"
-update = "update_setting"
-notFound = "the setting is not found"
+notFound = "notfound"
+googleName = "google"
+watsonName = "watson"
+whisperName = "whisper"
 
 engine = "engine_setting"
 plugin = "plugin_setting"
 
-[organizer.sources]
-logger = "source_manager"
+[settings.default]
+{
+    "engine_setting": {
+     "engine": "whisper",
+     "transcribe": {
+         "language": "English",
+         "detect_speakers": False,
+     },
+     "init": {}
+    },
+    "plugin_setting": []
+}

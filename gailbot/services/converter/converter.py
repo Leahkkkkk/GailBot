@@ -30,12 +30,15 @@ class Converter:
 
     
     def __call__(self, sources: List[SourceObject]) -> Union[bool, List[PayLoadObject]]:
+        logger.info("converter is called")
+        logger.info(sources)
         try:
             for source in sources:
                 logger.info(source)
                 self.load_source(source)
-            
+            logger.info(self.payloads_dict)
             return sum(list(self.payloads_dict.values()), [])
+        
         except Exception as e: 
             logger.error(e)
             return False

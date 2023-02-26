@@ -16,12 +16,13 @@ class ServiceController:
         self.pipeline_service = PipelineService(self.plugin_manager, num_threads=5) # TODO: add this to toml file
     
     def add_sources(self, src_output_pairs: List [Tuple [str, str]]):
+        logger.info(src_output_pairs)
         try:
             for src_pair in src_output_pairs:
                 (source_path, out_path) = src_pair
                 logger.info(source_path)
                 logger.info(out_path)
-                assert self.add_source(src_pair[0], src_pair[1])
+                assert self.add_source(source_path, out_path)
             return True
         except Exception as e:
             logger.error(e)
@@ -69,11 +70,13 @@ class ServiceController:
         self, source: str, setting: str, overwrite: bool = True) -> bool:
         return self.organizer.apply_setting_to_source(source, setting, overwrite)
 
-    def transcribe(self, sources = List[str]) -> bool:
+    def transcribe(self, sources: List[str] = None) -> bool:
         # get configured sources 
-        sources = self.organizer.get_configured_sources(sources)
+        if not sources:
+            sources = self.organizer.get_configured_sources(sources)
         # load to converter 
         payloads = self.converter(sources)
+        logger.info(payloads)
         # put the payload to the pipeline
         self.pipeline_service(payloads=payloads)
         

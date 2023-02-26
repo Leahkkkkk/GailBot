@@ -17,6 +17,7 @@ class FormatComponent(Component):
 
         """Get a source and the associated settings objects and transcribe"""
         payloads :List [PayLoadObject] = dependency_outputs["analysis"]
+        logger.info(payloads)
         try:
             for payload in payloads:
                 payload.save()

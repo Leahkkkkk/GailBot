@@ -6,9 +6,11 @@ import os
 from gailbot.core.utils.logger import makelogger
 from gailbot.core.utils.general import delete
 from ..services.test_data import SETTING_DATA, PATH 
+import pytest 
+
 logger = makelogger("test_controller")
 
-TEST_SETTING = SETTING_DATA.PROFILE
+TEST_SETTING = SETTING_DATA.PROFILE_NO_PLUGIN
 UPDATED_SETTING = SETTING_DATA.NEW_PROFILE
 SETTING_NAME = "test_setting"
 NEW_SETTING = "new_setting"
@@ -41,6 +43,10 @@ def test_controller_basic():
     controller.remove_source(get_name(A.SMALL_AUDIO_MP3))
     controller.register_plugin_suite(PATH.GB_TEST_SUITE)
 
-
-def test_controller():
+def test_transcribe():
     controller = ServiceController()
+    controller.add_sources([(A.MEDIUM_AUDIO_MP3, A.RESULT_OUTPUT)])
+    controller.create_new_setting(SETTING_NAME, TEST_SETTING)
+    logger.info(controller.organizer.get_configured_sources())
+    controller.transcribe()
+    

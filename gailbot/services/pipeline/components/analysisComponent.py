@@ -29,8 +29,10 @@ class AnalysisComponent(Component):
         payloads: List[PayLoadObject] = dependency_outputs["transcription"]
         try: 
             for payload in payloads:
+                logger.info(payload)
                 start_time = time.time()
                 plugins = payload.setting.get_plugin_setting()
+                logger.info(plugins)
                 for plugin in plugins:
                     plugin_suite: PluginSuite = self.plugin_manager.get_suite(plugin)
                     if plugin_suite:
