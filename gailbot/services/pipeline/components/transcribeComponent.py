@@ -16,10 +16,23 @@ logger = makelogger("transcribeComponent")
 3. error handling mechanism - logging and return failed
 """
 class TranscribeComponent(Component):
+    """ responsible for running the transcription process
+    """
     def __init__(self):
         self.engine_manager = EngineManager()
     
     def __call__(self, dependency_output: Dict[str, str]) -> Any:
+        """ extract the payload objects from the dependency_output,and 
+            transcribe the datafiles in the payload object
+
+        Args:
+            dependency_output (Dict[str, str]): dependency output contains the
+            result of the component and payload data
+            
+        Returns:
+            Any: component result that stores the result state of transcription 
+            and payloads data
+        """
         logger.info(dependency_output)
         # TODO: improve the way of getting the dependency result
         payloads : List[PayLoadObject] = dependency_output["base"]
@@ -88,8 +101,8 @@ class TranscribeComponent(Component):
 
         return utt_map
 
-
-
+    def __repr__(self):
+        return "Transcription Component"
 
 
 

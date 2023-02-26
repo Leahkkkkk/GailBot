@@ -81,7 +81,7 @@ class ServiceController:
         self.pipeline_service(payloads=payloads)
         
     def register_plugin_suite(self, plugin_source: str) -> str:
-        assert self.plugin_manager.register_suite(plugin_source)
+        return self.plugin_manager.register_suite(plugin_source)
         
     def get_plugin(self, suite_name) -> PluginSuite:
         return self.plugin_manager.get_suite(suite_name)

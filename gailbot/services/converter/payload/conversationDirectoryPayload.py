@@ -37,17 +37,25 @@ def load_conversation_dir_payload(source: SourceObject) -> Union [bool, List[Pay
         
 
 class ConversationDirectoryPayload(PayLoadObject):
-    """ store a conversation directory with only audio files """
+    """ 
+    Stores a conversation directory with only audio files 
+    """
     def __init__(self, source) -> None:
         super().__init__(source)
     
     @staticmethod 
     def supported_format() -> str:
+        """
+        Contains and accesses a list of the supported formats
+        """
         return "directory"
         
     @staticmethod
     def is_supported(file_path: str) -> bool:
         """ NOTE: currently only support audio file  """
+        """
+        Determines if a given file path has a supported file extension
+        """
         logger.info(file_path)
         if not is_directory(file_path):
             return False 
@@ -57,6 +65,9 @@ class ConversationDirectoryPayload(PayLoadObject):
         return True
      
     def _copy_file(self) -> None:
+        """
+        Copies file to workspace
+        """
         try:
             tgt_path = os.path.join(self.workspace.data_copy, f"{self.name}")
             copy(self.original_source, tgt_path)
@@ -68,4 +79,10 @@ class ConversationDirectoryPayload(PayLoadObject):
             logger.error(e)
     
     def _set_initial_status(self) -> None:
+        """
+        Sets the initial status of the payload object to initialized
+        """
         self.status = PayLoadStatus.INITIALIZED
+
+    def __repr__(self) -> str:
+        return "Conversation directory payload"

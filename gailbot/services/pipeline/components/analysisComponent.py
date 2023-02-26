@@ -15,7 +15,11 @@ logger = makelogger("transcribeComponent")
 
 """
 class AnalysisComponent(Component):
+    """ responsible for running plugin after the gailbot obtained the
+        transcription result 
+    """
     def __init__(self, plugin_manager: PluginManager):
+        
         self.plugin_manager = plugin_manager
         
     def __repr__(self):
@@ -25,10 +29,19 @@ class AnalysisComponent(Component):
         self,
         dependency_outputs : Dict[str, Any]
     ) :
+        """ extract the payloads from the dependency_output and run the 
+        
+        Args:
+            dependency_outputs (Dict[str, Any]): dependency outputs that store 
+            the result from the transcription process, which include the 
+            payloads data and result state 
+
+        Returns:
+            ComponentResult: the result of the analysis process
+        """
         process_start_time = time.time()
         logger.info(dependency_outputs)
             
-
         try: 
             dependency_res: ComponentResult = dependency_outputs["transcription"]
             assert dependency_res.state == ComponentState.SUCCESS

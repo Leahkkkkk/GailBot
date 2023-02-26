@@ -12,6 +12,7 @@ import pytest
 logger = makelogger("test_controller")
 
 TEST_SETTING = SETTING_DATA.PROFILE_NO_PLUGIN
+PLUGIN_SETTING = SETTING_DATA.PROFILE
 UPDATED_SETTING = SETTING_DATA.NEW_PROFILE
 SETTING_NAME = "test_setting"
 NEW_SETTING = "new_setting"
@@ -43,11 +44,21 @@ def test_controller_basic():
     controller.remove_source(get_name(A.SMALL_AUDIO_MP3))
     controller.register_plugin_suite(PATH.GB_TEST_SUITE)
 
-def test_transcribe():
+def transcribe(source, setting = TEST_SETTING):
     controller = ServiceController()
-    controller.add_sources([(A.MEDIUM_AUDIO_MP3, PATH.OUTPUT_ROOT)])
-    controller.create_new_setting(SETTING_NAME, TEST_SETTING)
+    controller.add_sources([(source, PATH.OUTPUT_ROOT)])
+    controller.create_new_setting(SETTING_NAME, setting)
     logger.info(controller.organizer.get_configured_sources())
     controller.transcribe()
+    
+def test_transcribe_audio():
+    transcribe(A.MEDIUM_AUDIO_MP3)
+    
+def test_transcribe_dir():
+    transcribe(A.CONVERSATION_DIR)
+    
+def test_transcribe_transcribed():
+    transcribe(A.TRANSCRIBED_DIR)
 
-
+def test_with_plugin():
+    transcribe(A.MEDIUM_AUDIO_MP3, PLUGIN_SETTING)
