@@ -3,6 +3,7 @@ from .interface import (
     load_watson_setting, 
     load_whisper_setting, 
     load_google_setting, 
+    load_interfaces, 
     EngineSettingInterface,
     PluginSettingsInterface
     )
@@ -10,7 +11,7 @@ from gailbot.core.utils.logger import makelogger
 from gailbot.core.utils.general import write_toml
 
 logger = makelogger("setting_object")
-
+INTERFACE_CONFIG = load_interfaces()
 
 
 class SettingObject():
@@ -24,8 +25,8 @@ class SettingObject():
      
     def __init__(self, setting: Dict[str, str], name: str) -> None:
         self.data = setting
-        self._load_engine_setting(setting["engine_setting"])
-        self._load_plugin_setting(setting["plugin_setting"])
+        self._load_engine_setting(setting[INTERFACE_CONFIG.engine_setting])
+        self._load_plugin_setting(setting[INTERFACE_CONFIG.plugin_setting])
         self.name = name
     
     def get_name(self):
@@ -52,9 +53,9 @@ class SettingObject():
     
     def update_setting(self, setting: Dict[str, str]) -> bool:
         logger.info(setting)
-        self._load_engine_setting(setting["engine_setting"])
-        if "plugin_setting" in setting.keys():
-            self._load_plugin_setting(setting["plugin_setting"])
+        self._load_engine_setting(setting[INTERFACE_CONFIG.engine_setting])
+        if INTERFACE_CONFIG.plugin_setting in setting.keys():
+            self._load_plugin_setting(setting[INTERFACE_CONFIG.plugin_setting])
         else:
             self._load_plugin_setting([])
             

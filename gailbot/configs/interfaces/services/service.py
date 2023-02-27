@@ -29,11 +29,8 @@ class InterfaceText(DataclassFromDict):
     googleName: str = field_from_dict()
     watsonName: str = field_from_dict()
     whisperName: str = field_from_dict()
-
-@dataclass
-class SettingsText(DataclassFromDict):
-    engine: str = field_from_dict()
-    plugin: str = field_from_dict()
+    engine_setting: str = field_from_dict()
+    plugin_setting: str = field_from_dict()
 
 @dataclass
 class DefaultSettings(DataclassFromDict):

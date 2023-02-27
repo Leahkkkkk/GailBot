@@ -50,3 +50,6 @@ def path_config_loader():
 
 # def file_extensions_loader():
 #     return load_file_extensions(os.path.join(CONFIG_ROOT, PATH.services))
+    
+# def interface_loader():
+#     return load_interfaces(os.path.join(CONFIG_ROOT, PATH.services))

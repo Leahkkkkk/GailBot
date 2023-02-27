@@ -25,15 +25,7 @@ watsonName = "watson"
 whisperName = "whisper"
 plugin = "plugin_setting"
 
-# [settings.default]
-# {
-#     "engine_setting": {
-#      "engine": "whisper",
-#      "transcribe": {
-#          "language": "English",
-#          "detect_speakers": False,
-#      },
-#      "init": {}
-#     },
-#     "plugin_setting": []
-# }
+[organizer.sources]
+logger = "source_manager"
+
+
