@@ -27,8 +27,6 @@ from gailbot.api import GailBot
 from PyQt6.QtCore import (
     QRunnable, pyqtSlot
 )
-
-
 WATSON_API_KEY = Credential.WATSON_API_KEY
 WATSON_LANG_CUSTOM_ID = Credential.WATSON_LANG_CUSTOM_ID
 WATSON_REGION = Credential.WATSON_REGION
@@ -37,8 +35,7 @@ SETTINGS_PROFILE_NAME = ProfileConfig.SETTINGS_PROFILE_NAME
 SETTINGS_PROFILE_EXTENSION = ProfileConfig.SETTINGS_PROFILE_EXTENSION
 PLUGINS_TO_APPLY = Plugin.PLUGINS_TO_APPLY
 
-def get_settings_dict():
-                         
+def get_settings_dict():           
     """ returns a dictionary that contains the setting information
     """
     return {
@@ -91,6 +88,7 @@ class Worker(QRunnable):
         self.killed = False
         self.files = files 
         self._initLogger()
+        self.logger.info("gailbot runnable initialized")
         
     @pyqtSlot()
     def run(self):
@@ -108,41 +106,37 @@ class Worker(QRunnable):
                                       file file key
         """
         self.logger.info("file ready to be transcribed" )
-        profiles = set()
-        workPath = getWorkPath()
-        WORKSPACE_DIRECTORY_PATH = workPath.workSpace
-        PLUGIN_DOWNLOAD_DIRECORY = workPath.plugin
+        # workPath = getWorkPath()
         
         try:
-            self.signals.start.emit()
-            gb = GailBot()
-            self.signals.progress.emit(str("GailBot controller Initialized"))
+            # self.signals.start.emit()
+            try:
+                gb = GailBot()
+                self.logger.info("get gailbot")
+            except Exception as e:
+                self.logger.error(e)
+            # self.signals.progress.emit(str("GailBot controller Initialized"))
         
-            # if not self.killed:
-            #     plugin_suite_paths = gb.download_plugin_suite_from_url(
-            #     Plugin.HIL_PLUGIN_URL, PLUGIN_DOWNLOAD_DIRECORY)  
-            #     self.signals.progress.emit(str("Plugins Downloaded"))
-            #     path = os.path.join(os.getcwd(), plugin_suite_paths[0])
-            #     self.signals.progress.emit(str("Plugins Applied"))
-            #     self.logger.info(gb.register_plugins(path))
-
             for file in self.files:
+                self.logger.info(file)
                 #iterate through the list of the file
                 key, filedata = file 
                 filename = filedata.Name
                 filePath = filedata.FullPath
                 outPath = filedata.Output
-                profile = filedata.Profile 
+                # profile = filedata.Profile 
                 self.logger.info(key)
                 self.logger.info(filename)
                 self.logger.info(filePath)
                 self.logger.info(outPath)
                 
                 if not self.killed:
+                    print("ready to add source")
+                    print(filePath, outPath)
                     assert gb.add_source(filePath, outPath)
                     self.logger.info(filedata)
                     self.logger.info("Source Added")
-                    self.signals.progress.emit(f"Source{filename} Added")
+                    # self.signals.progress.emit(f"Source{filename} Added")
 
                 # TODO: change the way the frontend passes the setting data 
                 # if not self.killed and not gb.is_setting(profile):
@@ -154,16 +148,17 @@ class Worker(QRunnable):
                 #     self.signals.progress.emit("Setting created")
 
             if not self.killed:
+                gb.transcribe()
                 self.signals.progress.emit(str("Transcribing"))
                 self.logger.info("Transcribing")
             
             if self.killed:
                 self.logger.info("User cancelled the transcription")
-                self.signals.killed.emit()
+                # self.signals.killed.emit()
                          
         except Exception as e:
-            self.signals.error.emit(f"${e.__class__} fails")
-            self.logger.error(f"{e.__class__} fails")
+            # self.signals.error.emit(f"${e.__class__} fails")
+            self.logger.error(f"{e} fails")
         else:
             if not self.killed:
                 for file in self.files:
@@ -179,7 +174,7 @@ class Worker(QRunnable):
             will terminates after finishing the last function call 
         """
         self.logger.info("received request to cancel the thread")
-        self.killed = True
+        # self.killed = True
         self.signals.killed.emit()
     
     def _initLogger(self):

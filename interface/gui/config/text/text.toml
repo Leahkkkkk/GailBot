@@ -91,7 +91,7 @@ postSetCaption     = "These settings are applied after the file is created."
 requiredSetHeader  = "Required Settings"
 requiredSetCaption = """These settings are required before transcription and \
                         cannot be edited after transcription."""
-pluginHeader       = "Choose Plugins"
+pluginHeader       = "Plugin Details"
 pluginCaption      = "These plugins are applied to the transcription process"
 
 [SystemSettingPage]

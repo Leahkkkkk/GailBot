@@ -11,7 +11,8 @@ from gailbot.core.engines import Engine
 from gailbot.services.controller import ServiceController
 from gailbot.workspace import WorkspaceManager
 from .plugins import PluginSuite
-
+from gailbot.core.utils.logger import makelogger
+logger = makelogger("gb_api")
 class GailBot:
     """
     Class for API wrapper
@@ -22,6 +23,7 @@ class GailBot:
     ):
         self.gb: ServiceController = ServiceController(load_exist_setting=True)
         self.reset_workspace()
+        logger.info("initialize the gailbot api")
         
     
     def reset_workspace(self):
@@ -34,7 +36,7 @@ class GailBot:
         Returns:
             No return but instantiates a new workspace.
         """
-        WorkspaceManager.clear_temp_space()
+        WorkspaceManager.clear_gb_temp_dir()
         WorkspaceManager.init_workspace()
         
         ### Organizer Service

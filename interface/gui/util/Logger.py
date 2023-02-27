@@ -100,7 +100,7 @@ class ConsoleHandler(logging.Handler, QtCore.QObject):
         QtCore.QObject.__init__(self)
         self.widget = TextWidget
         self.appendPlainText.connect(self.widget.appendHtml)
-        fmt = " %(source)s | %(asctime)s | %(levelname)s | %(module)s | %(funcName)s | %(message)s "
+        fmt = " %(source)s |  %(lineno)s | %(asctime)s | %(levelname)s | %(module)s | %(funcName)s | %(message)s "
         self.setFormatter(ConsoleFormatter(fmt))
         self._initLogFile(fmt)
 
@@ -131,7 +131,7 @@ class StatusBarHandler(logging.Handler, QtCore.QObject):
         QtCore.QObject.__init__(self)
         self.showMsg = showMsgFun
         self.addStatusMsg.connect(self.showMsg)
-        fmt = "%(levelname)s | %(message)s"
+        fmt = '%(asctime)s - %(funcName)s - %(lineno)s - %(levelname)s - %(message)s'
         self.setFormatter(StatusBarFormatter(fmt))
         self.setLevel(logging.WARNING)
     

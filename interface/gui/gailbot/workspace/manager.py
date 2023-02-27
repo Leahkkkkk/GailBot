@@ -106,6 +106,14 @@ class WorkspaceManager:
             return False
         
     @staticmethod
+    def clear_gb_temp_dir():
+        try: 
+            delete(PATH_CONFIG.tempspace_root)
+        except Exception as e:
+            logger.error(e)
+            return False
+        
+    @staticmethod
     def get_setting_file() -> List[str]:
         """ get the list of paths to the saved setting files
 

@@ -42,7 +42,7 @@ class PluginPage(QWidget):
         self.logger = makeLogger("F")
         self._initWidget()
         self._initlayout()
-        self._initPlugins()
+        # self._initPlugins()
         
     def _initWidget(self):
         """ initializes widgets """
@@ -71,11 +71,11 @@ class PluginPage(QWidget):
         self.verticalLayout.addWidget(
             self.caption, 
             alignment = center)
-        self.verticalLayout.setSpacing(Dimension.SMALL_SPACING)
-        self.verticalLayout.addWidget(
-            self.scrollArea, 
-            alignment=center)
-        self.verticalLayout.addStretch()
+        # self.verticalLayout.setSpacing(Dimension.SMALL_SPACING)
+        # self.verticalLayout.addWidget(
+        #     self.scrollArea, 
+        #     alignment=center)
+        # self.verticalLayout.addStretch()
         initSecondaryColorBackground(self.scrollArea)
         initSecondaryColorBackground(self.scrollContainer)
 
