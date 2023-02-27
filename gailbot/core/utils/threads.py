@@ -91,7 +91,9 @@ class ThreadPool(ThreadPoolExecutor):
         Return:
             int: An integer id key that will be used to keep track of the task in the thread.
         """
-        logger.info(f"args: {args}, kwargs {kwargs}")
+    
+        logger.info(f"the task {fun} is being added to the thread: \
+                    args: {args}, kwargs {kwargs}")
         try:
             if args and kwargs:
                 worker: Future = self.submit(fun, *args, **kwargs)
@@ -155,6 +157,9 @@ class ThreadPool(ThreadPoolExecutor):
         self._task_in_pool(key)
         try:
             future = self.task_pool[key]
+            logger.info(future)
+            assert future
+            logger.info(future.result())
             assert not future.exception()
             return future.result()
         except:

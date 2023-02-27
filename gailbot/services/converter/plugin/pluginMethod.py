@@ -97,6 +97,8 @@ class GBPluginMethods(Methods):
         Returns:
             bool: _description_
         """
+        logger.info("plugin method, saving item is called")
+        logger.info(data)
         path = os.path.join(self.work_path, name + "." + format) if temporary else \
                os.path.join(self.out_path,  name + "." + format)
         if fun:

@@ -4,6 +4,7 @@ from gailbot.core.pipeline import Component, ComponentState, ComponentResult
 from gailbot.core.utils.general import (
     get_name
 )
+from gailbot.core.utils.threads import ThreadPool
 from gailbot.core.utils.logger import makelogger
 import time
 from ...converter.result import  ProcessingStats
@@ -11,15 +12,15 @@ from ...converter.payload import PayLoadObject
 logger = makelogger("transcribeComponent")
 
 """ TODO by Feb 24:
-1. connect with engine and pipeline and test transcription
 2. test functions to skip trancription for transcribedpayload
 3. error handling mechanism - logging and return failed
 """
 class TranscribeComponent(Component):
     """ responsible for running the transcription process
     """
-    def __init__(self):
+    def __init__(self, num_thread : int = 5):
         self.engine_manager = EngineManager()
+        self.num_thread = num_thread
     
     def __call__(self, dependency_output: Dict[str, str]) -> Any:
         """ extract the payload objects from the dependency_output,and 
@@ -33,38 +34,43 @@ class TranscribeComponent(Component):
             Any: component result that stores the result state of transcription 
             and payloads data
         """
-        logger.info(dependency_output)
-        # TODO: improve the way of getting the dependency result
-        payloads : List[PayLoadObject] = dependency_output["base"]
-        process_start_time = time.time()
-        for payload in payloads:
-            # Parse payload
-            if not payload.transcribed:
-            # Transcribe
-                start_time = time.time()
-                utt_map = self._transcribe_payload(payload)
-                end_time = time.time()
-
-                stats = ProcessingStats(
-                    start_time=start_time,
-                    end_time = end_time,
-                    elapsed_time_sec= end_time - start_time
-                )
-
-                # Store results
+        try:
+            threadpool = ThreadPool(self.num_thread)
+            tasks : Dict[int, PayLoadObject] = dict()
+            logger.info(dependency_output)
+            dep: ComponentResult = dependency_output["base"]
+            payloads : List[PayLoadObject] = dep.result
+            process_start_time = time.time()
+        
+            for payload in payloads:
+                if not payload.transcribed:
+                    # add the payload to the threadpool
+                    key = threadpool.add_task(
+                        fun=self._transcribe_payload, args=[payload])
+                    tasks[key] = payload
+            threadpool.wait_for_all_completion() 
+            for key, payload in tasks.items():
+                utt_map, stats = threadpool.get_task_result(key)
                 payload.set_transcription_result(utt_map)
                 payload.set_transcription_process_stats(stats)
                 payload.set_transcribed()
-            
-        return ComponentResult(
-            state=ComponentState.SUCCESS,
-            result=payloads,
-            runtime=time.time() - process_start_time
-        )
+        except Exception as e:
+            logger.error(e)
+            return ComponentResult(
+                state=ComponentState.FAILED,
+                result=payloads,
+                runtime=time.time() - process_start_time
+            )
+        else:     
+            return ComponentResult(
+                state=ComponentState.SUCCESS,
+                result=payloads,
+                runtime=time.time() - process_start_time
+            )
         
-      
     def _transcribe_payload(self, payload : PayLoadObject) -> None:
         # Parse the payload
+        start_time = time.time()
         transcribe_ws = payload.workspace.transcribe_ws
         data_files = payload.data_files
 
@@ -99,7 +105,13 @@ class TranscribeComponent(Component):
             utterances = engine.transcribe(**engine_transcribe_kwargs)
             utt_map[get_name(data_file)] = utterances
 
-        return utt_map
+        end_time = time.time()
+        stats = ProcessingStats(
+            start_time=start_time,
+            end_time = end_time,
+            elapsed_time_sec= end_time - start_time
+        )
+        return utt_map, stats
 
     def __repr__(self):
         return "Transcription Component"

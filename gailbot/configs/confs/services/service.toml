@@ -23,8 +23,6 @@ notFound = "notfound"
 googleName = "google"
 watsonName = "watson"
 whisperName = "whisper"
-
-engine = "engine_setting"
 plugin = "plugin_setting"
 
 # [settings.default]

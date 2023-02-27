@@ -53,11 +53,14 @@ class AnalysisComponent(Component):
                 logger.info(plugins)
                 for plugin in plugins:
                     plugin_suite: PluginSuite = self.plugin_manager.get_suite(plugin)
+                    logger.info(plugin_suite)
                     if plugin_suite:
                         # create a method that get passed to plugin suite
                         method = GBPluginMethods(payload)
-                        res : ComponentResult = plugin_suite(base_input = None, methods = method)
-                        assert res.state == ComponentState.SUCCESS
+                        res : Dict[str, ComponentState] = plugin_suite(base_input = None, methods = method)
+                        for state in res.values():
+                            assert state == ComponentState.SUCCESS
+                        logger.info(res)
                         
                 end_time = time.time()
                 stats = ProcessingStats(
@@ -77,7 +80,7 @@ class AnalysisComponent(Component):
             logger.error(e)
             return ComponentResult(
                 state=ComponentState.FAILED,
-                result=None,
+                result= payloads,
                 runtime=time.time() - process_start_time
             )
 

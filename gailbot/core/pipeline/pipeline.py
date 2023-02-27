@@ -76,13 +76,13 @@ class Pipeline:
         """
         
         successors = self.get_dependency_graph()
-        
+        logger.info(successors) 
+        logger.info(self.dependency_graph)
+        logger.info(self.components)
         results : Dict[str, ComponentResult] = dict()   # map component name to result
-        
         base_sentinel = True # handle additional input for the first component
-        
+       
         while True:
-            
             executables: List[Component] = [
                 c for c, d in self.dependency_graph.in_degree if d == 0
             ]
@@ -117,21 +117,15 @@ class Pipeline:
                         if self.dependency_graph.has_node(executable):
                             self.dependency_graph.remove_node(executable)
                         prepare = False
-       
-                    # Base input is also passed as a component result.
-                
-                # form the arguments that will be passed to the executable
-                if base_sentinel: 
-                    args = [{"base": base_input }]
-                    base_sentinel = False 
-                else:
-                    args = [dep_outputs]          
+             
+                args = [dep_outputs]          
                               
                 if prepare:                    
                     key = self.threadpool.add_task(
                         executable, 
                         args = args, 
                         kwargs = additional_component_kwargs) 
+                    logger.info(executable)
                     logger.info(key)
                     key_to_exe[key] = executable           
 
@@ -140,6 +134,8 @@ class Pipeline:
             
             for key, exe in key_to_exe.items():
                 # get the task result from the thread pool
+                logger.info(key)
+                logger.info(exe)
                 exe_res = self.threadpool.get_task_result(key)
                 logger.info(exe_res)
                 self.dependency_graph.remove_node(exe)

@@ -48,9 +48,20 @@ def transcribe(source, setting = TEST_SETTING):
     controller = ServiceController()
     controller.add_sources([(source, PATH.OUTPUT_ROOT)])
     controller.create_new_setting(SETTING_NAME, setting)
+    controller.apply_setting_to_source(get_name(source), SETTING_NAME)
     logger.info(controller.organizer.get_configured_sources())
     controller.transcribe()
     
+def transcribe_multiple(sources, setting = TEST_SETTING):
+    controller = ServiceController()
+    src = [(s, PATH.OUTPUT_ROOT) for s in sources]
+    controller.add_sources(src)
+    controller.create_new_setting(SETTING_NAME, setting)
+    for source in sources:
+        controller.apply_setting_to_source(get_name(source), SETTING_NAME)
+    logger.info(controller.organizer.get_configured_sources())
+    controller.transcribe()
+
 def test_transcribe_audio():
     transcribe(A.MEDIUM_AUDIO_MP3)
     
@@ -62,3 +73,11 @@ def test_transcribe_transcribed():
 
 def test_with_plugin():
     transcribe(A.MEDIUM_AUDIO_MP3, PLUGIN_SETTING)
+
+def test_transcribe_multiple():
+    transcribe_multiple(
+        [A.CONVERSATION_DIR, 
+         A.MEDIUM_AUDIO_MP3, 
+         A.SMALL_AUDIO_MP3, 
+         A.SHORT_PHONE_CALL, 
+         A.LONG_PHONE_CALL])

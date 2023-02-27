@@ -46,6 +46,7 @@ class PluginComponent(Component):
         Giving a plugin, wrap it to a component class , so that it 
         it can be executed by the pipeline 
         """
+        logger.info(plugin)
         self.plugin = plugin
 
     def __repr__(self):
@@ -53,19 +54,24 @@ class PluginComponent(Component):
 
     def __call__(
         self,
-        dependency_outputs : Dict[str, ComponentResult],
-        methods : Methods
+        dependency_outputs : Dict[str, ComponentResult] = {},
+        methods : Methods = None
     ):
         """
         In addition to dependency outputs, this expects methods which can be
         passed to the individual plugins.
         """
         # Extract the actual dependency results
+        logger.info("plugin component called")
+        logger.info(f"the dependency output is {dependency_outputs}")
         dep_outputs = {
             k : v.result for k,v in dependency_outputs.items()
         }
+        logger.info("get the dependency output")
+        logger.info(dep_outputs)
         # Simply call the plugin and return its results
         start = time.time()
+        
         try:
             result = self.plugin.apply(dep_outputs, methods)
         except Exception as e:
@@ -73,6 +79,7 @@ class PluginComponent(Component):
             logger.error(e)
             
         elapsed = time.time() - start
+       
         return PluginResult(
             state=ComponentState.SUCCESS if self.plugin.is_successful else \
                 ComponentState.FAILED,
@@ -136,6 +143,9 @@ class PluginSuite:
         Apply the specified plugins when possible and return the results
         summary
         """
+        logger.info(methods)
+        logger.info(base_input)
+        
         result = self.pipeline(
             base_input=base_input, 
             additional_component_kwargs= {
@@ -211,6 +221,7 @@ class PluginSuite:
 
             dependency_map[clazz_name] = conf["dependencies"]
             plugins[clazz_name] = instance
-            
+            logger.info(dependency_map)
+            logger.info(plugins)
         return dependency_map, plugins # used to generate pipeline
 

@@ -32,6 +32,7 @@ class Plugin:
     """
 
     def __init__(self) -> None:
+        self.name = self.__class__
         self.successful = False
         pass
 
@@ -54,4 +55,7 @@ class Plugin:
                 outputs.
         """
         raise NotImplementedError()
+    
+    def __repr__(self) -> str:
+        return f"plugin {self.name}"
 
