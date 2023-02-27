@@ -14,9 +14,17 @@ logger = makelogger("transcribed_dir_payload")
 
 # TODO: ignore other file that is not audio files
 def load_transcribed_dir_payload(source: SourceObject) -> Union[bool, PayLoadObject]:
-    """
-    Loads an instance of the transcribed directory payload with a 
-        given source object
+    """ given a source object, convert it into an PayloadObject  
+        if the source stores a gailbot output directory that contains 
+        the gailbot output result 
+    
+    Args:
+        source (SourceObject): an instance of SourceObject that stores the 
+        datafile and setting of the transcription
+
+    Returns:
+        Union[bool, List[PayLoadObject]]: return the converted payload if the 
+        conversion is successful, return false other wise
     """
     if not source.setting:
         return False

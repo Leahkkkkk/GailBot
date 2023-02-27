@@ -11,6 +11,13 @@ from ...converter.result import  ProcessingStats
 from ...converter.payload import PayLoadObject
 logger = makelogger("transcribeComponent")
 
+class InvalidEngineError(Exception):
+    def __init__(self, engine: str, *args) -> None:
+        super().__init__(*args)
+        self.engine = engine 
+    def __repr__(self) -> str:
+        return self.engine + "is not a valid engine"
+
 """ TODO by Feb 24:
 2. test functions to skip trancription for transcribedpayload
 3. error handling mechanism - logging and return failed
@@ -48,6 +55,7 @@ class TranscribeComponent(Component):
                     key = threadpool.add_task(
                         fun=self._transcribe_payload, args=[payload])
                     tasks[key] = payload
+                    logger.info(f"key: {key}")
             threadpool.wait_for_all_completion() 
             for key, payload in tasks.items():
                 utt_map, stats = threadpool.get_task_result(key)
@@ -69,6 +77,20 @@ class TranscribeComponent(Component):
             )
         
     def _transcribe_payload(self, payload : PayLoadObject) -> None:
+        """ private function that transcribe each individual payload
+
+        Args:
+            payload (PayLoadObject): payload object that stores the datafiles 
+
+        Raises:
+            InvalidEngineError: 
+            raised when the engine setting uses an invalid engine
+            
+        Returns:
+            : return the transcribe result stored in a dictionary and the 
+              process data
+        """
+        logger.info(f"Payload {payload} being transcribed")
         # Parse the payload
         start_time = time.time()
         transcribe_ws = payload.workspace.transcribe_ws
@@ -86,7 +108,7 @@ class TranscribeComponent(Component):
 
         # Init engine
         if not self.engine_manager.is_engine(engine_name):
-            raise Exception(f"Not an engine: {engine_name}")
+            raise InvalidEngineError(engine)
         engine_init_kwargs.update({
             "workspace_dir": transcribe_ws
         })

@@ -9,7 +9,11 @@ from ..organizer.source import SourceObject
 
 logger = makelogger("congerter")
 class Converter: 
-    payloads_dict: Dict[str, PayLoadObject] = dict() 
+    payloads_dict: Dict[str, PayLoadObject] = dict()
+    """
+    provide function that converts the sourceObject to payload and 
+    keeps track of the converted payloads 
+    """ 
     loaders = [
         load_audio_payload, 
         load_transcribed_dir_payload,
@@ -29,7 +33,18 @@ class Converter:
         return False
 
     
-    def __call__(self, sources: List[SourceObject]) -> Union[bool, List[PayLoadObject]]:
+    def __call__(
+        self, sources: List[SourceObject]) -> Union[bool, List[PayLoadObject]]:
+        """ given a list of the source files, and convert them into a list of 
+           payload objects 
+
+        Args:
+            sources (List[SourceObject]): a list of source object
+
+        Returns:
+            Union[bool, List[PayLoadObject]]: a list of payload object that are 
+            successfully converted by the converter
+        """
         logger.info("converter is called")
         logger.info(sources)
         try:

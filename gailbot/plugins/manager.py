@@ -43,7 +43,7 @@ class PluginManager:
         self,
         plugin_sources : List[str] = [],
         load_existing : bool = True,
-        over_write: bool = False
+        over_write: bool = True
     ):
         self._init_workspace()
         """ check if the plugin has been installed  """

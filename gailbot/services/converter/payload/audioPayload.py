@@ -6,15 +6,24 @@ from gailbot.core.utils.general import (
     copy)
 from gailbot.core.utils.logger import makelogger
 import os 
-
+SUPPORTED_AUDIO = ["mp3", "wav", "opus", "mpeg"] 
 logger = makelogger("audioPayload")
 
 def load_audio_payload(source: SourceObject) -> Union[bool, List[PayLoadObject]]:
+    """ given a source object, convert it into an audio payload if the source 
+    
+    Args:
+        source (SourceObject): an instance of SourceObject that stores the 
+        datafile and setting of the transcription
+
+    Returns:
+        Union[bool, List[PayLoadObject]]: return the converted payload if the 
+        conversion is successful, return false other wise
+    """
     if not source.setting: 
         return False
     if not AudioPayload.is_supported(source.source_path()):
         return False  
-    # TODO: improve the logic of validating the format based on different engines
     try:
         return [AudioPayload(source)]
     except Exception as e:
@@ -35,7 +44,7 @@ class AudioPayload(PayLoadObject):
         Determines if a given file path has a supported file extension
         """
         logger.info(file_path)
-        return get_extension(file_path) in ["mp3", "wav", "opus", "mpeg"] 
+        return get_extension(file_path) in SUPPORTED_AUDIO
     
     def _set_initial_status(self) -> None:
         """
@@ -48,7 +57,8 @@ class AudioPayload(PayLoadObject):
         Copies file to workspace
         """
         extension = get_extension(self.original_source)
-        tgt_path =os.path.join(self.workspace.data_copy, f"{self.name}.{extension}")
+        tgt_path =os.path.join(
+            self.workspace.data_copy, f"{self.name}.{extension}")
         copy(self.original_source, tgt_path)
         self.data_files = [tgt_path]
         
@@ -57,7 +67,7 @@ class AudioPayload(PayLoadObject):
         """
         Contains and accesses a list of the supported formats
         """
-        return ["mp3", "wav", "opus", "mpeg"]
+        return SUPPORTED_AUDIO
 
     def __repr__(self) -> str:
         return "Audio payload"

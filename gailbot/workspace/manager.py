@@ -7,8 +7,8 @@ from dataclasses import dataclass
 PATH_CONFIG = path_config_loader()
 # FILE_CONFIG = file_extensions_loader()
 
-TEMP = FILE_CONFIG.temp
-OUTPUT = FILE_CONFIG.output
+TEMP = "_gb_temp"
+OUTPUT = "_gb_output"
 logger = makelogger("workspace")
 
 @dataclass

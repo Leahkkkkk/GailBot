@@ -5,7 +5,9 @@ from gailbot.core.utils.general import (
     get_extension, 
     copy)
 import os 
-
+""" NOTE: currently unused and not tested since gailbot does not support 
+          for video transcription yet
+"""
 def load_video_payload(source: SourceObject) -> Union[bool, List(PayLoadObject)]:
     """
     Loads an instance of the video payload with a given source object
@@ -18,6 +20,7 @@ def load_video_payload(source: SourceObject) -> Union[bool, List(PayLoadObject)]
         return [VideoPayload(source)]
     except:
         return False
+    
 class VideoPayload(PayLoadObject):
     def __init__(self, source) -> None:
         super().__init__(source)

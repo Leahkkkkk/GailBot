@@ -14,6 +14,17 @@ from typing import List, Dict, Union
 logger = makelogger("conversation_payload")
 
 def load_conversation_dir_payload(source: SourceObject) -> Union [bool, List[PayLoadObject]]:
+    """ given a source object, convert it into an conversation directory payload 
+        if the source stores a conversation directory
+    
+    Args:
+        source (SourceObject): an instance of SourceObject that stores the 
+        datafile and setting of the transcription
+
+    Returns:
+        Union[bool, List[PayLoadObject]]: return the converted payload if the 
+        conversion is successful, return false other wise
+    """
     original_source = source.source_path()
     if not is_directory(original_source) or not source.setting:
         return False
