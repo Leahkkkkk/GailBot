@@ -299,7 +299,7 @@ en plugin suite
 
         Returns:
         """
-        return self.gb.register_plugin_suite(splugin_source)
+        return self.gb.register_plugin_suite(plugin_source)
     
     def get_plugin(
             self, 
