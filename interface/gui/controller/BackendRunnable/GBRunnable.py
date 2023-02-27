@@ -22,7 +22,7 @@ import logging
 from model.dataBase.FileDatabase import FileObj
 from util.GailBotData import Credential, ProfileConfig, Plugin, getWorkPath
 
-from gailbot.controller import GailBotController
+from gailbot.api import GailBot
 
 from PyQt6.QtCore import (
     QRunnable, pyqtSlot
@@ -35,7 +35,6 @@ WATSON_REGION = Credential.WATSON_REGION
 WATSON_BASE_LANG_MODEL = Credential.WATSON_BASE_LANG_MODEL
 SETTINGS_PROFILE_NAME = ProfileConfig.SETTINGS_PROFILE_NAME
 SETTINGS_PROFILE_EXTENSION = ProfileConfig.SETTINGS_PROFILE_EXTENSION
-
 PLUGINS_TO_APPLY = Plugin.PLUGINS_TO_APPLY
 
 def get_settings_dict():
@@ -86,6 +85,7 @@ class Worker(QRunnable):
                  
     """
     def __init__(self, files: List [Tuple [str, FileObj]], signal):
+        """ TODO: the input for the files should be files: List [Tuple[str, str]] """
         super(Worker, self).__init__()
         self.signals = signal
         self.killed = False
@@ -112,25 +112,26 @@ class Worker(QRunnable):
         workPath = getWorkPath()
         WORKSPACE_DIRECTORY_PATH = workPath.workSpace
         PLUGIN_DOWNLOAD_DIRECORY = workPath.plugin
+        
         try:
             self.signals.start.emit()
-            gb = GailBotController(WORKSPACE_DIRECTORY_PATH)
+            gb = GailBot()
             self.signals.progress.emit(str("GailBot controller Initialized"))
         
-            if not self.killed:
-                plugin_suite_paths = gb.download_plugin_suite_from_url(
-                Plugin.HIL_PLUGIN_URL, PLUGIN_DOWNLOAD_DIRECORY)  
-                self.signals.progress.emit(str("Plugins Downloaded"))
-                path = os.path.join(os.getcwd(), plugin_suite_paths[0])
-                self.signals.progress.emit(str("Plugins Applied"))
-                self.logger.info(gb.register_plugins(path))
+            # if not self.killed:
+            #     plugin_suite_paths = gb.download_plugin_suite_from_url(
+            #     Plugin.HIL_PLUGIN_URL, PLUGIN_DOWNLOAD_DIRECORY)  
+            #     self.signals.progress.emit(str("Plugins Downloaded"))
+            #     path = os.path.join(os.getcwd(), plugin_suite_paths[0])
+            #     self.signals.progress.emit(str("Plugins Applied"))
+            #     self.logger.info(gb.register_plugins(path))
 
             for file in self.files:
                 #iterate through the list of the file
                 key, filedata = file 
                 filename = filedata.Name
                 filePath = filedata.FullPath
-                outPath = f"{filedata.Output}/{filename}_output/"
+                outPath = filedata.Output
                 profile = filedata.Profile 
                 self.logger.info(key)
                 self.logger.info(filename)
@@ -138,33 +139,23 @@ class Worker(QRunnable):
                 self.logger.info(outPath)
                 
                 if not self.killed:
-                    assert gb.add_source(filename, filePath, outPath)
+                    assert gb.add_source(filePath, outPath)
                     self.logger.info(filedata)
                     self.logger.info("Source Added")
                     self.signals.progress.emit(f"Source{filename} Added")
-                    
-    
-                if not self.killed and not gb.is_settings_profile(profile):
-                    gb.create_new_settings_profile(profile, get_settings_dict())
-                    profiles.add(profile)
-                    assert gb.is_settings_profile(profile)
-                    self.logger.info("Create Setting File")
-                    self.signals.progress.emit("Setting created")
 
-                if not self.killed:
-                    assert gb.apply_settings_profile_to_source(
-                        filename, profile)
-                    self.logger.info("Apply Setting")
-                    self.signals.progress.emit(str("Apply Setting"))
+                # TODO: change the way the frontend passes the setting data 
+                # if not self.killed and not gb.is_setting(profile):
+                #     # get the profile from the data base 
+                #     gb.create_new_setting(profile, get_settings_dict())
+                #     profiles.add(profile)
+                #     assert gb.is_settings_profile(profile)
+                #     self.logger.info("Create Setting File")
+                #     self.signals.progress.emit("Setting created")
 
-                    assert gb.is_source_ready_to_transcribe(filename)
-                    self.logger.info("Ready to transcribe")
-                    self.signals.progress.emit(f"{filename} Ready to transcribe")
-                
             if not self.killed:
                 self.signals.progress.emit(str("Transcribing"))
                 self.logger.info("Transcribing")
-                gb.transcribe()
             
             if self.killed:
                 self.logger.info("User cancelled the transcription")

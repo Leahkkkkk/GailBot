@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 # @Author: Muhammad Umair
-# @Date:   2021-12-02 13:13:08
+# @Date:   2023-01-08 12:25:27
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-02 14:52:31
-# Engines config file
+# @Last Modified time: 2023-01-10 13:30:27
 
-from .engines import Engines
-from .watson import WatsonCore, customWatsonCallbacks, WatsonLanguageModel, \
-    WatsonAcousticModel, WatsonEngine
+
+from .engine import Engine
+from .watson import WatsonAMInterface, WatsonLMInterface, Watson
+from .whisperEngine import WhisperEngine
+from .google import Google

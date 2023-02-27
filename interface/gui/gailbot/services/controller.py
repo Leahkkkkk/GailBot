@@ -91,4 +91,4 @@ class ServiceController:
     
     def delete_plugin(self, suite_name: str) -> bool:
         return self.plugin_manager.delete_suite(suite_name)
-        
+     

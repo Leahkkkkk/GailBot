@@ -1,256 +1,302 @@
 # -*- coding: utf-8 -*-
-# @Author: Muhammad Umair
-# @Date:   2021-12-07 12:47:17
-# @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2021-12-07 12:47:33
-# # Standard library imports
-# # Local imports
-# # Third party imports
-# from typing import List, Any, Dict, Tuple
-# from google.cloud import speech_v1p1beta1 as speech
-# from ...io import IO
-# from ..utterance import Utterance
-# import io as io
+# @Author: Vivian Li, Siara Small
+# @Date:   2023-01-30 16:00
+# @Last Modified by:  Vivian Li
+# @Last Modified time: 2023-01-31 12:01:31
+import os 
+import io
+from copy import deepcopy
+from typing import Union
+from google.cloud import speech_v1p1beta1 as speech
+from google.cloud.speech_v1p1beta1.types import cloud_speech
+from typing import Dict, List 
+from gailbot.core.utils.general import (
+    get_extension, 
+    write_json, 
+    is_directory, 
+    make_dir,
+    paths_in_dir,
+    delete,
+    get_name)
 
-# class GoogleCore:
+from gailbot.core.utils.logger import makelogger
+from ...engines import exception as Err
+from gailbot.configs import google_config_loader, top_level_config_loader
+from gailbot.core.utils.general import get_size
+from gailbot.core.utils.media import MediaHandler
 
-#     format_to_content_types = {
-#         "flac" : "audio/flac",
-#         "mp3" : "audio/mp3",
-#         "wav" : "audio/wav"}
+logger = makelogger("google")
+GOOGLE_CONFIG = google_config_loader()
+TOP_CONFIG = top_level_config_loader()
+""" TODO: 
+1. google API key  
+"""
+class GoogleCore: 
+    """
+    Implement core functionalities to transcribe an audio file through 
+    google STT engine
+    """
+    
+    ENCODING_TABLE = {
+        "wav": speech.RecognitionConfig.AudioEncoding.LINEAR16, 
+        "mp3": speech.RecognitionConfig.AudioEncoding.MP3,
+        "opus": speech.RecognitionConfig.AudioEncoding.OGG_OPUS,
+        "flac": speech.RecognitionConfig.AudioEncoding.FLAC,
+        "amr": speech.RecognitionConfig.AudioEncoding.AMR
+    }
+    
+    def __init__(self, workspace_dir: str, google_key: Dict[str, str] = None ) -> None:  
+        self.workspace_dir = workspace_dir
+        self._init_status()
+        self._init_workspace()
+        try:
+            if not google_key:
+                os.environ['GOOGLE_APPLICATION_CREDENTIALS']= os.path.join(os.getcwd(),'google_key.json')
+            else:
+                os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = google_key
+            self.client = speech.SpeechClient()   
+        except:
+            raise Err.ConnectionError("ERROR: Failed to connect to google cloud")
+        else:
+            self.connected = True
+            logger.info("Connected")
+    
+    @property
+    def supported_formats(self) -> List[str]:
+        """
+        Access the supported audio formats 
 
-#     # TODO: add more language_codes if want to add functionality for other languages.
-#     language_codes = {
-#         "english" : "en-us"
-#     }
+        Returns:
+            List[str] : list of supported formats
+        """
+        return list[self.ENCODING_TABLE]
 
-#     def __init__(self, io = IO) -> None:
-#         self.google_defaults = {
-#             "enable_automatic_punctuation": True,
-#             "language_code" : self.language_codes["english"],
-#             "enable_speaker_diarization" : True,
-#         }
-#         self.inputs = {
-#             "audio_path" : None,
-#             "sample_rate_hertz" : None,
-#             "diarization_speaker_count" : None
-#         }
-#         self.io = io
+    def is_file_supported(self, file: str) -> bool:
+        """
+        Determines if a given file is supported
 
-#     ## Setters
+        Args:
+            file (str) : file name to check if supported
 
-#     def set_audio_path(self, audio_source_path : str) -> bool:
-#         """
-#         Set the audio_path of audio file to transcribe. Validate that file
-#         is a valid and supported audio.
+        Returns: True if the file is supported, false if not.
+        """
+        return get_extension(file) in self.supported_formats
+    
+    def transcribe(self, audio_path: str) -> List[Dict[str, str]]:
+        """
+        Transcribes the provided audio stream using a websocket connections.
+        And output the result to given output directory 
 
-#         Args:
-#             audio_source_path (str):
-#                 Path to audio file.
-
-#         Returns:
-#             (bool): True if audio_path successfully set, false otherwise.
-#         """
-#         if not self.io.is_file(audio_source_path) or \
-#                 not self._is_supported_audio_file(audio_source_path):
-#             return False
-#         self.inputs["audio_path"] = audio_source_path
-#         return True
-
-#     # # TODO: define invalid rates -- some ranges are not suggested, or don't make sense inbetween a certain range
-#     def set_sample_rate_hertz(self, sample_rate_hertz : int) -> bool:
-#         """
-#         Set the sample_rate_herts of audio file. Validate that sample_rate_hertz
-#         is in proper range.
-
-#         Args:
-#             sample_rate_hertz (int):
-#                 Sample rate of audio.
-
-#         Returns:
-#             (bool): True if sample_rate_hertz successfully set, false otherwise.
-#         """
-#         if sample_rate_hertz <= 0:
-#             return False
-#         self.inputs["sample_rate_hertz"] = sample_rate_hertz
-#         return True
-
-#     def set_diarization_speaker_count(self, speaker_count : int) -> bool:
-#         """
-#         Set the speaker_count of audio conversation. Validate that speaker_count
-#         is more than 0.
-
-#         Args:
-#             speaker_count (int):
-#                 Number of speakers in audio.
-#         Returns:
-#             (bool): True if diarization_speaker_count sucecssfully set, false
-#                     otherwise.
-#         """
-#         if speaker_count <= 0:
-#             return False
-#         self.inputs["diarization_speaker_count"] = speaker_count
-#         return True
-
-#     ## Getters
-
-#     def get_audio_path(self) -> str:
-#         """
-#         Retrieve audio_path from inputs.
-
-#         Returns:
-#             (str): audio path to file to transcribe.
-#         """
-#         return self.inputs["audio_path"]
-
-#     def get_sample_rate_hertz(self) -> int:
-#         """
-#         Retrieve sample_rate_hertz from inputs.
-
-#         Returns:
-#             (int): sample rate of audio.
-#         """
-#         return self.inputs["sample_rate_hertz"]
-
-#     def get_diarization_speaker_count(self) -> int:
-#         """
-#         Retrieve diarization speaker count from inputs.
-
-#         Returns:
-#             (int): number of speakers in conversation.
-#         """
-#         return self.inputs["diarization_speaker_count"]
-
-#     def get_supported_audio_formats(self) -> List[str]:
-#         """
-#         Get the audio formats that are supported by the transcription service.
-
-#         Returns:
-#             List[str]: Supported audio formats.
-#         """
-#         return list(self.format_to_content_types.keys())
-
-#     def get_supported_language_codes(self) -> List[str]:
-#         """
-#         Get the languages that are supported by the transcription service.
-
-#         Returns:
-#             List[str]: Supported languages.
-#         """
-#         return list(self.language_codes.keys())
-
-#     def reset_configurations(self) -> bool:
-#         """
-#         Reset all the configurations/inputs.
-
-#         Returns:
-#             (bool): True if set successfully. False otherwise.
-#         """
-#         for k in self.inputs.keys():
-#             self.inputs[k] = None
-#         return True
-
-#     def transcribe_audio(self) -> List[Utterance]:
-#         """
-#         Sends transcription request to Google client and parses utterances
-#         from response.
-
-#         Returns:
-#             List[Utterance]: list of utterances of transcription on the word
-#                              level.
-#         """
-#         # Get Google speech client, configure and send request
-#         client = speech.SpeechClient()
-#         audio, config = self._configure_api_request()
-#         response = client.recognize(config=config, audio=audio)
-
-#         utterances = self._parse_utterances_from_response(response)
-
-#         return utterances
-
-#     # private
-#     def _is_supported_audio_file(self, file_path : str) -> bool:
-#         """
-#         Determine if the audio file at the given path is supported.
-
-#         Args:
-#             file_path (str): Path to the audio file.
-
-#         Returns:
-#             (bool): True if the file is supported. False otherwise.
-#         """
-#         _, extension = self.io.get_file_extension(file_path)
-#         return extension in self.format_to_content_types.keys()
-
-#     # TODO: it is not suggested to set encoding by extension. Need to find alternative methods for defining encoding
-#     def _determine_encoding(self, audio_source_path : str) -> Any:
-#         """
-#         Determines encoding of audio file.
-
-#         Args:
-#             audio_source_path (str): path to audio source.
-
-#         Return:
-#             (Any): Encoding of audio file provided, None if no encoding
-#                    determined
-#         """
-#         if not self._is_supported_audio_file(audio_source_path):
-#             return None
-
-#         _, extension = self.io.get_file_extension(audio_source_path)
-#         if extension == "mp3":
-#             return speech.RecognitionConfig.AudioEncoding.ENCODING_UNSPECIFIED
-#         elif extension == "wav":
-#             return speech.RecognitionConfig.AudioEncoding.LINEAR16
-#         elif extension == "flac":
-#             return speech.RecognitionConfig.AudioEncoding.FLAC
-#         return None
-
-#     def _configure_api_request(self) -> Tuple[speech.RecognitionAudio, speech.RecognitionConfig]:
-#         """
-#         Configures audio and config to send request to speech client.
-
-#         Return:
-#            Tuple[speech.RecognitionAudio, speech.RecognitionConfig]:
-#                 Audio and speech objects used for request
-#         """
-#         #TODO: does our io support this?
-#         file_path = self.inputs["audio_path"]
-#         with io.open(file_path, "rb") as audio:
-#             content = audio.read()
-
-#         audio = speech.RecognitionAudio(content=content)
-#         config = speech.RecognitionConfig(
-#             encoding=self._determine_encoding(file_path),
-#             sample_rate_hertz=self.inputs["sample_rate_hertz"],
-#             language_code=self.google_defaults["language_code"],
-#             enable_speaker_diarization=self.google_defaults["enable_speaker_diarization"],
-#             diarization_speaker_count=self.inputs["diarization_speaker_count"],
-#             enable_automatic_punctuation=self.google_defaults["enable_automatic_punctuation"]
-#         )
-
-#         return (audio, config)
-
-#     def _parse_utterances_from_response(self, response) -> List[Utterance]:
-#         """
-#         Parses utterances from Google response.
-
-#         Args:
-#             response: response from Google speech client after request sent.
-
-#         Returns:
-#             List[Utterance]: list of utterances on the word level from response.
-#         """
-#         result = response.results[-1]   # word list at end of response
-#         words_info = result.alternatives[0].words
-
-#         utterances = []
-#         for word_info in words_info:
-#             utterances.append(Utterance({
-#                 "speaker_label" : word_info.speaker_tag,
-#                 "start_time" : str(word_info.start_time),
-#                 "end_time" : str(word_info.end_time),
-#                 "transcript" : word_info.word
-#             }))
-
-#         return utterances
+        Args:
+            audio_path (str) : 
+                path to audio file that will be transcribed
+            output_directory (str) : 
+                path to directory where the transcribed data will be stored
+        
+        Return:
+            A list of dictionary that contains the utterance data of the 
+            audio file, each part of the audio file is stored in the format 
+            {speaker: , start_time: , end_time: , text: }
+        """
+        self._init_workspace()
+        mediaHandler = MediaHandler()
+        stream = mediaHandler.read_file(audio_path)
+        length = mediaHandler.info(stream)["duration_seconds"]
+        if length >= GOOGLE_CONFIG.maximum_duration:
+            try:
+                res = self._transcribe_large_file(
+                    audio_path, self.workspace_dir)
+                logger.info(res)
+                return res
+            except Exception as e:
+                logger.error(e)
+                raise Err.TranscriptionError(
+                    "ERROR: Failed to transcribe large file")
+        try:
+            response = self.run_engine(audio_path)
+        except:
+            raise Err.TranscriptionError("ERROR: Google STT transcription failed")
+        
+        try:
+            return self.prepare_utterance(response)
+        except Exception as e :
+            logger.error(e)
+            raise Err.OutPutError(f"ERROR: Output Google STT failed, error message: {e}")
+       
+            
+    def run_engine(self, audio_path: str) -> cloud_speech.RecognizeResponse:
+        """ 
+        run the google STT engine to transcribe the file 
+        
+        Args: 
+            audio_path (str):
+                path to audio file that will be transcribed
+        
+        Return (cloud_speech.RecognizeResponse):
+            return the response data from google STT 
+        """
+        try:
+            with io.open(audio_path, "rb") as audio:
+                content = audio.read()
+                audio = speech.RecognitionAudio(content = content)
+                self.read_audio = True
+            format = get_extension(audio_path).lower()
+            encoding = self.ENCODING_TABLE[format]
+            kwargs = deepcopy(GOOGLE_CONFIG.defaults)
+            
+            if format == "wav" or format == "flac":
+                kwargs.update({"encoding": encoding})
+            else:
+                kwargs.update({"encoding": encoding, "sample_rate_hertz": 16000})
+            
+            config = speech.RecognitionConfig(**kwargs)
+            
+            self.transcribing = True
+            response = self.client.recognize(
+                request={"config": config, "audio": audio})
+        
+        except Exception as e:
+            logger.error(e)
+            self.transcribe_error = True
+            raise Err.TranscriptionError("Google STT Transcription failed")
+        else:
+            self.transcribing = False
+            self.transcribe_success = True
+            logger.info(response.results)
+        return response
+      
+    def prepare_utterance(self, response: cloud_speech.RecognizeResponse) -> List[Dict[str, str]]:
+        """
+        output the response data from google STT, convert the raw data to 
+        utterance data which is a list of dictionary in the format 
+        {speaker: , start_time: , end_time: , text: }
+        
+        Args: 
+            output_directory(str) : output path 
+            response (cloud_speech.RecognizeResponse): raw response from google 
+        
+        Return:
+            A list of dictionary that contains the utterance data of the 
+            audio file, each part of the audio file is stored in the format 
+            {speaker: , start_time: , end_time: , text: }
+        """
+        results = response.results
+        
+        status_result = {
+            "connected": self.connected,
+            "read_audio": self.read_audio, 
+            "transcribing": self.transcribing, 
+            "transcribe_success": self.transcribe_success,
+            "transcribe_error": self.transcribe_error,
+            "output_success": True,
+            "request_id": response.request_id,
+        }
+        
+        write_json(os.path.join(self.workspace_dir, "results.json"), status_result)
+        """ Prepare Utterance """
+        utterances = list()
+        for result in results:
+            for word in result.alternatives[0].words:
+                utt = {
+                    "speaker": word.speaker_tag,
+                    "start_time": word.start_time.seconds,
+                    "end_time":word.end_time.seconds,
+                    "text":word.word
+                }
+                utterances.append(utt)
+        
+        logger.info(utterances)
+        return utterances
+    
+    def _init_status(self):
+        """ 
+        Initializes the status
+        """
+        self.connected = False
+        self.read_audio = False
+        self.transcribing = False
+        self.transcribe_success = False
+        self.transcribe_error = False
+        self.output_success = False
+    
+    def _chunk_audio(self, audiopath: str, output: str) -> Union[str, bool]:
+        """ given the audio path, chunking the audio into a series of audio
+            segment
+        
+        Args:
+            audiopath[str]: the file path to the audio file 
+            outout[str]: the output of the chunked file 
+            
+        Return:
+            Union[str, bool]: return the output directory if the chunking is 
+            successful else return False
+        """
+        if not is_directory(output):
+            make_dir(output)
+        dir = os.path.join(output, "audio")
+        make_dir(dir)
+        basename = get_name(audiopath)
+        idx = 0
+        try:
+            mediaHandler = MediaHandler()
+            stream = mediaHandler.read_file(audiopath)
+            chunks = mediaHandler.chunk(stream, GOOGLE_CONFIG.maximum_duration)
+            
+            for chunk in chunks:
+                mediaHandler.write_stream(
+                    chunk, dir, name=f"{basename}-{idx}", 
+                    format=get_extension(audiopath))
+                idx += 1
+                
+        except Exception as e:
+            logger.error(e)
+        else:
+            return dir
+    
+    def _transcribe_large_file(self, audiopath: str, workspace: str):
+        """ 
+        transcribing large audio file that exceeds the google cloud's limit for
+        transcribing local file size
+        
+        Arg: 
+            audiopath[str]: file path to the source audio file
+            workspace[str]: workspace for storing temporary file required in the 
+                            in the transcription process
+            output[str]: the output file path of the transcription result
+            
+        Return: 
+            A list of dictionary that contains the utterance data of the 
+            audio file, each part of the audio file is stored in the format 
+            {speaker: , start_time: , end_time: , text: }
+        """
+        audio_chunks_dir = self._chunk_audio(audiopath, workspace)
+        audio_chunks = paths_in_dir(audio_chunks_dir)
+        audio_chunks = sorted(audio_chunks, key = lambda file: (len(file), file))
+        utterances = []
+        for chunk in audio_chunks:
+            logger.info(f"transcribe {chunk} in progress")
+            response = self.run_engine(chunk)
+            assert response
+            logger.info("geting the response in chunk")
+            logger.info(response)
+            new_utt = self.prepare_utterance(response)
+            logger.info(new_utt)
+            utterances.append(new_utt)
+        delete(workspace)
+        return utterances
+    
+    def _init_workspace(self) -> None :    
+        """ 
+        initialize the work space
+        """ 
+        repeat = 1 
+        while is_directory(self.workspace_dir):
+            self.workspace_dir += str(repeat)
+       
+        try:
+            if not is_directory(self.workspace_dir):
+                make_dir(self.workspace_dir, overwrite=False)
+            assert is_directory(self.workspace_dir)
+        except Exception as e:
+            logger.error(e)
+            raise FileExistsError("ERROR: failed to create directory")

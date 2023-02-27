@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
 # @Author: Muhammad Umair
-# @Date:   2021-12-31 13:52:10
+# @Date:   2023-01-06 14:55:34
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2022-08-23 14:07:57
+# @Last Modified time: 2023-01-12 14:33:08
 
 
-# Provide as separate sub-packages
-from .controller import GailBotController, GailBotSettings
+__version__ = "0.1a8"
 
+from .api import GailBot
+from .core.engines import (
+    Engine,
+    Watson,
+    WatsonAMInterface,
+    WatsonLMInterface
+)
+from .servicesold import GBPluginMethods
+from .plugins import Plugin
 
-# Package version
-__version__ = '0.1.a6dev'
-
-# pypi info
-__latest_version__ = None
-__current_version_is_outdated__ = False
-__latest_version_upload_time__ = None
-__latest_version_check_time__ = None

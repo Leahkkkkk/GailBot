@@ -136,3 +136,6 @@ class Organizer:
         except Exception as e:
             logger.error(e)
             return False
+    
+    def get_setting_names(self) -> List[str]:
+        self.setting_manager.get_setting_names()

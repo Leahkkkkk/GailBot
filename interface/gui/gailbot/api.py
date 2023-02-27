@@ -23,6 +23,7 @@ class GailBot:
         self.gb: ServiceController = ServiceController(load_exist_setting=True)
         self.reset_workspace()
         
+    
     def reset_workspace(self):
         """
         Resets the workspace: clears the old workspace and initializes a new one.
@@ -38,6 +39,9 @@ class GailBot:
         
         ### Organizer Service
 
+    def transcribe(self, sources: List[str] = None):
+        self.gb.transcribe(sources)
+   
     def add_sources(
         self, 
         src_output_pairs : List [Tuple [str, str]]
@@ -343,4 +347,5 @@ en plugin suite
         """
         return self.gb.delete_plugin(suite_name)
     
+   
     
