@@ -1,0 +1,75 @@
+###### form values
+["record form".Basic]
+Filename             = "filename"
+"Audio format combo" = [".Wav"]
+
+["record form".Advanced]
+"Recording Rate (Hertz)" = "4800"
+"Max Recording Duration" = "1h"
+
+["profile form".Plugins]
+HiLabSuite = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
+
+["profile form"."PostTranscribe".General]
+"Gap Length"                = "0s"
+"Turn End Threshold"        = "0s"
+"Large Pause - Lower Bound" = "0s"
+
+["profile form"."PostTranscribe"."Laghter Settings"]
+"Laughter Detection Module bool"     = "ON"
+"Laughter Probability - Lower Bound" = "0s"
+"Laughter Length - Lower Bound"      = "0s"
+
+["profile form"."PostTranscribe"."MicroPause Bound"]
+"Upper Bound" = "0s"
+"Lower Bound" = "0s"
+
+["profile form"."PostTranscribe"."Transcription Model"]
+"Beat Transcription Mode bool"                       = "ON"
+"FTO (Floor Transfer offset)Transcription Mode bool" = "ON"
+"Syllable Rate mode bool"                            = "ON"
+
+["system setting form"."View Setting"]
+"Font Size combo"  = [ "medium", "small", "large"]
+"Color Mode combo" = [ "light mode", "dark mode"]
+"Log file auto deletion time combo" = ["every day", "every week", "every month", "every 2 months"]
+
+["system setting form"."GailBot Work Space Setting"]
+
+["log deletion"]
+"every day"      = 1
+"every week"     = 7
+"every month"    = 30
+"every 2 months" = 60
+
+[formField]
+user             = "User Info"
+engine           = "Engine"
+outPutFormat     = "Output Form Data"
+postTranscribe   = "PostTranscribe"
+reuquiredSetting = "RequiredSetting"
+plugin           = "Plugins"
+
+["profile form"."RequiredSetting"."Output Format".CorpusSettings]
+"Corpus name"        = "enter corpus name"
+"Corpus location"    = "enter corpus location"
+"Corpus room layout" = "enter corous room layout"
+"Corpus situation"   = "enter situation"
+
+["profile form"."RequiredSetting"."Output Format"]
+"FileFormat" = [".CHAT", ".TXT", ".RTF"]
+"Language"   = ["English", "French", "Spanish", "German", "Chinese(Madarin)", "Chinese(Cantonese)"]
+
+["profile form"."RequiredSetting".Engine.Whisper."0. basic setting"]
+"1. language combo" = ["English", "French", "Spanish", "German", "Chinese", "Japanese"]
+"2. detect speaker bool" = "OFF"
+
+["profile form"."RequiredSetting".Engine.Google."0. basic setting"]
+"1. audio format combo" = ["mp3", "wav"]
+
+["profile form"."RequiredSetting".Engine.Watson."0. basic setting"]
+"1. api key"        =  "enter your api key"
+"2. region" = "enter the resgion"
+"3. base model" = "enter the base model"
+"4. language customization id"   = "enter language customization id"
+"5. acoustic customization id" = "enter acoustic customization id"
