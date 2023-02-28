@@ -53,8 +53,6 @@ class ProfileModel:
     4. get(self, profilekey:str) -> None 
     """
     def __init__(self) -> None:
-        
-        
         self.logger = makeLogger("B")
         self.data = ProfilePreset              
         self.profilekeys = list(ProfilePreset) 
@@ -69,6 +67,8 @@ class ProfileModel:
         key, data = profile 
         if key not in self.data: 
             self.data[key] = data
+            self.logger.info(key)
+            self.logger.info(data)
             self.signals.profileAdded.emit(key)
         else:
             self.signals.error.emit("duplicated profile name") 
@@ -115,6 +115,7 @@ class ProfileModel:
             if profilekey not in self.data:
                 self.signals.error.emit(ErrorMsg.KEYERROR)
                 self.logger.error(KeyError)
+                self.logger.info(self.data[profilekey])
             else:
                 self.signals.send.emit((profilekey, self.data[profilekey]))
         except:
@@ -123,6 +124,7 @@ class ProfileModel:
 
     def get_profile(self, profilekey: str) -> Union[Dict, bool]:
         if profilekey in self.data:
+            self.logger.info(self.data[profilekey])
             return self.data[profilekey]
         else:
             return False

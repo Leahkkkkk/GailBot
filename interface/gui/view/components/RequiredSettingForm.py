@@ -10,7 +10,7 @@ Modified By:  Siara Small  & Vivian Li
 Description: implementation of the required setting form 
 '''
 
-from typing import Dict 
+from typing import Dict, TypedDict
 
 from view.widgets import ToggleView
 from view.widgets.Form.DependentComboBox import DependentCombo
@@ -29,6 +29,7 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import Qt
 
+    
 class RequiredSettingForm(QWidget):
     """ implementation of a form that allow user to create required setting 
     
@@ -52,8 +53,6 @@ class RequiredSettingForm(QWidget):
         self.engineFormView = ToggleView.ToggleView(
             Text.engineSettingHeader, self.engineForm, header = True)
         self.engineFormView.setScrollHeight(Dimension.OUTPUT_FORM_HEIGHT)
-        logger.error("the required setting form")
-        logger.error(self.getValue())
 
     def _initLayout(self):
         """initialize layout"""
@@ -70,8 +69,13 @@ class RequiredSettingForm(QWidget):
             data (Dict[str, Dict[str, dict]]): a dictionary that stores the 
                                                profile values
         """
-        print(data["Engine"])
-        self.engineForm.setValue(data["Engine"])
+        logger.info(data)
+        formdict = dict()
+        engine = data.pop("engine", "whisper")
+        formdict[engine] = dict()
+        formdict[engine].update(data)
+        logger.info(formdict)
+        self.engineForm.setValue(formdict)
     
     
     def getValue(self) -> Dict [str, dict]:
@@ -85,5 +89,5 @@ class RequiredSettingForm(QWidget):
         engine = list(d.keys())[0]
         profile["engine"] = engine
         profile.update(d[engine])
-        logger.error(profile)
+        logger.info(profile)
         return profile

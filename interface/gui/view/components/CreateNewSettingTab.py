@@ -78,12 +78,16 @@ class CreateNewSetting(QDialog):
     def _postSetting(self):
         """ a function that send the new setting data through signal"""
     
-        profileData = self.engineSetting.getData()
-        profileName = self.addProfileName.getData()
         res = dict()
-        res["RequiredSetting"] = dict()
-        res["RequiredSetting"]["Engine"] = profileData
-        
+        engineSetting = dict() 
+        profileName = self.addProfileName.getData()
+        d = self.engineSetting.getData()
+        engine = list(d.keys())[0]
+        engineSetting["engine"] = engine
+        engineSetting.update(d[engine])
+        res["engine_setting"] = engineSetting
+        res["plugin_setting"] = []
+        self.logger.info(res)
         try:
             self.signals.newSetting.emit((profileName, res))
             self.logger.info(res)

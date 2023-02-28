@@ -7,8 +7,8 @@ from PyQt6.QtWidgets import QWidget, QPushButton, QHBoxLayout
 
 class onOffButton(QWidget, FormWidget):
     def __init__(self, 
-                label: str,
-                state: bool,   
+                label: bool,
+                state: bool = False,   
                 *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.label = label 
@@ -18,7 +18,7 @@ class onOffButton(QWidget, FormWidget):
     
     def initUI(self):
         self.label = Label.Label(self.label, FontSize.BTN)
-        if self.value == True:
+        if self.value:
             self.onOffBtn = QPushButton(Text.on)
         else:
             self.onOffBtn = QPushButton(Text.off)
@@ -31,16 +31,16 @@ class onOffButton(QWidget, FormWidget):
         self._layout.addWidget(self.onOffBtn)
     
     def buttonClickHandler(self):
-        if self.onOffBtn.text() == Text.on:
+        if self.value:
             self.onOffBtn.setText(Text.off)
             self.value = False
         else:
             self.onOffBtn.setText(Text.on)
             self.value = True
     
-    def setValue(self, value):
+    def setValue(self, value: bool):
         self.value = value 
-        if value or value == "true":
+        if value:
             self.onOffBtn.setText(Text.on)
         else: 
             self.onOffBtn.setText(Text.off)

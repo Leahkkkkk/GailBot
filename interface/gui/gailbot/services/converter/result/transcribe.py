@@ -58,8 +58,7 @@ class UttResult(ResultInterface):
                 
             for name, result in data.items():
                 logger.info(path)
-                logger.error(name)
-                logger.error(path)
+                logger.info(name)
                 write_csv(os.path.join(path, name + ".csv"), result)
             return True
         except Exception as e:

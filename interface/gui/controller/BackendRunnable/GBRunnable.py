@@ -121,7 +121,6 @@ class Worker(QRunnable):
                 self.logger.info(file)
                 #iterate through the list of the file
                 key, filedata, profile = file 
-                profile = profile["RequiredSetting"]["Engine"]
                 filename = filedata.Name
                 filePath = filedata.FullPath
                 outPath = filedata.Output
@@ -130,7 +129,7 @@ class Worker(QRunnable):
                 self.logger.info(filename)
                 self.logger.info(filePath)
                 self.logger.info(outPath)
-                self.logger.info(profile)
+                self.logger.info(f"the profile of the file is {profile}")
                 
                 if not self.killed:
                     print("ready to add source")

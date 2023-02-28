@@ -198,7 +198,7 @@ class ProfileSettingPage(QWidget):
             key, data = profile 
             self.selectSettings.setCurrentText(key)
             # self.PostSetPage.setValue(data["PostTranscribe"])
-            self.RequiredSetPage.setValue(data["RequiredSetting"])
+            self.RequiredSetPage.setValue(data["engine_setting"])
             # self.PluginPage.setValue(data["Plugins"])
         except:
             WarnBox("An error occurred when loading the profile")
