@@ -115,7 +115,7 @@ class Worker(QRunnable):
                 self.logger.info("get gailbot")
             except Exception as e:
                 self.logger.error(e)
-            # self.signals.progress.emit(str("GailBot controller Initialized"))
+            self.signals.progress.emit(str("GailBot controller Initialized"))
         
             for file in self.files:
                 self.logger.info(file)
@@ -129,7 +129,8 @@ class Worker(QRunnable):
                 self.logger.info(filename)
                 self.logger.info(filePath)
                 self.logger.info(outPath)
-                self.logger.info(f"the profile of the file is {profile}")
+                self.logger.info(f"the profile name is {profile_name}, \
+                                   the profile is {profile}")
                 
                 if not self.killed:
                     print("ready to add source")
@@ -137,15 +138,28 @@ class Worker(QRunnable):
                     assert gb.add_source(filePath, outPath)
                     self.logger.info(filedata)
                     self.logger.info("Source Added")
-                    # self.signals.progress.emit(f"Source{filename} Added")
-
+                    self.signals.progress.emit(f"Source{filename} Added")
+                
                 # TODO: change the way the frontend passes the setting data 
-                # if not self.killed and not gb.is_setting(profile_name):
-                #     # get the profile from the data base 
-                #     gb.create_new_setting(profile_name, profile)
-                #     gb.apply_setting_to_source(filePath, profile_name)
-                #     self.logger.info("Create Setting File")
-                #     self.signals.progress.emit("Setting created")
+                if not self.killed and not gb.is_setting(profile_name):
+                    # get the profile from the data base 
+                    try:
+                        assert gb.create_new_setting(profile_name, profile)
+                    except Exception as e:
+                        self.logger.error("the profile cannot be created")
+                        self.logger.error(e)
+                        self.signals.error.emit("the profile cannot be created")
+                    else:
+                        self.logger.info("profile is created")
+                        
+                    try:
+                        assert gb.apply_setting_to_source(filePath, profile_name)
+                    except Exception as e:
+                        self.logger.error(f"profile cannot be applied {e}")
+                        self.signals.error.emit(f"profile cannot be applied {e}")
+                    
+                    self.logger.info("Create Setting File")
+                    self.signals.progress.emit("Setting created")
 
             if not self.killed:
                 gb.transcribe()
@@ -154,10 +168,10 @@ class Worker(QRunnable):
             
             if self.killed:
                 self.logger.info("User cancelled the transcription")
-                # self.signals.killed.emit()
+                self.signals.killed.emit()
                          
         except Exception as e:
-            # self.signals.error.emit(f"${e.__class__} fails")
+            self.signals.error.emit(f"Error: {e}")
             self.logger.error(f"{e} fails")
         else:
             if not self.killed:
@@ -174,7 +188,7 @@ class Worker(QRunnable):
             will terminates after finishing the last function call 
         """
         self.logger.info("received request to cancel the thread")
-        # self.killed = True
+        self.killed = True
         self.signals.killed.emit()
     
     def _initLogger(self):

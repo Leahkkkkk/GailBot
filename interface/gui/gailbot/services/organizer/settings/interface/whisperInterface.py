@@ -1,7 +1,9 @@
 from pydantic import BaseModel, ValidationError
 from typing import Dict, List , Union
 from .engineSettingInterface import EngineSettingInterface
+from gailbot.core.utils.logger import makelogger
 
+logger = makelogger("whisperInterface")
 class Init(BaseModel): 
     pass
 class TranscribeSetting(BaseModel):
@@ -12,7 +14,12 @@ class WhisperInterface(EngineSettingInterface):
     transcribe : TranscribeSetting
     init: Init = None 
     engine: str 
-   
+    
+class ValidateWhisper(BaseModel): 
+    engine              :str
+    language            : str  = None
+    detect_speakers     : bool = False
+
 def load_whisper_setting(setting: Dict[str, str]) -> Union[bool, EngineSettingInterface]:
     """ given a dictionary, load the dictionary as a whisper setting 
 
@@ -26,10 +33,22 @@ def load_whisper_setting(setting: Dict[str, str]) -> Union[bool, EngineSettingIn
                                         as an instance of SettingInterface, 
                                         else return false
     """
+    logger.info("initialize whisper engine")
     if  not "engine" in setting.keys() or setting["engine"] != "whisper": 
         return False
     try:
-        setting = WhisperInterface(**setting)
-        return setting
+        logger.info(setting)
+        validate = ValidateWhisper(**setting)
+        logger.info(validate)
+        whisper_set = dict()
+        whisper_set["engine"] = setting.pop("engine")
+        whisper_set["init"] = dict()
+        whisper_set["transcribe"] = dict()
+        whisper_set["transcribe"].update(setting)
+        logger.info(whisper_set)
+        whisper_set = WhisperInterface(**whisper_set)
+    
+        return whisper_set
     except ValidationError as e:
+        logger.error(e)
         return False

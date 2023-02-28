@@ -38,7 +38,7 @@ class TextInput(QWidget, FormWidget):
                  vertical = False,
                  *args, **kwargs) -> None:
         super(TextInput, self).__init__(*args, **kwargs)
-        self.label = label
+        self.label = label.replace("_", " ")
         self.vertical = vertical
         self.labelSize = labelSize
         self.value = inputText

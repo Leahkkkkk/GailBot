@@ -19,10 +19,11 @@ class SettingObject():
     engine_setting: EngineSettingInterface   = None
     plugin_setting: PluginSettingsInterface  = None 
     name: str     = None                   
-    valid_interfaces = [load_watson_setting, load_google_setting, load_whisper_setting] 
+    valid_interfaces = [load_whisper_setting, load_google_setting, load_watson_setting] 
      
     def __init__(self, setting: Dict[str, str], name: str) -> None:
         self.data = setting
+        logger.info("initialize the setting object")
         self._load_engine_setting(setting["engine_setting"])
         self._load_plugin_setting(setting["plugin_setting"])
         self.name = name
@@ -65,10 +66,13 @@ class SettingObject():
             return False
     
     def _load_plugin_setting(self, setting : List[str]) -> bool:
+        logger.info("initialize plugin setting ")
         self.plugin_setting = PluginSettingsInterface(setting)
 
     def _load_engine_setting(self, setting : Dict[str, str]) -> bool:
+        logger.info("initialize the engine setting")
         for option in self.valid_interfaces:
+            logger.info(option)
             set_obj = option(setting)
             if isinstance(set_obj, EngineSettingInterface):
                 self.engine_setting = set_obj

@@ -116,7 +116,7 @@ class GailBot:
             self, 
             name : str, 
             setting : Dict[str, str]
-        ) -> None:
+        ) -> bool:
         """
         Creates a new setting profile
 

@@ -75,7 +75,7 @@ class PluginPage(QWidget):
         # self.verticalLayout.addWidget(
         #     self.scrollArea, 
         #     alignment=center)
-        # self.verticalLayout.addStretch()
+        self.verticalLayout.addStretch()
         initSecondaryColorBackground(self.scrollArea)
         initSecondaryColorBackground(self.scrollContainer)
 
@@ -125,7 +125,7 @@ class PluginPage(QWidget):
             for plugin, checkWidget in self.pluginDict.items():
                 if checkWidget.isChecked():
                     appliedPlugins.add(plugin)
-            return appliedPlugins
+            return list(appliedPlugins)
         except:
             WarnBox("An error occurred when retrieving the plugins")
    

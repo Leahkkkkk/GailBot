@@ -34,10 +34,10 @@ class ServiceController:
     def remove_source(self, name: str) -> None:
         return self.organizer.remove_source(name)
     
-    def is_source(self, name:str) -> None:
+    def is_source(self, name:str) -> bool:
         return self.organizer.is_source(name)
     
-    def create_new_setting(self, name: str, setting: Dict[str, str]) -> None:
+    def create_new_setting(self, name: str, setting: Dict[str, str]) -> bool:
         return self.organizer.create_new_setting(name, setting)
         
     def save_setting(self, setting_name: str) -> bool:
