@@ -57,9 +57,6 @@ class CreateNewSetting(QDialog):
         self.signals = Signals()
         self.addProfileName = ProfileName()
         self.engineSetting = EngineSetting()
-        self.outPutFormSetting = OutPutFormatSetting()
-        self.postTranscribeSetting = PostTranscribeSetting()
-        self.pluginSetting = PluginSetting(plugins)
         self.newSettingData = dict()
         self.setWindowTitle(Text.WindowTitle)
         
@@ -68,9 +65,6 @@ class CreateNewSetting(QDialog):
             {
                 Text.TabHeader1: self.addProfileName,
                 Text.TabHeader3: self.engineSetting
-                # Text.TabHeader4: self.outPutFormSetting,
-                # Text.TabHeader5: self.postTranscribeSetting,
-                # Text.TabHeader6: self.pluginSetting
             },
             QSize(Dimension.LARGEDIALOGWIDTH, Dimension.LARGEDIALOGHEIGHT)
         )
@@ -84,23 +78,15 @@ class CreateNewSetting(QDialog):
     def _postSetting(self):
         """ a function that send the new setting data through signal"""
     
-        profileData = dict()
-        requiredData = dict()
+        profileData = self.engineSetting.getData()
         profileName = self.addProfileName.getData()
-        engineData = self.engineSetting.getData()
-        outputFormData = self.outPutFormSetting.getData()
-        postFormData = self.postTranscribeSetting.getData()
-        plugins = self.pluginSetting.getData()
+        res = dict()
+        res["RequiredSetting"] = dict()
+        res["RequiredSetting"]["Engine"] = profileData
         
         try:
-            requiredData["Engine"] = engineData
-            requiredData["Output Form Data"] = outputFormData
-            profileData ["PostTranscribe"] = postFormData
-            profileData ["RequiredSetting"] = requiredData
-            profileData ["Plugins"] = plugins
-            
-            self.signals.newSetting.emit((profileName, profileData))
-            self.logger.info(profileData)
+            self.signals.newSetting.emit((profileName, res))
+            self.logger.info(res)
             self.close()
         except:
             WarnBox("an error occurred when posting the form data")

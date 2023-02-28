@@ -18,6 +18,10 @@ from util.Text import EngineSettingForm
 from view.components.OutputFormatForm import OutPutFormat
 from util.Text import CreateNewProfilePageText as Text 
 from util.Style import Dimension
+import logging
+
+logger = logging.getLogger()
+logger = logging.LoggerAdapter(logger, {"source": "Frontend"})
 
 from PyQt6.QtWidgets import (
     QWidget, 
@@ -48,14 +52,8 @@ class RequiredSettingForm(QWidget):
         self.engineFormView = ToggleView.ToggleView(
             Text.engineSettingHeader, self.engineForm, header = True)
         self.engineFormView.setScrollHeight(Dimension.OUTPUT_FORM_HEIGHT)
-        self.outPutForm = OutPutFormat()
-        self.outPutFormView = ToggleView.ToggleView(
-            Text.outputSettingHeader, self.outPutForm, header = True)
-    
-        self.outPutFormView.setScrollHeight(self.outPutForm.height())
-        self.outPutFormView.setScrollHeight(Dimension.OUTPUT_FORM_HEIGHT)
-        self.engineFormView.Btn.clicked.connect(self.outPutFormView.hideView)
-        self.outPutFormView.Btn.clicked.connect(self.engineFormView.hideView)
+        logger.error("the required setting form")
+        logger.error(self.getValue())
 
     def _initLayout(self):
         """initialize layout"""
@@ -64,9 +62,6 @@ class RequiredSettingForm(QWidget):
         """ add widget to layout """
         self.verticalLayout.addWidget(
             self.engineFormView, alignment=Qt.AlignmentFlag.AlignTop)
-        #TODO: DELETE Eventually 
-        # self.verticalLayout.addWidget(
-        #     self.outPutFormView, stretch = 2, alignment=Qt.AlignmentFlag.AlignTop)  
     
     def setValue(self, data: Dict [str, dict]):
         """ a public function to set the form value
@@ -77,7 +72,7 @@ class RequiredSettingForm(QWidget):
         """
         print(data["Engine"])
         self.engineForm.setValue(data["Engine"])
-        self.outPutForm.setValue(data["Output Form Data"])
+    
     
     def getValue(self) -> Dict [str, dict]:
         """ a public function that get the file value
@@ -86,6 +81,9 @@ class RequiredSettingForm(QWidget):
             dict: returns a dictionary that stores the profile values
         """
         profile = dict() 
-        profile["Engine"] = self.engineForm.getValue()
-        profile["Output Form Data"] = self.outPutForm.getValue()
+        d = self.engineForm.getValue()
+        engine = list(d.keys())[0]
+        profile["engine"] = engine
+        profile.update(d[engine])
+        logger.error(profile)
         return profile

@@ -14,7 +14,6 @@ from util.Text import ProfilePageText as Text
 from view.widgets import  Label
 from view.components import RequiredSettingForm
 from view.widgets.MsgBox import WarnBox
-
 from PyQt6.QtWidgets import (
     QWidget, 
     QVBoxLayout, 

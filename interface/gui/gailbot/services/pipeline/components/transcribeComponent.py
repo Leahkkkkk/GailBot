@@ -57,11 +57,11 @@ class TranscribeComponent(Component):
                     tasks[key] = payload
                     logger.info(f"key: {key}")
             threadpool.wait_for_all_completion() 
-            for key, payload in tasks.items():
-                utt_map, stats = threadpool.get_task_result(key)
-                payload.set_transcription_result(utt_map)
-                payload.set_transcription_process_stats(stats)
-                payload.set_transcribed()
+            # for key, payload in tasks.items():
+            #     utt_map, stats = threadpool.get_task_result(key)
+            #     payload.set_transcription_result(utt_map)
+            #     payload.set_transcription_process_stats(stats)
+            payload.set_transcribed()
         except Exception as e:
             logger.error(e)
             return ComponentResult(
@@ -133,8 +133,10 @@ class TranscribeComponent(Component):
             end_time = end_time,
             elapsed_time_sec= end_time - start_time
         )
-        return utt_map, stats
-
+        payload.set_transcription_result(utt_map)
+        payload.set_format_process_stats(stats)
+        return True
+        
     def __repr__(self):
         return "Transcription Component"
 

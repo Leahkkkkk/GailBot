@@ -13,13 +13,14 @@ Connect between the database, view object and the backend transcription process
 '''
 import glob
 import os
-from typing import Set
+from typing import Set, Tuple
 import logging 
 import time
 
 from controller.TranscribeController import TranscribeController
 from controller.MVController import MVController
 from model import Model
+from model.dataBase.FileDatabase import FileObj
 from view import MainWindow
 from util import Logger
 from util.GailBotData import getWorkPath, FileManage
@@ -104,8 +105,9 @@ class Controller(QObject):
         transcribeList = []
         # get the file object from the database
         for key in files: 
-            fileData = self.ModelObj.FileData.getTranscribeData(key)
-            transcribeList.append(fileData)
+            file_name, file  = self.ModelObj.FileData.getTranscribeData(key)
+            profile = self.ModelObj.ProfileData.get_profile(file.Profile)
+            transcribeList.append((file_name, file, profile))
             
         # run gailbot 
         self._runGailBot(transcribeList)

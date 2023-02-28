@@ -60,14 +60,14 @@ plugin           = "Plugins"
 "FileFormat" = [".CHAT", ".TXT", ".RTF"]
 "Language"   = ["English", "French", "Spanish", "German", "Chinese(Madarin)", "Chinese(Cantonese)"]
 
-["profile form"."RequiredSetting".Engine.Whisper."0. basic setting"]
+["profile form"."RequiredSetting".Engine.whisper."0. basic setting"]
 "1. language combo" = ["English", "French", "Spanish", "German", "Chinese", "Japanese"]
 "2. detect speaker bool" = "OFF"
 
-["profile form"."RequiredSetting".Engine.Google."0. basic setting"]
+["profile form"."RequiredSetting".Engine.google."0. basic setting"]
 "1. audio format combo" = ["mp3", "wav"]
 
-["profile form"."RequiredSetting".Engine.Watson."0. basic setting"]
+["profile form"."RequiredSetting".Engine.watson."0. basic setting"]
 "1. api key"        =  "enter your api key"
 "2. region" = "enter the resgion"
 "3. base model" = "enter the base model"

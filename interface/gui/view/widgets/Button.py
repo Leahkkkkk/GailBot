@@ -222,11 +222,11 @@ class onOffButton(QWidget):
 
     def value(self):
         """ access state of on-off select """
-        return self.onOffBtn.text()
+        return self.state
     
     def setText(self, text):
         """ set the text of the button to be ON or OFF"""
-        if text == "ON":
+        if text == "ON" or text:
             self.state = True 
             self.onOffBtn.setText(Text.on)
         else:

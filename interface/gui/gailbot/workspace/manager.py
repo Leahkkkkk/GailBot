@@ -107,8 +107,9 @@ class WorkspaceManager:
         
     @staticmethod
     def clear_gb_temp_dir():
-        try: 
-            delete(PATH_CONFIG.tempspace_root)
+        try:
+            if is_directory(PATH_CONFIG.tempspace_root):
+                delete(PATH_CONFIG.tempspace_root)
         except Exception as e:
             logger.error(e)
             return False

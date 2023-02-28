@@ -12,7 +12,7 @@ Implementation of a database that stores the profile data
 '''
 
 
-from typing import Tuple
+from typing import Tuple, Union, Dict
 
 from util.Logger import makeLogger
 from util.Setting import ProfilePreset
@@ -120,3 +120,9 @@ class ProfileModel:
         except:
             self.signals.error(ErrorMsg.GETERROR)
             self.logger.error(ErrorMsg.GETERROR)
+
+    def get_profile(self, profilekey: str) -> Union[Dict, bool]:
+        if profilekey in self.data:
+            return self.data[profilekey]
+        else:
+            return False

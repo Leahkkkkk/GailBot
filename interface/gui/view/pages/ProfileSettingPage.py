@@ -142,11 +142,11 @@ class ProfileSettingPage(QWidget):
         self.saveBtn.clicked.connect(self.updateProfile)
         self.newPluginBtn.clicked.connect(self.addPluginRequest)
     
-    def _activatePostSet(self):
+    # def _activatePostSet(self):
         """ switches current page from required settings page to post transcription settings page """
-        self._setBtnDefault()
-        self.postSetBtn.setActiveStyle(Color.HIGHLIGHT)
-        self.settingStack.setCurrentWidget(self.PostSetPage)
+        # self._setBtnDefault()
+        # self.postSetBtn.setActiveStyle(Color.HIGHLIGHT)
+        # self.settingStack.setCurrentWidget(self.PostSetPage)
     
     def _activeRequiredSet(self):
         """ switches current page from post transcription settings page to required settings page """
@@ -199,7 +199,7 @@ class ProfileSettingPage(QWidget):
             self.selectSettings.setCurrentText(key)
             # self.PostSetPage.setValue(data["PostTranscribe"])
             self.RequiredSetPage.setValue(data["RequiredSetting"])
-            self.PluginPage.setValue(data["Plugins"])
+            # self.PluginPage.setValue(data["Plugins"])
         except:
             WarnBox("An error occurred when loading the profile")
             
@@ -229,9 +229,8 @@ class ProfileSettingPage(QWidget):
         """ updates the new profile setting """
         try:
             newSetting = dict()
-            newSetting["RequiredSetting"] = self.RequiredSetPage.getValue()
-            # newSetting["PostTranscribe"]  = self.PostSetPage.getValue()
-            newSetting["Plugins"] = self.PluginPage.getValue()
+            newSetting["engine_setting"] = self.RequiredSetPage.getValue()
+            newSetting["plugin_setting"] = self.PluginPage.getValue()
             self.logger.info(newSetting)
             profileKey = self.selectSettings.currentText()
             self.signals.edit.emit((profileKey, newSetting))

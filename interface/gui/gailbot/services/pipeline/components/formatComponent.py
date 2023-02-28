@@ -22,7 +22,6 @@ class FormatComponent(Component):
             payloads: List [PayLoadObject] = dependency_res.result
             logger.info(payloads)
             for payload in payloads:
-                
                 payload.save()
                 
             return ComponentResult(
@@ -30,9 +29,7 @@ class FormatComponent(Component):
                 result = payloads,
                 runtime = 0
             )
-            
-        
-            
+         
         except Exception as e:
             logger.error(e)
             return ComponentResult(

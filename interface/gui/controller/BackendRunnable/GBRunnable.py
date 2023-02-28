@@ -16,7 +16,7 @@ import multiprocessing
 """ declared at the top level for multi-processing support """
 multiprocessing.freeze_support()  
 import sys
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 import os
 import logging
 from model.dataBase.FileDatabase import FileObj
@@ -81,7 +81,7 @@ class Worker(QRunnable):
             1. run(): main driver for the running GailBot
                  
     """
-    def __init__(self, files: List [Tuple [str, FileObj]], signal):
+    def __init__(self, files: List [Tuple [str, FileObj, Dict]], signal):
         """ TODO: the input for the files should be files: List [Tuple[str, str]] """
         super(Worker, self).__init__()
         self.signals = signal
@@ -120,15 +120,17 @@ class Worker(QRunnable):
             for file in self.files:
                 self.logger.info(file)
                 #iterate through the list of the file
-                key, filedata = file 
+                key, filedata, profile = file 
+                profile = profile["RequiredSetting"]["Engine"]
                 filename = filedata.Name
                 filePath = filedata.FullPath
                 outPath = filedata.Output
-                # profile = filedata.Profile 
+                profile_name  = filedata.Profile 
                 self.logger.info(key)
                 self.logger.info(filename)
                 self.logger.info(filePath)
                 self.logger.info(outPath)
+                self.logger.info(profile)
                 
                 if not self.killed:
                     print("ready to add source")
@@ -139,11 +141,10 @@ class Worker(QRunnable):
                     # self.signals.progress.emit(f"Source{filename} Added")
 
                 # TODO: change the way the frontend passes the setting data 
-                # if not self.killed and not gb.is_setting(profile):
+                # if not self.killed and not gb.is_setting(profile_name):
                 #     # get the profile from the data base 
-                #     gb.create_new_setting(profile, get_settings_dict())
-                #     profiles.add(profile)
-                #     assert gb.is_settings_profile(profile)
+                #     gb.create_new_setting(profile_name, profile)
+                #     gb.apply_setting_to_source(filePath, profile_name)
                 #     self.logger.info("Create Setting File")
                 #     self.signals.progress.emit("Setting created")
 
@@ -162,7 +163,7 @@ class Worker(QRunnable):
         else:
             if not self.killed:
                 for file in self.files:
-                    key, filedata = file 
+                    key, filedata, profile = file 
                     self.signals.fileTranscribed.emit(key)
                     self.signals.finish.emit()
         finally:
