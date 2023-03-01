@@ -14,6 +14,3 @@ from .core.engines import (
     WatsonAMInterface,
     WatsonLMInterface
 )
-from .servicesold import GBPluginMethods
-from .plugins import Plugin
-

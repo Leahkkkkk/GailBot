@@ -21,6 +21,7 @@ import os
 import logging
 from model.dataBase.FileDatabase import FileObj
 from util.GailBotData import Credential, ProfileConfig, Plugin, getWorkPath
+from util.io import get_name
 
 from PyQt6.QtCore import (
     QRunnable, pyqtSlot
@@ -134,23 +135,28 @@ class Worker(QRunnable):
                     self.signals.progress.emit("Transcribing")
 
             if not self.killed:
-                gb.transcribe()
                 self.signals.progress.emit(str("Transcribing"))
                 self.logger.info("Transcribing")
-            
-            if self.killed:
-                self.logger.info("User cancelled the transcription")
-                self.signals.killed.emit()
-                         
+                result, invalid = gb.transcribe()
+                assert result
+                if len(invalid) != 0:
+                    invalid_files = str(invalid)
+                    self.signals.error.emit(f"ERROR: the following files cannot be transcribed:{invalid_files}")
+       
         except Exception as e:
-            self.signals.error.emit(f"Error: {e}")
+            if  len(invalid) == 0:
+                self.signals.error.emit(f"Error: the transcription fails")
             self.logger.error(f"{e} fails")
+            self.signals.finish.emit()
+        
         else:
             if not self.killed:
                 for file in self.files:
                     key, filedata, profile = file 
-                    self.signals.fileTranscribed.emit(key)
+                    if get_name(filedata) not in invalid:
+                        self.signals.fileTranscribed.emit(key)
                     self.signals.finish.emit()
+            self.signals.finish.emit()
         finally:
             self.setAutoDelete(True)
 

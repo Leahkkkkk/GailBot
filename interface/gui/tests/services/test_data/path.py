@@ -8,3 +8,4 @@ class PATH:
     DUMMY_AUDIO = os.path.join(os.getcwd(), "data/dummy_audio")
     TRANSCRIBED = os.path.join(os.getcwd(), "data/transcribed_dirs/test_dir")
     GB_TEST_SUITE = os.path.join(os.getcwd(), "data/gb_test_suite")
+    INVALID_PATH = "/Users/yike/Desktop/input/invalidFile/"

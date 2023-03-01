@@ -5,11 +5,12 @@
 # @Last Modified time: 2023-01-12 14:37:40
 
 from typing import List, Dict, Any
-from gailbot.core.pipeline import Pipeline, Component
+from gailbot.core.pipeline import Pipeline, Component, ComponentResult, ComponentState
 from gailbot.plugins import PluginManager
+from gailbot.core.utils.logger import makelogger
 from ..converter import PayLoadObject
 from .components import TranscribeComponent, AnalysisComponent, FormatComponent
-
+logger = makelogger("service pipeline")
 class PipelineService:
     def __init__(
         self,
@@ -36,7 +37,12 @@ class PipelineService:
         )
 
     def __call__(self, payloads : List[PayLoadObject]):
-        self.pipeline(
+        res = self.pipeline(
             base_input= payloads
         )
+        for name, result in res.items():
+            if not result == ComponentState.SUCCESS:
+                return False 
+        return True
 
+        

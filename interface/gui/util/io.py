@@ -17,6 +17,17 @@ from copy import deepcopy
 import subprocess
 
 
+def get_name(path : str) -> str:
+    """given the path return the name of file or dir without extension"""
+    try: 
+        dir_path, file_name = os.path.split(path)
+        if file_name:
+            return os.path.splitext(os.path.basename(path))[0]
+        else:
+            return os.path.basename(dir_path)
+    except:
+        return False
+
 def delete(path : str) -> None:
     """ given a path, delete the file """
     if is_file(path):
@@ -24,7 +35,7 @@ def delete(path : str) -> None:
     elif is_directory(path):
         shutil.rmtree(path)
     else:
-        raise False
+        return False
     
     
 def is_file(file_path: str) -> bool:
@@ -34,7 +45,7 @@ def is_file(file_path: str) -> bool:
     try:
         return Path(file_path).is_file()
     except:
-        raise False
+        return False
 
 
 def is_path(source:str):
