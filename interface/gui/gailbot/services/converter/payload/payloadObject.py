@@ -71,6 +71,7 @@ class PayLoadObject(ABC):
         self.transcription_result:  UttResult = UttResult(self.workspace.transcribe_ws)
         self.format_result: FormatResult = FormatResult(self.workspace.format_ws)
         self.analysis_result: AnalysisResult = AnalysisResult(self.workspace.analysis_ws)
+        logger.info(f"ouputspace {self.out_dir.transcribe_result}")
         self._set_initial_status()
         self._copy_file() 
         
@@ -172,9 +173,11 @@ class PayLoadObject(ABC):
     
     def output_transcription_result(self) -> bool: 
         try:
+            logger.info(self.out_dir.transcribe_result)
             self.transcription_result.output(self.out_dir.transcribe_result)
             return True
         except Exception as e:
+            logger.error(e)
             return False
         
     def output_format_result(self) -> bool:
@@ -182,6 +185,7 @@ class PayLoadObject(ABC):
            self.format_result.output(self.out_dir.format_result)
            return True 
        except Exception as e:
+           logger.error(e)
            return False
     
     def output_analysis_result(self) -> bool:
@@ -189,16 +193,21 @@ class PayLoadObject(ABC):
             self.analysis_result.output(self.out_dir.analysis_result)
             return True
         except Exception as e:
+            logger.error(e)
             return False
     
     def save(self):
         """ TODO: test the output format and output_analysis """
+        logger.info("saving the file")
+        logger.info(self.out_dir.root)
         assert self.output_analysis_result()
         assert self.output_format_result()
         assert self.output_transcription_result()
-        delete(self.workspace.root)
+        
         with open(os.path.join(self.out_dir.root, OUTPUT_MARKER), "w+") as f:
             f.write(f"{self.name}")
+            
+        # delete(self.workspace.root)
     
     def __repr__(self) -> str:
         return f"payload object {self.name}"

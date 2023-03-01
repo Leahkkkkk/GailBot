@@ -4,6 +4,10 @@ from .engineSettingInterface import EngineSettingInterface
 from gailbot.core.utils.logger import makelogger
 
 logger = makelogger("whisperInterface")
+class ValidateWhisper(BaseModel): 
+    engine              :str
+    language            : str  = None
+    detect_speakers     : bool = False
 class Init(BaseModel): 
     pass
 class TranscribeSetting(BaseModel):
@@ -14,11 +18,6 @@ class WhisperInterface(EngineSettingInterface):
     transcribe : TranscribeSetting
     init: Init = None 
     engine: str 
-    
-class ValidateWhisper(BaseModel): 
-    engine              :str
-    language            : str  = None
-    detect_speakers     : bool = False
 
 def load_whisper_setting(setting: Dict[str, str]) -> Union[bool, EngineSettingInterface]:
     """ given a dictionary, load the dictionary as a whisper setting 
@@ -34,10 +33,12 @@ def load_whisper_setting(setting: Dict[str, str]) -> Union[bool, EngineSettingIn
                                         else return false
     """
     logger.info("initialize whisper engine")
+    logger.info(setting)
     if  not "engine" in setting.keys() or setting["engine"] != "whisper": 
         return False
     try:
         logger.info(setting)
+        setting = setting.copy()
         validate = ValidateWhisper(**setting)
         logger.info(validate)
         whisper_set = dict()
@@ -47,7 +48,6 @@ def load_whisper_setting(setting: Dict[str, str]) -> Union[bool, EngineSettingIn
         whisper_set["transcribe"].update(setting)
         logger.info(whisper_set)
         whisper_set = WhisperInterface(**whisper_set)
-    
         return whisper_set
     except ValidationError as e:
         logger.error(e)

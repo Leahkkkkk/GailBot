@@ -1,3 +1,1 @@
-# the top root path defined by the user, will be dynamically changed
-# during the first launch of the gailbot
-"root"="/Users/yike/Desktop"
+root = "/Users/yike/Desktop"

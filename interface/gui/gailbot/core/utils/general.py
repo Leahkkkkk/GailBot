@@ -39,7 +39,7 @@ def is_directory(dir_path: str) -> bool:
     try:
         return Path(dir_path).is_dir()
     except:
-        raise Exception(InvalidPathError)
+        return False 
 
 def is_file(file_path: str) -> bool:
     """
@@ -48,7 +48,7 @@ def is_file(file_path: str) -> bool:
     try:
         return Path(file_path).is_file()
     except:
-        raise Exception(InvalidPathError)
+        return False
 
 def num_items_in_dir(
     path: str,
@@ -73,7 +73,7 @@ def num_items_in_dir(
             path, extensions,recursive, only_dirs
         ))
     except:
-        raise Exception(InvalidPathError)
+        raise FileExistsError
 
 
 def is_path(source:str):
@@ -100,7 +100,7 @@ def paths_in_dir(
         only_dirs (bool): Only applies to dirs.
     """
     if not is_directory(path):
-        raise Exception(f"ERROR: Not a directory")
+        raise FileExistsError
     if only_dirs:
         return glob.glob(f"{path}/*/",recursive=recursive)
     else:
@@ -126,7 +126,7 @@ def filepaths_in_dir(
             only_dirs=False
         )
     except: 
-        raise Exception(InvalidPathError)
+        raise FileExistsError
 
 def subdirs_in_dir(
     dir_path : str,
@@ -144,14 +144,14 @@ def subdirs_in_dir(
             only_dirs=True
         )
     except:
-        raise Exception(InvalidPathError)
+        raise FileExistsError
 
 def num_subdirs(dir_path : str, recursive : bool = False) -> int:
     """Get the number of subdirectory in the dir_path"""
     try:
         return len(subdirs_in_dir(dir_path,recursive))
     except:
-        raise Exception(InvalidPathError)
+        raise FileExistsError
         
 
 def get_name(path : str) -> str:
@@ -163,7 +163,7 @@ def get_name(path : str) -> str:
         else:
             return os.path.basename(dir_path)
     except:
-        raise Exception(InvalidPathError)
+        raise FileExistsError
         
 
 def get_extension(path : str) -> str:
@@ -171,7 +171,7 @@ def get_extension(path : str) -> str:
     try: 
         return os.path.splitext(os.path.basename(path))[1][1:]
     except:
-        raise Exception(InvalidPathError)
+        raise FileExistsError
 
 
 def get_parent_path(path : str) -> str:
@@ -180,7 +180,7 @@ def get_parent_path(path : str) -> str:
     try:
         return str(Path(path).parent.absolute())
     except:
-        raise Exception(InvalidPathError)
+        raise FileExistsError
 
 
 def get_size(path : str) -> bytes:
@@ -193,7 +193,7 @@ def get_size(path : str) -> bytes:
                 os.path.getsize(p) for p in filepaths_in_dir(path,recursive=True)
             ])
     except:
-        raise Exception(InvalidPathError)
+        raise FileExistsError
         
 
 def make_dir(path : str, overwrite : bool = False):
@@ -203,7 +203,7 @@ def make_dir(path : str, overwrite : bool = False):
             delete(path)
         os.makedirs(path, exist_ok=True)
     except:
-        raise Exception("Fail to create a directory")
+        raise FileExistsError
         
 
 def move(src_path : str, tgt_path : str) -> str:
@@ -211,7 +211,7 @@ def move(src_path : str, tgt_path : str) -> str:
     try:
         return shutil.move(src_path, tgt_path)
     except:
-        raise Exception(InvalidPathError)
+        raise FileExistsError
         
         
 def copy(src_path, tgt_path : str) -> str:
@@ -221,7 +221,7 @@ def copy(src_path, tgt_path : str) -> str:
     elif is_directory(src_path):
         return shutil.copytree(src_path, tgt_path,dirs_exist_ok=True)
     else:
-        raise Exception(InvalidPathError)
+        raise FileExistsError
         
         
 
@@ -230,7 +230,7 @@ def rename(src_path, new_name : str) -> str:
     try:
         return str(Path(src_path).rename(new_name).resolve())
     except:
-        raise Exception(InvalidPathError)
+        raise FileExistsError
     
 def delete(path : str) -> None:
     """ given a path, delete the file """
@@ -239,7 +239,7 @@ def delete(path : str) -> None:
     elif is_directory(path):
         shutil.rmtree(path)
     else:
-        raise Exception(InvalidPathError)
+        raise FileExistsError
 
 def read_json(path : str) -> Dict:
     """ given a path, read the json data stored in the file, return the 
@@ -249,7 +249,7 @@ def read_json(path : str) -> Dict:
         with open(path, 'r') as f:
             return json.load(f)
     else:
-        raise Exception(InvalidPathError)
+        raise FileExistsError
 
 def write_json(path : str, data : Dict, overwrite : bool = True) -> None:
     """ given the path to a file and a dictionary, output the data to the  
@@ -275,7 +275,7 @@ def read_txt(path : str) -> List:
         text = [s.strip() for s in text]
         return text
     else:
-        raise Exception(InvalidPathError)
+        raise FileExistsError
 
 def write_txt(path : str, data : List,  overwrite : bool = True) -> bool:
     """ given the path to a file, and a list of data, output the list 
@@ -287,7 +287,7 @@ def write_txt(path : str, data : List,  overwrite : bool = True) -> bool:
         with open(path, mode) as f:
                 f.writelines(data)
     except:
-        raise Exception(InvalidPathError)
+        raise FileExistsError
         
 def read_yaml(path : str) -> Dict:
     """ given a path to a yaml file, return a dictionary 
@@ -301,7 +301,7 @@ def read_yaml(path : str) -> Dict:
                 raise Exception
             return data
     else:
-        raise Exception(InvalidPathError)
+        raise FileExistsError
 
 def write_yaml(path : str, data : Dict, overwrite : bool = True) -> bool:
     """ given a path to a yaml file and data stored in a dictionary,
@@ -320,7 +320,7 @@ def write_yaml(path : str, data : Dict, overwrite : bool = True) -> bool:
             # a yaml file.
             yaml.dump(previous_data, f)
     except:
-        raise Exception(InvalidPathError)
+        raise FileExistsError
 
 def read_toml(path : str) -> Dict:
     """ given the path to a to toml file, return a dictionary 
@@ -329,7 +329,7 @@ def read_toml(path : str) -> Dict:
     if is_file(path):
         return toml.load(path)
     else:
-        raise Exception(InvalidPathError)
+        raise FileExistsError
 
 def write_toml(path : str, data : Dict) -> bool:
     """ given the path to a toml file and data stored in a dictionary 
@@ -339,7 +339,7 @@ def write_toml(path : str, data : Dict) -> bool:
         with open(path, "w") as f:
             toml.dump(data, f)
     except:
-        raise Exception(InvalidPathError)
+        raise FileExistsError
 
 def write_csv(path: str, data: List[Dict[str, str]]):
     fields = list(data[0].keys())

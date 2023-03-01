@@ -63,7 +63,6 @@ class UttResult(ResultInterface):
             return True
         except Exception as e:
             logger.error(f"the path is {path}")
-            logger.error(f"the name is {name}")
             logger.error(e)
         return False
     

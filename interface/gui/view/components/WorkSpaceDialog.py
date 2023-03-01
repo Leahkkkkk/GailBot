@@ -23,11 +23,11 @@ from util.Path import getProjectRoot
 from util.Text import WelcomePageText as Text 
 from util.GailBotData import getWorkBasePath
 from PyQt6.QtCore import QSize, Qt
-
+from util.io import is_file, delete
 import userpaths
 
 center = Qt.AlignmentFlag.AlignHCenter
-
+USER_ROOT_NAME = "GailBot"
 class WorkSpaceDialog(QDialog):
     def __init__(self, *arg, **kwargs) -> None:
         super().__init__(*arg, **kwargs)
@@ -49,7 +49,7 @@ class WorkSpaceDialog(QDialog):
         self.label = Label.Label(
             Text.firstLaunchInstruction, FontSize.BODY, others="text-align:center;")
         self.displayPath = Label.Label(
-            f"GailBot Work Space Path: {self.workDir}/GailBot", 
+            f"GailBot Work Space Path: {self.workDir}/{USER_ROOT_NAME}", 
             FontSize.BODY, FontFamily.MAIN, 
             others=f"border: 1px solid {Color.MAIN_TEXT}; text-align:center;")
         self.confirm = Button.ColoredBtn("Confirm", Color.SECONDARY_BUTTON)
@@ -73,21 +73,36 @@ class WorkSpaceDialog(QDialog):
         if selectedFolder:
             self.workDir = selectedFolder
             self.displayPath.setText(
-                f"GailBot Work Space Path: {self.workDir}/GailBot")
+                f"GailBot Work Space Path: {self.workDir}/{USER_ROOT_NAME}")
     
     def _onConfirm(self):
         basedir = getProjectRoot()
         print(basedir)
         # try:
-        workSpace = { "WORK_SPACE_BASE_DIRECTORY" : self.workDir }
+        userRoot = os.path.join(self.workDir, USER_ROOT_NAME)
+        workSpace = { "WORK_SPACE_BASE_DIRECTORY" : userRoot}
         print(os.path.join(basedir, BackEndDataPath.workSpaceData))
         try:
             with open(
                 os.path.join(basedir, BackEndDataPath.workSpaceData), "w+") as f:
                 toml.dump(workSpace, f)
-            if not os.path.isdir(f"{self.workDir}/GailBot"):
-                os.mkdir(f"{self.workDir}/GailBot")
-        except:
+            
+            # write_toml(workSpace, os.path.join(basedir, BackEndDataPath.workSpaceData))
+            
+            if not os.path.isdir(userRoot):
+                os.mkdir(userRoot)
+            
+            # create the backend toml file
+            backend_path =os.path.join(basedir, BackEndDataPath.backendroot) 
+            print(backend_path)
+            
+            if is_file(backend_path):
+                delete(backend_path)
+            with open(backend_path, "w+") as f:
+                toml.dump({"root": userRoot}, f)
+            # write_toml({"root": self.workDir}, backend_path)
+        except Exception as e:
+            print(e)
             print("toml file cannot be written")
             WarnBox(f"cannot find the file path: " 
                     f"{os.path.join(basedir, BackEndDataPath.workSpaceData)}")
@@ -111,7 +126,7 @@ class ChangeWorkSpace(WorkSpaceDialog):
         self.label = Label.Label(
             " ", FontSize.BODY, others="text-align:center;")
         self.displayPath = Label.Label(
-            f"GailBot Work Space Path: {self.workDir}/GailBot", 
+            f"GailBot Work Space Path: {self.workDir}/{USER_ROOT_NAME}", 
             FontSize.BODY, FontFamily.MAIN, 
             others=f"border: 1px solid {Color.MAIN_TEXT}; text-align:center;")
         self.confirm = Button.ColoredBtn("Confirm", Color.SECONDARY_BUTTON)

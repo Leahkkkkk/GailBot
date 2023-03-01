@@ -26,4 +26,5 @@ def makelogger(filename:str):
 
     # Add the file handler to the logger
     logger.addHandler(file_handler)
+    logger = logging.LoggerAdapter(logger, {"source": "Backend"})
     return logger

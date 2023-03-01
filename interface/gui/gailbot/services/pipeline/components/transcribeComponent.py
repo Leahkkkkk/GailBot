@@ -56,11 +56,7 @@ class TranscribeComponent(Component):
                         fun=self._transcribe_payload, args=[payload])
                     tasks[key] = payload
                     logger.info(f"key: {key}")
-            threadpool.wait_for_all_completion() 
-            # for key, payload in tasks.items():
-            #     utt_map, stats = threadpool.get_task_result(key)
-            #     payload.set_transcription_result(utt_map)
-            #     payload.set_transcription_process_stats(stats)
+            threadpool.wait_for_all_completion()  
             payload.set_transcribed()
         except Exception as e:
             logger.error(e)

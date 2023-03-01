@@ -29,6 +29,8 @@ class ServiceController:
             return False
         
     def add_source(self, src_path: str, out_path: str) -> bool:
+        logger.info(f"add source {src_path}")
+        logger.info(self.organizer.get_configured_sources())
         return self.organizer.add_source(src_path, out_path)
         
     def remove_source(self, name: str) -> None:

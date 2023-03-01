@@ -54,7 +54,7 @@ class ProfileModel:
     """
     def __init__(self) -> None:
         self.logger = makeLogger("B")
-        self.data = ProfilePreset              
+        self.data: Dict[str, Dict] = ProfilePreset              
         self.profilekeys = list(ProfilePreset) 
         self.signals = Signals()
     
@@ -64,7 +64,8 @@ class ProfileModel:
         Args:
             profile (Tuple[profile key, dict]): _description_
         """
-        key, data = profile 
+        key, data = profile
+        data = data.copy() 
         if key not in self.data: 
             self.data[key] = data
             self.logger.info(key)
@@ -73,7 +74,6 @@ class ProfileModel:
         else:
             self.signals.error.emit("duplicated profile name") 
     
-
     def delete(self, profilekey:str) -> None :
         """ delete a file from database 
 
@@ -125,6 +125,7 @@ class ProfileModel:
     def get_profile(self, profilekey: str) -> Union[Dict, bool]:
         if profilekey in self.data:
             self.logger.info(self.data[profilekey])
-            return self.data[profilekey]
+            profile = self.data[profilekey].copy()
+            return profile
         else:
             return False

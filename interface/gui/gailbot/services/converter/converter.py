@@ -9,7 +9,6 @@ from ..organizer.source import SourceObject
 
 logger = makelogger("congerter")
 class Converter: 
-    payloads_dict: Dict[str, PayLoadObject] = dict()
     """
     provide function that converts the sourceObject to payload and 
     keeps track of the converted payloads 
@@ -20,6 +19,9 @@ class Converter:
         load_conversation_dir_payload]
     
     """ mapping payload name to payloadObject """
+    def __init__(self) -> None:
+        self.payloads_dict: Dict[str, PayLoadObject] = dict()
+        
     def load_source(self, source: SourceObject) -> bool:
         for loader in self.loaders:
             try: 
@@ -47,6 +49,7 @@ class Converter:
         """
         logger.info("converter is called")
         logger.info(sources)
+        self.payloads_dict = dict()
         try:
             for source in sources:
                 logger.info(source)

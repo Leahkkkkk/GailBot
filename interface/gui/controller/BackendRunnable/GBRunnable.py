@@ -22,38 +22,9 @@ import logging
 from model.dataBase.FileDatabase import FileObj
 from util.GailBotData import Credential, ProfileConfig, Plugin, getWorkPath
 
-from gailbot.api import GailBot
-
 from PyQt6.QtCore import (
     QRunnable, pyqtSlot
 )
-WATSON_API_KEY = Credential.WATSON_API_KEY
-WATSON_LANG_CUSTOM_ID = Credential.WATSON_LANG_CUSTOM_ID
-WATSON_REGION = Credential.WATSON_REGION
-WATSON_BASE_LANG_MODEL = Credential.WATSON_BASE_LANG_MODEL
-SETTINGS_PROFILE_NAME = ProfileConfig.SETTINGS_PROFILE_NAME
-SETTINGS_PROFILE_EXTENSION = ProfileConfig.SETTINGS_PROFILE_EXTENSION
-PLUGINS_TO_APPLY = Plugin.PLUGINS_TO_APPLY
-
-def get_settings_dict():           
-    """ returns a dictionary that contains the setting information
-    """
-    return {
-        "core": {},
-        "plugins": {
-                "plugins_to_apply": PLUGINS_TO_APPLY
-        },
-        "engines": {
-            "engine_type": "watson",
-            "watson_engine": {
-                "watson_api_key": WATSON_API_KEY,
-                "watson_language_customization_id": "",
-                "watson_base_language_model": WATSON_BASE_LANG_MODEL,
-                "watson_region": WATSON_REGION,
-            }
-        }
-    }
-
 class Worker(QRunnable):
     """ Worker 
         A sub-class of QRunnable class that is able to run the main function 
@@ -63,7 +34,7 @@ class Worker(QRunnable):
         through pyqtsignal
     
         Constructor Args:
-            1.  files List[Tuple (str, FileObj)]: 
+            1.  files List[Tuple (str, FileObj, Dict)]: 
                 a list of tuples that stores the file data, 
                 the first element of tuple is file key 
                 and the second is the file object
@@ -96,7 +67,7 @@ class Worker(QRunnable):
             stored in the worker class. 
             Emit signal to communicate transcription progress, which is 
             expected to be handled by the caller
-            
+        
             Signals: 
             - start()               : transcription started 
             - progress(str)         : contains a string about current progress
@@ -106,17 +77,18 @@ class Worker(QRunnable):
                                       file file key
         """
         self.logger.info("file ready to be transcribed" )
-        # workPath = getWorkPath()
+        from gailbot.api import GailBot
         
         try:
-            # self.signals.start.emit()
+            self.signals.start.emit()
             try:
                 gb = GailBot()
                 self.logger.info("get gailbot")
             except Exception as e:
                 self.logger.error(e)
             self.signals.progress.emit(str("GailBot controller Initialized"))
-        
+            self.logger.info(self.files)
+            self.logger.info(gb.gb.organizer.get_configured_sources()) 
             for file in self.files:
                 self.logger.info(file)
                 #iterate through the list of the file
@@ -138,11 +110,10 @@ class Worker(QRunnable):
                     assert gb.add_source(filePath, outPath)
                     self.logger.info(filedata)
                     self.logger.info("Source Added")
-                    self.signals.progress.emit(f"Source{filename} Added")
+                    # self.signals.progress.emit(f"Source{filename} Added")
                 
                 # TODO: change the way the frontend passes the setting data 
                 if not self.killed and not gb.is_setting(profile_name):
-                    # get the profile from the data base 
                     try:
                         assert gb.create_new_setting(profile_name, profile)
                     except Exception as e:
@@ -157,9 +128,10 @@ class Worker(QRunnable):
                     except Exception as e:
                         self.logger.error(f"profile cannot be applied {e}")
                         self.signals.error.emit(f"profile cannot be applied {e}")
-                    
+        
                     self.logger.info("Create Setting File")
-                    self.signals.progress.emit("Setting created")
+                    # self.signals.progress.emit("Setting created")
+                    self.signals.progress.emit("Transcribing")
 
             if not self.killed:
                 gb.transcribe()

@@ -10,7 +10,10 @@ from gailbot.core.utils.logger import makelogger
 from gailbot.core.utils.general import write_toml
 
 logger = makelogger("setting_object")
-
+DEFAULT_WHISPER_SETTING = {
+    "engine": "whisper", 
+    "language": "English", 
+    "detect_speakers": False}
 
 class SettingObject():
     """
@@ -77,5 +80,6 @@ class SettingObject():
             if isinstance(set_obj, EngineSettingInterface):
                 self.engine_setting = set_obj
                 return True
-        logger.error(f"setting {setting} cannot be loaded")
-        return False
+        logger.error(f"setting {setting} cannot be loaded, use default setting instead")
+        self.engine_setting = load_whisper_setting(DEFAULT_WHISPER_SETTING)
+        return True

@@ -100,7 +100,7 @@ class ConsoleHandler(logging.Handler, QtCore.QObject):
         QtCore.QObject.__init__(self)
         self.widget = TextWidget
         self.appendPlainText.connect(self.widget.appendHtml)
-        fmt = " %(source)s |  %(lineno)s | %(asctime)s | %(levelname)s | %(module)s | %(funcName)s | %(message)s "
+        fmt = " |  %(lineno)s | %(asctime)s | %(levelname)s | %(module)s | %(funcName)s | %(message)s "
         self.setFormatter(ConsoleFormatter(fmt))
         self._initLogFile(fmt)
 
@@ -112,12 +112,11 @@ class ConsoleHandler(logging.Handler, QtCore.QObject):
     def _initLogFile(self,fmt):
         """ export all log information to a separate file """
         fh = logging.FileHandler(os.path.join(getProjectRoot(), f"GailBot-GUI-Log-Report-{current_time}.log"))
-        fh.setLevel(logging.DEBUG)
+        fh.setLevel(logging.INFO)
         fh.setFormatter(CustomFileFormatter(fmt))
         logging.getLogger().addHandler(fh)
         
         
-      
 class StatusBarHandler(logging.Handler, QtCore.QObject):
     """ logging handler that send log message above warning level 
         

@@ -64,12 +64,12 @@ plugin           = "Plugins"
 "1. language combo" = [ "English", "Chinese", "German", "Spanish", "Russian", "Korean", "French", "Japanese", "Portuguese", "Turkish", "Polish", "Catalan", "Dutch", "Arabic", "Swedish", "Italian", "Indonesian", "Hindi", "Finnish", "Vietnamese", "Hebrew", "Ukrainian", "Greek", "Malay", "Czech", "Romanian", "Danish", "Hungarian", "Tamil", "Norwegian", "Thai", "Urdu", "Croatian", "Bulgarian", "Lithuanian", "Latin", "Maori", "Malayalam", "Welsh", "Slovak", "Telugu", "Persian", "Latvian", "Bengali", "Serbian", "Azerbaijani", "Slovenian", "Kannada", "Estonian", "Macedonian", "Breton", "Basque", "Icelandic", "Armenian", "Nepali", "Mongolian", "Bosnian", "Kazakh", "Albanian", "Swahili", "Galician", "Marathi", "Punjabi", "Sinhala", "Khmer", "Shona", "Yoruba", "Somali", "Afrikaans", "Occitan", "Georgian", "Belarusian", "Tajik", "Sindhi", "Gujarati", "Amharic", "Yiddish", "Lao", "Uzbek", "Faroese", "Haitian creole", "Pashto", "Turkmen", "Nynorsk", "Maltese", "Sanskrit", "Luxembourgish", "Myanmar", "Tibetan", "Tagalog", "Malagasy", "Assamese", "Tatar", "Hawaiian", "Lingala", "Hausa", "Bashkir", "Javanese", "Sundanese",]
 "2. detect_speakers bool" = false
 
-["profile form"."RequiredSetting".Engine.google."0. basic setting"]
-"1. audio format combo" = ["mp3", "wav"]
+# ["profile form"."RequiredSetting".Engine.google."0. basic setting"]
+# "1. audio format combo" = ["mp3", "wav"]
 
-["profile form"."RequiredSetting".Engine.watson."0. basic setting"]
-"1. api key"        =  "enter your api key"
-"2. region" = "enter the resgion"
-"3. base model" = "enter the base model"
-"4. language customization id"   = "enter language customization id"
-"5. acoustic customization id" = "enter acoustic customization id"
+# ["profile form"."RequiredSetting".Engine.watson."0. basic setting"]
+# "1. api_key"        =  "enter your api key"
+# "2. region" = "enter the resgion"
+# "3. base_model" = "enter the base model"
+# "4. language_customization_id"   = "enter language customization id"
+# "5. acoustic_customization_id" = "enter acoustic customization id"

@@ -25,7 +25,7 @@ class BackEndData(DataclassFromDict):
     workSpaceData                : str = field_from_dict()
     defaultWorkSpaceData         : str = field_from_dict()
     fileManageData               : str = field_from_dict()
-
+    backendroot                  : str = field_from_dict()
 @dataclass 
 class StyleData(DataclassFromDict): 
     dimension                   : str = field_from_dict()
