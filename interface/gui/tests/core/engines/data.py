@@ -20,3 +20,5 @@ class AudioPath:
     RESULT_OUTPUT = os.path.join(os.getcwd(), "data/result_output")
     CONVERSATION_DIR = os.path.join(os.getcwd(), "data/test_file/conversation_dir/")
     TRANSCRIBED_DIR = os.path.join(os.getcwd(), "data/result_output/conversation_dir_gb_output")
+    FOURTY_MIN = "/Users/yike/Desktop/input/long/testConvo2.mp3"
+    SHORT_AUDIO = "/Users/yike/Desktop/input/short_test/shorttest.wav"

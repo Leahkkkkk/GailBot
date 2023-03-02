@@ -17,6 +17,7 @@ import os
 
 from util.Style import Color, FontSize, Dimension
 from util.Text import FileUploadPageText as Text
+from util.io import get_name, is_directory
 from util.Logger import makeLogger
 from model.dataBase.FileDatabase import fileDict
 from view.widgets.Button import ColoredBtn
@@ -120,6 +121,7 @@ class OpenFile(TabPage):
         self.fileDisplayList.setStyleSheet(f"background-color:{Color.MAIN_BACKGROUND};"
                                            f"color:{Color.MAIN_TEXT}")
         self.fileDisplayList.setColumnWidth(0,Dimension.SMALL_TABLE_WIDTH) 
+    
     def _initDimension(self):
         """ initializes the dimensions """
         self.logger.info("")
@@ -129,20 +131,12 @@ class OpenFile(TabPage):
     
     def _pathToFileObj(self, path):  
         """ converts the file path to a file object  """  
-        self.logger.info("")
         fullPath = path
+        self.logger.info(fullPath)
         date = datetime.date.today().strftime("%m-%d-%y")    
-        temp = str(fullPath)
-        patharr = temp.split("/")
         size = round(os.stat(fullPath).st_size/1000, 2)
-        if os.path.isdir(path):
-            fileType = Text.directoryLogo
-            fileName = patharr[-2]
-        else:
-            fileType = pathlib.Path(path).suffix
-            if fileType == ".wav":
-                fileType = Text.audioLogo
-            fileName = patharr[-1]
+        fileName = get_name(fullPath)
+        fileType = Text.directoryLogo if is_directory(path) else Text.audioLogo
             
         return {"Name": fileName, 
                 "Type": fileType, 
@@ -178,6 +172,7 @@ class OpenFile(TabPage):
         self.logger.info("")
         try:
             dialog = QFileDialog() 
+            dialog.setDirectory(userpaths.get_desktop())
             selectedFolder = dialog.getExistingDirectory()
             
             if selectedFolder:

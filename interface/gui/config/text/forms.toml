@@ -30,17 +30,18 @@ HiLabSuite = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
 "Syllable Rate mode bool"                            = "ON"
 
 ["system setting form"."View Setting"]
-"Font Size combo"  = [ "medium", "small", "large"]
-"Color Mode combo" = [ "light mode", "dark mode"]
-"Log file auto deletion time combo" = ["every day", "every week", "every month", "every 2 months"]
+"Font Size combo"  = [ "Medium", "Small", "Large"]
+"Color Mode combo" = [ "Light Mode", "Dark Mode"]
+"Log file auto deletion time combo" = ["Daily", "Weekly", "Monthly", "Every 2 months"]
 
 ["system setting form"."GailBot Work Space Setting"]
 
 ["log deletion"]
-"every day"      = 1
-"every week"     = 7
-"every month"    = 30
-"every 2 months" = 60
+"Daily"      = 1
+"Weekly"     = 7
+"Monthly"    = 30
+"Every 2 months" = 60
+
 
 [formField]
 user             = "User Info"
