@@ -30,10 +30,10 @@ captionText               = """GailBot is the world's first automated transcript
 startBtnText              = "Get Started"
 instructionText           = "How GailBot Works"
 resourcesText             = "Resources"
-tutorialText              = "GailBot Beginner Tutorial"
+tutorialText              = "GailBot User Manual"
 guideText                 = "GailBot Settings Guide"
 gbLinkText                = "Tufts Human Interaction Laboratory"
-moreInfoText              = "For more, information visit"
+moreInfoText              = "For more information, visit:"
 firstLaunchHeader         = "Welcome to GailBot's initial setup"
 firstLaunchInstruction    = """Please specify the path to GailBot's \
                              workspace directory on your computer.\nThis is where
