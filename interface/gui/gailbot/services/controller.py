@@ -72,15 +72,34 @@ class ServiceController:
         self, source: str, setting: str, overwrite: bool = True) -> bool:
         return self.organizer.apply_setting_to_source(source, setting, overwrite)
 
-    def transcribe(self, sources: List[str] = None) -> bool:
+    def transcribe(self, sources: List[str] = None) -> Tuple [bool, List[str]]:
+        """ return a list of file that was not able to be transcribed, 
+            and the transcription result of the rest of the file
+
+        Args:
+            sources (List[str], optional): _description_. Defaults to None.
+
+        Returns:
+            List[str]: _description_
+        """
         # get configured sources 
-        if not sources:
-            sources = self.organizer.get_configured_sources(sources)
-        # load to converter 
-        payloads = self.converter(sources)
-        logger.info(payloads)
-        # put the payload to the pipeline
-        self.pipeline_service(payloads=payloads)
+        try:
+            if not sources:
+                sources = self.organizer.get_configured_sources(sources)
+            # load to converter 
+            payloads, invalid = self.converter(sources)
+            if len(sources) != 0:
+                logger.info(payloads)
+                # put the payload to the pipeline
+                result = self.pipeline_service(payloads=payloads)
+                logger.info(f"the transcription result is {result}")
+                logger.info(f"the invalid files are {invalid}")
+            else:
+                result = False
+            return result, invalid
+        except Exception as e:
+            logger.error(e)
+            return False, []
         
     def register_plugin_suite(self, plugin_source: str) -> str:
         return self.plugin_manager.register_suite(plugin_source)

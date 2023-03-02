@@ -24,16 +24,18 @@ def test_invalid_input():
     assert len(payload_empty) == 0
     
 def test_converter():
-    paths = [PATH.TRANSCRIBED, AudioPath.MEDIUM_AUDIO, AudioPath.CONVERSATION_DIR]
+    paths = [PATH.TRANSCRIBED, PATH.INVALID_PATH, PATH.INVALID_DATA_DIR]
 
     sources =[SourceObject(path, get_name(path), PATH.OUTPUT_ROOT) for path in paths]
     for source in sources:
         source.apply_setting(TEST_SETTING)
 
     test_converter = Converter()
-    payloads: List[PayLoadObject] = test_converter(sources)
+    payloads, invalid = test_converter(sources)
     for payload in payloads:
         logging.info(payload.__class__)
         logging.info(payload.data_files)
-    assert len(payloads) == 3
+    assert len(payloads) == 1
+    logging.info(invalid)
+
     

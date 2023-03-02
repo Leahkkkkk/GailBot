@@ -116,6 +116,7 @@ class FileModel:
         self.logger = makeLogger("Database")
         self.logger.info("post file to database")
         key = str(self.currentKey)
+        self.logger.info(data)
         try:
             if key not in self.data:
                 file = FileObj.from_dict(data)

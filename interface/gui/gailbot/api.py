@@ -42,7 +42,7 @@ class GailBot:
         ### Organizer Service
 
     def transcribe(self, sources: List[str] = None):
-        self.gb.transcribe(sources)
+        return self.gb.transcribe(sources)
    
     def add_sources(
         self, 

@@ -2,27 +2,29 @@
 HILAB = "https://sites.tufts.edu/hilab"
 
 [TranscribeSuccessText]
-mainLabelText        = "Transcription Successful"
+mainLabelText        = "Transcription successful"
 transcribedFilesText = "Files summary and locations:"
-moreBtnText          = "Process more files"
+moreBtnText          = "Process additional files"
 returnBtnText        = "Return to main menu"
 
 [TranscribeProgressText]
-mainLabelText  = "Transcription in Progress"
+mainLabelText  = "Transcription in progress"
 loadingText    = "Transcribing files..."
 inProgressText = "Files in progress:"
 cancelText     = "Cancel"
 
 [WelcomePageText]
-audioInstructionText      = "1. Select audio and video files \n or record live in Gailbot"
-settingsInstructionText   = "2. Apply settings"
+# audioInstructionText      = "1. Select audio and video files \n or record live in Gailbot"
+audioInstructionText      = "1. Add audio / video\n sources or record live"
+settingsInstructionText   = "2. Select a Settings Profile"
 transcribeInstructionText = "3. Transcribe"
-fileInstructionText       = "4. Get a transcribed file"
+fileInstructionText       = "4. Review transcriptions"
 editInstructionText       = "5. Edit settings \n or retranscribe"
 welcomeText               = "Welcome to GailBot"
-captionText               = """GailBot is the world's first application that lets \
-                             you convert audio and\n video files into customized \
-                             transcripts."""
+captionText               = """GailBot is the world's first automated transcription \
+                                system capable\n of generating customized \
+                                Conversation Analytic transcripts at scale.
+                            """
 startBtnText              = "Get Started"
 instructionText           = "How GailBot Works"
 resourcesText             = "Resources"
@@ -30,23 +32,23 @@ tutorialText              = "GailBot Beginner Tutorial"
 guideText                 = "GailBot Settings Guide"
 gbLinkText                = "GailBot.com"
 moreInfoText              = "For more, information visit"
-firstLaunchHeader         = "Welcom to the first launch on GailBot"
-firstLaunchInstruction    = """The first step is to choose the path to GailBot's \
-                             workspace directory on your computer.\n This will be \ 
-                             where the file generated during transcription stored in."""
+firstLaunchHeader         = "Welcome to GailBot's initial setup"
+firstLaunchInstruction    = """Please specify the path to GailBot's \
+                             workspace directory on your computer.\nThis is where
+                             all internal and log files will be stored."""
 
 
 [FileUploadPageText]
 header                = "Files to Transcribe"
 returnMainText        = "Return to Main Menu"
-recordBtnText         = "Record live"
+recordBtnText         = "Record Live"
 uploadBtnText         = "Add From Device"
 transcribeBtnText     = "Transcribe"
 removeBtnText         = "Remove All"
 ## unicode for settings gear
 settingBtnText        = "\u2699"
-dropText              = "Drop File Here to Upload"
-chooseLocalText       = "Choose From Local"
+dropText              = "Drop file to upload"
+chooseLocalText       = "Choose from local"
 chooseSetHeader       = "select setting profile"
 selectSetText         = "select settings"
 selectPlaceHolderText = "None"
@@ -87,25 +89,25 @@ postSetBtn         = "Post-Transcription Settings"
 newPluginBtn       = "Add New Plugin"
 pluginSetBtn       = "Plugin Settings"
 postSetHeader      = "Post-Transcription Settings"
-postSetCaption     = "These settings are applied after the file is created."
+postSetCaption     = "These settings are applied after the file is created"
 requiredSetHeader  = "Required Settings"
-requiredSetCaption = """These settings are required before transcription and \
-                        cannot be edited after transcription."""
-pluginHeader       = "Plugin Details"
+requiredSetCaption = """These settings are applied to the selected settings profile \
+                        and are required for transcription"""
+pluginHeader       = "Choose Plugins"
 pluginCaption      = "These plugins are applied to the transcription process"
 tempMessage        = "This page has been temporarily disabled to allow for further updates and developments. Please check back later."
 
 [SystemSettingPage]
-header        = "System Setting"
-caption       = "These settings are applied for system setting"
+header        = "System Settings"
+caption       = "Control various aspects of the graphical interface"
 cancelBtn     = "Cancel"
 saveBtn       = "Save and Exit"
-confirmChange = """This change will relaunch GailBot and all uploaded files will be \
-                 lost. Do you want to relaunch and change system settings?"""
-changeError   = "Change system setting failed"
-clearLog      = "Clear All Log Files"
-confirmClear  = "Confirm clearing all log files"
-changeWorkSpace = "Change GailBot Work Space"
+confirmChange = """The changes applied require GailBot to relaunch. All uploaded \
+                files will be removed. Do you wish to proceed?"""
+changeError   = "System settings change failed"
+clearLog      = "Clear all log files"
+confirmClear  = "All log files will be removed. Proceed?"
+changeWorkSpace = "Change GailBot workspace"
 
 [ConfirmTranscriptionPageText]
 confirmLabel = "Confirm Files and Settings"
@@ -118,17 +120,17 @@ cancel = "Cancel"
 end    = "End Recording"
 
 [filetable.header]
-fileUploadPage = ["Select All", "Type", "Name", "Profile", 
+fileUploadPage = ["Select All", "Type", "Name", "Profile",
                     "Status", "Date", "Size", "Actions"]
 confirmPage    = ["Type", "Name", "Profile", "Action"]
 transcribePage = ["Type", "Name", "Progress"]
 successPage    = ["Type",  "Name", "Status", "Output"]
 
 
-[CreateNewProfilePageText]  
+[CreateNewProfilePageText]
 profileName           = "Profile Name"
 confirmProfileNameBtn = "Start"
-emptyNameMsg          = "The profile name cannot be empty"
+emptyNameMsg          = "A profile name must be specified"
 emptyUserMsg          = "Please enter user name and password"
 engineSettingHeader   = "Speech to text settings"
 outputSettingHeader   = "Output format settings"
@@ -137,9 +139,9 @@ cofirmBtn             = "Confirm"
 [ChooseFileTabText]
 WindowTitle = "Upload File"
 TabTitle    = "Add New File"
-TabHeader1  = "Add file"
-TabHeader2  = "Choose settings"
-TabHeader3  = "Select output"
+TabHeader1  = "Add File"
+TabHeader2  = "Choose Settings"
+TabHeader3  = "Select Output"
 
 [WindowTitle]
 consoleWindow = "Console Window"
@@ -196,9 +198,9 @@ username = "Username"
 password = "Password"
 
 [popUpText]
-## unicode of left pointing arrow 
+## unicode of left pointing arrow
 leftArr = "\u25B6"
-## unicode of right pointing arrow 
+## unicode of right pointing arrow
 rightArr = "\u25C0"
 finish   = "Finish"
 window   = "File Info"
@@ -215,4 +217,3 @@ abtDir       = "About this directory"
 [tableWidgetOptions]
 fileDetails = "details"
 checkbox    = "check"
-

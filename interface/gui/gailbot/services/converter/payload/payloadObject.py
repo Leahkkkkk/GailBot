@@ -207,7 +207,7 @@ class PayLoadObject(ABC):
         with open(os.path.join(self.out_dir.root, OUTPUT_MARKER), "w+") as f:
             f.write(f"{self.name}")
             
-        # delete(self.workspace.root)
+        delete(self.workspace.root)
     
     def __repr__(self) -> str:
         return f"payload object {self.name}"

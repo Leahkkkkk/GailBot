@@ -207,6 +207,7 @@ class ThreadPool(ThreadPoolExecutor):
         """
         for task in self.task_pool.keys():
             self.wait_for_task(task, error_fun)
+            
 
     def wait_for_task(self, key: int, error_fun: Callable = None ):
         """ 
@@ -230,6 +231,7 @@ class ThreadPool(ThreadPoolExecutor):
             future.result()
             assert not future.exception()
         except Exception as e:
+            logger.error(e)
             if error_fun: error_fun()
             else: raise ThreadError(e)
 

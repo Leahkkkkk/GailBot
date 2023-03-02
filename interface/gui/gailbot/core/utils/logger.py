@@ -2,12 +2,21 @@ import logging
 import shutil
 import os 
 from datetime import date
-from .general import make_dir, is_directory
+from pathlib import Path
 from gailbot.configs import log_config_loader, top_level_config_loader, path_config_loader
 
 log_directory = path_config_loader().gailbot_data.logfiles
 LOG_CONFIG  = log_config_loader()
 
+def is_directory(dir_path: str) -> bool:
+    """
+    Determine if the given path is a directory.
+    """
+    try:
+        return Path(dir_path).is_dir()
+    except Exception as e:
+        return False 
+    
 if not is_directory(log_directory):
     os.makedirs(log_directory, exist_ok=True)
 

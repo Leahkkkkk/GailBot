@@ -9,11 +9,12 @@ import json
 import time
 from .data import AudioPath
 from gailbot.core.engines.whisperEngine import WhisperEngine
+from gailbot.workspace.manager import WorkspaceManager
 from gailbot.core.utils.general import write_json
 import pytest 
 
 def whisper_test(audio, detect_speaker: bool, output):
-    engine = WhisperEngine()
+    engine = WhisperEngine(WorkspaceManager.tempspace_root)
     print(engine)
     print(engine.get_supported_formats())
     print(engine.get_available_models())
@@ -31,16 +32,16 @@ def whisper_test(audio, detect_speaker: bool, output):
     
 
 @pytest.mark.parametrize("audio, detect_speaker, output", 
-                [(AudioPath.SHORT_PHONE_CALL, True, "short_phone_call.json")])
+                [(AudioPath.SHORT_AUDIO, False, "short_phone_call.json")])
 def test_detect_speaker(audio, detect_speaker, output):
     whisper_test(audio, detect_speaker, output)
 
 @pytest.mark.parametrize("audio, detect_speaker, output", 
-                [(AudioPath.LONG_PHONE_CALL, True, "long_phone_call.json")])
+                [(AudioPath.LONG_PHONE_CALL, False, "long_phone_call.json")])
 def test_detect_speaker_long(audio, detect_speaker, output):
     whisper_test(audio, detect_speaker, output)
     
 @pytest.mark.parametrize("audio, detect_speaker, output", 
-                [(AudioPath.LARGE_AUDIO_WAV, False, "long_audio.json")])
+                [(AudioPath.FOURTY_MIN, False, "long_audio.json")])
 def test_long_audio(audio, detect_speaker, output):
     whisper_test(audio, detect_speaker, output)

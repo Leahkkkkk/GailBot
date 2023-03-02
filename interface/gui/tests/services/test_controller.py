@@ -50,7 +50,7 @@ def transcribe(source, setting = TEST_SETTING):
     controller.create_new_setting(SETTING_NAME, setting)
     controller.apply_setting_to_source(get_name(source), SETTING_NAME)
     logger.info(controller.organizer.get_configured_sources())
-    controller.transcribe()
+    return controller.transcribe()
     
 def transcribe_multiple(sources, setting = TEST_SETTING):
     controller = ServiceController()
@@ -60,10 +60,12 @@ def transcribe_multiple(sources, setting = TEST_SETTING):
     for source in sources:
         controller.apply_setting_to_source(get_name(source), SETTING_NAME)
     logger.info(controller.organizer.get_configured_sources())
-    controller.transcribe()
+    return controller.transcribe()
 
 def test_transcribe_audio():
-    transcribe(A.MEDIUM_AUDIO_MP3)
+    result, invalid = transcribe(A.MEDIUM_AUDIO_MP3)
+    assert result 
+    logger.info(invalid)
     
 def test_transcribe_dir():
     transcribe(A.CONVERSATION_DIR)
@@ -75,9 +77,23 @@ def test_with_plugin():
     transcribe(A.MEDIUM_AUDIO_MP3, PLUGIN_SETTING)
 
 def test_transcribe_multiple():
-    transcribe_multiple(
+    result, invalid = transcribe_multiple(
         [A.CONVERSATION_DIR, 
          A.MEDIUM_AUDIO_MP3, 
          A.SMALL_AUDIO_MP3, 
          A.SHORT_PHONE_CALL, 
          A.LONG_PHONE_CALL])
+    
+    logger.info(result)
+    logger.info(invalid)
+    
+def test_transcribe_invalid():
+    result, invalid = transcribe_multiple(
+        [
+            PATH.INVALID_DATA_DIR,
+            PATH.INVALID_PATH
+        ]
+    )
+    
+    logger.info(result)
+    logger.info(invalid)

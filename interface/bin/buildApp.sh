@@ -7,7 +7,8 @@ pyinstaller --noconsole --windowed ../gui/app.py   \
 --icon "../install/GailBotLogo.icns" \
 --add-data "../gui/config/:config" \
 --add-data "../gui/asset/:asset" \
---hidden-import waitress \
+--add-data "../gui/gailbot/:configs" \
+--hidden-import tqdm \ 
 --clean
 mv build ../install
 mv dist ../install

@@ -23,11 +23,11 @@ class StyleSource:
 
 """ a search table with all style choices and the path to the source"""
 StyleTable = {
-    "dark mode"     :   StyleDataPath.darkColor,
-    "light mode"    :   StyleDataPath.lightColor,
-    "small"         :   StyleDataPath.smallFontSize,
-    "large"         :   StyleDataPath.largeFontSize,
-    "medium"        :   StyleDataPath.mediumFontSize 
+    "Dark Mode"     :   StyleDataPath.darkColor,
+    "Light Mode"    :   StyleDataPath.lightColor,
+    "Small"         :   StyleDataPath.smallFontSize,
+    "Large"         :   StyleDataPath.largeFontSize,
+    "Medium"        :   StyleDataPath.mediumFontSize 
 }
     
     

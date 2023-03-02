@@ -22,6 +22,9 @@ from pathlib import Path
 # Third party imports
 from copy import deepcopy
 import subprocess
+from gailbot.core.utils.logger import makelogger
+
+logger = makelogger("general")
 
 InvalidPathError = "Error: invalid path"
 
@@ -38,7 +41,8 @@ def is_directory(dir_path: str) -> bool:
     """
     try:
         return Path(dir_path).is_dir()
-    except:
+    except Exception as e:
+        logger.error(e)
         return False 
 
 def is_file(file_path: str) -> bool:
@@ -47,7 +51,8 @@ def is_file(file_path: str) -> bool:
     """
     try:
         return Path(file_path).is_file()
-    except:
+    except Exception as e:
+        logger.error(e)
         return False
 
 def num_items_in_dir(
@@ -72,8 +77,9 @@ def num_items_in_dir(
         return len(paths_in_dir(
             path, extensions,recursive, only_dirs
         ))
-    except:
-        raise FileExistsError
+    except Exception as e:
+        logger.error(e)
+        return False
 
 
 def is_path(source:str):
@@ -100,14 +106,19 @@ def paths_in_dir(
         only_dirs (bool): Only applies to dirs.
     """
     if not is_directory(path):
-        raise FileExistsError
-    if only_dirs:
-        return glob.glob(f"{path}/*/",recursive=recursive)
-    else:
-        return list(itertools.chain(
-            *[glob.glob(f"{path}/*.{ext}",recursive=recursive) for \
-                ext in extensions]
-        ))
+        logger.error("not a valid directory")
+        return False
+    try: 
+        if only_dirs:
+            return glob.glob(f"{path}/*/",recursive=recursive)
+        else:
+            return list(itertools.chain(
+                *[glob.glob(f"{path}/*.{ext}",recursive=recursive) for \
+                    ext in extensions]
+            ))
+    except Exception as e:
+        logger.error(e)
+        return False
 
 def filepaths_in_dir(
     dir_path : str,
@@ -125,9 +136,10 @@ def filepaths_in_dir(
             recursive=recursive,
             only_dirs=False
         )
-    except: 
-        raise FileExistsError
-
+    except Exception as e:
+        logger.error(e) 
+        return False
+    
 def subdirs_in_dir(
     dir_path : str,
     recursive : bool = False
@@ -143,15 +155,17 @@ def subdirs_in_dir(
             recursive=recursive,
             only_dirs=True
         )
-    except:
-        raise FileExistsError
+    except Exception as e:
+        logger.error(e)
+        return False
 
 def num_subdirs(dir_path : str, recursive : bool = False) -> int:
     """Get the number of subdirectory in the dir_path"""
     try:
         return len(subdirs_in_dir(dir_path,recursive))
-    except:
-        raise FileExistsError
+    except Exception as e:
+        logger.error(e)
+        return False
         
 
 def get_name(path : str) -> str:
@@ -162,16 +176,18 @@ def get_name(path : str) -> str:
             return os.path.splitext(os.path.basename(path))[0]
         else:
             return os.path.basename(dir_path)
-    except:
-        raise FileExistsError
+    except Exception as e:
+        logger.error(e)
+        return False
         
 
 def get_extension(path : str) -> str:
     """ given the path to the file, return the extension of the file """
     try: 
         return os.path.splitext(os.path.basename(path))[1][1:]
-    except:
-        raise FileExistsError
+    except Exception as e:
+        logger.error(e)
+        return False
 
 
 def get_parent_path(path : str) -> str:
@@ -179,9 +195,9 @@ def get_parent_path(path : str) -> str:
         parent directory"""
     try:
         return str(Path(path).parent.absolute())
-    except:
-        raise FileExistsError
-
+    except Exception as e:
+        logger.error(e)
+        return False
 
 def get_size(path : str) -> bytes:
     """given the path to the file, return the file size"""
@@ -192,9 +208,9 @@ def get_size(path : str) -> bytes:
             return sum([
                 os.path.getsize(p) for p in filepaths_in_dir(path,recursive=True)
             ])
-    except:
-        raise FileExistsError
-        
+    except Exception as e:
+        logger.error(e)
+        return False 
 
 def make_dir(path : str, overwrite : bool = False):
     """ given the path, create a directory """
@@ -202,44 +218,55 @@ def make_dir(path : str, overwrite : bool = False):
         if is_directory(path) and overwrite:
             delete(path)
         os.makedirs(path, exist_ok=True)
-    except:
-        raise FileExistsError
+    except Exception as e:
+        logger.error(e)
+        return False 
         
 
 def move(src_path : str, tgt_path : str) -> str:
     """ move the file from the source path to the target path """
     try:
         return shutil.move(src_path, tgt_path)
-    except:
-        raise FileExistsError
+    except Exception as e:
+        logger.error(e)
+        return False 
         
         
 def copy(src_path, tgt_path : str) -> str:
     """ copy the file from the source path to the target path """
-    if is_file(src_path):
-        return shutil.copy(src_path, tgt_path)
-    elif is_directory(src_path):
-        return shutil.copytree(src_path, tgt_path,dirs_exist_ok=True)
-    else:
-        raise FileExistsError
-        
-        
+    try:
+        if is_file(src_path):
+            return shutil.copy(src_path, tgt_path)
+        elif is_directory(src_path):
+            return shutil.copytree(src_path, tgt_path,dirs_exist_ok=True)
+        else:
+            logger.error("not a valid file path")
+    except Exception as e:
+        logger.error(e)
+        return False
+    
 
 def rename(src_path, new_name : str) -> str:
     """ rename the file in the source path to the new name """
     try:
         return str(Path(src_path).rename(new_name).resolve())
-    except:
+    except Exception as e:
+        logger.error(e)
         raise FileExistsError
     
 def delete(path : str) -> None:
     """ given a path, delete the file """
-    if is_file(path):
-        Path(path).unlink(missing_ok=True)
-    elif is_directory(path):
-        shutil.rmtree(path)
-    else:
-        raise FileExistsError
+    try: 
+        if is_file(path):
+            Path(path).unlink(missing_ok=True)
+        elif is_directory(path):
+            shutil.rmtree(path)
+        else:
+            logger.error("not a valid path")
+            return False
+    except Exception as e:
+        logger.error(e)
+        return False
 
 def read_json(path : str) -> Dict:
     """ given a path, read the json data stored in the file, return the 
@@ -286,7 +313,8 @@ def write_txt(path : str, data : List,  overwrite : bool = True) -> bool:
     try:
         with open(path, mode) as f:
                 f.writelines(data)
-    except:
+    except Exception as e:
+        logger.error
         raise FileExistsError
         
 def read_yaml(path : str) -> Dict:
@@ -301,6 +329,7 @@ def read_yaml(path : str) -> Dict:
                 raise Exception
             return data
     else:
+        logger.error("not a valid yaml file")
         raise FileExistsError
 
 def write_yaml(path : str, data : Dict, overwrite : bool = True) -> bool:
@@ -319,7 +348,8 @@ def write_yaml(path : str, data : Dict, overwrite : bool = True) -> bool:
             # Data must be convertable to a dictionary object to be written to
             # a yaml file.
             yaml.dump(previous_data, f)
-    except:
+    except Exception as e:
+        logger.error(e)
         raise FileExistsError
 
 def read_toml(path : str) -> Dict:
@@ -329,6 +359,7 @@ def read_toml(path : str) -> Dict:
     if is_file(path):
         return toml.load(path)
     else:
+        logger.error("not a valid toml file")
         raise FileExistsError
 
 def write_toml(path : str, data : Dict) -> bool:
@@ -338,7 +369,8 @@ def write_toml(path : str, data : Dict) -> bool:
     try:
         with open(path, "w") as f:
             toml.dump(data, f)
-    except:
+    except Exception as e:
+        logger.error(e)
         raise FileExistsError
 
 def write_csv(path: str, data: List[Dict[str, str]]):
@@ -348,6 +380,7 @@ def write_csv(path: str, data: List[Dict[str, str]]):
         writer = csv.DictWriter(file, fieldnames=fields)
         writer.writeheader()
         for row in data:
+    
             writer.writerow(row)
 
 def read_csv(path:str) -> List[Dict[str, str]]:
@@ -357,6 +390,7 @@ def read_csv(path:str) -> List[Dict[str, str]]:
         for row in reader:
             data.append(row)
     return data
+
 
 def run_cmd(
     cmd : List[str],

@@ -18,10 +18,6 @@ class InvalidEngineError(Exception):
     def __repr__(self) -> str:
         return self.engine + "is not a valid engine"
 
-""" TODO by Feb 24:
-2. test functions to skip trancription for transcribedpayload
-3. error handling mechanism - logging and return failed
-"""
 class TranscribeComponent(Component):
     """ responsible for running the transcription process
     """
