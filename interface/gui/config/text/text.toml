@@ -1,5 +1,7 @@
 [links]
 HILAB = "https://sites.tufts.edu/hilab"
+USER_MANUAL = "https://docs.google.com/presentation/d/12wsU2ORg3PhsGwAsEnF6vE9ZGyYsOlfF/edit?usp=sharing&ouid=104802467280999304975&rtpof=true&sd=true"
+GUIDE = "https://docs.google.com/document/d/170SyWsE6pRgnZUMoXLtgqiIBJDqWMwZKUpg6eKgMyj0/edit?usp=sharing"
 
 [TranscribeSuccessText]
 mainLabelText        = "Transcription successful"
@@ -30,7 +32,7 @@ instructionText           = "How GailBot Works"
 resourcesText             = "Resources"
 tutorialText              = "GailBot Beginner Tutorial"
 guideText                 = "GailBot Settings Guide"
-gbLinkText                = "GailBot.com"
+gbLinkText                = "Tufts Human Interaction Laboratory"
 moreInfoText              = "For more, information visit"
 firstLaunchHeader         = "Welcome to GailBot's initial setup"
 firstLaunchInstruction    = """Please specify the path to GailBot's \

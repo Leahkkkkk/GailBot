@@ -52,8 +52,8 @@ class PluginPage(QWidget):
             alignment= center)
         self.caption = Label.Label(
             Text.pluginCaption, FontSize.DESCRIPTION, FontFamily.MAIN)
-        self.placeholder = Label.Label(
-            Text.pluginPlaceholder, FontSize.HEADER3, FontFamily.MAIN)
+        # self.placeholder = Label.Label(
+        #     Text.pluginPlaceholder, FontSize.HEADER3, FontFamily.MAIN)
 
         self.message = Label.Label(
             Text.tempMessage, FontSize.DESCRIPTION, FontFamily.MAIN)

@@ -28,7 +28,7 @@ from dict_to_dataclass import DataclassFromDict, field_from_dict
 """
 #############################  about data ################################
 year = datetime.date.today().strftime("%Y")
-copyRightText = f"copyright {year} © HIL Lab"
+copyRightText = f"Copyright {year} © HIL Lab"
 @dataclass
 class aboutData(DataclassFromDict):
     """class holding data about GailBot; e.g. version, title, etc."""
