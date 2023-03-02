@@ -52,6 +52,8 @@ class PluginPage(QWidget):
             alignment= center)
         self.caption = Label.Label(
             Text.pluginCaption, FontSize.DESCRIPTION, FontFamily.MAIN)
+        self.placeholder = Label.Label(
+            Text.pluginPlaceholder, FontSize.HEADER3, FontFamily.MAIN)
 
     def _initlayout(self):
         """" initializes layout """
@@ -71,7 +73,10 @@ class PluginPage(QWidget):
         self.verticalLayout.addWidget(
             self.caption, 
             alignment = center)
-        # self.verticalLayout.setSpacing(Dimension.SMALL_SPACING)
+        self.verticalLayout.setSpacing(Dimension.LARGE_SPACING)
+        self.verticalLayout.addWidget(
+            self.placeholder, 
+            alignment=center)
         # self.verticalLayout.addWidget(
         #     self.scrollArea, 
         #     alignment=center)

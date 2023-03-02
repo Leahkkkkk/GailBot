@@ -95,6 +95,7 @@ requiredSetCaption = """These settings are applied to the selected settings prof
                         and are required for transcription"""
 pluginHeader       = "Choose Plugins"
 pluginCaption      = "These plugins are applied to the transcription process"
+pluginPlaceholder  = "No plugin is applied under current setting profile"
 
 [SystemSettingPage]
 header        = "System Settings"
