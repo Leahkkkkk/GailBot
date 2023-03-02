@@ -15,7 +15,6 @@ import sys
 from controller import Controller
 from PyQt6.QtWidgets import QApplication
 
-
    
 EXIT_CODE_REBOOT = -20000
 def run(exitCodeQueue):

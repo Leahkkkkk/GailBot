@@ -21,6 +21,7 @@ import os
 import logging
 from model.dataBase.FileDatabase import FileObj
 from util.GailBotData import Credential, ProfileConfig, Plugin, getWorkPath
+# from gailbot.api import GailBot 
 from util.io import get_name
 
 from PyQt6.QtCore import (
