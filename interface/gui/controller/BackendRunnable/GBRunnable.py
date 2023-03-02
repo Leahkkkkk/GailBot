@@ -78,8 +78,14 @@ class Worker(QRunnable):
                                       file file key
         """
         self.logger.info("file ready to be transcribed" )
-        from gailbot.api import GailBot
-        
+        try:
+            from gailbot.api import GailBot
+        except Exception as e:
+            self.logger.error(e)
+            self.signals.error.emit("the profile cannot be created")
+            self.signals.finish.emit()
+            return
+            
         try:
             self.signals.start.emit()
             try:
@@ -144,8 +150,7 @@ class Worker(QRunnable):
                     self.signals.error.emit(f"ERROR: the following files cannot be transcribed:{invalid_files}")
        
         except Exception as e:
-            if  len(invalid) == 0:
-                self.signals.error.emit(f"Error: the transcription fails")
+            self.signals.error.emit(f"Error: the transcription fails")
             self.logger.error(f"{e} fails")
             self.signals.finish.emit()
         

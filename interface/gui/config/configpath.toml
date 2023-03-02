@@ -4,7 +4,8 @@ gailBotData          = "config/backend/gailbot.toml"
 workSpaceData        = "config/backend/workSpace.toml"
 defaultWorkSpaceData = "config/backend/defaultWorkSpace.toml"
 fileManageData       = "config/backend/fileManage.toml"
-backendroot          = "gailbot/configs/confs/toplevel/user_root.toml" 
+backendroot          = "configs/confs/toplevel/user_root.toml" 
+# backendroot          = "gailbot/configs/confs/toplevel/user_root.toml" 
 
 # path to config files with style data
 [style]

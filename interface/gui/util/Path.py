@@ -11,7 +11,6 @@ Description: provides function  to get the project root path
 '''
 
 import os
-
 def getProjectRoot() -> str:
     """return the root path of the program """
     dir = os.path.dirname(os.path.dirname(__file__))
