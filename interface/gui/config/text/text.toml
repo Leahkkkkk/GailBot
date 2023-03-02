@@ -52,7 +52,7 @@ selectSetText         = "select settings"
 selectPlaceHolderText = "None"
 selectFolderText      = "Select Folder"
 chooseOutPutText      = "Choose Output Directory"
-fileFilter            = "audio file (*.wav, *.mp3, *.opus)"
+fileFilter            = "audio file (*.wav *.mp3 *.opus)"
 removeWarnText        = "Remove all files?"
 tabAddfile            = "Add File"
 tabAddFolder          = "Add Folder"
@@ -93,6 +93,7 @@ requiredSetCaption = """These settings are required before transcription and \
                         cannot be edited after transcription."""
 pluginHeader       = "Plugin Details"
 pluginCaption      = "These plugins are applied to the transcription process"
+tempMessage        = "This page has been temporarily disabled to allow for further updates and developments. Please check back later."
 
 [SystemSettingPage]
 header        = "System Setting"

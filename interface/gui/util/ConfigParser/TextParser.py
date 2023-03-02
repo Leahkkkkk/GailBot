@@ -161,6 +161,7 @@ class ProfilePageTextData(DataclassFromDict):
     requiredSetCaption : str  = field_from_dict()
     pluginHeader       : str  = field_from_dict()
     pluginCaption      : str  = field_from_dict()
+    tempMessage        : str  = field_from_dict()
 
 @dataclass 
 class SystemSetPageTextData(DataclassFromDict):
