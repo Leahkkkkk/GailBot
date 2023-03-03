@@ -18,7 +18,9 @@ import huggingface_hub
 import dtw 
 import whisper
 import scipy
-import gailbot
+from gailbot.api import GailBot
+
+gb = GailBot
 
 EXIT_CODE_REBOOT = -20000
 def run(exitCodeQueue):
