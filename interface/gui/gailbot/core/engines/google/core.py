@@ -21,13 +21,12 @@ from gailbot.core.utils.general import (
 
 from gailbot.core.utils.logger import makelogger
 from ...engines import exception as Err
-from gailbot.configs import google_config_loader, top_level_config_loader
+from gailbot.configs import google_config_loader
 from gailbot.core.utils.general import get_size
 from gailbot.core.utils.media import MediaHandler
 
 logger = makelogger("google")
 GOOGLE_CONFIG = google_config_loader()
-TOP_CONFIG = top_level_config_loader()
 """ TODO: 
 1. google API key  
 """

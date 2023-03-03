@@ -1,6 +1,5 @@
 from gailbot.plugins.suite import PluginComponent, PluginSuite, ComponentResult, ComponentState
-from gailbot.plugins.plugin import Plugin
-from gailbot.servicesold.pipeline.pluginMethods import GBPluginMethods, Methods
+from gailbot.plugins.plugin import Plugin, Methods
 import pytest 
 from typing import Dict, Any, List
 from gailbot.core.utils.logger import makelogger
@@ -12,15 +11,12 @@ import os
 import time
 from gailbot.core.utils.general import get_name
 
-TOP_CONFIG = top_level_config_loader()
 logger = makelogger("test_plugins")
 
 TEST_CONFIG_SRC = "/Users/yike/Documents/GitHub/GailBot/data/test_suite/conf.toml"
 TEST_DIR_SRC = "/Users/yike/Documents/GitHub/GailBot/data/test_suite"
 HIL_CONFIG_SRC =  "/Users/yike/Documents/GitHub/GailBot/gb_hilab_suite/config.toml"
 HIL_DIR_SRC = "/Users/yike/Documents/GitHub/GailBot/gb_hilab_suite"
-PLUGIN_WORKSPACE = os.path.join( TOP_CONFIG.root, TOP_CONFIG.workspace.plugin_workspace)
-test_plugin_method = GBPluginMethods()
 SUCCESS_RESULT = ComponentResult(ComponentState.SUCCESS)
 FAILURE_RESULT = ComponentResult(ComponentState.FAILED)
 

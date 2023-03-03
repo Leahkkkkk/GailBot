@@ -13,7 +13,6 @@ import importlib
 import imp
 from gailbot.core.utils.logger import makelogger
 from .plugin import Plugin, Methods
-from gailbot.configs import top_level_config_loader
 
 from gailbot.core.pipeline import (
     Pipeline, 
@@ -21,7 +20,6 @@ from gailbot.core.pipeline import (
     ComponentResult, 
     ComponentState)
 
-PLUGIN_CONFIG = top_level_config_loader().plugin
 
 logger = makelogger("pluginSuite")
 
@@ -113,7 +111,7 @@ class PluginSuite:
         # Init the pipeline based on the components
         self.pipeline = Pipeline(dependency_map = self.dependency_map,
                                  components = self.components,
-                                 num_threads=PLUGIN_CONFIG.num_threads)
+                                 num_threads=5)
         
         # Add vars here from conf.
         self._name = dict_conf["suite_name"]

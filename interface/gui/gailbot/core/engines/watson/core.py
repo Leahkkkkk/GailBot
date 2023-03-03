@@ -19,7 +19,7 @@ from .recognize_callback import CustomWatsonCallbacks
 from .recognition_results import RecognitionResult
 from gailbot.core.utils.logger import makelogger
 from gailbot.core.engines import exception as ERR
-from gailbot.configs import watson_config_loader, top_level_config_loader
+from gailbot.configs import watson_config_loader
 from gailbot.core.utils.media import MediaHandler
 from gailbot.core.utils.general import (
     make_dir,
@@ -36,7 +36,6 @@ from gailbot.core.utils.general import (
 )
 
 WATSON_CONFIG = watson_config_loader()
-TOP_CONFIG = top_level_config_loader()
 logger = makelogger("watson_core")
 class WatsonCore:
     """

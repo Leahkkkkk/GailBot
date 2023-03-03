@@ -11,11 +11,15 @@ Description: the driver for running GailBot on a single process
 '''
 
 import sys
-
 from controller import Controller
 from PyQt6.QtWidgets import QApplication
+import huggingface_hub 
+# import pyannote.audio
+import dtw 
+import whisper
+import scipy
+import gailbot
 
-   
 EXIT_CODE_REBOOT = -20000
 def run(exitCodeQueue):
     """ main driver function to run the app  """

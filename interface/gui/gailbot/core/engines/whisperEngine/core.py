@@ -30,14 +30,13 @@ from gailbot.core.utils.general import (
     is_directory,
     make_dir
 )
-from gailbot.configs import  top_level_config_loader, whisper_config_loader
+from gailbot.configs import whisper_config_loader
 from gailbot.core.engines.whisperEngine.diarization.diarize import PyannoteDiarizer
 
 from gailbot.core.utils.logger import makelogger
 logger = makelogger("whisper")
 
 WHISPER_CONFIG = whisper_config_loader()
-TOP_CONFIG = top_level_config_loader()
 
 class WhisperCore:
     """

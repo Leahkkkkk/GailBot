@@ -36,11 +36,6 @@ def log_config_loader(): return load_log_config(
     os.path.join(CONFIG_ROOT, PATH.log))
 
 
-def top_level_config_loader():
-    return load_top_config(
-        os.path.join(CONFIG_ROOT, PATH.config),
-        os.path.join(CONFIG_ROOT, PATH.root)
-    )
 
 def path_config_loader():
     return load_path_config(

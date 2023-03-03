@@ -10,7 +10,7 @@ from typing import Any
 from huggingface_hub import hf_hub_url, cached_download
 import joblib
 from huggingface_hub import hf_hub_download
-from pyannote.audio import Pipeline
+from pyannote.audio.core.pipeline import Pipeline
 
 from gailbot.core.utils.general import (
     make_dir,

@@ -24,11 +24,9 @@ from gailbot.core.utils.general import (
     get_name, 
     is_directory
 )
-from gailbot.configs import top_level_config_loader 
 from gailbot.workspace import WorkspaceManager
 from pprint import pprint
 
-TOP_LEVEL = top_level_config_loader()
 logger = makelogger("plugin_manager")
 class DuplicatePlugin(Exception):
     def __str__(self) -> str:
