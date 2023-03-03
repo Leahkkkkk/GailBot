@@ -25,7 +25,7 @@ def makelogger(filename:str):
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
     # Create a file handler
-    path = os.path.join(log_directory, f"{filename}-{today}.log")
+    path = os.path.join(log_directory, f"GailBot-{today}.log")
     file_handler = logging.FileHandler(path)
     file_handler.setLevel(logging.DEBUG)
 

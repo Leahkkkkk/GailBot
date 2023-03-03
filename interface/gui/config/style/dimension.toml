@@ -2,7 +2,7 @@
 [dimension]
 WINMAXWIDTH         = 1100
 WINMAXHEIGHT        = 900
-BTNWIDTH            = 150
+BTNWIDTH            = 165
 BTNHEIGHT           = 40
 SBTNWIDTH           = 100
 SBTNHEIGHT          = 30

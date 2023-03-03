@@ -28,7 +28,7 @@ from dict_to_dataclass import DataclassFromDict, field_from_dict
 """
 #############################  about data ################################
 year = datetime.date.today().strftime("%Y")
-copyRightText = f"copyright {year} © HIL Lab"
+copyRightText = f"Copyright {year} © HIL Lab"
 @dataclass
 class aboutData(DataclassFromDict):
     """class holding data about GailBot; e.g. version, title, etc."""
@@ -161,7 +161,7 @@ class ProfilePageTextData(DataclassFromDict):
     requiredSetCaption : str  = field_from_dict()
     pluginHeader       : str  = field_from_dict()
     pluginCaption      : str  = field_from_dict()
-    pluginPlaceholder  : str  = field_from_dict()
+    tempMessage        : str  = field_from_dict()
 
 @dataclass 
 class SystemSetPageTextData(DataclassFromDict):

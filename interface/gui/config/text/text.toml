@@ -1,5 +1,7 @@
 [links]
 HILAB = "https://sites.tufts.edu/hilab"
+USER_MANUAL = "https://docs.google.com/presentation/d/12wsU2ORg3PhsGwAsEnF6vE9ZGyYsOlfF/edit?usp=sharing&ouid=104802467280999304975&rtpof=true&sd=true"
+GUIDE = "https://docs.google.com/document/d/170SyWsE6pRgnZUMoXLtgqiIBJDqWMwZKUpg6eKgMyj0/edit?usp=sharing"
 
 [TranscribeSuccessText]
 mainLabelText        = "Transcription successful"
@@ -28,10 +30,10 @@ captionText               = """GailBot is the world's first automated transcript
 startBtnText              = "Get Started"
 instructionText           = "How GailBot Works"
 resourcesText             = "Resources"
-tutorialText              = "GailBot Beginner Tutorial"
+tutorialText              = "GailBot User Manual"
 guideText                 = "GailBot Settings Guide"
-gbLinkText                = "GailBot.com"
-moreInfoText              = "For more, information visit"
+gbLinkText                = "Tufts Human Interaction Laboratory"
+moreInfoText              = "For more information, visit:"
 firstLaunchHeader         = "Welcome to GailBot's initial setup"
 firstLaunchInstruction    = """Please specify the path to GailBot's \
                              workspace directory on your computer.\nThis is where
@@ -54,7 +56,7 @@ selectSetText         = "select settings"
 selectPlaceHolderText = "None"
 selectFolderText      = "Select Folder"
 chooseOutPutText      = "Choose Output Directory"
-fileFilter            = "audio file (*.wav)"
+fileFilter            = "audio file (*.wav *.mp3 *.opus)"
 removeWarnText        = "Remove all files?"
 tabAddfile            = "Add File"
 tabAddFolder          = "Add Folder"
@@ -95,7 +97,7 @@ requiredSetCaption = """These settings are applied to the selected settings prof
                         and are required for transcription"""
 pluginHeader       = "Choose Plugins"
 pluginCaption      = "These plugins are applied to the transcription process"
-pluginPlaceholder  = "No plugin is applied under current setting profile"
+tempMessage        = "This page has been temporarily disabled to allow for further updates and developments. Please check back later."
 
 [SystemSettingPage]
 header        = "System Settings"

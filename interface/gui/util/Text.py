@@ -88,16 +88,19 @@ LogDeleteTimeDict = forms["log deletion"]
 
 @dataclass
 class Links: 
-    link = text["links"]["HILAB"]
+    hilab_link = text["links"]["HILAB"]
+    manual_link = text["links"]["USER_MANUAL"]
+    guide_link = text ["links"]["GUIDE"]
+
     _linkTemplate = "<a style='color:{0}; font-weight: 500;' href={1}>{2}</a>"
     tutorialLink = _linkTemplate.format(
-        Color.LINK, link, WelcomePageText.tutorialText)
+        Color.LINK, manual_link, WelcomePageText.tutorialText)
     guideLink = _linkTemplate.format(
-        Color.LINK, link, WelcomePageText.guideText)
+        Color.LINK, guide_link, WelcomePageText.guideText)
     gbWebLink = _linkTemplate.format(
-        Color.LINK,link, WelcomePageText.gbLinkText)
+        Color.LINK, hilab_link, WelcomePageText.gbLinkText)
     guideLinkSideBar = _linkTemplate.format(
-        Color.LINKLIGHT,link, WelcomePageText.guideText)
+        Color.LINKLIGHT, hilab_link, WelcomePageText.guideText)
 
 
 
