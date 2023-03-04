@@ -2,7 +2,7 @@ from abc import ABC
 from typing import List, Dict 
 import os 
 from enum import Enum 
-from gailbot.configs import path_config_loader, OutputFolder, TemporaryFolder
+from gailbot.configs import  OutputFolder, TemporaryFolder
 from gailbot.core.utils.logger import makelogger
 from ...organizer.source import SourceObject
 from ...organizer.settings import SettingObject
@@ -23,7 +23,6 @@ logger = makelogger("payloadobject")
 1. move all name strings to configuration  
 2. test save function and any functions involve i/o 
 """
-PATH_CONFIG = path_config_loader()
 OUTPUT_MARKER = ".gailbot"
 class PayLoadStatus(Enum):
     """ For tracking the status of the file in the payload """
@@ -60,14 +59,14 @@ class PayLoadObject(ABC):
     
     # payload result
     
-    def __init__(self, source: SourceObject) -> None:
+    def __init__(self, source: SourceObject, workspace: WorkspaceManager) -> None:
         self.name = source.name
         self.original_source: str = source.source_path()
         self.setting: SettingObject = source.setting
         self.workspace: TemporaryFolder = \
-            WorkspaceManager.get_file_temp_space(self.name)        
+            workspace.get_file_temp_space(self.name)        
         self.out_dir: OutputFolder = \
-            WorkspaceManager.get_output_space(source.output, self.name)
+            workspace.get_output_space(source.output, self.name)
         self.transcription_result:  UttResult = UttResult(self.workspace.transcribe_ws)
         self.format_result: FormatResult = FormatResult(self.workspace.format_ws)
         self.analysis_result: AnalysisResult = AnalysisResult(self.workspace.analysis_ws)

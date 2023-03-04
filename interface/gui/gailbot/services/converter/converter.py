@@ -6,7 +6,7 @@ from .payload import (
 from typing import Dict, List, Union, Tuple
 from gailbot.core.utils.logger import makelogger
 from ..organizer.source import SourceObject
-
+from gailbot.workspace.manager import WorkspaceManager
 logger = makelogger("congerter")
 class Converter: 
     """
@@ -19,13 +19,14 @@ class Converter:
         load_conversation_dir_payload]
     
     """ mapping payload name to payloadObject """
-    def __init__(self) -> None:
+    def __init__(self, ws_manager: WorkspaceManager) -> None:
+        self.ws_manager = ws_manager
         self.payloads_dict: Dict[str, PayLoadObject] = dict()
         
     def load_source(self, source: SourceObject) -> bool:
         for loader in self.loaders:
             try: 
-                payloads: List [PayLoadObject] = loader(source)
+                payloads: List [PayLoadObject] = loader(source, self.ws_manager)
                 logger.info(payloads)
                 if isinstance(payloads, list):
                     self.payloads_dict[source.name] = payloads
@@ -51,6 +52,7 @@ class Converter:
         logger.info(sources)
         self.payloads_dict = dict()
         invalid = list()
+       
         try:
             for source in sources:
                 logger.info(source)

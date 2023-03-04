@@ -3,9 +3,11 @@ import shutil
 import os 
 from datetime import date
 from pathlib import Path
-from gailbot.configs import log_config_loader, path_config_loader
+from gailbot.configs import log_config_loader 
 
-log_directory = path_config_loader().gailbot_data.logfiles
+# TODO: check where to store the log message 
+
+# log_directory = path_config_loader().gailbot_data.logfiles
 LOG_CONFIG  = log_config_loader()
 
 def is_directory(dir_path: str) -> bool:
@@ -17,23 +19,23 @@ def is_directory(dir_path: str) -> bool:
     except Exception as e:
         return False 
     
-if not is_directory(log_directory):
-    os.makedirs(log_directory, exist_ok=True)
+# if not is_directory(log_directory):
+#     os.makedirs(log_directory, exist_ok=True)
 
 def makelogger(filename:str):
     today = date.today()
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
     # Create a file handler
-    path = os.path.join(log_directory, f"GailBot-{today}.log")
-    file_handler = logging.FileHandler(path)
-    file_handler.setLevel(logging.DEBUG)
+    # path = os.path.join(log_directory, f"GailBot-{today}.log")
+    # file_handler = logging.FileHandler(path)
+    # file_handler.setLevel(logging.DEBUG)
 
     # Create a formatter
     formatter = logging.Formatter(LOG_CONFIG.formatter)
-    file_handler.setFormatter(formatter)
+    # file_handler.setFormatter(formatter)
 
-    # Add the file handler to the logger
-    logger.addHandler(file_handler)
+    # # Add the file handler to the logger
+    # logger.addHandler(file_handler)
     logger = logging.LoggerAdapter(logger, {"source": "Backend"})
     return logger

@@ -2,8 +2,7 @@ from .source import SourceObject, SourceManager
 from gailbot.core.utils.logger import makelogger
 from .settings import SettingManager, SettingObject
 from typing import Dict, List, Union
-from gailbot.configs import path_config_loader, TemporaryFolder, OutputFolder
-PATH_CONFIG = path_config_loader()
+from gailbot.configs import  TemporaryFolder, OutputFolder
 logger = makelogger("organizer")
 DEFAULT_SETTING_NAME = "default"
 
@@ -21,10 +20,8 @@ DEFAULT_SETTING = {
 }
 
 class Organizer:
-    workspace :str = PATH_CONFIG.gailbot_data.root
-    
-    def __init__(self, load_exist_setting: bool = False) -> None:
-        self.setting_manager = SettingManager(load_exist_setting)
+    def __init__(self, setting_workspace: str, load_exist_setting: bool = False) -> None:
+        self.setting_manager = SettingManager(setting_workspace, load_exist_setting)
         self.source_manager  = SourceManager()
         if not self.setting_manager.is_setting(DEFAULT_SETTING_NAME):
             self.setting_manager.add_new_setting(DEFAULT_SETTING_NAME, DEFAULT_SETTING)

@@ -3,10 +3,6 @@
 # @Date:   2023-01-08 13:22:01
 # @Last Modified by:   Muhammad Umair
 # @Last Modified time: 2023-01-16 13:10:15
-#
-# TODO: 
-#       rename the suite directory to be the same as the suite name 
-# .     rename suite
 
 import sys
 import os
@@ -24,8 +20,7 @@ from gailbot.core.utils.general import (
     get_name, 
     is_directory
 )
-from gailbot.workspace import WorkspaceManager
-from pprint import pprint
+
 
 logger = makelogger("plugin_manager")
 class DuplicatePlugin(Exception):
@@ -39,10 +34,12 @@ class PluginManager:
     """
     def __init__(
         self,
+        workspace: str, 
         plugin_sources : List[str] = [],
         load_existing : bool = True,
         over_write: bool = True
     ):
+        self.workspace = workspace
         self._init_workspace()
         """ check if the plugin has been installed  """
         self.loaders: List[PluginLoader] = [
@@ -85,7 +82,7 @@ class PluginManager:
         Reset all the plugins that currently exist.
         They will be permanently deleted and will have to be re-added.
         """
-        make_dir(self.workspace_dir,overwrite=True)
+        make_dir(self.workspace,overwrite=True)
 
     def register_suite(
         self,
@@ -114,16 +111,14 @@ class PluginManager:
     def _init_workspace(self):
         """
         Init workspace and load plugins from the specified sources.
-        """        
-        self.workspace_dir = WorkspaceManager.plugin_src
-        
-        self.suites_dir = f"{self.workspace_dir}/suites"
-        self.download_dir = f"{self.workspace_dir}/downloads"
+        """         
+        self.suites_dir = f"{self.workspace}/suites"
+        self.download_dir = f"{self.workspace}/downloads"
         sys.path.append(self.suites_dir)
         self.suites = dict()
         
         # Make the directory
-        make_dir(self.workspace_dir,overwrite=False)
+        make_dir(self.workspace,overwrite=False)
         make_dir(self.suites_dir,overwrite=False)
         make_dir(self.download_dir,overwrite=True)
     

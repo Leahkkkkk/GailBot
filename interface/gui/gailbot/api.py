@@ -19,9 +19,11 @@ class GailBot:
     """
     def __init__(
         self,
-        workspace_dir : str = None # TODO: confirm to delete
+        user_root : str 
     ):
-        self.gb: ServiceController = ServiceController(load_exist_setting=True)
+        self.ws_manager: WorkspaceManager = WorkspaceManager(user_root)
+        self.gb: ServiceController = ServiceController(
+            self.ws_manager, load_exist_setting = True)
         self.reset_workspace()
         logger.info("initialize the gailbot api")
         
@@ -36,8 +38,8 @@ class GailBot:
         Returns:
             No return but instantiates a new workspace.
         """
-        WorkspaceManager.clear_gb_temp_dir()
-        WorkspaceManager.init_workspace()
+        self.ws_manager.clear_gb_temp_dir()
+        self.ws_manager.init_workspace()
         
         ### Organizer Service
 

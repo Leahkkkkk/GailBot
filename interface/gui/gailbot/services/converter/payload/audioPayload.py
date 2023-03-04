@@ -6,10 +6,12 @@ from gailbot.core.utils.general import (
     copy)
 from gailbot.core.utils.logger import makelogger
 import os 
+from gailbot.workspace.manager import WorkspaceManager
+
 SUPPORTED_AUDIO = ["mp3", "wav", "opus", "mpeg"] 
 logger = makelogger("audioPayload")
 
-def load_audio_payload(source: SourceObject) -> Union[bool, List[PayLoadObject]]:
+def load_audio_payload(source: SourceObject, ws_manager: WorkspaceManager) -> Union[bool, List[PayLoadObject]]:
     """ given a source object, convert it into an audio payload if the source 
     
     Args:
@@ -25,7 +27,7 @@ def load_audio_payload(source: SourceObject) -> Union[bool, List[PayLoadObject]]
     if not AudioPayload.is_supported(source.source_path()):
         return False  
     try:
-        return [AudioPayload(source)]
+        return [AudioPayload(source, ws_manager)]
     except Exception as e:
         logger.error(source.__class__)
         logger.error(e)
@@ -35,8 +37,8 @@ class AudioPayload(PayLoadObject):
     """
     Class for audio payload
     """
-    def __init__(self, source: SourceObject) -> None:
-       super().__init__(source) 
+    def __init__(self, source: SourceObject, workspace: WorkspaceManager) -> None:
+        super().__init__(source, workspace)
     
     @staticmethod
     def is_supported(file_path: str) -> bool:

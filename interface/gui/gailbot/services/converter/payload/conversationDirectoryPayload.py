@@ -2,6 +2,7 @@ from .payloadObject import PayLoadObject, PayLoadStatus
 from ...organizer.source import SourceObject
 from gailbot.core.utils.general import paths_in_dir, is_directory, get_name, get_extension, copy
 from gailbot.core.utils.logger import makelogger
+from gailbot.workspace.manager import WorkspaceManager
 from .audioPayload import load_audio_payload, AudioPayload
 import os 
 from typing import List, Dict, Union
@@ -13,7 +14,7 @@ from typing import List, Dict, Union
 """
 logger = makelogger("conversation_payload")
 
-def load_conversation_dir_payload(source: SourceObject) -> Union [bool, List[PayLoadObject]]:
+def load_conversation_dir_payload(source: SourceObject, ws_manager: WorkspaceManager) -> Union [bool, List[PayLoadObject]]:
     """ given a source object, convert it into an conversation directory payload 
         if the source stores a conversation directory
     
@@ -29,7 +30,7 @@ def load_conversation_dir_payload(source: SourceObject) -> Union [bool, List[Pay
     if not is_directory(original_source) or not source.setting:
         return False
     if ConversationDirectoryPayload.is_supported(original_source):
-        return [ConversationDirectoryPayload(source)]
+        return [ConversationDirectoryPayload(source, ws_manager)]
    
     # NOTE: currently not support loading directory inside directory
     # sub_paths = paths_in_dir(original_source)
@@ -51,8 +52,8 @@ class ConversationDirectoryPayload(PayLoadObject):
     """ 
     Stores a conversation directory with only audio files 
     """
-    def __init__(self, source) -> None:
-        super().__init__(source)
+    def __init__(self, source: SourceObject, workspace: WorkspaceManager) -> None:
+        super().__init__(source, workspace)
     
     @staticmethod 
     def supported_format() -> str:

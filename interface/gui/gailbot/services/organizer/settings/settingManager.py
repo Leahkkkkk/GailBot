@@ -10,9 +10,6 @@ from gailbot.core.utils.general import (
     delete,
     filepaths_in_dir)
 from gailbot.core.utils.logger import makelogger
-from gailbot.configs import path_config_loader
-from gailbot.workspace import WorkspaceManager
-PATH_CONFIG = path_config_loader()
 
 logger = makelogger("setting_manager")
 
@@ -28,9 +25,9 @@ class SettingManager():
     Manages all available settings 
     """
     settings : Dict[str , SettingObject] = dict()
-    workspace = WorkspaceManager.setting_src
     
-    def __init__(self, load_exist: bool = True) -> None:
+    def __init__(self, workspace:str, load_exist: bool = True) -> None:
+        self.workspace = workspace
         if not is_directory(self.workspace):
             make_dir(self.workspace)
             

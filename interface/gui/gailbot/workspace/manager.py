@@ -4,9 +4,6 @@ from gailbot.core.utils.general import is_directory, make_dir, delete, paths_in_
 from gailbot.core.utils.logger import makelogger
 from dataclasses import dataclass
 
-PATH_CONFIG = path_config_loader()
-# FILE_CONFIG = file_extensions_loader()
-
 TEMP = "_gb_temp"
 OUTPUT = "_gb_output"
 logger = makelogger("workspace")
@@ -16,24 +13,24 @@ class WorkspaceManager:
     """ store the path data of the workspace, provide utility function to 
         create temporary and output directories 
     """
-    setting_src: str    = PATH_CONFIG.gailbot_data.setting_src
-    log_file_space: str = PATH_CONFIG.gailbot_data.logfiles
-    plugin_src: str     = PATH_CONFIG.gailbot_data.plugin_src
-    tempspace_root: str = PATH_CONFIG.tempspace_root
-    
-    @staticmethod 
-    def init_workspace():
+    def __init__(self, root: str ) -> None:
+        self.path_config = path_config_loader(root)
+        self.setting_src: str = self.path_config.gailbot_data.setting_src
+        self.log_file_space: str = self.path_config.gailbot_data.logfiles 
+        self.plugin_src: str     = self.path_config.gailbot_data.plugin_src
+        self.tempspace_root: str = self.path_config.tempspace_root
+        
+    def init_workspace(self):
         """
             initializing the workspace
         """
-        for path in PATH_CONFIG.gailbot_data.__dict__.values():
+        for path in self.path_config.gailbot_data.__dict__.values():
             if not is_directory(path):
                 make_dir(path, True)
-        if not is_directory(PATH_CONFIG.tempspace_root):
-                make_dir(PATH_CONFIG.tempspace_root, True)
+        if not is_directory(self.path_config.tempspace_root):
+                make_dir(self.path_config.tempspace_root, True)
 
-    @staticmethod
-    def get_file_temp_space(name: str) -> Union[TemporaryFolder, bool]:
+    def get_file_temp_space(self, name: str) -> Union[TemporaryFolder, bool]:
         """ given the file name, create a directory for the file
             to store temporary files created during the transcription process
 
@@ -46,7 +43,7 @@ class WorkspaceManager:
             stores the path of each subfolder under the temporary folder, 
             else return False
         """
-        folder: TemporaryFolder = PATH_CONFIG.get_temp_space(name + TEMP) 
+        folder: TemporaryFolder = self.path_config.get_temp_space(name + TEMP) 
         try:
             for path in folder.__dict__.values(): 
                 if not is_directory(path):
@@ -56,8 +53,7 @@ class WorkspaceManager:
             logger.error(e)
             return False
         
-    @staticmethod
-    def get_output_space(outdir: str, name: str) -> Union[OutputFolder, bool]:
+    def get_output_space(self, outdir: str, name: str) -> Union[OutputFolder, bool]:
         """ given the file name, and the root path of the output, create a 
             directory for the file to store output files 
 
@@ -71,7 +67,7 @@ class WorkspaceManager:
             stores the path of each subfolder under the output folder, 
             else return False
         """
-        folder: OutputFolder = PATH_CONFIG.get_output_space(outdir, name + OUTPUT)
+        folder: OutputFolder = self.path_config.get_output_space(outdir, name + OUTPUT)
         try:
             for path in folder.__dict__.values():
                 if not is_directory(path):
@@ -82,8 +78,7 @@ class WorkspaceManager:
             return False
     
     
-    @staticmethod
-    def clear_temp_space(temp_space: Union[str, TemporaryFolder]):
+    def clear_temp_space(self, temp_space: Union[str, TemporaryFolder]):
         """clear the temporary space of a certain file
 
         Args:
@@ -99,44 +94,41 @@ class WorkspaceManager:
             if isinstance(temp_space, TemporaryFolder):
                 delete(temp_space.root)
             else:
-                delete(PATH_CONFIG.get_temp_space(temp_space + TEMP).root)
+                delete(self.path_config.get_temp_space(temp_space + TEMP).root)
                 return True
         except Exception as e:
             logger.error(e)
             return False
         
-    @staticmethod
-    def clear_gb_temp_dir():
+    def clear_gb_temp_dir(self):
         try:
-            if is_directory(PATH_CONFIG.tempspace_root):
-                delete(PATH_CONFIG.tempspace_root)
+            if is_directory(self.path_config.tempspace_root):
+                delete(self.path_config.tempspace_root)
         except Exception as e:
             logger.error(e)
             return False
         
-    @staticmethod
-    def get_setting_file() -> List[str]:
+    def get_setting_file(self) -> List[str]:
         """ get the list of paths to the saved setting files
 
         Returns:
             List[str]: a list of paths to the saved setting files
         """
         try: 
-            return paths_in_dir(PATH_CONFIG.gailbot_data.setting_src, ["toml"])
+            return paths_in_dir(self.path_config.gailbot_data.setting_src, ["toml"])
         except Exception as e:
             logger.error(e)
             return False 
     
-    @staticmethod
-    def clear_log() -> bool:
+    def clear_log(self) -> bool:
         """ clear the log files in the gailbot workspace folder
 
         Returns:
             bool: true if the deletion is successful, false otherwise 
         """
         try:
-            if is_directory(PATH_CONFIG.gailbot_data.logfiles):
-                delete(PATH_CONFIG.gailbot_data.logfiles)
+            if is_directory(self.path_config.gailbot_data.logfiles):
+                delete(self.path_config.gailbot_data.logfiles)
             return True
         except Exception as e:
             logger.error(e)

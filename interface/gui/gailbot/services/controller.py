@@ -4,16 +4,19 @@ from .converter import Converter
 from .pipeline import PipelineService
 from ..plugins import PluginManager, PluginSuite
 from gailbot.core.utils.logger import makelogger
+from gailbot.workspace.manager import WorkspaceManager
 
 """ TODO: plugin vs. plugin suite naming """
+NUM_THREAD = 5
 logger = makelogger("service_controller")
 """ Knows about all three sub modules """
 class ServiceController:
-    def __init__(self, load_exist_setting: bool = False) -> None:
-        self.organizer = Organizer(load_exist_setting)
-        self.converter = Converter()
-        self.plugin_manager = PluginManager()
-        self.pipeline_service = PipelineService(self.plugin_manager, num_threads=5) # TODO: add this to toml file
+    def __init__(self, ws_manager: WorkspaceManager, load_exist_setting: bool = False) -> None:
+        self.organizer = Organizer(ws_manager.setting_src, load_exist_setting)
+        self.converter = Converter(ws_manager)
+        self.plugin_manager = PluginManager(ws_manager.plugin_src)
+        self.pipeline_service = PipelineService(
+            self.plugin_manager, num_threads = NUM_THREAD) 
     
     def add_sources(self, src_output_pairs: List [Tuple [str, str]]):
         logger.info(src_output_pairs)

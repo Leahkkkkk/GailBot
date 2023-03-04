@@ -11,7 +11,6 @@ import os
 import logging
 CONFIG_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 CONFIG_ROOT = os.path.join(CONFIG_ROOT, "config_gb")
-# print(CONFIG_ROOT)
 logging.info(CONFIG_ROOT)
 @dataclass 
 class ConfigPath(DataclassFromDict):
