@@ -38,7 +38,14 @@ def makeLogger(source:str):
     global fileHandlerAdded
     if not fileHandlerAdded:
         fmt = " %(source)s |  %(lineno)s | %(asctime)s | %(levelname)s | %(module)s | %(funcName)s | %(message)s "
-        fh = logging.FileHandler(os.path.join (getWorkPath().logFiles, f"GailBot-GUI-Log-Report-{current_time}.log"))
+        logdir = getWorkPath().logFiles
+        filePath = os.path.join(logdir, f"GailBot-GUI-Log-Report-{current_time}.log")
+        if not os.path.isdir(logdir):
+            os.makedirs(logdir)
+        if not os.path.isfile(filePath):
+            f = open(filePath, "w+")
+            f.close()
+        fh = logging.FileHandler(filePath)
         fh.setFormatter(CustomFileFormatter(fmt))
         fh.setLevel(logging.DEBUG)
         logger.addHandler(fh)
