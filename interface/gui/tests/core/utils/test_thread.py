@@ -9,7 +9,7 @@ class ThreadErrorHandleException(Exception):
 
 # Set up logging
 logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 # Create a file handler
 file_handler = logging.FileHandler('tests/core/utils/thread.log')

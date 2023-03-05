@@ -14,8 +14,8 @@ Description: implement tab widgets that take in different page widget as child
 
 from typing import Dict
 
-from util.Style import Color, Dimension, buttonStyle
-from util.Text import PopUpText as Text
+from config.Style import Color, Dimension, buttonStyle
+from config.Text import PopUpText as Text
 
 from view.widgets import Button, ScrollArea
 from view.widgets.TabPage import TabPage

@@ -9,7 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 Description: implement widgets to accept user input in a form
 '''
-from util.Style import FontSize, Dimension, Color
+from config.Style import FontSize, Dimension, Color
 from view.widgets import Label
 from view.widgets.ComboBox import ComboBox
 from PyQt6.QtWidgets import (

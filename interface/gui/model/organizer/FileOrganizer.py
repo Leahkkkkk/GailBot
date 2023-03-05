@@ -12,11 +12,11 @@ Description: Implementation of a database that stores all the file data
 
 
 from dataclasses import dataclass
-from typing import TypedDict, Tuple, Dict
+from typing import TypedDict, Tuple, Dict, Set
 from gailbot.api import GailBot
 
 from util.Logger import makeLogger
-from util.Error import ErrorMsg, DBException
+from util.Error import ErrorMsg, DBException, ErrorFormatter
 from PyQt6.QtCore import QObject, pyqtSignal
 from dict_to_dataclass import DataclassFromDict, field_from_dict
 
@@ -106,6 +106,7 @@ class FileOrganizer:
         self.data : Dict[str, FileObj] = dict() 
         self.signals = Signals()
         self.currentKey = 1
+        self.logger = makeLogger("F")
     
     
     ##########################  request handler ###########################
@@ -114,22 +115,21 @@ class FileOrganizer:
         data: (fileDict) a dictionary that contains the file data to be 
               added to the database
         """
-        self.logger = makeLogger("Database")
         self.logger.info("post file to database")
         key = str(self.currentKey)
         self.logger.info(data)
         file = FileObj.from_dict(data)
         try:
-            if key not in self.data and self.gb.add_source(file.FullPath):
+            if key not in self.data and self.gb.add_source(file.FullPath, file.Output):
                 self.data[key] = file 
                 self.signals.fileAdded.emit((key, data))
                 self.currentKey += 1
             else:
                 self.signals.error.emit(ErrorMsg.DUPLICATEKEY)
                 self.logger.error(ErrorMsg.DUPLICATEKEY)
-        except:
-            self.signals.error.emit(ErrorMsg.POSTERROR)
-            self.logger.error(ErrorMsg.POSTERROR)
+        except Exception as e:
+            self.signals.error.emit(ErrorFormatter.DEFAULT_ERROR.format(source="post file", msg=e))
+            self.logger.error(f"Error in posting file: {e}")
     
     
     def delete(self, key: str) -> None:
@@ -302,8 +302,16 @@ class FileOrganizer:
             self.signals.error.emit(ErrorMsg.GETERROR)
             self.logger.error(ErrorMsg.GETERROR)  
             
+    def getTranscribeData(self, keys: Set[str]) -> Dict[str, str]:
+        data = dict()
+        for key in keys:
+            name = self.getFileName(key)
+            if name: 
+                data[key] = name
+        return data
+            
               
-    def getTranscribeData(self, key:str) -> Tuple:
+    def getFileName(self, key:str) -> str:
         """ send the file data that will be transcribed
 
         Args:
@@ -317,8 +325,9 @@ class FileOrganizer:
         if key not in self.data:
             self.signals.error.emit(ErrorMsg.GETERROR)
             self.logger.info(ErrorMsg.GETERROR)
+            return False
         else:
-            return (key, self.data[key])
+            return self.data[key].Name
         
     def profileDeleted(self, profileName:str):
         """ send signal to update the profile of the files to default 

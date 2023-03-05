@@ -12,9 +12,9 @@ Description: implement reusable button widgets
 import os
 from typing import List
 from view.widgets import Label
-from util.Style import FontSize, Dimension, Color, StyleSheet, Asset
-from util.Text import BtnText as Text
-from util.Path import getProjectRoot
+from config.Style import FontSize, Dimension, Color, StyleSheet, Asset
+from config.Text import BtnText as Text
+from config.Path import getProjectRoot
 from util.ColorGenerator import colorScale
 
 from PyQt6.QtWidgets import (

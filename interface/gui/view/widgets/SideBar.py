@@ -11,7 +11,7 @@ Description: a side bar widget
 '''
 
 from view.widgets.Background import initSideBarBackground
-from util.Style import Dimension
+from config.Style import Dimension
 
 from PyQt6.QtWidgets import (
     QWidget, 

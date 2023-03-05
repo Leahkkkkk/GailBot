@@ -1,4 +1,4 @@
-from util.Style import FontSize, Dimension, Color, FontFamily
+from config.Style import FontSize, Dimension, Color, FontFamily
 
 INPUT_TEXT = f" color: {Color.INPUT_TEXT};\
                 border: 1px solid {Color.INPUT_BORDER};\

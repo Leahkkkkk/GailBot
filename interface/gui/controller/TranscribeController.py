@@ -11,14 +11,20 @@ Description:
 connect the backend transcription process with the front end view object, 
 so that the front end is able to reflect the transcription progress
 '''
-from util.Error import ErrorMsg, ThreadException
+from dataclasses import dataclass
+from typing import List, Dict
+from util.Error import ErrorMsg, ThreadException, ErrorFormatter
 from view.MainWindow import MainWindow
-from controller.BackendRunnable.GBRunnable import Worker
-# from controller.BackendRunnable.DummyRunnable import Worker
+from controller.BackendRunnable.DummyRunnable import Worker as DummyWorker
 from util.Logger import makeLogger
-from util.GailBotData import ThreadControl
-from PyQt6.QtCore import pyqtSignal, QObject, QThreadPool
+from config.GailBotData import ThreadControl
+from PyQt6.QtCore import pyqtSignal, QObject, QThreadPool, QRunnable, pyqtSlot
+from gailbot.api import GailBot
 
+@dataclass 
+class TranscribeError:
+    INVALID_FILES = "The following files are not valid input {files}"    
+    
 
 class Signal(QObject):
     """ a signal object to communicate the transcription process with 
@@ -34,7 +40,7 @@ class Signal(QObject):
 
 
 class TranscribeController(QObject):
-    def __init__(self, ThreadPool: QThreadPool, view: MainWindow, files:list):
+    def __init__(self, ThreadPool: QThreadPool, view: MainWindow, gb: GailBot):
         """ a controller that controls the transcription process
 
         Constructor Args:
@@ -57,7 +63,7 @@ class TranscribeController(QObject):
         self.logger.info("initialize the transcribe controller")
         self.ThreadPool = ThreadPool
         self.signal = Signal()
-        self.files = files
+        self.gb = gb
         # connect to view handler for over-loaded threadpool
         self.signal.busy.connect(view.busyThreadPool)
         
@@ -80,7 +86,7 @@ class TranscribeController(QObject):
         # handle view request to cancel gailbot
         view.fileTableSignals.cancel.connect(self.cancelGailBot)
 
-    def runGailBot(self):
+    def runGailBot(self, files: Dict[str, str]):
         # pass 
         """ function to run gailbot on a separate thread """
         self.logger.info(self.ThreadPool.activeThreadCount())
@@ -90,15 +96,14 @@ class TranscribeController(QObject):
         else:
             try:
                 self.ThreadPool.clear()
-                self.logger.info(self.files)
-                self.worker = Worker(self.files, self.signal)
+                self.logger.info(files)
+                self.worker = GBWorker(files, self.signal, self.gb)
                 self.signal.start.emit()
                 if not self.ThreadPool.tryStart(self.worker):
                     raise ThreadException(ErrorMsg.RESOURCEERROR)
             except:
                 self.signal.error.emit("failed to start transcribing")
                 self.logger.error("failed to start transcribe")
-    
 
     def cancelGailBot(self):
         """ handler for user's request to cancel the gailbot """
@@ -110,3 +115,53 @@ class TranscribeController(QObject):
         except:
           self.signal.error.emit("failed to cancel gailbot")
           self.logger.error("failed to cancel transcription")
+
+class GBWorker(QRunnable):
+    def __init__(self, files: Dict [str, str], signal: Signal, gb: GailBot) -> None:
+        super().__init__()
+        self.signal = signal
+        self.killed = False
+        self.files: Dict[str, str] = files 
+        self.gb = gb
+        self.logger = makeLogger("F")
+        
+    @pyqtSlot()
+    def run(self):
+        self.logger.info(f"start to transcribe the files {self.files}")
+        try:
+            self.signal.start.emit()
+            self.signal.progress.emit("Transcribing")
+            self.logger.info("Transcribing")
+            result, invalid = self.gb.transcribe(list(self.files.values()))
+            assert result
+            if len(invalid) != 0:
+                invalidFiles = str(invalid)
+                self.signal.error.emit(
+                    TranscribeError.INVALID_FILES.format(files=invalidFiles))
+        except Exception as e:
+            self.signal.error.emit(ErrorFormatter.DEFAULT_ERROR.format(
+                source="transcription", msg=e))
+            self.logger.error(f"Error during transcription: {e}")
+            self.signal.finish.emit()
+        else:
+            if not self.killed:
+                for key, filename in self.files.items():
+                    if not filename in invalid:
+                        self.signal.fileTranscribed.emit(key)
+            self.signal.finish.emit()
+        finally:
+            self.setAutoDelete(True)
+    
+    def kill(self):
+        """ public function to kill current running thread, the thread 
+            will terminates after finishing the last function call 
+        """
+        self.logger.info("received request to cancel the thread")
+        try:
+            self.killed = True
+            self.signal.killed.emit()
+        except Exception as e:
+            self.logger.error(f"Error while killing  the thread {e}")
+            self.signal.error("The task cannot been cancelled")
+
+            

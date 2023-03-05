@@ -21,7 +21,7 @@ from view.widgets.Form.ComBoInput import InputCombo
 from view.widgets.Form.OnOffButton import onOffButton
 from view.widgets.Form.FormWidget import FormWidget
 
-from util.Style import (
+from config.Style import (
     FontFamily, 
     FontSize, 
     Dimension, 

@@ -14,10 +14,9 @@ from typing import Dict, TypedDict
 
 from view.widgets import ToggleView
 from view.widgets.Form.DependentComboBox import DependentCombo
-from util.Text import EngineSettingForm
-from view.components.OutputFormatForm import OutPutFormat
-from util.Text import CreateNewProfilePageText as Text 
-from util.Style import Dimension
+from config.Text import EngineSettingForm
+from config.Text import CreateNewProfilePageText as Text 
+from config.Style import Dimension
 import logging
 
 logger = logging.getLogger()

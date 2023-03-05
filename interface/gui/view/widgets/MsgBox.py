@@ -10,7 +10,7 @@ Modified By:  Siara Small  & Vivian Li
 Description implement pop up message dialogue to display message for user
 '''
 from typing import List 
-from util.Style import Color
+from config.Style import Color
 from util.Logger import makeLogger
 from view.widgets.Background import initSecondaryColorBackground
 from view.style.WidgetStyleSheet import MESSAGE_BOX, MESSAGE_BOX_BTN

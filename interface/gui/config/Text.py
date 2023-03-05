@@ -10,12 +10,12 @@ Modified By:  Siara Small  & Vivian Li
 '''
 
 import os 
-from util.ConfigParser import TextParser
+from config.ConfigParser import TextParser
 import toml 
 from dataclasses import dataclass
-from util.Path import getProjectRoot
-from util.Style import Color
-from config.ConfigPath import TextDataPath
+from config.Path import getProjectRoot
+from config.Style import Color
+from config_gui.ConfigPath import TextDataPath
 
 
 basedir = getProjectRoot()

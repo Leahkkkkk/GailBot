@@ -12,12 +12,12 @@ Description:
 
 import os 
 import toml 
-from util.Path import getProjectRoot
+from config.Path import getProjectRoot
 from dataclasses import dataclass
 from dict_to_dataclass import field_from_dict, DataclassFromDict
 
 basedir = getProjectRoot()
-data    = toml.load(os.path.join (basedir, "config/configpath.toml"))
+data    = toml.load(os.path.join (basedir, "config_gui/configpath.toml"))
 
 @dataclass 
 class BackEndData(DataclassFromDict): 

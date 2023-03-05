@@ -17,12 +17,12 @@ from gailbot.core.engines.whisperEngine.whisperTimestamped.utils import (
     force_cudnn_initialization
 )
 
-# from .diarization.diarize import PyannoteDiarizer
-# from .parsers import (
-#     parse_into_full_text,
-#     parse_into_word_dicts,
-#     add_speaker_info_to_text
-# )
+from .diarization.diarize import PyannoteDiarizer
+from .parsers import (
+    parse_into_full_text,
+    parse_into_word_dicts,
+    add_speaker_info_to_text
+)
 
 from .parsers import parse_into_word_dicts
 
@@ -52,19 +52,11 @@ class WhisperCore:
     _SUPPORTED_FORMATS = ("wav", "mp3")
 
     def __init__(self, workspace_dir: str):
-
-        # Create a cache dir in case it is required
-        # self.workspace_dir = os.path.join(
-        #     TOP_CONFIG.root, TOP_CONFIG.workspace.whisper_workspace,
-        # )
-        
         #NOTE: make workspace to be dynamically passed in
         self.workspace_dir = workspace_dir
         self.cache_dir = os.path.join(self.workspace_dir,"cache")
         self.models_dir = os.path.join(self.cache_dir,"models")
-
         logger.info(f"Whisper workspace path: {self.workspace_dir}")
-
         make_dir(self.workspace_dir,overwrite=False)
         make_dir(self.cache_dir,overwrite=False)
         make_dir(self.models_dir,overwrite=False)
@@ -83,7 +75,7 @@ class WhisperCore:
         logger.info(f"Whisper core using whisper model: {WHISPER_CONFIG.model_name}")
 
         # TODO: Add this speaker diarization pipeline after further testing
-        # self.diarization_pipeline = PyannoteDiarizer(self.models_dir)
+        self.diarization_pipeline = PyannoteDiarizer(self.models_dir)
 
     def __repr__(self) -> str:
         configs = json.dumps(
@@ -119,22 +111,22 @@ class WhisperCore:
             **asdict(WHISPER_CONFIG.transcribe_configs)
         )
 
-        # if WHISPER_CONFIG.transcribe_configs.verbose:
-        #     logger.debug(parse_into_full_text(asr_result))
+        if WHISPER_CONFIG.transcribe_configs.verbose:
+            logger.debug(parse_into_full_text(asr_result))
 
         # Apply speaker diarization
-        # if detect_speaker:
-        #     if self.device == "cpu":
-        #         logger.warning(
-        #             f"Performing speaker diarization on {self.device} may take upto 10x "\
-        #             f"the duration of the audio"
-        #         )
-        #     logger.info("Performing speaker diarization")
-        #     dir_result = self.diarization_pipeline(audio_path)
-        #     # Create and return results
-        #     return add_speaker_info_to_text(asr_result, dir_result)
-        # else:
-        return parse_into_word_dicts(asr_result)
+        if detect_speaker:
+            if self.device == "cpu":
+                logger.warning(
+                    f"Performing speaker diarization on {self.device} may take upto 10x "\
+                    f"the duration of the audio"
+                )
+            logger.info("Performing speaker diarization")
+            dir_result = self.diarization_pipeline(audio_path)
+            # Create and return results
+            return add_speaker_info_to_text(asr_result, dir_result)
+        else:
+            return parse_into_word_dicts(asr_result)
 
 
     def get_supported_formats(self) -> List[str]:

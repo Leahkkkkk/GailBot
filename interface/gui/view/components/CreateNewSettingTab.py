@@ -14,8 +14,8 @@ Description: implementation of a pop up dialog that allow user to
 from typing import List 
 
 from util.Logger import makeLogger
-from util.Text import CreateNewProfileTabText as Text
-from util.Style import Dimension
+from config.Text import CreateNewProfileTabText as Text
+from config.Style import Dimension
 from view.pages.CreateNewProfilePages import (
     ProfileName,
     EngineSetting, 

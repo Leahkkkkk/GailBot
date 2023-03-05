@@ -12,12 +12,12 @@ Modified By:  Siara Small  & Vivian Li
 
 from typing import List
 
-from util.Style import Color, Dimension
-from util.Text import ProfilePageText as Text, About
-from util.Style import FontSize as FS 
-from util.Style import StyleSheet as SS 
-from util.Text import ProfileSettingForm as Form 
-from util.Text import Links
+from config.Style import Color, Dimension
+from config.Text import ProfilePageText as Text, About
+from config.Style import FontSize as FS 
+from config.Style import StyleSheet as SS 
+from config.Text import ProfileSettingForm as Form 
+from config.Text import Links
 from util.Logger import makeLogger
 
 from view.Signals import ProfileSignals
@@ -81,8 +81,6 @@ class ProfileSettingPage(QWidget):
             Text.newProfileBtn,Color.PRIMARY_BUTTON)
         self.requiredSetBtn = Button.BorderBtn(
             Text.reuquiredSetBtn, Color.GREYDARK, FS.BTN, 0, SS.onlyTopBorder)
-        # self.postSetBtn = Button.BorderBtn(
-        #     Text.postSetBtn,Color.GREYDARK, FS.BTN, 0,SS.noSideBorder)
         self.GuideLink = Label.Label(Links.guideLinkSideBar, FS.LINK, link=True)
         self.newPluginBtn = Button.ColoredBtn(
             Text.newPluginBtn, Color.PRIMARY_BUTTON)
@@ -92,13 +90,11 @@ class ProfileSettingPage(QWidget):
         self.copyRightLabel = Label.Label(About.copyRight, FS.SMALL)
         self.settingStack = QStackedWidget(self)
         self.RequiredSetPage = RequiredSettingPage.RequiredSettingPage()
-        # self.PostSetPage = PostSettingPage.PostSettingPage()   
         self.PluginPage = PluginPage.PluginPage()
         self.selectSettings.setCurrentIndex(0)     
         self.placeHolder = QWidget()
         self.settingStack.addWidget(self.placeHolder)
         self.settingStack.addWidget(self.RequiredSetPage)
-        # self.settingStack.addWidget(self.PostSetPage)
         self.settingStack.addWidget(self.PluginPage)
         self.settingStack.setCurrentWidget(self.RequiredSetPage)
     
@@ -116,7 +112,6 @@ class ProfileSettingPage(QWidget):
         """ adds widgets to layout """
         self.sidebarTopLayout.addWidget(self.selectSettings)
         self.sidebarTopLayout.addWidget(self.requiredSetBtn)
-        # self.sidebarTopLayout.addWidget(self.postSetBtn)
         self.sidebarTopLayout.addWidget(self.pluginBtn)
         self.sidebarTopLayout.setSpacing(0)
         self.sideBar.addWidget(self.topSelectionContainer)
@@ -141,13 +136,7 @@ class ProfileSettingPage(QWidget):
         self.newProfileBtn.clicked.connect(self.createNewSetting)
         self.saveBtn.clicked.connect(self.updateProfile)
         self.newPluginBtn.clicked.connect(self.addPluginRequest)
-    
-    # def _activatePostSet(self):
-        """ switches current page from required settings page to post transcription settings page """
-        # self._setBtnDefault()
-        # self.postSetBtn.setActiveStyle(Color.HIGHLIGHT)
-        # self.settingStack.setCurrentWidget(self.PostSetPage)
-    
+  
     def _activeRequiredSet(self):
         """ switches current page from post transcription settings page to required settings page """
         self._setBtnDefault()
@@ -197,9 +186,7 @@ class ProfileSettingPage(QWidget):
             self.logger.info(profile)
             key, data = profile 
             self.selectSettings.setCurrentText(key)
-            # self.PostSetPage.setValue(data["PostTranscribe"])
             self.RequiredSetPage.setValue(data["engine_setting"])
-            # self.PluginPage.setValue(data["Plugins"])
         except:
             WarnBox("An error occurred when loading the profile")
             

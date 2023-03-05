@@ -11,8 +11,8 @@ Description: implement function for initialize background for different pages
 '''
 import os
 
-from util.Style import Color, Asset, Dimension
-from util.Path import getProjectRoot
+from config.Style import Color, Asset, Dimension
+from config.Path import getProjectRoot
 from view.widgets import Image
 
 from PyQt6.QtCore import  Qt

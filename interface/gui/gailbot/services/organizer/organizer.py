@@ -138,4 +138,7 @@ class Organizer:
             return False
     
     def get_setting_names(self) -> List[str]:
-        self.setting_manager.get_setting_names()
+        return self.setting_manager.get_setting_names()
+    
+    def get_serialized_settings_data(self) -> Dict[str, Dict]:
+        return self.setting_manager.get_serialized_settings_data()

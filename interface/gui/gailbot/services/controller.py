@@ -23,8 +23,8 @@ class ServiceController:
         try:
             for src_pair in src_output_pairs:
                 (source_path, out_path) = src_pair
-                logger.info(source_path)
-                logger.info(out_path)
+                logger.debug(source_path)
+                logger.debug(out_path)
                 assert self.add_source(source_path, out_path)
             return True
         except Exception as e:
@@ -54,8 +54,8 @@ class ServiceController:
     def update_setting(self, setting_name: str, new_setting: Dict[str, str]) -> bool:
         return self.organizer.update_setting(setting_name, new_setting)
    
-    def get_available_settings(self) -> List[str]:
-        return self.organizer.get_setting_names()
+    def get_serialized_setting_data(self) -> Dict[str, Dict]:
+        return self.organizer.get_serialized_settings_data()
     
     def get_src_setting_name(self, source_name: str) -> Union[bool, str]:
         if not self.organizer.is_source(source_name):
@@ -103,6 +103,8 @@ class ServiceController:
         try:
             if not sources:
                 sources = self.organizer.get_configured_sources(sources)
+            else: 
+                sources = [self.organizer.get_source(name) for name in sources]
             # load to converter 
             payloads, invalid = self.converter(sources)
             if len(sources) != 0:

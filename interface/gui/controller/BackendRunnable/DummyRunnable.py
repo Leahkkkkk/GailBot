@@ -11,8 +11,8 @@ Description: using time.sleep to run a fake backend function , for testing
              purpose only 
 '''
 import time
-from util.GailBotData import  getWorkPath
-
+from config.GailBotData import  getWorkPath
+from typing import Dict
 
 from PyQt6.QtCore import (
     QRunnable, 
@@ -34,7 +34,7 @@ class Signals(QObject):
 class Worker(QRunnable):
     """  contain dummy function that is able to run on a separate thread 
     """
-    def __init__(self, files, signals: Signals):
+    def __init__(self, files: Dict [str, str], signals: Signals, gb = None):
         super(Worker, self).__init__()
         self.signals = signals
         self.files = files

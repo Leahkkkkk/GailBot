@@ -1,2 +1,2 @@
 from .Model import Model
-from .organizer.FileOrganizer import FileObj
+from .organizer.FileOrganizer import FileObj, fileDict

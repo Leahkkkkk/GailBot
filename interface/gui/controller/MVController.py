@@ -70,6 +70,7 @@ class MVController:
         
         # handle file database's request to load the profile of one file
         dbSignal.profileRequest.connect(self.profileOrganizer.get)
+        dbSignal.error.connect(self.view.showError)
      
     def _connectViewToFileDB(self):
         """ connect the signal from the view to file database  
@@ -133,7 +134,8 @@ class MVController:
         # connect db's response to add new profile selection on view
         dbSignal.profileAdded.connect(profileView.addProfile)
         dbSignal.profileAdded.connect(fileView.addProfile)
-        
+     
         dbSignal.delete.connect(self.fileOrganizer.profileDeleted)
+        dbSignal.error.connect(self.view.showError)
         
     

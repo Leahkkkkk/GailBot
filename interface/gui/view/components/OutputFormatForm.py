@@ -12,8 +12,8 @@ Description: implementation of the out put format form
 from typing import Dict 
 
 from view.widgets import ToggleView, TextForm, Button, Label, ComboBox
-from util.Text import OutputFormatForm, OutputFormatFormText
-from util.Style import Color, Dimension, FontSize
+from config.Text import OutputFormatForm, OutputFormatFormText
+from config.Style import Color, Dimension, FontSize
 from util.Logger import makeLogger
 
 from PyQt6.QtWidgets import (

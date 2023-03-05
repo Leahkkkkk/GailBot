@@ -17,12 +17,12 @@ import toml
 from view.widgets import Label, Button, MsgBox
 from view.widgets.MsgBox import WarnBox
 from PyQt6.QtWidgets import QDialog, QFileDialog, QVBoxLayout
-from config.ConfigPath import BackEndDataPath
-from util.Style import Color, FontFamily, FontSize, Dimension
-from util.Path import getProjectRoot
-from util.Text import WelcomePageText as Text 
+from config_gui.ConfigPath import BackEndDataPath
+from config.Style import Color, FontFamily, FontSize, Dimension
+from config.Path import getProjectRoot
+from config.Text import WelcomePageText as Text 
 from util.Logger import makeLogger
-from util.GailBotData import getWorkBasePath
+from config.GailBotData import getWorkBasePath
 from PyQt6.QtCore import QSize, Qt
 from util.io import is_file, delete
 import userpaths

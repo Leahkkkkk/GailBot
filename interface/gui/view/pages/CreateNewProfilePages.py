@@ -12,9 +12,9 @@ Description: implementation of pages for user to create new profile
 
 from typing import Dict
 
-from util.Style import Color, FontSize, FontFamily, Dimension
-from util.Text import CreateNewProfilePageText as Text 
-from util.Text import EngineSettingForm as Form 
+from config.Style import Color, FontSize, FontFamily, Dimension
+from config.Text import CreateNewProfilePageText as Text 
+from config.Text import EngineSettingForm as Form 
 from util.Logger import makeLogger
 
 from view.widgets.Form.DependentComboBox import DependentCombo

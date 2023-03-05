@@ -247,4 +247,17 @@ class SettingManager():
             return True
         except Exception as e:
             logger.error(e)
-            return False 
+            return False
+        
+    
+    def get_serialized_settings_data(self) -> Dict[str, Dict]:
+        """ 
+        
+        
+        """
+        setting_dict = dict()
+        for key, setting_object in self.settings.items():
+            setting_dict[key] = setting_object.data
+            
+        logger.info(f"setting data {setting_dict}")
+        return setting_dict 

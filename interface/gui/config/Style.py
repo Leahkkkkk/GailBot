@@ -13,9 +13,9 @@ import os
 from dataclasses import dataclass
 import toml
 
-from util.Path import getProjectRoot
-from config.ConfigPath import StyleDataPath
-from util.ConfigParser import StyleParser
+from config.Path import getProjectRoot
+from config_gui.ConfigPath import StyleDataPath
+from .ConfigParser import StyleParser
 basedir = getProjectRoot()
 
 # reading data from toml files

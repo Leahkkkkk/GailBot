@@ -15,11 +15,11 @@ import pathlib
 from typing import List, TypedDict
 import os
 
-from util.Style import Color, FontSize, Dimension
-from util.Text import FileUploadPageText as Text
+from config.Style import Color, FontSize, Dimension
+from config.Text import FileUploadPageText as Text
 from util.io import get_name, is_directory
 from util.Logger import makeLogger
-from model.dataBase.FileDatabase import fileDict
+from model.organizer import fileDict
 from view.widgets.Button import ColoredBtn
 from view.widgets.Label import Label
 from view.widgets.TabPage import TabPage
@@ -74,8 +74,10 @@ class OpenFile(TabPage):
                 fileObj = self._pathToFileObj(file)
                 fileList.append(fileObj)
             return fileList
-        except:
+        except Exception as e:
+            self.logger.error(e)
             WarnBox("An error ocurred in getting the files to be transcribed")
+            return False
         
     def _initWidget(self):
         """ initializes the widgets """

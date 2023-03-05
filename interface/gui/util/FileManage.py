@@ -13,7 +13,7 @@ import time
 import os
 import glob
 
-from util.GailBotData import getWorkPath, FileManage
+from config.GailBotData import getWorkPath, FileManage
 
 def clearLog():
     """ clear the expired log file"""

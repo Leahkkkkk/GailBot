@@ -11,7 +11,6 @@ Description: main siganls for view object to communicate with backend database
 '''
 
 
-from inspect import getfile
 from PyQt6.QtCore import QObject, pyqtSignal
 
 

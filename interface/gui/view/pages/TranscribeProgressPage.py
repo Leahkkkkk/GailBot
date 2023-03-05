@@ -11,16 +11,16 @@ Modified By:  Siara Small  & Vivian Li
 
 import os
 
-from util.Style import (
+from config.Style import (
     Color, 
     FontSize, 
     Asset
 )
-from util.Text import TranscribeProgressText as Text
-from util.Text import FileTableHeader
-from util.Style import Dimension, FileTableDimension, FontFamily
+from config.Text import TranscribeProgressText as Text
+from config.Text import FileTableHeader
+from config.Style import Dimension, FileTableDimension, FontFamily
+from config.Path import getProjectRoot
 from util.Logger import makeLogger
-from util.Path import getProjectRoot
 from view.widgets.Background import addLogo
 from view.Signals import FileSignals
 from view.widgets import MsgBox

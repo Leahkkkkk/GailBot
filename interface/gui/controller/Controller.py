@@ -17,19 +17,18 @@ from typing import Set, Tuple
 import logging 
 import time
 
-from config.ConfigPath import BackEndDataPath
+from config_gui.ConfigPath import BackEndDataPath
 from model import Model, FileObj
 from controller.TranscribeController import TranscribeController
 from controller.MVController import MVController# TODO: why
 from view import MainWindow
 from view.components import WorkSpaceDialog
-from util import Logger
-from util.GailBotData import getWorkPath, FileManage
+from util import Logger, LogMsgFormatter
+from config.GailBotData import getWorkPath, FileManage
 
 from gailbot.api import GailBot
 
 from PyQt6.QtCore import pyqtSlot, QObject, QThreadPool, pyqtSignal
-
 class Signal(QObject):
     """ a signal object that contains signal for communication between 
         backend transcription process and frontend view object"""
@@ -42,7 +41,7 @@ class Controller(QObject):
     
     Field:
     1. ModelObj     : the database with file, profile and plugin data 
-    2. ThreadPool   : a threadpool to run backend function in parallel with 
+    2. threadPool   : a threadpool to run backend function in parallel with 
                       front-end interface 
     3. ViewObj      : a view object that implement ths front end interface 
     4. MVController : a model view controller that connect front-end view and 
@@ -57,13 +56,23 @@ class Controller(QObject):
     """
     def __init__(self):
         super().__init__()
-        userRoot = self.launchApp()
-        self.init_application(userRoot)
-        self.run()
+        self.signal = Signal()
+        userRoot = self.prelaunch()
+        self.logger = Logger.makeLogger("B")
+        self.logger.info(f"controller initialized")
+        self.logger.info(userRoot)
+        self.initApp(userRoot)
         
-    def launchApp(self) -> str:
+    def prelaunch(self) -> str:
+        """ run before initializing the app to create a toml file that stores
+            the user's root
+
+        Returns:
+            str: return a string that stores the root path to gailbot workspace
+        """
         try:
-            if not os.path.exists(os.path.join(os.getcwd(), BackEndDataPath.workSpaceData)):
+            if not os.path.exists(
+                os.path.join(os.getcwd(), BackEndDataPath.workSpaceData)):
                 pathDialog = WorkSpaceDialog()
                 pathDialog.exec()
                 userRoot = pathDialog.userRoot
@@ -73,68 +82,88 @@ class Controller(QObject):
         except Exception as e:
             self.logger.error(e)
     
-    def init_application(self, userRoot) -> bool:
+    def initApp(self, userRoot) -> bool:
         try:
             self.gb = GailBot(userRoot)
-            self.Model = Model(self.gb)
-            self.ViewObj = MainWindow.MainWindow(self.gb.get_available_settings())
+            assert self.gb
+            self.logger.info("GailBot initialized")
+            
+            self.model = Model(self.gb)
+            assert self.model
+            self.logger.info("model initialized")
+            
+            self.ViewObj = MainWindow.MainWindow(self.gb.get_serialized_setting_data())
+            assert self.ViewObj
+            self.logger.info("View Object initialized")
             
             self.MVController = MVController(
                 self.ViewObj, 
-                self.Model.fileOrganizer, 
-                self.Model.profileOrganizer, 
-                self.Model.pluginOrganizer)
+                self.model.fileOrganizer, 
+                self.model.profileOrganizer, 
+                self.model.pluginOrganizer)
+            assert self.MVController
+            self.logger.info("MV Controller initialized")
             
-            self.ThreadPool = QThreadPool()
+            self.threadPool = QThreadPool()
+            self.logger.info("Threadpool initialized")
             
-            self.transcribeController = None 
-            self.signal = Signal
+            self.transcribeController = TranscribeController(
+                self.threadPool, self.ViewObj, self.gb)
+            assert self.transcribeController
+            self.logger.info("Transcribe controller initialized")
+            
         except Exception as e:
-            self.logger.error("Error in app initialization {e}")
+            self.logger.error(f"Error in app initialization {e}")
             
         
     def run(self):
         """ Public function that run the GUI app """
-        self._initLogger()
-        self._handleViewSignal()
-        self.ViewObj.show()
-        self.MVController.exec()
-        self._handleTanscribeSignal()
+        try:
+            self.logger.info("start running application")
+            self._handleViewSignal()
+            self.logger.info("connect to view")
+        except Exception as e:
+            self.logger.error(f"error connecting to view {e}")
+        
+        try:
+            self.ViewObj.show()
+            self.MVController.exec()
+            self.logger.info("connect to model view controller")
+            self._handleTranscribeSignal()
+            self.logger.info("connect to transcribe signal")
+        except Exception as e: 
+            self.logger.error(f"error running the app {e}")
         self._clearLog()
     
+    def restart(self):
+        """ send signal to restart the application, the owner of controller 
+            class is expected to handle this signal by relaunching the application
+            
+        """
+        self.signal.restart.emit()
+        
     def _handleViewSignal(self):
         """ handling signal to change the interface content from view object  """
         self.ViewObj.viewSignal.restart.connect(self.restart)
         
-    def restart(self):
-        self.signal.restart.emit()
-        logging.getLogger().removeHandler(self.logHandler)
-        
     ###################   gailbot  handler #############################   
-    def _handleTanscribeSignal(self):
+    def _handleTranscribeSignal(self):
         """ handle signal from View that requests to transcribe the file"""
         self.ViewObj.fileTableSignals.transcribe.connect(self._transcribeFiles)
         self.signal.fileProgress.connect(
-            self.ModelObj.FileData.updateFileProgress)
+            self.model.fileOrganizer.updateFileProgress)
         
     @pyqtSlot(set)
     def _transcribeFiles(self, files: Set[str]):
         """ transcribing the files
-
         Args:
             files (Set[str]): a set of file keys that identify the files that
                               will be transcribed
         """
         self.logger.info(files)
-        transcribeList = []
-        # get the file object from the database
-        for key in files: 
-            file_name, file  = self.ModelObj.FileData.getTranscribeData(key)
-            profile = self.ModelObj.ProfileData.get_profile(file.Profile)
-            transcribeList.append((file_name, file, profile))
-            
-        # run gailbot 
+        transcribeList = self.model.fileOrganizer.getTranscribeData(files)
         self._runGailBot(transcribeList)
+        
         
     def _runGailBot(self, files):
         """run gailbot on a separate thread 
@@ -143,23 +172,13 @@ class Controller(QObject):
             files (List): a list of files stored in key data pair that will
                           be transcribed
         """
-        self.transcribeController = TranscribeController(
-            self.ThreadPool, 
-            self.ViewObj, 
-            files)
-        self.transcribeController.runGailBot()
+        try:
+            self.transcribeController.runGailBot(files)
+        except Exception as e:
+            self.logger.error(f"error in running gailbot transcription:{e}")
     
-    def _initLogger(self):
-        """ initialize the loggier """
-        logDisplay = self.ViewObj.getLogDisplayer()
-        self.logHandler = Logger.ConsoleHandler(logDisplay)
-        logging.getLogger().addHandler(self.logHandler)
-        logging.getLogger().setLevel(logging.DEBUG)
-        self.logger = Logger.makeLogger("B")
-        self.logger.info("Initialize the controller")
-         
     def _clearLog(self):
-        """ clear the log that is  """
+        """ clear the log that is expired"""
         currentTime = int(time.time())
         deleteTime = currentTime - FileManage.AUTO_DELETE_TIME
         logdir = getWorkPath().logFiles

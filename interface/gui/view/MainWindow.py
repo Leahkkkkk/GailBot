@@ -9,13 +9,14 @@ Modified By:  Siara Small  & Vivian Li
 -----
 Description: implement the main window for the GUI interface
 '''
-from typing import List 
+from typing import List, Dict
+import logging 
 import os 
 import shutil
 import glob
-
-from util import Logger
-from config.ConfigPath import BackEndDataPath
+import logging
+from util import Logger, LogMsgFormatter
+from config_gui.ConfigPath import BackEndDataPath
 from view.components import (
     MainStack, 
     StatusBar, 
@@ -26,10 +27,10 @@ from view.components import (
 from view import Signals
 from view.components import WorkSpaceDialog
 from view.widgets import MsgBox
-from util.Style import Dimension
-from util.Path import getProjectRoot
-from util.GailBotData import getWorkPath
-from util.Text import About
+from config.Style import Dimension
+from config.Path import getProjectRoot
+from config.GailBotData import getWorkPath
+from config.Text import About
 
 
 from PyQt6.QtCore import QSize, QObject, pyqtSignal
@@ -42,7 +43,7 @@ class MainWindow(QMainWindow):
     """ mainwindow  of the GUI App"""
     def __init__(
         self, 
-        settingkey: List [str ]
+        setting_data: Dict[str, Dict]
     ):
         """initialize mainWindow object 
         
@@ -50,31 +51,31 @@ class MainWindow(QMainWindow):
             settingkey: (List [str ]) a list of predefined setting profile names
         """
         super().__init__()
+        self.logger = Logger.makeLogger("F")
+        self.logger.info(f"start to initialize view object, get available profile {setting_data}")
         self.fileTableSignals = Signals.FileSignals()
         self.profileSignals = Signals.ProfileSignals()
         self.viewSignal = ViewSignals()
+        self.logger.info(f"initialized signals")
         self.StatusBar = StatusBar.StatusBar()
         self.setStatusBar(self.StatusBar)
         self.MenuBar = MenuBar.ManuBar()
         self.setMenuBar(self.MenuBar)
         self.Console = Console.Console()
-        self.logger = Logger.makeLogger("F")
-        
+        self.logger.info(LogMsgFormatter.INITIALIZE.format(source="console bar"))
         self.setWindowTitle(About.APP_TITTLE)
         self.setMinimumSize(QSize(Dimension.WIN_MIN_WIDTH, Dimension.WIN_MIN_HEIGHT))
         self.setMaximumSize(QSize(Dimension.WINMAXWIDTH, Dimension.WINMAXHEIGHT))
-
-    
         self.MainStack = MainStack.MainStack(
-            settingkey,
+            setting_data,
             self.fileTableSignals, 
             self.profileSignals,
             parent=self)
-        
+        self.logger.info(LogMsgFormatter.INITIALIZE.format(source="main view stack"))
         self.setCentralWidget(self.MainStack)
         self.setContentsMargins(0,0,0,0)
         self._connectSignal()
-        self._openWorkSpaceDialog()
+        self._initLogger()
 
     """ Functions provided to controller """
     def showTranscribeInProgress(self):
@@ -123,10 +124,6 @@ class MainWindow(QMainWindow):
         """ update file information on file upload file """
         self.MainStack.updateFile(data)
     
-    def getLogDisplayer(self):
-        """ return the widget that display the logging message """
-        return self.Console.LogBox
-    
     def changeFiletoTranscribed(self, key:str):
         """ change the file status to be transcribed 
             currently delete the file from the table
@@ -135,8 +132,10 @@ class MainWindow(QMainWindow):
     
     def closeEvent(self, a0) -> None:
         super().closeEvent(a0)
-        self._copylog()
-        
+        # self._copylog() TODO: delete
+    
+    def showError(self, errorMsg:str):
+        MsgBox.WarnBox(errorMsg) 
     """ private function """
     def _connectSignal(self):
         """ connect to signal """
@@ -150,13 +149,6 @@ class MainWindow(QMainWindow):
         self.viewSignal.restart.emit()
         self.hide()
         self.close()
-    
-    def _openWorkSpaceDialog(self):
-        """ open a dialog to ask user for the path to work space directory """
-        basedir = getProjectRoot()
-        if not os.path.exists(os.path.join(basedir, BackEndDataPath.workSpaceData)):
-            pathDialog = WorkSpaceDialog.WorkSpaceDialog()
-            pathDialog.exec()
 
     def _copylog(self):
         """ copy log file to the frontend/logfiles folder """
@@ -172,3 +164,7 @@ class MainWindow(QMainWindow):
                 shutil.copy2(file, os.path.join(frontEndDir, name))
                 os.remove(file)
     
+    def _initLogger(self):
+        consoleLog = Logger.ConsoleHandler(self.Console.LogBox)
+        logging.getLogger().addHandler(consoleLog)
+        logging.getLogger().setLevel(logging.DEBUG) 

@@ -9,7 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 Description: implementation of the menu bar 
 '''
-from util.Text import MenuBarText
+from config.Text import MenuBarText
 
 from PyQt6.QtWidgets import QMenuBar, QMenu
 from PyQt6 import QtGui

@@ -9,7 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 from view.style.WidgetStyleSheet import COMBO_BOX
-from util.Style import Dimension
+from config.Style import Dimension
 from PyQt6.QtWidgets import QComboBox 
 
 class ComboBox(QComboBox):

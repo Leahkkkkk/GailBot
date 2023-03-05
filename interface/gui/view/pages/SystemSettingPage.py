@@ -12,7 +12,7 @@ Description: implement the system setting page
 import os
 import shutil 
 import toml
-from util.Style import Color, StyleSheet, FontSize,Dimension
+from config.Style import Color, StyleSheet, FontSize,Dimension
 from view.widgets import (
     SideBar, 
     SettingForm, 
@@ -21,15 +21,15 @@ from view.widgets import (
 )
 from view.components.WorkSpaceDialog import ChangeWorkSpace
 
-from config.ConfigPath import BackEndDataPath, SettingDataPath
-from util.Setting import SystemSetting, DefaultSetting
-from util.StyleSource import StyleSource, StyleTable
-from util.Text import SystemSetPageText as Text 
-from util.Text import SystemSettingForm as Form
-from util.Text import About, Links, LogDeleteTimeDict
-from util.Path import getProjectRoot
+from config_gui.ConfigPath import BackEndDataPath, SettingDataPath
+from config.Setting import SystemSetting, DefaultSetting
+from config.StyleSource import StyleSource, StyleTable
+from config.Text import SystemSetPageText as Text 
+from config.Text import SystemSettingForm as Form
+from config.Text import About, Links, LogDeleteTimeDict
+from config.Path import getProjectRoot
 from util.FileManage import clearAllLog
-from util.GailBotData import getWorkBasePath
+from config.GailBotData import getWorkBasePath
 from view.widgets import MsgBox
 
 from PyQt6.QtWidgets import (

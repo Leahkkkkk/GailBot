@@ -13,12 +13,13 @@ import datetime
 import logging
 import re
 
-from util.Path import getProjectRoot
-
+from config.Path import getProjectRoot
+from config.GailBotData import getWorkPath
 from PyQt6 import QtCore
 from PyQt6.QtWidgets import QLineEdit
 
 current_time = datetime.datetime.now()
+fileHandlerAdded = False
 
 def makeLogger(source:str):
     """ return a logger that specifies the source of the log information
@@ -31,9 +32,19 @@ def makeLogger(source:str):
         source = "Frontend"
     elif source == "B":
         source = "Backend"
-        
-    logExtra = {"source": source}
+    
     logger = logging.getLogger()
+    # create log file handler
+    global fileHandlerAdded
+    if not fileHandlerAdded:
+        fmt = " %(source)s |  %(lineno)s | %(asctime)s | %(levelname)s | %(module)s | %(funcName)s | %(message)s "
+        fh = logging.FileHandler(os.path.join (getWorkPath().logFiles, f"GailBot-GUI-Log-Report-{current_time}.log"))
+        fh.setFormatter(CustomFileFormatter(fmt))
+        fh.setLevel(logging.DEBUG)
+        logger.addHandler(fh)
+        logging.getLogger().addHandler(fh)
+        fileHandlerAdded = True
+    logExtra = {"source": source}
     logger = logging.LoggerAdapter(logger, logExtra)
     return logger
 
@@ -102,19 +113,11 @@ class ConsoleHandler(logging.Handler, QtCore.QObject):
         self.appendPlainText.connect(self.widget.appendHtml)
         fmt = " %(source)s |  %(lineno)s | %(asctime)s | %(levelname)s | %(module)s | %(funcName)s | %(message)s "
         self.setFormatter(ConsoleFormatter(fmt))
-        self._initLogFile(fmt)
 
     def emit(self, record):
         """ display log changes """
         msg = self.format(record)
         self.appendPlainText.emit(msg)
-    
-    def _initLogFile(self,fmt):
-        """ export all log information to a separate file """
-        fh = logging.FileHandler(os.path.join(getProjectRoot(), f"GailBot-GUI-Log-Report-{current_time}.log"))
-        fh.setLevel(logging.DEBUG)
-        fh.setFormatter(CustomFileFormatter(fmt))
-        logging.getLogger().addHandler(fh)
         
         
 class StatusBarHandler(logging.Handler, QtCore.QObject):

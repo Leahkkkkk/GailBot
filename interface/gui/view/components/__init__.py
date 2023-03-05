@@ -1,1 +1,1 @@
-from WorkSpaceDialog import WorkSpaceDialog
+from .WorkSpaceDialog import WorkSpaceDialog

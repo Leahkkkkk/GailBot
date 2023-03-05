@@ -19,8 +19,8 @@ import sys
 from typing import List, Tuple, Dict
 import os
 import logging
-from model.dataBase.FileDatabase import FileObj
-from util.GailBotData import Credential, ProfileConfig, Plugin, getWorkPath
+from model import FileObj
+from config.GailBotData import Credential, ProfileConfig, Plugin, getWorkPath
 # from gailbot.api import GailBot 
 from util.io import get_name
 

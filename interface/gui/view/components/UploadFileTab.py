@@ -13,7 +13,7 @@ Description: implementation of a pop up dialog that allow user to upload
 from typing import List
 
 from util.Logger import makeLogger
-from util.Text import ChooseFileTabText
+from config.Text import ChooseFileTabText
 from view.widgets.PopUpTab import Tab
 from view.pages.FileUploadTabPages import (
     OpenFile, 
@@ -74,12 +74,14 @@ class UploadFileTab(QDialog):
             "Status": "Not Transcribed", 
             "Progress": "None", 
             "SelectedAction": "Transcribe"}
-        
-        for fileObj in fileList:
-            fileData = {**fileObj, **profile, **outputPath, **status}
-            self.signals.postFile.emit(fileData)
-            self.logger.info("File added")
-            self.logger.info(fileData)
-
+        try: 
+            assert fileList
+            for fileObj in fileList:
+                fileData = {**fileObj, **profile, **outputPath, **status}
+                self.signals.postFile.emit(fileData)
+                self.logger.info("File added")
+                self.logger.info(fileData)
+        except Exception as e: 
+            self.logger.error(e)
         self.close()
 

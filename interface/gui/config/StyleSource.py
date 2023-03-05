@@ -12,7 +12,7 @@ Description: contains instances of dataclasses with style data
 
 
 from dataclasses import dataclass
-from config.ConfigPath import StyleDataPath
+from config_gui.ConfigPath import StyleDataPath
 
 @dataclass
 class StyleSource:

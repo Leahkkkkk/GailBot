@@ -1,7 +1,7 @@
 from view.widgets.Form.FormWidget import FormWidget
 from view.widgets import Label
-from util.Style import Color, Dimension, FontFamily, FontSize
-from util.Text import BtnText as Text 
+from config.Style import Color, Dimension, FontFamily, FontSize
+from config.Text import BtnText as Text 
 
 from PyQt6.QtWidgets import QWidget, QPushButton, QHBoxLayout
 

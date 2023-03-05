@@ -12,8 +12,8 @@ Modified By:  Siara Small  & Vivian Li
 
 from typing import Dict, Tuple
 
-from util.Style import Dimension, FontSize
-from util.Text import MultipleComboText as Text 
+from config.Style import Dimension, FontSize
+from config.Text import MultipleComboText as Text 
 from view.widgets import  Label, ComboBox, TextForm
 
 from PyQt6.QtWidgets import (

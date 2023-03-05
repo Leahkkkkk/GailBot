@@ -167,8 +167,8 @@ class GailBot:
     def get_source_setting_dict(self, source_name) -> Union[bool, Dict[str, Union[str, Dict]]]:
         return self.gb.get_source_setting_dict(source_name)
     
-    def get_available_settings(self) -> List[str]:
-        return self.gb.get_available_settings()
+    def get_serialized_setting_data(self) -> Dict[str, Dict]:
+        return self.gb.get_serialized_setting_data()
      
     def rename_setting(
         self, 

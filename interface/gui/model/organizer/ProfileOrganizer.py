@@ -16,7 +16,7 @@ from typing import Tuple, Union, Dict
 
 from gailbot.api import GailBot
 from util.Logger import makeLogger
-from util.Setting import ProfilePreset
+from config.Setting import ProfilePreset
 from util.Error import ErrorMsg
 
 from PyQt6.QtCore import QObject, pyqtSignal 
@@ -53,12 +53,13 @@ class ProfileOrganizer:
     Database access: 
     4. get(self, profilekey:str) -> None 
     """
-    def __init__(self, gbController: GailBot) -> None:
+    def __init__(self, gb: GailBot) -> None:
         self.logger = makeLogger("B")
-        self.data: Dict[str, Dict] = ProfilePreset              
-        self.profilekeys = list(ProfilePreset) 
+        self.data: Dict[str, Dict] = gb.get_serialized_setting_data()  
+        self.logger.info("the setting data {self.data}")         
+        self.profilekeys = list(self.data) 
         self.signals = Signals()
-        self.gbController = gbController
+        self.gb = gb
     
     def post(self, profile: Tuple[str, dict]) -> None :
         """ post a new profile to profile database
@@ -69,10 +70,10 @@ class ProfileOrganizer:
         name, data = profile
         data = data.copy() 
         try:
-            if name in self.data or self.gbController.is_setting(name): 
+            if name in self.data or self.gb.is_setting(name): 
                 self.signals.error.emit("duplicated profile name") 
                 self.logger.error(f"Duplicated profile name {name}")
-            elif not self.gbController.create_new_setting(name, data):
+            elif not self.gb.create_new_setting(name, data):
                 self.signals.error.emit("not a valid profile") 
                 self.logger.error(f"not a valid profile") 
             else:
@@ -89,7 +90,7 @@ class ProfileOrganizer:
             profilekey (str): the profile name that identified the profile  
                               to be deleted
         """
-        if profilekey not in self.data or not self.gbController.remove_setting(profilekey):
+        if profilekey not in self.data or not self.gb.remove_setting(profilekey):
             self.signals.error.emit(ErrorMsg.KEYERROR)
             self.logger.error(ErrorMsg.KEYERROR)
         else:
@@ -107,7 +108,7 @@ class ProfileOrganizer:
             if name not in self.data:
                 self.signals.error.emit(ErrorMsg.KEYERROR)
                 self.logger.error(KeyError)
-            elif not self.gbController.update_setting(name, data):
+            elif not self.gb.update_setting(name, data):
                 self.signals.error.emit(f"Updating setting {name} failed")
                 self.logger.error(f"Error updating setting {name}")
             else:

@@ -12,8 +12,8 @@ Description: implement a visual component to display progress
 import os 
 from dataclasses import dataclass
 import toml 
-from util.Path import getProjectRoot
-from util.ConfigParser.GailBotDataParser import (
+from config.Path import getProjectRoot
+from config.ConfigParser.GailBotDataParser import (
     CredentialData, 
     ProfileConfigData, 
     PluginData, 
@@ -22,7 +22,7 @@ from util.ConfigParser.GailBotDataParser import (
     WorkSpaceBaseDirData,
     FileManageData
 )
-from config.ConfigPath import BackEndDataPath
+from config_gui.ConfigPath import BackEndDataPath
 
 import userpaths
 

@@ -12,8 +12,8 @@ Description: a image widget to support displaying image on the interface
 
 import os 
 
-from util.Path import getProjectRoot
-from util.Style import Dimension
+from config.Path import getProjectRoot
+from config.Style import Dimension
 from PyQt6.QtWidgets import (
     QLabel)
 from PyQt6.QtGui import QPixmap

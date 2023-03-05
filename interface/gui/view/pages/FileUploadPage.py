@@ -12,7 +12,7 @@ Description: implementation of file upload page
 
 from typing import List
 
-from util.Style import (
+from config.Style import (
     FileTableDimension, 
     Asset, 
     StyleSheet,
@@ -21,10 +21,10 @@ from util.Style import (
     Dimension,
     FontFamily
 )
-from util.Text import FileTableHeader
-from util.Text import FileUploadPageText as Text 
-from util.Style import FontSize as FS
-from util.Style import buttonStyle
+from config.Text import FileTableHeader
+from config.Text import FileUploadPageText as Text 
+from config.Style import FontSize as FS
+from config.Style import buttonStyle
 from util.Logger import makeLogger
 from view.Signals import FileSignals
 from view.widgets import Label, Button

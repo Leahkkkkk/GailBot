@@ -9,15 +9,15 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
-from util.Style import (
+from config.Style import (
     Color, 
     Dimension, 
     FileTableDimension
 )
-from util.Style import FontSize as FS
-from util.Style import FontFamily
-from util.Text import TranscribeSuccessText as Text
-from util.Text import FileTableHeader
+from config.Style import FontSize as FS
+from config.Style import FontFamily
+from config.Text import TranscribeSuccessText as Text
+from config.Text import FileTableHeader
 from view.widgets import (
     Button,
     Label,

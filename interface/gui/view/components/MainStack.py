@@ -12,8 +12,8 @@ Description: implementation of the main page Stack
 from typing import Tuple
 
 from util.Logger import makeLogger
-from util.Style import Dimension
-from util.Text import MainStackText
+from config.Style import Dimension
+from config.Text import MainStackText
 from view.pages import (
         WelcomePage, 
         ConfirmTranscribePage,
@@ -56,14 +56,15 @@ class MainStack(QStackedWidget):
     """
     def __init__(
         self, 
-        profileKeys,       
+        settingData,       
         fileTableSignal,   
         profileSignals,    
         parent, 
         *args, 
         **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.profileKeys = profileKeys
+        self.settingData = settingData
+        self.profileKeys = list(settingData)
         self.fileSignal = fileTableSignal
         self.profileSignals = profileSignals
         self.logger= makeLogger("F")

@@ -13,11 +13,11 @@ import os
 import logging
 
 
-from util.Style import Color,  FontFamily, FontSource
+from config.Style import Color,  FontFamily, FontSource
 
 from PyQt6.QtWidgets import QLabel
 from PyQt6.QtGui import QFont, QFontDatabase
-from util import Path
+from config import Path
 
 
 class Label(QLabel):

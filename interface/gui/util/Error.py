@@ -22,6 +22,18 @@ class ErrorMsg:
     DELETEEROR    = "Unable to delete data"
     RESOURCEERROR = "Thread Resource temporarily unavailable"
     PROFILE_NOT_FOUND = "Profile Not Found" 
+
+
+
+@dataclass
+class ErrorFormatter:
+    DEFAULT_ERROR = "Error from {source}, error message: {msg}"
+    FILE_ERROR = "Error from {source}, file name {name}, error message: {msg}"
+    PROFILE_ERROR = "Error from {source}, profile name {name}, error message: {msg}"
+    PLUGIN_ERROR = "Error from {source}, plugin name {name}, error message: {msg}"
+    TRANSCRIBE_ERROR = "Error from {source}, file name {name}, error message: {msg}"    
+
+
     
 class DBException(Exception):
     """ exception for database module """
