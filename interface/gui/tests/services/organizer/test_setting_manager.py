@@ -4,6 +4,7 @@ from gailbot.services.organizer.settings.interface import whisperInterface
 from gailbot.core.utils.general import is_directory, is_file, read_toml
 from gailbot.core.utils.logger import makelogger 
 from ...services.test_data.data import PROFILE, NEW_PROFILE
+from ...services.test_data import WS_MANGER
 import pytest
 import random
 from ...services.test_data import SETTING_DATA
@@ -12,7 +13,7 @@ from gailbot.services.organizer.settings.interface import load_google_setting, l
 logger = makelogger("test_setting_manager")
 
 def test_setting_manager():
-    manager = SettingManager(False)
+    manager = SettingManager(WS_MANGER.setting_src, False)
     test_set = PROFILE
     
     manager.add_new_setting("test", test_set)
@@ -53,7 +54,7 @@ def test_setting_manager():
         logger.info(manager.get_setting(new).engine_setting)
         logger.info(manager.get_setting(new).plugin_setting)
     logger.info(manager.get_setting_names())
-    logger.info(WorkspaceManager.get_setting_file())
+    logger.info(WS_MANGER.get_setting_file())
     
     #test update profile
     for new in newnames:
@@ -62,27 +63,27 @@ def test_setting_manager():
         logger.info(manager.get_setting(new).engine_setting.engine)
         assert (manager.get_setting(new).engine_setting.engine == "google") 
         logger.info(manager.get_setting(new).get_plugin_setting())
-    for new_setting in WorkspaceManager.get_setting_file():
+    for new_setting in WS_MANGER.get_setting_file():
         logger.info(read_toml(new_setting))
     
     assert manager.delete_all_settings()
     
     
 def test_init_and_load():
-    manager = SettingManager()
+    manager = SettingManager(WS_MANGER.setting_src)
     test_set = PROFILE
     settings = [f"test_2_{i}" for i in range(5)]
     for setting in settings:
         manager.add_new_setting(setting, test_set)
         manager.save_setting(setting)
     
-    manager2 = SettingManager(load_exist=False)
+    manager2 = SettingManager(WS_MANGER.setting_src, load_exist=False)
     for setting in settings:
         assert manager2.is_setting(setting)
         logger.info(manager2.get_setting(setting).get_plugin_setting())        
         logger.info(manager2.get_setting(setting).get_engine_setting())        
-    assert manager.delete_all_setting()
-    assert manager2.delete_all_setting()
+    assert manager.delete_all_settings()
+    assert manager2.delete_all_settings()
     
 def test_setting_interface():
     suc_dict = {"engine": "whisper", "recognize_speaker": True}
@@ -92,7 +93,7 @@ def test_setting_interface():
     assert not whisperInterface.load_whisper_setting(fail_dict)
     
 def test_validate_setting():
-    manager = SettingManager()
+    manager = SettingManager(WS_MANGER.setting_src)
     assert manager.add_new_setting("whisper", SETTING_DATA.WHISPER_PROFILE)
     assert manager.add_new_setting("watson", SETTING_DATA.WATSON_PROFILE)
     assert manager.add_new_setting("google", SETTING_DATA.GOOGLE_PROFILE )

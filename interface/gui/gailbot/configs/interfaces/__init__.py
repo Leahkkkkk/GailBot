@@ -37,11 +37,8 @@ def log_config_loader(): return load_log_config(
 
 
 
-def path_config_loader(root = PATH.root):
-    return load_path_config(
-        os.path.join(CONFIG_ROOT, PATH.paths_config),
-        os.path.join(CONFIG_ROOT, root)
-    )
+def path_config_loader(user_root):
+    return load_path_config(os.path.join(CONFIG_ROOT, PATH.paths_config), user_root)
 
 # def file_extensions_loader():
 #     return load_file_extensions(os.path.join(CONFIG_ROOT, PATH.services))

@@ -13,9 +13,7 @@ Model view controller than connect ths database to a front end view object
 
 from util.Logger import makeLogger
 from view.MainWindow import MainWindow
-from model.dataBase.FileDatabase import FileModel
-from model.dataBase.ProfileDatabase import ProfileModel
-from model.dataBase.PluginDatabase import PluginModel
+from model.organizer import FileOrganizer, PluginOrganizer, ProfileOrganizer
 
 
 class MVController:
@@ -25,15 +23,15 @@ class MVController:
 
     Constructor Args:
         view (MainWindow): main view 
-        fileDB (FileModel): file database 
-        profileDB (ProfileModel): profile database
-        pluginDB (PluginModel): plugin database
+        fileOrganizer (FileModel): file database 
+        profileOrganizer (ProfileModel): profile database
+        pluginOrganizer (PluginModel): plugin database
     
     Field:
         view: view object 
-        fileDB: file database 
-        profileDB: profile database
-        pluginDB: plugin database
+        fileOrganizer: file database 
+        profileOrganizer: profile database
+        pluginOrganizer: plugin database
     
     Public Function:
         exec(): driver function that starts to run the model view controller
@@ -41,14 +39,14 @@ class MVController:
     def __init__(
         self, 
         view: MainWindow, 
-        fileDB: FileModel, 
-        profileDB: ProfileModel, 
-        pluginDB: PluginModel) -> None:  
+        fileOrganizer: FileOrganizer, 
+        profileOrganizer: ProfileOrganizer, 
+        pluginOrganizer: PluginOrganizer) -> None:  
         self.logger = makeLogger("Backend")
         self.view = view 
-        self.fileDB = fileDB
-        self.profileDB = profileDB
-        self.pluginDB = pluginDB
+        self.fileOrganizer = fileOrganizer
+        self.profileOrganizer = profileOrganizer
+        self.pluginOrganizer = pluginOrganizer
     
     def exec(self):
         """ public function to execute the model view controller """
@@ -64,14 +62,14 @@ class MVController:
             change the presentation of data on the view
         """
         self.logger.info("")
-        dbSignal = self.fileDB.signals
+        dbSignal = self.fileOrganizer.signals
         view = self.view
         # connect database response to view to display change
         dbSignal.fileAdded.connect(view.addFileToTables)
         dbSignal.fileUpdated.connect(view.updateFile)
         
         # handle file database's request to load the profile of one file
-        dbSignal.profileRequest.connect(self.profileDB.get)
+        dbSignal.profileRequest.connect(self.profileOrganizer.get)
      
     def _connectViewToFileDB(self):
         """ connect the signal from the view to file database  
@@ -79,8 +77,8 @@ class MVController:
         """
         self.logger.info("initialize model&view connection")
         viewSignal = self.view.fileTableSignals
-        db = self.fileDB
-        # handle view's request to post new file
+        db = self.fileOrganizer
+        # handle view's request to pfost new file
         viewSignal.postFile.connect(db.post)
         # handle view's request to edit file data
         viewSignal.editFile.connect(db.edit)
@@ -96,14 +94,14 @@ class MVController:
         self.logger.info("initialize model&view connection")
         viewSignal = self.view.profileSignals
         # handle view's request to load new plugin
-        viewSignal.addPlugin.connect(self.pluginDB.post)
+        viewSignal.addPlugin.connect(self.pluginOrganizer.post)
     
     def _connectPluginDBToView(self):
         """ connect the signal from the plugin database to view
             change the presentation of data on the view
         """
         self.logger.info("initialize model&view connection")
-        dbSignal = self.pluginDB.signals
+        dbSignal = self.pluginOrganizer.signals
         view = self.view.MainStack.ProfileSettingPage
         # reflect the plugin database's changes on view
         dbSignal.pluginAdded.connect(view.addPluginHandler)
@@ -114,7 +112,7 @@ class MVController:
         """
         self.logger.info("initialize model&view connection")
         viewSignal = self.view.profileSignals
-        db = self.profileDB
+        db = self.profileOrganizer
         # handle view's request to post new profile
         viewSignal.post.connect(db.post)
         # handle view's request to get profile data 
@@ -127,7 +125,7 @@ class MVController:
             change the presentation of data on the view
         """
         self.logger.info("initialize model&view connection")
-        dbSignal = self.profileDB.signals
+        dbSignal = self.profileOrganizer.signals
         profileView = self.view.MainStack.ProfileSettingPage
         fileView = self.view.MainStack.FileUploadPage.fileTable
         # connect db's response to load profile data 
@@ -135,5 +133,7 @@ class MVController:
         # connect db's response to add new profile selection on view
         dbSignal.profileAdded.connect(profileView.addProfile)
         dbSignal.profileAdded.connect(fileView.addProfile)
+        
+        dbSignal.delete.connect(self.fileOrganizer.profileDeleted)
         
     

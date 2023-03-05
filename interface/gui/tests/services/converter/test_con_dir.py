@@ -1,4 +1,4 @@
-from ..test_data import SETTING_DATA, UTT_RESULT, PATH
+from ..test_data import SETTING_DATA, UTT_RESULT, PATH, WS_MANGER
 from gailbot.services.converter.payload.conversationDirectoryPayload import ConversationDirectoryPayload, load_conversation_dir_payload
 from tests.core.engines.data import AudioPath
 from gailbot.services.organizer.source import SourceObject, SourceManager
@@ -15,7 +15,7 @@ audio_source.apply_setting(TEST_SETTING)
 
 # @pytest.mark.parametrize("test_payload", [audio_payload])
 def test_con_dir():
-    test_payload: ConversationDirectoryPayload = load_conversation_dir_payload(audio_source)[0]
+    test_payload: ConversationDirectoryPayload = load_conversation_dir_payload(audio_source, WS_MANGER)[0]
     assert test_payload
     assert test_payload.name == get_name(AudioPath.CONVERSATION_DIR)
     logging.info(test_payload.original_source)
@@ -46,6 +46,6 @@ def test_invalid_audio():
     for source in sources:
         assert source
         assert source.name 
-        assert not load_conversation_dir_payload(source)
+        assert not load_conversation_dir_payload(source, WS_MANGER)
         source.apply_setting(TEST_SETTING)
-        assert not load_conversation_dir_payload(source)
+        assert not load_conversation_dir_payload(source, WS_MANGER)

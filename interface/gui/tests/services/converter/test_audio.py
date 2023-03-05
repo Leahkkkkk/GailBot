@@ -1,4 +1,4 @@
-from ..test_data import SETTING_DATA, UTT_RESULT, PATH
+from ..test_data import SETTING_DATA, UTT_RESULT, PATH, WS_MANGER
 from gailbot.services.converter.payload.audioPayload import AudioPayload, load_audio_payload
 from tests.core.engines.data import AudioPath
 from gailbot.services.organizer.source import SourceObject, SourceManager
@@ -10,9 +10,8 @@ TEST_SETTING = SettingObject (SETTING_DATA.PROFILE, "test_setting")
 audio_source = SourceObject(AudioPath.MEDIUM_AUDIO, get_name(AudioPath.MEDIUM_AUDIO), output=AudioPath.RESULT_OUTPUT)
 audio_source.apply_setting(TEST_SETTING)
 
-# @pytest.mark.parametrize("test_payload", [audio_payload])
 def test_audio():
-    test_payload: AudioPayload = load_audio_payload(audio_source)[0]
+    test_payload: AudioPayload = load_audio_payload(audio_source, WS_MANGER)[0]
     assert test_payload
     assert test_payload.name == get_name(AudioPath.MEDIUM_AUDIO)
     logging.info(test_payload.original_source)
@@ -46,6 +45,6 @@ def test_invalid_audio():
     for source in sources:
         assert source
         assert source.name 
-        assert not load_audio_payload(source)
+        assert not load_audio_payload(source, WS_MANGER)
         source.apply_setting(TEST_SETTING)
-        assert not load_audio_payload(source)
+        assert not load_audio_payload(source, WS_MANGER)

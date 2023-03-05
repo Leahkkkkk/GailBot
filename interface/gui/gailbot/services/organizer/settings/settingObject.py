@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Union
 from .interface import (
     load_watson_setting, 
     load_whisper_setting, 
@@ -42,6 +42,9 @@ class SettingObject():
     
     def get_plugin_setting(self) -> List[str]:
         return self.plugin_setting.get_data()
+    
+    def get_setting_dict(self) -> Dict[str, Union[str, Dict]]:
+        return self.data
     
     def save_setting(self, output: str) -> bool: 
         logger.info(self.data)

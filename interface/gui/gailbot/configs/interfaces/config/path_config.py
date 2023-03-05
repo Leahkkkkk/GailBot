@@ -30,11 +30,10 @@ class GailBotData():
 
 @dataclass 
 class PathConfig:
-    def __init__(self, config_path: str, user_root_conf:str) -> None:
+    def __init__(self, config_path: str, user_root:str) -> None:
         self._output_d: Dict = toml.load(config_path)["output"]
         self._workspace_d: Dict = toml.load(config_path)["workspace"]
-        self._user_root: str = toml.load(user_root_conf)["root"]
-
+        self._user_root = user_root 
         self.workspace_root = os.path.join(self._user_root, self._workspace_d["root"])
         self.tempspace_root = os.path.join(
             self.workspace_root, self._workspace_d["temporary"]["root"])
@@ -81,9 +80,9 @@ class PathConfig:
         new_output_dir["root"] = os.path.join(root, name)
         return OutputFolder.from_dict(new_output_dir)
         
-def load_path_config(config_path, root_path) -> PathConfig:
+def load_path_config(config_path, user_root) -> PathConfig:
     """ public function that load the workspace data and return it """
-    return PathConfig(config_path, root_path)
+    return PathConfig(config_path, user_root)
 
 
     

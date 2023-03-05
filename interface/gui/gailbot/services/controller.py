@@ -1,4 +1,4 @@
-from typing import Dict, List, Any, Tuple
+from typing import Dict, List, Any, Tuple, Union
 from .organizer import Organizer 
 from .converter import Converter 
 from .pipeline import PipelineService
@@ -53,13 +53,27 @@ class ServiceController:
     
     def update_setting(self, setting_name: str, new_setting: Dict[str, str]) -> bool:
         return self.organizer.update_setting(setting_name, new_setting)
+   
+    def get_available_settings(self) -> List[str]:
+        return self.organizer.get_setting_names()
     
+    def get_src_setting_name(self, source_name: str) -> Union[bool, str]:
+        if not self.organizer.is_source(source_name):
+            return False
+        return self.organizer.get_source_setting(source_name).name
+     
     def get_engine_setting(self, setting_name: str) -> Dict[str, str]:
         return self.organizer.get_engine_setting(setting_name)
     
     def get_plugin_setting(self, setting_name: str) -> Dict[str, str]:
         return self.organizer.get_plugin_setting(setting_name)
     
+    def get_setting_dict(self, setting_name:str) -> Union[bool, Dict[str, Union[str, Dict]]]:
+        return self.organizer.get_setting_dict(setting_name)
+    
+    def get_source_setting_dict(self, source_name:str) -> Union[bool, Dict[str, Union[str, Dict]]]:
+        return self.organizer.get_source_setting(source_name).data
+     
     def remove_setting(self, setting_name: str) -> bool:
         return self.organizer.remove_setting(setting_name)
     

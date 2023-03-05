@@ -13,11 +13,11 @@ Description: Implementation of a database that stores all the file data
 
 from dataclasses import dataclass
 from typing import TypedDict, Tuple, Dict
+from gailbot.api import GailBot
 
 from util.Logger import makeLogger
 from util.Error import ErrorMsg, DBException
 from PyQt6.QtCore import QObject, pyqtSignal
-
 from dict_to_dataclass import DataclassFromDict, field_from_dict
 
 
@@ -67,8 +67,8 @@ class Signals(QObject):
     fileUpdated = pyqtSignal(tuple)
     
 
-class FileModel:
-    def __init__(self) -> None:
+class FileOrganizer:
+    def __init__(self, gbController: GailBot) -> None:
         """ implementation of File database
         
         Field:
@@ -102,6 +102,7 @@ class FileModel:
         10. get(self, filekey:str) -> None
         11. getTranscribeData(self, key:str) -> Tuple
         """
+        self.gb: GailBot = gbController
         self.data : Dict[str, FileObj] = dict() 
         self.signals = Signals()
         self.currentKey = 1
@@ -111,15 +112,15 @@ class FileModel:
     def post(self, data : fileDict) -> None:
         """ add file to file database 
         data: (fileDict) a dictionary that contains the file data to be 
-              added to the data base
+              added to the database
         """
         self.logger = makeLogger("Database")
         self.logger.info("post file to database")
         key = str(self.currentKey)
         self.logger.info(data)
+        file = FileObj.from_dict(data)
         try:
-            if key not in self.data:
-                file = FileObj.from_dict(data)
+            if key not in self.data and self.gb.add_source(file.FullPath):
                 self.data[key] = file 
                 self.signals.fileAdded.emit((key, data))
                 self.currentKey += 1
@@ -139,7 +140,7 @@ class FileModel:
         
         self.logger.info("delete file from database")
         try:
-            if key in self.data:
+            if key in self.data and self.gb.remove_source(self.data[key].Name):
                 del self.data[key]
                 self._updateFileResponse(key, "Status", "deleted")
                 if key not in self.data:
@@ -194,7 +195,11 @@ class FileModel:
         Args: 
             key: a file key that identifies the file in the database
         """    
-        self.editFileStatus((key, "Transcribed"))
+        try:
+            self.editFileStatus((key, "Transcribed"))
+            assert self.gb.remove_source(self.data[key].Name)
+        except Exception as e:
+            self.logger.error("Deleting file from gailbot fails, error {e}")
     
     
     def editFileProfile(self, data: Tuple[str, str]) -> None:
@@ -206,11 +211,16 @@ class FileModel:
         self.logger.info("request to edit file profile in the database")
         key, profile = data
         try:
-            if key not in self.data:
+            if key not in self.data or not self.gb.is_source(self.data[key].Name):
                 self.signals.error.emit(ErrorMsg.KEYERROR)
                 self.logger.error(ErrorMsg.KEYERROR)
+                return 
+            elif not self.gb.is_setting(profile):
+                self.signals.error.emit(ErrorMsg.PROFILE_NOT_FOUND)
+                self.logger.error(f"{profile}: {ErrorMsg.PROFILE_NOT_FOUND}")
             else:
                 self.data[key].Profile = profile
+                assert self.gb.apply_setting_to_source(self.data[key].Name, profile)
                 self._updateFileResponse(key, "Profile", profile)
         except:
             self.signals.error.emit(ErrorMsg.EDITERROR)
@@ -309,3 +319,21 @@ class FileModel:
             self.logger.info(ErrorMsg.GETERROR)
         else:
             return (key, self.data[key])
+        
+    def profileDeleted(self, profileName:str):
+        """ send signal to update the profile of the files to default 
+            after the original profile is deleted
+
+        Args:
+            profileName (str): profile name that is deleted
+
+        """
+        try:
+            for key, file in self.data.items():
+                if file.Profile == profileName:
+                    file.Profile = self.gb.get_src_setting_name(file.Name)
+                    self._updateFileResponse(key, "Profile", file.Profile)
+        except Exception as e:
+            self.logger.error(f"error deleting profile {e}")
+            
+                

@@ -12,6 +12,7 @@ Description: implementation of a the plugin database
 '''
 from typing import TypedDict, Tuple
 
+from gailbot.api import GailBot
 from PyQt6.QtCore import QObject, pyqtSignal
 
 
@@ -33,7 +34,7 @@ class Signals(QObject):
     error = pyqtSignal(str)
 
 
-class PluginModel:
+class PluginOrganizer:
     """ Implementation of a plugin database that 
     
     Field:
@@ -47,9 +48,10 @@ class PluginModel:
         functions that delete or add file to the database
     1. post(self, plugin: Tuple[str, str]) -> None
     """
-    def __init__(self) -> None:
+    def __init__(self, gbController: GailBot) -> None:
         self.data = dict()
         self.signals = Signals()
+        self.gbCotroller = gbController
     
     def post(self, plugin: Tuple[str, str]) -> None: 
         """ add a new pugin to the data base

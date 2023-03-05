@@ -1,34 +1,35 @@
-from gailbot.services.organizer.organizer import Organizer
+from gailbot.services.organizer.organizer import Organizer 
 from gailbot.core.utils.general import is_file
 from tests.core.engines.data import AudioPath
 from gailbot.core.utils.general import get_name
 import os
 from gailbot.core.utils.logger import makelogger
 from ...services.test_data.data import PROFILE, NEW_PROFILE
+from ...services.test_data import WS_MANGER
 logger = makelogger("test_orgranizer")
 
 TEST_SETTING =  PROFILE
 UPDATED_SETTING = NEW_PROFILE
 
 def test_construct_organizer():
-    organizer = Organizer()
+    organizer = Organizer(WS_MANGER.setting_src)
     
 #NOTE: get_source and is_source can be tested with other functions
 def test_add_source():
-    organizer = Organizer()
+    organizer = Organizer(WS_MANGER.setting_src)
     organizer.add_source(AudioPath.MEDIUM_AUDIO, AudioPath.GOOGLE_OUT_PATH)
     # logger.info(organizer.sour)
     assert organizer.is_source(get_name(AudioPath.MEDIUM_AUDIO))
 
 def test_remove_source():
-    organizer = Organizer()
+    organizer = Organizer(WS_MANGER.setting_src)
     organizer.add_source(AudioPath.MEDIUM_AUDIO, AudioPath.GOOGLE_OUT_PATH)
     assert organizer.is_source(get_name(AudioPath.MEDIUM_AUDIO))
     organizer.remove_source(get_name(AudioPath.MEDIUM_AUDIO))
     assert not organizer.is_source(get_name(AudioPath.MEDIUM_AUDIO))
 
 def test_apply_setting():
-    organizer = Organizer()
+    organizer = Organizer(WS_MANGER.setting_src)
     organizer.add_source(AudioPath.MEDIUM_AUDIO, AudioPath.GOOGLE_OUT_PATH)
     organizer.create_new_setting("test_setting", TEST_SETTING)
     organizer.apply_setting_to_source(get_name(AudioPath.MEDIUM_AUDIO), "test_setting")
@@ -36,7 +37,7 @@ def test_apply_setting():
     assert organizer.get_source_setting(get_name(AudioPath.MEDIUM_AUDIO)).get_name() == "test_setting"
 
 def test_remove_setting():
-    organizer = Organizer()
+    organizer = Organizer(WS_MANGER.setting_src)
     setting = "test_setting"
     dummysource = [os.path.join(os.getcwd, f"dummy{i}") for i in range(10)]
     for dummy in dummysource:
@@ -53,7 +54,7 @@ def test_remove_setting():
 def test_change_setting():
     oldsetting = "old"
     newsetting = "new"
-    organizer = Organizer()
+    organizer = Organizer(WS_MANGER.setting_src)
     organizer.create_new_setting(oldsetting, TEST_SETTING)
     
     dummysrc = [os.path.join(os.getcwd(), f"dummy{i}") for i in range(10)]
@@ -70,7 +71,7 @@ def test_change_setting():
 
 def test_create_and_save_setting():
     testnames = [f"test{i}" for i in range(10)]
-    organizer = Organizer()
+    organizer = Organizer(WS_MANGER.setting_src)
     for name in testnames:
         organizer.create_new_setting(name, TEST_SETTING)
         assert organizer.is_setting(name)
@@ -83,7 +84,7 @@ def test_create_and_save_setting():
         assert not is_file(organizer.setting_manager.get_setting_path(name))
 
 def test_update_setting():
-    organizer = Organizer()
+    organizer = Organizer(WS_MANGER.setting_src)
     testnames = [f"test{i}" for i in range(10)]
     for name in testnames:
         organizer.create_new_setting(name, TEST_SETTING)
@@ -92,7 +93,7 @@ def test_update_setting():
         assert organizer.get_setting(name).plugin_setting.get_data() == UPDATED_SETTING["plugin_setting"]
 
 def test_remove_setting():
-    organizer = Organizer()
+    organizer = Organizer(WS_MANGER.setting_src)
     testnames = [f"test{i}" for i in range(5)]
     for name in testnames:
         organizer.create_new_setting(name, TEST_SETTING)

@@ -131,6 +131,18 @@ class GailBot:
             None
         """
         return self.gb.create_new_setting(name, setting)
+    
+    def get_src_setting_name(self, source_name:str) -> Union[bool, str]:
+        """given a source name, return the setting name applied to the source
+
+        Args:
+            source_name (str): the name that identify the source
+
+        Returns:
+            Union[bool, str]: if the source is found, return the setting name 
+                              applied to the source, else return false
+        """
+        return self.gb.get_src_setting_name(source_name)    
 
     def save_setting(
         self,
@@ -148,6 +160,16 @@ class GailBot:
         """
         return self.gb.save_setting(setting_name)
 
+    def get_setting_dict(self, setting_name) -> Union[bool, Dict[str, Union[str, Dict]]]:
+        return self. gb.get_setting_dict(setting_name)
+    
+    
+    def get_source_setting_dict(self, source_name) -> Union[bool, Dict[str, Union[str, Dict]]]:
+        return self.gb.get_source_setting_dict(source_name)
+    
+    def get_available_settings(self) -> List[str]:
+        return self.gb.get_available_settings()
+     
     def rename_setting(
         self, 
         old_name: str,
@@ -298,8 +320,7 @@ class GailBot:
         plugin_source : str
     ) -> str:
         """
-        Registers a gi
-en plugin suite
+        Registers a gailbot plugin suite
 
         Args:
             self

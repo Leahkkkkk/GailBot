@@ -8,9 +8,7 @@ import os
 from typing import List, Dict, Union
 
 """ TODO:
-1. test directory with different content
-2. test directory with large file
-3. change the load directory only loading audio file  
+1. add more complected logic in loading directory
 """
 logger = makelogger("conversation_payload")
 

@@ -212,6 +212,12 @@ class SettingManager():
                 logger.error(e)
                 return False
     
+    def get_setting_dict(self, setting_name:str) -> Union[Dict[str, Union[str, Dict]], bool]:
+        if setting_name in self.settings:
+            return self.settings[setting_name].data
+        else:
+            return False
+    
     def get_setting_path(self, name:str) -> str:
         """given a setting name, return its path
 

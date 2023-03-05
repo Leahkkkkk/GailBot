@@ -14,6 +14,7 @@ Implementation of a database that stores the profile data
 
 from typing import Tuple, Union, Dict
 
+from gailbot.api import GailBot
 from util.Logger import makeLogger
 from util.Setting import ProfilePreset
 from util.Error import ErrorMsg
@@ -29,7 +30,7 @@ class Signals(QObject):
     profileAdded = pyqtSignal(str)
     
     
-class ProfileModel:
+class ProfileOrganizer:
     """ implementation of the Profile database
     
     Field:
@@ -52,60 +53,69 @@ class ProfileModel:
     Database access: 
     4. get(self, profilekey:str) -> None 
     """
-    def __init__(self) -> None:
+    def __init__(self, gbController: GailBot) -> None:
         self.logger = makeLogger("B")
         self.data: Dict[str, Dict] = ProfilePreset              
         self.profilekeys = list(ProfilePreset) 
         self.signals = Signals()
+        self.gbController = gbController
     
     def post(self, profile: Tuple[str, dict]) -> None :
         """ post a new profile to profile database
 
         Args:
-            profile (Tuple[profile key, dict]): _description_
+            profile (Tuple[profile name, dict]): _description_
         """
-        key, data = profile
+        name, data = profile
         data = data.copy() 
-        if key not in self.data: 
-            self.data[key] = data
-            self.logger.info(key)
-            self.logger.info(data)
-            self.signals.profileAdded.emit(key)
-        else:
-            self.signals.error.emit("duplicated profile name") 
-    
+        try:
+            if name in self.data or self.gbController.is_setting(name): 
+                self.signals.error.emit("duplicated profile name") 
+                self.logger.error(f"Duplicated profile name {name}")
+            elif not self.gbController.create_new_setting(name, data):
+                self.signals.error.emit("not a valid profile") 
+                self.logger.error(f"not a valid profile") 
+            else:
+                self.data[name] = data
+                self.logger.info(f"New profile created {name}, {data}")
+                self.signals.profileAdded.emit(name)
+        except Exception as e:
+            self.logger.error("Creating new profile error {e}")
+        
     def delete(self, profilekey:str) -> None :
         """ delete a file from database 
 
         Args:
-            profilekey (str): the profile key that identified the profile  
+            profilekey (str): the profile name that identified the profile  
                               to be deleted
         """
-        
-        if profilekey not in self.data:
+        if profilekey not in self.data or not self.gbController.remove_setting(profilekey):
             self.signals.error.emit(ErrorMsg.KEYERROR)
             self.logger.error(ErrorMsg.KEYERROR)
         else:
             del self.data[profilekey]
+            self.signals.delete(profilekey)
     
     def edit(self, profile: Tuple[str, dict]) -> None :
         """ update a file
         Args:
-            profile (Tuple[key, dict]): a key that identified the profile 
+            profile (Tuple[name, dict]): a name that identified the profile 
                                         and new profile
         """
         try:
-            key, data = profile
-            if key not in self.data:
+            name, data = profile
+            if name not in self.data:
                 self.signals.error.emit(ErrorMsg.KEYERROR)
                 self.logger.error(KeyError)
+            elif not self.gbController.update_setting(name, data):
+                self.signals.error.emit(f"Updating setting {name} failed")
+                self.logger.error(f"Error updating setting {name}")
             else:
-                self.data[key] = data
-        except:
+                self.data[name] = data
+        except Exception as e:
             self.signals.error.emit(ErrorMsg.EDITERROR)
-            self.logger.error(ErrorMsg.EDITERROR)
-    
-    
+            self.logger.error(e)
+     
     def get(self, profilekey:str) -> None:
         """ 
         Args:
@@ -121,11 +131,3 @@ class ProfileModel:
         except:
             self.signals.error(ErrorMsg.GETERROR)
             self.logger.error(ErrorMsg.GETERROR)
-
-    def get_profile(self, profilekey: str) -> Union[Dict, bool]:
-        if profilekey in self.data:
-            self.logger.info(self.data[profilekey])
-            profile = self.data[profilekey].copy()
-            return profile
-        else:
-            return False

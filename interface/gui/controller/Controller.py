@@ -17,13 +17,16 @@ from typing import Set, Tuple
 import logging 
 import time
 
+from config.ConfigPath import BackEndDataPath
+from model import Model, FileObj
 from controller.TranscribeController import TranscribeController
-from controller.MVController import MVController
-from model import Model
-from model.dataBase.FileDatabase import FileObj
+from controller.MVController import MVController# TODO: why
 from view import MainWindow
+from view.components import WorkSpaceDialog
 from util import Logger
 from util.GailBotData import getWorkPath, FileManage
+
+from gailbot.api import GailBot
 
 from PyQt6.QtCore import pyqtSlot, QObject, QThreadPool, pyqtSignal
 
@@ -54,20 +57,42 @@ class Controller(QObject):
     """
     def __init__(self):
         super().__init__()
-        self.ModelObj = Model.Model()
-        self.ThreadPool = QThreadPool()
-        self.ViewObj = MainWindow.MainWindow(
-            self.ModelObj.ProfileData.profilekeys)
-        self.MVController = MVController(
-            self.ViewObj, 
-            self.ModelObj.FileData, 
-            self.ModelObj.ProfileData, 
-            self.ModelObj.PluginData)
-        # transcribe controller is initially null until user makes a transcribe 
-        # request 
-        self.transcribeController = None
-        self.signal = Signal()
- 
+        userRoot = self.launchApp()
+        self.init_application(userRoot)
+        self.run()
+        
+    def launchApp(self) -> str:
+        try:
+            if not os.path.exists(os.path.join(os.getcwd(), BackEndDataPath.workSpaceData)):
+                pathDialog = WorkSpaceDialog()
+                pathDialog.exec()
+                userRoot = pathDialog.userRoot
+            else:
+                userRoot = getWorkPath().workSpace
+            return userRoot
+        except Exception as e:
+            self.logger.error(e)
+    
+    def init_application(self, userRoot) -> bool:
+        try:
+            self.gb = GailBot(userRoot)
+            self.Model = Model(self.gb)
+            self.ViewObj = MainWindow.MainWindow(self.gb.get_available_settings())
+            
+            self.MVController = MVController(
+                self.ViewObj, 
+                self.Model.fileOrganizer, 
+                self.Model.profileOrganizer, 
+                self.Model.pluginOrganizer)
+            
+            self.ThreadPool = QThreadPool()
+            
+            self.transcribeController = None 
+            self.signal = Signal
+        except Exception as e:
+            self.logger.error("Error in app initialization {e}")
+            
+        
     def run(self):
         """ Public function that run the GUI app """
         self._initLogger()
@@ -79,8 +104,7 @@ class Controller(QObject):
     
     def _handleViewSignal(self):
         """ handling signal to change the interface content from view object  """
-        self.ViewObj.viewSignal.restart.connect( self.restart
-        )
+        self.ViewObj.viewSignal.restart.connect(self.restart)
         
     def restart(self):
         self.signal.restart.emit()

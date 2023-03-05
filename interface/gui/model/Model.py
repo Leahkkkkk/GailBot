@@ -8,11 +8,9 @@ Last Modified: Thursday, 6th October 2022 9:48:10 am
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
-
-
-from model.dataBase.FileDatabase import FileModel
-from model.dataBase.ProfileDatabase import ProfileModel
-from model.dataBase.PluginDatabase import PluginModel
+from typing import List, Tuple, Dict
+from .organizer import FileOrganizer, ProfileOrganizer, PluginOrganizer
+from gailbot.api import GailBot
 
 class Model():
     """ a database that stores three tables: 
@@ -20,13 +18,11 @@ class Model():
         2.ProfileData: profile database with all the profile created by user
         3.PluginData: plugin database with all the plugin and 
                     plugin source loaded by user
-        
     """
-    def __init__(self):
-      self.ProfileData = ProfileModel()
-      self.FileData = FileModel()
-      self.PluginData = PluginModel()
-
-      
-      
-      
+    def __init__(self, gbController: GailBot):
+        self.fileOrganizer = FileOrganizer(gbController)
+        self.profileOrganizer = ProfileOrganizer(gbController)
+        self.pluginOrganizer = PluginOrganizer(gbController)
+    
+    def profileKeys(self) -> List[str]:
+        return self.profileOrganizer.profilekeys

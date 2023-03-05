@@ -60,6 +60,15 @@ class PayLoadObject(ABC):
     # payload result
     
     def __init__(self, source: SourceObject, workspace: WorkspaceManager) -> None:
+        """ initialize a payload object
+
+        Args:
+            source (SourceObject): A source object that stores the source data 
+            workspace (WorkspaceManager): a workspace manager that provide 
+                                          functions to initialize payload output
+                                          directory and payload temporary workspace
+            
+        """ 
         self.name = source.name
         self.original_source: str = source.source_path()
         self.setting: SettingObject = source.setting

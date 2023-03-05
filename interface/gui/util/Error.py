@@ -21,7 +21,7 @@ class ErrorMsg:
     EDITERROR     = "Fail to edit the data"
     DELETEEROR    = "Unable to delete data"
     RESOURCEERROR = "Thread Resource temporarily unavailable"
-    
+    PROFILE_NOT_FOUND = "Profile Not Found" 
     
 class DBException(Exception):
     """ exception for database module """

@@ -42,6 +42,6 @@ def test_detect_speaker_long(audio, detect_speaker, output):
     whisper_test(audio, detect_speaker, output)
     
 @pytest.mark.parametrize("audio, detect_speaker, output", 
-                [(AudioPath.FOURTY_MIN, False, "long_audio.json")])
+                [(AudioPath.FORTY_MIN, False, "long_audio.json")])
 def test_long_audio(audio, detect_speaker, output):
     whisper_test(audio, detect_speaker, output)

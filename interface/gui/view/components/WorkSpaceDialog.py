@@ -21,6 +21,7 @@ from config.ConfigPath import BackEndDataPath
 from util.Style import Color, FontFamily, FontSize, Dimension
 from util.Path import getProjectRoot
 from util.Text import WelcomePageText as Text 
+from util.Logger import makeLogger
 from util.GailBotData import getWorkBasePath
 from PyQt6.QtCore import QSize, Qt
 from util.io import is_file, delete
@@ -31,13 +32,16 @@ USER_ROOT_NAME = "GailBot"
 class WorkSpaceDialog(QDialog):
     def __init__(self, *arg, **kwargs) -> None:
         super().__init__(*arg, **kwargs)
-        self.workDir = f"{userpaths.get_profile()}"
+        self.userRoot = os.path.join(userpaths.get_profile(), USER_ROOT_NAME)
+        self.logger = makeLogger("F")
         self._initWidget()
         self._initLayout()
         self._connectSignal()
         self._initStyle()
-        
     
+    def getUserRoot(self) -> str:
+        return self.userRoot
+          
     def _connectSignal(self):
         self.choose.clicked.connect(self._openDialog)
         self.confirm.clicked.connect(self._onConfirm)
@@ -49,7 +53,7 @@ class WorkSpaceDialog(QDialog):
         self.label = Label.Label(
             Text.firstLaunchInstruction, FontSize.BODY, others="text-align:center;")
         self.displayPath = Label.Label(
-            f"GailBot Work Space Path: {self.workDir}/{USER_ROOT_NAME}", 
+            f"GailBot Work Space Path: {self.userRoot}", 
             FontSize.BODY, FontFamily.MAIN, 
             others=f"border: 1px solid {Color.MAIN_TEXT}; text-align:center;")
         self.confirm = Button.ColoredBtn("Confirm", Color.SECONDARY_BUTTON)
@@ -68,42 +72,39 @@ class WorkSpaceDialog(QDialog):
     
     def _openDialog(self):
         dialog = QFileDialog() 
-        dialog.setDirectory(self.workDir)
+        dialog.setDirectory(userpaths.get_profile())
         selectedFolder = dialog.getExistingDirectory()
         if selectedFolder:
-            self.workDir = selectedFolder
+            self.userRoot = os.path.join(selectedFolder, USER_ROOT_NAME)
             self.displayPath.setText(
-                f"GailBot Work Space Path: {self.workDir}/{USER_ROOT_NAME}")
+                f"GailBot Work Space Path: {self.userRoot}")
     
     def _onConfirm(self):
         basedir = getProjectRoot()
         print(basedir)
-        # try:
-        userRoot = os.path.join(self.workDir, USER_ROOT_NAME)
-        workSpace = { "WORK_SPACE_BASE_DIRECTORY" : userRoot}
+        workSpace = { "WORK_SPACE_BASE_DIRECTORY" : self.userRoot}
         print(os.path.join(basedir, BackEndDataPath.workSpaceData))
         try:
             with open(
                 os.path.join(basedir, BackEndDataPath.workSpaceData), "w+") as f:
                 toml.dump(workSpace, f)
+             
+            if not os.path.isdir(self.userRoot):
+                os.mkdir(self.userRoot)
             
-            # write_toml(workSpace, os.path.join(basedir, BackEndDataPath.workSpaceData))
+            #TODO: delete this 
+            # # create the backend toml file
+            # backend_path =os.path.join(basedir, BackEndDataPath.backendroot) 
+            # print(backend_path)
             
-            if not os.path.isdir(userRoot):
-                os.mkdir(userRoot)
-            
-            # create the backend toml file
-            backend_path =os.path.join(basedir, BackEndDataPath.backendroot) 
-            print(backend_path)
-            
-            if is_file(backend_path):
-                delete(backend_path)
-            with open(backend_path, "w+") as f:
-                toml.dump({"root": userRoot}, f)
-            # write_toml({"root": self.workDir}, backend_path)
+            # if is_file(backend_path):
+            #     delete(backend_path)
+            # with open(backend_path, "w+") as f:
+            #     toml.dump({"root": self.userRoot}, f)
+            # # write_toml({"root": self.workDir}, backend_path)
+       
         except Exception as e:
-            print(e)
-            print("toml file cannot be written")
+            self.logger("error when creating file to store user workspace {e}")
             WarnBox(f"cannot find the file path: " 
                     f"{os.path.join(basedir, BackEndDataPath.workSpaceData)}")
         self.close()

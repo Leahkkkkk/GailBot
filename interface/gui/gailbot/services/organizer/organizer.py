@@ -97,6 +97,9 @@ class Organizer:
     def get_setting(self, setting_name:str) -> SettingObject:
         return self.setting_manager.get_setting(setting_name)    
 
+    def get_setting_dict(self, setting_name:str) -> Union[bool, Dict[str, Union[str, Dict]]]:
+        return self.setting_manager.get_setting_dict(setting_name)
+
     def is_setting(self, setting_name: str) -> bool:
         return self.setting_manager.is_setting(setting_name)
     
