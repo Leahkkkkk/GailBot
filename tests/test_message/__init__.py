@@ -1,1 +1,0 @@
-""" log files goes to this directory """

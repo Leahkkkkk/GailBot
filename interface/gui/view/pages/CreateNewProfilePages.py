@@ -100,6 +100,7 @@ class ProfileName (TabPage):
         if self.profileName.value == "":
             WarnBox(Text.emptyNameMsg)
         else:
+            self.signals.nextPage.emit()
             self.signals.goToNextPage.emit()
     
 class EngineSetting(TabPage):

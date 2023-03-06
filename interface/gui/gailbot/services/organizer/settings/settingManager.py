@@ -1,5 +1,5 @@
 from typing import Dict, Union, List
-from .settingObject import SettingObject
+from .settingObject import SettingObject, SettingDict
 import os
 from gailbot.core.utils.general import (
     is_file, 
@@ -212,7 +212,7 @@ class SettingManager():
                 logger.error(e)
                 return False
     
-    def get_setting_dict(self, setting_name:str) -> Union[Dict[str, Union[str, Dict]], bool]:
+    def get_setting_dict(self, setting_name:str) -> Union[bool, SettingDict]:
         if setting_name in self.settings:
             return self.settings[setting_name].data
         else:
@@ -250,10 +250,9 @@ class SettingManager():
             return False
         
     
-    def get_serialized_settings_data(self) -> Dict[str, Dict]:
+    def get_all_settings_data(self) -> Dict[str, SettingDict]:
         """ 
-        
-        
+        return a dictionary that stores all available setting data 
         """
         setting_dict = dict()
         for key, setting_object in self.settings.items():

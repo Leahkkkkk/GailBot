@@ -57,6 +57,8 @@ class WhisperCore:
         self.cache_dir = os.path.join(self.workspace_dir,"cache")
         self.models_dir = os.path.join(self.cache_dir,"models")
         logger.info(f"Whisper workspace path: {self.workspace_dir}")
+        binary_path = os.environ['PATH']
+        logger.info(f"whisper using binary in the path {binary_path}")
         make_dir(self.workspace_dir,overwrite=False)
         make_dir(self.cache_dir,overwrite=False)
         make_dir(self.models_dir,overwrite=False)
@@ -75,7 +77,8 @@ class WhisperCore:
         logger.info(f"Whisper core using whisper model: {WHISPER_CONFIG.model_name}")
 
         # TODO: Add this speaker diarization pipeline after further testing
-        self.diarization_pipeline = PyannoteDiarizer(self.models_dir)
+        # self.diarization_pipeline = PyannoteDiarizer(self.models_dir)
+        logger.info("get the diarazation pipleine")
 
     def __repr__(self) -> str:
         configs = json.dumps(

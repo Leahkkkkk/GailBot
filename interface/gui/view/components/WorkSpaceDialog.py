@@ -52,6 +52,7 @@ class WorkSpaceDialog(QDialog):
             Text.firstLaunchHeader, FontSize.HEADER2, FontFamily.MAIN)
         self.label = Label.Label(
             Text.firstLaunchInstruction, FontSize.BODY, others="text-align:center;")
+        self.label.setWordWrap(True)
         self.displayPath = Label.Label(
             f"GailBot Work Space Path: {self.userRoot}", 
             FontSize.BODY, FontFamily.MAIN, 

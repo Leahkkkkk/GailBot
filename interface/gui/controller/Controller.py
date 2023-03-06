@@ -13,11 +13,13 @@ Connect between the database, view object and the backend transcription process
 '''
 import glob
 import os
+import sys
 from typing import Set, Tuple
 import logging 
 import time
 
 from config_gui.ConfigPath import BackEndDataPath
+from config.Path import getProjectRoot
 from model import Model, FileObj
 from controller.TranscribeController import TranscribeController
 from controller.MVController import MVController# TODO: why
@@ -25,7 +27,6 @@ from view import MainWindow
 from view.components import WorkSpaceDialog
 from util import Logger, LogMsgFormatter
 from config.GailBotData import getWorkPath, FileManage
-
 from gailbot.api import GailBot
 
 from PyQt6.QtCore import pyqtSlot, QObject, QThreadPool, pyqtSignal
@@ -34,6 +35,7 @@ class Signal(QObject):
         backend transcription process and frontend view object"""
     fileProgress = pyqtSignal(tuple)
     restart      = pyqtSignal()
+    
     
 
 class Controller(QObject):
@@ -62,6 +64,11 @@ class Controller(QObject):
         self.logger.info(f"controller initialized")
         self.logger.info(userRoot)
         self.initApp(userRoot)
+        self.logger.info(os.environ["PATH"])
+        os.environ["PATH"] += os.pathsep + getProjectRoot()
+        self.logger.info(os.environ["PATH"])
+        self.logger.info(os.getcwd())
+        self.logger.info(getProjectRoot())
         
     def prelaunch(self) -> str:
         """ run before initializing the app to create a toml file that stores
@@ -72,7 +79,7 @@ class Controller(QObject):
         """
         try:
             if not os.path.exists(
-                os.path.join(os.getcwd(), BackEndDataPath.workSpaceData)):
+                os.path.join(getProjectRoot(), BackEndDataPath.workSpaceData)):
                 pathDialog = WorkSpaceDialog()
                 pathDialog.exec()
                 userRoot = pathDialog.userRoot
@@ -92,7 +99,7 @@ class Controller(QObject):
             assert self.model
             self.logger.info("model initialized")
             
-            self.ViewObj = MainWindow.MainWindow(self.gb.get_serialized_setting_data())
+            self.ViewObj = MainWindow.MainWindow(self.gb.get_all_settings_data())
             assert self.ViewObj
             self.logger.info("View Object initialized")
             

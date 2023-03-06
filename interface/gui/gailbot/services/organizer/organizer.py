@@ -1,6 +1,6 @@
 from .source import SourceObject, SourceManager
 from gailbot.core.utils.logger import makelogger
-from .settings import SettingManager, SettingObject
+from .settings import SettingManager, SettingObject, SettingDict
 from typing import Dict, List, Union
 from gailbot.configs import  TemporaryFolder, OutputFolder
 logger = makelogger("organizer")
@@ -97,7 +97,7 @@ class Organizer:
     def get_setting(self, setting_name:str) -> SettingObject:
         return self.setting_manager.get_setting(setting_name)    
 
-    def get_setting_dict(self, setting_name:str) -> Union[bool, Dict[str, Union[str, Dict]]]:
+    def get_setting_dict(self, setting_name:str) -> Union[bool, SettingDict]:
         return self.setting_manager.get_setting_dict(setting_name)
 
     def is_setting(self, setting_name: str) -> bool:
@@ -107,7 +107,7 @@ class Organizer:
         return self.apply_setting_to_source(
             source_name, DEFAULT_SETTING_NAME, True)
     
-    def get_engine_setting(self, name: str):
+    def get_engine_setting(self, name: str) -> Union[bool, Dict[str, str]]:
         setting: SettingObject = self.setting_manager.get_setting(name)
         if setting:
             return setting.get_engine_setting()
@@ -140,5 +140,8 @@ class Organizer:
     def get_setting_names(self) -> List[str]:
         return self.setting_manager.get_setting_names()
     
-    def get_serialized_settings_data(self) -> Dict[str, Dict]:
-        return self.setting_manager.get_serialized_settings_data()
+    def get_all_settings_data(self) -> Dict[str, SettingDict]:
+        """ 
+        return a dictionary that stores all setting data
+        """
+        return self.setting_manager.get_all_settings_data()

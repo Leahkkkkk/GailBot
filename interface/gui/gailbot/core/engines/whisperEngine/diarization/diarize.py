@@ -57,7 +57,8 @@ class PyannoteDiarizer:
             repo_id = WHISPER_CONFIG.diarization_configs.HF_diarization_config_repo_id,
             filename = WHISPER_CONFIG.diarization_configs.config_filename,
             token = WHISPER_CONFIG.diarization_configs.HF_auth_token,
-            cache_dir=self.cache_dir
+            cache_dir=self.cache_dir,
+            repo_type="model" #TODO: check if the type is model 
         )
         logger.info(f"Using diarizaton configuration from path: {config_path}")
 
@@ -65,10 +66,12 @@ class PyannoteDiarizer:
         config = read_yaml(config_path)
         config["pipeline"]["params"]["segmentation"] = model_path
         write_yaml(config_path, config,overwrite=True)
-
+        logger.info("configuration output")
+        logger.info("ready to pretrained data")
         self.pipeline = Pipeline.from_pretrained(
             config_path
         )
+        logger.info("after running from_pretrained")
 
     def __call__(
         self,
@@ -84,5 +87,6 @@ class PyannoteDiarizer:
         Returns:
             Pipeline containing the diarization for the given audio file.
         """
+        logger.info("get the diariazation")
         return self.pipeline(audio_path)
 

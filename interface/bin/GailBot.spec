@@ -3,7 +3,7 @@ from PyInstaller.utils.hooks import collect_data_files
 from PyInstaller.utils.hooks import copy_metadata
 import sys ; sys.setrecursionlimit(sys.getrecursionlimit() * 5)
 
-datas = [('../gui/config/', 'config'), ('../gui/asset/', 'asset'), ('../gui/config_gb/', 'config_gb'), ('../torchaudio/', './torchaudio')]
+datas = [('../gui/config_gui/', 'config_gui'), ('../gui/asset/', 'asset'), ('../gui/config_gb/', 'config_gb'), ('./pre.sh', '.')]
 datas += collect_data_files('torch')
 datas += copy_metadata('torch')
 datas += copy_metadata('tqdm')
@@ -27,16 +27,17 @@ datas += copy_metadata('asteroid_filterbanks')
 datas += copy_metadata('pytorch-metric-learning')
 datas += copy_metadata('hmmlearn')
 datas += copy_metadata('speechbrain')
+datas += copy_metadata('ffmpeg-python')
 
 
 block_cipher = None
 
 a = Analysis(
     ['../gui/app.py'],
-    pathex=[],
+    pathex=["/Users/yike/opt/anaconda3/envs/gb-ui-dev/lib/python3.10/site-packages"],
     binaries=[('./ffmpeg', '.')] ,
     datas=datas,
-    hiddenimports=['pyannote.audio', 'speechbrain', 'hmmlearn', 'pytorch-metric-learning', 'asteroid_filterbanks','librosa', 'pytorch', 'sklearn.utils._cython_blas', 'sklearn.neighbors.typedefs', 'sklearn.neighbors.quad_tree', 'sklearn.tree', 'sklearn.tree._utils', 'torch', 'torch-audiomentations', 'torchmetrics', 'torch-pitch-shift'],
+    hiddenimports=['ffmpeg-python', 'pyannote.audio', 'speechbrain', 'hmmlearn', 'pytorch-metric-learning', 'asteroid_filterbanks','librosa', 'pytorch', 'sklearn.utils._cython_blas', 'sklearn.neighbors.typedefs', 'sklearn.neighbors.quad_tree', 'sklearn.tree', 'sklearn.tree._utils', 'torch', 'torch-audiomentations', 'torchmetrics', 'torch-pitch-shift'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],

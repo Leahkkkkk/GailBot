@@ -1,4 +1,4 @@
-from typing import Dict, List, Union
+from typing import Dict, List, Union, TypedDict
 from .interface import (
     load_watson_setting, 
     load_whisper_setting, 
@@ -14,6 +14,11 @@ DEFAULT_WHISPER_SETTING = {
     "engine": "whisper", 
     "language": "English", 
     "detect_speakers": False}
+
+
+class SettingDict(TypedDict):
+    engine_setting: Dict[str, str]
+    plugin_setting: List[str]
 
 class SettingObject():
     """
@@ -43,7 +48,7 @@ class SettingObject():
     def get_plugin_setting(self) -> List[str]:
         return self.plugin_setting.get_data()
     
-    def get_setting_dict(self) -> Dict[str, Union[str, Dict]]:
+    def get_setting_dict(self) -> SettingDict:
         return self.data
     
     def save_setting(self, output: str) -> bool: 

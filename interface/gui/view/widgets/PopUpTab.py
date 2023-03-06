@@ -189,8 +189,7 @@ class _ChangePageBtn(QWidget):
         self.prevBtn.setStyleSheet(buttonStyle.ButtonInactive)
     
 
-class NoControlTab(QWidget):
-    
+class NoControlTab(QWidget): 
     def __init__(
         self, 
         header:str,

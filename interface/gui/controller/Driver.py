@@ -13,6 +13,9 @@ Description: the driver for running GailBot on a single process
 import sys
 from controller import Controller
 from PyQt6.QtWidgets import QApplication
+import ffmpeg
+import os 
+
 
 EXIT_CODE_REBOOT = -20000
 def run(exitCodeQueue):

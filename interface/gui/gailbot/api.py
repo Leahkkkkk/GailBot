@@ -8,7 +8,7 @@ import sys
 import os
 from typing import List, Dict, Any, Union, Tuple
 from gailbot.core.engines import Engine
-from gailbot.services.controller import ServiceController
+from gailbot.services import ServiceController, SettingDict 
 from gailbot.workspace import WorkspaceManager
 from .plugins import PluginSuite
 from gailbot.core.utils.logger import makelogger
@@ -27,7 +27,6 @@ class GailBot:
         self.reset_workspace()
         logger.info("initialize the gailbot api")
         
-    
     def reset_workspace(self):
         """
         Resets the workspace: clears the old workspace and initializes a new one.
@@ -43,7 +42,24 @@ class GailBot:
         
         ### Organizer Service
 
-    def transcribe(self, sources: List[str] = None):
+    def transcribe(self, sources: List[str] = None) -> Tuple[bool, List[str]]:
+        """ given a list of the source name, and transcribe the sources 
+
+        Args:
+            sources (List[str], optional): a list of source name, which 
+            can be either a list of source paths or the file name of the 
+            source file without the file extension
+            if sources is None, the default is to transcribe all sources 
+            that have been configured
+
+        Returns:
+            Tuple[bool, List[str]]: 
+                returns a tuple of boolean and a list of string, 
+                the boolean indicates if the transcription is successful or not,
+                the list of string stores a list of invalid files that cannot
+                be transcribed
+            
+        """
         return self.gb.transcribe(sources)
    
     def add_sources(
@@ -159,16 +175,43 @@ class GailBot:
             Bool: True if setting was successfully saved, false if not
         """
         return self.gb.save_setting(setting_name)
+     
+    def get_source_setting_dict(self, source_name) -> Union[bool, SettingDict]:
+        """ 
+        given a source, return its setting content in a dictionary
 
-    def get_setting_dict(self, setting_name) -> Union[bool, Dict[str, Union[str, Dict]]]:
-        return self. gb.get_setting_dict(setting_name)
-    
-    
-    def get_source_setting_dict(self, source_name) -> Union[bool, Dict[str, Union[str, Dict]]]:
+        Args:
+            source_name (str): the name of the source
+
+        Returns:
+            Union[bool, Dict[str, Union[str, Dict]]]:  a dictionary that stores
+            the source setting content
+        """
         return self.gb.get_source_setting_dict(source_name)
     
-    def get_serialized_setting_data(self) -> Dict[str, Dict]:
-        return self.gb.get_serialized_setting_data()
+    def get_setting_dict(self, setting_name:str) -> Union[bool, SettingDict]:
+        """ given a setting name, return the setting content in a dictionary 
+
+        Args:
+            setting_name (str): name that identifies a setting
+
+        Returns:
+            Union[bool, SettingDict]: if the setting is found, returns its setting 
+            content stored in a dictionary, else returns false  
+        """
+        return self.gb.get_setting_dict(setting_name)
+    
+    def get_all_settings_data(self) -> Dict[str, SettingDict]:
+        """
+        given a setting name, return the setting content in a dictionary format 
+
+        Args:
+            setting_name (string): setting name
+
+        Returns:
+            Union[bool, Dict[str, Union[str, Dict]]]: the setting content
+        """
+        return self.gb.get_all_settings_data()
      
     def rename_setting(
         self, 

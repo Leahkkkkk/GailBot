@@ -55,7 +55,7 @@ class ProfileOrganizer:
     """
     def __init__(self, gb: GailBot) -> None:
         self.logger = makeLogger("B")
-        self.data: Dict[str, Dict] = gb.get_serialized_setting_data()  
+        self.data: Dict[str, Dict] = gb.get_all_settings_data()  
         self.logger.info("the setting data {self.data}")         
         self.profilekeys = list(self.data) 
         self.signals = Signals()
