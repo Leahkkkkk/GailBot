@@ -358,6 +358,26 @@ class GailBot:
         """
         return self.gb.apply_setting_to_sources(sources, setting, overwrite)
    
+    def get_default_setting_name(self) -> str:
+        """ get the name of current default setting
+
+        Returns:
+            str: the name of current default setting
+        """
+        return self.gb.get_default_setting_name()
+   
+   
+    def set_default_setting(self, setting_name)-> bool:
+        """set the default setting to setting name
+
+        Args:
+            setting_name (str): the name of the default setting 
+
+        Returns:
+            bool: true if default setting is set correctly
+        """
+        return self.gb.set_default_setting(setting_name)
+    
     def register_plugin_suite(
         self, 
         plugin_source : str
@@ -373,7 +393,7 @@ class GailBot:
         """
         return self.gb.register_plugin_suite(plugin_source)
     
-    def get_plugin(
+    def get_plugin_suite(
             self, 
             suite_name
         ) -> PluginSuite:
@@ -387,9 +407,9 @@ class GailBot:
         Returns:
             PluginSuite with the given name
         """
-        return self.gb.get_plugin(suite_name) 
+        return self.gb.get_plugin_suite(suite_name) 
     
-    def is_plugin(self, suite_name:str)-> bool:
+    def is_plugin_suite(self, suite_name:str)-> bool:
         """
         Determines if a given plugin suite is an existing plugin suite
 
@@ -400,9 +420,9 @@ class GailBot:
         Returns:
             Bool: true if given plugin suite exists, false if not
         """
-        return self.gb.is_plugin(suite_name) 
+        return self.gb.is_plugin_suite(suite_name) 
    
-    def delete_plugin(self, suite_name:str) -> bool:
+    def delete_plugin_suite(self, suite_name:str) -> bool:
         """
         Removes the given plugin suite
 
@@ -413,7 +433,6 @@ class GailBot:
         Returns:
             Bool: true if plugin suite was successfully removed, false if not
         """
-        return self.gb.delete_plugin(suite_name)
-    
+        return self.gb.delete_plugin_suite(suite_name)
    
-    
+   

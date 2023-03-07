@@ -21,6 +21,7 @@ class ErrorMsg:
     EDITERROR     = "Fail to edit the data"
     DELETEEROR    = "Unable to delete data"
     RESOURCEERROR = "Thread Resource temporarily unavailable"
+    DELETE_DEFAULT = "Default setting cannot be deleted"
     PROFILE_NOT_FOUND = "Profile Not Found" 
 
 

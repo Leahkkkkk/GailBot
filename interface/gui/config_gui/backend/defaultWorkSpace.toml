@@ -1,5 +1,0 @@
-workSpace = "Transcription/WorkSpace"
-plugin = "Transcription/Plugin"
-frontend = "Frontend"
-logFiles = "Frontend/LogFiles"
-

@@ -25,9 +25,12 @@ class SettingManager():
     Manages all available settings 
     """
     settings : Dict[str , SettingObject] = dict()
+
     
     def __init__(self, workspace:str, load_exist: bool = True) -> None:
         self.workspace = workspace
+        self.default_setting = None
+        
         if not is_directory(self.workspace):
             make_dir(self.workspace)
             
@@ -260,3 +263,26 @@ class SettingManager():
             
         logger.info(f"setting data {setting_dict}")
         return setting_dict 
+
+    def set_to_default_setting(self, setting_name: str) -> bool:
+        """set one setting to be the default setting
+
+        Args:
+            name (str): the name of the setting
+
+        Returns:
+            bool: return true if the default setting can be set, false otherwise
+        """
+        if setting_name in self.settings:
+             self.default_setting = setting_name
+             return True
+        else:
+             return False 
+    
+    def get_default_setting_name(self) -> str:
+        """get the default setting name
+
+        Returns:
+            str: the default setting 
+        """
+        return self.default_setting

@@ -118,8 +118,10 @@ class MVController:
         viewSignal.post.connect(db.post)
         # handle view's request to get profile data 
         viewSignal.get.connect(db.get)
-        # handle view's request to cedit profile data 
+        # handle view's request to edit profile data 
         viewSignal.edit.connect(db.edit)
+        # handle view's reques to delete profile 
+        viewSignal.delete.connect(db.delete)
     
     def _connectProfileDBToView(self):
         """ connect the signal from the profile database to view
@@ -134,8 +136,10 @@ class MVController:
         # connect db's response to add new profile selection on view
         dbSignal.profileAdded.connect(profileView.addProfile)
         dbSignal.profileAdded.connect(fileView.addProfile)
-     
-        dbSignal.delete.connect(self.fileOrganizer.profileDeleted)
+        dbSignal.deleted.connect(profileView.deleteProfileConfirmed)
+        
+        dbSignal.deleteProfile.connect(self.fileOrganizer.profileDeleted)
+        dbSignal.deleteProfile.connect(fileView.deleteProfile)
         dbSignal.error.connect(self.view.showError)
         
     

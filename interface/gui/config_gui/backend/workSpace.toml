@@ -1,1 +1,4 @@
-WORK_SPACE_BASE_DIRECTORY = "/Users/yike/GailBot"
+workSpace = "Backend/"
+frontend  = "Frontend"
+logFiles  = "LogFiles"
+

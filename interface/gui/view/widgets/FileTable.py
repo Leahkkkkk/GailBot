@@ -382,7 +382,18 @@ class FileTable(QTableWidget):
             ** connect to the backend signal to add profile
         """
         self.profiles.append(profileName)
-    
+        
+    def deleteProfile(self, profileName:str)->None:
+        """ delete profile
+
+        Args:
+            profileName (str): the name of the profile
+        """
+        try: 
+            self.profiles.remove(profileName)
+        except Exception as e:
+            self.logger.error(e)
+            
             
     ###################### edit file handler ###############################        
     def updateFileContent(self, file: Tuple[str, str, str]):

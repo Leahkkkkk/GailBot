@@ -81,7 +81,7 @@ class SystemSettingPage(QWidget):
             Text.changeWorkSpace, FontSize.BODY)
         directory = getWorkBasePath()
         self.directoryDisplay = Label.Label(
-            f"    Current work space: {directory}/GailBot",
+            f"    Current work space: {directory}",
             FontSize.SMALL, 
             Color.PRIMARY_INTENSE
         )

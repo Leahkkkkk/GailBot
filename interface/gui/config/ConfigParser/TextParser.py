@@ -150,6 +150,7 @@ class ProfilePageTextData(DataclassFromDict):
     """class holding the text for the profile page"""
     cancelBtn          : str  = field_from_dict()
     saveBtn            : str  = field_from_dict()
+    deleteBtn          : str  = field_from_dict()
     newProfileBtn      : str  = field_from_dict()
     reuquiredSetBtn    : str  = field_from_dict()
     postSetBtn         : str  = field_from_dict()
@@ -162,6 +163,8 @@ class ProfilePageTextData(DataclassFromDict):
     pluginHeader       : str  = field_from_dict()
     pluginCaption      : str  = field_from_dict()
     tempMessage        : str  = field_from_dict()
+    confirmDelete      : str  = field_from_dict()
+
 
 @dataclass 
 class SystemSetPageTextData(DataclassFromDict):

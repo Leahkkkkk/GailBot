@@ -1,8 +1,8 @@
 # path to config_gui files with backend data
 [backend]
 gailBotData          = "config_gui/backend/gailbot.toml"
-workSpaceData        = "config_gui/backend/workSpace.toml"
-defaultWorkSpaceData = "config_gui/backend/defaultWorkSpace.toml"
+workSpaceData        = "config_gui/backend/user_root.toml"
+defaultWorkSpaceData = "config_gui/backend/workspace.toml"
 fileManageData       = "config_gui/backend/fileManage.toml"
 backendroot          = "configs/confs/toplevel/user_root.toml" 
 # backendroot          = "gailbot/configs/confs/toplevel/user_root.toml" 

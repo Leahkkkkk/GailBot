@@ -25,6 +25,7 @@ class Organizer:
         self.source_manager  = SourceManager()
         if not self.setting_manager.is_setting(DEFAULT_SETTING_NAME):
             self.setting_manager.add_new_setting(DEFAULT_SETTING_NAME, DEFAULT_SETTING)
+            self.setting_manager.set_to_default_setting(DEFAULT_SETTING_NAME)
         
     def add_source(self, source_path: str, output: str) -> bool:
         try:
@@ -84,12 +85,15 @@ class Organizer:
     def remove_setting(self, setting_name: str) -> bool:
         if not self.setting_manager.is_setting(setting_name):
             return False 
-        
-        self.setting_manager.remove_setting(setting_name)
-        sources = self.source_manager.get_sources_with_setting(setting_name)
-        
-        for source in sources:
-            self.remove_setting_from_source(source)
+        try:
+            assert self.setting_manager.remove_setting(setting_name)
+            sources = self.source_manager.get_sources_with_setting(setting_name) 
+            for source in sources:
+                self.remove_setting_from_source(source)
+            return True
+        except Exception as e:
+            logger.error(e)
+            return False
     
     def update_setting(self, setting_name:str, new_setting: Dict[str,str]) -> bool:
         return self.setting_manager.update_setting(setting_name, new_setting)
@@ -145,3 +149,22 @@ class Organizer:
         return a dictionary that stores all setting data
         """
         return self.setting_manager.get_all_settings_data()
+    
+    def get_default_setting_name(self) -> str:
+        """ get the default setting name
+
+        Returns:
+            str: a string that represent the default setting
+        """
+        return self.setting_manager.get_default_setting_name()
+    
+    def set_default_setting(self, setting_name:str) -> bool:
+        """ set the default setting to setting_name
+
+        Args:
+            setting_name (str)
+            
+        Returns:
+            bool:return true if the setting can be set, false otherwise
+        """
+        return self.setting_manager.set_to_default_setting(setting_name)

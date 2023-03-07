@@ -225,6 +225,13 @@ class ServiceController:
         """
         return self.organizer.is_setting(name)
         
+    def get_default_setting_name(self) -> str:
+        return self.organizer.get_default_setting_name()
+    
+    def set_default_setting(self, setting_name:str) -> bool:
+        return self.organizer.set_default_setting(setting_name) 
+   
+   
     def apply_setting_to_sources(
         self, sources: List[str], setting: str, overwrite: bool = True) -> bool:
         """apply setting to a list of sources
@@ -289,12 +296,11 @@ class ServiceController:
     def register_plugin_suite(self, plugin_source: str) -> str:
         return self.plugin_manager.register_suite(plugin_source)
         
-    def get_plugin(self, suite_name) -> PluginSuite:
+    def get_plugin_suite(self, suite_name) -> PluginSuite:
         return self.plugin_manager.get_suite(suite_name)
     
-    def is_plugin(self, suite_name: str) -> bool:
+    def is_plugin_suite(self, suite_name: str) -> bool:
         return self.plugin_manager.is_suite(suite_name)
     
-    def delete_plugin(self, suite_name: str) -> bool:
+    def delete_plugin_suite(self, suite_name: str) -> bool:
         return self.plugin_manager.delete_suite(suite_name)
-     

@@ -85,6 +85,7 @@ end      = "End Recording"
 [ProfilePageText]
 cancelBtn          = "Cancel"
 saveBtn            = "Save and Exit"
+deleteBtn          = "Delete Profile"
 newProfileBtn      = "Create New Profile"
 reuquiredSetBtn    = "Required Settings"
 postSetBtn         = "Post-Transcription Settings"
@@ -98,6 +99,7 @@ requiredSetCaption = """These settings are applied to the selected settings prof
 pluginHeader       = "Choose Plugins"
 pluginCaption      = "These plugins are applied to the transcription process"
 tempMessage        = "This page has been temporarily disabled to allow for further updates and developments. Please check back later."
+confirmDelete      = "Confirm deleting the profile: "
 
 [SystemSettingPage]
 header        = "System Settings"

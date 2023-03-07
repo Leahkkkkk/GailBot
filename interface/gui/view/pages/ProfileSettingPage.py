@@ -30,9 +30,9 @@ from view.widgets import (
     Button, 
     Label, 
     ComboBox, 
-    SideBar
+    SideBar 
 )
-from view.widgets.MsgBox import WarnBox
+from view.widgets.MsgBox import WarnBox, ConfirmBox
 from view.components.CreateNewSettingTab import CreateNewSetting
 from view.components.PluginDialog import PluginDialog
 
@@ -77,10 +77,14 @@ class ProfileSettingPage(QWidget):
             Text.cancelBtn, Color.CANCEL_QUIT)
         self.saveBtn = Button.ColoredBtn(
             Text.saveBtn, Color.SECONDARY_BUTTON)
+        self.deleteBtn = Button.ColoredBtn (
+            Text.deleteBtn, Color.CANCEL_QUIT
+        )
         self.newProfileBtn = Button.ColoredBtn(
             Text.newProfileBtn,Color.PRIMARY_BUTTON)
         self.requiredSetBtn = Button.BorderBtn(
             Text.reuquiredSetBtn, Color.GREYDARK, FS.BTN, 0, SS.onlyTopBorder)
+        
         self.GuideLink = Label.Label(Links.guideLinkSideBar, FS.LINK, link=True)
         self.newPluginBtn = Button.ColoredBtn(
             Text.newPluginBtn, Color.PRIMARY_BUTTON)
@@ -119,6 +123,7 @@ class ProfileSettingPage(QWidget):
         self.sideBar.addWidget(self.newProfileBtn)
         self.sideBar.addWidget(self.saveBtn)
         self.sideBar.addWidget(self.cancelBtn)
+        self.sideBar.addWidget(self.deleteBtn)
         self.sideBar.addStretch()
         self.sideBar.addWidget(self.GuideLink, alignment=bottom)
         self.sideBar.addWidget(self.versionLabel, alignment=bottom)
@@ -136,6 +141,7 @@ class ProfileSettingPage(QWidget):
         self.newProfileBtn.clicked.connect(self.createNewSetting)
         self.saveBtn.clicked.connect(self.updateProfile)
         self.newPluginBtn.clicked.connect(self.addPluginRequest)
+        self.deleteBtn.clicked.connect(self._deleteProfile)
   
     def _activeRequiredSet(self):
         """ switches current page from post transcription settings page to required settings page """
@@ -173,7 +179,18 @@ class ProfileSettingPage(QWidget):
     def _postNewProfile(self, profile: tuple):
         """ sends the request to database to post a new profile data """
         self.signals.post.emit(profile)
-    
+        
+    def _deleteProfile(self):
+        """ sends the delete signal to delete the profile"""
+        profileName = self.selectSettings.currentText()
+        ConfirmBox(Text.confirmDelete + profileName, 
+                   lambda: self.signals.delete.emit(self.selectSettings.currentText()))
+         
+    def deleteProfileConfirmed(self, deleted: bool):
+        """ if deleted, remove the current setting name from available setting"""
+        if deleted:
+            self.selectSettings.removeItem(self.selectSettings.currentIndex())
+        
     def createNewSetting(self):
         """ opens a pop up window for user to create new setting profile """
         createNewSettingTab = CreateNewSetting(self.plugins)

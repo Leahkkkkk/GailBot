@@ -10,9 +10,7 @@ Modified By:  Siara Small  & Vivian Li
 Description: main siganls for view object to communicate with backend database
 '''
 
-
 from PyQt6.QtCore import QObject, pyqtSignal
-
 
 class FileSignals(QObject):
     """ file signals for frontend to communicate with file database  """
@@ -32,5 +30,5 @@ class ProfileSignals(QObject):
     post = pyqtSignal(tuple)
     edit = pyqtSignal(tuple)
     get  = pyqtSignal(object)
-    delete = pyqtSignal(object)
+    delete = pyqtSignal(str)
     addPlugin = pyqtSignal(tuple)

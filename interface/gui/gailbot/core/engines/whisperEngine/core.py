@@ -77,7 +77,7 @@ class WhisperCore:
         logger.info(f"Whisper core using whisper model: {WHISPER_CONFIG.model_name}")
 
         # TODO: Add this speaker diarization pipeline after further testing
-        # self.diarization_pipeline = PyannoteDiarizer(self.models_dir)
+        self.diarization_pipeline = PyannoteDiarizer(self.models_dir)
         logger.info("get the diarazation pipleine")
 
     def __repr__(self) -> str:
