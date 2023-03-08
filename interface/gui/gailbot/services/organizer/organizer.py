@@ -4,7 +4,7 @@ from .settings import SettingManager, SettingObject, SettingDict
 from typing import Dict, List, Union
 from gailbot.configs import  TemporaryFolder, OutputFolder
 logger = makelogger("organizer")
-DEFAULT_SETTING_NAME = "default"
+DEFAULT_SETTING_NAME = "Default"
 
 """ TODO: put this under toml file """
 DEFAULT_SETTING = {

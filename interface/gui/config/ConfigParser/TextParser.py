@@ -28,7 +28,7 @@ from dict_to_dataclass import DataclassFromDict, field_from_dict
 """
 #############################  about data ################################
 year = datetime.date.today().strftime("%Y")
-copyRightText = f"Copyright {year} © HIL Lab"
+copyRightText = f"Copyright {year} © HI Lab"
 @dataclass
 class aboutData(DataclassFromDict):
     """class holding data about GailBot; e.g. version, title, etc."""
@@ -231,6 +231,9 @@ class MenuBarText(DataclassFromDict):
     console: str = field_from_dict()
     open: str = field_from_dict()
     close : str = field_from_dict()
+    help : str = field_from_dict()
+    contact : str = field_from_dict()
+    email: str = field_from_dict()
 
 @dataclass
 class OutputFormatFormData(DataclassFromDict):

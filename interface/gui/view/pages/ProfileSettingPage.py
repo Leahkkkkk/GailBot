@@ -77,9 +77,6 @@ class ProfileSettingPage(QWidget):
             Text.cancelBtn, Color.CANCEL_QUIT)
         self.saveBtn = Button.ColoredBtn(
             Text.saveBtn, Color.SECONDARY_BUTTON)
-        self.deleteBtn = Button.ColoredBtn (
-            Text.deleteBtn, Color.CANCEL_QUIT
-        )
         self.newProfileBtn = Button.ColoredBtn(
             Text.newProfileBtn,Color.PRIMARY_BUTTON)
         self.requiredSetBtn = Button.BorderBtn(

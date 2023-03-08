@@ -1,7 +1,7 @@
 [links]
-HILAB = "https://sites.tufts.edu/hilab"
-USER_MANUAL = "https://docs.google.com/presentation/d/12wsU2ORg3PhsGwAsEnF6vE9ZGyYsOlfF/edit?usp=sharing&ouid=104802467280999304975&rtpof=true&sd=true"
-GUIDE = "https://docs.google.com/document/d/170SyWsE6pRgnZUMoXLtgqiIBJDqWMwZKUpg6eKgMyj0/edit?usp=sharing"
+HILAB = "https://sites.tufts.edu/hilab/"
+USER_MANUAL = "https://drive.google.com/file/d/1NnirL5-26j3xnI4yEV7cJVUEqxrFfTm5/view?usp=sharing"
+GUIDE = "https://drive.google.com/file/d/1t_-NAM0PCFHhjZ4Kpry2LuhLcXZTDG07/view?usp=sharing"
 
 [TranscribeSuccessText]
 mainLabelText        = "Transcription successful"
@@ -36,8 +36,7 @@ gbLinkText                = "Tufts Human Interaction Laboratory"
 moreInfoText              = "For more information, visit:"
 firstLaunchHeader         = "Welcome to GailBot's initial setup"
 firstLaunchInstruction    = """Please specify the path to GailBot's \
-                             workspace directory on your computer.\nThis is where
-                             all internal and log files will be stored."""
+                             workspace directory on your computer.\nThis is where all internal and log files will be stored."""
 
 
 [FileUploadPageText]
@@ -182,6 +181,9 @@ outputSetHeader = "Output File Format Settings"
 console = "Console"
 open    = "Open"
 close   = "close"
+help    = "help"
+contact = "contact us"
+email = "hillab@tufts.edu"
 
 
 [btnText]

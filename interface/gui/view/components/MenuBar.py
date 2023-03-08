@@ -20,10 +20,21 @@ class ManuBar(QMenuBar):
         console option """
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
+        # console
         self.Console = QMenu(MenuBarText.console)
         self.OpenConsole = QtGui.QAction(MenuBarText.open)
         self.Console.addAction(self.OpenConsole)
         self.CloseConsole = QtGui.QAction(MenuBarText.close)
         self.Console.addAction(self.CloseConsole)
-        self.addAction(self.Console.menuAction())
+        self.addMenu(self.Console)
+        # help
+        self.Help = QMenu(MenuBarText.help)
+        self.Contact = QtGui.QAction(MenuBarText.contact)
+        self.Help.addAction(self.Contact)
+        self.addMenu(self.Help)
+        # Contact.triggered.connect(self.sendEmail)
+        
+        
+    def sendEmail(self):
+        pass 
         

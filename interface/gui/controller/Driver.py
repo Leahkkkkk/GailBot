@@ -9,7 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 Description: the driver for running GailBot on a single process
 '''
-
+import certifi
 import sys
 from controller import Controller
 from PyQt6.QtWidgets import QApplication

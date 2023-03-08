@@ -9,6 +9,8 @@ Modified By:  Siara Small  & Vivian Li
 -----
 Description: implement the system setting page
 '''
+import userpaths
+import datetime
 import os
 import shutil 
 import toml
@@ -19,8 +21,9 @@ from view.widgets import (
     Label, 
     Button
 )
-from view.components.WorkSpaceDialog import ChangeWorkSpace
 
+from view.components.WorkSpaceDialog import ChangeWorkSpace
+from util.io import zip_file
 from config_gui.ConfigPath import BackEndDataPath, SettingDataPath
 from config.Setting import SystemSetting, DefaultSetting
 from config.StyleSource import StyleSource, StyleTable
@@ -28,7 +31,9 @@ from config.Text import SystemSetPageText as Text
 from config.Text import SystemSettingForm as Form
 from config.Text import About, Links, LogDeleteTimeDict
 from config.Path import getProjectRoot
+from config.GailBotData import getWorkPath
 from util.FileManage import clearAllLog
+from util.Logger import makeLogger
 from config.GailBotData import getWorkBasePath
 from view.widgets import MsgBox
 
@@ -36,7 +41,8 @@ from PyQt6.QtWidgets import (
     QWidget, 
     QHBoxLayout,
     QStackedWidget,
-    QMessageBox)
+    QMessageBox, 
+    QFileDialog)
 from PyQt6.QtCore import Qt, pyqtSignal, QObject
 
 dirname = getProjectRoot()
@@ -44,6 +50,8 @@ class Signal(QObject):
     restart = pyqtSignal()
 
 bottom = Qt.AlignmentFlag.AlignBottom
+
+ZIP_LOG_NAME = "gailbot_log_file"
 class SystemSettingPage(QWidget):
     """ class for the system settings page """
     def __init__(self, *args, **kwargs) -> None:
@@ -51,6 +59,7 @@ class SystemSettingPage(QWidget):
         super().__init__(*args, **kwargs)
         self.data = Form
         self.signal = Signal()
+        self.logger = makeLogger("F")
         self._initWidget()
         self._initLayout()
         self._initStyle()
@@ -86,16 +95,26 @@ class SystemSettingPage(QWidget):
             Color.PRIMARY_INTENSE
         )
         
-        self.restoreBtnContainer = QWidget()
-        self.restoreBtnLayout = QHBoxLayout()
-        self.restoreBtnContainer.setLayout(self.restoreBtnLayout)
+        self.buttomBtnContainer = QWidget()
+        self.bottomBtnLayout = QHBoxLayout()
+        self.buttomBtnContainer.setLayout(self.bottomBtnLayout)
+        
         self.restoreBtn = Button.BorderBtn(
             "Restore Defaults", 
             Color.INPUT_TEXT, 
             other= f"background-color: {Color.INPUT_BACKGROUND}")
         self.restoreBtn.setFixedHeight(Dimension.INPUTHEIGHT)
-        self.restoreBtnLayout.addWidget(
+        
+        self.saveLogBtn = Button.BorderBtn(
+            "Save Log File", 
+            Color.INPUT_TEXT, 
+            other= f"background-color: {Color.INPUT_BACKGROUND}")
+        self.saveLogBtn.setFixedHeight(Dimension.INPUTHEIGHT)
+    
+        self.bottomBtnLayout.addWidget(
             self.restoreBtn, alignment=Qt.AlignmentFlag.AlignRight)
+        self.bottomBtnLayout.addWidget(
+            self.saveLogBtn, alignment=Qt.AlignmentFlag.AlignRight)
        
         self.Mainstack.addWidget(self.SysSetForm)
         self.GuideLink = Label.Label(Links.guideLinkSideBar, FontSize.LINK, link=True)
@@ -116,7 +135,7 @@ class SystemSettingPage(QWidget):
         self.saveBtn.clicked.connect(self._confirmChangeSetting)
         self.changeDir.clicked.connect(self._changeDirHandler)
         self.restoreBtn.clicked.connect(self._confirmRestore)
-        
+        self.saveLogBtn.clicked.connect(self._saveLog)
     
     def _changeDirHandler(self):
         dialog = ChangeWorkSpace()
@@ -157,7 +176,7 @@ class SystemSettingPage(QWidget):
         self.SysSetForm.addWidget(self.changeDirContainer)
         self.SysSetForm.addWidget(self.directoryDisplay)
         self.restoreBtn.setContentsMargins(10,50,10,20)
-        self.SysSetForm.addWidget(self.restoreBtnContainer)
+        self.SysSetForm.addWidget(self.buttomBtnContainer)
         
     def _initStyle(self):
         self.Mainstack.setObjectName(StyleSheet.sysSettingStackID)
@@ -228,3 +247,14 @@ class SystemSettingPage(QWidget):
         MsgBox.ConfirmBox(
             "Confirm to restore to default setting", 
             lambda: self._loadValue(DefaultSetting))
+        
+    def _saveLog(self):
+        try:
+            dialog = QFileDialog()
+            dialog.setDirectory(userpaths.get_desktop())
+            selectedFolder = dialog.getExistingDirectory()
+            if selectedFolder: 
+                logdir = getWorkPath().logFiles
+                zip_file(logdir, os.path.join(selectedFolder, f"{ZIP_LOG_NAME}-{datetime.datetime.now()}.zip"))
+        except Exception as e:
+            self.logger.error(e)

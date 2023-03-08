@@ -64,6 +64,7 @@ class Controller(QObject):
         self.logger.info(f"controller initialized")
         self.logger.info(userRoot)
         self.initApp(userRoot)
+        # remove this to the top level
         self.logger.info(os.environ["PATH"])
         os.environ["PATH"] += os.pathsep + getProjectRoot()
         self.logger.info(os.environ["PATH"])

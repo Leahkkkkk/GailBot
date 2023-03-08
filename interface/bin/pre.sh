@@ -5,6 +5,12 @@ cp -r /Users/yike/opt/anaconda3/envs/gb-ui-dev/lib/python3.10/site-packages/libr
 cp -r /Users/yike/opt/anaconda3/envs/gb-ui-dev/lib/python3.10/site-packages/sklearn* .
 cp -r /Users/yike/opt/anaconda3/envs/gb-ui-dev/lib/python3.10/site-packages/pyannote* .
 cp -r /Users/yike/opt/anaconda3/envs/gb-ui-dev/lib/python3.10/site-packages/ffmpeg* .
+cp -r /Users/yike/opt/anaconda3/envs/gb-ui-dev/lib/python3.10/site-packages/huggingface_hub* .
+cp -r /Users/yike/opt/anaconda3/envs/gb-ui-dev/lib/python3.10/site-packages/whisper .
+cp -r /Users/yike/opt/anaconda3/envs/gb-ui-dev/lib/python3.10/site-packages/pytorch_metric_learning* .
+cp -r /Users/yike/opt/anaconda3/envs/gb-ui-dev/lib/python3.10/site-packages/hmmlearn* .
+cp -r /Users/yike/opt/anaconda3/envs/gb-ui-dev/lib/python3.10/site-packages/speechbrain* .
+cp -r /Users/yike/opt/anaconda3/envs/gb-ui-dev/lib/python3.10/site-packages/certifi* .
 rm libtorch_python.dylib
 rm libtorch.dylib
 rm libc10.dylib

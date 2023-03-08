@@ -52,6 +52,7 @@ class RequiredSettingPage(QWidget):
             Text.requiredSetHeader, FontSize.HEADER2, FontFamily.MAIN )
         self.description = Label.Label(
             Text.requiredSetCaption, FontSize.DESCRIPTION, FontFamily.MAIN )
+
         self.form = RequiredSettingForm.RequiredSettingForm()
     
     def _initLayout(self):
