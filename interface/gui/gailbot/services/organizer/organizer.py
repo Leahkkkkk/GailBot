@@ -58,7 +58,7 @@ class Organizer:
         self, sources: List[str], setting_name:str, overwrite: bool = True)-> bool:
         try:
             for source in sources:
-                logger.info(source)
+                logger.info(f"organizer change {source} setting to {setting_name}")
                 assert self.apply_setting_to_source(source, setting_name, overwrite)
             return True
         except Exception as e:

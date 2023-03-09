@@ -92,7 +92,11 @@ class TranscribeComponent(Component):
         engine_name = payload.get_engine()
         engine_init_kwargs = payload.get_engine_init_setting()
         engine_transcribe_kwargs = payload.get_engine_transcribe_setting()
-        
+
+        logger.info(f"get transcribed setting engine_name: {engine_name} \
+                      engine initialization setting {engine_init_kwargs} \
+                      engine transcription setting {engine_transcribe_kwargs}")
+       
         # Transcribe behavior is different based on the type of the input
         # For example, if source contains video files, they should first be
         # extracted into audio files here.

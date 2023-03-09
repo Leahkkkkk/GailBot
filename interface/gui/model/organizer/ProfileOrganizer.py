@@ -123,7 +123,7 @@ class ProfileOrganizer:
                 self.logger.error(f"Error updating setting {name}")
         except Exception as e:
             self.signals.error.emit(ErrorMsg.EDITERROR)
-            self.logger.error(e)
+            self.logger.error(f"error in updating the profile setting {e}")
      
     def get(self, profilekey:str) -> None:
         """ 

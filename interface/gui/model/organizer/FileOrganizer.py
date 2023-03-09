@@ -124,6 +124,7 @@ class FileOrganizer:
                 self.data[key] = file 
                 self.signals.fileAdded.emit((key, data))
                 self.currentKey += 1
+                assert self.gb.apply_setting_to_source(file.Name, file.Profile)
             else:
                 self.signals.error.emit(ErrorMsg.DUPLICATEKEY)
                 self.logger.error(ErrorMsg.DUPLICATEKEY)
@@ -205,8 +206,8 @@ class FileOrganizer:
             data (Tuple[key, new profile]): a tuple  that stores the file key 
                                             and a the new profile name
         """
-        self.logger.info("request to edit file profile in the database")
         key, profile = data
+        self.logger.info(f"request to change the file {self.data[key].Name}'s setting to {profile}")
         try:
             if key not in self.data or not self.gb.is_source(self.data[key].Name):
                 self.signals.error.emit(ErrorMsg.KEYERROR)
@@ -218,6 +219,7 @@ class FileOrganizer:
             else:
                 self.data[key].Profile = profile
                 assert self.gb.apply_setting_to_source(self.data[key].Name, profile)
+                self.logger.info(f"the setting of the file {self.data[key].Name} is change to {self.gb.get_source_setting_dict(self.data[key].Name)}")
                 self._updateFileResponse(key, "Profile", profile)
         except:
             self.signals.error.emit(ErrorMsg.EDITERROR)

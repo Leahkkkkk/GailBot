@@ -99,7 +99,7 @@ class WhisperCore:
         detect_speaker : bool = False
     ) -> List[Dict]:
         assert is_file(audio_path), f"ERROR: Invalid file path: {audio_path}"
-
+        logger.info(f"received setting language: {language}, detect speaker {detect_speaker} audio_path {audio_path}")
         if language != None and not language in self.get_supported_languages():
             raise Exception(
                 f"Unsupported language, must be one of: {self.get_supported_languages()}"
@@ -132,7 +132,6 @@ class WhisperCore:
             return add_speaker_info_to_text(asr_result, dir_result)
         else:
             return parse_into_word_dicts(asr_result)
-
 
     def get_supported_formats(self) -> List[str]:
         return list(self._SUPPORTED_FORMATS)

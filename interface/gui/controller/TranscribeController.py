@@ -90,21 +90,21 @@ class TranscribeController(QObject):
     def runGailBot(self, files: Dict[str, str]):
         # pass 
         """ function to run gailbot on a separate thread """
-        self.logger.info(self.ThreadPool.activeThreadCount())
+        self.logger.info(f"active thread numbers : {self.ThreadPool.activeThreadCount()}")
         if self.ThreadPool.activeThreadCount() >= ThreadControl.maxThread:
             self.signal.busy.emit()
             self.logger.warn("threadpool busy")
         else:
             try:
                 self.ThreadPool.clear()
-                self.logger.info(files)
+                self.logger.info(f"the files to be transcribeda are :{files}")
                 self.worker = GBWorker(files, self.signal, self.gb)
                 self.signal.start.emit()
                 if not self.ThreadPool.tryStart(self.worker):
                     raise ThreadException(ErrorMsg.RESOURCEERROR)
-            except:
-                self.signal.error.emit("failed to start transcribing")
-                self.logger.error("failed to start transcribe")
+            except Exception as e:
+                self.signal.error.emit("failed to start transcription")
+                self.logger.error(f"failed to start transcribe due to error {e}")
 
     def cancelGailBot(self):
         """ handler for user's request to cancel the gailbot """
@@ -134,6 +134,8 @@ class GBWorker(QRunnable):
             self.signal.progress.emit("Transcribing")
             self.logger.info("Transcribing")
             result, invalid = self.gb.transcribe(list(self.files.values()))
+            self.logger.info(f"the transcription result is {result}")
+            self.logger.info(f"the invalid files are {invalid}")
             assert result
             if len(invalid) != 0:
                 invalidFiles = str(invalid)
