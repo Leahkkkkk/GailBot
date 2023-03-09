@@ -3,8 +3,21 @@ from PyInstaller.utils.hooks import collect_data_files
 from PyInstaller.utils.hooks import copy_metadata
 import sys ; sys.setrecursionlimit(sys.getrecursionlimit() * 5)
 
-datas = [('../gui/config_gui/', 'config_gui'), ('../gui/asset/', 'asset'), ('../gui/config_gb/', 'config_gb'), ('./pre.sh', '.')]
+datas = [('../gui/config_gui/', 'config_gui'), 
+         ('../gui/asset/', 'asset'), 
+         ('../gui/config_gb/', 'config_gb'),
+         ('./pre.sh', '.')]
 datas += collect_data_files('torch')
+datas += collect_data_files('torchaudio')
+datas += collect_data_files('librosa')
+datas += collect_data_files('sklearn')
+datas += collect_data_files('pyannote')
+datas += collect_data_files('pytorch_metric_learning')
+datas += collect_data_files('certifi')
+datas += collect_data_files('hmmlearn')
+datas += collect_data_files('huggingface_hub')
+datas += collect_data_files('pytorch_lightning')
+datas += collect_data_files('whisper')
 datas += copy_metadata('torch')
 datas += copy_metadata('tqdm')
 datas += copy_metadata('regex')
@@ -28,14 +41,16 @@ datas += copy_metadata('pytorch-metric-learning')
 datas += copy_metadata('hmmlearn')
 datas += copy_metadata('speechbrain')
 datas += copy_metadata('ffmpeg-python')
+datas += copy_metadata('librosa')
 
+binaries = [('./ffmpeg', '.')]
 
 block_cipher = None
 
 a = Analysis(
     ['../gui/app.py'],
     pathex=["/Users/yike/opt/anaconda3/envs/gb-ui-dev/lib/python3.10/site-packages"],
-    binaries=[('./ffmpeg', '.')] ,
+    binaries= binaries,
     datas=datas,
     hiddenimports=['certifi', 'ffmpeg-python', 'pyannote.audio', 'speechbrain', 'hmmlearn', 'pytorch-metric-learning', 'asteroid_filterbanks','librosa', 'pytorch', 'sklearn.utils._cython_blas', 'sklearn.neighbors.typedefs', 'sklearn.neighbors.quad_tree', 'sklearn.tree', 'sklearn.tree._utils', 'torch', 'torch-audiomentations', 'torchmetrics', 'torch-pitch-shift'],
     hookspath=[],
@@ -55,11 +70,11 @@ exe = EXE(
     [],
     exclude_binaries=True,
     name='GailBot',
-    debug=False,
+    debug=True,
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
-    console=False,
+    console=True,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
@@ -67,6 +82,7 @@ exe = EXE(
     entitlements_file=None,
     icon=['../install/GailBotLogo.icns'],
 )
+
 coll = COLLECT(
     exe,
     a.binaries,
@@ -77,6 +93,7 @@ coll = COLLECT(
     upx_exclude=[],
     name='GailBot',
 )
+
 app = BUNDLE(
     coll,
     name='GailBot.app',
