@@ -80,7 +80,7 @@ class FileTable(QTableWidget):
     """ class for the file tables """
     def __init__(self, 
                  headers: List[str], 
-                 dbSignal: FileSignals,
+                 fileSignal: FileSignals,
                  profiles: List[str] = [Text.default],  
                  tableWidgetsSet: Set[TableWidget] = None, 
                  *args, 
@@ -90,7 +90,7 @@ class FileTable(QTableWidget):
         Args:
             headers (List[str]): list of headers 
             filedata (Dict[str, fileObject]): initial file data
-            dbSignal (FileSignals): signals to communicate with database
+            fileSignal (FileSignals): signals to communicate with database
             profiles (List[str]): a list of available profile names
             tableWidgetsSet (Set[TableWidget]): a set of widgets name that will be displayed
                                    on each row
@@ -115,7 +115,7 @@ class FileTable(QTableWidget):
         self.logger =  makeLogger("F")
         
         self.viewSignal = Signals()
-        self.dbSignal = dbSignal
+        self.fileSignal = fileSignal
         self._setFileHeader()     # set file header 
         self._initStyle()
         self._connectViewSignal()
@@ -220,7 +220,7 @@ class FileTable(QTableWidget):
         """ send signals to post file to the database 
             ** connected to the upload file button 
         """
-        self.dbSignal.postFile.emit(file)
+        self.fileSignal.postFile.emit(file)
     
     def addFiles(self, files: List[Tuple]):
         """ adding a list of files to file table
@@ -288,7 +288,7 @@ class FileTable(QTableWidget):
             if key in self.filePins:
                 rowIdx = self.indexFromItem(self.filePins[key]).row()
                 self.removeRow(rowIdx)
-                self.dbSignal.delete.emit(key)
+                self.fileSignal.delete.emit(key)
                 del self.fileWidgets[key]
                 del self.filePins[key]
                 if key in self.transferList:
@@ -318,7 +318,7 @@ class FileTable(QTableWidget):
         Args: key(str): a file key 
         """
         try:
-            self.dbSignal.requestprofile.emit(key) # make request to load profile data 
+            self.fileSignal.requestprofile.emit(key) # make request to load profile data 
             self.viewSignal.goSetting.emit()
         except:
             MsgBox.WarnBox("An error occurred when retrieving the file's profile setting")
@@ -365,7 +365,7 @@ class FileTable(QTableWidget):
         """
         try:
             key, profilekey = newprofile
-            self.dbSignal.changeProfile.emit(newprofile) 
+            self.fileSignal.changeProfile.emit(newprofile) 
             if key in self.filePins:
                 row = self.indexFromItem(self.filePins[key]).row()
                 newitem = QTableWidgetItem(profilekey)
@@ -402,6 +402,7 @@ class FileTable(QTableWidget):
         Args:
             file (Tuple[key, field, value]): 
         """
+        self.logger.info(f"get updated information {file}")
         key, field, value = file 
         if key in self.filePins:
             if field in self.headers:
@@ -486,7 +487,7 @@ class FileTable(QTableWidget):
         
     def transcribeFile(self):
         """ send signal to controller to transcribe file """
-        self.dbSignal.transcribe.emit(self.transferList)  
+        self.fileSignal.transcribe.emit(self.transferList)  
         
     def _setColorRow(self, rowIdx, color):
         """ change the color of the row at rowIdx """

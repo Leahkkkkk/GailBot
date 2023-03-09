@@ -9,7 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 Description: implement the main window for the GUI interface
 '''
-from typing import List, Dict
+from typing import List, Dict, Tuple
 import logging 
 import os 
 import shutil
@@ -24,7 +24,7 @@ from view.components import (
     Console, 
 )
 
-from view import Signals
+from view.Signals import FileSignals, ViewSignals, ProfileSignals
 from view.components import WorkSpaceDialog
 from view.widgets import MsgBox
 from config.Style import Dimension
@@ -36,9 +36,7 @@ from config.Text import About
 from PyQt6.QtCore import QSize, QObject, pyqtSignal
 from PyQt6.QtWidgets import QMainWindow
 
-class ViewSignals(QObject):
-    restart = pyqtSignal()
-    
+
 class MainWindow(QMainWindow):
     """ mainwindow  of the GUI App"""
     def __init__(
@@ -53,8 +51,8 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.logger = Logger.makeLogger("F")
         self.logger.info(f"start to initialize view object, get available profile {setting_data}")
-        self.fileTableSignals = Signals.FileSignals()
-        self.profileSignals = Signals.ProfileSignals()
+        self.fileTableSignals = FileSignals()
+        self.profileSignals = ProfileSignals()
         self.viewSignal = ViewSignals()
         self.logger.info(f"initialized signals")
         self.StatusBar = StatusBar.StatusBar()
@@ -131,11 +129,33 @@ class MainWindow(QMainWindow):
         self.MainStack.changeToTranscribed(key)
     
     def closeEvent(self, a0) -> None:
+        """  called when application closes """
         super().closeEvent(a0)
-        # self._copylog() TODO: delete
     
+    def addProfile(self, profileName:str) -> None:
+        """ add a new profile with name being profileName to the profile 
+            setting page and file table file profile options
+        """
+        self.MainStack.ProfileSettingPage.addProfile(profileName)
+        self.MainStack.FileUploadPage.fileTable.addProfile(profileName)
+    
+    def deleteProfile(self, profileName:str) -> None: 
+        """ delete profile with name being profileName from the profile 
+            setting page and file table file profile options
+        """
+        self.MainStack.FileUploadPage.fileTable.deleteProfile(profileName)
+        self.MainStack.ProfileSettingPage.deleteProfileConfirmed(True)
+        
+    def loadProfile(self, data: Tuple[str, Dict]):
+        self.MainStack.ProfileSettingPage.loadProfile(data)
+        
     def showError(self, errorMsg:str):
         MsgBox.WarnBox(errorMsg) 
+    
+    def addPlugin(self, pluginName: str): 
+        self.MainStack.ProfileSettingPage.addPluginHandler(pluginName)
+      
+        
     """ private function """
     def _connectSignal(self):
         """ connect to signal """

@@ -4,7 +4,7 @@ import psutil
 from typing import Any, Callable, Tuple, List, Dict
 import os
 import glob
-import json
+import json 
 import yaml
 import toml
 import csv
@@ -62,15 +62,6 @@ def get_name(path : str) -> str:
             return os.path.basename(dir_path)
     except:
         return False
-
-def delete(path : str) -> None:
-    """ given a path, delete the file """
-    if is_file(path):
-        Path(path).unlink(missing_ok=True)
-    elif is_directory(path):
-        shutil.rmtree(path)
-    else:
-        return False
     
     
 def is_file(file_path: str) -> bool:
@@ -97,10 +88,43 @@ def is_directory(dir_path: str) -> bool:
         return False
 
 
-def zip_file(source: str, tgt: str):
-    files = paths_in_dir(source, ["log"])
-    with ZipFile(tgt,'w') as zip:
-        # writing each file one by one
-        for file in files:
-            zip.write(file)
+def zip_file(source: str, tgt: str) -> bool:
+    """ zip the file from source and output a zipped file to tgy=t"""
+    try:
+        files = paths_in_dir(source)
+        with ZipFile(tgt,'w') as zip:
+            # writing each file one by one
+            for file in files:
+                zip.write(file)
+        return True
+    except Exception as e:
+        logging.error(e)
+        return False
              
+        
+def copy(src_path, tgt_path : str) -> str:
+    """ copy the file from the source path to the target path """
+    try:
+        if is_file(src_path):
+            return shutil.copy(src_path, tgt_path)
+        elif is_directory(src_path):
+            return shutil.copytree(src_path, tgt_path,dirs_exist_ok=True)
+        else:
+            logging.error("not a valid file path")
+    except Exception as e:
+        logging.error(e)
+        return False
+    
+def delete(path : str) -> None:
+    """ given a path, delete the file """
+    try: 
+        if is_file(path):
+            Path(path).unlink(missing_ok=True)
+        elif is_directory(path):
+            shutil.rmtree(path)
+        else:
+            logging.error("not a valid path")
+            return False
+    except Exception as e:
+        logging.error(e)
+        return False

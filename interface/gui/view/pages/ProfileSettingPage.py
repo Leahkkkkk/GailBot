@@ -81,14 +81,10 @@ class ProfileSettingPage(QWidget):
             Text.newProfileBtn,Color.PRIMARY_BUTTON)
         self.requiredSetBtn = Button.BorderBtn(
             Text.reuquiredSetBtn, Color.GREYDARK, FS.BTN, 0, SS.onlyTopBorder)
-        
-        self.GuideLink = Label.Label(Links.guideLinkSideBar, FS.LINK, link=True)
         self.newPluginBtn = Button.ColoredBtn(
             Text.newPluginBtn, Color.PRIMARY_BUTTON)
         self.pluginBtn = Button.BorderBtn(
             Text.pluginSetBtn, Color.GREYDARK, FS.BTN, 0, SS.onlyBottomBorder)
-        self.versionLabel = Label.Label(About.version, FS.SMALL)
-        self.copyRightLabel = Label.Label(About.copyRight, FS.SMALL)
         self.settingStack = QStackedWidget(self)
         self.RequiredSetPage = RequiredSettingPage.RequiredSettingPage()
         self.PluginPage = PluginPage.PluginPage()
@@ -120,11 +116,8 @@ class ProfileSettingPage(QWidget):
         self.sideBar.addWidget(self.newProfileBtn)
         self.sideBar.addWidget(self.saveBtn)
         self.sideBar.addWidget(self.cancelBtn)
-        self.sideBar.addWidget(self.deleteBtn)
         self.sideBar.addStretch()
-        self.sideBar.addWidget(self.GuideLink, alignment=bottom)
-        self.sideBar.addWidget(self.versionLabel, alignment=bottom)
-        self.sideBar.addWidget(self.copyRightLabel, alignment=bottom)
+        self.sideBar.addFooter() 
         self.horizontalLayout.addWidget(self.sideBar)
         self.horizontalLayout.addWidget(self.settingStack)
         self.settingStack.setContentsMargins(0,0,0,0)
@@ -138,7 +131,7 @@ class ProfileSettingPage(QWidget):
         self.newProfileBtn.clicked.connect(self.createNewSetting)
         self.saveBtn.clicked.connect(self.updateProfile)
         self.newPluginBtn.clicked.connect(self.addPluginRequest)
-        self.deleteBtn.clicked.connect(self._deleteProfile)
+        self.RequiredSetPage.deleteBtn.clicked.connect(self._deleteProfile)
   
     def _activeRequiredSet(self):
         """ switches current page from post transcription settings page to required settings page """
@@ -201,7 +194,8 @@ class ProfileSettingPage(QWidget):
             key, data = profile 
             self.selectSettings.setCurrentText(key)
             self.RequiredSetPage.setValue(data["engine_setting"])
-        except:
+        except Exception as e:
+            self.logger.error(e)
             WarnBox("An error occurred when loading the profile")
             
     def addProfile (self, profileName:str):

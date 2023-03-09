@@ -23,7 +23,6 @@ class ConfigPath(DataclassFromDict):
     default: str = field_from_dict()
     log: str = field_from_dict()
     config: str = field_from_dict()
-    root:str = field_from_dict()
     paths_config: str = field_from_dict()
     services: str = field_from_dict()
 

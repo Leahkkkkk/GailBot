@@ -1,5 +1,5 @@
 [links]
-HILAB = "https://sites.tufts.edu/hilab/"
+HILAB = "https://sites.tufts.edu/hilab"
 USER_MANUAL = "https://drive.google.com/file/d/1NnirL5-26j3xnI4yEV7cJVUEqxrFfTm5/view?usp=sharing"
 GUIDE = "https://drive.google.com/file/d/1t_-NAM0PCFHhjZ4Kpry2LuhLcXZTDG07/view?usp=sharing"
 
@@ -31,7 +31,7 @@ startBtnText              = "Get Started"
 instructionText           = "How GailBot Works"
 resourcesText             = "Resources"
 tutorialText              = "GailBot User Manual"
-guideText                 = "GailBot Settings Guide"
+guideText                 = "GailBot Technical Document"
 gbLinkText                = "Tufts Human Interaction Laboratory"
 moreInfoText              = "For more information, visit:"
 firstLaunchHeader         = "Welcome to GailBot's initial setup"
@@ -180,10 +180,11 @@ outputSetHeader = "Output File Format Settings"
 [MenuBar]
 console = "Console"
 open    = "Open"
-close   = "close"
-help    = "help"
-contact = "contact us"
+close   = "Close"
+help    = "Help"
+contact = "Contact Us"
 email = "hillab@tufts.edu"
+mailFailed = "Cannot open mail application on your computer, please contact us by sending email to: hilab@tufts.edu"
 
 
 [btnText]

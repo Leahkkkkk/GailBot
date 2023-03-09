@@ -70,7 +70,7 @@ class ProfileOrganizer:
         name, data = profile
         data = data.copy() 
         try:
-            if name in self.data or self.gb.is_setting(name): 
+            if self.gb.is_setting(name): 
                 self.signals.error.emit("duplicated profile name") 
                 self.logger.error(f"Duplicated profile name {name}")
             elif not self.gb.create_new_setting(name, data):
@@ -80,7 +80,6 @@ class ProfileOrganizer:
                 self.signals.error.emit("profile cannot be saved locally")
                 self.logger.error(f"profile cannont be saved locally")
             else:
-                self.data[name] = data
                 self.logger.info(f"New profile created {name}, {data}")
                 self.signals.profileAdded.emit(name)
         except Exception as e:

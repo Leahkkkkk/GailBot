@@ -4,6 +4,9 @@
 # @Last Modified by:   Muhammad Umair
 # @Last Modified time: 2023-02-07 17:53:46
 
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
+
 import sys
 import os
 import json
@@ -11,7 +14,6 @@ from typing import List, Dict, Any
 from dataclasses import asdict
 
 import torch
-
 import gailbot.core.engines.whisperEngine.whisperTimestamped as whisper
 from gailbot.core.engines.whisperEngine.whisperTimestamped.utils import (
     force_cudnn_initialization

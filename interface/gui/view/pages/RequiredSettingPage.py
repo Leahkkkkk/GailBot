@@ -9,11 +9,12 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
  
-from config.Style import FontSize,FontFamily
+from config.Style import FontSize,FontFamily, Color
 from config.Text import ProfilePageText as Text
 from view.widgets import  Label
 from view.components import RequiredSettingForm
 from view.widgets.MsgBox import WarnBox
+from view.widgets.Button import ColoredBtn
 from PyQt6.QtWidgets import (
     QWidget, 
     QVBoxLayout, 
@@ -52,7 +53,9 @@ class RequiredSettingPage(QWidget):
             Text.requiredSetHeader, FontSize.HEADER2, FontFamily.MAIN )
         self.description = Label.Label(
             Text.requiredSetCaption, FontSize.DESCRIPTION, FontFamily.MAIN )
-
+        self.deleteBtn = ColoredBtn (
+            Text.deleteBtn, Color.CANCEL_QUIT
+        )
         self.form = RequiredSettingForm.RequiredSettingForm()
     
     def _initLayout(self):
@@ -63,6 +66,7 @@ class RequiredSettingPage(QWidget):
                               alignment=center)
         self.layout.addWidget(self.description,
                               alignment=center)
+        self.layout.addWidget(self.deleteBtn, alignment=center)
         self.layout.addWidget(self.form, 
                               alignment=center)
         self.layout.addStretch()

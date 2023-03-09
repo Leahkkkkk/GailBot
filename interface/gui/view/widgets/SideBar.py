@@ -11,7 +11,9 @@ Description: a side bar widget
 '''
 
 from view.widgets.Background import initSideBarBackground
-from config.Style import Dimension
+from view.widgets.Label import Label
+from config.Style import Dimension, Color, FontSize
+from config.Text import About, Links
 
 from PyQt6.QtWidgets import (
     QWidget, 
@@ -49,4 +51,12 @@ class SideBar(QWidget):
         """ adds a stretch to the sidebar """
         self.verticalLayout.addStretch()
         
+    def addFooter(self) -> None:
+        self.GuideLink = Label(Links.guideLinkSideBar, FontSize.LINK, link=True)
+        self.versionLabel = Label(About.version, FontSize.SMALL)
+        self.copyRightLabel = Label(About.copyRight, FontSize.SMALL)
+        self.addWidget(self.GuideLink)
+        self.addWidget(self.versionLabel)
+        self.addWidget(self.copyRightLabel)
+        self.verticalLayout.addSpacing(30) 
         

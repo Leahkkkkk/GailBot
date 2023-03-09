@@ -10,14 +10,23 @@ Modified By:  Siara Small  & Vivian Li
 Description: main driver for a GUI app that support front and interface to 
              allow user transcribe file using gailbot 
 '''
+from config.Path import getProjectRoot
+import hooks
+import ssl
+import os 
+
 if __name__ == '__main__':
+    # add project path to program environment path
+    # this is added for the packaged app to be able to tun binary file ffmpeg 
+    os.environ["PATH"] += os.pathsep + getProjectRoot()
+    ssl._create_default_https_context = ssl._create_unverified_context
     
     import multiprocessing
     multiprocessing.freeze_support()
     from multiprocessing import Process, Queue
     from controller.Driver import run 
+    
     EXIT_CODE_REBOOT = -20000
-
     exitCodeQueue = Queue()
     exitCode = EXIT_CODE_REBOOT   
     while exitCode == EXIT_CODE_REBOOT:

@@ -12,7 +12,7 @@ Model view controller than connect ths database to a front end view object
 '''
 
 from util.Logger import makeLogger
-from view.MainWindow import MainWindow
+from view import ViewController
 from model.organizer import FileOrganizer, PluginOrganizer, ProfileOrganizer
 
 
@@ -38,7 +38,7 @@ class MVController:
     """
     def __init__(
         self, 
-        view: MainWindow, 
+        view: ViewController, 
         fileOrganizer: FileOrganizer, 
         profileOrganizer: ProfileOrganizer, 
         pluginOrganizer: PluginOrganizer) -> None:  
@@ -65,19 +65,19 @@ class MVController:
         dbSignal = self.fileOrganizer.signals
         view = self.view
         # connect database response to view to display change
-        dbSignal.fileAdded.connect(view.addFileToTables)
+        dbSignal.fileAdded.connect(view.addFile)
         dbSignal.fileUpdated.connect(view.updateFile)
         
         # handle file database's request to load the profile of one file
         dbSignal.profileRequest.connect(self.profileOrganizer.get)
-        dbSignal.error.connect(self.view.showError)
+        dbSignal.error.connect(self.view.showErr)
      
     def _connectViewToFileDB(self):
         """ connect the signal from the view to file database  
             store, delete or edit the database based on the view's request
         """
         self.logger.info("initialize model&view connection")
-        viewSignal = self.view.fileTableSignals
+        viewSignal = self.view.getFileSignal()
         db = self.fileOrganizer
         # handle view's request to pfost new file
         viewSignal.postFile.connect(db.post)
@@ -87,13 +87,15 @@ class MVController:
         viewSignal.changeProfile.connect(db.editFileProfile)
         # handle view's reuqesgt to see file profile
         viewSignal.requestprofile.connect(db.requestProfile)
+        # handle remove file 
+        viewSignal.delete.connect(db.delete)
     
     def _connectViewToPluginDB(self):
         """ connect the signal from the view to plugin database  
             store, delete or edit the database based on the view's request
         """
         self.logger.info("initialize model&view connection")
-        viewSignal = self.view.profileSignals
+        viewSignal = self.view.getProfileSignal()
         # handle view's request to load new plugin
         viewSignal.addPlugin.connect(self.pluginOrganizer.post)
     
@@ -103,16 +105,15 @@ class MVController:
         """
         self.logger.info("initialize model&view connection")
         dbSignal = self.pluginOrganizer.signals
-        view = self.view.MainStack.ProfileSettingPage
         # reflect the plugin database's changes on view
-        dbSignal.pluginAdded.connect(view.addPluginHandler)
+        dbSignal.pluginAdded.connect(self.view.addPlugin)
         
     def _connectViewToProfileDB(self):
         """ connect the signal from the view to profile database  
             store, delete or edit the database based on the view's request
         """
         self.logger.info("initialize model&view connection")
-        viewSignal = self.view.profileSignals
+        viewSignal = self.view.getProfileSignal()
         db = self.profileOrganizer
         # handle view's request to post new profile
         viewSignal.post.connect(db.post)
@@ -129,17 +130,12 @@ class MVController:
         """
         self.logger.info("initialize model&view connection")
         dbSignal = self.profileOrganizer.signals
-        profileView = self.view.MainStack.ProfileSettingPage
-        fileView = self.view.MainStack.FileUploadPage.fileTable
         # connect db's response to load profile data 
-        dbSignal.send.connect(profileView.loadProfile)
+        dbSignal.send.connect(self.view.loadProfile)
         # connect db's response to add new profile selection on view
-        dbSignal.profileAdded.connect(profileView.addProfile)
-        dbSignal.profileAdded.connect(fileView.addProfile)
-        dbSignal.deleted.connect(profileView.deleteProfileConfirmed)
-        
+        dbSignal.profileAdded.connect(self.view.addProfile) 
+        dbSignal.deleteProfile.connect(self.view.deleteProfile)
         dbSignal.deleteProfile.connect(self.fileOrganizer.profileDeleted)
-        dbSignal.deleteProfile.connect(fileView.deleteProfile)
-        dbSignal.error.connect(self.view.showError)
+        dbSignal.error.connect(self.view.showErr)
         
     

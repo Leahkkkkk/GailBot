@@ -13,7 +13,6 @@ Description: a pop up dialogue that opens during the first launch of the
 
 import os 
 import toml 
-
 from view.widgets import Label, Button, MsgBox
 from view.widgets.MsgBox import WarnBox
 from PyQt6.QtWidgets import QDialog, QFileDialog, QVBoxLayout
@@ -22,9 +21,9 @@ from config.Style import Color, FontFamily, FontSize, Dimension
 from config.Path import getProjectRoot
 from config.Text import WelcomePageText as Text 
 from util.Logger import makeLogger
+from util.io import copy, delete
 from config.GailBotData import getWorkBasePath
 from PyQt6.QtCore import QSize, Qt
-from util.io import is_file, delete
 import userpaths
 
 center = Qt.AlignmentFlag.AlignHCenter
@@ -92,17 +91,6 @@ class WorkSpaceDialog(QDialog):
              
             if not os.path.isdir(self.userRoot):
                 os.mkdir(self.userRoot)
-            
-            #TODO: delete this 
-            # # create the backend toml file
-            # backend_path =os.path.join(basedir, BackEndDataPath.backendroot) 
-            # print(backend_path)
-            
-            # if is_file(backend_path):
-            #     delete(backend_path)
-            # with open(backend_path, "w+") as f:
-            #     toml.dump({"root": self.userRoot}, f)
-            # # write_toml({"root": self.workDir}, backend_path)
        
         except Exception as e:
             self.logger("error when creating file to store user workspace {e}")
@@ -119,6 +107,8 @@ class ChangeWorkSpace(WorkSpaceDialog):
     """  a subclass of the original workspace dialog, with changed labels """
     def __init__(self, *arg, **kwargs) -> None:
         super().__init__(*arg, **kwargs)
+        self.oldRoot = self.userRoot
+        self.logger.info(f"old work space root {self.oldRoot}")
         
     def _initWidget(self):
         """ initialize the widget """
@@ -128,7 +118,7 @@ class ChangeWorkSpace(WorkSpaceDialog):
         self.label = Label.Label(
             " ", FontSize.BODY, others="text-align:center;")
         self.displayPath = Label.Label(
-            f"GailBot Work Space Path: {self.workDir}/{USER_ROOT_NAME}", 
+            f"GailBot Work Space Path: {self.workDir}", 
             FontSize.BODY, FontFamily.MAIN, 
             others=f"border: 1px solid {Color.MAIN_TEXT}; text-align:center;")
         self.confirm = Button.ColoredBtn("Confirm", Color.SECONDARY_BUTTON)
@@ -139,3 +129,10 @@ class ChangeWorkSpace(WorkSpaceDialog):
         self.setStyleSheet(f"background-color:{Color.MAIN_BACKGROUND}")
         self.setFixedSize(QSize(500,350))
     
+    def _onConfirm(self):
+        super()._onConfirm()
+        try:
+            copy(self.oldRoot, self.userRoot)
+            delete(self.oldRoot)
+        except Exception as e:
+            self.logger.error(f"Error in moving GailBot folder {e}")

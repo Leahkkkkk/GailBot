@@ -22,14 +22,16 @@ from config_gui.ConfigPath import BackEndDataPath
 from config.Path import getProjectRoot
 from model import Model, FileObj
 from controller.TranscribeController import TranscribeController
-from controller.MVController import MVController# TODO: why
-from view import MainWindow
-from view.components import WorkSpaceDialog
+from controller.MVController import MVController 
 from util import Logger, LogMsgFormatter
 from config.GailBotData import getWorkPath, FileManage
 from gailbot.api import GailBot
 
+# import from view 
+from view import ViewController
+from view import WorkSpaceDialog
 from PyQt6.QtCore import pyqtSlot, QObject, QThreadPool, pyqtSignal
+
 class Signal(QObject):
     """ a signal object that contains signal for communication between 
         backend transcription process and frontend view object"""
@@ -59,19 +61,24 @@ class Controller(QObject):
     def __init__(self):
         super().__init__()
         self.signal = Signal()
-        userRoot = self.prelaunch()
-        self.logger = Logger.makeLogger("B")
+        # get the user's work space root 
+        userRoot = self._prelaunch()
+        
+        # create logger
+        self.logger = Logger.makeLogger("F")
         self.logger.info(f"controller initialized")
         self.logger.info(userRoot)
+        
+        # initialize the application
         self.initApp(userRoot)
+        
         # remove this to the top level
         self.logger.info(os.environ["PATH"])
-        os.environ["PATH"] += os.pathsep + getProjectRoot()
         self.logger.info(os.environ["PATH"])
         self.logger.info(os.getcwd())
         self.logger.info(getProjectRoot())
         
-    def prelaunch(self) -> str:
+    def _prelaunch(self) -> str:
         """ run before initializing the app to create a toml file that stores
             the user's root
 
@@ -92,18 +99,22 @@ class Controller(QObject):
     
     def initApp(self, userRoot) -> bool:
         try:
+            # initialize gailbot
             self.gb = GailBot(userRoot)
             assert self.gb
             self.logger.info("GailBot initialized")
             
+            # initialize model which stores the data from users
             self.model = Model(self.gb)
             assert self.model
             self.logger.info("model initialized")
             
-            self.ViewObj = MainWindow.MainWindow(self.gb.get_all_settings_data())
+            # initialize view object
+            self.ViewObj = ViewController(self.gb.get_all_settings_data())
             assert self.ViewObj
             self.logger.info("View Object initialized")
             
+            # initialize model view controller for dynamically changing view
             self.MVController = MVController(
                 self.ViewObj, 
                 self.model.fileOrganizer, 
@@ -112,9 +123,11 @@ class Controller(QObject):
             assert self.MVController
             self.logger.info("MV Controller initialized")
             
+            # initialize thread 
             self.threadPool = QThreadPool()
             self.logger.info("Threadpool initialized")
             
+            # initialize transcribe controller
             self.transcribeController = TranscribeController(
                 self.threadPool, self.ViewObj, self.gb)
             assert self.transcribeController
@@ -132,7 +145,6 @@ class Controller(QObject):
             self.logger.info("connect to view")
         except Exception as e:
             self.logger.error(f"error connecting to view {e}")
-        
         try:
             self.ViewObj.show()
             self.MVController.exec()
@@ -146,20 +158,20 @@ class Controller(QObject):
     def restart(self):
         """ send signal to restart the application, the owner of controller 
             class is expected to handle this signal by relaunching the application
-            
         """
         self.signal.restart.emit()
         
     def _handleViewSignal(self):
         """ handling signal to change the interface content from view object  """
-        self.ViewObj.viewSignal.restart.connect(self.restart)
+        self.ViewObj.getViewSignal().restart.connect(self.restart)
         
     ###################   gailbot  handler #############################   
     def _handleTranscribeSignal(self):
         """ handle signal from View that requests to transcribe the file"""
-        self.ViewObj.fileTableSignals.transcribe.connect(self._transcribeFiles)
+        self.ViewObj.getFileSignal().transcribe.connect(self._transcribeFiles)
         self.signal.fileProgress.connect(
             self.model.fileOrganizer.updateFileProgress)
+        
         
     @pyqtSlot(set)
     def _transcribeFiles(self, files: Set[str]):

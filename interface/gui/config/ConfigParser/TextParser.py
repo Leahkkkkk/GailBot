@@ -19,13 +19,6 @@ from os.path import exists
 from dict_to_dataclass import DataclassFromDict, field_from_dict
 
 
-""" 
-   TODO: load the config file dynamically 
-    
-    - load either from user toml or interface toml 
-    - get the root path 
-
-"""
 #############################  about data ################################
 year = datetime.date.today().strftime("%Y")
 copyRightText = f"Copyright {year} © HI Lab"
@@ -234,6 +227,7 @@ class MenuBarText(DataclassFromDict):
     help : str = field_from_dict()
     contact : str = field_from_dict()
     email: str = field_from_dict()
+    mailFailed: str = field_from_dict()
 
 @dataclass
 class OutputFormatFormData(DataclassFromDict):

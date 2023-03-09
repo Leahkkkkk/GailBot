@@ -15,6 +15,7 @@ from dataclasses import dataclass
 from typing import List, Dict
 from util.Error import ErrorMsg, ThreadException, ErrorFormatter
 from view.MainWindow import MainWindow
+from view import ViewController
 from controller.BackendRunnable.DummyRunnable import Worker as DummyWorker
 from util.Logger import makeLogger
 from config.GailBotData import ThreadControl
@@ -40,12 +41,12 @@ class Signal(QObject):
 
 
 class TranscribeController(QObject):
-    def __init__(self, ThreadPool: QThreadPool, view: MainWindow, gb: GailBot):
+    def __init__(self, ThreadPool: QThreadPool, view: ViewController, gb: GailBot):
         """ a controller that controls the transcription process
 
         Constructor Args:
             ThreadPool (QThreadPool): a threadpool provided by the parent 
-            view (MainWindow): view object that handle the signal from the 
+            view (ViewController): view object that handle the signal from the 
                                backend
             files (list): a list of files to be transcribed
         
@@ -65,7 +66,7 @@ class TranscribeController(QObject):
         self.signal = Signal()
         self.gb = gb
         # connect to view handler for over-loaded threadpool
-        self.signal.busy.connect(view.busyThreadPool)
+        self.signal.busy.connect(view.busyThreadWarning)
         
         # view handler to redirect to different pages based on the 
         # transcribe result 
@@ -75,16 +76,16 @@ class TranscribeController(QObject):
         
         # view handler to show transcription status
         self.signal.progress.connect(view.showStatusMsg)
-        self.signal.progress.connect(view.showFileProgress)
+        self.signal.progress.connect(view.showFilesTranscriptionProgress)
         
         # view handler for transcription field 
-        self.signal.error.connect(view.TranscribeFailed)
+        self.signal.error.connect(view.showErr)
         
         # view handler for change file display when transcription succeed
-        self.signal.fileTranscribed.connect(view.changeFiletoTranscribed)
+        self.signal.fileTranscribed.connect(view.changeFileToTranscribed)
         
         # handle view request to cancel gailbot
-        view.fileTableSignals.cancel.connect(self.cancelGailBot)
+        view.getFileSignal().cancel.connect(self.cancelGailBot)
 
     def runGailBot(self, files: Dict[str, str]):
         # pass 

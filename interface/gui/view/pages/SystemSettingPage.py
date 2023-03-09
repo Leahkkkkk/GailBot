@@ -117,13 +117,11 @@ class SystemSettingPage(QWidget):
             self.saveLogBtn, alignment=Qt.AlignmentFlag.AlignRight)
        
         self.Mainstack.addWidget(self.SysSetForm)
-        self.GuideLink = Label.Label(Links.guideLinkSideBar, FontSize.LINK, link=True)
         self.cancelBtn = Button.ColoredBtn(
             Text.cancelBtn, Color.CANCEL_QUIT)
         self.saveBtn = Button.ColoredBtn(
             Text.saveBtn, Color.SECONDARY_BUTTON)
-        self.versionLabel = Label.Label(About.version, FontSize.SMALL)
-        self.copyRightLabel = Label.Label(About.copyRight, FontSize.SMALL)
+     
         self.deleteContainer = QWidget()
         self.deleteLayout = QHBoxLayout()
         self.changeDirContainer = QWidget()
@@ -142,7 +140,7 @@ class SystemSettingPage(QWidget):
         dialog.exec()
         directory = getWorkBasePath()
         self.directoryDisplay.setText(
-            f"    Current work space: {directory}/GailBot"
+            f"    Current work space: {directory}"
         )
     
     def _initLayout(self):
@@ -159,10 +157,8 @@ class SystemSettingPage(QWidget):
         self.sideBar.addWidget(self.saveBtn)
         self.sideBar.addWidget(self.cancelBtn)
         self.sideBar.addStretch()
-        self.sideBar.addWidget(self.GuideLink, alignment=bottom)
-        self.sideBar.addWidget(self.versionLabel, alignment=bottom)
-        self.sideBar.addWidget(self.copyRightLabel, alignment=bottom)
-    
+        self.sideBar.addFooter()
+         
         self.deleteContainer.setLayout(self.deleteLayout)
         self.deleteLayout.addWidget(self.deleteLogLabel)
         self.deleteLayout.addSpacing(55)

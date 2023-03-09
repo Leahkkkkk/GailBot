@@ -8,14 +8,11 @@ DEFAULT_SETTING_NAME = "Default"
 
 """ TODO: put this under toml file """
 DEFAULT_SETTING = {
-    "engine_setting": {
-     "engine": "whisper",
-     "transcribe": {
+    "engine_setting":{
+         "engine"  : 'whisper',
          "language": "English",
          "detect_speakers": False,
      },
-     "init": {}
-    },
     "plugin_setting": []
 }
 
@@ -69,7 +66,7 @@ class Organizer:
             return False
         
     def create_new_setting(
-        self, setting_name: str, setting: Dict[str, str]) -> bool: 
+        self, setting_name: str, setting: SettingDict) -> bool: 
         return self.setting_manager.add_new_setting(setting_name, setting)
     
     def save_setting_profile(self, setting_name: str) -> str:

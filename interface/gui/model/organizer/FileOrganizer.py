@@ -142,14 +142,11 @@ class FileOrganizer:
         try:
             if key in self.data and self.gb.remove_source(self.data[key].Name):
                 del self.data[key]
-                self._updateFileResponse(key, "Status", "deleted")
-                if key not in self.data:
-                    self.signals.deleted.emit(key)
-                else:
+                if key in self.data:
                     raise DBException(ErrorMsg.DELETEEROR)
             else:
-                self.signals.error.emit(ErrorMsg.KEYERROR)
-                self.logger.error(ErrorMsg.KEYERROR)
+                self.signals.error.emit(f"failed to remove {self.data[key].Name} from the database")
+                self.logger.error(f"file key {key} is not found")
         except DBException as err:
             self.signals.error.emit(err)
             self.logger.error(err)
