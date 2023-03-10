@@ -128,8 +128,7 @@ class OpenFile(TabPage):
         """ initializes the dimensions """
         self.logger.info("")
         self.fileDisplayList.setFixedSize(QSize(Dimension.SMALL_TABLE_WIDTH,
-                                                Dimension.SMALL_TABLE_HEIGHT))
-        
+                                                Dimension.SMALL_TABLE_HEIGHT)) 
     
     def _pathToFileObj(self, path):  
         """ converts the file path to a file object  """  
@@ -151,7 +150,7 @@ class OpenFile(TabPage):
         self.logger.info("")
         try:
             dialog = QFileDialog()
-            dialog.setDirectory(userpaths.get_desktop())
+            # dialog.setDirectory(userpaths.get_desktop())
             fileFilter = Text.fileFilter
             selectedFiles = dialog.getOpenFileNames(filter = fileFilter)
             if selectedFiles:
@@ -162,7 +161,7 @@ class OpenFile(TabPage):
                 else:
                     WarnBox("No file is uploaded by user")   
                 for file in files:
-                    self._addFileToFileDisplay(file)
+                    self._addFileToFileDisplay(file, icon="🔊")
             else:
                 WarnBox("No file is uploaded is uploaded by user")
                 self.logger.warn("No file is uploaded by user")
@@ -174,12 +173,12 @@ class OpenFile(TabPage):
         self.logger.info("")
         try:
             dialog = QFileDialog() 
-            dialog.setDirectory(userpaths.get_desktop())
+            # dialog.setDirectory(userpaths.get_desktop())
             selectedFolder = dialog.getExistingDirectory()
             
             if selectedFolder:
                 self.filePaths = self.filePaths + [selectedFolder]
-                self._addFileToFileDisplay(selectedFolder)
+                self._addFileToFileDisplay(selectedFolder, icon="📁")
                 if self.filePaths:
                     self.signals.nextPage.emit()
             else:
@@ -187,13 +186,13 @@ class OpenFile(TabPage):
         except:
             WarnBox("An error occurred when getting the uploaded folder")
 
-    def _addFileToFileDisplay(self, file):
+    def _addFileToFileDisplay(self, file, icon = "📁"):
         """ add the file to the file display table """
         self.logger.info("")
         try:
             row = self.fileDisplayList.rowCount()
             self.fileDisplayList.insertRow(row)
-            newFile = QTableWidgetItem(file)
+            newFile = QTableWidgetItem(icon + file)
             self.fileDisplayList.setItem(row, 0, newFile)
             # self.fileDisplayList.resizeColumnsToContents()
             self.fileDisplayList.resizeRowsToContents()
@@ -238,7 +237,7 @@ class ChooseSet(TabPage):
     def _initLayout(self):
         """ initializes the layouts """
         self.logger.info("")
-        self.layout = QHBoxLayout()
+        self.layout = QVBoxLayout()
         self.setLayout(self.layout)
         self.layout.addWidget(self.label)
         self.layout.addWidget(self.selectSettings)

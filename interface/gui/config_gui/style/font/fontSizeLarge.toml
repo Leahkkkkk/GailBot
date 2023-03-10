@@ -2,7 +2,7 @@
 BODY                = "15px"
 TEXT_FIELD          = "15px"
 SMALL               = "11px"
-LINK                = "18px"
+LINK                = "15px"
 HEADER1             = "40px"
 HEADER2             = "28px"
 HEADER3             = "24px"

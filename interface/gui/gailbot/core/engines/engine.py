@@ -35,7 +35,6 @@ class Engine(ABC):
     def was_transcription_successful(self) -> bool:
         """ return true if the transcription is successful """
         pass 
-    
 
     @abstractmethod
     def get_engine_name(self) -> str:

@@ -69,7 +69,7 @@ class ConversationDirectoryPayload(PayLoadObject):
         logger.info(file_path)
         if not is_directory(file_path):
             return False 
-        sub_paths = paths_in_dir(file_path, AudioPayload.supported_format())
+        sub_paths = paths_in_dir(file_path, AudioPayload.supported_format(), recursive=False)
         if len(sub_paths) == 0:
             return False
         return True
@@ -82,7 +82,7 @@ class ConversationDirectoryPayload(PayLoadObject):
             tgt_path = os.path.join(self.workspace.data_copy, f"{self.name}")
             copy(self.original_source, tgt_path)
             self.data_files = []
-            sub_paths = paths_in_dir(tgt_path)
+            sub_paths = paths_in_dir(tgt_path, AudioPayload.supported_format(), recursive=False)
             for path in sub_paths:
                 self.data_files.append(path)
         except Exception as e:

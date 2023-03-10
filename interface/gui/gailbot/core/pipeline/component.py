@@ -13,18 +13,18 @@ class ComponentState(Enum):
     """
     Class containing the status of a component object.
     """
-    READY = 0
+    READY   = 0
     SUCCESS = 1
-    FAILED = 2
+    FAILED  = 2
 
 @dataclass
 class ComponentResult:
     """
     Class containing the result of a component object.
     """
-    state : ComponentState = ComponentState.FAILED
-    result : Any = None
-    runtime : float  = 0
+    state   : ComponentState = ComponentState.FAILED
+    result  : Any            = None
+    runtime : float          = 0
 
 class Component:
     """

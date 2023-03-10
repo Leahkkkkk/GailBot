@@ -53,7 +53,8 @@ class TranscribeComponent(Component):
                     tasks[key] = payload
                     logger.info(f"key: {key}")
             threadpool.wait_for_all_completion()  
-            payload.set_transcribed()
+            for payload in payloads:
+                payload.set_transcribed()
         except Exception as e:
             logger.error(e)
             return ComponentResult(
@@ -97,6 +98,7 @@ class TranscribeComponent(Component):
                       engine initialization setting {engine_init_kwargs} \
                       engine transcription setting {engine_transcribe_kwargs}")
        
+
         # Transcribe behavior is different based on the type of the input
         # For example, if source contains video files, they should first be
         # extracted into audio files here.

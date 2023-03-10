@@ -10,22 +10,23 @@ Modified By:  Siara Small  & Vivian Li
 Description: a pop up dialogue that opens during the first launch of the 
              app to ask user for the path the gailbot work directory
 '''
-
 import os 
+import datetime
 import toml 
 from view.widgets import Label, Button, MsgBox
 from view.widgets.MsgBox import WarnBox
+from util.io import zip_file
 from PyQt6.QtWidgets import QDialog, QFileDialog, QVBoxLayout
 from config_gui.ConfigPath import BackEndDataPath
 from config.Style import Color, FontFamily, FontSize, Dimension
 from config.Path import getProjectRoot
-from config.Text import WelcomePageText as Text 
+from config.Text import WelcomePageText as TEXT 
 from util.Logger import makeLogger
 from util.io import copy, delete
 from config.GailBotData import getWorkBasePath
+from config.GailBotData import getWorkPath
 from PyQt6.QtCore import QSize, Qt
 import userpaths
-
 center = Qt.AlignmentFlag.AlignHCenter
 USER_ROOT_NAME = "GailBot"
 class WorkSpaceDialog(QDialog):
@@ -48,16 +49,16 @@ class WorkSpaceDialog(QDialog):
     def _initWidget(self):
         """ initialize the widget """
         self.header = Label.Label(
-            Text.firstLaunchHeader, FontSize.HEADER2, FontFamily.MAIN)
+            TEXT.firstLaunchHeader, FontSize.HEADER2, FontFamily.MAIN)
         self.label = Label.Label(
-            Text.firstLaunchInstruction, FontSize.BODY, others="text-align:center;")
+            TEXT.firstLaunchInstruction, FontSize.BODY, others="text-align:center;")
         self.label.setWordWrap(True)
         self.displayPath = Label.Label(
-            f"GailBot Work Space Path: {self.userRoot}", 
+            f"{TEXT.workspacePath}: {self.userRoot}", 
             FontSize.BODY, FontFamily.MAIN, 
             others=f"border: 1px solid {Color.MAIN_TEXT}; text-align:center;")
-        self.confirm = Button.ColoredBtn("Confirm", Color.SECONDARY_BUTTON)
-        self.choose  = Button.ColoredBtn("Change Directory", Color.PRIMARY_BUTTON)
+        self.confirm = Button.ColoredBtn(TEXT.confirmBtn, Color.SECONDARY_BUTTON)
+        self.choose  = Button.ColoredBtn(TEXT.changeDirBtn, Color.PRIMARY_BUTTON)
     
     def _initLayout(self):
         """ initialize the layout """
@@ -77,7 +78,7 @@ class WorkSpaceDialog(QDialog):
         if selectedFolder:
             self.userRoot = os.path.join(selectedFolder, USER_ROOT_NAME)
             self.displayPath.setText(
-                f"GailBot Work Space Path: {self.userRoot}")
+                f"{TEXT.workspacePath} {self.userRoot}")
     
     def _onConfirm(self):
         basedir = getProjectRoot()
@@ -103,6 +104,49 @@ class WorkSpaceDialog(QDialog):
         self.setStyleSheet(f"background-color:{Color.MAIN_BACKGROUND}")
         self.setFixedSize(QSize(600,450))
 
+class SaveLogFile(WorkSpaceDialog):
+    def __init__(self, *arg, **kwargs) -> None:
+        super().__init__(*arg, **kwargs)
+        self.userRoot = userpaths.get_desktop()
+        self.logger = makeLogger("F")
+       
+    def _initWidget(self):
+        self.userRoot = userpaths.get_desktop()
+        self.workDir = getWorkBasePath()
+        self.header = Label.Label(
+           TEXT.saveLogPrompt, FontSize.HEADER3, FontFamily.MAIN)
+        linkFormat = "<a style='color:{0};' href='mailto: {1}'> {2} \n {1}</a>"
+        self.label = Label.Label(
+            linkFormat.format(Color.MAIN_TEXT, TEXT.email, TEXT.sendZipMsg), FontSize.BODY, link=True)
+        self.displayPath = Label.Label(
+            f"{TEXT.saveLogPath}: {self.userRoot}", 
+            FontSize.BODY, FontFamily.MAIN, 
+            others=f"border: 1px solid {Color.MAIN_TEXT}; text-align:center;")
+        self.confirm = Button.ColoredBtn(TEXT.confirmBtn, Color.SECONDARY_BUTTON)
+        self.choose  = Button.ColoredBtn(TEXT.changeDirBtn, Color.PRIMARY_BUTTON)
+   
+    def _initStyle(self):
+        """ initialize the style """
+        self.setStyleSheet(f"background-color:{Color.MAIN_BACKGROUND}")
+        self.setFixedSize(QSize(500,350))
+    
+    def _openDialog(self):
+        dialog = QFileDialog() 
+        dialog.setDirectory(userpaths.get_profile())
+        selectedFolder = dialog.getExistingDirectory()
+        if selectedFolder:
+            self.userRoot = selectedFolder
+            self.displayPath.setText(
+                f"{TEXT.saveLogPath}: {self.userRoot}")
+        
+    def _onConfirm(self):
+        try:
+            logdir = getWorkPath().logFiles
+            zip_file(logdir, os.path.join(self.userRoot, f"{TEXT.zipFileName}-{datetime.datetime.now()}.zip"))
+            self.close()
+        except Exception as e:
+            self.logger.error(e)
+
 class ChangeWorkSpace(WorkSpaceDialog):
     """  a subclass of the original workspace dialog, with changed labels """
     def __init__(self, *arg, **kwargs) -> None:
@@ -114,15 +158,15 @@ class ChangeWorkSpace(WorkSpaceDialog):
         """ initialize the widget """
         self.workDir = getWorkBasePath()
         self.header = Label.Label(
-           "Change Path to GailBot Work Space", FontSize.HEADER3, FontFamily.MAIN)
+          TEXT.changeWorkDir, FontSize.HEADER3, FontFamily.MAIN)
         self.label = Label.Label(
             " ", FontSize.BODY, others="text-align:center;")
         self.displayPath = Label.Label(
-            f"GailBot Work Space Path: {self.workDir}", 
+            f"{TEXT.workspacePath}: {self.workDir}", 
             FontSize.BODY, FontFamily.MAIN, 
             others=f"border: 1px solid {Color.MAIN_TEXT}; text-align:center;")
-        self.confirm = Button.ColoredBtn("Confirm", Color.SECONDARY_BUTTON)
-        self.choose  = Button.ColoredBtn("Change Directory", Color.PRIMARY_BUTTON)
+        self.confirm = Button.ColoredBtn(TEXT.confirmBtn, Color.SECONDARY_BUTTON)
+        self.choose  = Button.ColoredBtn(TEXT.changeDirBtn, Color.PRIMARY_BUTTON)
 
     def _initStyle(self):
         """ initialize the style """

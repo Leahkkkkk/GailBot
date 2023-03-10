@@ -157,16 +157,16 @@ class ThreadPool(ThreadPoolExecutor):
         self._task_in_pool(key)
         try:
             future = self.task_pool[key]
-            logger.info(future)
-            assert future
-            logger.info(future.result())
-            assert not future.exception()
             return future.result()
-        except:
+        except Exception as e:
             logger.error(future.exception())
+            logger.error(f"task key is {key}")
             if error_fun: 
+                logger.error(e)
                 error_fun()
-            else: return False
+                return future.result()
+            else: 
+                return False
 
     def completed(self, key, error_fun: Callable = None )-> bool:
         """ 
@@ -206,6 +206,7 @@ class ThreadPool(ThreadPoolExecutor):
             Calls wait_for_task() for all tasks in the thread pool. 
         """
         for task in self.task_pool.keys():
+            logger.info(f"tries to wait for the task {task}")
             self.wait_for_task(task, error_fun)
             
 
@@ -224,6 +225,7 @@ class ThreadPool(ThreadPoolExecutor):
         Return:
             None
         """
+        logger.info(f"wait for the task {key}")
         self._task_in_pool(key)
         future = self.task_pool[key]
         try:
@@ -232,9 +234,12 @@ class ThreadPool(ThreadPoolExecutor):
             assert not future.exception()
         except Exception as e:
             logger.error(e)
-            if error_fun: error_fun()
-            else: raise ThreadError(e)
-
+            if error_fun: 
+                error_fun()
+            else: 
+                raise ThreadError(e)
+    
+    
     def cancel(self, key: int) -> bool:
         """
         Cancels the task at the given key.

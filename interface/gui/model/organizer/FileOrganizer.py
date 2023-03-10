@@ -66,7 +66,6 @@ class Signals(QObject):
     fileAdded = pyqtSignal(tuple)
     fileUpdated = pyqtSignal(tuple)
     
-
 class FileOrganizer:
     def __init__(self, gbController: GailBot) -> None:
         """ implementation of File database
@@ -138,13 +137,12 @@ class FileOrganizer:
         Args:
             key (str): the file key of the file to be deleted 
         """
-        
         self.logger.info("delete file from database")
         try:
             if key in self.data and self.gb.remove_source(self.data[key].Name):
                 del self.data[key]
                 if key in self.data:
-                    raise DBException(ErrorMsg.DELETEEROR)
+                    self.logger.error(f"file key {key} cannot be deleted from file database")
             else:
                 self.signals.error.emit(f"failed to remove {self.data[key].Name} from the database")
                 self.logger.error(f"file key {key} is not found")

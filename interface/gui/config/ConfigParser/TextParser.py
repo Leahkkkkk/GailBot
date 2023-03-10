@@ -49,6 +49,15 @@ class WelcomePageTextData(DataclassFromDict):
     moreInfoText             : str = field_from_dict()
     firstLaunchHeader        : str = field_from_dict()
     firstLaunchInstruction   :str  = field_from_dict()
+    confirmBtn               :str  = field_from_dict()
+    changeDirBtn             :str  = field_from_dict()
+    workspacePath            :str  = field_from_dict()
+    email                    :str  = field_from_dict()
+    workDirName              :str  = field_from_dict()
+    zipFileName              :str  = field_from_dict()
+    sendZipMsg               :str  = field_from_dict()
+    saveLogPrompt            :str  = field_from_dict()
+    saveLogPath              :str  = field_from_dict()
         
 @dataclass
 class TranscribeSuccessTextData(DataclassFromDict):
@@ -162,42 +171,42 @@ class ProfilePageTextData(DataclassFromDict):
 @dataclass 
 class SystemSetPageTextData(DataclassFromDict):
     """class holding the text for the system settings page"""
-    header        : str  = field_from_dict()
-    caption       : str  = field_from_dict()
-    cancelBtn     : str  = field_from_dict()
-    saveBtn       : str  = field_from_dict()
-    confirmChange : str  = field_from_dict()
-    changeError   : str  = field_from_dict()
-    clearLog      : str  = field_from_dict()
-    confirmClear  : str  = field_from_dict()
-    changeWorkSpace: str  = field_from_dict()
+    header          : str = field_from_dict()
+    caption         : str = field_from_dict()
+    cancelBtn       : str = field_from_dict()
+    saveBtn         : str = field_from_dict()
+    confirmChange   : str = field_from_dict()
+    changeError     : str = field_from_dict()
+    clearLog        : str = field_from_dict()
+    confirmClear    : str = field_from_dict()
+    changeWorkSpace : str = field_from_dict()
     
 @dataclass
 class ConfirmTranscribeTextData(DataclassFromDict):
     """class holding the text for the confirm transcription popup"""
-    confirmLabel: str = field_from_dict()
-    confirm: str = field_from_dict()
-    cancel: str = field_from_dict()
+    confirmLabel: str  = field_from_dict()
+    confirm      : str = field_from_dict()
+    cancel       : str = field_from_dict()
 
 @dataclass 
 class CreateNewProfileTextData(DataclassFromDict):
     """class holding the text for the create new settings profile page"""
-    profileName: str = field_from_dict()
-    confirmProfileNameBtn: str = field_from_dict()
-    emptyNameMsg :str = field_from_dict()
-    emptyUserMsg : str = field_from_dict()
-    engineSettingHeader: str = field_from_dict()
-    outputSettingHeader: str = field_from_dict()
-    cofirmBtn : str = field_from_dict()
+    profileName           : str = field_from_dict()
+    confirmProfileNameBtn : str = field_from_dict()
+    emptyNameMsg          : str = field_from_dict()
+    emptyUserMsg          : str = field_from_dict()
+    engineSettingHeader   : str = field_from_dict()
+    outputSettingHeader   : str = field_from_dict()
+    cofirmBtn             : str = field_from_dict()
     
 @dataclass
 class ChooseFileTabTextData(DataclassFromDict):
     """class holding the text for the choose file tab functionality"""
     WindowTitle : str = field_from_dict()
-    TabTitle : str = field_from_dict()
-    TabHeader1 : str = field_from_dict()
-    TabHeader2 : str = field_from_dict()
-    TabHeader3 : str = field_from_dict()
+    TabTitle    : str = field_from_dict()
+    TabHeader1  : str = field_from_dict()
+    TabHeader2  : str = field_from_dict()
+    TabHeader3  : str = field_from_dict()
 
 @dataclass 
 class CreateNewProfileTabTextData(DataclassFromDict):
@@ -221,13 +230,13 @@ class MainStackTextData(DataclassFromDict):
 @dataclass 
 class MenuBarText(DataclassFromDict):
     """class holding the text for the menu bar"""
-    console: str = field_from_dict()
-    open: str = field_from_dict()
-    close : str = field_from_dict()
-    help : str = field_from_dict()
-    contact : str = field_from_dict()
-    email: str = field_from_dict()
-    mailFailed: str = field_from_dict()
+    console    : str = field_from_dict()
+    open       : str = field_from_dict()
+    close      : str = field_from_dict()
+    help       : str = field_from_dict()
+    contact    : str = field_from_dict()
+    email      : str = field_from_dict()
+    mailFailed : str = field_from_dict()
 
 @dataclass
 class OutputFormatFormData(DataclassFromDict):
@@ -243,19 +252,19 @@ class OutputFormatFormData(DataclassFromDict):
 @dataclass 
 class BtnText(DataclassFromDict):
     """class holding the text for the buttons widget"""
-    on : str = field_from_dict()
-    off : str = field_from_dict()
+    on    : str = field_from_dict()
+    off   : str = field_from_dict()
     icon  : str = field_from_dict()
     right : str = field_from_dict()
-    down : str = field_from_dict()
+    down  : str = field_from_dict()
 
 
 @dataclass
 class FileTableText(DataclassFromDict):
     """class holding the text for the file table widget"""
-    default : str = field_from_dict()
-    delete : str = field_from_dict()
-    changeSet : str = field_from_dict()
+    default    : str = field_from_dict()
+    delete     : str = field_from_dict()
+    changeSet  : str = field_from_dict()
     profileDet : str = field_from_dict()
 
 @dataclass 
@@ -272,29 +281,29 @@ class WindowTitleData(DataclassFromDict):
 @dataclass
 class PopUpText(DataclassFromDict):
     """class holding the text for the pop-up component"""
-    leftArr : str = field_from_dict()
+    leftArr  : str = field_from_dict()
     rightArr : str = field_from_dict()
-    finish : str = field_from_dict()
-    window : str = field_from_dict()
+    finish   : str = field_from_dict()
+    window   : str = field_from_dict()
 
 @dataclass
 class TableText(DataclassFromDict):
     """class holding the text for the table component"""
-    location : str = field_from_dict()
+    location     : str = field_from_dict()
     postSettings : str = field_from_dict()
-    save : str = field_from_dict()
-    transBy : str = field_from_dict()
-    transOn : str = field_from_dict()
-    inDir : str = field_from_dict()
-    abtDir : str = field_from_dict()
+    save         : str = field_from_dict()
+    transBy      : str = field_from_dict()
+    transOn      : str = field_from_dict()
+    inDir        : str = field_from_dict()
+    abtDir       : str = field_from_dict()
 
 @dataclass
 class FiletableHeader(DataclassFromDict):
     """class holding the text for the file table headers"""
-    fileUploadPage: List[str] = field_from_dict()
-    confirmPage: List[str] = field_from_dict()
-    successPage:  List[str] = field_from_dict()
-    transcribePage: List[str] = field_from_dict()
+    fileUploadPage : List[str] = field_from_dict()
+    confirmPage    : List[str] = field_from_dict()
+    successPage    : List[str] = field_from_dict()
+    transcribePage : List[str] = field_from_dict()
 
 
 @dataclass
@@ -306,9 +315,9 @@ class TableWidgetOptions(DataclassFromDict):
 @dataclass 
 class ProfileField(DataclassFromDict):
     """class holding the text for the profile field component"""
-    user: str = field_from_dict()
-    engine : str = field_from_dict()
-    outPutFormat: str = field_from_dict()
-    postTranscribe : str = field_from_dict()
+    user             : str = field_from_dict()
+    engine           : str = field_from_dict()
+    outPutFormat     : str = field_from_dict()
+    postTranscribe   : str = field_from_dict()
     reuquiredSetting : str = field_from_dict()
-    plugin: str = field_from_dict()
+    plugin           : str = field_from_dict()

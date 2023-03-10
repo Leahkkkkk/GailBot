@@ -3,6 +3,6 @@
 plugin_setting = []
 
 ["HILAB default setting".engine_setting]
-"engine"         = "whisper"
-"language"       = "English"
+"engine"          = "whisper"
+"language"        = "English"
 "detect_speakers" = false

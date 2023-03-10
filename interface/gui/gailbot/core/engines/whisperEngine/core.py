@@ -109,13 +109,17 @@ class WhisperCore:
             logger.info("No language specified - auto detecting language")
 
         # Load the audio and models, transcribe, and return the parsed result
+        logger.info("prepare to load audio")
         audio = whisper.load_audio(audio_path)
+        logger.info("audio loaded")
+        
         asr_result = whisper.transcribe(
-            self.model, audio,
+            self.model, 
+            audio,
             language=language,
             **asdict(WHISPER_CONFIG.transcribe_configs)
         )
-
+            
         if WHISPER_CONFIG.transcribe_configs.verbose:
             logger.debug(parse_into_full_text(asr_result))
 

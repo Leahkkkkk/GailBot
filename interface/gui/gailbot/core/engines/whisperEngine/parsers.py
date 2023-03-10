@@ -9,9 +9,9 @@ import os
 import json
 from typing import Dict, List, Any, Tuple
 from pyannote.core import Segment
-
+from gailbot.core.utils.logger import makelogger
 _DEFAULT_SPEAKER = 0
-
+logger = makelogger("parsers")
 def parse_into_word_dicts(transcription : Dict) -> List[Dict]:
     """
     Parse the results of the transcription into a list of dictionaries
@@ -20,18 +20,22 @@ def parse_into_word_dicts(transcription : Dict) -> List[Dict]:
     Format of the transcription is detailed here: https://github.com/linto-ai/whisper-timestamped
     """
     parsed = list()
+    logger.info(f"get transcription and starts to parse it {transcription}")
     segments = transcription["segments"]
-    for segment in segments:
-        word_list = segment["words"]
-        for item in word_list:
-            parsed.append({
-                "start" : item["start"],
-                "end" : item["end"],
-                "text" : item["text"],
-                # NOTE: Whisper does not generate speaker but I can
-                # potentially add that in too.
-                "speaker" : str(_DEFAULT_SPEAKER)
-            })
+    try:
+        for segment in segments:
+            word_list = segment["words"]
+            for item in word_list:
+                parsed.append({
+                    "start" : item["start"],
+                    "end" : item["end"],
+                    "text" : item["text"],
+                    # NOTE: Whisper does not generate speaker but I can
+                    # potentially add that in too.
+                    "speaker" : str(_DEFAULT_SPEAKER)
+                })
+    except Exception as e:
+        logger.error(e)
     return parsed
 
 def parse_into_timestamped_text(asr_res : Dict) -> List[Tuple]:

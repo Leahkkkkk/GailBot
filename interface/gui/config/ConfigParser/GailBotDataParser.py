@@ -43,7 +43,7 @@ class DirectoryData(DataclassFromDict):
 class PluginData(DataclassFromDict): 
     """ data for plugin sources """
     PLUGINS_TO_APPLY: List[str] = field_from_dict()
-    HIL_PLUGIN_URL  : str       = field_from_dict()
+    HIL_PLUGIN_URL   : str      = field_from_dict()
 
 @dataclass 
 class ThreadData(DataclassFromDict): 
@@ -52,9 +52,9 @@ class ThreadData(DataclassFromDict):
 
 @dataclass 
 class WorkSpacePathData(DataclassFromDict): 
-    workSpace: str = field_from_dict()
-    frontend: str = field_from_dict()
-    logFiles: str = field_from_dict()
+      workSpace                           : str = field_from_dict()
+      frontend                            : str = field_from_dict()
+      logFiles                            : str = field_from_dict()
 
 @dataclass 
 class WorkSpaceBaseDirData(DataclassFromDict):

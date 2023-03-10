@@ -8,7 +8,7 @@ from gailbot.core.utils.logger import makelogger
 import os 
 from gailbot.workspace.manager import WorkspaceManager
 
-SUPPORTED_AUDIO = ["mp3", "wav", "opus", "mpeg"] 
+SUPPORTED_AUDIO = ["wav"] 
 logger = makelogger("audioPayload")
 
 def load_audio_payload(source: SourceObject, ws_manager: WorkspaceManager) -> Union[bool, List[PayLoadObject]]:

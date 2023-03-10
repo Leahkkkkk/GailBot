@@ -1,5 +1,5 @@
 [links]
-HILAB = "https://sites.tufts.edu/hilab"
+HILAB = "https://sites.tufts.edu/hilab/gailbot-an-automatic-transcription-system-for-conversation-analysis"
 USER_MANUAL = "https://drive.google.com/file/d/1NnirL5-26j3xnI4yEV7cJVUEqxrFfTm5/view?usp=sharing"
 GUIDE = "https://drive.google.com/file/d/1t_-NAM0PCFHhjZ4Kpry2LuhLcXZTDG07/view?usp=sharing"
 
@@ -31,12 +31,22 @@ startBtnText              = "Get Started"
 instructionText           = "How GailBot Works"
 resourcesText             = "Resources"
 tutorialText              = "GailBot User Manual"
-guideText                 = "GailBot Technical Document"
+guideText                 = "GailBot Technical Documentation"
 gbLinkText                = "Tufts Human Interaction Laboratory"
 moreInfoText              = "For more information, visit:"
 firstLaunchHeader         = "Welcome to GailBot's initial setup"
 firstLaunchInstruction    = """Please specify the path to GailBot's \
                              workspace directory on your computer.\nThis is where all internal and log files will be stored."""
+chanegeWorkDir            = "Change Path to GailBot Work Space"
+confirmBtn                = "Confirm"
+changeDirBtn              = "Change Directory"
+workspacePath             = "GailBot Work Space Path"
+email                     = "hillab@elist.edu"
+workDirName               = "GailBot"
+zipFileName               = "gailbot_log_file"
+sendZipMsg                = "You can send the zipped log file to us through the email:"
+saveLogPrompt             = "Select the path the log files will be saved to"
+saveLogPath               = "Log files saved to:"
 
 
 [FileUploadPageText]
@@ -55,7 +65,7 @@ selectSetText         = "select settings"
 selectPlaceHolderText = "None"
 selectFolderText      = "Select Folder"
 chooseOutPutText      = "Choose Output Directory"
-fileFilter            = "audio file (*.wav *.mp3 *.opus)"
+fileFilter            = "audio file (*.wav)"
 removeWarnText        = "Remove all files?"
 tabAddfile            = "Add File"
 tabAddFolder          = "Add Folder"
@@ -183,7 +193,7 @@ open    = "Open"
 close   = "Close"
 help    = "Help"
 contact = "Contact Us"
-email = "hillab@tufts.edu"
+email = "https://docs.google.com/forms/d/e/1FAIpQLSey-yx8gj2k5n-pdoSqBzBRU9q1aqWfK6laiQCxTimvuGU0hg/viewform"
 mailFailed = "Cannot open mail application on your computer, please contact us by sending email to: hilab@tufts.edu"
 
 

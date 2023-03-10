@@ -38,7 +38,7 @@ class ManuBar(QMenuBar):
         
     def sendEmail(self):
         try:
-            QDesktopServices.openUrl(QUrl("mailto:" + MenuBarText.email))
+            QDesktopServices.openUrl(QUrl(MenuBarText.email))
         except Exception as e:
             logging.error(e)
             WarnBox(MenuBarText.mailFailed)

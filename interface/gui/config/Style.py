@@ -19,26 +19,22 @@ from .ConfigParser import StyleParser
 basedir = getProjectRoot()
 
 # reading data from toml files
-color = toml.load(os.path.join (basedir, StyleDataPath.currentColor))
-fontSize = toml.load(os.path.join (basedir, StyleDataPath.currentFontSize))
-dimension = toml.load(os.path.join(basedir, StyleDataPath.dimension))
-fontFamily  = toml.load(os.path.join (basedir, StyleDataPath.fontFamily))
+color      = toml.load(os.path.join (basedir, StyleDataPath.currentColor))
+fontSize   = toml.load(os.path.join (basedir, StyleDataPath.currentFontSize))
+dimension  = toml.load(os.path.join(basedir, StyleDataPath.dimension))
+fontFamily = toml.load(os.path.join (basedir, StyleDataPath.fontFamily))
 
 
 
 # parse toml files to dataclass object
-Color = StyleParser.ColorData.from_dict(color["colors"])
-FontSize = StyleParser.FontSizeData.from_dict(
-    fontSize["fontSizes"])
-Dimension = StyleParser.DimensionData.from_dict(
-    dimension["dimension"])
-StyleSheet = StyleParser.StyleSheet.from_dict(
-    color["styleSheet"])
-Asset = StyleParser.Asset.from_dict(color["asset"])
-FileTableDimension = StyleParser.FileTableDimension.from_dict(
-    dimension["filetable"]["dimension"])
-FontFamily = StyleParser.FontFamilyData.from_dict(fontFamily ["fontFamily"])
-FontSource = StyleParser.FontSource.from_dict(fontFamily ["fontSource"])
+Color              = StyleParser.ColorData.from_dict(color["colors"])
+FontSize           = StyleParser.FontSizeData.from_dict(fontSize["fontSizes"])
+Dimension          = StyleParser.DimensionData.from_dict(dimension["dimension"])
+StyleSheet         = StyleParser.StyleSheet.from_dict(color["styleSheet"])
+Asset              = StyleParser.Asset.from_dict(color["asset"])
+FileTableDimension = StyleParser.FileTableDimension.from_dict(dimension["filetable"]["dimension"])
+FontFamily         = StyleParser.FontFamilyData.from_dict(fontFamily ["fontFamily"])
+FontSource         = StyleParser.FontSource.from_dict(fontFamily ["fontSource"])
 
 
 @dataclass

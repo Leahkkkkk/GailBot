@@ -49,7 +49,8 @@ block_cipher = None
 
 a = Analysis(
     ['../gui/app.py'],
-    pathex=["/Users/yike/opt/anaconda3/envs/gb-ui-dev/lib/python3.10/site-packages"],
+    pathex=["/Users/yike/Documents/gb-dev-env/lib/python3.10/site-packages", 
+            "/Users/yike/opt/anaconda3/envs/gb-ui-dev/lib/python3.10/site-packages"],
     binaries= binaries,
     datas=datas,
     hiddenimports=['certifi', 'ffmpeg-python', 'pyannote.audio', 'speechbrain', 'hmmlearn', 'pytorch-metric-learning', 'asteroid_filterbanks','librosa', 'pytorch', 'sklearn.utils._cython_blas', 'sklearn.neighbors.typedefs', 'sklearn.neighbors.quad_tree', 'sklearn.tree', 'sklearn.tree._utils', 'torch', 'torch-audiomentations', 'torchmetrics', 'torch-pitch-shift'],
@@ -70,11 +71,11 @@ exe = EXE(
     [],
     exclude_binaries=True,
     name='GailBot',
-    debug=True,
+    debug=False,
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
-    console=True,
+    console=False,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,

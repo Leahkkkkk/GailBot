@@ -22,7 +22,7 @@ class Organizer:
         self.source_manager  = SourceManager()
         if not self.setting_manager.is_setting(DEFAULT_SETTING_NAME):
             self.setting_manager.add_new_setting(DEFAULT_SETTING_NAME, DEFAULT_SETTING)
-            self.setting_manager.set_to_default_setting(DEFAULT_SETTING_NAME)
+        self.setting_manager.set_to_default_setting(DEFAULT_SETTING_NAME)
         
     def add_source(self, source_path: str, output: str) -> bool:
         try:

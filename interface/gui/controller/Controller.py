@@ -153,7 +153,7 @@ class Controller(QObject):
             self.logger.info("connect to transcribe signal")
         except Exception as e: 
             self.logger.error(f"error running the app {e}")
-        self._clearLog()
+        self._clearLog() 
     
     def restart(self):
         """ send signal to restart the application, the owner of controller 
@@ -200,7 +200,7 @@ class Controller(QObject):
     def _clearLog(self):
         """ clear the log that is expired"""
         currentTime = int(time.time())
-        deleteTime = currentTime - FileManage.AUTO_DELETE_TIME
+        deleteTime = currentTime - FileManage.AUTO_DELETE_TIME * 24 * 60
         logdir = getWorkPath().logFiles
         files = glob.iglob(os.path.join(logdir, "*.log"))
         for file in files:

@@ -22,7 +22,7 @@ from view.widgets import (
     Button
 )
 
-from view.components.WorkSpaceDialog import ChangeWorkSpace
+from view.components.WorkSpaceDialog import ChangeWorkSpace, SaveLogFile
 from util.io import zip_file
 from config_gui.ConfigPath import BackEndDataPath, SettingDataPath
 from config.Setting import SystemSetting, DefaultSetting
@@ -246,11 +246,7 @@ class SystemSettingPage(QWidget):
         
     def _saveLog(self):
         try:
-            dialog = QFileDialog()
-            dialog.setDirectory(userpaths.get_desktop())
-            selectedFolder = dialog.getExistingDirectory()
-            if selectedFolder: 
-                logdir = getWorkPath().logFiles
-                zip_file(logdir, os.path.join(selectedFolder, f"{ZIP_LOG_NAME}-{datetime.datetime.now()}.zip"))
+            dialog = SaveLogFile()
+            dialog.exec()
         except Exception as e:
             self.logger.error(e)
