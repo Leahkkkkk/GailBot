@@ -16,7 +16,7 @@ import shutil
 import glob
 import logging
 from util import Logger, LogMsgFormatter
-from config_gui.ConfigPath import BackEndDataPath
+from config_frontend.ConfigPath import BackEndDataPath
 from view.components import (
     MainStack, 
     StatusBar, 
@@ -25,15 +25,11 @@ from view.components import (
 )
 
 from view.Signals import FileSignals, ViewSignals, ProfileSignals
-from view.components import WorkSpaceDialog
 from view.widgets import MsgBox
-from config.Style import Dimension
-from config.Path import getProjectRoot
-from config.GailBotData import getWorkPath
-from config.Text import About
-
-
-from PyQt6.QtCore import QSize, QObject, pyqtSignal
+from view.config.Style import Dimension
+from view.config.Text import About
+from config_frontend import FRONTEND_CONFIG_ROOT
+from PyQt6.QtCore import QSize
 from PyQt6.QtWidgets import QMainWindow
 
 
@@ -52,7 +48,7 @@ class MainWindow(QMainWindow):
         # initialize the main view controller 
         self.logger = Logger.makeLogger("F")
         self.logger.info(f"start to initialize view object, get available profile {setting_data}")
-        
+        self.logger.info(f"the frontend configuration file is stored at {FRONTEND_CONFIG_ROOT}")
         # initialize the signal
         self.fileTableSignals = FileSignals()
         self.profileSignals = ProfileSignals()
@@ -127,7 +123,6 @@ class MainWindow(QMainWindow):
         except Exception as e:
             self.logger.error(e)
             self.showError(f"Failed to show file progress due to error {e}, please check back later ")
-            
             
     def freeThread(self):
         """clears thread message"""
@@ -238,24 +233,12 @@ class MainWindow(QMainWindow):
         self.hide()
         self.close()
 
-    def _copylog(self):
-        """ copy log file to the frontend/logfiles folder """
-        try:
-            frontEndDir = getWorkPath().logFiles
-            
-            if not os.path.isdir(frontEndDir):
-                os.makedirs(frontEndDir)
-                
-            files = glob.iglob(os.path.join(getProjectRoot(), "*.log"))
-            for file in files:
-                if os.path.isfile(file):
-                    name = os.path.basename(file)
-                    shutil.copy2(file, os.path.join(frontEndDir, name))
-                    os.remove(file)
-        except Exception as e:
-            self.logger.error(f"copy log error {e}")
+
         
     def _initLogger(self):
         consoleLog = Logger.ConsoleHandler(self.Console.LogBox)
         logging.getLogger().addHandler(consoleLog)
         logging.getLogger().setLevel(logging.DEBUG) 
+        
+        
+  

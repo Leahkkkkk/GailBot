@@ -13,8 +13,7 @@ import datetime
 import logging
 import re
 
-from config.Path import getProjectRoot
-from config.GailBotData import getWorkPath
+from config_frontend import getWorkPath
 from PyQt6 import QtCore
 from PyQt6.QtWidgets import QLineEdit
 

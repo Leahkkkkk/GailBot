@@ -12,7 +12,7 @@ Modified By:  Siara Small  & Vivian Li
 from view.widgets.Form.FormWidget import FormWidget
 from view.widgets import Label
 from view.style.WidgetStyleSheet import INPUT_TEXT as INPUT_STYLE
-from config.Style import FontSize, Dimension
+from view.config.Style import FontSize, Dimension
 
 
 from PyQt6.QtWidgets import QLineEdit, QHBoxLayout, QVBoxLayout, QWidget

@@ -1,15 +1,16 @@
 from gailbot.core.engines.engineManager import EngineManager
 from typing import Any, List, Dict
 from gailbot.core.pipeline import Component, ComponentState, ComponentResult
-from gailbot.core.utils.general import (
-    get_name
-)
+from gailbot.core.utils.general import get_name
 from gailbot.core.utils.threads import ThreadPool
 from gailbot.core.utils.logger import makelogger
+import copy
 import time
 from ...converter.result import  ProcessingStats
 from ...converter.payload import PayLoadObject
 logger = makelogger("transcribeComponent")
+""" TODO: Add to toml"""
+NUM_THREAD = 5
 
 class InvalidEngineError(Exception):
     def __init__(self, engine: str, *args) -> None:
@@ -39,7 +40,7 @@ class TranscribeComponent(Component):
         """
         try:
             threadpool = ThreadPool(self.num_thread)
-            tasks : Dict[int, PayLoadObject] = dict()
+            threadkey_to_payload : Dict[int, PayLoadObject] = dict()
             logger.info(dependency_output)
             dep: ComponentResult = dependency_output["base"]
             payloads : List[PayLoadObject] = dep.result
@@ -50,11 +51,12 @@ class TranscribeComponent(Component):
                     # add the payload to the threadpool
                     key = threadpool.add_task(
                         fun=self._transcribe_payload, args=[payload])
-                    tasks[key] = payload
+                    threadkey_to_payload[key] = payload
                     logger.info(f"key: {key}")
-            threadpool.wait_for_all_completion()  
-            for payload in payloads:
+            for key, payload in threadkey_to_payload.items():
+                assert threadpool.get_task_result(key)
                 payload.set_transcribed()
+        
         except Exception as e:
             logger.error(e)
             return ComponentResult(
@@ -62,6 +64,7 @@ class TranscribeComponent(Component):
                 result=payloads,
                 runtime=time.time() - process_start_time
             )
+        
         else:     
             return ComponentResult(
                 state=ComponentState.SUCCESS,
@@ -92,8 +95,8 @@ class TranscribeComponent(Component):
         # Parse the settings
         engine_name = payload.get_engine()
         engine_init_kwargs = payload.get_engine_init_setting()
+        engine_init_kwargs.update({"workspace_dir": transcribe_ws})
         engine_transcribe_kwargs = payload.get_engine_transcribe_setting()
-
         logger.info(f"get transcribed setting engine_name: {engine_name} \
                       engine initialization setting {engine_init_kwargs} \
                       engine transcription setting {engine_transcribe_kwargs}")
@@ -106,24 +109,37 @@ class TranscribeComponent(Component):
 
         # Init engine
         if not self.engine_manager.is_engine(engine_name):
-            raise InvalidEngineError(engine)
-        engine_init_kwargs.update({
-            "workspace_dir": transcribe_ws
-        })
-        
-        engine = self.engine_manager.init_engine(
-            engine_name, **engine_init_kwargs)
-        
-        logger.info(engine)
-
-        # Transcribe all of the data files
+            raise InvalidEngineError(engine_name)
+        engine = self.engine_manager.init_engine(engine_name, **engine_init_kwargs)
+                
         utt_map = dict()
-        for data_file in data_files:
-            engine_transcribe_kwargs.update({
-                "audio_path" : data_file,
-            })
-            utterances = engine.transcribe(**engine_transcribe_kwargs)
-            utt_map[get_name(data_file)] = utterances
+        name_to_threadkey : Dict[str, int] = dict()
+        threadpool = ThreadPool(NUM_THREAD)
+        
+        for file in data_files:
+            transcribe_kwargs = copy.deepcopy(engine_transcribe_kwargs)
+            transcribe_kwargs.update({"audio_path": file})
+            name_to_threadkey[file] = threadpool.add_task(
+                engine.transcribe, kwargs = transcribe_kwargs) 
+        try:
+            for file in data_files:
+                utt_map[get_name(file)] = \
+                    threadpool.get_task_result(name_to_threadkey[file])
+        except Exception as e:
+            logger.error(f"Failed to transcribed {len(data_files)} file in parallel due to the error {e}")
+            return False
+    
+    
+        # logger.info(engine)
+
+        # # Transcribe all of the data files
+        # utt_map = dict()
+        # for data_file in data_files:
+        #     engine_transcribe_kwargs.update({
+        #         "audio_path" : data_file,
+        #     })
+        #     utterances = engine.transcribe(**engine_transcribe_kwargs)
+        #     utt_map[get_name(data_file)] = utterances
 
         end_time = time.time()
         stats = ProcessingStats(
@@ -134,6 +150,14 @@ class TranscribeComponent(Component):
         payload.set_transcription_result(utt_map)
         payload.set_format_process_stats(stats)
         return True
+    
+    
+    def transcribe_single_file(self, engine, init_kwargs, transcribe_kwargs):
+        engine = self.engine_manager.init_engine(engine, **init_kwargs)
+        utterances = engine.transcribe(**transcribe_kwargs)
+        return utterances
+        
+    
         
     def __repr__(self):
         return "Transcription Component"

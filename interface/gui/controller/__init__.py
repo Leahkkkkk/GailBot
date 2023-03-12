@@ -1,4 +1,1 @@
-""" 
-GailBot Controller
-
-"""
+from .Controller import Controller

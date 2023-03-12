@@ -11,9 +11,6 @@ from gailbot.core.engines import (
     WhisperEngine
     
 )
-from gailbot.core.utils.general import (
-    make_dir
-)
 
 _ENGINES = {
     "watson" : Watson,

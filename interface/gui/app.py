@@ -10,7 +10,7 @@ Modified By:  Siara Small  & Vivian Li
 Description: main driver for a GUI app that support front and interface to 
              allow user transcribe file using gailbot 
 '''
-from config.Path import getProjectRoot
+
 import hooks
 import ssl
 import os 
@@ -18,7 +18,8 @@ import os
 if __name__ == '__main__':
     # add project path to program environment path
     # this is added for the packaged app to be able to tun binary file ffmpeg 
-    os.environ["PATH"] += os.pathsep + getProjectRoot()
+    os.environ["PATH"] += os.pathsep + os.path.dirname(__file__)
+    print(os.path.dirname(__file__))
     ssl._create_default_https_context = ssl._create_unverified_context
     
     import multiprocessing

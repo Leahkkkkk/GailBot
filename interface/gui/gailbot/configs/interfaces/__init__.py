@@ -12,6 +12,7 @@ from .core.setting.defaults import load_default_config
 from .core.util.logger import load_log_config
 from .config.config import load_top_config
 from .config.path_config import load_path_config
+from .services import load_service_config
 from .config.path_config import TemporaryFolder, OutputFolder
 # from .services import load_file_extensions, load_conversation_payload, load_transdir_payload, load_result, load_interfaces, load_default_settings
 import os
@@ -31,11 +32,13 @@ def whisper_config_loader(): return load_whisper_config(
 def default_config_loader(): return load_default_config(
     os.path.join(CONFIG_ROOT, PATH.default))
 
+def service_config_loader(): return load_service_config(
+    os.path.join(CONFIG_ROOT, PATH.services)
+)
 
 def log_config_loader(): return load_log_config(
-    os.path.join(CONFIG_ROOT, PATH.log))
-
-
+    os.path.join(CONFIG_ROOT, PATH.log)
+)
 
 def path_config_loader(user_root):
     return load_path_config(os.path.join(CONFIG_ROOT, PATH.paths_config), user_root)

@@ -9,43 +9,44 @@ Modified By:  Siara Small  & Vivian Li
 -----
 Description: implement the system setting page
 '''
-import userpaths
-import datetime
+
 import os
 import shutil 
 import toml
-from config.Style import Color, StyleSheet, FontSize,Dimension
+from view.config.Style import (
+    Color, 
+    StyleSheet, 
+    FontSize,
+    Dimension
+)
 from view.widgets import (
     SideBar, 
     SettingForm, 
     Label, 
     Button
 )
-
 from view.components.WorkSpaceDialog import ChangeWorkSpace, SaveLogFile
-from util.io import zip_file
-from config_gui.ConfigPath import BackEndDataPath, SettingDataPath
-from config.Setting import SystemSetting, DefaultSetting
-from config.StyleSource import StyleSource, StyleTable
-from config.Text import SystemSetPageText as Text 
-from config.Text import SystemSettingForm as Form
-from config.Text import About, Links, LogDeleteTimeDict
-from config.Path import getProjectRoot
-from config.GailBotData import getWorkPath
-from util.FileManage import clearAllLog
+from config_frontend.ConfigPath import BackEndDataPath, SettingDataPath
+from view.config.Setting import SystemSetting, DefaultSetting
+from view.config.StyleSource import StyleSource, StyleTable
+from view.config.Text import SystemSetPageText as Text 
+from view.config.Text import SystemSettingForm as Form
+from view.config.Text import LogDeleteTimeDict
+from config_frontend import FRONTEND_CONFIG_ROOT as dirname
+from view.util.FileManage import clearAllLog
 from util.Logger import makeLogger
-from config.GailBotData import getWorkBasePath
+from config_frontend import getWorkBasePath
 from view.widgets import MsgBox
 
 from PyQt6.QtWidgets import (
     QWidget, 
     QHBoxLayout,
     QStackedWidget,
-    QMessageBox, 
-    QFileDialog)
+    QMessageBox
+    )
 from PyQt6.QtCore import Qt, pyqtSignal, QObject
 
-dirname = getProjectRoot()
+
 class Signal(QObject):
     restart = pyqtSignal()
 

@@ -1,7 +1,7 @@
 from typing import Dict, Tuple 
 
-from config.Style import Color, Dimension, FontSize 
-from config.Text import MultipleComboText as Text 
+from view.config.Style import Color, Dimension, FontSize 
+from view.config.Text import MultipleComboText as Text 
 from view.widgets import  Label, ComboBox, TextForm
 from view.widgets.Form.FormWidget import FormWidget 
 

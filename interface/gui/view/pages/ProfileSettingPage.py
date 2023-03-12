@@ -12,12 +12,12 @@ Modified By:  Siara Small  & Vivian Li
 
 from typing import List
 
-from config.Style import Color, Dimension
-from config.Text import ProfilePageText as Text, About
-from config.Style import FontSize as FS 
-from config.Style import StyleSheet as SS 
-from config.Text import ProfileSettingForm as Form 
-from config.Text import Links
+from view.config.Style import Color, Dimension
+from view.config.Text import ProfilePageText as Text, About
+from view.config.Style import FontSize as FS 
+from view.config.Style import StyleSheet as SS 
+from view.config.Text import ProfileSettingForm as Form 
+from view.config.Text import Links
 from util.Logger import makeLogger
 
 from view.Signals import ProfileSignals

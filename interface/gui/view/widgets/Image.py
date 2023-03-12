@@ -11,15 +11,13 @@ Description: a image widget to support displaying image on the interface
 '''
 
 import os 
-
-from config.Path import getProjectRoot
-from config.Style import Dimension
+from config_frontend import PROJECT_ROOT 
+from view.config.Style import Dimension
 from PyQt6.QtWidgets import (
     QLabel)
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtCore import  QSize
 
-dirname = getProjectRoot()
 class Image(QLabel):
     """ takes in the filename of image and generates a image widget that 
         can be displayed  
@@ -36,7 +34,7 @@ class Image(QLabel):
         **kwargs
     ) -> None:
         super().__init__(*args, **kwargs)
-        imgpath = os.path.join(dirname, f"{imagename}")
+        imgpath = os.path.join(PROJECT_ROOT, f"{imagename}")
         self.img = QPixmap(imgpath)
         self.setPixmap(self.img)
         self.resize(self.img.width(), self.img.height())

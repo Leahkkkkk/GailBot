@@ -1,9 +1,10 @@
 from .payloadObject import PayLoadObject, PayLoadStatus
 from ...organizer.source import SourceObject
-from typing import List, Dict, Union
+from typing import List, Union
 from gailbot.core.utils.general import (
     get_extension, 
-    copy)
+    copy
+)
 import os 
 """ NOTE: currently unused and not tested since gailbot does not support 
           for video transcription yet
@@ -29,8 +30,14 @@ class VideoPayload(PayLoadObject):
     def is_supported(file_path: str) -> bool:
         """
         Determines if a given file path has a supported file extension
+
+        Args:
+            file_path: str: name of the file path to check
+
+        Returns:
+            True if filepath is supported, false if not
         """
-        return super().is_supported()
+        return super().is_supported(file_path)
 
     def _copy_file(self) -> None:
         """

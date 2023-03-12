@@ -1,0 +1,238 @@
+[links]
+HILAB = "https://sites.tufts.edu/hilab/gailbot-an-automatic-transcription-system-for-conversation-analysis"
+USER_MANUAL = "https://drive.google.com/file/d/1NnirL5-26j3xnI4yEV7cJVUEqxrFfTm5/view?usp=sharing"
+GUIDE = "https://drive.google.com/file/d/1t_-NAM0PCFHhjZ4Kpry2LuhLcXZTDG07/view?usp=sharing"
+
+[TranscribeSuccessText]
+mainLabelText        = "Transcription complete"
+transcribedFilesText = "Files summary and locations:"
+moreBtnText          = "Process additional files"
+returnBtnText        = "Return to main menu"
+
+[TranscribeProgressText]
+mainLabelText  = "Transcription in progress"
+loadingText    = "Transcribing files..."
+inProgressText = "Files in progress:"
+cancelText     = "Cancel"
+
+[WelcomePageText]
+# audioInstructionText      = "1. Select audio and video files \n or record live in Gailbot"
+audioInstructionText      = "1. Add audio / video\n sources or record live"
+settingsInstructionText   = "2. Select a Settings Profile"
+transcribeInstructionText = "3. Transcribe"
+fileInstructionText       = "4. Review transcriptions"
+editInstructionText       = "5. Edit settings \n or retranscribe"
+welcomeText               = "Welcome to GailBot"
+captionText               = """GailBot is the world's first automated transcription \
+                                system capable\n of generating customized \
+                                Conversation Analytic transcripts at scale.
+                            """
+startBtnText              = "Get Started"
+instructionText           = "How GailBot Works"
+resourcesText             = "Resources"
+tutorialText              = "GailBot User Manual"
+guideText                 = "GailBot Technical Documentation"
+gbLinkText                = "Tufts Human Interaction Laboratory"
+moreInfoText              = "For more information, visit:"
+firstLaunchHeader         = "Welcome to GailBot's initial setup"
+firstLaunchInstruction    = """Please specify the path to GailBot's \
+                             workspace directory on your computer.\nThis is where all internal and log files will be stored."""
+chanegeWorkDir            = "Change Path to GailBot Work Space"
+confirmBtn                = "Confirm"
+changeDirBtn              = "Change Directory"
+workspacePath             = "GailBot Work Space Path"
+email                     = "hil@elist.tufts.edu"
+workDirName               = "GailBot"
+zipFileName               = "gailbot_log_file"
+sendZipMsg                = "You can send the zipped log file to us through the email:"
+saveLogPrompt             = "Select the path the log files will be saved to"
+saveLogPath               = "Log files saved to:"
+
+
+[FileUploadPageText]
+header                = "Files to Transcribe"
+returnMainText        = "Return to Main Menu"
+recordBtnText         = "Record Live"
+uploadBtnText         = "Add From Device"
+transcribeBtnText     = "Transcribe"
+removeBtnText         = "Remove All"
+## unicode for settings gear
+settingBtnText        = "\u2699"
+dropText              = "Drop file to upload"
+chooseLocalText       = "Choose from local"
+chooseSetHeader       = "select setting profile"
+selectSetText         = "select settings"
+selectPlaceHolderText = "None"
+selectFolderText      = "Select Folder"
+chooseOutPutText      = "Choose Output Directory"
+fileFilter            = "audio file (*.wav)"
+removeWarnText        = "Remove all files?"
+tabAddfile            = "Add File"
+tabAddFolder          = "Add Folder"
+## unicode for an audio icon
+audioLogo = "🔊"
+## unicode for a file folder icon
+directoryLogo = "📁"
+
+
+[RecordPageText]
+basic    = "Basic"
+filename = "Filename"
+mp3      = "MP3"
+wav      = "WAV"
+format   = "Audio Format"
+advanced = "Advanced"
+rate     = "Recording Rate (Hertz)"
+duration = "Max Recording Duration"
+cancel   = "Cancel"
+start    = "Start Recording"
+test     = "Test MicroPhone"
+recSet   = "Recording Settings"
+record   = "Record Audio File"
+end      = "End Recording"
+
+[ProfilePageText]
+cancelBtn          = "Cancel"
+saveBtn            = "Save and Exit"
+deleteBtn          = "Delete Profile"
+newProfileBtn      = "Create New Profile"
+reuquiredSetBtn    = "Required Settings"
+postSetBtn         = "Post-Transcription Settings"
+newPluginBtn       = "Add New Plugin"
+pluginSetBtn       = "Plugin Settings"
+postSetHeader      = "Post-Transcription Settings"
+postSetCaption     = "These settings are applied after the file is created"
+requiredSetHeader  = "Required Settings"
+requiredSetCaption = """These settings are applied to the selected settings profile \
+                        and are required for transcription"""
+pluginHeader       = "Choose Plugins"
+pluginCaption      = "These plugins are applied to the transcription process"
+tempMessage        = "This page has been temporarily disabled to allow for further updates and developments. Please check back later."
+confirmDelete      = "Confirm deleting the profile: "
+
+[SystemSettingPage]
+header        = "System Settings"
+caption       = "Control various aspects of the graphical interface"
+cancelBtn     = "Cancel"
+saveBtn       = "Save and Exit"
+confirmChange = """The changes applied require GailBot to relaunch. All uploaded \
+                files will be removed. Do you wish to proceed?"""
+changeError   = "System settings change failed"
+clearLog      = "Clear all log files"
+confirmClear  = "All log files will be removed. Proceed?"
+changeWorkSpace = "Change GailBot workspace"
+
+[ConfirmTranscriptionPageText]
+confirmLabel = "Confirm Files and Settings"
+confirm      = "Confirm"
+cancel       = "Cancel"
+
+[RecordInProgressPageText]
+start  = "Start Recording"
+cancel = "Cancel"
+end    = "End Recording"
+
+[filetable.header]
+fileUploadPage = ["Select All", "Type", "Name", "Profile",
+                    "Status", "Date", "Size", "Actions"]
+confirmPage    = ["Type", "Name", "Profile", "Action"]
+transcribePage = ["Type", "Name", "Progress"]
+successPage    = ["Type",  "Name", "Status", "Output"]
+
+
+[CreateNewProfilePageText]
+profileName           = "Profile Name"
+confirmProfileNameBtn = "Start"
+emptyNameMsg          = "A profile name must be specified"
+emptyUserMsg          = "Please enter user name and password"
+engineSettingHeader   = "Speech to text settings"
+outputSettingHeader   = "Output format settings"
+cofirmBtn             = "Confirm"
+
+[ChooseFileTabText]
+WindowTitle = "Upload File"
+TabTitle    = "Add New File"
+TabHeader1  = "Add File"
+TabHeader2  = "Choose Settings"
+TabHeader3  = "Select Output"
+
+[WindowTitle]
+consoleWindow = "Console Window"
+
+[CreateNewProfileTabText]
+WindowTitle  = "Create New Profile"
+TabTitle     = "Create New Profile"
+TabHeader1   = "Profile Name"
+TabHeader2   = "Basic Settings"
+TabHeader3   = "Optional Settings"
+TabHeader4   = "Output File Format Settings"
+TabHeader5   = "Post Transcription Settings"
+TabHeader6   = "Plugin Settings"
+pluginFilter = "json file (*.json) zip file (*.zip)"
+
+[MainStackText]
+ProfileSetting = "Profile Settings"
+SystemSetting  = "System Settings"
+
+[OutputFormatForm]
+header           = "Output File Format"
+CorpuFormHeader  = "Corpus Settings"
+LanguageHeader   = "language"
+FileHeaderView   = "File Header Views"
+FileFormatHeader = "File Format"
+SpeakerHeader    = "Number of Speakers"
+TextWrap         = "Text-Wrapping"
+
+[RequiredSettingForm]
+engineSetHeader = "Speech to text settings"
+outputSetHeader = "Output File Format Settings"
+
+[MenuBar]
+console = "Console"
+open    = "Open"
+close   = "Close"
+help    = "Help"
+contact = "Contact Us"
+bugreport = "Report Bug"
+buglink = "https://docs.google.com/forms/d/e/1FAIpQLSey-yx8gj2k5n-pdoSqBzBRU9q1aqWfK6laiQCxTimvuGU0hg/viewform"
+email = "mailto: hil@elist.tufts.edu"
+mailFailed = "Cannot open mail application on your computer, please contact us by sending email to: hil@elist.tufts.edu"
+
+
+[btnText]
+on    = "ON"
+off   = "OFF"
+icon  = "iconButton"
+right = "right.png"
+down  = "down.png"
+
+[fileTableText]
+default    = "Default"
+delete     = "Remove"
+changeSet  = "Change Profile"
+profileDet = "Profile Details"
+
+[multipleComboText]
+username = "Username"
+password = "Password"
+
+[popUpText]
+## unicode of left pointing arrow
+leftArr = "\u25B6"
+## unicode of right pointing arrow
+rightArr = "\u25C0"
+finish   = "Finish"
+window   = "File Info"
+
+[tableText]
+location     = "Change Location"
+postSettings = "Post Transcribe Setting"
+save         = "Save"
+transBy      = "Transcribed by: "
+transOn      = "Trancribed on: "
+inDir        = "In this directory"
+abtDir       = "About this directory"
+
+[tableWidgetOptions]
+fileDetails = "details"
+checkbox    = "check"

@@ -8,12 +8,24 @@ logger = makelogger("result_interface")
 """ .pickle , use efficient way to save the file """
 
 class ResultInterface:
+    """
+    Defines a class containing the logic for transcription, format, and analysis results
+    """
     def __init__(self, workspace: str, data = None) -> None:
         self.workspace = workspace 
         self.data = data 
         self.processingStats = None 
        
     def set_processing_stats(self, stats: ProcessingStats):
+        """
+        Sets an object's processing stats
+
+        Args:
+            stats: ProcessingStats: ProcessingStats to set
+
+        Returns:
+            bool: True if successfully set, false if not
+        """
         try:
             assert stats 
             self.processingStats:ProcessingStats = stats 
@@ -23,6 +35,15 @@ class ResultInterface:
             return False
     
     def output_processing_stats(self, outpath: str):
+        """
+        Outputs an object's processing stats to the output directory
+
+        Args:
+            outpath: str: Path of the output directory
+
+        Returns:
+            bool: True if successfully set, false if not
+        """
         try:
             write_json(outpath, self.processingStats.__dict__)
             return True

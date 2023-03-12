@@ -11,8 +11,8 @@ Modified By:  Siara Small  & Vivian Li
 
 from view.widgets import SettingForm
 from view.widgets.MsgBox import WarnBox
-from config.Text import ProfilePageText as Text 
-from config.Text import PostSettingForm as Form
+from view.config.Text import ProfilePageText as Text 
+from view.config.Text import PostSettingForm as Form
 from util.Logger import makeLogger
 
 from PyQt6.QtWidgets import QWidget, QVBoxLayout

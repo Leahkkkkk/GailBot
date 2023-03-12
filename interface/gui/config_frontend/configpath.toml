@@ -1,0 +1,32 @@
+# path to config_frontend files with backend data
+[backend]
+gailBotData          = "backend/gailbot.toml"
+workSpaceData        = "backend/user_root.toml"
+defaultWorkSpaceData = "backend/workspace.toml"
+fileManageData       = "backend/fileManage.toml"
+backendroot          = "configs/confs/toplevel/user_root.toml" 
+# backendroot          = "gailbot/configs/confs/toplevel/user_root.toml" 
+
+# path to config_frontend files with style data
+[style]
+dimension       = "style/dimension.toml"
+fontFamily      = "style/font/fontFamily.toml"
+currentColor    = "style/color/color.toml"
+darkColor       = "style/color/colorDark.toml"
+lightColor      = "style/color/colorLight.toml"
+currentFontSize = "style/font/fontSize.toml"
+largeFontSize   = "style/font/fontSizeLarge.toml"
+smallFontSize   = "style/font/fontSizeSmall.toml"
+mediumFontSize  = "style/font/fontSizeMedium.toml"
+
+# path to config_frontend files with text data
+[text]
+string          = "text/text.toml"
+form            = "text/forms.toml"
+about           = "text/about.toml"
+
+# path to config_frontend files with the preset data 
+[setting]
+profilePreset   = "setting/profileValues.toml"
+systemSetting   = "setting/systemSettingValues.toml"
+defaultSetting  = "setting/defaultSetting.toml"

@@ -9,8 +9,8 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
  
-from config.Style import FontSize,FontFamily, Color
-from config.Text import ProfilePageText as Text
+from view.config.Style import FontSize,FontFamily, Color
+from view.config.Text import ProfilePageText as Text
 from view.widgets import  Label
 from view.components import RequiredSettingForm
 from view.widgets.MsgBox import WarnBox

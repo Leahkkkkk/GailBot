@@ -11,27 +11,38 @@ Description: implement function for initialize background for different pages
 '''
 import os
 
-from config.Style import Color, Asset, Dimension
-from config.Path import getProjectRoot
+from view.config.Style import Color, Asset, Dimension
 from view.widgets import Image
+from config_frontend import PROJECT_ROOT
 
-from PyQt6.QtCore import  Qt
+from PyQt6.QtCore import  Qt, QEvent
 from PyQt6.QtGui import (
     QBrush, 
     QColor, 
     QPalette,
     QPixmap,
-    QTransform,
+    QResizeEvent
 )
 from PyQt6.QtWidgets import QWidget, QVBoxLayout
 
-dirname = getProjectRoot()
 class Background(QBrush):
     """ a QBrush object that creates a white background """
     def __init__(self,color, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.setColor(QColor(color))
         self.setStyle(Qt.BrushStyle.SolidPattern) 
+
+
+def resizeEvent(widget: QWidget, event: QResizeEvent, img: str):
+    size = event.size()
+    pixmap = QPixmap(img).scaled(
+        size, Qt.AspectRatioMode.IgnoreAspectRatio, Qt.TransformationMode.FastTransformation)
+    # Set the scaled image to the QLabel
+    palette = widget.palette()
+    brush = QBrush()
+    brush.setTexture(pixmap)
+    palette.setBrush(QPalette.ColorRole.Window, brush)
+    widget.setPalette(palette)
 
 
 def _initBackground(widget:QWidget, color=Color.MAIN_BACKGROUND):
@@ -51,12 +62,14 @@ def _initImgBackground(widget:QWidget, background: str = Asset.homeBackground):
     """
     widget.setAutoFillBackground(True)
     palette = widget.palette()
+    size = widget.size()
+    pixmap = QPixmap(background).scaled(
+        size, Qt.AspectRatioMode.IgnoreAspectRatio, Qt.TransformationMode.FastTransformation)
     brush = QBrush()
-    brush.setTexture(QPixmap(os.path.join(dirname, f"{background}")))
-    backgroundTransform = QTransform()
-    brush.setTransform(backgroundTransform.scale(1,1))
+    brush.setTexture(pixmap)
     palette.setBrush(QPalette.ColorRole.Window, brush) 
     widget.setPalette(palette)
+    widget.resizeEvent = lambda event : resizeEvent(widget, event, background)
     
 def initHomePageBackground(widget:QWidget):
     """initialize the home page background with image"""
@@ -85,4 +98,4 @@ def addLogo(layout: QVBoxLayout):
     layout.addWidget(
         logo, alignment=Qt.AlignmentFlag.AlignTop|Qt.AlignmentFlag.AlignRight)
     logo.setContentsMargins(0,0,0,0)
-    
+ 

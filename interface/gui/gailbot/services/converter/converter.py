@@ -7,7 +7,8 @@ from typing import Dict, List, Union, Tuple
 from gailbot.core.utils.logger import makelogger
 from ..organizer.source import SourceObject
 from gailbot.workspace.manager import WorkspaceManager
-logger = makelogger("congerter")
+
+logger = makelogger("converter")
 class Converter: 
     """
     provide function that converts the sourceObject to payload and 
@@ -24,6 +25,15 @@ class Converter:
         self.payloads_dict: Dict[str, PayLoadObject] = dict()
         
     def load_source(self, source: SourceObject) -> bool:
+        """
+        Loads a given source object with the correct loader
+
+        Args:
+            source: SourceObject: source to load
+
+        Returns:
+            bool: true if successfully loaded, false if not
+        """
         for loader in self.loaders:
             try: 
                 payloads: List [PayLoadObject] = loader(source, self.ws_manager)

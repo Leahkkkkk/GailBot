@@ -15,15 +15,18 @@ from ..result import (
     FormatResultDict,
     ProcessingStats
 )
-from gailbot.core.utils.general import is_directory, make_dir, delete
+from gailbot.core.utils.general import delete
 from gailbot.workspace import WorkspaceManager
-logger = makelogger("payloadobject")
+from gailbot.configs import service_config_loader
+
+SERVICE_CONFIG = service_config_loader()
+logger = makelogger("payload object")
 
 """ TODO by Feb 24:
 1. move all name strings to configuration  
 2. test save function and any functions involve i/o 
 """
-OUTPUT_MARKER = ".gailbot"
+OUTPUT_MARKER = SERVICE_CONFIG.directory_name.hidden_file
 class PayLoadStatus(Enum):
     """ For tracking the status of the file in the payload """
     INITIALIZED = 0 
@@ -98,46 +101,117 @@ class PayLoadObject(ABC):
     
     # functions that has been implemented on abstract class 
     def get_source(self) -> List[str]:
+        """
+        Accesses and returns a list of the current sources
+        """
         return self.data_files
     
     @property
     def transcribed(self) -> bool:
+        """
+        Determines if payload object is transcribed
+
+        Returns:
+            bool: true if transcribed, false if not
+        """
         return self.status == PayLoadStatus.TRANSCRIBED
 
     @property
     def analyzed(self) -> bool:
+        """
+        Determines if payload object is analyzed
+
+        Returns:
+            bool: true if analyzed, false if not
+        """
         return self.status == PayLoadStatus.ANALYZED 
     
     @property 
     def formatted(self) -> bool:
+        """
+        Determines if payload object is formatted
+
+        Returns:
+            bool: true if formatted, false if not
+        """
         return self.status == PayLoadStatus.FORMATTED
     
     def set_transcribed(self):
+        """
+        Sets status of payload object to TRANSCRIBED
+        """
         self.status = PayLoadStatus.TRANSCRIBED
     
     def set_analyzed(self):
+        """
+        Sets status of payload object to ANALYZED
+        """
         self.status = PayLoadStatus.ANALYZED
         
     def set_formatted(self):
+        """
+        Sets status of payload object to FORMATTED
+        """
         self.status = PayLoadStatus.FORMATTED
    
     def get_engine(self) -> str:
+        """
+        Accesses and returns the current engine setting
+
+        Returns:
+            Current engine as a string
+        """
         return self.setting.engine_setting.engine
    
     def get_engine_init_setting(self) -> Dict[str, str]:
+        """
+        Accesses and returns the engine's initial settings
+
+        Returns:
+            Initial settings in the form of a dictionary
+        """
         return self.setting.engine_setting.get_init_kwargs()
      
     def get_engine_transcribe_setting(self) -> Dict[str, str]:
+        """
+        Accesses and returns the engine's transcription settings
+
+        Returns:
+            Transcription settings in the form of a dictionary
+        """
         return self.setting.engine_setting.to_kwargs_dict()
     
     def get_plugin_setting(self) -> List[str]:
-        """ TODO: check the plugin setting return types   """
+        """
+        Accesses and returns the plugin settings as a list
+
+        Returns:
+            List of strings of the current settings
+        """
         return self.setting.plugin_setting.get_data()
     
     def get_status(self) -> PayLoadStatus:
+        """
+        Accesses and returns the payload's status
+
+        Returns:
+            Current PayLoadStatus
+        """
         return self.status
     
-    def set_transcription_result(self, result: Dict[str, List[UttDict]])-> bool:
+    def set_transcription_result(
+        self, 
+        result: Dict[str, List[UttDict]]
+    )-> bool:
+        """
+        Sets the transcription result to a given dictionary
+
+        Args:
+            result: Dict[str, List[UttDict]]: result to set
+
+        Returns:
+            bool: True if successfully set, false if not
+        """
         try:
             self.transcription_result.save_data(result)
             return True 
@@ -145,7 +219,19 @@ class PayLoadObject(ABC):
             logger.error(e)
             return False
     
-    def set_format_result(self, result: Dict[str, FormatResultDict]) -> bool:
+    def set_format_result(
+        self, 
+        result: Dict[str, FormatResultDict]
+    ) -> bool:
+        """
+        Sets the format result to a given dictionary
+
+        Args:
+            result: Dict[str, FormatResultDict]: result to set
+
+        Returns:
+            bool: True if successfully set, false if not
+        """
         try:
             self.format_result.save_data(result)
             return True
@@ -153,7 +239,19 @@ class PayLoadObject(ABC):
             logger.error(e)
             return False
     
-    def set_analysis_result(self, result: Dict[str, AnalysisResultDict]) -> bool:
+    def set_analysis_result(
+        self, 
+        result: Dict[str, AnalysisResultDict]
+    ) -> bool:
+        """
+        Sets the analysis result to a given dictionary
+
+        Args:
+            result: Dict[str, FormatResultDict]: result to set
+
+        Returns:
+            bool: True if successfully set, false if not
+        """
         try:
             self.analysis_result.save_data(result)
             return True
@@ -161,25 +259,78 @@ class PayLoadObject(ABC):
             logger.error(e)
             return False
         
-    def set_transcription_process_stats(self, stats:ProcessingStats) -> Dict[str, List[UttDict]]:
+    def set_transcription_process_stats(
+        self, 
+        stats: ProcessingStats
+    ) -> Dict[str, List[UttDict]]:
+        """
+        Sets the transcription processing stats.
+
+        Args:
+            stats:ProcessingStats: stats to set
+        """
         return self.transcription_result.set_processing_stats(stats)
     
-    def set_analysis_process_stats(self, stats:ProcessingStats) -> Dict[str, List[UttDict]]:
+    def set_analysis_process_stats(
+        self, 
+        stats:ProcessingStats
+    ) -> Dict[str, List[UttDict]]:
+        """
+        Sets the analysis processing stats.
+
+        Args:
+            stats:ProcessingStats: stats to set
+        """
         return self.analysis_result.set_processing_stats(stats)
 
-    def set_format_process_stats(self, stats:ProcessingStats) -> Dict[str, List[UttDict]]:
+    def set_format_process_stats(
+        self, 
+        stats:ProcessingStats
+    ) -> Dict[str, List[UttDict]]:
+        """
+        Sets the formal processing stats.
+
+        Args:
+            stats:ProcessingStats: stats to set
+        """
         return self.format_result.set_processing_stats(stats)
     
     def get_transcription_result(self) -> Dict[str, List[UttDict]]:
+        """
+        Accesses the result of the current transcription
+
+        Returns:
+            Transcription result in the form of a dictionary mapping strings 
+            to lists of utterance dictionaries
+        """
         return self.transcription_result.get_data()
     
     def get_format_result(self) -> FormatResultDict:
+        """
+        Accesses the result of the current formatting
+
+        Returns:
+            Transcription result in the form of a FormatResultDict
+        """
         return self.format_result.get_data()
     
     def get_analyze_result(self) -> Dict[str, AnalysisResultDict]:
+        """
+        Accesses the result of the current analysis
+
+        Returns:
+            Transcription result in the form of a dictionary mapping strings 
+            to AnalysisResultDicts
+        """
         return self.analysis_result.get_data()
     
     def output_transcription_result(self) -> bool: 
+        """
+        Outputs the current transcription result to the output directory
+
+        Returns:
+            bool: true if successfully outputted, false if not
+        """
         try:
             logger.info(self.out_dir.transcribe_result)
             self.transcription_result.output(self.out_dir.transcribe_result)
@@ -189,14 +340,26 @@ class PayLoadObject(ABC):
             return False
         
     def output_format_result(self) -> bool:
-       try:
-           self.format_result.output(self.out_dir.format_result)
-           return True 
-       except Exception as e:
-           logger.error(e)
-           return False
+        """
+        Outputs the current formatting result to the output directory
+
+        Returns:
+            bool: true if successfully outputted, false if not
+        """
+        try:
+            self.format_result.output(self.out_dir.format_result)
+            return True 
+        except Exception as e:
+            logger.error(e)
+            return False
     
     def output_analysis_result(self) -> bool:
+        """
+        Outputs the current analysis result to the output directory
+
+        Returns:
+            bool: true if successfully outputted, false if not
+        """
         try:
             self.analysis_result.output(self.out_dir.analysis_result)
             return True
@@ -205,6 +368,9 @@ class PayLoadObject(ABC):
             return False
     
     def save(self):
+        """
+        Saves the file and outputs all results to output directory
+        """
         """ TODO: test the output format and output_analysis """
         logger.info("saving the file")
         logger.info(self.out_dir.root)

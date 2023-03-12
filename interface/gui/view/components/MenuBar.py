@@ -9,7 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 Description: implementation of the menu bar 
 '''
-from config.Text import MenuBarText
+from view.config.Text import MenuBarText
 
 from PyQt6.QtWidgets import QMenuBar, QMenu
 from PyQt6.QtGui import QDesktopServices, QAction
@@ -29,16 +29,23 @@ class ManuBar(QMenuBar):
         self.CloseConsole = QAction(MenuBarText.close)
         self.Console.addAction(self.CloseConsole)
         self.addMenu(self.Console)
-        # help
+       
+        # help menu
         self.Help = QMenu(MenuBarText.help)
         self.Contact = QAction(MenuBarText.contact)
         self.Help.addAction(self.Contact)
         self.addMenu(self.Help)
-        self.Contact.triggered.connect(self.sendEmail)
-        
-    def sendEmail(self):
+        self.Contact.triggered.connect(lambda: self.activateLink(MenuBarText.email))
+        self.BugReport = QAction(MenuBarText.bugreport)
+        self.Help.addAction(self.BugReport)
+        self.BugReport.triggered.connect(lambda: self.activateLink(MenuBarText.buglink))
+    
+    
+    def activateLink(self, link:str):
         try:
-            QDesktopServices.openUrl(QUrl(MenuBarText.email))
+            QDesktopServices.openUrl(QUrl(link))
         except Exception as e:
             logging.error(e)
             WarnBox(MenuBarText.mailFailed)
+    
+    

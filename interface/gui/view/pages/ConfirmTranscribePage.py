@@ -9,14 +9,15 @@ Modified By:  Siara Small  & Vivian Li
 -----
 Description: implementation of Confirm Transcription Page
 '''
-from config.Style import (
+from view.config.Style import (
     Color, 
     FontSize, 
     FileTableDimension,
     FontFamily,
     Dimension)
-from config.Text import ConfirmTranscribeText as Text
-from config.Text import FileTableHeader 
+
+from view.config.Text import ConfirmTranscribeText as Text
+from view.config.Text import FileTableHeader 
 from util.Logger import makeLogger
 from view.Signals import FileSignals
 from view.widgets.Background import addLogo

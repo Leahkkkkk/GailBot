@@ -11,8 +11,8 @@ Description: implementation of a console that display logging message
 '''
 import logging
 
-from config.Style import Dimension
-from config.Text import WindowTitle
+from view.config.Style import Dimension
+from view.config.Text import WindowTitle
 
 from PyQt6.QtWidgets import (
     QWidget, 

@@ -15,11 +15,11 @@ import pathlib
 from typing import List, TypedDict
 import os
 
-from config.Style import Color, FontSize, Dimension
-from config.Text import FileUploadPageText as Text
-from util.io import get_name, is_directory
+from view.config.Style import Color, FontSize, Dimension
+from view.config.Text import FileUploadPageText as Text
+from view.util.io import get_name, is_directory
 from util.Logger import makeLogger
-from model.organizer import fileDict
+from controller.mvController import fileDict
 from view.widgets.Button import ColoredBtn
 from view.widgets.Label import Label
 from view.widgets.TabPage import TabPage
@@ -35,7 +35,8 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QAbstractItemView,
     QTableWidget,
-    QTableWidgetItem)
+    QTableWidgetItem,
+    QPushButton)
 from PyQt6.QtCore import QSize, Qt
 
 center = Qt.AlignmentFlag.AlignHCenter
@@ -70,7 +71,8 @@ class OpenFile(TabPage):
         self.logger.info("")
         fileList = []
         try:
-            for file in self.filePaths:
+            for file in self.filePaths.values():
+                self.logger.info(f"get file path {file}")
                 fileObj = self._pathToFileObj(file)
                 fileList.append(fileObj)
             return fileList
@@ -83,7 +85,7 @@ class OpenFile(TabPage):
         """ initializes the widgets """
         self.logger.info("")
         self.fileDisplayList = QTableWidget()
-        self.filePaths = []
+        self.filePaths = dict()
         self.uploadFileBtn = ColoredBtn(
             Text.tabAddfile, 
             Color.PRIMARY_BUTTON)
@@ -114,6 +116,7 @@ class OpenFile(TabPage):
         """ initialize the style  """
         self.logger.info("")
         self.fileDisplayList.insertColumn(0)
+        self.fileDisplayList.insertColumn(1)
         self.fileDisplayList.setSelectionMode(
             QAbstractItemView.SelectionMode.NoSelection)
         self.fileDisplayList.setEditTriggers(
@@ -129,8 +132,10 @@ class OpenFile(TabPage):
         self.logger.info("")
         self.fileDisplayList.setFixedSize(QSize(Dimension.SMALL_TABLE_WIDTH,
                                                 Dimension.SMALL_TABLE_HEIGHT)) 
+        self.fileDisplayList.setColumnWidth(0, 325)
+        self.fileDisplayList.setColumnWidth(1, 25)
     
-    def _pathToFileObj(self, path):  
+    def _pathToFileObj(self, path:str):  
         """ converts the file path to a file object  """  
         fullPath = path
         self.logger.info(fullPath)
@@ -155,13 +160,12 @@ class OpenFile(TabPage):
             selectedFiles = dialog.getOpenFileNames(filter = fileFilter)
             if selectedFiles:
                 files, types = selectedFiles
-                self.filePaths = self.filePaths + files
+                for file in files:
+                    self._addFileToFileDisplay(file, icon="🔊")
                 if self.filePaths:
                     self.signals.nextPage.emit()
                 else:
                     WarnBox("No file is uploaded by user")   
-                for file in files:
-                    self._addFileToFileDisplay(file, icon="🔊")
             else:
                 WarnBox("No file is uploaded is uploaded by user")
                 self.logger.warn("No file is uploaded by user")
@@ -175,9 +179,7 @@ class OpenFile(TabPage):
             dialog = QFileDialog() 
             # dialog.setDirectory(userpaths.get_desktop())
             selectedFolder = dialog.getExistingDirectory()
-            
             if selectedFolder:
-                self.filePaths = self.filePaths + [selectedFolder]
                 self._addFileToFileDisplay(selectedFolder, icon="📁")
                 if self.filePaths:
                     self.signals.nextPage.emit()
@@ -192,12 +194,29 @@ class OpenFile(TabPage):
         try:
             row = self.fileDisplayList.rowCount()
             self.fileDisplayList.insertRow(row)
-            newFile = QTableWidgetItem(icon + file)
+            self.filePaths[row] = file
+            filestr = os.path.join(os.path.basename(os.path.dirname(file)),os.path.basename(file))
+            newFile = QTableWidgetItem(icon + filestr)
             self.fileDisplayList.setItem(row, 0, newFile)
+            btn = QPushButton("❌")
+            btn.setFixedSize(QSize(20,20))
+            btn.setContentsMargins(1,5,1,5)
+            self.fileDisplayList.setCellWidget(row, 1, btn)
+            btn.clicked.connect(lambda: self.removeFile(row, newFile))
             # self.fileDisplayList.resizeColumnsToContents()
             self.fileDisplayList.resizeRowsToContents()
         except:
             WarnBox("An error occurred when displaying the added file")
+    
+    def removeFile(self, key, fileItem: QTableWidgetItem):
+        self.logger.info("remove the file with key {key}")
+        try:
+            row = self.fileDisplayList.indexFromItem(fileItem).row()
+            self.logger.info(f"removeing the row {row}")
+            self.fileDisplayList.removeRow(row)
+            del self.filePaths[key]
+        except Exception as e:
+            self.logger.error(e)
 
 class ChooseSet(TabPage):
     """ implement a page for user to choose the setting profile
@@ -239,8 +258,10 @@ class ChooseSet(TabPage):
         self.logger.info("")
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
+        self.layout.addStretch()
         self.layout.addWidget(self.label)
         self.layout.addWidget(self.selectSettings)
+        self.layout.addStretch()
         
     def _updateSettings(self, setting):
         """ updates the settings

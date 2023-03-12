@@ -9,7 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
-from config.Style import Dimension, Color
+from ..config.Style import Dimension, Color
 from view.style.WidgetStyleSheet import PROGRESS_BAR
 from PyQt6.QtWidgets import QSlider
 from PyQt6 import QtCore, QtGui, QtWidgets

@@ -1,20 +1,17 @@
-from typing import List, Dict, Union
+from typing import Union
 
 from .payloadObject import PayLoadObject, PayLoadStatus
 from ...organizer.source import SourceObject
-from gailbot.core.utils.general import is_directory, is_file, copy, paths_in_dir
+from gailbot.core.utils.general import is_directory, is_file, copy
 from gailbot.core.utils.logger import makelogger
 from gailbot.workspace.manager import WorkspaceManager
+from gailbot.configs import service_config_loader
 import os 
 
-MAKER = "gailbot"
-""" 
-TODO by Feb 24
-1. test function of loading the result file
-"""
+MAKER = service_config_loader().directory_name.hidden_file
+
 logger = makelogger("transcribed_dir_payload")
 
-# TODO: ignore other file that is not audio files
 def load_transcribed_dir_payload(
     source: SourceObject, ws_manager: WorkspaceManager) -> Union[bool, PayLoadObject]:
     """ given a source object, convert it into an PayloadObject  
@@ -54,6 +51,12 @@ class TranscribedDirPayload(PayLoadObject):
     def is_supported(file_path: str) -> bool:
         """
         Determines if a given file path has a supported file extension
+
+        Args:
+            file_path: str: name of the file path to check
+
+        Returns:
+            bool: True if the file path is supported, false if not
         """
         if not is_directory(file_path):
             return False 

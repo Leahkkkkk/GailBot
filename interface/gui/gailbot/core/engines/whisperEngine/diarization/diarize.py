@@ -15,7 +15,6 @@ from gailbot.core.utils.general import (
     make_dir,
     read_yaml,
     write_yaml,
-    is_directory
 )
 from gailbot.core.utils.download import is_internet_connected
 from gailbot.configs import  whisper_config_loader

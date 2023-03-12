@@ -30,7 +30,6 @@ from .parsers import parse_into_word_dicts
 
 from gailbot.core.utils.general import (
     is_file,
-    is_directory,
     make_dir
 )
 from gailbot.configs import whisper_config_loader

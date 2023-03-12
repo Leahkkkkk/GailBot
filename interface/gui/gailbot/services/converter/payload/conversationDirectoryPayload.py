@@ -1,9 +1,13 @@
 from .payloadObject import PayLoadObject, PayLoadStatus
 from ...organizer.source import SourceObject
-from gailbot.core.utils.general import paths_in_dir, is_directory, get_name, get_extension, copy
+from gailbot.core.utils.general import (
+    paths_in_dir, 
+    is_directory, 
+    copy
+)
 from gailbot.core.utils.logger import makelogger
 from gailbot.workspace.manager import WorkspaceManager
-from .audioPayload import load_audio_payload, AudioPayload
+from .audioPayload import AudioPayload
 import os 
 from typing import List, Dict, Union
 
@@ -12,8 +16,11 @@ from typing import List, Dict, Union
 """
 logger = makelogger("conversation_payload")
 
-def load_conversation_dir_payload(source: SourceObject, ws_manager: WorkspaceManager) -> Union [bool, List[PayLoadObject]]:
-    """ given a source object, convert it into an conversation directory payload 
+def load_conversation_dir_payload(
+    source: SourceObject, 
+    ws_manager: WorkspaceManager
+) -> Union [bool, List[PayLoadObject]]:
+    """ Given a source object, convert it into an conversation directory payload 
         if the source stores a conversation directory
     
     Args:
@@ -65,6 +72,12 @@ class ConversationDirectoryPayload(PayLoadObject):
         """ NOTE: currently only support audio file  """
         """
         Determines if a given file path has a supported file extension
+
+        Args:
+            file_path: str: file path to check
+        
+        Returns: 
+            bool: True if it contains a supported file extension, false if not
         """
         logger.info(file_path)
         if not is_directory(file_path):

@@ -13,16 +13,16 @@ Modified By:  Siara Small  & Vivian Li
 import datetime
 import time 
 
-from config.Style import (
+from view.config.Style import (
     Color, 
     FontSize, 
     Dimension, 
     Asset, 
     FontFamily
 )
-from config.Text import RecordPageText as Text
-from config.Text import RecordForm
-from config.Style import Dimension, StyleSheet
+from view.config.Text import RecordPageText as Text
+from view.config.Text import RecordForm
+from view.config.Style import Dimension, StyleSheet
 from view.widgets.Background import addLogo
 from view.widgets import (
     Button, 

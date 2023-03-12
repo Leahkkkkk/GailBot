@@ -11,15 +11,19 @@ Modified By:  Siara Small  & Vivian Li
 
 import os
 
-from config.Style import (
+from view.config.Style import (
     Color, 
     FontSize, 
     Asset
 )
-from config.Text import TranscribeProgressText as Text
-from config.Text import FileTableHeader
-from config.Style import Dimension, FileTableDimension, FontFamily
-from config.Path import getProjectRoot
+from view.config.Text import TranscribeProgressText as Text
+from view.config.Text import FileTableHeader
+from view.config.Style import (
+    Dimension, 
+    FileTableDimension, 
+    FontFamily
+)
+from config_frontend import PROJECT_ROOT
 from util.Logger import makeLogger
 from view.widgets.Background import addLogo
 from view.Signals import FileSignals
@@ -27,7 +31,8 @@ from view.widgets import MsgBox
 from view.widgets import (
     Label,   
     Button,
-    FileTable)
+    FileTable
+)
 from view.widgets import Button
 
 
@@ -71,7 +76,7 @@ class TranscribeProgressPage(QWidget):
         self.label.setAlignment(center)
         self.loadIcon = QLabel()
         self.IconImg = QMovie(
-            os.path.join(getProjectRoot(), Asset.transcribing))
+            os.path.join(PROJECT_ROOT, Asset.transcribing))
         self.loadIcon.setMovie(self.IconImg)
         self.loadStart()
        

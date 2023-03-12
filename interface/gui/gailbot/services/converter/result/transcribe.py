@@ -19,19 +19,23 @@ from .resultInterface import ResultInterface
 
 logger = makelogger("transcribe_result")
 
-""" TODO by FEB 24:
-1. test the functions involve in I/O 
-
+"""
 TODO: 
 use .pickle to store temporary file to save memory
 """
 class UttDict(TypedDict):
+    """
+    Defines a class for the utterance dictionary
+    """
     speaker: str 
     start_time: str 
     end_time:str 
     text:str 
     
 class UttResult(ResultInterface):
+    """
+    Defines a class containing the utterance results of a transcription
+    """
     def __init__(self, workspace: str, data: Dict[str, List[UttDict]] = None) -> None:
         self.workspace = os.path.join(workspace, "temporary_result")
         make_dir(self.workspace, overwrite=True)
@@ -39,7 +43,19 @@ class UttResult(ResultInterface):
         self.data = data 
         self.saved_to_disk: bool = False
             
-    def save_data(self, data: Dict[str, List[UttDict]]) -> bool:
+    def save_data(
+        self, 
+        data: Dict[str, List[UttDict]]
+    ) -> bool:
+        """
+        Saves the given data to the output directory
+
+        Args:  
+            data: Dict[str, List[UttDict]]: data to save
+        
+        Returns:
+            bool: True if successfully saved, false if not
+        """
         try: 
             for name, result in data.items():
                 write_json(os.path.join(self.workspace, f"{name}.json"), result)
@@ -50,6 +66,15 @@ class UttResult(ResultInterface):
             return False
            
     def output(self, path) -> None:
+        """
+        Outputs the result to the output directory
+
+        Args:
+            path: output directory path
+        
+        Returns:
+            bool: True if successfully outputted, false if not
+        """
         try:
             if self.saved_to_disk:
                 data = self.get_data()
@@ -67,6 +92,12 @@ class UttResult(ResultInterface):
         return False
     
     def get_data(self) -> Dict[str, List[UttDict]]:
+        """
+        Accesses and returns the data of the current transcription result
+
+        Returns:
+            Data in the form Dict[str, List[UttDict]]
+        """
         if self.saved_to_disk:
             files = paths_in_dir(self.workspace, ["json"])
             res = dict()
@@ -77,6 +108,16 @@ class UttResult(ResultInterface):
             return self.data 
     
     def load_result(self, path: str) -> bool:
+        """
+        Loads the transcription result
+
+        Args:
+            Path:str: path to the input 
+
+        Returns: 
+            Result in the form Dict[str, List[UttDict]] or false if not 
+            successfully accessed
+        """
         if is_file(path):
             return self._read_from_file(path)
         elif is_directory(path):
@@ -85,6 +126,9 @@ class UttResult(ResultInterface):
             return False
     
     def _read_from_dir(self, path) -> Dict[str, List[UttDict]]:
+        """
+        Processes the result of a directory input
+        """
         try:
             files = paths_in_dir(path, ["csv"])
             res = dict()
@@ -98,6 +142,9 @@ class UttResult(ResultInterface):
             return False
         
     def _read_from_file(self, path: str) -> Dict[str, List[UttDict]]:
+        """
+        Processes the result of a file input
+        """
         try:
             res = {get_name(path): read_csv(path)}
             assert self.save_data(res)

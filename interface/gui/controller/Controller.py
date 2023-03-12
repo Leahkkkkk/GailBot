@@ -18,13 +18,12 @@ from typing import Set, Tuple
 import logging 
 import time
 
-from config_gui.ConfigPath import BackEndDataPath
-from config.Path import getProjectRoot
-from model import Model, FileObj
-from controller.TranscribeController import TranscribeController
-from controller.MVController import MVController 
+from config_frontend.ConfigPath import BackEndDataPath
+from config_frontend import FRONTEND_CONFIG_ROOT
+from .transcribeController import TranscribeController
+from .mvController import MVController 
 from util import Logger, LogMsgFormatter
-from config.GailBotData import getWorkPath, FileManage
+from config_frontend import getWorkBasePath, getWorkPath, getFileManagementData
 from gailbot.api import GailBot
 
 # import from view 
@@ -38,8 +37,6 @@ class Signal(QObject):
     fileProgress = pyqtSignal(tuple)
     restart      = pyqtSignal()
     
-    
-
 class Controller(QObject):
     """ Controller for Gailbot GUI 
     
@@ -72,11 +69,6 @@ class Controller(QObject):
         # initialize the application
         self.initApp(userRoot)
         
-        # remove this to the top level
-        self.logger.info(os.environ["PATH"])
-        self.logger.info(os.environ["PATH"])
-        self.logger.info(os.getcwd())
-        self.logger.info(getProjectRoot())
         
     def _prelaunch(self) -> str:
         """ run before initializing the app to create a toml file that stores
@@ -87,7 +79,7 @@ class Controller(QObject):
         """
         try:
             if not os.path.exists(
-                os.path.join(getProjectRoot(), BackEndDataPath.workSpaceData)):
+                os.path.join(FRONTEND_CONFIG_ROOT, BackEndDataPath.workSpaceData)):
                 pathDialog = WorkSpaceDialog()
                 pathDialog.exec()
                 userRoot = pathDialog.userRoot
@@ -104,22 +96,13 @@ class Controller(QObject):
             assert self.gb
             self.logger.info("GailBot initialized")
             
-            # initialize model which stores the data from users
-            self.model = Model(self.gb)
-            assert self.model
-            self.logger.info("model initialized")
-            
             # initialize view object
             self.ViewObj = ViewController(self.gb.get_all_settings_data())
             assert self.ViewObj
             self.logger.info("View Object initialized")
             
             # initialize model view controller for dynamically changing view
-            self.MVController = MVController(
-                self.ViewObj, 
-                self.model.fileOrganizer, 
-                self.model.profileOrganizer, 
-                self.model.pluginOrganizer)
+            self.MVController = MVController(self.ViewObj, self.gb) 
             assert self.MVController
             self.logger.info("MV Controller initialized")
             
@@ -170,7 +153,7 @@ class Controller(QObject):
         """ handle signal from View that requests to transcribe the file"""
         self.ViewObj.getFileSignal().transcribe.connect(self._transcribeFiles)
         self.signal.fileProgress.connect(
-            self.model.fileOrganizer.updateFileProgress)
+            self.MVController.fileOrganizer.updateFileProgress)
         
         
     @pyqtSlot(set)
@@ -181,7 +164,7 @@ class Controller(QObject):
                               will be transcribed
         """
         self.logger.info(files)
-        transcribeList = self.model.fileOrganizer.getTranscribeData(files)
+        transcribeList = self.MVController.fileOrganizer.getTranscribeData(files)
         self._runGailBot(transcribeList)
         
         
@@ -200,7 +183,7 @@ class Controller(QObject):
     def _clearLog(self):
         """ clear the log that is expired"""
         currentTime = int(time.time())
-        deleteTime = currentTime - FileManage.AUTO_DELETE_TIME * 24 * 60
+        deleteTime = currentTime - getFileManagementData().AUTO_DELETE_TIME * 24 * 60
         logdir = getWorkPath().logFiles
         files = glob.iglob(os.path.join(logdir, "*.log"))
         for file in files:

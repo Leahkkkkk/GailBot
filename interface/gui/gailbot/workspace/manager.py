@@ -2,10 +2,11 @@ from gailbot.configs import path_config_loader, TemporaryFolder, OutputFolder
 from typing import Union, List, Dict, Any
 from gailbot.core.utils.general import is_directory, make_dir, delete, paths_in_dir, subdirs_in_dir
 from gailbot.core.utils.logger import makelogger
+from gailbot.configs import service_config_loader
 from dataclasses import dataclass
-
-TEMP = "_gb_temp"
-OUTPUT = "_gb_output"
+CONFIG = service_config_loader()
+TEMP = CONFIG.directory_name.temp_extension
+OUTPUT = CONFIG.directory_name.out
 logger = makelogger("workspace")
 
 @dataclass

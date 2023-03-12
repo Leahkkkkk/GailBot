@@ -10,9 +10,9 @@ Modified By:  Siara Small  & Vivian Li
 Description: implementation of the plugin page
 '''
 from typing import Dict 
-from config.Style import FontSize, Dimension, FontFamily
-from config.Text import ProfilePageText as Text
-from config.Text import ProfileSettingForm as Form
+from view.config.Style import FontSize, Dimension, FontFamily
+from view.config.Text import ProfilePageText as Text
+from view.config.Text import ProfileSettingForm as Form
 from util.Logger import makeLogger
 from view.widgets import Label, ScrollArea
 from view.widgets.MsgBox import WarnBox

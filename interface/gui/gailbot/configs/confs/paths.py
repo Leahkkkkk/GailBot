@@ -9,8 +9,10 @@ from dict_to_dataclass import field_from_dict, DataclassFromDict
 import toml 
 import os
 import logging
+
 CONFIG_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
-CONFIG_ROOT = os.path.join(CONFIG_ROOT, "config_gb")
+CONFIG_ROOT = os.path.join(CONFIG_ROOT, "config_backend")
+
 logging.info(CONFIG_ROOT)
 @dataclass 
 class ConfigPath(DataclassFromDict):
@@ -25,7 +27,6 @@ class ConfigPath(DataclassFromDict):
     config: str = field_from_dict()
     paths_config: str = field_from_dict()
     services: str = field_from_dict()
-
 
 path_dict = toml.load(os.path.join(CONFIG_ROOT, "paths.toml"))
 PATH = ConfigPath.from_dict(path_dict["paths"]) 

@@ -12,8 +12,8 @@ Description: a side bar widget
 
 from view.widgets.Background import initSideBarBackground
 from view.widgets.Label import Label
-from config.Style import Dimension, Color, FontSize
-from config.Text import About, Links
+from ..config.Style import Dimension, Color, FontSize
+from ..config.Text import About, Links
 
 from PyQt6.QtWidgets import (
     QWidget, 

@@ -1,11 +1,10 @@
 from gailbot.plugins import Methods
 from gailbot.core.utils.logger import makelogger
 from ..payload.payloadObject import PayLoadObject
-from typing import Dict, Union, List, Any, Callable
+from typing import Dict, Union, List, Any
 from gailbot.core.utils.general import (
     get_name, 
     is_directory, 
-    is_file, 
     make_dir,
     write_csv,
     write_json,
@@ -15,9 +14,6 @@ from gailbot.core.utils.general import (
 import os 
 
 
-""" TODO:
-1. connection GBPluginMethods with analysis component, add testing
-"""
 logger = makelogger("pluginMethod")
 
 class GBPluginMethods(Methods):
@@ -45,14 +41,14 @@ class GBPluginMethods(Methods):
     @property
     def audios(self) -> Dict[str,str]:
         """
-            return a dictionary that maps the audio name to the audio
-            source
+        Returns a dictionary that maps the audio name to the audio source
         """
         return self.audio_files
 
     @property
     def utterances(self) -> Dict[str,Dict]:
-        """ get the utterance data
+        """ 
+        Accesses and returns the utterance data
 
         Returns:
             Dict[str,Dict]: return dictionary that maps audio name to the 
@@ -66,10 +62,22 @@ class GBPluginMethods(Methods):
                 
     @property
     def temp_work_path(self) -> str:
+        """
+        Accesses and returns the temporary workspace path
+
+        Returns:
+            String containing the temporary workspace path
+        """
         return self.work_path
    
     @property
     def output_path(self) -> str:
+        """
+        Accesses and returns the output path
+
+        Returns:
+            String containing the output path
+        """
         return self.out_path
     
     def save_item(self, 

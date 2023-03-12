@@ -9,16 +9,16 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
-from config.Style import  (
+from view.config.Style import  (
     Color,  
     Dimension,  
     FontFamily,  
     Asset,
     StyleSheet
 )
-from config.Style import FontSize as FS
-from config.Text import WelcomePageText as Text
-from config.Text import Links
+from view.config.Style import FontSize as FS
+from view.config.Text import WelcomePageText as Text
+from view.config.Text import Links
 from view.widgets import (
     Button, 
     Label, 

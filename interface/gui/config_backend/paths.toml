@@ -1,0 +1,10 @@
+# contains path  configuration files
+[paths]
+watson       = "engines/watson/watson_config.toml"
+whisper      = "engines/whisper/whisper_config.toml"
+google       = "engines/google/google_config.toml"
+log          = "util/log.toml"
+default      = "settings/default.toml"
+config       = "toplevel/config.toml"
+paths_config = "toplevel/path_config.toml"
+services     = "services/service.toml"

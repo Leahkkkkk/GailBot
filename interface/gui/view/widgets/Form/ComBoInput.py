@@ -12,7 +12,7 @@ from typing import List
 
 from view.widgets.Form.FormWidget import FormWidget
 from view.widgets import Label, ComboBox 
-from config.Style import Color, FontSize
+from view.config.Style import Color, FontSize
 from PyQt6.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget
 
 class InputCombo(QWidget, FormWidget):

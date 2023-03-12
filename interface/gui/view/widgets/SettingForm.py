@@ -14,7 +14,7 @@ from typing import Dict
 
 from view.widgets import Label,TextForm, ScrollArea
 from view.widgets.Background import initSecondaryColorBackground
-from config.Style import (
+from ..config.Style import (
     FontFamily, 
     FontSize, 
     Dimension,

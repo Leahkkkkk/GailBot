@@ -89,6 +89,15 @@ class SourceManager():
             return False
 
     def get_source_setting(self, source:str) -> SettingObject:
+        """
+        Gets the object;s source settings
+
+        Args:
+            source: str: source object to look for
+        
+        Returns:
+            SettingObject of the current source's settings
+        """
         source_name = get_name(source) if is_path(source) else source
         if self.is_source(source_name):
             return self.sources[source_name].source_setting()
@@ -96,6 +105,17 @@ class SourceManager():
             return False
 
     def apply_setting_profile_to_source(self, source:str, setting: SettingObject, overwrite: bool):
+        """
+        Applies the given settings to the given source
+
+        Args:
+            source: str: given source to update
+            setting: SettingObject: setting object to apply
+            overwrite: bool: whether or not to overwrite
+        
+        Returns:    
+            bool: True if successfully applied, false if not
+        """
         source_name = get_name(source) if is_path(source) else source
         if self.is_source(source_name):
                 self.sources[source_name].apply_setting(setting, overwrite)
@@ -159,6 +179,15 @@ class SourceManager():
     
     @staticmethod
     def _is_path(source:str):
+        """
+        Determines if a string is a path
+
+        Args:
+            source: str: string to determine if is a path 
+
+        Returns:
+            bool: true if given string is a path, false if not
+        """
         return is_file(source) or is_directory(source)
     
     

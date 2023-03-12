@@ -11,7 +11,7 @@ Modified By:  Siara Small  & Vivian Li
 
 from view.widgets.Form.FormWidget import FormWidget
 from view.widgets.Label import Label
-from config.Style import FontSize
+from view.config.Style import FontSize
 from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QCheckBox
 
 class CheckBox(QWidget, FormWidget):

@@ -12,8 +12,8 @@ Description: implementation of the main page Stack
 from typing import Tuple
 
 from util.Logger import makeLogger
-from config.Style import Dimension
-from config.Text import MainStackText
+from view.config.Style import Dimension
+from view.config.Text import MainStackText
 from view.pages import (
         WelcomePage, 
         ConfirmTranscribePage,

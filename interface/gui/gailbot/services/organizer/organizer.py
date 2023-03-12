@@ -25,6 +25,16 @@ class Organizer:
         self.setting_manager.set_to_default_setting(DEFAULT_SETTING_NAME)
         
     def add_source(self, source_path: str, output: str) -> bool:
+        """
+        Adds given source to the output directory
+
+        Args:
+            source_path: str: path to the source to add
+            output: str: path to the output directory
+
+        Returns: 
+            bool: True if successfully added, false if not
+        """
         try:
             name = self.source_manager.add_source(source_path, output)
             assert name
@@ -35,18 +45,63 @@ class Organizer:
             return False
         
     def remove_source(self, source_name: str) -> bool:
+        """
+        Removes given source
+
+        Args:
+            source_path: str: path to the source to remove
+
+        Returns: 
+            bool: True if successfully removed, false if not
+        """
         return self.source_manager.remove_source(source_name)
     
     def is_source(self, source_name: str) -> bool:
+        """
+        Determines if given name corresponds to an existing source
+
+        Args:
+            source_name: str: name of potential source
+
+        Returns:
+            bool: true if the name corresponds to an existing source, false if not
+        """
         return self.source_manager.is_source(source_name)
     
     def get_source(self, source_name: str) -> Union [bool, SourceObject]:
+        """
+        Accesses source with a given name
+
+        Args:
+            source_name: str: source name to access
+
+        Returns:    
+            Source object associated with the given name or false if source object is not found
+        """
         return self.source_manager.get_source(source_name)
     
     def get_source_setting(self, source_name: str) -> SettingObject:
+        """
+        Accesses the settings of a source with a given name
+
+        Args:
+            source_name: str: source name whose setting to access
+
+        Returns:    
+            Source settings associated with the given name or false if source object is not found
+        """
         return self.source_manager.get_source_setting(source_name)
     
     def is_setting_applied(self, source_name: str) -> bool:
+        """
+        Determines if a given source has configured settings
+
+        Args:
+            source_name: str: source name to access
+
+        Returns:
+            bool: True if given source is configured, false if not
+        """
         return self.source_manager.is_source_configured(source_name)
     
     def apply_setting_to_source(

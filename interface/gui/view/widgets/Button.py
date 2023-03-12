@@ -12,10 +12,10 @@ Description: implement reusable button widgets
 import os
 from typing import List
 from view.widgets import Label
-from config.Style import FontSize, Dimension, Color, StyleSheet, Asset
-from config.Text import BtnText as Text
-from config.Path import getProjectRoot
-from util.ColorGenerator import colorScale
+from view.config.Style import FontSize, Dimension, Color, StyleSheet, Asset
+from view.config.Text import BtnText as Text
+from config_frontend import PROJECT_ROOT
+from view.util.ColorGenerator import colorScale
 
 from PyQt6.QtWidgets import (
     QPushButton, 
@@ -28,7 +28,6 @@ from PyQt6.QtCore import  Qt
 from PyQt6.QtGui import QIcon, QCursor
 
 
-dirname = getProjectRoot()
 class ColoredBtn(QPushButton):
     """ a button widget with colored background and white button text
 
@@ -142,8 +141,8 @@ class ToggleBtn(QPushButton):
         super().__init__(*args, **kwargs)
         self.text = text
         self.setText(self.text)
-        self.rightIcon = QIcon(os.path.join(dirname, f"{label[0]}"))
-        self.downIcon = QIcon(os.path.join(dirname, f"{label[1]}"))
+        self.rightIcon = QIcon(os.path.join(PROJECT_ROOT, f"{label[0]}"))
+        self.downIcon = QIcon(os.path.join(PROJECT_ROOT, f"{label[1]}"))
         self.setCheckable(True)
         self.clicked.connect(self._changeSymbol)
         self.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
@@ -248,7 +247,7 @@ class iconBtn(QPushButton):
     """
     def __init__(self, icon:str, label:str=None,*args, **kwargs):
       super().__init__(*args, **kwargs)
-      icon = QIcon(os.path.join(dirname, f"{icon}"))
+      icon = QIcon(os.path.join(PROJECT_ROOT, f"{icon}"))
       self.setIcon(icon)
       self.setObjectName(Text.icon)
       self.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))

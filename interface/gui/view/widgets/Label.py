@@ -13,11 +13,11 @@ import os
 import logging
 
 
-from config.Style import Color,  FontFamily, FontSource
+from ..config.Style import Color,  FontFamily, FontSource
 
 from PyQt6.QtWidgets import QLabel
 from PyQt6.QtGui import QFont, QFontDatabase
-from config import Path
+from config_frontend import PROJECT_ROOT
 
 
 class Label(QLabel):
@@ -60,16 +60,15 @@ class Label(QLabel):
         
     def loadHeaderFont(self):
         """loads font for header label (since it's not default)"""
-        id = QFontDatabase.addApplicationFont(os.path.join
-                                                   (Path.getProjectRoot(), 
-                                                    FontSource.headerFont))
+        id = QFontDatabase.addApplicationFont(
+            os.path.join(PROJECT_ROOT, FontSource.headerFont))
         if id < 0 : logging.warn("Font cannot be loaded")
         Raleway =  QFontDatabase.applicationFontFamilies(id)
         self.setFont(QFont(Raleway[0], weight=800))
     
     def loadClockFont(self):
-        id = QFontDatabase.addApplicationFont(os.path.join (Path.getProjectRoot(),
-                                                            FontSource.clockFont))
+        id = QFontDatabase.addApplicationFont(
+            os.path.join(PROJECT_ROOT,FontSource.clockFont))
         if id < 0 : logging.warn("Font cannot be loaded")
         ClockFont =  QFontDatabase.applicationFontFamilies(id)
         self.setFont(QFont(ClockFont[0], weight=600))

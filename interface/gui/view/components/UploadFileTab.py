@@ -13,7 +13,7 @@ Description: implementation of a pop up dialog that allow user to upload
 from typing import List
 
 from util.Logger import makeLogger
-from config.Text import ChooseFileTabText
+from view.config.Text import ChooseFileTabText
 from view.widgets.PopUpTab import Tab
 from view.pages.FileUploadTabPages import (
     OpenFile, 

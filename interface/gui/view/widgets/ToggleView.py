@@ -11,7 +11,7 @@ Description: a toggle widget with the functionalities to hide and show
              a view object 
 '''
 from view.widgets import Button, ScrollArea
-from config.Style import (
+from ..config.Style import (
     Color, 
     FontSize, 
     Dimension, 
