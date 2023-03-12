@@ -19,14 +19,14 @@ class ConfigPath(DataclassFromDict):
     """
     Loads paths to engine configuration files
     """
-    watson: str = field_from_dict()
-    whisper: str = field_from_dict()
-    google: str = field_from_dict()
-    default: str = field_from_dict()
-    log: str = field_from_dict()
-    config: str = field_from_dict()
+    watson      : str = field_from_dict()
+    whisper     : str = field_from_dict()
+    google      : str = field_from_dict()
+    default     : str = field_from_dict()
+    log         : str = field_from_dict()
+    config      : str = field_from_dict()
     paths_config: str = field_from_dict()
-    services: str = field_from_dict()
+    services    : str = field_from_dict()
 
 path_dict = toml.load(os.path.join(CONFIG_ROOT, "paths.toml"))
 PATH = ConfigPath.from_dict(path_dict["paths"]) 

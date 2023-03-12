@@ -45,13 +45,13 @@ class ProfileOrganizer:
     Public function:
     Database modifier: 
     1. post(self, profile: Tuple[str, dict]) -> None 
-    2. delete(self, profilekey:str) -> None
+    2. delete(self, profileName:str) -> None
     
     Profile modifier:
     3. edit(self, profile: Tuple[str, dict]) -> None 
     
     Database access: 
-    4. get(self, profilekey:str) -> None 
+    4. get(self, profileName:str) -> None 
     """
     def __init__(self, gb: GailBot) -> None:
         self.logger = makeLogger("B")
@@ -84,26 +84,26 @@ class ProfileOrganizer:
         except Exception as e:
             self.logger.error(f"Creating new profile error {e}")
         
-    def delete(self, profilekey:str) -> None :
+    def delete(self, profileName:str) -> None :
         """ delete a file from database 
 
         Args:
-            profilekey (str): the profile name that identified the profile  
+            profileName (str): the profile name that identified the profile  
                               to be deleted
         """
-        self.logger.info(f"deleting profile {profilekey}")
+        self.logger.info(f"deleting profile {profileName}")
         self.logger.info(f"the default setting is {self.gb.get_default_setting_name()}")
-        if not self.gb.is_setting(profilekey):
-            self.signals.error.emit(f"The setting profile {profilekey} does not exist")
+        if not self.gb.is_setting(profileName):
+            self.signals.error.emit(f"The setting profile {profileName} does not exist")
             self.logger.error(ErrorMsg.KEYERROR)
-        elif profilekey == self.gb.get_default_setting_name():
+        elif profileName == self.gb.get_default_setting_name():
             self.signals.error.emit(ErrorMsg.DELETE_DEFAULT)
             self.logger.error(ErrorMsg.DELETE_DEFAULT)
-        elif not self.gb.remove_setting(profilekey):
-            self.signals.error.emit(f"Error: the profile {profilekey} cannot be deleted")
-            self.logger.error(f"profile {profilekey} cannot be deleted")
+        elif not self.gb.remove_setting(profileName):
+            self.signals.error.emit(f"Error: the profile {profileName} cannot be deleted")
+            self.logger.error(f"profile {profileName} cannot be deleted")
         else:
-            self.signals.deleteProfile.emit(profilekey)
+            self.signals.deleteProfile.emit(profileName)
             self.signals.deleted.emit(True)
     
     def edit(self, profile: Tuple[str, dict]) -> None :
@@ -124,18 +124,18 @@ class ProfileOrganizer:
             self.signals.error.emit(ErrorMsg.EDITERROR)
             self.logger.error(f"error in updating the profile setting {e}")
      
-    def get(self, profilekey:str) -> None:
+    def get(self, profileName:str) -> None:
         """ 
-        Args:
-            profilekey (str): _description_
+        Args: send a signal that stores the profile information
+            profileName (str): the profile name that identifies a profile 
         """
         try:
-            if not self.gb.is_setting(profilekey):
+            if not self.gb.is_setting(profileName):
                 self.signals.error.emit(ErrorMsg.KEYERROR)
                 self.logger.error(KeyError)
             else:
-                data = self.gb.get_setting_dict(profilekey)
-                self.signals.send.emit((profilekey, data))
+                data = self.gb.get_setting_dict(profileName)
+                self.signals.send.emit((profileName, data))
         except Exception as e:
             self.signals.error.emit(ErrorMsg.GETERROR)
             self.logger.error(f"error getting the profile {e}")

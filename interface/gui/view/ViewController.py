@@ -53,7 +53,7 @@ class ViewController():
 
         Args:
             msg (str): the message tha will be displayed
-            time (int, optional): the time the msg will stay in thjeh pgui
+            time (int, optional): the time the msg will be displayed
             Defaults to 2000.
         """
         self.window.showStatusMsg(msg,time)     

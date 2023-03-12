@@ -4,17 +4,17 @@ from dict_to_dataclass import field_from_dict, DataclassFromDict
 import toml 
 
 @dataclass
-class WorkSpace(DataclassFromDict):
-    log_files: str = field_from_dict()
-    watson_workspace: str = field_from_dict()
-    google_workspace: str = field_from_dict()
-    whisper_workspace: str = field_from_dict()
-    plugin_workspace: str = field_from_dict() 
+class WorkSpace(DataclassFromDict): 
+      log_files                   : str = field_from_dict()
+      watson_workspace            : str = field_from_dict()
+      google_workspace            : str = field_from_dict()
+      whisper_workspace           : str = field_from_dict()
+      plugin_workspace            : str = field_from_dict()
 
 @dataclass
-class Output(DataclassFromDict):
-    audio: str = field_from_dict()
-    transcript: str = field_from_dict()
+class Output(DataclassFromDict): 
+      audio                    : str = field_from_dict()
+      transcript               : str = field_from_dict()
 
 @dataclass
 class Organizer(DataclassFromDict):

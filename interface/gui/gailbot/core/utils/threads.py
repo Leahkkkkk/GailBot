@@ -9,27 +9,43 @@ from dataclasses import dataclass
 from concurrent.futures import ThreadPoolExecutor, Future, wait
 from queue import Queue
 from enum import Enum
-from typing import Tuple, Callable, List, Dict
+from typing import Tuple, Callable, List, Dict, Any
 from gailbot.core.utils.logger import makelogger
 
 logger = makelogger("thread")
 
 #### Custom Exceptions for Threads ####
 class TaskNotFoundException(Exception):
+    def __init__(self, task_key  = None ) -> None:
+        self.task_key = task_key 
     def __str__(self) -> str:
-        return super().__str__()
-
+        return "task" + str(self.task_key) + " is not found"
+        
 class TaskNotFinishedException(Exception):
-    pass
+    def __init__(self, task_key  = None ) -> None:
+        self.task_key = task_key 
+    def __str__(self) -> str:
+        return "task" + str(self.task_key) + " is not finished"
 
 class TaskCancelException(Exception):
-    pass
+    def __init__(self, task_key  = None ) -> None:
+        self.task_key = task_key 
+    def __str__(self) -> str:
+        return "task" + str(self.task_key) + " cannot be canceled"
 
 class TaskCreateError(Exception):
-    pass 
+    def __init__(self, msg  = None ) -> None:
+        self.msg = msg
+    def __str__(self) -> str:
+        return "task cannot be created due to the error " + self.msg
 
 class ThreadError(Exception):
-    pass 
+    def __init__(self, task_key  = None, msg: str = None ) -> None:
+        self.task_key = task_key 
+        self.msg = msg
+        
+    def __str__(self) -> str:
+        return "task" + str(self.task_key) + " has an error " + self.msg
 
 ### Defines different possible statuses for a task ###
 @dataclass
@@ -61,9 +77,9 @@ class ThreadPool(ThreadPoolExecutor):
                                 at the same time parallel
         """
         super().__init__(max_workers, *args, **kwargs)
-        self.num_thread = max_workers
-        self.task_pool: Dict[int, Future] = dict() # used to keeps track of the task status
-        self.next_key = 0
+        self.num_thread = max_workers              
+        self.task_pool: Dict[Any, Future] = dict() # used to keeps track of the task status
+        self.next_key = 0                          # next available key
 
 
     def get_num_threads(self) -> int:
@@ -77,8 +93,12 @@ class ThreadPool(ThreadPoolExecutor):
         return self.num_thread
 
     def add_task(
-        self, fun, args: List = None, kwargs: Dict = None,
-             error_fun: Callable = None) -> int:
+        self, 
+        task, 
+        args: List = None, 
+        kwargs: Dict = None,
+        error_fun: Callable = None,
+        key: Any = None) -> Any:
         """
         Adds the given task to the task pool.
 
@@ -87,31 +107,40 @@ class ThreadPool(ThreadPoolExecutor):
             args: List (Optional): a list argument to the function
             kwargs: Dict (Optional): a list of key word arguments to the function
             error_fun: Callable (Optional): a function to handle the error 
-       
+            key: Any(Optional): a user provided key that can be used to query 
+                                the task progress and result after submitting it 
+                                to the threadpool 
         Return:
             int: An integer id key that will be used to keep track of the task in the thread.
         """
     
-        logger.info(f"the task {fun} is being added to the thread: \
+        logger.info(f"the task {task} is being added to the thread: \
                     args: {args}, kwargs {kwargs}")
         try:
             if args and kwargs:
-                worker: Future = self.submit(fun, *args, **kwargs)
+                worker: Future = self.submit(task, *args, **kwargs)
             elif args:
                 logger.info(*args)
-                worker: Future = self.submit(fun, *args)
+                worker: Future = self.submit(task, *args)
             elif kwargs:
-                worker: Future = self.submit(fun, **kwargs)
+                worker: Future = self.submit(task, **kwargs)
             else:
-                worker: Future = self.submit(fun)
+                worker: Future = self.submit(task)
             # worker.add_done_callback(self._handle_error)
-            self.task_pool[self.next_key] = worker
-            self.next_key += 1
-        except:
-            if error_fun: error_fun()
-            else: raise TaskCreateError
-        else:
-            return self.next_key - 1
+            if key:
+                self.task_pool[key] = worker
+                return key
+            else:
+                self.task_pool[self.next_key] = worker
+                self.next_key += 1
+                return self.next_key - 1
+        except Exception as e:
+            logger.error(e)
+            if error_fun: 
+                error_fun()
+            else: 
+                raise TaskCreateError(e)
+
 
     def check_task_status(self, key: int):
         """ 
@@ -124,10 +153,11 @@ class ThreadPool(ThreadPoolExecutor):
             String representing the status of the current task.
         """
         self._task_in_pool(key)
-        exception = self.task_pool[key].exception()
+        future: Future = self.task_pool[key]
+        exception =future.exception()
         if exception:
             return Status.error
-        return self.task_pool[key]._state
+        return future._state
 
     def get_tasks_with_status(self, status: Status) -> List[Tuple[int, str]]:
         """ 
@@ -140,7 +170,7 @@ class ThreadPool(ThreadPoolExecutor):
             A List[Tuple[int, str]] of tasks in the thread pool that
                 match the requested status. 
         """
-        return [id for id in self.task_pool.keys() if self.check_task_status(id) == status ]
+        return [task_key for task_key in self.task_pool.keys() if self.check_task_status(task_key) == status ]
 
     def get_task_result(self, key: int, error_fun: Callable = None ):
         """ 
@@ -159,8 +189,7 @@ class ThreadPool(ThreadPoolExecutor):
             future = self.task_pool[key]
             return future.result()
         except Exception as e:
-            logger.error(future.exception())
-            logger.error(f"task key is {key}")
+            logger.error(f"task with task keu {key} received an exception {future.exception}")
             if error_fun: 
                 logger.error(e)
                 error_fun()
