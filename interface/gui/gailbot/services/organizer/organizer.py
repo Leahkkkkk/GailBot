@@ -127,6 +127,7 @@ class Organizer:
     def save_setting_profile(self, setting_name: str) -> str:
         return self.setting_manager.save_setting(setting_name)
     
+   
     def rename_setting(self, setting_name: str, new_name: str) -> bool:
         try:
             self.setting_manager.rename_setting(setting_name, new_name)
@@ -163,13 +164,6 @@ class Organizer:
         return self.apply_setting_to_source(
             source_name, DEFAULT_SETTING_NAME, True)
     
-    def get_engine_setting(self, name: str) -> Union[bool, Dict[str, str]]:
-        setting: SettingObject = self.setting_manager.get_setting(name)
-        if setting:
-            return setting.get_engine_setting()
-        else:
-            return False
-        
     def get_plugin_setting(self, name: str):
         setting: SettingObject = self.setting_manager.get_setting(name)
         if setting:

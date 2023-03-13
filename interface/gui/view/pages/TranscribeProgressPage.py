@@ -79,12 +79,9 @@ class TranscribeProgressPage(QWidget):
             os.path.join(PROJECT_ROOT, Asset.transcribing))
         self.loadIcon.setMovie(self.IconImg)
         self.loadStart()
-       
         self.loadingText = Label.Label(
             Text.loadingText,FontSize.SMALL, FontFamily.OTHER)
         self.loadingText.setAlignment(center)
-        self.Caption = Label.Label(
-            Text.inProgressText, FontSize.HEADER3, FontFamily.MAIN)
         self.cancelBtn = Button.ColoredBtn(
             Text.cancelText, 
             Color.GREYDARK, 
@@ -107,7 +104,6 @@ class TranscribeProgressPage(QWidget):
         self.containerLayout = QVBoxLayout()
         self.container.setFixedWidth(Dimension.TABLECONTAINERWIDTH)
         self.container.setLayout(self.containerLayout)
-        self.containerLayout.addWidget(self.Caption)
         self.containerLayout.addWidget(self.fileTable)
         self.setLayout(self.verticalLayout)
         """ add widget to layout """
@@ -119,10 +115,9 @@ class TranscribeProgressPage(QWidget):
         self.verticalLayout.addWidget(self.loadingText, alignment = top)
         self.verticalLayout.addWidget(self.container, alignment = top|center)
         self.verticalLayout.addStretch()
-        self.verticalLayout.addWidget(self.cancelBtn, 
-                                      alignment = center)
-        self.Caption.setContentsMargins(0, 0, 0, 0)
-        # self.verticalLayout.setSpacing(Dimension.MEDIUM_SPACING)
+        #NOTE: disable cancel function 
+        # self.verticalLayout.addWidget(self.cancelBtn, 
+        #                               alignment = center)
         self.verticalLayout.addStretch()
         
     def _connectSignal(self):

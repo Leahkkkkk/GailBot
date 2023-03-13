@@ -19,9 +19,6 @@ class SourceObject():
     def source_details(self) -> Dict[str, Union[str, SettingObject]]:
         """
         Accesses and returns the details about the given source.
-
-        Args:
-            self
         
         Returns:
             Dictionary containing the source name, source path, and settings profile
@@ -34,9 +31,6 @@ class SourceObject():
         """
         Accesses the path of a source
 
-        Args:
-            self
-
         Returns:
             string containing the source path
         """
@@ -46,9 +40,6 @@ class SourceObject():
         """
         Accesses the source settings
 
-        Args:
-            self
-
         Returns:
             Settings object of the current source
         """
@@ -57,9 +48,6 @@ class SourceObject():
     def setting_name(self) -> str:
         """
         Accesses the source name
-
-        Args:
-            self
 
         Returns:
             String name of the current source
@@ -71,9 +59,6 @@ class SourceObject():
         """
         Determines if a given source was configured or not.
 
-        Args:
-            self
-
         Returns:
             Boolean representing whether or not the given source was configured
         """
@@ -84,7 +69,6 @@ class SourceObject():
         Apply setting object
 
         Args:
-            self
             setting: SettingObject
             overwrite: bool
 

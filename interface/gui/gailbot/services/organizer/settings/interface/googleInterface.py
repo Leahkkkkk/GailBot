@@ -7,8 +7,7 @@ logger = makelogger("google_interface")
 class ValidateGoogle(BaseModel):
     engine: str 
 class Transcribe(BaseModel):
-    """ TODO: add documention
-
+    """ 
     Args:
         BaseModel (_type_): _description_
     """
@@ -17,6 +16,9 @@ class Init(BaseModel):
     pass 
 
 class GoogleInterface(EngineSettingInterface):
+    """
+    Interface for the Google speech to text engine
+    """
     init: Init = None 
     transcribe: Transcribe = None 
     engine: str 

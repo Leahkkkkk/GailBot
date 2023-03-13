@@ -6,16 +6,21 @@ from ...converter.result import  ProcessingStats
 from ...converter.payload import PayLoadObject
 logger = makelogger("transcribeComponent")
 
-""" TODO:
-1. connect with pipeline and test 
-"""
 class FormatComponent(Component):
     def __call__(
         self,
         dependency_outputs : Dict[str, Any]
     ) -> ComponentState:
 
-        """Get a source and the associated settings objects and transcribe"""
+        """
+        Gets a source and the associated settings objects and transcribes it
+        
+        Args:
+            dependency_outputs : Dict[str, Any]: output of the dependency map to search through
+
+        Returns: 
+            ComponentResult: the result of the formatting process
+        """
         try:
             dependency_res: ComponentResult = dependency_outputs["analysis"]
             assert dependency_res.state == ComponentState.SUCCESS

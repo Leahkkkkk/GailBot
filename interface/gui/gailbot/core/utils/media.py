@@ -222,7 +222,6 @@ class AudioHandler:
         Return:
             the resulting audio stream as an instance of AudioStream
         """
-
         stereo_name = f"{left_stream.name}_{right_stream.name}_stereo"
         sources = [left_stream,right_stream]
         segment = AudioSegment.from_mono_audiosegments(

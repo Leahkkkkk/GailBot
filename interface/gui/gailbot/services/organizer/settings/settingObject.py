@@ -10,11 +10,12 @@ from gailbot.core.utils.logger import makelogger
 from gailbot.core.utils.general import write_toml
 
 logger = makelogger("setting_object")
+
 DEFAULT_WHISPER_SETTING = {
     "engine": "whisper", 
     "language": "English", 
-    "detect_speakers": False}
-
+    "detect_speakers": False
+}
 
 class SettingDict(TypedDict):
     engine_setting: Dict[str, str]
@@ -29,12 +30,20 @@ class SettingObject():
     name: str     = None                   
     valid_interfaces = [load_whisper_setting, load_google_setting, load_watson_setting] 
      
-    def __init__(self, setting: Dict[str, str], name: str) -> None:
-        self.data = setting
-        logger.info("initialize the setting object")
-        self._load_engine_setting(setting["engine_setting"])
-        self._load_plugin_setting(setting["plugin_setting"])
+    def __init__(self, setting: SettingDict, name: str) -> None:
         self.name = name
+        if not "engine_setting" in setting or not "plugin_setting" in setting:
+            logger.error(f"The setting data {setting} cannot be parsed since it"  + 
+                          " does not provide correct setting key, default setting " + 
+                          " will be loaded instead")
+            self._load_default_setting()
+            self.datat = DEFAULT_WHISPER_SETTING
+        else: 
+            logger.info("initialize the setting object")
+            self._load_engine_setting(setting["engine_setting"])
+            self._load_plugin_setting(setting["plugin_setting"])
+            self.data = setting
+        
     
     def get_name(self):
         """
@@ -51,12 +60,6 @@ class SettingObject():
         """
         self.name = name 
         
-    def get_engine_setting(self) -> Dict[str, str]:
-        """
-        Accesses and returns the object's engine settings
-        """
-        return self.engine_setting.to_kwargs_dict()
-    
     def get_plugin_setting(self) -> List[str]:
         """
         Accesses and returns the object's plugin settings
@@ -100,12 +103,12 @@ class SettingObject():
         """
         logger.info(setting)
         self._load_engine_setting(setting["engine_setting"])
+       
         if "plugin_setting" in setting.keys():
             self._load_plugin_setting(setting["plugin_setting"])
         else:
             self._load_plugin_setting([])
             
-        # NOTE: the plugin data is not required
         if self.engine_setting:
             self.data = setting
             return True
@@ -115,6 +118,9 @@ class SettingObject():
     def _load_plugin_setting(self, setting : List[str]) -> bool:
         """
         Loads the plugin settings
+
+        Args:
+            setting : List[str]: settings to load
 
         Returns:
             bool: true if successfully loaded, false if not
@@ -126,6 +132,9 @@ class SettingObject():
         """
         Loads the engine settings
 
+        Args:
+            setting : List[str]: settings to load
+
         Returns:
             bool: true if successfully loaded, false if not
         """
@@ -135,7 +144,10 @@ class SettingObject():
             set_obj = option(setting)
             if isinstance(set_obj, EngineSettingInterface):
                 self.engine_setting = set_obj
-                return True
+                return 
         logger.error(f"setting {setting} cannot be loaded, use default setting instead")
+        self._load_default_setting()
+        
+    def _load_default_setting(self):
         self.engine_setting = load_whisper_setting(DEFAULT_WHISPER_SETTING)
         return True

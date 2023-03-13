@@ -2,13 +2,10 @@ from pydantic import BaseModel, ValidationError
 from typing import Dict, List , Union
 from .engineSettingInterface import EngineSettingInterface
 from gailbot.core.utils.logger import makelogger
-# from gailbot.configs import interface_loader
 
 
 logger = makelogger("watson_interface")
 
-# # INTERFACE_CONFIG = interface_loader()
-# name = INTERFACE_CONFIG.watsonName
 class ValidateWatson(BaseModel):
     engine: str
     api_key : str 
@@ -27,6 +24,9 @@ class TranscribeSetting(BaseModel):
     acoustic_customization_id : str = None 
     
 class WatsonInterface(EngineSettingInterface):
+    """
+    Interface for the Watson speech to text engine
+    """
     engine: str 
     init : InitSetting
     transcribe: TranscribeSetting
@@ -66,4 +66,5 @@ def load_watson_setting(setting: Dict[str, str]) -> Union[bool, EngineSettingInt
         watson_set = WatsonInterface(**watson_set)
         return watson_set
     except ValidationError as e:
+        logger.error(e)
         return False

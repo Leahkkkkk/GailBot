@@ -22,9 +22,9 @@ from pathlib import Path
 # Third party imports
 from copy import deepcopy
 import subprocess
-from gailbot.core.utils.logger import makelogger
+import logging 
 
-logger = makelogger("general")
+logger = logging.getLogger("general")
 
 InvalidPathError = "Error: invalid path"
 
@@ -367,7 +367,7 @@ def write_toml(path : str, data : Dict) -> bool:
         output the data in the toml format to the file
     """
     try:
-        with open(path, "w") as f:
+        with open(path, "w+") as f:
             toml.dump(data, f)
     except Exception as e:
         logger.error(e)
@@ -440,3 +440,28 @@ def get_cmd_status(identifier : int) -> CMD_STATUS:
     except psutil.NoSuchProcess:
         return CMD_STATUS.NOTFOUND
     
+    
+def copy_dir_files(src_folder, dest_folder):
+    """ copy files from src_folder to dest_folder recursively
+
+    Args:
+        src_folder (str): the path to the source folder
+        dest_folder (str): the path to the destination folder
+    """
+    if not os.path.exists(dest_folder):
+        os.makedirs(dest_folder)
+
+    # Walk through the source directory tree
+    for root, dirs, files in os.walk(src_folder):
+        # Create the corresponding subdirectories in the destination folder
+        dest_root = root.replace(src_folder, dest_folder)
+        for dir_name in dirs:
+            dest_dir = os.path.join(dest_root, dir_name)
+            if not os.path.exists(dest_dir):
+                os.makedirs(dest_dir)
+
+        # Copy the files to the destination folder
+        for filename in files:
+            src_path = os.path.join(root, filename)
+            dest_path = os.path.join(dest_root, filename)
+            shutil.copy2(src_path, dest_path)

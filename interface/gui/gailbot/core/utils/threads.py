@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from concurrent.futures import ThreadPoolExecutor, Future, wait
 from queue import Queue
 from enum import Enum
-from typing import Tuple, Callable, List, Dict, Any
+from typing import Tuple, Callable, List, Dict, Any, Union
 from gailbot.core.utils.logger import makelogger
 
 logger = makelogger("thread")
@@ -56,7 +56,6 @@ class Status:
     cancelled = "CANCELLED"
     error = "ERROR"
 
-
 class ThreadPool(ThreadPoolExecutor):
     """
     Implement a threadpool that is able to run tasks parallel on different 
@@ -94,11 +93,11 @@ class ThreadPool(ThreadPoolExecutor):
 
     def add_task(
         self, 
-        task, 
-        args: List = None, 
-        kwargs: Dict = None,
+        task: Callable, 
+        args: List = [], 
+        kwargs: Dict = {},
         error_fun: Callable = None,
-        key: Any = None) -> Any:
+        key: Union[str, int] = None) -> Union[str, int]:
         """
         Adds the given task to the task pool.
 
@@ -107,26 +106,19 @@ class ThreadPool(ThreadPoolExecutor):
             args: List (Optional): a list argument to the function
             kwargs: Dict (Optional): a list of key word arguments to the function
             error_fun: Callable (Optional): a function to handle the error 
-            key: Any(Optional): a user provided key that can be used to query 
+            key: Union[str, int](Optional): a user provided key that can be used to query 
                                 the task progress and result after submitting it 
-                                to the threadpool 
+                                to the threadpool, caller is responsible for
+                                providing unique key  
         Return:
-            int: An integer id key that will be used to keep track of the task in the thread.
+            Union[str, int]: key that will be used to keep track of the task in the thread.
         """
-    
         logger.info(f"the task {task} is being added to the thread: \
                     args: {args}, kwargs {kwargs}")
         try:
-            if args and kwargs:
-                worker: Future = self.submit(task, *args, **kwargs)
-            elif args:
-                logger.info(*args)
-                worker: Future = self.submit(task, *args)
-            elif kwargs:
-                worker: Future = self.submit(task, **kwargs)
-            else:
-                worker: Future = self.submit(task)
-            # worker.add_done_callback(self._handle_error)
+            if not callable(task) or type(args) != list or type(kwargs) != dict:
+                raise TypeError("Type error in adding thread task.")
+            worker = self.submit(task, *args, **kwargs)
             if key:
                 self.task_pool[key] = worker
                 return key
@@ -142,7 +134,7 @@ class ThreadPool(ThreadPoolExecutor):
                 raise TaskCreateError(e)
 
 
-    def check_task_status(self, key: int):
+    def check_task_status(self, key: Union[str, int]):
         """ 
         Return a string representing the status of the current task.
 
@@ -164,15 +156,15 @@ class ThreadPool(ThreadPoolExecutor):
         Returns a list of tasks that match the status passed in by caller
 
         Args:
-            status (Status): Status from set list of possible statuses
-        
+            status (Status): Status ot the task 
+            
         Returns:
             A List[Tuple[int, str]] of tasks in the thread pool that
                 match the requested status. 
         """
         return [task_key for task_key in self.task_pool.keys() if self.check_task_status(task_key) == status ]
 
-    def get_task_result(self, key: int, error_fun: Callable = None ):
+    def get_task_result(self, key: Union[str, int], error_fun: Callable = None ):
         """ 
         Gets the result from the given task.
 
@@ -189,15 +181,15 @@ class ThreadPool(ThreadPoolExecutor):
             future = self.task_pool[key]
             return future.result()
         except Exception as e:
-            logger.error(f"task with task keu {key} received an exception {future.exception}")
-            if error_fun: 
+            logger.error(f"task with task keu {key} received an exception {e}")
+            if error_fun and callable(error_fun): 
                 logger.error(e)
                 error_fun()
                 return future.result()
             else: 
-                return False
+                raise ThreadError(key ,e)
 
-    def completed(self, key, error_fun: Callable = None )-> bool:
+    def completed(self, key: Union[str, int], error_fun: Callable = None )-> bool:
         """ 
         Checks if a given task has been completed.
 
@@ -217,8 +209,10 @@ class ThreadPool(ThreadPoolExecutor):
         try:
             return self.task_pool[key].done()
         except: 
-            if error_fun: error_fun()
-            else: raise ThreadError("ERROR: failed to get thread status")
+            if error_fun and callable(error_fun): 
+                error_fun()
+            else: 
+                raise ThreadError(key, "ERROR: failed to get thread status")
 
     def wait_for_all_completion(self, error_fun: Callable = None ):
         """ 
@@ -239,7 +233,7 @@ class ThreadPool(ThreadPoolExecutor):
             self.wait_for_task(task, error_fun)
             
 
-    def wait_for_task(self, key: int, error_fun: Callable = None ):
+    def wait_for_task(self, key: Union[str, int], error_fun: Callable = None ):
         """ 
         Waits for a certain task in the thread pool to be completed.
 
@@ -259,20 +253,18 @@ class ThreadPool(ThreadPoolExecutor):
         future = self.task_pool[key]
         try:
             wait([future])
-            future.result()
             assert not future.exception()
         except Exception as e:
             logger.error(e)
             if error_fun: 
                 error_fun()
             else: 
-                raise ThreadError(e)
+                raise ThreadError(key, e)
     
-    
-    def cancel(self, key: int) -> bool:
+    def cancel(self, key: Union[str, int]) -> bool:
         """
         Cancels the task at the given key.
-
+ 
         Args:
             key (int): Key to find the given task in the thread pool.
 
@@ -287,7 +279,7 @@ class ThreadPool(ThreadPoolExecutor):
         try:
             self.task_pool[key].cancel()
             if not self.task_pool[key].cancelled():
-                raise TaskCancelException("Failed to cancel thread")
+                raise TaskCancelException(key)
             return True
         except:
             return False
@@ -310,7 +302,8 @@ class ThreadPool(ThreadPoolExecutor):
         except:
             return False
 
-    def add_callback_with_arg(self, key, fun: Callable, error_fun: Callable = None):
+    def add_callback_with_arg(
+        self, key: Union[str, int], fun: Callable, error_fun: Callable = None):
         """ 
         Adds a function to the thread as a callback of a previous function
 
@@ -331,28 +324,46 @@ class ThreadPool(ThreadPoolExecutor):
         res = [future.result()]
         if res and future.done():
             return self.add_task(fun, res)
-        elif error_fun:
+        elif error_fun and callable(error_fun):
             error_fun()
         else: 
-            raise ThreadError("ERROR: Failed to add callback")
+            raise ThreadError(key, "ERROR: Failed to add callback")
     
-    def add_callback(self, key, fun: Callable):
+    def add_callback(self, key: Union[str, int], fun: Callable):
+        """ add call back function fun that will run after the task identified
+            by key is finished running 
+
+        Args:
+            key (Union[str, int]): the key that identifies the existing an task  
+            fun (Callable): the call back function that will be added 
+        """
+        if not callable(fun):
+            raise ThreadError(key, "ERROR: Non-function added as callback")
         future = self.task_pool[key]
         future.add_done_callback(fun)
     
-    def add_task_after(
-        self, key, fun: Callable, args: List = None, 
-        kwargs: Dict = None,  error_fun: Callable = None) -> int:
+    def add_callback_on_result(
+        self, 
+        key: Union[str, int], 
+        fun: Callable, 
+        args: List = [], 
+        kwargs: Dict = {},  
+        error_fun: Callable = None) -> int:
         """ 
         Adds a task to the thread after one task has finished running.
 
         Args:
             key (int): Key to find the current task.
-            fun (Callable): function to be called after the current task has been completed. 
-            error_fun: Callable function used if there is an error when executing the task.
+            fun (Callable): function to be called after the current task has 
+                            been completed. 
+            error_fun: Callable function used if there is an error when
+                      executing the task.
 
         Raises: 
-            Raises ThreadError if the error function is not successfully completed.
+            Raises ThreadError if the task identified by key is throws an 
+            exception 
+            
+            Raises TypeError if the arguments is not passed in correctly 
         
         Returns:
             Returns the key that identify the newly added task 
@@ -360,12 +371,17 @@ class ThreadPool(ThreadPoolExecutor):
         self._task_in_pool(key)
         future = self.task_pool[key]
         wait([future])
+        if not callable(fun) and type(args) == list and type(kwargs) == dict:
+            raise TypeError(f"Type error in adding callback on result to thread task {key}")
         try:
             future.result()
             return self.add_task(fun, args, kwargs)
-        except:
-            if error_fun: error_fun()
-            else: raise ThreadError("ERROR: Failed to add task after")
+        except Exception as e:
+            logger.error(e)
+            if error_fun: 
+                error_fun()
+            else: 
+                raise ThreadError(key, f"ERROR: Failed to add callback task, get error {e}")
     
     def is_busy(self) -> bool:
         """
@@ -401,20 +417,5 @@ class ThreadPool(ThreadPoolExecutor):
             None
         """
         if not key in self.task_pool:
-            raise TaskNotFoundException("ERROR: task is not found")
+            raise TaskNotFoundException(key)
     
-    def _handle_error(self, future: Future) -> None :
-        """
-        Handles errors raised by finding the future of a task. 
-
-        Args:
-            future: Future to determine if there is an exception raised. 
-
-        Raises:
-            Raises ThreadError if the given future raises an exception.
-            
-        Return:
-            None
-        """
-        if future.exception():
-            pass 

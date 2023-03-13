@@ -19,7 +19,6 @@ def test_con_dir():
     assert test_payload
     assert test_payload.name == get_name(AudioPath.CONVERSATION_DIR)
     logging.info(test_payload.original_source)
-    logging.info(test_payload.setting.get_engine_setting())
     assert(test_payload.setting.engine_setting.engine == SETTING_DATA.PROFILE["engine_setting"]["engine"]) 
     assert(test_payload.get_engine() == SETTING_DATA.PROFILE["engine_setting"]["engine"]) 
     logging.info(test_payload.workspace)

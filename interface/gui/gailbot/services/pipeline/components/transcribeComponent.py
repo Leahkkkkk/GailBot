@@ -20,15 +20,17 @@ class InvalidEngineError(Exception):
         return self.engine + "is not a valid engine"
 
 class TranscribeComponent(Component):
-    """ responsible for running the transcription process
+    """ 
+    Responsible for running the transcription process
     """
     def __init__(self, num_thread : int = 5):
         self.engine_manager = EngineManager()
         self.num_thread = num_thread
     
     def __call__(self, dependency_output: Dict[str, str]) -> Any:
-        """ extract the payload objects from the dependency_output,and 
-            transcribe the datafiles in the payload object
+        """ 
+        Extracts the payload objects from the dependency_output and 
+            transcribes the datafiles in the payload object
 
         Args:
             dependency_output (Dict[str, str]): dependency output contains the
@@ -50,7 +52,7 @@ class TranscribeComponent(Component):
                 if not payload.transcribed:
                     # add the payload to the threadpool
                     key = threadpool.add_task(
-                        fun=self._transcribe_payload, args=[payload])
+                        task=self._transcribe_payload, args=[payload])
                     threadkey_to_payload[key] = payload
                     logger.info(f"key: {key}")
             for key, payload in threadkey_to_payload.items():
@@ -120,7 +122,7 @@ class TranscribeComponent(Component):
             transcribe_kwargs = copy.deepcopy(engine_transcribe_kwargs)
             transcribe_kwargs.update({"audio_path": file})
             name_to_threadkey[file] = threadpool.add_task(
-                engine.transcribe, kwargs = transcribe_kwargs) 
+                task = engine.transcribe, kwargs = transcribe_kwargs) 
         try:
             for file in data_files:
                 utt_map[get_name(file)] = \
@@ -153,11 +155,18 @@ class TranscribeComponent(Component):
     
     
     def transcribe_single_file(self, engine, init_kwargs, transcribe_kwargs):
+        """
+        Transcribes a file with the given engine
+
+        Args:
+            engine: engine to perform the transcription
+            init_kwargs: arguments with which to initialize the engine
+            transcribe_kwargs: arguments with which to initialize the transcription
+        """
         engine = self.engine_manager.init_engine(engine, **init_kwargs)
         utterances = engine.transcribe(**transcribe_kwargs)
         return utterances
         
-    
         
     def __repr__(self):
         return "Transcription Component"

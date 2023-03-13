@@ -1,9 +1,10 @@
 import os 
-import shutil
 from dataclasses import dataclass
 from dict_to_dataclass import field_from_dict, DataclassFromDict
+from gailbot.core.utils.general import is_file, write_toml, delete
 import toml 
 from typing import Dict
+
 @dataclass 
 class OutputFolder(DataclassFromDict):
     root: str = field_from_dict()
@@ -85,4 +86,19 @@ def load_path_config(config_path, user_root) -> PathConfig:
     return PathConfig(config_path, user_root)
 
 
-    
+def load_user_root(config_path) -> str:
+    """ public function that returns the user's root if config_path is 
+        a valid file that stores the user's root
+    """
+    if is_file(config_path):
+        d = toml.load(config_path)
+        if "user_root" in d:
+            return d["user_root"]
+    return False
+
+def store_user_root(config_path, user_root: str) -> str:
+    """ public function to store the user_root path to a configuration file 
+    """
+    if is_file(config_path):
+        delete(config_path)
+    write_toml(config_path, {"user_root": user_root})

@@ -11,9 +11,7 @@ from .audioPayload import AudioPayload
 import os 
 from typing import List, Dict, Union
 
-""" TODO:
-1. add more complected logic in loading directory
-"""
+
 logger = makelogger("conversation_payload")
 
 def load_conversation_dir_payload(
@@ -37,19 +35,7 @@ def load_conversation_dir_payload(
     if ConversationDirectoryPayload.is_supported(original_source):
         return [ConversationDirectoryPayload(source, ws_manager)]
    
-    # NOTE: currently not support loading directory inside directory
-    # sub_paths = paths_in_dir(original_source)
-    # output = source.output
-    # setting = source.setting
-    # payloads = []
-    # for path in sub_paths:
-    #     if is_directory(path):
-    #         new_source = SourceObject(path, get_name(path), output)
-    #         new_source.apply_setting(setting)
-    #         new_payloads = load_conversation_dir_payload(new_source)
-    #         if new_payloads:
-    #             payloads.extend(new_payloads)
-                
+    # NOTE: currently not support loading directory inside directory 
     return False
         
 
@@ -69,7 +55,6 @@ class ConversationDirectoryPayload(PayLoadObject):
         
     @staticmethod
     def is_supported(file_path: str) -> bool:
-        """ NOTE: currently only support audio file  """
         """
         Determines if a given file path has a supported file extension
 

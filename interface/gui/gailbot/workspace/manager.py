@@ -1,12 +1,23 @@
-from gailbot.configs import path_config_loader, TemporaryFolder, OutputFolder
-from typing import Union, List, Dict, Any
-from gailbot.core.utils.general import is_directory, make_dir, delete, paths_in_dir, subdirs_in_dir
-from gailbot.core.utils.logger import makelogger
-from gailbot.configs import service_config_loader
 from dataclasses import dataclass
+import os
+from typing import Union, List
+from gailbot.configs import (
+    path_config_loader, 
+    save_user_root, 
+    service_config_loader,
+    PROJECT_ROOT, 
+    TemporaryFolder, 
+    OutputFolder)
+from gailbot.core.utils.general import (
+    is_directory, 
+    make_dir,
+    delete, 
+    paths_in_dir)
+from gailbot.core.utils.logger import makelogger
+
 CONFIG = service_config_loader()
 TEMP = CONFIG.directory_name.temp_extension
-OUTPUT = CONFIG.directory_name.out
+OUTPUT = CONFIG.directory_name.output_extension
 logger = makelogger("workspace")
 
 @dataclass
@@ -14,23 +25,27 @@ class WorkspaceManager:
     """ store the path data of the workspace, provide utility function to 
         create temporary and output directories 
     """
-    def __init__(self, root: str ) -> None:
-        self.path_config = path_config_loader(root)
-        self.setting_src: str = self.path_config.gailbot_data.setting_src
+    def __init__(self, user_root: str ) -> None:
+        self.path_config         = path_config_loader(user_root)
+        self.user_root:      str = user_root
+        self.setting_src:    str = self.path_config.gailbot_data.setting_src
         self.log_file_space: str = self.path_config.gailbot_data.logfiles 
-        self.plugin_src: str     = self.path_config.gailbot_data.plugin_src
+        self.plugin_src:     str = self.path_config.gailbot_data.plugin_src
         self.tempspace_root: str = self.path_config.tempspace_root
-        
+    
     def init_workspace(self):
         """
-            initializing the workspace
+        initializing the workspace
         """
         for path in self.path_config.gailbot_data.__dict__.values():
             if not is_directory(path):
                 make_dir(path, True)
+                
         if not is_directory(self.path_config.tempspace_root):
                 make_dir(self.path_config.tempspace_root, True)
-
+        
+        save_user_root(self.user_root)
+        
     def get_file_temp_space(self, name: str) -> Union[TemporaryFolder, bool]:
         """ given the file name, create a directory for the file
             to store temporary files created during the transcription process
@@ -102,6 +117,12 @@ class WorkspaceManager:
             return False
         
     def clear_gb_temp_dir(self):
+        """
+        Clears the temporary workspace directory
+
+        Returns:
+            False if exception is raised
+        """
         try:
             if is_directory(self.path_config.tempspace_root):
                 delete(self.path_config.tempspace_root)

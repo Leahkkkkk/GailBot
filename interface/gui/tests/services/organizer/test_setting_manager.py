@@ -59,7 +59,6 @@ def test_setting_manager():
     #test update profile
     for new in newnames:
         assert manager.update_setting(new, NEW_PROFILE)
-        logger.info(manager.get_setting(new).get_engine_setting())
         logger.info(manager.get_setting(new).engine_setting.engine)
         assert (manager.get_setting(new).engine_setting.engine == "google") 
         logger.info(manager.get_setting(new).get_plugin_setting())
@@ -81,7 +80,6 @@ def test_init_and_load():
     for setting in settings:
         assert manager2.is_setting(setting)
         logger.info(manager2.get_setting(setting).get_plugin_setting())        
-        logger.info(manager2.get_setting(setting).get_engine_setting())        
     assert manager.delete_all_settings()
     assert manager2.delete_all_settings()
     

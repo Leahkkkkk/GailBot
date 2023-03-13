@@ -11,9 +11,9 @@ from gailbot.core.utils.logger import makelogger
 from ..test_data import SETTING_DATA, WS_MANGER
 TEST_SETTING = SettingObject (SETTING_DATA.PROFILE, "test_setting")
 
-TEST_TRANSCRIBE_RESULT = { "test": [{"speaker": 1, "endtime": 1, "starttime": "2", "text": "hello"}]}
-TEST_ANALYSIS_RESULT = {"test": [{"speaker-analysis": 1, "endtime-analysis": 1, "starttime-analysis": "2", "text-analysis": "hello"}]}
-TEST_FORMAT_RESULT = {"test" : [{"speaker-format": 1, "endtime": 1, "starttime-format": "2", "text-format": "hello"}]}
+TEST_TRANSCRIBE_RESULT = {"test": [{"speaker": 1, "endtime": 1, "starttime": "2", "text": "hello"}]}
+TEST_ANALYSIS_RESULT   = {"test":  [{"speaker-analysis": 1, "endtime-analysis": 1, "starttime-analysis": "2", "text-analysis": "hello"}]}
+TEST_FORMAT_RESULT     = {"test" : [{"speaker-format": 1, "endtime": 1, "starttime-format": "2", "text-format": "hello"}]}
 
 logger = makelogger("audiopayload_test ")
     

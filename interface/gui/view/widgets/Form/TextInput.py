@@ -13,7 +13,7 @@ from view.widgets.Form.FormWidget import FormWidget
 from view.widgets import Label
 from view.style.WidgetStyleSheet import INPUT_TEXT as INPUT_STYLE
 from view.config.Style import FontSize, Dimension
-
+from copy import deepcopy
 
 from PyQt6.QtWidgets import QLineEdit, QHBoxLayout, QVBoxLayout, QWidget
 from PyQt6.QtCore import QSize
@@ -38,7 +38,8 @@ class TextInput(QWidget, FormWidget):
                  vertical = False,
                  *args, **kwargs) -> None:
         super(TextInput, self).__init__(*args, **kwargs)
-        self.label = label.replace("_", " ")
+        self.label = deepcopy(label)
+        self.label.replace("_", " ").capitalize()
         self.vertical = vertical
         self.labelSize = labelSize
         self.value = inputText

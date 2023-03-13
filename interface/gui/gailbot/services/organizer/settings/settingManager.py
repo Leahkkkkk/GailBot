@@ -25,9 +25,14 @@ class SettingManager():
     Manages all available settings 
     """
     settings : Dict[str , SettingObject] = dict()
-
     
     def __init__(self, workspace:str, load_exist: bool = True) -> None:
+        """ consturcting the setting manager
+
+        Args:
+            workspace (str): the path to the directory stores all the setting files
+            load_exist (bool, optional): if true , load existing setting in workspace. Defaults to True.
+        """
         self.workspace = workspace
         self.default_setting = None
         
@@ -216,6 +221,15 @@ class SettingManager():
                 return False
     
     def get_setting_dict(self, setting_name:str) -> Union[bool, SettingDict]:
+        """ return the setting data as a dictionary 
+
+        Args:
+            setting_name (str): the name that identifies the setting
+
+        Returns:
+            Union[bool, SettingDict]: if the setting exists, return the setting 
+                                      data, else return false
+        """ 
         if setting_name in self.settings:
             return self.settings[setting_name].data
         else:

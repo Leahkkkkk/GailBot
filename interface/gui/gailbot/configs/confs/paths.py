@@ -10,8 +10,8 @@ import toml
 import os
 import logging
 
-CONFIG_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
-CONFIG_ROOT = os.path.join(CONFIG_ROOT, "config_backend")
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+CONFIG_ROOT = os.path.join(PROJECT_ROOT, "config_backend")
 
 logging.info(CONFIG_ROOT)
 @dataclass 
@@ -24,7 +24,7 @@ class ConfigPath(DataclassFromDict):
     google      : str = field_from_dict()
     default     : str = field_from_dict()
     log         : str = field_from_dict()
-    config      : str = field_from_dict()
+    user_root   : str = field_from_dict()
     paths_config: str = field_from_dict()
     services    : str = field_from_dict()
 

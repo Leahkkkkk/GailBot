@@ -15,6 +15,9 @@ class TranscribeSetting(BaseModel):
     detect_speakers     : bool = False
     
 class WhisperInterface(EngineSettingInterface):
+    """
+    Interface for the Whisper speech to text engine
+    """
     transcribe : TranscribeSetting
     init: Init = None 
     engine: str 

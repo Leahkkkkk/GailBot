@@ -28,6 +28,7 @@ class InputCombo(QWidget, FormWidget):
         self.vertical = vertical
         self.label = label 
         self.labelSize = labelSize
+        self.label = label.replace("_", " ").capitalize()
         self.inputText = inputText
         self.initUI()
         self.connectSignal()

@@ -179,7 +179,7 @@ class PayLoadObject(ABC):
         Returns:
             Transcription settings in the form of a dictionary
         """
-        return self.setting.engine_setting.to_kwargs_dict()
+        return self.setting.engine_setting.get_transcribe_kwargs()
     
     def get_plugin_setting(self) -> List[str]:
         """
@@ -371,7 +371,6 @@ class PayLoadObject(ABC):
         """
         Saves the file and outputs all results to output directory
         """
-        """ TODO: test the output format and output_analysis """
         logger.info("saving the file")
         logger.info(self.out_dir.root)
         assert self.output_analysis_result()

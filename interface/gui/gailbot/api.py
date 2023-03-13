@@ -29,9 +29,6 @@ class GailBot:
         """
         Resets the workspace: clears the old workspace and initializes a new one.
 
-        Args:
-            self
-
         Returns:
             No return but instantiates a new workspace.
         """
@@ -68,7 +65,6 @@ class GailBot:
         Adds a given list of sources
 
         Args:
-            self
             src_output_pairs: List [Tuple [str, str]]: List of Tuples of strings 
                 to strings, each representing the source path and output path of 
                 a source to add
@@ -87,7 +83,6 @@ class GailBot:
         Adds a given source
 
         Args:
-            self
             source_path : str: Source path of the given source
             output_dir : str: Path to the output directory of the given source
         
@@ -104,7 +99,6 @@ class GailBot:
         Removes the given source
 
         Args:
-            self
             source_name : str: Name of the existing source to remove
         
         Returns: 
@@ -120,7 +114,6 @@ class GailBot:
         Determines if a given name corresponds to an existing source
 
         Args:
-            self
             name: str: Name of the source to look for
 
         Returns:
@@ -137,7 +130,6 @@ class GailBot:
         Creates a new setting profile
 
         Args:
-            self
             name: str: Name to assign to the newly created setting
             setting : Dict[str, str]: Dictionary representation of the setting
 
@@ -166,7 +158,6 @@ class GailBot:
         Saves the given setting
 
         Args:
-            self
             setting_name: str: Name of the setting to save
         
         Returns:
@@ -176,7 +167,7 @@ class GailBot:
      
     def get_source_setting_dict(self, source_name) -> Union[bool, SettingDict]:
         """ 
-        given a source, return its setting content in a dictionary
+        Given a source, returns its setting content as a dictionary
 
         Args:
             source_name (str): the name of the source
@@ -188,7 +179,8 @@ class GailBot:
         return self.gb.get_source_setting_dict(source_name)
     
     def get_setting_dict(self, setting_name:str) -> Union[bool, SettingDict]:
-        """ given a setting name, return the setting content in a dictionary 
+        """ 
+        Given a setting name, returns the setting content in a dictionary 
 
         Args:
             setting_name (str): name that identifies a setting
@@ -220,7 +212,6 @@ class GailBot:
         Renames a given setting to a given new name
 
         Args:
-            self
             old_name: str: original name of the setting to rename
             new_name: str: name to rename the setting to
 
@@ -239,7 +230,6 @@ class GailBot:
         Updates a given setting to a newly given structure
 
         Args:
-            self
             setting_name: str: name of the setting to update
             new_setting: Dict[str, str]: dictionary representation of 
                 the new structure of the setting
@@ -257,7 +247,6 @@ class GailBot:
         Accesses the engine setting of a given setting
 
         Args:
-            self
             setting_name: str: name of the setting to get the engine setting of
 
         Returns:
@@ -273,7 +262,6 @@ class GailBot:
         Accesses the plugin setting of a given setting
 
         Args:
-            self
             setting_name: str: name of the setting to get the plugin setting of
 
         Returns:
@@ -289,7 +277,6 @@ class GailBot:
         Removes the given setting
 
         Args:
-            self
             setting_name: str: name of the setting to remove
 
         Returns:
@@ -305,7 +292,6 @@ class GailBot:
         Determines if a given setting name corresponds to an existing setting
 
         Args:
-            self
             name: str: name of the setting to search fort
 
         Returns:
@@ -323,7 +309,6 @@ class GailBot:
         Applies a given setting to a given source
 
         Args:
-            self
             source: str: name of the source to which to apply the given setting
             setting: str: name of the setting to apply to the given source
             overwrite: bool: determines if it should overwrite from an existing setting
@@ -344,7 +329,6 @@ class GailBot:
         Applies a given setting to a given list of sources
 
         Args:
-            self
             sources: List[str]: list of names of the sources to which to apply the given setting
             setting: str: name of the setting to apply to the given sources
             overwrite: bool: determines if it should overwrite from an existing setting
@@ -384,7 +368,6 @@ class GailBot:
         Registers a gailbot plugin suite
 
         Args:
-            self
             plugin_source : str: Name of the plugin suite to register
 
         Returns:
@@ -399,7 +382,6 @@ class GailBot:
         Gets the plugin suite with a given name
 
         Args:
-            self
             suite_name: string name of the given plugin suite
 
         Returns:
@@ -412,7 +394,6 @@ class GailBot:
         Determines if a given plugin suite is an existing plugin suite
 
         Args:
-            self
             suite_name: str: name of the plugin suite of which to determine existence
 
         Returns:
@@ -425,7 +406,6 @@ class GailBot:
         Removes the given plugin suite
 
         Args:
-            self
             suite_name: str: name of the plugin suite to delete
 
         Returns:

@@ -10,12 +10,8 @@ from gailbot.core.pipeline.component import Component
 from ...converter.plugin.pluginMethod import GBPluginMethods
 logger = makelogger("transcribeComponent")
 
-""" TODO: 
-1. connect with a dummy plugin suite and test 
-
-"""
 class AnalysisComponent(Component):
-    """ responsible for running plugin after the gailbot obtained the
+    """ Responsible for running plugin after gailbot has obtained the
         transcription result 
     """
     def __init__(self, plugin_manager: PluginManager):
@@ -29,7 +25,8 @@ class AnalysisComponent(Component):
         self,
         dependency_outputs : Dict[str, Any]
     ) :
-        """ extract the payloads from the dependency_output and run the 
+        """ 
+        Extracts the payloads from the dependency_output and runs the analysis
         
         Args:
             dependency_outputs (Dict[str, Any]): dependency outputs that store 

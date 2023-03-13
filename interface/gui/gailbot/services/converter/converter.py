@@ -11,7 +11,7 @@ from gailbot.workspace.manager import WorkspaceManager
 logger = makelogger("converter")
 class Converter: 
     """
-    provide function that converts the sourceObject to payload and 
+    Provides functionality that converts the sourceObject to payload and 
     keeps track of the converted payloads 
     """ 
     loaders = [

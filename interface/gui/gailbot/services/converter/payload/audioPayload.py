@@ -10,9 +10,11 @@ from gailbot.workspace.manager import WorkspaceManager
 from gailbot.configs import service_config_loader
 
 SUPPORTED_AUDIO = service_config_loader().engines.audio_supported_format
+
 logger = makelogger("audioPayload")
 
-def load_audio_payload(source: SourceObject, ws_manager: WorkspaceManager) -> Union[bool, List[PayLoadObject]]:
+def load_audio_payload(
+    source: SourceObject, ws_manager: WorkspaceManager) -> Union[bool, List[PayLoadObject]]:
     """ given a source object, convert it into an audio payload if the source 
     
     Args:

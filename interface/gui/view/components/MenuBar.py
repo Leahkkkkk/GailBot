@@ -32,12 +32,12 @@ class ManuBar(QMenuBar):
        
         # help menu
         self.Help = QMenu(MenuBarText.help)
-        self.Contact = QAction(MenuBarText.contact)
-        self.Help.addAction(self.Contact)
         self.addMenu(self.Help)
+        self.Contact = QAction(MenuBarText.contact)
         self.Contact.triggered.connect(lambda: self.activateLink(MenuBarText.email))
         self.BugReport = QAction(MenuBarText.bugreport)
         self.Help.addAction(self.BugReport)
+        self.Help.addAction(self.Contact)
         self.BugReport.triggered.connect(lambda: self.activateLink(MenuBarText.buglink))
     
     

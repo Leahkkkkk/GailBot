@@ -8,8 +8,7 @@ from gailbot.workspace.manager import WorkspaceManager
 from gailbot.configs import service_config_loader
 import os 
 
-MAKER = service_config_loader().directory_name.hidden_file
-
+HIDDEN_FILE = service_config_loader().directory_name.hidden_file
 logger = makelogger("transcribed_dir_payload")
 
 def load_transcribed_dir_payload(
@@ -60,7 +59,7 @@ class TranscribedDirPayload(PayLoadObject):
         """
         if not is_directory(file_path):
             return False 
-        return is_file(os.path.join(file_path, ".gailbot"))
+        return is_file(os.path.join(file_path, HIDDEN_FILE))
        
     def _copy_file(self) -> None:
         """

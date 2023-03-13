@@ -223,7 +223,7 @@ def test_mult_thread_callback(args):
 
 def test_add_task_after():
     """ 
-    Test add_task_after function runs the task in correct dependent order
+    Test add_callback_on_result function runs the task in correct dependent order
     """
     pool = ThreadPool(10)
     previous_id = []
@@ -233,7 +233,7 @@ def test_add_task_after():
     
     for id in previous_id:
         logger.info(id)
-        pool.add_task_after(id, callback_worker, [f"callback task {id}"])
+        pool.add_callback_on_result(id, callback_worker, [f"callback task {id}"])
         
 
 def test_add_multi_task_after():
@@ -246,7 +246,7 @@ def test_add_multi_task_after():
         ids.append(pool.add_task(previous_worker, [(i + 1) * 2, f"woker {i}"]))
     for id in ids:
         for i in range(5):
-            pool.add_task_after(id, callback_worker, [f"callback task id: {id} - {i}"])
+            pool.add_callback_on_result(id, callback_worker, [f"callback task id: {id} - {i}"])
 
 
 def test_callback_with_queue():
@@ -261,7 +261,7 @@ def test_callback_with_queue():
         TestQueue.put(newid)
     
     for id in ids:
-        pool.add_task_after(id, callback_check_queue, [id])
+        pool.add_callback_on_result(id, callback_check_queue, [id])
         
     ids = []
     for i in range(5):
@@ -287,13 +287,13 @@ def test_multiple_callback_with_queue():
     assert ids == [j for j in range(5)]
     logger.info(ids)
     for i in range(5):
-       newid =pool.add_task_after(i, callback_check_queue, [i])
+       newid =pool.add_callback_on_result(i, callback_check_queue, [i])
        ids.append(newid)
        TestQueue.put(newid)
     assert ids == [j for j in range(10)]
     
     for i in range(5, 10):
-       newid =pool.add_task_after(i, callback_check_queue, [i])
+       newid =pool.add_callback_on_result(i, callback_check_queue, [i])
        ids.append(newid)
        TestQueue.put(newid)
     assert ids == [j for j in range(15)]
@@ -307,9 +307,9 @@ def test_error():
     with pytest.raises(ThreadErrorHandleException):
         id = pool.add_task(error_worker, error_fun = error_handler)
         res = pool.get_task_result(id, error_fun = error_handler)
-        id = pool.add_task_after(id, error_worker, error_fun = error_handler)
+        id = pool.add_callback_on_result(id, error_worker, error_fun = error_handler)
     with pytest.raises(ThreadError):
-        pool.add_task_after(id, error_worker)
+        pool.add_callback_on_result(id, error_worker)
     assert pool.check_task_status(id) == Status.error
     
 

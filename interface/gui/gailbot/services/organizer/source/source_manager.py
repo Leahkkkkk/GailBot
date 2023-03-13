@@ -14,6 +14,17 @@ class SourceManager():
         self.sources : Dict[str, SourceObject] = dict()
     
     def add_source(self, source_path: str, output: str) -> Union [str, bool]:
+        """
+        Adds a source to the source manager object
+
+        Args:
+            source_path: str: path to the source object to add
+            output: str: path to the output directory
+        
+        Returns:
+            Name of the source if it is successfully added, false if it is not
+                successfully added
+        """
         try:
             source  = SourceObject(source_path, get_name(source_path), output)
             name = source.name
@@ -29,7 +40,6 @@ class SourceManager():
         Removes a given source from the source manager's sources
 
         Args:
-            self
             source_name: str: name to remove
 
         Returns:
@@ -45,7 +55,6 @@ class SourceManager():
         Determines if a given source is currently in the source manager's sources
 
         Args:
-            self
             source: str: key of the source to search for
 
         Returns:
@@ -61,9 +70,6 @@ class SourceManager():
     def source_names(self) -> List[str]:
         """
         Obtains all source names as a list
-
-        Args:
-            self
         
         Returns:
             List of strings containing all source names
@@ -75,12 +81,11 @@ class SourceManager():
         Gets the source associated with a given source name
 
         Args:
-            self
             source_name: str: string of name to search for
         
         Returns:
             Source object associated with the given name
-            Raises exception if object with given name is not found
+            Returns false if object with given name is not found
         """
         source_name = get_name(source) if is_path(source) else source
         if self.is_source(source_name):
@@ -104,7 +109,12 @@ class SourceManager():
         else:
             return False
 
-    def apply_setting_profile_to_source(self, source:str, setting: SettingObject, overwrite: bool):
+    def apply_setting_profile_to_source(
+        self, 
+        source:str, 
+        setting: SettingObject, 
+        overwrite: bool
+    ):
         """
         Applies the given settings to the given source
 

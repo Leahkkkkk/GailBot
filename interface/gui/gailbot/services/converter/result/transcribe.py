@@ -14,9 +14,11 @@ from gailbot.core.utils.general import (
     is_directory, 
     is_file)
 from gailbot.core.utils.logger import makelogger
+from gailbot.configs import service_config_loader
 import os 
 from .resultInterface import ResultInterface
 
+SERVICE_CONFIG = service_config_loader()
 logger = makelogger("transcribe_result")
 
 """
@@ -37,7 +39,7 @@ class UttResult(ResultInterface):
     Defines a class containing the utterance results of a transcription
     """
     def __init__(self, workspace: str, data: Dict[str, List[UttDict]] = None) -> None:
-        self.workspace = os.path.join(workspace, "temporary_result")
+        self.workspace = os.path.join(workspace, SERVICE_CONFIG.directory_name.temp_result)
         make_dir(self.workspace, overwrite=True)
         self.max_size = 1000 # TODO: move to toml 
         self.data = data 
@@ -128,6 +130,12 @@ class UttResult(ResultInterface):
     def _read_from_dir(self, path) -> Dict[str, List[UttDict]]:
         """
         Processes the result of a directory input
+
+        Args:
+            path: path to the directory to process
+        
+        Returns:
+            Dict[str, List[UttDict]]: dictionary containing the processed input
         """
         try:
             files = paths_in_dir(path, ["csv"])
@@ -144,6 +152,12 @@ class UttResult(ResultInterface):
     def _read_from_file(self, path: str) -> Dict[str, List[UttDict]]:
         """
         Processes the result of a file input
+
+        Args:
+            path: path to the file to process
+        
+        Returns:
+            Dict[str, List[UttDict]]: dictionary containing the processed input
         """
         try:
             res = {get_name(path): read_csv(path)}

@@ -151,19 +151,6 @@ class ServiceController:
             return False
         return self.organizer.get_source_setting(source_name).name
      
-    def get_engine_setting(self, setting_name: str) -> Union[bool, Dict[str, str]]:
-        """ given a setting name, return its engine setting 
-
-        Args:
-            setting_name (str): the name that identifies the setting
-
-        Returns:
-            Dict[str, str]: 
-            if the setting is found, returns the engine setting that is 
-            stored in a dictionary, else return false
-        """
-        return self.organizer.get_engine_setting(setting_name)
-    
     def get_plugin_setting(self, setting_name: str) -> Union[bool, List[str]]:
         """ returns the plugin setting of the setting
 
@@ -226,9 +213,24 @@ class ServiceController:
         return self.organizer.is_setting(name)
         
     def get_default_setting_name(self) -> str:
+        """
+        Accesses an object's default setting name
+
+        Returns:
+            string containing the default name
+        """
         return self.organizer.get_default_setting_name()
     
     def set_default_setting(self, setting_name:str) -> bool:
+        """
+        Updates an object's default setting to the given setting name
+
+        Args:
+            setting_name:str: new setting name
+        
+        Returns:
+            bool: True if successfully set, false if not
+        """
         return self.organizer.set_default_setting(setting_name) 
    
    
@@ -293,14 +295,52 @@ class ServiceController:
             logger.error(e)
             return False, []
         
-    def register_plugin_suite(self, plugin_source: str) -> str:
+    def register_plugin_suite(self, plugin_source: str) -> bool:
+        """
+        Registers a plugin suite to the object's plugin manager
+
+        Args:
+            plugin_source: str: plugin suite to register
+        
+        Returns:
+            bool: True if successfully registered, false if not
+        """
         return self.plugin_manager.register_suite(plugin_source)
         
     def get_plugin_suite(self, suite_name) -> PluginSuite:
+        """
+        Accesses the plugin suite object associated with a given name
+
+        Args:
+            suite_name: name of the suite to search for
+
+        Returns:
+            PluginSuite: found plugin suite object
+        """
         return self.plugin_manager.get_suite(suite_name)
     
     def is_plugin_suite(self, suite_name: str) -> bool:
+        """
+        Determines if a given name is associated with a plugin suite object in the 
+            plugin manager
+        
+        Args:
+            suite_name: str: name of the suite to search for
+
+        Returns:
+            bool: True if name is associated with an existing plugin suite in the 
+                manager, false if not
+        """
         return self.plugin_manager.is_suite(suite_name)
     
     def delete_plugin_suite(self, suite_name: str) -> bool:
+        """
+        Deletes the plugin suite with the given name from the object's plugin manager
+
+        Args:
+            suite_name: str: name of the plugin suite to delete
+
+        Returns:
+            bool: True if successfully deleted, false if not
+        """
         return self.plugin_manager.delete_suite(suite_name)
