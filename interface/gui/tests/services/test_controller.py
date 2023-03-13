@@ -6,7 +6,7 @@ from gailbot.core.utils.general import get_name
 import os
 from gailbot.core.utils.logger import makelogger
 from gailbot.core.utils.general import delete
-from ..services.test_data import SETTING_DATA, PATH 
+from ..services.test_data import SETTING_DATA, PATH , WS_MANAGER
 import pytest 
 
 logger = makelogger("test_controller")
@@ -20,7 +20,7 @@ SOURCES = [(A.LARGE_AUDIO_MP3, A.RESULT_OUTPUT), (A.MEDIUM_AUDIO, A.RESULT_OUTPU
            (A.TRANSCRIBED_DIR, A.RESULT_OUTPUT), [A.CONVERSATION_DIR, A.RESULT_OUTPUT]]
 
 def test_controller_basic():
-    controller = ServiceController(False)
+    controller = ServiceController(WS_MANAGER, False)
     logger.info(controller.organizer.setting_manager.workspace)
     controller.add_source(A.SMALL_AUDIO_MP3, A.RESULT_OUTPUT)
     assert controller.is_source(A.SMALL_AUDIO_MP3)
@@ -32,7 +32,6 @@ def test_controller_basic():
     assert not controller.is_setting(SETTING_NAME)
     assert controller.is_setting(NEW_SETTING)
     logger.info(controller.get_plugin_setting(NEW_SETTING))
-    logger.info(controller.get_engine_setting(NEW_SETTING)) 
     assert controller.apply_setting_to_source(A.SMALL_AUDIO_MP3, NEW_SETTING)
     assert controller.add_sources(SOURCES)
     assert controller.apply_setting_to_sources(
@@ -45,7 +44,7 @@ def test_controller_basic():
     controller.register_plugin_suite(PATH.GB_TEST_SUITE)
 
 def transcribe(source, setting = TEST_SETTING):
-    controller = ServiceController()
+    controller = ServiceController(WS_MANAGER)
     controller.add_sources([(source, PATH.OUTPUT_ROOT)])
     controller.create_new_setting(SETTING_NAME, setting)
     controller.apply_setting_to_source(get_name(source), SETTING_NAME)
@@ -53,7 +52,7 @@ def transcribe(source, setting = TEST_SETTING):
     return controller.transcribe()
     
 def transcribe_multiple(sources, setting = TEST_SETTING):
-    controller = ServiceController()
+    controller = ServiceController(WS_MANAGER)
     src = [(s, PATH.OUTPUT_ROOT) for s in sources]
     controller.add_sources(src)
     controller.create_new_setting(SETTING_NAME, setting)
@@ -94,6 +93,10 @@ def test_transcribe_invalid():
             PATH.INVALID_PATH
         ]
     )
-    
     logger.info(result)
     logger.info(invalid)
+
+def test_transcribe_many():
+    result, invalid = transcribe(A.MANY_FILES_DIR)
+    
+    

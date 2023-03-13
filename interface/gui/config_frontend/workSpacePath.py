@@ -36,8 +36,8 @@ class FileManageData(DataclassFromDict):
 
 def getWorkBasePath() -> str:
     """  return the base directory of the gailbot workspace """
-    if os.path.exists(os.path.join(FRONTEND_CONFIG_ROOT,BackEndDataPath.workSpaceData)):
-        data = toml.load(os.path.join(FRONTEND_CONFIG_ROOT,BackEndDataPath.workSpaceData))
+    if os.path.exists(os.path.join(FRONTEND_CONFIG_ROOT,BackEndDataPath.userRoot)):
+        data = toml.load(os.path.join(FRONTEND_CONFIG_ROOT,BackEndDataPath.userRoot))
         userBaseDir = WorkSpaceBaseDirData.from_dict(data).userRoot
     else:
         userBaseDir = userpaths.get_profile()

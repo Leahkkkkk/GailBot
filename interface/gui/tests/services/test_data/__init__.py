@@ -3,4 +3,4 @@ from .setting_data import SETTING_DATA
 from .path import PATH
 from .result_data import UTT_RESULT
 from .payload_obj import PAYLOAD_OBJ
-from .workspace import WS_MANGER
+from .workspace import WS_MANAGER

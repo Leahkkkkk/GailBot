@@ -198,7 +198,6 @@ class SystemSettingPage(QWidget):
             self._changeSetting, 
             QMessageBox.StandardButton.Reset)
         
-        
     def _changeSetting(self)->None:
         """ rewrite the current setting file based on the user's choice"""
         setting = self.SysSetForm.getValue()
@@ -213,7 +212,6 @@ class SystemSettingPage(QWidget):
             f.close()
             self._copyTomlFile(colorSource, colorDes, dirname)
             self._copyTomlFile(fontSource, fontDes, dirname) 
-            
             f = open (f"{os.path.join(dirname, SettingDataPath.systemSetting)}", "w+")
             toml.dump(setting, f)
             f.close()

@@ -80,19 +80,19 @@ class WorkSpaceDialog(QDialog):
     def _onConfirm(self):
         print(PROJECT_ROOT)
         workSpace = { "userRoot" : self.userRoot}
-        print(os.path.join(PROJECT_ROOT, BackEndDataPath.workSpaceData))
+        print(os.path.join(PROJECT_ROOT, BackEndDataPath.userRoot))
         try:
             with open(
-                os.path.join(PROJECT_ROOT, BackEndDataPath.workSpaceData), "w+") as f:
+                os.path.join(PROJECT_ROOT, BackEndDataPath.userRoot), "w+") as f:
                 toml.dump(workSpace, f)
              
             if not os.path.isdir(self.userRoot):
                 os.mkdir(self.userRoot)
        
         except Exception as e:
-            self.logger("error when creating file to store user workspace {e}")
+            self.logger(f"error when creating file to store user workspace {e}")
             WarnBox(f"cannot find the file path: " 
-                    f"{os.path.join(PROJECT_ROOT, BackEndDataPath.workSpaceData)}")
+                    f"{os.path.join(PROJECT_ROOT, BackEndDataPath.userRoot)}")
         self.close()
     
     def _initStyle(self):
@@ -138,7 +138,8 @@ class SaveLogFile(WorkSpaceDialog):
     def _onConfirm(self):
         try:
             logdir = getWorkPath().logFiles
-            zip_file(logdir, os.path.join(self.userRoot, f"{TEXT.zipFileName}-{datetime.datetime.now()}.zip"))
+            zip_file(logdir, os.path.join(
+                self.userRoot, f"{TEXT.zipFileName}-{datetime.datetime.now()}.zip"))
             self.close()
         except Exception as e:
             self.logger.error(e)
@@ -170,9 +171,15 @@ class ChangeWorkSpace(WorkSpaceDialog):
         self.setFixedSize(QSize(500,350))
     
     def _onConfirm(self):
-        super()._onConfirm()
+        workSpace = { "userRoot" : self.userRoot}
         try:
-            copy(self.oldRoot, self.userRoot)
-            delete(self.oldRoot)
+            with open(
+                os.path.join(PROJECT_ROOT, BackEndDataPath.newUserRoot), "w+") as f:
+                toml.dump(workSpace, f)
+             
         except Exception as e:
-            self.logger.error(f"Error in moving GailBot folder {e}")
+            self.logger(f"error when creating file to store user workspace {e}")
+            WarnBox(f"cannot find the file path: " 
+                    f"{os.path.join(PROJECT_ROOT, BackEndDataPath.newUserRoot)}")
+        self.close()
+        MsgBox("The change to workspace will be applied when relaunching GailBot")

@@ -8,9 +8,10 @@ import copy
 import time
 from ...converter.result import  ProcessingStats
 from ...converter.payload import PayLoadObject
+from gailbot.configs import service_config_loader
 logger = makelogger("transcribeComponent")
 """ TODO: Add to toml"""
-NUM_THREAD = 5
+DEFULT_NUM_THREAD = service_config_loader().thread.transcriber_num_threads
 
 class InvalidEngineError(Exception):
     def __init__(self, engine: str, *args) -> None:
@@ -23,7 +24,7 @@ class TranscribeComponent(Component):
     """ 
     Responsible for running the transcription process
     """
-    def __init__(self, num_thread : int = 5):
+    def __init__(self, num_thread : int = DEFULT_NUM_THREAD):
         self.engine_manager = EngineManager()
         self.num_thread = num_thread
     
@@ -96,52 +97,38 @@ class TranscribeComponent(Component):
 
         # Parse the settings
         engine_name = payload.get_engine()
-        engine_init_kwargs = payload.get_engine_init_setting()
-        engine_init_kwargs.update({"workspace_dir": transcribe_ws})
-        engine_transcribe_kwargs = payload.get_engine_transcribe_setting()
+        init_kwargs = payload.get_engine_init_setting()
+        init_kwargs.update({"workspace_dir": transcribe_ws})
+        transcribe_kwargs = payload.get_engine_transcribe_setting()
         logger.info(f"get transcribed setting engine_name: {engine_name} \
-                      engine initialization setting {engine_init_kwargs} \
-                      engine transcription setting {engine_transcribe_kwargs}")
-       
-
-        # Transcribe behavior is different based on the type of the input
-        # For example, if source contains video files, they should first be
-        # extracted into audio files here.
-        # If the source is being re-transcribed, then that should be parsed here.
-
+                      engine initialization setting {init_kwargs} \
+                      engine transcription setting {transcribe_kwargs}")
+        
         # Init engine
         if not self.engine_manager.is_engine(engine_name):
             raise InvalidEngineError(engine_name)
-        engine = self.engine_manager.init_engine(engine_name, **engine_init_kwargs)
                 
         utt_map = dict()
-        name_to_threadkey : Dict[str, int] = dict()
-        threadpool = ThreadPool(NUM_THREAD)
+        threadpool = ThreadPool(DEFULT_NUM_THREAD)
         
         for file in data_files:
-            transcribe_kwargs = copy.deepcopy(engine_transcribe_kwargs)
+            transcribe_kwargs = copy.deepcopy(transcribe_kwargs)
             transcribe_kwargs.update({"audio_path": file})
-            name_to_threadkey[file] = threadpool.add_task(
-                task = engine.transcribe, kwargs = transcribe_kwargs) 
+            filename = threadpool.add_task( 
+                                            self.transcribe_single_file, 
+                                            kwargs= {"engine_name" : engine_name,
+                                                    "init_kwargs" : init_kwargs, 
+                                                    "transcribe_kwargs": transcribe_kwargs},
+                                            key = get_name(file)) 
+            assert filename == get_name(file)
         try:
             for file in data_files:
                 utt_map[get_name(file)] = \
-                    threadpool.get_task_result(name_to_threadkey[file])
+                    threadpool.get_task_result(get_name(file))
+                    
         except Exception as e:
             logger.error(f"Failed to transcribed {len(data_files)} file in parallel due to the error {e}")
             return False
-    
-    
-        # logger.info(engine)
-
-        # # Transcribe all of the data files
-        # utt_map = dict()
-        # for data_file in data_files:
-        #     engine_transcribe_kwargs.update({
-        #         "audio_path" : data_file,
-        #     })
-        #     utterances = engine.transcribe(**engine_transcribe_kwargs)
-        #     utt_map[get_name(data_file)] = utterances
 
         end_time = time.time()
         stats = ProcessingStats(
@@ -154,7 +141,7 @@ class TranscribeComponent(Component):
         return True
     
     
-    def transcribe_single_file(self, engine, init_kwargs, transcribe_kwargs):
+    def transcribe_single_file(self, engine_name, init_kwargs, transcribe_kwargs):
         """
         Transcribes a file with the given engine
 
@@ -163,7 +150,7 @@ class TranscribeComponent(Component):
             init_kwargs: arguments with which to initialize the engine
             transcribe_kwargs: arguments with which to initialize the transcription
         """
-        engine = self.engine_manager.init_engine(engine, **init_kwargs)
+        engine = self.engine_manager.init_engine(engine_name, **init_kwargs)
         utterances = engine.transcribe(**transcribe_kwargs)
         return utterances
         

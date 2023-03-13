@@ -25,7 +25,7 @@ from .mvController import MVController
 from util import Logger, LogMsgFormatter
 from config_frontend import getWorkBasePath, getWorkPath, getFileManagementData
 from gailbot.api import GailBot
-
+from controller.util.io import is_file, copy
 # import from view 
 from view import ViewController
 from view import WorkSpaceDialog
@@ -79,10 +79,18 @@ class Controller(QObject):
         """
         try:
             if not os.path.exists(
-                os.path.join(FRONTEND_CONFIG_ROOT, BackEndDataPath.workSpaceData)):
+                os.path.join(FRONTEND_CONFIG_ROOT, BackEndDataPath.userRoot)):
                 pathDialog = WorkSpaceDialog()
                 pathDialog.exec()
                 userRoot = pathDialog.userRoot
+            elif is_file(BackEndDataPath.newUserRoot): 
+                oldRoot = getWorkBasePath()
+                os.remove(BackEndDataPath.userRoot)
+                copy(BackEndDataPath.newUserRoot, BackEndDataPath.userRoot)
+                os.remove(BackEndDataPath.newUserRoot)
+                newRoot = getWorkBasePath()
+                copy(oldRoot, newRoot)
+                userRoot = getWorkPath().workSpace
             else:
                 userRoot = getWorkPath().workSpace
             return userRoot
