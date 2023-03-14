@@ -11,7 +11,7 @@ from .core.engines.whisper import load_whisper_config
 from .core.setting.defaults import load_default_config
 from .core.util.logger import load_log_config
 from .config.path_config import load_workspace_config, load_ws_root, store_ws_root
-from .services import load_service_config
+from .services import load_service_config, load_default_setting
 from .config.path_config import TemporaryFolder, OutputFolder
 import os
 
@@ -26,9 +26,6 @@ def whisper_config_loader(): return load_whisper_config(
     os.path.join(CONFIG_ROOT, PATH.whisper)
 )
 
-def default_config_loader(): return load_default_config(
-    os.path.join(CONFIG_ROOT, PATH.default))
-
 def service_config_loader(): return load_service_config(
     os.path.join(CONFIG_ROOT, PATH.services)
 )
@@ -39,6 +36,10 @@ def log_config_loader(): return load_log_config(
 
 def workspace_config_loader(user_root): return load_workspace_config(
     os.path.join(CONFIG_ROOT, PATH.paths_config), user_root
+)
+
+def default_setting_loader(): return load_default_setting(
+    os.path.join(CONFIG_ROOT, PATH.default_setting)
 )
 
 def get_ws_root(): return load_ws_root(

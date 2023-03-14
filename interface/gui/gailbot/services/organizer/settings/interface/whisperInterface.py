@@ -36,22 +36,19 @@ def load_whisper_setting(setting: Dict[str, str]) -> Union[bool, EngineSettingIn
                                         else return false
     """
     logger.info("initialize whisper engine")
-    logger.info(setting)
     if  not "engine" in setting.keys() or setting["engine"] != "whisper": 
         return False
     try:
         logger.info(setting)
         setting = setting.copy()
         validate = ValidateWhisper(**setting)
-        logger.info(validate)
         whisper_set = dict()
         whisper_set["engine"] = setting.pop("engine")
         whisper_set["init"] = dict()
         whisper_set["transcribe"] = dict()
         whisper_set["transcribe"].update(setting)
-        logger.info(whisper_set)
         whisper_set = WhisperInterface(**whisper_set)
         return whisper_set
     except ValidationError as e:
-        logger.error(e)
+        logger.error(f"error in validating whisper interface {e}")
         return False

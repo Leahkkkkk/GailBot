@@ -37,7 +37,7 @@ def makeLogger(source:str):
     global fileHandlerAdded
     if not fileHandlerAdded:
         fmt = " %(source)s |  %(lineno)s | %(asctime)s | %(levelname)s | %(module)s | %(funcName)s | %(message)s "
-        logdir = getWorkPath().logFiles
+        logdir = getWorkPath().frontendLogFiles
         filePath = os.path.join(logdir, f"GailBot-GUI-Log-Report-{current_time}.log")
         if not os.path.isdir(logdir):
             os.makedirs(logdir)

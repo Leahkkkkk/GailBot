@@ -74,10 +74,6 @@ def is_file(file_path: str) -> bool:
         return False
 
 
-def is_path(source:str):
-    return is_file(source) or is_directory(source)
-
-
 def is_directory(dir_path: str) -> bool:
     """
     Determine if the given path is a directory.
@@ -86,7 +82,6 @@ def is_directory(dir_path: str) -> bool:
         return Path(dir_path).is_dir()
     except:
         return False
-
 
 def zip_file(source: str, tgt: str, extension: str) -> bool:
     """ zip the file from source and output a zipped file to tgt"""

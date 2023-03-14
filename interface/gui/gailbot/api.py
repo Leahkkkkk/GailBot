@@ -30,7 +30,7 @@ class GailBot:
         self.gb: ServiceController = ServiceController(
             self.ws_manager, load_exist_setting = True)
         self.reset_workspace()
-        logger.info("initialize the gailbot api")
+        logger.info("gailbot service controller initialized")
         
     def reset_workspace(self):
         """
@@ -39,11 +39,15 @@ class GailBot:
         Returns:
             No return but instantiates a new workspace.
         """
-        self.ws_manager.clear_gb_temp_dir()
-        self.ws_manager.init_workspace()
-        
-        ### Organizer Service
-
+        try:
+            self.ws_manager.clear_gb_temp_dir()
+            self.ws_manager.init_workspace()
+            return True
+        except Exception as e:
+            logger.error(f"failed to reset workspace due to the error {e}")
+            return False
+    
+    
     def transcribe(self, sources: List[str] = None) -> Tuple[bool, List[str]]:
         """ given a list of the source name, and transcribe the sources 
 
@@ -124,7 +128,8 @@ class GailBot:
             name: str: Name of the source to look for
 
         Returns:
-            Bool: True if the given name corresponds to an existing source, false if not
+            Bool: True if the given name corresponds to an existing source, 
+                  false if not
         """
         return self.gb.is_source(name)
     

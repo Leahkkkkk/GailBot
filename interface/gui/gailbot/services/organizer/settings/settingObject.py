@@ -8,15 +8,10 @@ from .interface import (
     )
 from gailbot.core.utils.logger import makelogger
 from gailbot.core.utils.general import write_toml
-
+from gailbot.configs import default_setting_loader
 logger = makelogger("setting_object")
 
-DEFAULT_WHISPER_SETTING = {
-    "engine": "whisper", 
-    "language": "English", 
-    "detect_speakers": False
-}
-
+DEFAULT_ENGINE_SETTING = default_setting_loader().default_engine
 class SettingDict(TypedDict):
     engine_setting: Dict[str, str]
     plugin_setting: List[str]
@@ -37,7 +32,7 @@ class SettingObject():
                           " does not provide correct setting key, default setting " + 
                           " will be loaded instead")
             self._load_default_setting()
-            self.datat = DEFAULT_WHISPER_SETTING
+            self.data = DEFAULT_ENGINE_SETTING
         else: 
             logger.info("initialize the setting object")
             self._load_engine_setting(setting["engine_setting"])
@@ -149,5 +144,5 @@ class SettingObject():
         self._load_default_setting()
         
     def _load_default_setting(self):
-        self.engine_setting = load_whisper_setting(DEFAULT_WHISPER_SETTING)
+        self.engine_setting = load_whisper_setting(DEFAULT_ENGINE_SETTING)
         return True

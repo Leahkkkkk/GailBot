@@ -1,21 +1,13 @@
 from .source import SourceObject, SourceManager
 from gailbot.core.utils.logger import makelogger
 from .settings import SettingManager, SettingObject, SettingDict
+from gailbot.configs import default_setting_loader
 from typing import Dict, List, Union
-from gailbot.configs import  TemporaryFolder, OutputFolder
+
 logger = makelogger("organizer")
-DEFAULT_SETTING_NAME = "Default"
-
-""" TODO: put this under toml file """
-DEFAULT_SETTING = {
-    "engine_setting":{
-         "engine"  : 'whisper',
-         "language": "English",
-         "detect_speakers": False,
-     },
-    "plugin_setting": []
-}
-
+CONFIG = default_setting_loader() 
+DEFAULT_SETTING_NAME = CONFIG.setting_name 
+DEFAULT_SETTING = CONFIG.setting_data 
 class Organizer:
     def __init__(self, setting_workspace: str, load_exist_setting: bool = False) -> None:
         self.setting_manager = SettingManager(setting_workspace, load_exist_setting)
@@ -106,11 +98,33 @@ class Organizer:
     
     def apply_setting_to_source(
         self, source_name: str, setting_name:str, overwrite: bool = True) -> bool:
+        """apply setting to a source 
+
+        Args:
+            sources (str): a string that identifies the source
+            setting (str): the setting name
+            overwrite (bool, optional): if true, overwrites  the existing setting 
+            . Defaults to True.
+
+        Returns:
+            bool: return true if settings can be applied
+        """
         return self.source_manager.apply_setting_profile_to_source(
-            source_name, self.get_setting(setting_name), overwrite)
+            source_name, self.get_setting_obj(setting_name), overwrite)
 
     def apply_setting_to_sources(
         self, sources: List[str], setting_name:str, overwrite: bool = True)-> bool:
+        """apply setting to a list of sources
+
+        Args:
+            sources (List[str]): a list of string that identifies the sources
+            setting (str): the setting name
+            overwrite (bool, optional): if true, overwrites  the existing setting 
+            . Defaults to True.
+
+        Returns:
+            bool: return true if settings can be applied
+        """
         try:
             for source in sources:
                 logger.info(f"organizer change {source} setting to {setting_name}")
@@ -122,13 +136,41 @@ class Organizer:
         
     def create_new_setting(
         self, setting_name: str, setting: SettingDict) -> bool: 
+        """ create a new setting
+
+        Args:
+            name (str): the name of the setting
+            setting (Dict[str, str]): the setting content
+
+        Returns:
+            bool: return true if the setting can be created, if the setting uses 
+                  an existing name, the setting cannot be created
+        """ 
         return self.setting_manager.add_new_setting(setting_name, setting)
     
     def save_setting_profile(self, setting_name: str) -> str:
+        """ save the setting locally on the disk
+
+        Args:
+            setting_name (str): the setting name of the setting
+
+        Returns:
+            bool: return true if the setting is saved correctly 
+        """
         return self.setting_manager.save_setting(setting_name)
     
    
     def rename_setting(self, setting_name: str, new_name: str) -> bool:
+        """rename a setting
+
+        Args:
+            old_name (str): the old name that identifies the setting
+            new_name (str): the new name of the setting
+
+        Returns:
+            bool: return true if the setting can be renamed correctly, 
+                  return false if the new setting name has been taken
+        """
         try:
             self.setting_manager.rename_setting(setting_name, new_name)
             return True
@@ -136,6 +178,14 @@ class Organizer:
             return False
    
     def remove_setting(self, setting_name: str) -> bool:
+        """remove a setting 
+
+        Args:
+            setting_name (str): the name of the setting that will be removed
+
+        Returns:
+            bool: true if the setting is removed, false otherwise 
+        """
         if not self.setting_manager.is_setting(setting_name):
             return False 
         try:
@@ -149,22 +199,76 @@ class Organizer:
             return False
     
     def update_setting(self, setting_name:str, new_setting: Dict[str,str]) -> bool:
+        """updating the setting with new setting content
+
+        Args:
+            setting_name (str): the setting name that identifies the setting 
+            new_setting (SettingDict): the content of the new settings
+
+        Returns:
+            bool: return true if the setting can be updated correctly
+        """
         return self.setting_manager.update_setting(setting_name, new_setting)
         
-    def get_setting(self, setting_name:str) -> SettingObject:
+    def get_setting_obj(self, setting_name:str) -> SettingObject:
+        """ get setting object that is identified by setting name
+
+        Args:
+            setting_name (str): the name that identifies the setting object
+
+        Returns:
+            SettingObject: a setting object that stores the setting data
+        """
         return self.setting_manager.get_setting(setting_name)    
 
     def get_setting_dict(self, setting_name:str) -> Union[bool, SettingDict]:
+        """ given a source name, return the setting content of the source 
+            in a dictionary 
+
+        Args:
+            source_name (str): name that identifies a source
+
+        Returns:
+            Union[bool, SettingDict]: if the source is found, returns its setting 
+            content stored in a dictionary, else returns false  
+        """
         return self.setting_manager.get_setting_dict(setting_name)
 
-    def is_setting(self, setting_name: str) -> bool:
+    def is_setting(self, setting_name: str) -> bool: 
+        """check if a setting exists or not
+
+        Args:
+            name (str): names that identifies the settings
+
+        Returns:
+            bool: return true if the setting exists, false otherwise
+        """
         return self.setting_manager.is_setting(setting_name)
     
     def remove_setting_from_source(self, source_name: str) -> bool:
+        """ given a source name, remove the current setting from the source, 
+            set the setting of the source to default
+
+        Args:
+            source_name (str): the name that identifies the source
+
+        Returns:
+            bool: return true if the setting is removed successfully false otherwise
+        """
         return self.apply_setting_to_source(
             source_name, DEFAULT_SETTING_NAME, True)
     
     def get_plugin_setting(self, name: str):
+        """ returns the plugin setting of the setting
+
+        Args:
+            setting_name (str): name that identifies a setting
+
+        Returns:
+            Union[bool, Dict[str, str]]: if the setting is found, return the 
+            list of string that identifies which plugins are used, else return 
+            false
+        """
         setting: SettingObject = self.setting_manager.get_setting(name)
         if setting:
             return setting.get_plugin_setting()
@@ -172,9 +276,24 @@ class Organizer:
             return False
     
     def get_configured_sources(self, sources : List[str] = None) -> List[SourceObject]:
+        """ given the  a list of source name, return a list of the sourceObject
+            that stores the source configured with setting
+        Args:
+            sources (List[str], optional): a list of source name, if not 
+            given, return a list of configured source. Defaults to None.
+
+        Returns:
+            List[SourceObject]: a list of source object that stores the source data 
+        """
         return self.source_manager.get_configured_sources(sources)
     
+
     def remove_all_settings(self) -> bool:
+        """ remove all settings except for the default setting
+
+        Returns:
+            bool: return true if the removal is successful 
+        """
         try:
             for setting in self.setting_manager.get_setting_names():
                 if setting != DEFAULT_SETTING_NAME:
@@ -188,6 +307,11 @@ class Organizer:
             return False
     
     def get_setting_names(self) -> List[str]:
+        """ return a list of available setting names 
+
+        Returns:
+            List[str]: a list of available setting names
+        """
         return self.setting_manager.get_setting_names()
     
     def get_all_settings_data(self) -> Dict[str, SettingDict]:

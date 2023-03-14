@@ -22,10 +22,6 @@ from gailbot.configs import service_config_loader
 SERVICE_CONFIG = service_config_loader()
 logger = makelogger("payload object")
 
-""" TODO by Feb 24:
-1. move all name strings to configuration  
-2. test save function and any functions involve i/o 
-"""
 OUTPUT_MARKER = SERVICE_CONFIG.directory_name.hidden_file
 class PayLoadStatus(Enum):
     """ For tracking the status of the file in the payload """

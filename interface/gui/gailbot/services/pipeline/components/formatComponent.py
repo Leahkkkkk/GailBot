@@ -1,7 +1,6 @@
 from typing import Any, List, Dict
 from gailbot.core.pipeline import Component, ComponentState, ComponentResult
 from gailbot.core.utils.logger import makelogger
-import time
 from ...converter.result import  ProcessingStats
 from ...converter.payload import PayLoadObject
 logger = makelogger("transcribeComponent")
@@ -23,12 +22,14 @@ class FormatComponent(Component):
         """
         try:
             dependency_res: ComponentResult = dependency_outputs["analysis"]
-            assert dependency_res.state == ComponentState.SUCCESS
+            logger.info(f"format component is run, {len(payloads)} result will be formatted")
             payloads: List [PayLoadObject] = dependency_res.result
             logger.info(payloads)
             for payload in payloads:
+                logger.info(f"saving {payload.name} result to {payload.out_dir}")
                 payload.save()
-                
+            
+            assert dependency_res.state == ComponentState.SUCCESS    
             return ComponentResult(
                 state = ComponentState.SUCCESS,
                 result = payloads,
@@ -36,7 +37,7 @@ class FormatComponent(Component):
             )
          
         except Exception as e:
-            logger.error(e)
+            logger.error(f"error in formatting payload result {e}")
             return ComponentResult(
                 state=ComponentState.FAILED,
                 result=None,

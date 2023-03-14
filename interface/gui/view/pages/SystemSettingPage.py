@@ -233,6 +233,8 @@ class SystemSettingPage(QWidget):
         """ open confirm box to confirm clearing the log file """
         MsgBox.ConfirmBox(Text.confirmClear, clearAllLog)
     
+        
+    
     def _loadValue(self, setting):
         """ initialize the setting value """
         self.SysSetForm.setValue(setting)

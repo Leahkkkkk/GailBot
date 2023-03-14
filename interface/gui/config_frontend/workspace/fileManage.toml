@@ -1,2 +1,1 @@
-# managing the audto log deletion time , unit is day 
 AUTO_DELETE_TIME = 30

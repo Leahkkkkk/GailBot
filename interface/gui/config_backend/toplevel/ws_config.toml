@@ -5,7 +5,7 @@ log_root    = "../LogFiles/Backend" # log file directry is on the same level of
 
 [file_extensions]
 temp        = "_temp"
-output      = "_gb+temp"
+output      = "_gb_output"
 
 # contains relative paths for the output of gailbot
 [output]

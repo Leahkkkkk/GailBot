@@ -1,0 +1,14 @@
+setting_name = "Default"
+
+[setting_data.engine_setting]
+engine = "whisper"
+language = "English"
+detect_speakers = false
+
+[setting_data]
+plugin_setting = []
+
+[default_engine]
+engine = "whisper"
+language = "English"
+detect_speakers = false

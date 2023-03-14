@@ -19,7 +19,6 @@ class Engines(DataclassFromDict):
       whisper_name               : str = field_from_dict()
       audio_supported_format     : List[str] = field_from_dict()
 
-
 @dataclass 
 class Thread(DataclassFromDict): 
       transcriber_num_threads  : int = field_from_dict()
@@ -30,6 +29,17 @@ class ServiceConfig(DataclassFromDict):
     directory_name : DirectoryName = field_from_dict()
     thread : Thread = field_from_dict()
 
+
+@dataclass 
+class DefaultSetting(DataclassFromDict): 
+    setting_name                     : str = field_from_dict()
+    setting_data                     : dict = field_from_dict()
+    default_engine                   : dict = field_from_dict()
+
 def load_service_config(path: str) -> ServiceConfig:
     d = toml.load(path)
     return ServiceConfig.from_dict(d)
+
+def load_default_setting(path: str) -> DefaultSetting:
+    d = toml.load(path)
+    return DefaultSetting.from_dict(d)

@@ -117,6 +117,7 @@ class ThreadPool(ThreadPoolExecutor):
                     args: {args}, kwargs {kwargs}")
         try:
             if not callable(task) or type(args) != list or type(kwargs) != dict:
+                logger.error(f"type error in adding thread task ")
                 raise TypeError("Type error in adding thread task.")
             worker = self.submit(task, *args, **kwargs)
             if key:
@@ -181,7 +182,7 @@ class ThreadPool(ThreadPoolExecutor):
             future = self.task_pool[key]
             return future.result()
         except Exception as e:
-            logger.error(f"task with task keu {key} received an exception {e}")
+            logger.error(f"task with task key {key} received an exception {e}")
             if error_fun and callable(error_fun): 
                 logger.error(e)
                 error_fun()
@@ -372,6 +373,7 @@ class ThreadPool(ThreadPoolExecutor):
         future = self.task_pool[key]
         wait([future])
         if not callable(fun) and type(args) == list and type(kwargs) == dict:
+            logger.error(f"type error in adding thread task ")
             raise TypeError(f"Type error in adding callback on result to thread task {key}")
         try:
             future.result()

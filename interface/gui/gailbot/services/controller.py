@@ -5,9 +5,9 @@ from .pipeline import PipelineService
 from ..plugins import PluginManager, PluginSuite
 from gailbot.core.utils.logger import makelogger
 from gailbot.workspace.manager import WorkspaceManager
+from gailbot.configs import service_config_loader
 
-""" TODO: plugin vs. plugin suite naming """
-NUM_THREAD = 5
+CONFIG = service_config_loader()
 logger = makelogger("service_controller")
 """ Knows about all three sub modules """
 class ServiceController:
@@ -16,7 +16,7 @@ class ServiceController:
         self.converter = Converter(ws_manager)
         self.plugin_manager = PluginManager(ws_manager.plugin_src)
         self.pipeline_service = PipelineService(
-            self.plugin_manager, num_threads = NUM_THREAD) 
+            self.plugin_manager, num_threads = CONFIG.thread.transcriber_num_threads) 
     
     def add_sources(self, src_output_pairs: List [Tuple [str, str]]):
         """add a list of sources

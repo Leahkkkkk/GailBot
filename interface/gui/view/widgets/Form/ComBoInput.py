@@ -34,6 +34,9 @@ class InputCombo(QWidget, FormWidget):
         self.connectSignal()
     
     def initUI(self):
+        """ 
+        initializing ui
+        """
         super().initUI()
         self.inputLabel = Label.Label(self.label, self.labelSize)
         self.inputField = ComboBox.ComboBox()
@@ -48,12 +51,19 @@ class InputCombo(QWidget, FormWidget):
         self._layout.addWidget(self.inputField)
     
     def connectSignal(self):
+        """ 
+        connect file signal
+        """
         self.inputField.currentTextChanged.connect(self.updateValue)
         
-        
-    def setValue(self, value):
+    def setValue(self, value: str):
+        """ 
+        set the current value as value
+        """
         self.inputField.setCurrentText(value)
         self.value = value 
     
-    def getValue(self):
+    def getValue(self) -> str:
+        """ return the user selection as a string 
+        """
         return self.inputField.currentText()

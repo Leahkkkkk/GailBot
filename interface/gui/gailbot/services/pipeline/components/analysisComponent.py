@@ -15,7 +15,6 @@ class AnalysisComponent(Component):
         transcription result 
     """
     def __init__(self, plugin_manager: PluginManager):
-        
         self.plugin_manager = plugin_manager
         
     def __repr__(self):
@@ -70,8 +69,7 @@ class AnalysisComponent(Component):
             return ComponentResult(
                 state  = ComponentState.SUCCESS,
                 result = payloads,
-                runtime = time.time() - process_start_time
-            )
+                runtime = time.time() - process_start_time)
             
         except Exception as e:
             logger.error(e)

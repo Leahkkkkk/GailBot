@@ -39,8 +39,10 @@ class WorkspaceManager:
                 
         if not is_directory(self.path_config.tempspace_root):
                 make_dir(self.path_config.tempspace_root, True)
-        
-        save_ws_root(self.user_root)
+                 
+        save_ws_root(self.user_root) # store the workspace root in a toml file 
+                                     # so that the logger module will have access 
+                                     # to the workspace for storing log files 
         
     def get_file_temp_space(self, name: str) -> Union[TemporaryFolder, bool]:
         """ given the file name, create a directory for the file
@@ -55,7 +57,8 @@ class WorkspaceManager:
             stores the path of each subfolder under the temporary folder, 
             else return False
         """
-        folder: TemporaryFolder = self.path_config.get_temp_space(name + self.file_extension.temp) 
+        folder = self.path_config.get_temp_space(
+            name + self.file_extension.temp) 
         try:
             for path in folder.__dict__.values(): 
                 if not is_directory(path):
@@ -79,7 +82,8 @@ class WorkspaceManager:
             stores the path of each subfolder under the output folder, 
             else return False
         """
-        folder: OutputFolder = self.path_config.get_output_space(outdir, name + self.file_extension.output)
+        folder = self.path_config.get_output_space(
+            outdir, name + self.file_extension.output)
         try:
             for path in folder.__dict__.values():
                 if not is_directory(path):
@@ -106,7 +110,8 @@ class WorkspaceManager:
             if isinstance(temp_space, TemporaryFolder):
                 delete(temp_space.root)
             else:
-                delete(self.path_config.get_temp_space(temp_space + self.file_extension.temp).root)
+                delete(self.path_config.get_temp_space(
+                    temp_space + self.file_extension.temp).root)
                 return True
         except Exception as e:
             logger.error(e)

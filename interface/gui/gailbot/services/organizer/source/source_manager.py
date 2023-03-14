@@ -43,7 +43,8 @@ class SourceManager():
             source_name: str: name to remove
 
         Returns:
-            True if given source was successfully removed, false if given source was not found
+            True if given source was successfully removed, false if given 
+            source was not found
         """
         if not self.is_source(source_name):
             return False
@@ -147,14 +148,14 @@ class SourceManager():
     
     
     def get_configured_sources(self, sources: List[str] = None) -> List[SourceObject]:
-        """ given the source name, return a list of the sourceObject
-
+        """ given the  a list of source name, return a list of the sourceObject
+            that stores the source configured with setting
         Args:
             sources (List[str], optional): a list of source name, if not 
             given, return a list of configured source. Defaults to None.
 
         Returns:
-            List[SourceObject]: a list of sources 
+            List[SourceObject]: a list of source object that stores the source data 
         """
         configured = []
         if not sources:

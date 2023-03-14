@@ -1,1 +1,1 @@
-from .service import load_service_config
+from .service import load_service_config, load_default_setting

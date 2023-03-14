@@ -10,7 +10,7 @@ from ...converter.result import  ProcessingStats
 from ...converter.payload import PayLoadObject
 from gailbot.configs import service_config_loader
 logger = makelogger("transcribeComponent")
-""" TODO: Add to toml"""
+
 DEFULT_NUM_THREAD = service_config_loader().thread.transcriber_num_threads
 
 class InvalidEngineError(Exception):
@@ -25,16 +25,17 @@ class TranscribeComponent(Component):
     Responsible for running the transcription process
     """
     def __init__(self, num_thread : int = DEFULT_NUM_THREAD):
-        self.engine_manager = EngineManager()
+        self.engine_manager = EngineManager() # a wrapper class for managing 
+                                              # and transcribing payload using engine 
         self.num_thread = num_thread
     
-    def __call__(self, dependency_output: Dict[str, str]) -> Any:
+    def __call__(self, dependency_output: Dict[str, ComponentResult]) -> Any:
         """ 
-        Extracts the payload objects from the dependency_output and 
+            Extracts the payload objects from the dependency_output and 
             transcribes the datafiles in the payload object
 
         Args:
-            dependency_output (Dict[str, str]): dependency output contains the
+            dependency_output (Dict[str, ComponentResult]): dependency output contains the
             result of the component and payload data
             
         Returns:
@@ -42,26 +43,33 @@ class TranscribeComponent(Component):
             and payloads data
         """
         try:
+            
             threadpool = ThreadPool(self.num_thread)
-            threadkey_to_payload : Dict[int, PayLoadObject] = dict()
             logger.info(dependency_output)
-            dep: ComponentResult = dependency_output["base"]
-            payloads : List[PayLoadObject] = dep.result
+            dep: ComponentResult = dependency_output["base"] 
+            # get the list of payloads from dependency_output
+            payloads : List[PayLoadObject] = dep.result 
             process_start_time = time.time()
         
             for payload in payloads:
                 if not payload.transcribed:
                     # add the payload to the threadpool
                     key = threadpool.add_task(
-                        task=self._transcribe_payload, args=[payload])
-                    threadkey_to_payload[key] = payload
-                    logger.info(f"key: {key}")
-            for key, payload in threadkey_to_payload.items():
-                assert threadpool.get_task_result(key)
-                payload.set_transcribed()
-        
+                        task = self._transcribe_payload,
+                        args = [payload],
+                        key  = payload.name)
+                    assert key == payload.name
+                    logger.info(f"payload {payload.name} is added to the threadpool, the key is {key}")
+           
+            # get the result from the thread pool 
+            for payload in payloads:
+                if not payload.transcribed:
+                    assert threadpool.get_task_result(payload.name)
+                    payload.set_transcribed()
+                
         except Exception as e:
-            logger.error(e)
+            logger.error(f"thread execution fails due to the error {e}")
+            threadpool.shutdown(wait=True)
             return ComponentResult(
                 state=ComponentState.FAILED,
                 result=payloads,
@@ -69,6 +77,7 @@ class TranscribeComponent(Component):
             )
         
         else:     
+            threadpool.shutdown(cancel_futures=True)
             return ComponentResult(
                 state=ComponentState.SUCCESS,
                 result=payloads,
@@ -115,11 +124,11 @@ class TranscribeComponent(Component):
             transcribe_kwargs = copy.deepcopy(transcribe_kwargs)
             transcribe_kwargs.update({"audio_path": file})
             filename = threadpool.add_task( 
-                                            self.transcribe_single_file, 
-                                            kwargs= {"engine_name" : engine_name,
-                                                    "init_kwargs" : init_kwargs, 
-                                                    "transcribe_kwargs": transcribe_kwargs},
-                                            key = get_name(file)) 
+                self.transcribe_single_file, 
+                kwargs= {"engine_name" : engine_name,
+                        "init_kwargs" : init_kwargs, 
+                        "transcribe_kwargs": transcribe_kwargs},
+                key = get_name(file)) 
             assert filename == get_name(file)
         try:
             for file in data_files:

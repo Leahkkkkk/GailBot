@@ -19,6 +19,13 @@ setting:
 """
 @dataclass 
 class SETTING_DATA: 
+    
+    WHISPER_SPEAKER = {
+        "engine": "whisper", 
+        "language": "English",
+        "detect_speakers": True
+    }
+    
     WHISPER_SETTING = {
         "engine": "whisper", 
         "language": "English",
@@ -72,6 +79,11 @@ class SETTING_DATA:
         "plugin_setting": []
     }
 
+    WHISPER_SPEAKER_PROFILE = {
+        "engine_setting": WHISPER_SPEAKER,
+        "plugin_setting": []
+    }
+    
     WHISPER_PROFILE = {
         "engine_setting": WHISPER_SETTING,
         "plugin_setting": []
