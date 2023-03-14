@@ -8,11 +8,13 @@ class ValidateGoogle(BaseModel):
     engine: str 
 class Transcribe(BaseModel):
     """ 
-    Args:
-        BaseModel (_type_): _description_
+    NOTE: google does not support additional kwargs in transcription
     """
     pass 
 class Init(BaseModel):
+    """ 
+    NOTE: currently the initialization kwargs for google has not been implemented
+    """
     pass 
 
 class GoogleInterface(EngineSettingInterface):

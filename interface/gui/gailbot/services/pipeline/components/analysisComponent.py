@@ -23,7 +23,7 @@ class AnalysisComponent(Component):
     def __call__(
         self,
         dependency_outputs : Dict[str, Any]
-    ) :
+    ) -> ComponentResult:
         """ 
         Extracts the payloads from the dependency_output and runs the analysis
         

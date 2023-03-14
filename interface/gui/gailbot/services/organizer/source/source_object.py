@@ -54,7 +54,6 @@ class SourceObject():
         """
         return self.setting.get_name()
 
-    # @property
     def configured(self) -> bool:
         """
         Determines if a given source was configured or not.

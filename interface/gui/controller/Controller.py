@@ -81,7 +81,8 @@ class Controller(QObject):
             if not os.path.exists(userRootConfigPath):
                 pathDialog = WorkSpaceDialog()
                 pathDialog.exec()
-                backendRoot = pathDialog.userRoot
+                if not pathDialog.workSpaceSaved:
+                    pathDialog.saveWorkspace()
             elif is_file(newRootConfigPath): 
                 logging.info("detect new workspace path")
                 oldRoot = getWorkBasePath()
@@ -91,9 +92,8 @@ class Controller(QObject):
                 newRoot = getWorkBasePath()
                 copy(oldRoot, newRoot)
                 delete(oldRoot)
-                backendRoot = getWorkPath().backend
-            else:
-                backendRoot = getWorkPath().backend
+            
+            backendRoot = getWorkPath().backend
             return backendRoot
         except Exception as e:
             self.logger.error(e)

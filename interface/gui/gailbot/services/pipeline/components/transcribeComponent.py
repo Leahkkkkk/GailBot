@@ -84,7 +84,7 @@ class TranscribeComponent(Component):
                 runtime=time.time() - process_start_time
             )
         
-    def _transcribe_payload(self, payload : PayLoadObject) -> None:
+    def _transcribe_payload(self, payload : PayLoadObject) -> bool:
         """ private function that transcribe each individual payload
 
         Args:
@@ -95,8 +95,8 @@ class TranscribeComponent(Component):
             raised when the engine setting uses an invalid engine
             
         Returns:
-            : return the transcribe result stored in a dictionary and the 
-              process data
+            : return True if the transcription is successful , false 
+              otherwise 
         """
         logger.info(f"Payload {payload} being transcribed")
         # Parse the payload
@@ -146,11 +146,11 @@ class TranscribeComponent(Component):
             elapsed_time_sec= end_time - start_time
         )
         payload.set_transcription_result(utt_map)
-        payload.set_format_process_stats(stats)
+        payload.set_transcription_process_stats(stats)
         return True
     
     
-    def transcribe_single_file(self, engine_name, init_kwargs, transcribe_kwargs):
+    def transcribe_single_file(self, engine_name, init_kwargs, transcribe_kwargs)  -> List[Dict[str, str]]:
         """
         Transcribes a file with the given engine
 
@@ -158,6 +158,9 @@ class TranscribeComponent(Component):
             engine: engine to perform the transcription
             init_kwargs: arguments with which to initialize the engine
             transcribe_kwargs: arguments with which to initialize the transcription
+            
+        Return: 
+            the utterances result 
         """
         engine = self.engine_manager.init_engine(engine_name, **init_kwargs)
         utterances = engine.transcribe(**transcribe_kwargs)

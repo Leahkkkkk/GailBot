@@ -35,7 +35,8 @@ class Background(QBrush):
 
 def resizeEvent(widget: QWidget, event: QResizeEvent, img: str):
     size = event.size()
-    pixmap = QPixmap(img).scaled(
+    temp = QPixmap(img)
+    pixmap = temp.scaled(
         size, Qt.AspectRatioMode.IgnoreAspectRatio, Qt.TransformationMode.FastTransformation)
     # Set the scaled image to the QLabel
     palette = widget.palette()
@@ -63,7 +64,8 @@ def _initImgBackground(widget:QWidget, background: str = Asset.homeBackground):
     widget.setAutoFillBackground(True)
     palette = widget.palette()
     size = widget.size()
-    pixmap = QPixmap(background).scaled(
+    temp = QPixmap(background)
+    pixmap = temp.scaled(
         size, Qt.AspectRatioMode.IgnoreAspectRatio, Qt.TransformationMode.FastTransformation)
     brush = QBrush()
     brush.setTexture(pixmap)

@@ -33,6 +33,7 @@ class WorkSpaceDialog(QDialog):
         super().__init__(*arg, **kwargs)
         self.userRoot = os.path.join(userpaths.get_profile(), USER_ROOT_NAME)
         self.logger = makeLogger("F")
+        self.workSpaceSaved = False
         self._initWidget()
         self._initLayout()
         self._connectSignal()
@@ -78,8 +79,8 @@ class WorkSpaceDialog(QDialog):
             self.userRoot = os.path.join(selectedFolder, USER_ROOT_NAME)
             self.displayPath.setText(
                 f"{TEXT.workspacePath} {self.userRoot}")
-    
-    def _onConfirm(self):
+            
+    def saveWorkspace(self) -> bool:
         self.logger.info(FRONTEND_CONFIG_ROOT)
         workSpace = { "userRoot" : self.userRoot}
         self.logger.info(os.path.join(FRONTEND_CONFIG_ROOT, WorkSpaceConfigPath.userRoot))
@@ -90,13 +91,21 @@ class WorkSpaceDialog(QDialog):
              
             if not os.path.isdir(self.userRoot):
                 os.mkdir(self.userRoot)
-       
+            return True
         except Exception as e:
             self.logger.info(f"error when creating file to store user workspace {e}")
             WarnBox(f"cannot find the file path: " 
                     f"{os.path.join(FRONTEND_CONFIG_ROOT, WorkSpaceConfigPath.userRoot)}"
                     f"error: {e}")
-        self.close()
+            return False
+        
+    def _onConfirm(self):
+        if self.saveWorkspace():
+            self.workSpaceSaved = True 
+            self.close()
+        else:
+            self.workSpaceSaved = False
+            self.userRoot = os.path.join(userpaths.get_profile(), USER_ROOT_NAME)
     
     def _initStyle(self):
         """ initialize the style """
