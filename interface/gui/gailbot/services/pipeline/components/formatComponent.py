@@ -22,8 +22,8 @@ class FormatComponent(Component):
         """
         try:
             dependency_res: ComponentResult = dependency_outputs["analysis"]
-            logger.info(f"format component is run, {len(payloads)} result will be formatted")
             payloads: List [PayLoadObject] = dependency_res.result
+            logger.info(f"format component is run, {len(payloads)} result will be formatted")
             logger.info(payloads)
             for payload in payloads:
                 logger.info(f"saving {payload.name} result to {payload.out_dir}")

@@ -32,6 +32,7 @@ class GailBotData():
         self.root:        str = path_dict["root"]
         self.setting_src: str = os.path.join(ws_root, self.root, path_dict["setting_src"])
         self.plugin_src:  str = os.path.join(ws_root, self.root, path_dict["plugin_src"])
+        self.root:        str = os.path.join(ws_root, self.root)
 
 
 @dataclass 

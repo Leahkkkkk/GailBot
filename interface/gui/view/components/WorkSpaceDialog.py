@@ -80,21 +80,22 @@ class WorkSpaceDialog(QDialog):
                 f"{TEXT.workspacePath} {self.userRoot}")
     
     def _onConfirm(self):
-        print(PROJECT_ROOT)
+        self.logger.info(FRONTEND_CONFIG_ROOT)
         workSpace = { "userRoot" : self.userRoot}
-        print(os.path.join(PROJECT_ROOT, WorkSpaceConfigPath.userRoot))
+        self.logger.info(os.path.join(FRONTEND_CONFIG_ROOT, WorkSpaceConfigPath.userRoot))
         try:
             with open(
-                os.path.join(PROJECT_ROOT, WorkSpaceConfigPath.userRoot), "w+") as f:
+                os.path.join(FRONTEND_CONFIG_ROOT, WorkSpaceConfigPath.userRoot), "w+") as f:
                 toml.dump(workSpace, f)
              
             if not os.path.isdir(self.userRoot):
                 os.mkdir(self.userRoot)
        
         except Exception as e:
-            self.logger(f"error when creating file to store user workspace {e}")
+            self.logger.info(f"error when creating file to store user workspace {e}")
             WarnBox(f"cannot find the file path: " 
-                    f"{os.path.join(PROJECT_ROOT, WorkSpaceConfigPath.userRoot)}")
+                    f"{os.path.join(FRONTEND_CONFIG_ROOT, WorkSpaceConfigPath.userRoot)}"
+                    f"error: {e}")
         self.close()
     
     def _initStyle(self):

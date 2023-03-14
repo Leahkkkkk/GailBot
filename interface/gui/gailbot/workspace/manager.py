@@ -34,6 +34,7 @@ class WorkspaceManager:
         initializing the workspace
         """
         for path in self.path_config.gailbot_data.__dict__.values():
+            logger.info(f"path received in workspace {path}")
             if not is_directory(path):
                 make_dir(path, True)
                 
