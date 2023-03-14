@@ -2,7 +2,7 @@ import logging
 import os 
 from datetime import date
 from pathlib import Path
-from gailbot.configs import PROJECT_ROOT, log_config_loader, get_ws_root, path_config_loader
+from gailbot.configs import PROJECT_ROOT, log_config_loader, get_ws_root, workspace_config_loader
 from gailbot.core.utils.general import is_directory, make_dir, copy_dir_files, delete
 import logging
 
@@ -49,7 +49,7 @@ def makelogger(logger_name:str):
     logging.info(f"temporary_log_space is {perm_log_space}")
     
     if perm_log_space: 
-        log_root = path_config_loader(perm_log_space).log_root 
+        log_root = workspace_config_loader(perm_log_space).log_root 
         # if exists permanent log space, check if there is an temporary log 
         # space that has not been moved to the permanent log space
         global log_restored

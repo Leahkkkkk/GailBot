@@ -8,7 +8,7 @@ from .interfaces import (
     whisper_config_loader,
     default_config_loader,
     log_config_loader,
-    path_config_loader,
+    workspace_config_loader,
     service_config_loader,
     get_ws_root,
     save_ws_root,

@@ -13,7 +13,7 @@ from typing import Dict
 from view.config.Style import FontSize, Dimension, FontFamily
 from view.config.Text import ProfilePageText as Text
 from view.config.Text import ProfileSettingForm as Form
-from util.Logger import makeLogger
+from gbLogger import makeLogger
 from view.widgets import Label, ScrollArea
 from view.widgets.MsgBox import WarnBox
 from view.widgets.Background import initSecondaryColorBackground

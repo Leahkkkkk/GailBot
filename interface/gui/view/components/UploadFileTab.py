@@ -12,7 +12,7 @@ Description: implementation of a pop up dialog that allow user to upload
 '''
 from typing import List
 
-from util.Logger import makeLogger
+from gbLogger import makeLogger
 from view.config.Text import ChooseFileTabText
 from view.widgets.PopUpTab import Tab
 from view.pages.FileUploadTabPages import (
@@ -70,10 +70,8 @@ class UploadFileTab(QDialog):
         profile = self.chooseSetTab.getProfile()
         outputPath = self.chooseOutPutTab.getOutputPath()
         
-        status = {
-            "Status": "Not Transcribed", 
-            "Progress": "None", 
-            "SelectedAction": "Transcribe"}
+        status = {"Status": "Not Transcribed", "Progress": "None"}
+        
         try: 
             assert fileList
             for fileObj in fileList:

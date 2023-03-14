@@ -57,6 +57,7 @@ class WelcomePageTextData(DataclassFromDict):
     sendZipMsg               :str  = field_from_dict()
     saveLogPrompt            :str  = field_from_dict()
     saveLogPath              :str  = field_from_dict()
+    changeWorkDir            :str  = field_from_dict()
         
 @dataclass
 class TranscribeSuccessTextData(DataclassFromDict):

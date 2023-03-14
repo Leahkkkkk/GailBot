@@ -12,7 +12,7 @@ Description: a status bar that display the status message to user
 
 import logging
 
-from util import Logger
+from gbLogger import Logger
 from view.config.Style import Dimension, StyleSheet
 from PyQt6.QtCore import QSize 
 from PyQt6.QtWidgets import  QStatusBar

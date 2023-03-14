@@ -15,7 +15,7 @@ from typing import Dict
 from view.config.Style import Color, FontSize, FontFamily, Dimension
 from view.config.Text import CreateNewProfilePageText as Text 
 from view.config.Text import EngineSettingForm as Form 
-from util.Logger import makeLogger
+from gbLogger import makeLogger
 
 from view.widgets.Form.DependentComboBox import DependentCombo
 from view.widgets.ScrollArea import ScrollArea

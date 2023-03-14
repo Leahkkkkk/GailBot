@@ -2,10 +2,8 @@ from dataclasses import dataclass
 import os
 from typing import Union, List
 from gailbot.configs import (
-    path_config_loader, 
+    workspace_config_loader, 
     save_ws_root, 
-    service_config_loader,
-    PROJECT_ROOT, 
     TemporaryFolder, 
     OutputFolder)
 from gailbot.core.utils.general import (
@@ -15,9 +13,6 @@ from gailbot.core.utils.general import (
     paths_in_dir)
 from gailbot.core.utils.logger import makelogger
 
-CONFIG = service_config_loader()
-TEMP = CONFIG.directory_name.temp_extension
-OUTPUT = CONFIG.directory_name.output_extension
 logger = makelogger("workspace")
 
 @dataclass
@@ -26,12 +21,13 @@ class WorkspaceManager:
         create temporary and output directories 
     """
     def __init__(self, user_root: str ) -> None:
-        self.path_config         = path_config_loader(user_root)
+        self.path_config         = workspace_config_loader(user_root)
         self.user_root:      str = user_root
         self.setting_src:    str = self.path_config.gailbot_data.setting_src
         self.plugin_src:     str = self.path_config.gailbot_data.plugin_src
         self.tempspace_root: str = self.path_config.tempspace_root
-        self.log_root:    str = self.path_config.log_root
+        self.log_root:       str = self.path_config.log_root
+        self.file_extension      = self.path_config.file_extension
     
     def init_workspace(self):
         """
@@ -59,7 +55,7 @@ class WorkspaceManager:
             stores the path of each subfolder under the temporary folder, 
             else return False
         """
-        folder: TemporaryFolder = self.path_config.get_temp_space(name + TEMP) 
+        folder: TemporaryFolder = self.path_config.get_temp_space(name + self.file_extension.temp) 
         try:
             for path in folder.__dict__.values(): 
                 if not is_directory(path):
@@ -83,7 +79,7 @@ class WorkspaceManager:
             stores the path of each subfolder under the output folder, 
             else return False
         """
-        folder: OutputFolder = self.path_config.get_output_space(outdir, name + OUTPUT)
+        folder: OutputFolder = self.path_config.get_output_space(outdir, name + self.file_extension.output)
         try:
             for path in folder.__dict__.values():
                 if not is_directory(path):
@@ -110,7 +106,7 @@ class WorkspaceManager:
             if isinstance(temp_space, TemporaryFolder):
                 delete(temp_space.root)
             else:
-                delete(self.path_config.get_temp_space(temp_space + TEMP).root)
+                delete(self.path_config.get_temp_space(temp_space + self.file_extension.temp).root)
                 return True
         except Exception as e:
             logger.error(e)
@@ -137,7 +133,8 @@ class WorkspaceManager:
             List[str]: a list of paths to the saved setting files
         """
         try: 
-            return paths_in_dir(self.path_config.gailbot_data.setting_src, ["toml"])
+            return paths_in_dir(
+                self.path_config.gailbot_data.setting_src, ["toml"])
         except Exception as e:
             logger.error(e)
             return False 

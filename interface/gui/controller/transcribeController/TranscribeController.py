@@ -16,7 +16,7 @@ from typing import List, Dict
 from controller.util.Error import ErrorMsg, ThreadException, ErrorFormatter
 from view.MainWindow import MainWindow
 from view import ViewController
-from util.Logger import makeLogger
+from gbLogger import makeLogger
 from PyQt6.QtCore import pyqtSignal, QObject, QThreadPool, QRunnable, pyqtSlot
 from gailbot.api import GailBot
 

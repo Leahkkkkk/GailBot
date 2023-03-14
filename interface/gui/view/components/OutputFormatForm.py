@@ -14,7 +14,7 @@ from typing import Dict
 from view.widgets import ToggleView, TextForm, Button, Label, ComboBox
 from view.config.Text import OutputFormatForm, OutputFormatFormText
 from view.config.Style import Color, Dimension, FontSize
-from util.Logger import makeLogger
+from gbLogger import makeLogger
 
 from PyQt6.QtWidgets import (
     QWidget, 

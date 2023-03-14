@@ -15,7 +15,7 @@ from dataclasses import dataclass
 from typing import TypedDict, Tuple, Dict, Set
 from gailbot.api import GailBot
 
-from util.Logger import makeLogger
+from gbLogger import makeLogger
 from controller.util.Error import ErrorMsg, DBException, ErrorFormatter
 from PyQt6.QtCore import QObject, pyqtSignal
 from dict_to_dataclass import DataclassFromDict, field_from_dict
@@ -25,46 +25,43 @@ from dict_to_dataclass import DataclassFromDict, field_from_dict
 @dataclass 
 class FileObj(DataclassFromDict):
     """ implement the interface of a file object  """
-    Name:     str  = field_from_dict()
-    Type:     str  = field_from_dict()
-    Output:   str = field_from_dict()
+    Name    : str = field_from_dict()
+    Type    : str = field_from_dict()
+    Output  : str = field_from_dict()
     FullPath: str = field_from_dict()
-    Profile:  str = field_from_dict()
-    Status:   str = field_from_dict()
-    Date:     str = field_from_dict()
-    Size:     str = field_from_dict()
-    SelectedAction: str = field_from_dict() # TODO: delete this 
-    Progress:       str = field_from_dict() 
-    
+    Profile : str = field_from_dict()
+    Status  : str = field_from_dict()
+    Date    : str = field_from_dict()
+    Size    : str = field_from_dict()
+    Progress: str = field_from_dict()
     
 class fileDict(TypedDict):
     """ the scheme of file data, 
         a file is posted to the database through a dictionary that 
         follows this scheme
     """
-    Name:   str
-    Type:   str
-    Profile:str
-    Status: str
-    Date:   str
-    Size:   str
-    Output: str
+    Name    : str
+    Type    : str
+    Profile : str
+    Status  : str
+    Date    : str
+    Size    : str
+    Output  : str
     FullPath: str
-    SelectedAction: str
-    Progress:str
+    Progress: str
     
 class Signals(QObject):
     """ 
         contains pyqtSignal to support communication between 
         file database and view 
     """
-    send = pyqtSignal(object)
-    deleted  = pyqtSignal(str)
-    error = pyqtSignal(str)
-    success = pyqtSignal(str)
+    send           = pyqtSignal(object)
+    deleted        = pyqtSignal(str)
+    error          = pyqtSignal(str)
+    success        = pyqtSignal(str)
     profileRequest = pyqtSignal(str)
-    fileAdded = pyqtSignal(tuple)
-    fileUpdated = pyqtSignal(tuple)
+    fileAdded      = pyqtSignal(tuple)
+    fileUpdated    = pyqtSignal(tuple)
     
 class FileOrganizer:
     def __init__(self, gbController: GailBot) -> None:

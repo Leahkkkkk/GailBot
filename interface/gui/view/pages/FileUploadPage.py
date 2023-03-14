@@ -25,7 +25,7 @@ from view.config.Text import FileTableHeader
 from view.config.Text import FileUploadPageText as Text 
 from view.config.Style import FontSize as FS
 from view.config.Style import buttonStyle
-from util.Logger import makeLogger
+from gbLogger import makeLogger
 from view.Signals import FileSignals
 from view.widgets import Label, Button
 from view.widgets.FileTable import FileTable, TableWidget

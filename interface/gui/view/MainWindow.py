@@ -15,7 +15,7 @@ import os
 import shutil
 import glob
 import logging
-from util import Logger, LogMsgFormatter
+from gbLogger import Logger
 from view.components import (
     MainStack, 
     StatusBar, 
@@ -60,7 +60,7 @@ class MainWindow(QMainWindow):
         self.MenuBar = MenuBar.ManuBar()
         self.setMenuBar(self.MenuBar)
         self.Console = Console.Console()
-        self.logger.info(LogMsgFormatter.INITIALIZE.format(source="console bar"))
+        self.logger.info("console initialized")
         self.setWindowTitle(About.APP_TITTLE)
         self.setMinimumSize(QSize(Dimension.WIN_MIN_WIDTH, Dimension.WIN_MIN_HEIGHT))
         self.setMaximumSize(QSize(Dimension.WINMAXWIDTH, Dimension.WINMAXHEIGHT))
@@ -69,7 +69,7 @@ class MainWindow(QMainWindow):
             self.fileTableSignals, 
             self.profileSignals,
             parent=self)
-        self.logger.info(LogMsgFormatter.INITIALIZE.format(source="main view stack"))
+        self.logger.info("main stack initialized")
         self.setCentralWidget(self.MainStack)
         self.setContentsMargins(0,0,0,0)
         self._connectSignal()

@@ -18,7 +18,7 @@ import os
 from view.config.Style import Color, FontSize, Dimension
 from view.config.Text import FileUploadPageText as Text
 from view.util.io import get_name, is_directory
-from util.Logger import makeLogger
+from gbLogger import makeLogger
 from controller.mvController import fileDict
 from view.widgets.Button import ColoredBtn
 from view.widgets.Label import Label

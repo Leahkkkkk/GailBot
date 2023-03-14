@@ -10,24 +10,19 @@ Modified By:  Siara Small  & Vivian Li
 '''
 
 from dataclasses import dataclass
-
-# TODO: update the ErrorMsg class 
 @dataclass
 class ErrorMsg:
     """ error messages """
-    KEYERROR      = "File key not found"
-    DUPLICATEKEY  = "Duplicate key"
-    POSTERROR     = "Fail to add to database"
-    GETERROR      = "Fail to get data"
-    EDITERROR     = "Fail to edit the data"
-    DELETEEROR    = "Unable to delete data"
-    RESOURCEERROR = "Thread Resource temporarily unavailable"
-    DELETE_DEFAULT = "Default setting cannot be deleted"
-    PROFILE_NOT_FOUND = "Profile Not Found" 
+    KEYERROR          = "File key not found"
+    DUPLICATEKEY      = "Duplicate key"
+    POSTERROR         = "Fail to add to database"
+    GETERROR          = "Fail to get data"
+    EDITERROR         = "Fail to edit the data"
+    DELETEEROR        = "Unable to delete data"
+    RESOURCEERROR     = "Thread Resource temporarily unavailable"
+    DELETE_DEFAULT    = "Default setting cannot be deleted"
+    PROFILE_NOT_FOUND = "Profile Not Found"
 
-
-
-# TODO: complete the error formatter
 @dataclass
 class ErrorFormatter:
     DEFAULT_ERROR = "Error from {source}, error message: {msg}"

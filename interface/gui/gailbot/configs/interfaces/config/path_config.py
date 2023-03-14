@@ -21,6 +21,11 @@ class TemporaryFolder(DataclassFromDict):
     analysis_ws: str = field_from_dict()
     data_copy: str = field_from_dict()
 
+@dataclass 
+class FileExtensions(DataclassFromDict):
+    temp: str = field_from_dict()
+    output: str = field_from_dict()
+
 @dataclass
 class GailBotData():
     def __init__(self, ws_root: str, path_dict: Dict[str,  str]) -> None:
@@ -28,18 +33,23 @@ class GailBotData():
         self.setting_src: str = os.path.join(ws_root, self.root, path_dict["setting_src"])
         self.plugin_src:  str = os.path.join(ws_root, self.root, path_dict["plugin_src"])
 
+
 @dataclass 
-class PathConfig:
+class WorkSpaceConfig:
     def __init__(self, config_path: str, ws_root:str) -> None:
-        self._output_d: Dict = toml.load(config_path)["output"]
-        self._workspace_d: Dict = toml.load(config_path)["workspace"]
+        d = toml.load(config_path)
+        self._output_d: Dict = d["output"]
+        self._workspace_d: Dict = d["workspace"]
+        self._extension_d: Dict = d["file_extensions"]
         self._ws_root = ws_root 
+        # public path data
         self.workspace_root = os.path.join(self._ws_root, self._workspace_d["ws_root"])
         self.log_root       = os.path.join(self._ws_root, self._workspace_d["log_root"])
         self.tempspace_root = os.path.join(
             self.workspace_root, self._workspace_d["temporary"]["root"])
         self.gailbot_data: GailBotData = GailBotData(
-            self.workspace_root, self._workspace_d["gailbot_data"] )
+            self.workspace_root, self._workspace_d["gailbot_data"])
+        self.file_extension : FileExtensions = FileExtensions.from_dict(self._extension_d)
     
     def get_temp_space(self, name:str)-> TemporaryFolder:
         """ Given a name of the source, return a dataclass object that stores
@@ -81,10 +91,9 @@ class PathConfig:
         new_output_dir["root"] = os.path.join(root, name)
         return OutputFolder.from_dict(new_output_dir)
         
-def load_path_config(config_path, ws_root) -> PathConfig:
+def load_workspace_config(config_path, ws_root) -> WorkSpaceConfig:
     """ public function that load the workspace data and return it """
-    return PathConfig(config_path, ws_root)
-
+    return WorkSpaceConfig(config_path, ws_root)
 
 def load_ws_root(config_path) -> str:
     """ public function that returns the workspace root if config_path is 

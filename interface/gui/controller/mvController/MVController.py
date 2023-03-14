@@ -11,7 +11,7 @@ Description:
 Model view controller than connect ths database to a front end view object 
 '''
 
-from util.Logger import makeLogger
+from gbLogger import makeLogger 
 from view import ViewController
 from .organizer import FileOrganizer, PluginOrganizer, ProfileOrganizer
 from gailbot.api import GailBot

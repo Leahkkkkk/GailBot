@@ -13,16 +13,15 @@ Connect between the database, view object and the backend transcription process
 '''
 import glob
 import os
-import sys
-from typing import Set, Tuple
-import logging 
+from typing import Set
 import time
-
+import logging
+from controller.util.io import delete
 from config_frontend.ConfigPath import WorkSpaceConfigPath
 from config_frontend import FRONTEND_CONFIG_ROOT
-from .transcribeController import TranscribeController
-from .mvController import MVController 
-from util import Logger, LogMsgFormatter
+from controller.transcribeController import TranscribeController
+from controller.mvController import MVController 
+from gbLogger import makeLogger
 from config_frontend import getWorkBasePath, getWorkPath, getFileManagementData
 from gailbot.api import GailBot
 from controller.util.io import is_file, copy
@@ -30,7 +29,6 @@ from controller.util.io import is_file, copy
 from view import ViewController
 from view import WorkSpaceDialog
 from PyQt6.QtCore import pyqtSlot, QObject, QThreadPool, pyqtSignal
-
 class Signal(QObject):
     """ a signal object that contains signal for communication between 
         backend transcription process and frontend view object"""
@@ -62,7 +60,7 @@ class Controller(QObject):
         backendRoot = self._prelaunch()
         
         # create logger
-        self.logger = Logger.makeLogger("F")
+        self.logger = makeLogger("F")
         self.logger.info(f"controller initialized")
         self.logger.info(backendRoot)
         
@@ -77,19 +75,22 @@ class Controller(QObject):
         Returns:
             str: return a string that stores the root path to gailbot workspace
         """
+        userRootConfigPath = os.path.join(FRONTEND_CONFIG_ROOT, WorkSpaceConfigPath.userRoot)
+        newRootConfigPath  = os.path.join(FRONTEND_CONFIG_ROOT, WorkSpaceConfigPath.newUserRoot) 
         try:
-            if not os.path.exists(
-                os.path.join(FRONTEND_CONFIG_ROOT, WorkSpaceConfigPath.userRoot)):
+            if not os.path.exists(userRootConfigPath):
                 pathDialog = WorkSpaceDialog()
                 pathDialog.exec()
                 backendRoot = pathDialog.userRoot
-            elif is_file(WorkSpaceConfigPath.newUserRoot): 
+            elif is_file(newRootConfigPath): 
+                logging.info("detect new workspace path")
                 oldRoot = getWorkBasePath()
-                os.remove(WorkSpaceConfigPath.userRoot)
-                copy(WorkSpaceConfigPath.newUserRoot, WorkSpaceConfigPath.userRoot)
-                os.remove(WorkSpaceConfigPath.newUserRoot)
+                os.remove(userRootConfigPath)
+                copy(newRootConfigPath, userRootConfigPath)
+                os.remove(newRootConfigPath)
                 newRoot = getWorkBasePath()
                 copy(oldRoot, newRoot)
+                delete(oldRoot)
                 backendRoot = getWorkPath().backend
             else:
                 backendRoot = getWorkPath().backend

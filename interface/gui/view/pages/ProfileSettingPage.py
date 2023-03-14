@@ -18,7 +18,7 @@ from view.config.Style import FontSize as FS
 from view.config.Style import StyleSheet as SS 
 from view.config.Text import ProfileSettingForm as Form 
 from view.config.Text import Links
-from util.Logger import makeLogger
+from gbLogger import makeLogger
 
 from view.Signals import ProfileSignals
 from view.pages import (

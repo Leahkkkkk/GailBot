@@ -37,7 +37,7 @@ moreInfoText              = "For more information, visit:"
 firstLaunchHeader         = "Welcome to GailBot's initial setup"
 firstLaunchInstruction    = """Please specify the path to GailBot's \
                              workspace directory on your computer.\nThis is where all internal and log files will be stored."""
-chanegeWorkDir            = "Change Path to GailBot Work Space"
+changeWorkDir            = "Change Path to GailBot Work Space"
 confirmBtn                = "Confirm"
 changeDirBtn              = "Change Directory"
 workspacePath             = "GailBot Work Space Path"

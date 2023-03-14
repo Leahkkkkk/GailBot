@@ -5,4 +5,4 @@ from .ConfigPath import (
     SettingDataPath, 
     FRONTEND_CONFIG_ROOT, 
     PROJECT_ROOT)
-from .workSpacePath import getWorkBasePath, getWorkPath, getFileManagementData
+from .WorkspaceData import getWorkBasePath, getWorkPath, getFileManagementData

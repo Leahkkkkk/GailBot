@@ -34,7 +34,7 @@ from view.config.Text import SystemSettingForm as Form
 from view.config.Text import LogDeleteTimeDict
 from config_frontend import FRONTEND_CONFIG_ROOT as dirname
 from view.util.FileManage import clearAllLog
-from util.Logger import makeLogger
+from gbLogger import makeLogger
 from config_frontend import getWorkBasePath
 from view.widgets import MsgBox
 

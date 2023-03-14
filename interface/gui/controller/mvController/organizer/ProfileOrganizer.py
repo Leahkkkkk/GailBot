@@ -15,7 +15,7 @@ Implementation of a database that stores the profile data
 from typing import Tuple, Union, Dict
 
 from gailbot.api import GailBot
-from util.Logger import makeLogger
+from gbLogger import makeLogger
 from controller.util.Error import ErrorMsg
 
 from PyQt6.QtCore import QObject, pyqtSignal 

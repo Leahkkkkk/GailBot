@@ -24,7 +24,7 @@ from view.config.Style import (
     FontFamily
 )
 from config_frontend import PROJECT_ROOT
-from util.Logger import makeLogger
+from gbLogger import makeLogger
 from view.widgets.Background import addLogo
 from view.Signals import FileSignals
 from view.widgets import MsgBox

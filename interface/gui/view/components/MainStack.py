@@ -11,7 +11,7 @@ Description: implementation of the main page Stack
 '''
 from typing import Tuple
 
-from util.Logger import makeLogger
+from gbLogger import makeLogger
 from view.config.Style import Dimension
 from view.config.Text import MainStackText
 from view.pages import (

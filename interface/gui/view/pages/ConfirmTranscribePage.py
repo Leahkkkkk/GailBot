@@ -18,7 +18,7 @@ from view.config.Style import (
 
 from view.config.Text import ConfirmTranscribeText as Text
 from view.config.Text import FileTableHeader 
-from util.Logger import makeLogger
+from gbLogger import makeLogger
 from view.Signals import FileSignals
 from view.widgets.Background import addLogo
 from view.widgets import ( 

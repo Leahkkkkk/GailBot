@@ -87,23 +87,6 @@ def is_directory(dir_path: str) -> bool:
     except:
         return False
 
-
-def zip_file(source: str, tgt: str, extension: str) -> bool:
-    """ zip the file from source and output a zipped file to tgt"""
-    try:
-        zip_file = ZipFile(tgt, 'w', ZIP_DEFLATED)
-        for root, dirs, files in os.walk(source):
-            for file in files:
-                # Check if the file is a log file
-                if file.endswith(extension):
-                    # Get the full path of the file
-                    file_path = os.path.join(root, file)
-                    # Add the file to the zip_file with the same directory structure
-                    zip_file.write(file_path, arcname=file_path.replace(tgt, '', 1))
-    except Exception as e:
-        logging.error(e)
-        return False
-             
         
 def copy(src_path, tgt_path : str) -> str:
     """ copy the file from the source path to the target path """

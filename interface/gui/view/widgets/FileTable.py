@@ -21,8 +21,8 @@ from view.components.UploadFileTab import UploadFileTab
 from view.pages.FileUploadTabPages import ChooseSet
 from view.widgets.Background import initSecondaryColorBackground
 from view.Signals import FileSignals
-from util.Logger import makeLogger
-from ..config.Style import Dimension, Color, FontFamily, FontSize
+from gbLogger import makeLogger
+from ..config.Style import Dimension, Color
 from ..config.Text import FileTableText as Text
 from view.style.WidgetStyleSheet import FILE_TABLE, SCROLL_BAR, TABLE_HEADER
 

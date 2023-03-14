@@ -17,15 +17,17 @@ from view.widgets import Label, Button, MsgBox
 from view.widgets.MsgBox import WarnBox
 from view.util.io import zip_file
 from PyQt6.QtWidgets import QDialog, QFileDialog, QVBoxLayout
-from config_frontend.ConfigPath import WorkSpaceConfigPath, PROJECT_ROOT
+from config_frontend.ConfigPath import WorkSpaceConfigPath, PROJECT_ROOT, FRONTEND_CONFIG_ROOT
 from view.config.Style import Color, FontFamily, FontSize, Dimension
 from view.config.Text import WelcomePageText as TEXT 
-from util.Logger import makeLogger
+from gbLogger import makeLogger
 from config_frontend import getWorkPath, getWorkBasePath
 from PyQt6.QtCore import QSize, Qt
 import userpaths
 center = Qt.AlignmentFlag.AlignHCenter
 USER_ROOT_NAME = "GailBot"
+
+
 class WorkSpaceDialog(QDialog):
     def __init__(self, *arg, **kwargs) -> None:
         super().__init__(*arg, **kwargs)
@@ -101,6 +103,9 @@ class WorkSpaceDialog(QDialog):
         self.setFixedSize(QSize(600,450))
 
 class SaveLogFile(WorkSpaceDialog):
+    """ 
+    open a dialog that ask user to select a space to store zipped log files 
+    """
     def __init__(self, *arg, **kwargs) -> None:
         super().__init__(*arg, **kwargs)
         self.userRoot = userpaths.get_desktop()
@@ -136,6 +141,10 @@ class SaveLogFile(WorkSpaceDialog):
                 f"{TEXT.saveLogPath}: {self.userRoot}")
         
     def _onConfirm(self):
+        """ 
+            On confirm, output the zipped log file to the directory selected 
+            by user
+        """
         try:
             logdir = getWorkBasePath()
             zip_file(logdir, 
@@ -175,12 +184,11 @@ class ChangeWorkSpace(WorkSpaceDialog):
         workSpace = { "userRoot" : self.userRoot}
         try:
             with open(
-                os.path.join(PROJECT_ROOT, WorkSpaceConfigPath.newUserRoot), "w+") as f:
+                os.path.join(FRONTEND_CONFIG_ROOT, WorkSpaceConfigPath.newUserRoot), "w+") as f:
                 toml.dump(workSpace, f)
-             
         except Exception as e:
-            self.logger(f"error when creating file to store user workspace {e}")
+            self.logger.info(f"error when creating file to store user workspace {e}")
             WarnBox(f"cannot find the file path: " 
-                    f"{os.path.join(PROJECT_ROOT, WorkSpaceConfigPath.newUserRoot)}")
+                    f"{os.path.join(FRONTEND_CONFIG_ROOT, WorkSpaceConfigPath.newUserRoot)}")
+        WarnBox("The change to workspace will be applied when relaunching GailBot")
         self.close()
-        MsgBox("The change to workspace will be applied when relaunching GailBot")
