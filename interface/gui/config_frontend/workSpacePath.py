@@ -17,14 +17,16 @@ from dict_to_dataclass import field_from_dict, DataclassFromDict
 
 import toml 
 from config_frontend import FRONTEND_CONFIG_ROOT
-from config_frontend.ConfigPath import BackEndDataPath
+from config_frontend.ConfigPath import WorkSpaceConfigPath
 import userpaths
 
 @dataclass 
 class WorkSpacePathData(DataclassFromDict): 
-    workSpace                           : str = field_from_dict()
+    backend                             : str = field_from_dict()
     frontend                            : str = field_from_dict()
     logFiles                            : str = field_from_dict()
+    frontendLogFiles                    : str = field_from_dict()
+    backendLogFiles                     : str = field_from_dict()
 
 @dataclass 
 class WorkSpaceBaseDirData(DataclassFromDict):
@@ -36,8 +38,8 @@ class FileManageData(DataclassFromDict):
 
 def getWorkBasePath() -> str:
     """  return the base directory of the gailbot workspace """
-    if os.path.exists(os.path.join(FRONTEND_CONFIG_ROOT,BackEndDataPath.userRoot)):
-        data = toml.load(os.path.join(FRONTEND_CONFIG_ROOT,BackEndDataPath.userRoot))
+    if os.path.exists(os.path.join(FRONTEND_CONFIG_ROOT,WorkSpaceConfigPath.userRoot)):
+        data = toml.load(os.path.join(FRONTEND_CONFIG_ROOT,WorkSpaceConfigPath.userRoot))
         userBaseDir = WorkSpaceBaseDirData.from_dict(data).userRoot
     else:
         userBaseDir = userpaths.get_profile()
@@ -48,13 +50,13 @@ def getWorkPath() -> WorkSpacePathData:
     # get the user's defined base directory
     userBaseDir = getWorkBasePath()
     # get the path to the sub directory     
-    data = toml.load(os.path.join(FRONTEND_CONFIG_ROOT, BackEndDataPath.defaultWorkSpaceData))
+    data = toml.load(os.path.join(FRONTEND_CONFIG_ROOT, WorkSpaceConfigPath.wsStructure))
     for key, value in data.items():
         data[key] = os.path.join(userBaseDir, value)
-    WorkSpacePath = WorkSpacePathData.from_dict(data)
-    return WorkSpacePath
+    WorkSpace = WorkSpacePathData.from_dict(data)
+    return WorkSpace
 
 def getFileManagementData() -> FileManageData: 
-    fileManage = toml.load(os.path.join(FRONTEND_CONFIG_ROOT, BackEndDataPath.fileManageData))
+    fileManage = toml.load(os.path.join(FRONTEND_CONFIG_ROOT, WorkSpaceConfigPath.fileManageData))
     FileManage = FileManageData.from_dict(fileManage)
     return FileManage

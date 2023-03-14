@@ -16,7 +16,6 @@ import shutil
 import glob
 import logging
 from util import Logger, LogMsgFormatter
-from config_frontend.ConfigPath import BackEndDataPath
 from view.components import (
     MainStack, 
     StatusBar, 

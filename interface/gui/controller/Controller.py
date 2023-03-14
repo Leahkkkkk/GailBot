@@ -18,7 +18,7 @@ from typing import Set, Tuple
 import logging 
 import time
 
-from config_frontend.ConfigPath import BackEndDataPath
+from config_frontend.ConfigPath import WorkSpaceConfigPath
 from config_frontend import FRONTEND_CONFIG_ROOT
 from .transcribeController import TranscribeController
 from .mvController import MVController 
@@ -59,15 +59,15 @@ class Controller(QObject):
         super().__init__()
         self.signal = Signal()
         # get the user's work space root 
-        userRoot = self._prelaunch()
+        backendRoot = self._prelaunch()
         
         # create logger
         self.logger = Logger.makeLogger("F")
         self.logger.info(f"controller initialized")
-        self.logger.info(userRoot)
+        self.logger.info(backendRoot)
         
         # initialize the application
-        self.initApp(userRoot)
+        self.initApp(backendRoot)
         
         
     def _prelaunch(self) -> str:
@@ -79,28 +79,28 @@ class Controller(QObject):
         """
         try:
             if not os.path.exists(
-                os.path.join(FRONTEND_CONFIG_ROOT, BackEndDataPath.userRoot)):
+                os.path.join(FRONTEND_CONFIG_ROOT, WorkSpaceConfigPath.userRoot)):
                 pathDialog = WorkSpaceDialog()
                 pathDialog.exec()
-                userRoot = pathDialog.userRoot
-            elif is_file(BackEndDataPath.newUserRoot): 
+                backendRoot = pathDialog.userRoot
+            elif is_file(WorkSpaceConfigPath.newUserRoot): 
                 oldRoot = getWorkBasePath()
-                os.remove(BackEndDataPath.userRoot)
-                copy(BackEndDataPath.newUserRoot, BackEndDataPath.userRoot)
-                os.remove(BackEndDataPath.newUserRoot)
+                os.remove(WorkSpaceConfigPath.userRoot)
+                copy(WorkSpaceConfigPath.newUserRoot, WorkSpaceConfigPath.userRoot)
+                os.remove(WorkSpaceConfigPath.newUserRoot)
                 newRoot = getWorkBasePath()
                 copy(oldRoot, newRoot)
-                userRoot = getWorkPath().workSpace
+                backendRoot = getWorkPath().backend
             else:
-                userRoot = getWorkPath().workSpace
-            return userRoot
+                backendRoot = getWorkPath().backend
+            return backendRoot
         except Exception as e:
             self.logger.error(e)
     
-    def initApp(self, userRoot) -> bool:
+    def initApp(self, backendRoot) -> bool:
         try:
             # initialize gailbot
-            self.gb = GailBot(userRoot)
+            self.gb = GailBot(backendRoot)
             assert self.gb
             self.logger.info("GailBot initialized")
             

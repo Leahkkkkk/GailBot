@@ -29,5 +29,5 @@ def test_controller(sources, settings):
 def test_update_setting(settings):
     controller = ServiceController(WS_MANAGER, False)
     controller.create_new_setting(settings[0], settings[1])
-    
+
 

@@ -9,11 +9,11 @@ def test_workspace():
     ws_manager = WorkspaceManager(ROOT)
     ws_manager.init_workspace()
     logging.info(ws_manager.setting_src)
-    logging.info(ws_manager.log_file_space)
+    logging.info(ws_manager.log)
     logging.info(ws_manager.plugin_src)
     logging.info(ws_manager.tempspace_root)
     assert(is_directory(ws_manager.setting_src)) 
-    assert(is_directory(ws_manager.log_file_space)) 
+    assert(is_directory(ws_manager.log_root)) 
     assert(is_directory(ws_manager.plugin_src)) 
     assert(is_directory(ws_manager.tempspace_root))
     

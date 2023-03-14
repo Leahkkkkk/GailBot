@@ -17,9 +17,16 @@ class GailBot:
     """
     def __init__(
         self,
-        user_root : str 
+        ws_root : str 
     ):
-        self.ws_manager: WorkspaceManager = WorkspaceManager(user_root)
+        """ initialize an gailbot object that provides a suite of functions
+            to interact with gailbot
+
+        Args:
+            ws_root (str): the path to workspace root
+        """
+        self.ws_manager: WorkspaceManager = WorkspaceManager(ws_root)
+        logger.info("workspace manager initialized")
         self.gb: ServiceController = ServiceController(
             self.ws_manager, load_exist_setting = True)
         self.reset_workspace()

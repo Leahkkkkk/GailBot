@@ -11,7 +11,7 @@ import csv
 import shutil
 import itertools
 from pathlib import Path
-from zipfile import ZipFile
+from zipfile import ZipFile, ZIP_DEFLATED
 # Local imports
 # Third party imports
 import logging 
@@ -88,15 +88,18 @@ def is_directory(dir_path: str) -> bool:
         return False
 
 
-def zip_file(source: str, tgt: str) -> bool:
-    """ zip the file from source and output a zipped file to tgy=t"""
+def zip_file(source: str, tgt: str, extension: str) -> bool:
+    """ zip the file from source and output a zipped file to tgt"""
     try:
-        files = paths_in_dir(source)
-        with ZipFile(tgt,'w') as zip:
-            # writing each file one by one
+        zip_file = ZipFile(tgt, 'w', ZIP_DEFLATED)
+        for root, dirs, files in os.walk(source):
             for file in files:
-                zip.write(file)
-        return True
+                # Check if the file is a log file
+                if file.endswith(extension):
+                    # Get the full path of the file
+                    file_path = os.path.join(root, file)
+                    # Add the file to the zip_file with the same directory structure
+                    zip_file.write(file_path, arcname=file_path.replace(tgt, '', 1))
     except Exception as e:
         logging.error(e)
         return False

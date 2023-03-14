@@ -3,7 +3,7 @@ import os
 from typing import Union, List
 from gailbot.configs import (
     path_config_loader, 
-    save_user_root, 
+    save_ws_root, 
     service_config_loader,
     PROJECT_ROOT, 
     TemporaryFolder, 
@@ -29,9 +29,9 @@ class WorkspaceManager:
         self.path_config         = path_config_loader(user_root)
         self.user_root:      str = user_root
         self.setting_src:    str = self.path_config.gailbot_data.setting_src
-        self.log_file_space: str = self.path_config.gailbot_data.logfiles 
         self.plugin_src:     str = self.path_config.gailbot_data.plugin_src
         self.tempspace_root: str = self.path_config.tempspace_root
+        self.log_root:    str = self.path_config.log_root
     
     def init_workspace(self):
         """
@@ -44,7 +44,7 @@ class WorkspaceManager:
         if not is_directory(self.path_config.tempspace_root):
                 make_dir(self.path_config.tempspace_root, True)
         
-        save_user_root(self.user_root)
+        save_ws_root(self.user_root)
         
     def get_file_temp_space(self, name: str) -> Union[TemporaryFolder, bool]:
         """ given the file name, create a directory for the file
@@ -149,8 +149,8 @@ class WorkspaceManager:
             bool: true if the deletion is successful, false otherwise 
         """
         try:
-            if is_directory(self.path_config.gailbot_data.logfiles):
-                delete(self.path_config.gailbot_data.logfiles)
+            if is_directory(self.path_config.log_root):
+                delete(self.path_config.log_root)
             return True
         except Exception as e:
             logger.error(e)

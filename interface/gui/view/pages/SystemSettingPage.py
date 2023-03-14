@@ -26,7 +26,7 @@ from view.widgets import (
     Button
 )
 from view.components.WorkSpaceDialog import ChangeWorkSpace, SaveLogFile
-from config_frontend.ConfigPath import BackEndDataPath, SettingDataPath
+from config_frontend.ConfigPath import WorkSpaceConfigPath, SettingDataPath
 from view.config.Setting import SystemSetting, DefaultSetting
 from view.config.StyleSource import StyleSource, StyleTable
 from view.config.Text import SystemSetPageText as Text 
@@ -207,7 +207,7 @@ class SystemSettingPage(QWidget):
             fontSource  = StyleTable[setting["Font Size"]]
             fontDes     = StyleSource.CURRENT_FONTSIZE
             logDeleteTime = LogDeleteTimeDict[setting["Log file auto deletion time"]]
-            f = open (f"{os.path.join(dirname, BackEndDataPath.fileManageData)}", "w+")
+            f = open (f"{os.path.join(dirname, WorkSpaceConfigPath.fileManageData)}", "w+")
             toml.dump({"AUTO_DELETE_TIME" : logDeleteTime}, f)
             f.close()
             self._copyTomlFile(colorSource, colorDes, dirname)

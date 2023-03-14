@@ -1,5 +1,5 @@
 from .ConfigPath import (
-    BackEndDataPath, 
+    WorkSpaceConfigPath, 
     StyleDataPath, 
     TextDataPath, 
     SettingDataPath, 

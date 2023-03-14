@@ -1,10 +1,9 @@
 # path to config_frontend files with backend data
-[backend]
-gailBotData          = "backend/gailbot.toml"
-workSpaceData        = "backend/user_root.toml"
-newUserRoot          = "backend/new_user_root.toml"
-defaultWorkSpaceData = "backend/workspace.toml"
-fileManageData       = "backend/fileManage.toml"
+[workspace]
+userRoot             = "workspace/userRoot.toml"
+newUserRoot          = "workspace/newUserRoot.toml"
+wsStructure          = "workspace/wsStructure.toml"
+fileManageData       = "workspace/fileManage.toml"
 # path to config_frontend files with style data
 [style]
 dimension       = "style/dimension.toml"

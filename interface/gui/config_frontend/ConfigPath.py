@@ -19,12 +19,11 @@ FRONTEND_CONFIG_ROOT = os.path.join (os.path.dirname (os.path.dirname(__file__))
 data    = toml.load(os.path.join (FRONTEND_CONFIG_ROOT, "configpath.toml"))
 
 @dataclass 
-class BackEndData(DataclassFromDict): 
-    gailBotData                  : str = field_from_dict()
-    userRoot                     : str = field_from_dict()
+class WorkSpaceData(DataclassFromDict): 
+    userRoot                      : str = field_from_dict()
     newUserRoot                   : str = field_from_dict()
-    defaultWorkSpaceData         : str = field_from_dict()
-    fileManageData               : str = field_from_dict()
+    wsStructure                   : str = field_from_dict()
+    fileManageData                : str = field_from_dict()
 
 
 @dataclass 
@@ -51,7 +50,7 @@ class SettingData(DataclassFromDict):
     systemSetting               : str = field_from_dict()
     defaultSetting              : str = field_from_dict()
 
-BackEndDataPath  = BackEndData.from_dict(data["backend"])
+WorkSpaceConfigPath  = WorkSpaceData.from_dict(data["workspace"])
 StyleDataPath    = StyleData.from_dict(data["style"])
 TextDataPath     = TextData.from_dict(data["text"])
 SettingDataPath  = SettingData.from_dict(data["setting"])

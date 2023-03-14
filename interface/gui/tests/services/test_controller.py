@@ -99,4 +99,5 @@ def test_transcribe_invalid():
 def test_transcribe_many():
     result, invalid = transcribe(A.MANY_FILES_DIR)
     
-    
+def test_transcribe_small():
+    result, invalid = transcribe(A.SMALL_AUDIO_WAV)  

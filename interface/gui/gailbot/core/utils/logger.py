@@ -2,12 +2,13 @@ import logging
 import os 
 from datetime import date
 from pathlib import Path
-from gailbot.configs import PROJECT_ROOT, log_config_loader, get_user_root, path_config_loader
+from gailbot.configs import PROJECT_ROOT, log_config_loader, get_ws_root, path_config_loader
 from gailbot.core.utils.general import is_directory, make_dir, copy_dir_files, delete
 import logging
 
+logging.info("creating logger for gailbot")
 LOG_CONFIG  = log_config_loader()
-logging.info(get_user_root())
+logging.info(get_ws_root())
 
 log_restored = False  # a global variable to check if there exists a temporary 
                       # log file in the project folder that was not moved 
@@ -42,12 +43,13 @@ def makelogger(logger_name:str):
     # as the project root, which will be copied over to the permanent gailbot 
     # workspace 
     
-    perm_log_space = get_user_root()
+    perm_log_space = get_ws_root()
     temp_log_space = os.path.join(PROJECT_ROOT, LOG_CONFIG.temp_dir)
     logging.info(f"permenant_log_space is {perm_log_space}")
     logging.info(f"temporary_log_space is {perm_log_space}")
+    
     if perm_log_space: 
-        log_root = path_config_loader(perm_log_space).gailbot_data.logfiles 
+        log_root = path_config_loader(perm_log_space).log_root 
         # if exists permanent log space, check if there is an temporary log 
         # space that has not been moved to the permanent log space
         global log_restored

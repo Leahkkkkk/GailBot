@@ -9,22 +9,11 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
-import time
 import os
 import glob
 
 from config_frontend import getWorkPath, getFileManagementData
 
-def clearLog():
-    """ clear the expired log file"""
-    currentTime = int(time.time())
-    deleteTime = currentTime - getFileManagementData().AUTO_DELETE_TIME * 24 * 60 * 60
-    logdir = getWorkPath().logFiles
-    files = glob.iglob(os.path.join(logdir, "*.log"))
-    for file in files:
-        fileTime = int(os.path.getctime(file))
-        if fileTime <= deleteTime :
-            os.remove(file)
 
 def clearAllLog():
     """ clear all the log file  """

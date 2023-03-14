@@ -1,3 +1,8 @@
+[workspace]
+ws_root     = "gailbot_workspace"
+log_root    = "../LogFiles/Backend" # log file directry is on the same level of 
+                                    #  the parent directory of gailbot_workspace
+
 # contains relative paths for the output of gailbot
 [output]
 transcribe_result = "result/transcription"
@@ -5,16 +10,11 @@ analysis_result   = "result/analysis"
 format_result     = "result/format"
 media_file        = "media"
 
-# TODO: delete the root from other paths
-[workspace]
-root = "gailbot_workspace"
-
 # contains relative paths for the directory storing the gailbot data
 [workspace.gailbot_data]
 root        = "gailbot_data"
 setting_src = "setting_source"
 plugin_src  = "plugin_source"
-logfiles    = "logfiles"
 
 # contains relative paths for the files storing temporary data
 [workspace.temporary]

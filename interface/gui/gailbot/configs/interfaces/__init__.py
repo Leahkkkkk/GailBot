@@ -10,7 +10,7 @@ from .core.engines.google import load_google_config
 from .core.engines.whisper import load_whisper_config
 from .core.setting.defaults import load_default_config
 from .core.util.logger import load_log_config
-from .config.path_config import load_path_config, load_user_root, store_user_root
+from .config.path_config import load_path_config, load_ws_root, store_ws_root
 from .services import load_service_config
 from .config.path_config import TemporaryFolder, OutputFolder
 import os
@@ -41,10 +41,10 @@ def path_config_loader(user_root): return load_path_config(
     os.path.join(CONFIG_ROOT, PATH.paths_config), user_root
 )
 
-def get_user_root(): return load_user_root(
-    os.path.join(CONFIG_ROOT, PATH.user_root)
+def get_ws_root(): return load_ws_root(
+    os.path.join(CONFIG_ROOT, PATH.ws_root)
 )
 
-def save_user_root(user_root: str): return store_user_root(
-    os.path.join(CONFIG_ROOT, PATH.user_root), user_root
+def save_ws_root(user_root: str): return store_ws_root(
+    os.path.join(CONFIG_ROOT, PATH.ws_root), user_root
 )

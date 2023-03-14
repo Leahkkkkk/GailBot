@@ -1,0 +1,5 @@
+backend   = "Backend"
+frontend  = "Frontend"
+logFiles  = "LogFiles"
+frontendLogFiles = "LogFiles/Frontend"
+backendLogFiles = "LogFiles/Backend"

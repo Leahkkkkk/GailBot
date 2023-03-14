@@ -24,7 +24,7 @@ class ConfigPath(DataclassFromDict):
     google      : str = field_from_dict()
     default     : str = field_from_dict()
     log         : str = field_from_dict()
-    user_root   : str = field_from_dict()
+    ws_root   : str = field_from_dict()
     paths_config: str = field_from_dict()
     services    : str = field_from_dict()
 

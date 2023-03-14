@@ -15,9 +15,9 @@ import datetime
 import toml 
 from view.widgets import Label, Button, MsgBox
 from view.widgets.MsgBox import WarnBox
-from view.util.io import zip_file, copy, delete
+from view.util.io import zip_file
 from PyQt6.QtWidgets import QDialog, QFileDialog, QVBoxLayout
-from config_frontend.ConfigPath import BackEndDataPath, PROJECT_ROOT
+from config_frontend.ConfigPath import WorkSpaceConfigPath, PROJECT_ROOT
 from view.config.Style import Color, FontFamily, FontSize, Dimension
 from view.config.Text import WelcomePageText as TEXT 
 from util.Logger import makeLogger
@@ -80,10 +80,10 @@ class WorkSpaceDialog(QDialog):
     def _onConfirm(self):
         print(PROJECT_ROOT)
         workSpace = { "userRoot" : self.userRoot}
-        print(os.path.join(PROJECT_ROOT, BackEndDataPath.userRoot))
+        print(os.path.join(PROJECT_ROOT, WorkSpaceConfigPath.userRoot))
         try:
             with open(
-                os.path.join(PROJECT_ROOT, BackEndDataPath.userRoot), "w+") as f:
+                os.path.join(PROJECT_ROOT, WorkSpaceConfigPath.userRoot), "w+") as f:
                 toml.dump(workSpace, f)
              
             if not os.path.isdir(self.userRoot):
@@ -92,7 +92,7 @@ class WorkSpaceDialog(QDialog):
         except Exception as e:
             self.logger(f"error when creating file to store user workspace {e}")
             WarnBox(f"cannot find the file path: " 
-                    f"{os.path.join(PROJECT_ROOT, BackEndDataPath.userRoot)}")
+                    f"{os.path.join(PROJECT_ROOT, WorkSpaceConfigPath.userRoot)}")
         self.close()
     
     def _initStyle(self):
@@ -137,9 +137,10 @@ class SaveLogFile(WorkSpaceDialog):
         
     def _onConfirm(self):
         try:
-            logdir = getWorkPath().logFiles
-            zip_file(logdir, os.path.join(
-                self.userRoot, f"{TEXT.zipFileName}-{datetime.datetime.now()}.zip"))
+            logdir = getWorkBasePath()
+            zip_file(logdir, 
+                     os.path.join(self.userRoot, f"{TEXT.zipFileName}-{datetime.datetime.now()}.zip"),
+                     ".log")
             self.close()
         except Exception as e:
             self.logger.error(e)
@@ -174,12 +175,12 @@ class ChangeWorkSpace(WorkSpaceDialog):
         workSpace = { "userRoot" : self.userRoot}
         try:
             with open(
-                os.path.join(PROJECT_ROOT, BackEndDataPath.newUserRoot), "w+") as f:
+                os.path.join(PROJECT_ROOT, WorkSpaceConfigPath.newUserRoot), "w+") as f:
                 toml.dump(workSpace, f)
              
         except Exception as e:
             self.logger(f"error when creating file to store user workspace {e}")
             WarnBox(f"cannot find the file path: " 
-                    f"{os.path.join(PROJECT_ROOT, BackEndDataPath.newUserRoot)}")
+                    f"{os.path.join(PROJECT_ROOT, WorkSpaceConfigPath.newUserRoot)}")
         self.close()
         MsgBox("The change to workspace will be applied when relaunching GailBot")

@@ -23,19 +23,19 @@ class TemporaryFolder(DataclassFromDict):
 
 @dataclass
 class GailBotData():
-    def __init__(self, user_root: str, path_dict: Dict[str,  str]) -> None:
+    def __init__(self, ws_root: str, path_dict: Dict[str,  str]) -> None:
         self.root:        str = path_dict["root"]
-        self.setting_src: str = os.path.join(user_root, self.root, path_dict["setting_src"])
-        self.plugin_src:  str = os.path.join(user_root, self.root, path_dict["plugin_src"])
-        self.logfiles:    str = os.path.join(user_root, self.root, path_dict["logfiles"])
+        self.setting_src: str = os.path.join(ws_root, self.root, path_dict["setting_src"])
+        self.plugin_src:  str = os.path.join(ws_root, self.root, path_dict["plugin_src"])
 
 @dataclass 
 class PathConfig:
-    def __init__(self, config_path: str, user_root:str) -> None:
+    def __init__(self, config_path: str, ws_root:str) -> None:
         self._output_d: Dict = toml.load(config_path)["output"]
         self._workspace_d: Dict = toml.load(config_path)["workspace"]
-        self._user_root = user_root 
-        self.workspace_root = os.path.join(self._user_root, self._workspace_d["root"])
+        self._ws_root = ws_root 
+        self.workspace_root = os.path.join(self._ws_root, self._workspace_d["ws_root"])
+        self.log_root       = os.path.join(self._ws_root, self._workspace_d["log_root"])
         self.tempspace_root = os.path.join(
             self.workspace_root, self._workspace_d["temporary"]["root"])
         self.gailbot_data: GailBotData = GailBotData(
@@ -81,24 +81,24 @@ class PathConfig:
         new_output_dir["root"] = os.path.join(root, name)
         return OutputFolder.from_dict(new_output_dir)
         
-def load_path_config(config_path, user_root) -> PathConfig:
+def load_path_config(config_path, ws_root) -> PathConfig:
     """ public function that load the workspace data and return it """
-    return PathConfig(config_path, user_root)
+    return PathConfig(config_path, ws_root)
 
 
-def load_user_root(config_path) -> str:
-    """ public function that returns the user's root if config_path is 
-        a valid file that stores the user's root
+def load_ws_root(config_path) -> str:
+    """ public function that returns the workspace root if config_path is 
+        a valid file that stores the workspace root
     """
     if is_file(config_path):
         d = toml.load(config_path)
-        if "user_root" in d:
-            return d["user_root"]
+        if "ws_root" in d:
+            return d["ws_root"]
     return False
 
-def store_user_root(config_path, user_root: str) -> str:
-    """ public function to store the user_root path to a configuration file 
+def store_ws_root(config_path, ws_root: str) -> str:
+    """ public function to store the ws_root path to a configuration file 
     """
     if is_file(config_path):
         delete(config_path)
-    write_toml(config_path, {"user_root": user_root})
+    write_toml(config_path, {"ws_root": ws_root})
