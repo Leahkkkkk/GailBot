@@ -325,7 +325,9 @@ def read_yaml(path : str) -> Dict:
         with open(path, 'r') as f:
             data = yaml.load(f, Loader=yaml.Loader)  # NOTE: added the required parameter Loader
             # Data loaded must be a dictionary
+            logger.info(f"the data is {data}")
             if not type(data) == dict:
+                logger.error(f"the data is {data}")
                 raise Exception
             return data
     else:

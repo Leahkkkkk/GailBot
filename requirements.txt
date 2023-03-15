@@ -229,4 +229,4 @@ yamllint==1.23.0
 yarl==1.8.2
 zipp==3.8.0
 zope.event==4.5.0
-zope.interface==5.5.1
+zope.interface==5.5.1e
