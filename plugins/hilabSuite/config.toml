@@ -1,9 +1,0 @@
-
-suiteName = "HiLab"
-
-[plugins.TestPlugin1]
-className = "TestPlugin1"
-moduleName = "test"
-path = "src/test.py"
-dependencies = []
-
