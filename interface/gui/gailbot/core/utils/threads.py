@@ -38,7 +38,7 @@ class TaskCreateError(Exception):
         self.msg = msg
     def __str__(self) -> str:
         return "task cannot be created due to the error " + self.msg
-
+ 
 class ThreadError(Exception):
     def __init__(self, task_key  = None, msg: str = None ) -> None:
         self.task_key = task_key 
@@ -182,13 +182,13 @@ class ThreadPool(ThreadPoolExecutor):
             future = self.task_pool[key]
             return future.result()
         except Exception as e:
-            logger.error(f"task with task key {key} received an exception {e}", exc_info=e)
+            logger.error(f"task with task key {key} with future object {future} received an exception {e} , the function exception is {future.exception()}", exc_info=e)
             if error_fun and callable(error_fun): 
                 logger.error(e)
                 error_fun()
                 return future.result()
             else: 
-                raise ThreadError(key ,e)
+                raise ThreadError(key, f"received exception {e}") ##
 
     def completed(self, key: Union[str, int], error_fun: Callable = None )-> bool:
         """ 
@@ -260,7 +260,7 @@ class ThreadPool(ThreadPoolExecutor):
             if error_fun: 
                 error_fun()
             else: 
-                raise ThreadError(key, e)
+                raise ThreadError(key, f"received exception {e}")
     
     def cancel(self, key: Union[str, int]) -> bool:
         """
