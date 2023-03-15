@@ -182,7 +182,7 @@ class ThreadPool(ThreadPoolExecutor):
             future = self.task_pool[key]
             return future.result()
         except Exception as e:
-            logger.error(f"task with task key {key} received an exception {e}")
+            logger.error(f"task with task key {key} received an exception {e}", exc_info=e)
             if error_fun and callable(error_fun): 
                 logger.error(e)
                 error_fun()

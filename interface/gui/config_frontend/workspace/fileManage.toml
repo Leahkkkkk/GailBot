@@ -1,2 +1,1 @@
 AUTO_DELETE_TIME = 30
-BACKEND_LOG = "BackendLogFiles"

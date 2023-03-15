@@ -97,7 +97,7 @@ class Controller(QObject):
                 newRoot = getWorkBasePath()
                 copy(oldRoot, newRoot)
                 delete(oldRoot)
-
+           
             backendRoot = getWorkPath().backend
             return backendRoot
         except Exception as e:
@@ -105,7 +105,7 @@ class Controller(QObject):
            
     def createWs(self):
         ws = userpaths.get_profile()
-        workSpace = { "userRoot" : ws}
+        workSpace = { "userRoot" : os.path.join(ws, "GailBot")}
         try:
             with open(
                 os.path.join(FRONTEND_CONFIG_ROOT, WorkSpaceConfigPath.userRoot), "w+") as f:

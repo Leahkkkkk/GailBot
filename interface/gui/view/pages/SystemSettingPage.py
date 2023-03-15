@@ -170,7 +170,7 @@ class SystemSettingPage(QWidget):
         # self.changeDirLayout.addWidget(self.changeDir)
 
         # self.SysSetForm.addWidget(self.changeDirContainer)
-        self.SysSetForm.addWidget(self.directoryDisplay)
+        # self.SysSetForm.addWidget(self.directoryDisplay)
         self.restoreBtn.setContentsMargins(10,50,10,20)
         self.SysSetForm.addWidget(self.buttomBtnContainer)
 

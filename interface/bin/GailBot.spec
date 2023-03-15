@@ -6,7 +6,8 @@ import sys ; sys.setrecursionlimit(sys.getrecursionlimit() * 5)
 datas = [('../gui/config_backend/', 'config_backend'), 
          ('../gui/asset/', 'asset'), 
          ('../gui/config_frontend/', 'config_frontend'),
-         ('./pre.sh', '.')]
+         ('./pre.sh', '.'),
+         ('./better_pre.sh' , '.')]
 datas += collect_data_files('torch')
 datas += collect_data_files('torchaudio')
 datas += collect_data_files('librosa')

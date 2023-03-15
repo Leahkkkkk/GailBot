@@ -22,10 +22,13 @@ def parse_into_word_dicts(transcription : Dict) -> List[Dict]:
     parsed = list()
     logger.info(f"get transcription and starts to parse it {transcription}")
     segments = transcription["segments"]
+    logger.info("get the segment")
     try:
         for segment in segments:
             word_list = segment["words"]
+            logger.info(f"get the word list {word_list}")
             for item in word_list:
+                logger.info(f"get item in word list {item}")
                 parsed.append({
                     "start" : item["start"],
                     "end" : item["end"],
@@ -34,6 +37,10 @@ def parse_into_word_dicts(transcription : Dict) -> List[Dict]:
                     # potentially add that in too.
                     "speaker" : str(_DEFAULT_SPEAKER)
                 })
+                
+                assert parsed
+
+        logger.info("get the segment in to parsed dict")
     except Exception as e:
         logger.error(e)
     return parsed

@@ -138,9 +138,13 @@ class WhisperCore:
             logger.info("Performing speaker diarization")
             dir_result = self.diarization_pipeline(audio_path)
             # Create and return results
-            return add_speaker_info_to_text(asr_result, dir_result)
+            res = add_speaker_info_to_text(asr_result, dir_result)
+            logger.info("get the result from parsed dict with speaker")
+            return res 
         else:
-            return parse_into_word_dicts(asr_result)
+            res = parse_into_word_dicts(asr_result)
+            logger.info("get the result from parse")
+            return res  
 
     def get_supported_formats(self) -> List[str]:
         return list(self._SUPPORTED_FORMATS)
