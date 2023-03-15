@@ -16,6 +16,7 @@ Description:
 Main controller for the app
 Connect between the database, view object and the backend transcription process
 '''
+import toml
 import glob
 import os
 from typing import Set
@@ -30,9 +31,11 @@ from gbLogger import makeLogger
 from config_frontend import getWorkBasePath, getWorkPath, getFileManagementData
 from gailbot.api import GailBot
 from controller.util.io import is_file, copy
+import userpaths
 # import from view
 from view import ViewController
 from view import WorkSpaceDialog
+from view.widgets.MsgBox import WarnBox
 from PyQt6.QtCore import pyqtSlot, QObject, QThreadPool, pyqtSignal
 class Signal(QObject):
     """ a signal object that contains signal for communication between
@@ -84,10 +87,7 @@ class Controller(QObject):
         newRootConfigPath  = os.path.join(FRONTEND_CONFIG_ROOT, WorkSpaceConfigPath.newUserRoot)
         try:
             if not os.path.exists(userRootConfigPath):
-                pathDialog = WorkSpaceDialog()
-                pathDialog.exec()
-                if not pathDialog.workSpaceSaved:
-                    pathDialog.saveWorkspace()
+                assert self.createWs()
             elif is_file(newRootConfigPath):
                 logging.info("detect new workspace path")
                 oldRoot = getWorkBasePath()
@@ -102,6 +102,21 @@ class Controller(QObject):
             return backendRoot
         except Exception as e:
             self.logger.error(e)
+           
+    def createWs(self):
+        ws = userpaths.get_profile()
+        workSpace = { "userRoot" : ws}
+        try:
+            with open(
+                os.path.join(FRONTEND_CONFIG_ROOT, WorkSpaceConfigPath.userRoot), "w+") as f:
+                toml.dump(workSpace, f)
+            return True
+        except Exception as e:
+            WarnBox(f"cannot find the file path: "
+                    f"{os.path.join(FRONTEND_CONFIG_ROOT, WorkSpaceConfigPath.userRoot)}"
+                    f"error: {e}")
+        return False
+            
 
     def initApp(self, backendRoot) -> bool:
         try:
