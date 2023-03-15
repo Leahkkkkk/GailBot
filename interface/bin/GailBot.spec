@@ -3,9 +3,9 @@ from PyInstaller.utils.hooks import collect_data_files
 from PyInstaller.utils.hooks import copy_metadata
 import sys ; sys.setrecursionlimit(sys.getrecursionlimit() * 5)
 
-datas = [('../gui/config_gui/', 'config_gui'), 
+datas = [('../gui/config_backend/', 'config_backend'), 
          ('../gui/asset/', 'asset'), 
-         ('../gui/config_gb/', 'config_gb'),
+         ('../gui/config_frontend/', 'config_frontend'),
          ('./pre.sh', '.')]
 datas += collect_data_files('torch')
 datas += collect_data_files('torchaudio')
