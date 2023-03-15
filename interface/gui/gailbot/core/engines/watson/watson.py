@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 12:43:29
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-16 11:58:57
+# @Last Modified time: 2023-03-15 11:33:51
 import os
 from typing import Dict, Any, List
 from itertools import chain
@@ -17,6 +17,8 @@ from gailbot.core.engines import exception as ERR
 from gailbot.core.utils.general import write_json
 from gailbot.configs import watson_config_loader
 WATSON_CONFIG = watson_config_loader()
+
+
 class Watson(Engine):
     """
     An Engine that connect to IBM Watson STT, provide function to transcribe
@@ -29,7 +31,7 @@ class Watson(Engine):
     def __init__(
         self,
         apikey : str,
-        region : str, 
+        region : str,
         workspace_dr: str
     ):
         """ constructor for IBM Watson STT engine

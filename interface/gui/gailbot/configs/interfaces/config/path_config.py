@@ -1,11 +1,11 @@
-import os 
+import os
 from dataclasses import dataclass
 from dict_to_dataclass import field_from_dict, DataclassFromDict
 from gailbot.core.utils.general import is_file, write_toml, delete
-import toml 
+import toml
 from typing import Dict
 
-@dataclass 
+@dataclass
 class OutputFolder(DataclassFromDict):
     root: str = field_from_dict()
     transcribe_result: str = field_from_dict()
@@ -21,10 +21,20 @@ class TemporaryFolder(DataclassFromDict):
     analysis_ws: str = field_from_dict()
     data_copy: str = field_from_dict()
 
-@dataclass 
+@dataclass
 class FileExtensions(DataclassFromDict):
     temp: str = field_from_dict()
     output: str = field_from_dict()
+
+
+@dataclass
+class EngineWS():
+    def __init__(self, ws_root:str, path_dict: Dict[str, str]) -> None:
+        self.whisper = os.path.join(ws_root, path_dict["whisper"])
+        self.google = os.path.join(ws_root, path_dict["google"])
+        self.watson = os.path.join(ws_root, path_dict["watson"])
+
+
 
 @dataclass
 class GailBotData():
@@ -35,14 +45,14 @@ class GailBotData():
         self.root:        str = os.path.join(ws_root, self.root)
 
 
-@dataclass 
+@dataclass
 class WorkSpaceConfig:
     def __init__(self, config_path: str, ws_root:str) -> None:
         d = toml.load(config_path)
         self._output_d: Dict = d["output"]
         self._workspace_d: Dict = d["workspace"]
         self._extension_d: Dict = d["file_extensions"]
-        self._ws_root = ws_root 
+        self._ws_root = ws_root
         # public path data
         self.workspace_root = os.path.join(self._ws_root, self._workspace_d["ws_root"])
         self.log_root       = os.path.join(self._ws_root, self._workspace_d["log_root"])
@@ -51,39 +61,40 @@ class WorkSpaceConfig:
         self.gailbot_data: GailBotData = GailBotData(
             self.workspace_root, self._workspace_d["gailbot_data"])
         self.file_extension : FileExtensions = FileExtensions.from_dict(self._extension_d)
-    
+        self.engine_ws: EngineWS = EngineWS(self.workspace_root, self._workspace_d["engine"])
+
     def get_temp_space(self, name:str)-> TemporaryFolder:
         """ Given a name of the source, return a dataclass object that stores
-            the temporary directory structures of source, including the 
-            full paths to every subdirectory in the temporary directory 
+            the temporary directory structures of source, including the
+            full paths to every subdirectory in the temporary directory
 
         Args:
             name (str): the name of the source
 
         Returns:
-            TemporaryFolder: a dataclass object that stores the full paths 
-            of every subdirectories within the temporary folders for a 
+            TemporaryFolder: a dataclass object that stores the full paths
+            of every subdirectories within the temporary folders for a
             particular source
         """
         temp_dir: Dict[str, str] = self._workspace_d["temporary"].copy()
         for key, value in temp_dir.items():
                 temp_dir[key] = os.path.join(self.tempspace_root, name, value)
         temp_dir["root"] = os.path.join(self.tempspace_root, name)
-        return TemporaryFolder.from_dict(temp_dir)   
+        return TemporaryFolder.from_dict(temp_dir)
 
     def get_output_space(self, root: str, name: str) -> OutputFolder:
-        """ Given a name of the source,  and the user selected output directory 
+        """ Given a name of the source,  and the user selected output directory
             root, return a dataclass object that stores
-            the output directory structures of source, including the 
-            full paths to every subdirectory in the output directory 
+            the output directory structures of source, including the
+            full paths to every subdirectory in the output directory
 
         Args:
             root (str): the root the directory of the output
             name (str): the name of the source
 
         Returns:
-            OutputFolder: a dataclass object that stores the full paths 
-            of every subdirectories within the output folders for a 
+            OutputFolder: a dataclass object that stores the full paths
+            of every subdirectories within the output folders for a
             particular source
         """
         new_output_dir = self._output_d.copy()
@@ -91,13 +102,13 @@ class WorkSpaceConfig:
             new_output_dir[key] = os.path.join(root, name, value)
         new_output_dir["root"] = os.path.join(root, name)
         return OutputFolder.from_dict(new_output_dir)
-        
+
 def load_workspace_config(config_path, ws_root) -> WorkSpaceConfig:
     """ public function that load the workspace data and return it """
     return WorkSpaceConfig(config_path, ws_root)
 
 def load_ws_root(config_path) -> str:
-    """ public function that returns the workspace root if config_path is 
+    """ public function that returns the workspace root if config_path is
         a valid file that stores the workspace root
     """
     if is_file(config_path):
@@ -107,7 +118,7 @@ def load_ws_root(config_path) -> str:
     return False
 
 def store_ws_root(config_path, ws_root: str) -> str:
-    """ public function to store the ws_root path to a configuration file 
+    """ public function to store the ws_root path to a configuration file
     """
     if is_file(config_path):
         delete(config_path)

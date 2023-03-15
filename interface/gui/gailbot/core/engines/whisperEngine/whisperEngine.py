@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-08 12:43:29
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-02-07 17:53:15
+# @Last Modified time: 2023-03-15 12:01:39
 
 from typing import Dict, Any, List
 import torch
@@ -12,16 +12,15 @@ from gailbot.core.utils.general import (
     get_extension
 )
 from gailbot.configs import  whisper_config_loader
-from gailbot.core.utils.logger import makelogger 
+from gailbot.core.utils.logger import makelogger
 logger = makelogger("Whisper Engine")
 
 WHISPER_CONFIG = whisper_config_loader()
 
 class WhisperEngine(Engine):
 
-    def __init__(self, workspace_dir: str):
-        self.workspace_dir = workspace_dir
-        self.core = WhisperCore(workspace_dir)
+    def __init__(self):
+        self.core = WhisperCore()
         self._successful = False
 
     def __str__(self):
@@ -37,8 +36,9 @@ class WhisperEngine(Engine):
     def transcribe(
         self,
         audio_path : str,
+        payload_workspace : str,
         language : str = None,
-        detect_speakers : bool = False
+        detect_speakers : bool = False,
     ) -> List[Dict]:
         """Use the engine to transcribe an item"""
         logger.info(f"get transcribe request audio_path: {audio_path}, language: {language}, detect_speakers: {detect_speakers}")

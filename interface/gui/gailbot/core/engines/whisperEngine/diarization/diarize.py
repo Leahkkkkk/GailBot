@@ -27,8 +27,8 @@ WHISPER_CONFIG = whisper_config_loader()
 
 class PyannoteDiarizer:
     """
-    Class containing the functionality for creating and managing the diarization 
-        for WHISPER transcripts 
+    Class containing the functionality for creating and managing the diarization
+        for WHISPER transcripts
     """
 
     def __init__(
@@ -56,7 +56,7 @@ class PyannoteDiarizer:
             filename = WHISPER_CONFIG.diarization_configs.config_filename,
             token = WHISPER_CONFIG.diarization_configs.HF_auth_token,
             cache_dir=self.cache_dir,
-            repo_type="model" #TODO: check if the type is model 
+            repo_type="model" #TODO: check if the type is model
         )
         logger.info(f"Using diarizaton configuration from path: {config_path}")
 
@@ -79,9 +79,9 @@ class PyannoteDiarizer:
         Get speaker diarization for the given audio.
 
         Args:
-            audio_path = string containing the path to the audio for which 
+            audio_path = string containing the path to the audio for which
                 to get the speaker diarization.
-        
+
         Returns:
             Pipeline containing the diarization for the given audio file.
         """

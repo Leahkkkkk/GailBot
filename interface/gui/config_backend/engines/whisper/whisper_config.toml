@@ -3,6 +3,7 @@
 [whisper]
 engine_name = "whisper"
 model_name = "tiny"
+
 [whisper.transcribe_configs]
 remove_punctuation_from_words = true
 compute_word_confidence = true

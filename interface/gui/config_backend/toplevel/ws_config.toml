@@ -1,6 +1,6 @@
 [workspace]
 ws_root     = "gailbot_workspace"
-log_root    = "../LogFiles/BackendLogFiles" # log file directry is on the same level of 
+log_root    = "../LogFiles/BackendLogFiles" # log file directry is on the same level of
                                     #  the parent directory of gailbot_workspace
 
 [file_extensions]
@@ -28,5 +28,8 @@ format_ws     = "format_ws"
 analysis_ws   = "analysis_ws"
 data_copy     = "data_copy"
 
-
+[workspace.engine]
+whisper = "engine_source/whisper_workspace"
+watson  = "engine_source/watson_workspace"
+google  = "engine_source/google_workspace"
 

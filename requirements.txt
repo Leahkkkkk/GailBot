@@ -91,7 +91,7 @@ oauthlib==3.2.2
 omegaconf==2.3.0
 openai-whisper @ git+https://github.com/openai/whisper.git@7858aa9c08d98f75575035ecd6481f462d66ca27
 optuna==3.1.0
-packaging==21/3
+packaging==21.3
 pandas==1.5.3
 parso==0.8.3
 pep517==0.12.0

@@ -2,7 +2,7 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-31 11:09:26
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-02-07 17:53:46
+# @Last Modified time: 2023-03-15 11:43:23
 
 import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
@@ -27,7 +27,7 @@ from .parsers import (
 )
 
 from .parsers import parse_into_word_dicts
-
+from gailbot.configs import  whisper_config_loader, workspace_config_loader, get_ws_root
 from gailbot.core.utils.general import (
     is_file,
     make_dir
@@ -52,12 +52,13 @@ class WhisperCore:
     # formats.
     _SUPPORTED_FORMATS = ("wav", "mp3")
 
-    def __init__(self, workspace_dir: str):
-        #NOTE: make workspace to be dynamically passed in
-        self.workspace_dir = workspace_dir
+    def __init__(self):
+        # TODO: This should come from config file.
+
+        self.workspace_dir = workspace_config_loader(get_ws_root()).engine_ws.whisper
+        logger.info(f"Whisper workspace path: {self.workspace_dir}")
         self.cache_dir = os.path.join(self.workspace_dir,"cache")
         self.models_dir = os.path.join(self.cache_dir,"models")
-        logger.info(f"Whisper workspace path: {self.workspace_dir}")
         binary_path = os.environ['PATH']
         logger.info(f"whisper using binary in the path {binary_path}")
         make_dir(self.workspace_dir,overwrite=False)
@@ -69,17 +70,7 @@ class WhisperCore:
         if self.device.lower().startswith("cuda"):
             force_cudnn_initialization(self.device)
         logger.info(f"Whisper core initialized with device: {self.device}")
-        # Load / download the actual whisper model.
-        self.model = whisper.load_model(
-            name=WHISPER_CONFIG.model_name,
-            device=self.device,
-            download_root=self.models_dir
-        )
-        logger.info(f"Whisper core using whisper model: {WHISPER_CONFIG.model_name}")
 
-        # TODO: Add this speaker diarization pipeline after further testing
-        self.diarization_pipeline = PyannoteDiarizer(self.models_dir)
-        logger.info("get the diarazation pipleine")
 
     def __repr__(self) -> str:
         configs = json.dumps(
@@ -107,18 +98,33 @@ class WhisperCore:
         if language == None:
             logger.info("No language specified - auto detecting language")
 
+        # Load the model
+        # Load / download the actual whisper model.
+        self.model = whisper.load_model(
+            name=WHISPER_CONFIG.model_name,
+            device=self.device,
+            download_root=self.models_dir
+        )
+        logger.info(f"Whisper core using whisper model: {WHISPER_CONFIG.model_name}")
+
+        # Load the diarization pipeline
+        # TODO: Add this speaker diarization pipeline after further testing
+        self.diarization_pipeline = PyannoteDiarizer(self.models_dir)
+        logger.info("get the diarazation pipleine")
+
+
         # Load the audio and models, transcribe, and return the parsed result
         logger.info("prepare to load audio")
         audio = whisper.load_audio(audio_path)
         logger.info("audio loaded")
-        
+
         asr_result = whisper.transcribe(
-            self.model, 
+            self.model,
             audio,
             language=language,
             **asdict(WHISPER_CONFIG.transcribe_configs)
         )
-            
+
         if WHISPER_CONFIG.transcribe_configs.verbose:
             logger.debug(parse_into_full_text(asr_result))
 
@@ -147,6 +153,8 @@ class WhisperCore:
 
 
     ################ PRIVATE METHODS
+
+
 
 
 

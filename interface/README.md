@@ -1,5 +1,0 @@
-#GailBot
-
-#Installation
-
-#Usage
