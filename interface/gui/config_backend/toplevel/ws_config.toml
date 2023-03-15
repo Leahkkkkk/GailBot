@@ -1,6 +1,6 @@
 [workspace]
 ws_root     = "gailbot_workspace"
-log_root    = "../LogFiles/Backend" # log file directry is on the same level of 
+log_root    = "../LogFiles/BackendLogFiles" # log file directry is on the same level of 
                                     #  the parent directory of gailbot_workspace
 
 [file_extensions]

@@ -35,7 +35,7 @@ class Background(QBrush):
 
 def resizeEvent(widget: QWidget, event: QResizeEvent, img: str):
     size = event.size()
-    temp = QPixmap(img)
+    temp = QPixmap(os.path.join(PROJECT_ROOT, img))
     pixmap = temp.scaled(
         size, Qt.AspectRatioMode.IgnoreAspectRatio, Qt.TransformationMode.FastTransformation)
     # Set the scaled image to the QLabel
@@ -45,7 +45,6 @@ def resizeEvent(widget: QWidget, event: QResizeEvent, img: str):
     palette.setBrush(QPalette.ColorRole.Window, brush)
     widget.setPalette(palette)
 
-
 def _initBackground(widget:QWidget, color=Color.MAIN_BACKGROUND):
     """ make the widget background as white """
     widget.setAutoFillBackground(True)
@@ -53,7 +52,6 @@ def _initBackground(widget:QWidget, color=Color.MAIN_BACKGROUND):
     palette = widget.palette()
     palette.setBrush(QPalette.ColorRole.Window, bg)
     widget.setPalette(palette)
-
 
 def _initImgBackground(widget:QWidget, background: str = Asset.homeBackground):
     """  initialize the image background for a widget
@@ -64,7 +62,8 @@ def _initImgBackground(widget:QWidget, background: str = Asset.homeBackground):
     widget.setAutoFillBackground(True)
     palette = widget.palette()
     size = widget.size()
-    temp = QPixmap(background)
+    temp = QPixmap(os.path.join(PROJECT_ROOT, background))
+
     pixmap = temp.scaled(
         size, Qt.AspectRatioMode.IgnoreAspectRatio, Qt.TransformationMode.FastTransformation)
     brush = QBrush()

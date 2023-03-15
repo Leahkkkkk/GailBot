@@ -1,7 +1,7 @@
 # conatins the value for dimension data
 [dimension]
-WINMAXWIDTH         = 1100
-WINMAXHEIGHT        = 900
+WINMAXWIDTH         = 1300
+WINMAXHEIGHT        = 1200
 BTNWIDTH            = 165
 BTNHEIGHT           = 40
 SBTNWIDTH           = 100

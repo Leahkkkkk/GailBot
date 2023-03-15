@@ -92,9 +92,7 @@ class SettingForm(QWidget):
     
     def addWidget(self, widget: QWidget):
         self.setForm.addWidget(widget)
-    
-    def addWidgetTotheSide(self, widget: QWidget):
-        self.setForm.addWidgetToSide(widget)
+
 
     
         

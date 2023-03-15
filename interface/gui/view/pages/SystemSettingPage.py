@@ -9,7 +9,6 @@ Modified By:  Siara Small  & Vivian Li
 -----
 Description: implement the system setting page
 '''
-
 import os
 import shutil 
 import toml
@@ -233,7 +232,6 @@ class SystemSettingPage(QWidget):
         """ open confirm box to confirm clearing the log file """
         MsgBox.ConfirmBox(Text.confirmClear, clearAllLog)
     
-        
     
     def _loadValue(self, setting):
         """ initialize the setting value """

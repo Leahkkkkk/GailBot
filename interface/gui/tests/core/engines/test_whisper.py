@@ -14,6 +14,7 @@ import pytest
 from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures import Future
 from typing import List
+import logging
 
 def whisper_test(audio, detect_speaker: bool, output):
     engine = WhisperEngine(AudioPath.RESULT_OUTPUT)
@@ -48,12 +49,19 @@ def test_detect_speaker_long(audio, detect_speaker, output):
 def test_long_audio(audio, detect_speaker, output):
     whisper_test(audio, detect_speaker, output)
     
+def test_single_whisper():
+    whisper = WhisperEngine(AudioPath.RESULT_OUTPUT)
+    utt = whisper.transcribe(AudioPath.SineWaveMinus16)
+    logging.info(utt)
+    
+    
 def test_threading_whisper():
     whisper = WhisperEngine(AudioPath.RESULT_OUTPUT)
     futures: List[Future] = list()
+    audios = [AudioPath.SHORT_AUDIO, AudioPath.HELLO_1, AudioPath.HELLO_2, AudioPath.HELLO_3, AudioPath.HELLO_4]
     with ThreadPoolExecutor(max_workers= 5) as executor:
-        for _ in range(2):
-            future = executor.submit(whisper.transcribe, audio_path = AudioPath.SHORT_PHONE_CALL)
+        for audio in audios:
+            future = executor.submit(whisper.transcribe, audio_path = audio)
             futures.append(future)
         for f in futures:
             if f.exception():

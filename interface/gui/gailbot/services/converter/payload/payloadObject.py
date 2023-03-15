@@ -329,7 +329,7 @@ class PayLoadObject(ABC):
         """
         try:
             logger.info(self.out_dir.transcribe_result)
-            self.transcription_result.output(self.out_dir.transcribe_result)
+            assert self.transcription_result.output(self.out_dir.transcribe_result)
             return True
         except Exception as e:
             logger.error(e)
@@ -343,7 +343,7 @@ class PayLoadObject(ABC):
             bool: true if successfully outputted, false if not
         """
         try:
-            self.format_result.output(self.out_dir.format_result)
+            assert self.format_result.output(self.out_dir.format_result)
             return True 
         except Exception as e:
             logger.error(e)
@@ -357,7 +357,7 @@ class PayLoadObject(ABC):
             bool: true if successfully outputted, false if not
         """
         try:
-            self.analysis_result.output(self.out_dir.analysis_result)
+            assert self.analysis_result.output(self.out_dir.analysis_result)
             return True
         except Exception as e:
             logger.error(e)

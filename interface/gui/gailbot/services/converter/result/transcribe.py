@@ -58,6 +58,9 @@ class UttResult(ResultInterface):
         Returns:
             bool: True if successfully saved, false if not
         """
+        if len(data) == 0: 
+            logger.error("the result is empty")
+            return False
         try: 
             for name, result in data.items():
                 write_json(os.path.join(self.workspace, f"{name}.json"), result)
@@ -67,7 +70,7 @@ class UttResult(ResultInterface):
             logger.error(e)
             return False
            
-    def output(self, path) -> None:
+    def output(self, path) -> bool:
         """
         Outputs the result to the output directory
 
@@ -82,10 +85,10 @@ class UttResult(ResultInterface):
                 data = self.get_data()
             else: 
                 data = self.data 
-                
             for name, result in data.items():
                 logger.info(path)
                 logger.info(name)
+                logger.info(data)
                 write_csv(os.path.join(path, name + ".csv"), result)
             return True
         except Exception as e:

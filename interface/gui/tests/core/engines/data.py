@@ -16,7 +16,11 @@ class AudioPath:
     MEDIUM_AUDIO_MP3        = os.path.join(AUDIOROOT, "all/mediumtest.mp3")
     LARGE_AUDIO_MP3         = os.path.join(AUDIOROOT, "all/largetest.mp3")
     FORTY_MIN               = os.path.join(AUDIOROOT, "long/forty.mp3")
-    
+    HELLO_1                 = os.path.join(AUDIOROOT, "small_test/hello1.wav")
+    HELLO_2                 = os.path.join(AUDIOROOT, "small_test/hello2.wav")
+    HELLO_3                 = os.path.join(AUDIOROOT, "small_test/hello3.wav")
+    HELLO_4                 = os.path.join(AUDIOROOT, "small_test/hello4.wav")
+    SineWaveMinus16         = os.path.join(AUDIOROOT, "wav/SineWaveMinus16.wav")
     ##### the below test will be run for controller ###
     SMALL_AUDIO_WAV         = os.path.join(AUDIOROOT, "all/shorttest.wav")
     MEDIUM_AUDIO            = os.path.join(AUDIOROOT, "all/mediumtest.wav")

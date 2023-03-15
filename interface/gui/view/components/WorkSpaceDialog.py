@@ -13,9 +13,10 @@ Description: a pop up dialogue that opens during the first launch of the
 import os 
 import datetime
 import toml 
+import logging
 from view.widgets import Label, Button, MsgBox
 from view.widgets.MsgBox import WarnBox
-from view.util.io import zip_file
+from view.util.io import zip_file, is_directory, copy
 from PyQt6.QtWidgets import QDialog, QFileDialog, QVBoxLayout
 from config_frontend.ConfigPath import WorkSpaceConfigPath, PROJECT_ROOT, FRONTEND_CONFIG_ROOT
 from view.config.Style import Color, FontFamily, FontSize, Dimension
@@ -26,13 +27,12 @@ from PyQt6.QtCore import QSize, Qt
 import userpaths
 center = Qt.AlignmentFlag.AlignHCenter
 USER_ROOT_NAME = "GailBot"
-
+BACKEND_LOG_NAME = "BackendLogFiles"
 
 class WorkSpaceDialog(QDialog):
     def __init__(self, *arg, **kwargs) -> None:
         super().__init__(*arg, **kwargs)
         self.userRoot = os.path.join(userpaths.get_profile(), USER_ROOT_NAME)
-        self.logger = makeLogger("F")
         self.workSpaceSaved = False
         self._initWidget()
         self._initLayout()
@@ -81,9 +81,7 @@ class WorkSpaceDialog(QDialog):
                 f"{TEXT.workspacePath} {self.userRoot}")
             
     def saveWorkspace(self) -> bool:
-        self.logger.info(FRONTEND_CONFIG_ROOT)
         workSpace = { "userRoot" : self.userRoot}
-        self.logger.info(os.path.join(FRONTEND_CONFIG_ROOT, WorkSpaceConfigPath.userRoot))
         try:
             with open(
                 os.path.join(FRONTEND_CONFIG_ROOT, WorkSpaceConfigPath.userRoot), "w+") as f:
@@ -93,7 +91,6 @@ class WorkSpaceDialog(QDialog):
                 os.mkdir(self.userRoot)
             return True
         except Exception as e:
-            self.logger.info(f"error when creating file to store user workspace {e}")
             WarnBox(f"cannot find the file path: " 
                     f"{os.path.join(FRONTEND_CONFIG_ROOT, WorkSpaceConfigPath.userRoot)}"
                     f"error: {e}")
@@ -156,6 +153,12 @@ class SaveLogFile(WorkSpaceDialog):
             by user
         """
         try:
+            """ TODO: find better implementation if we were to move 
+                      the backend log files 
+            """
+            backendLog = getWorkPath().backendLogFiles
+            if is_directory(os.path.join(PROJECT_ROOT, BACKEND_LOG_NAME)):
+                copy(os.path.join(PROJECT_ROOT, BACKEND_LOG_NAME), backendLog)
             logdir = getWorkBasePath()
             zip_file(logdir, 
                      os.path.join(self.userRoot, f"{TEXT.zipFileName}-{datetime.datetime.now()}.zip"),
@@ -169,6 +172,7 @@ class ChangeWorkSpace(WorkSpaceDialog):
     def __init__(self, *arg, **kwargs) -> None:
         super().__init__(*arg, **kwargs)
         self.oldRoot = self.userRoot
+        self.logger = makeLogger("F")
         self.logger.info(f"old work space root {self.oldRoot}")
         
     def _initWidget(self):

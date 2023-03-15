@@ -374,13 +374,16 @@ def write_toml(path : str, data : Dict) -> bool:
         raise FileExistsError
 
 def write_csv(path: str, data: List[Dict[str, str]]):
+    if not data or len(data) == 0:
+        with open(path, mode="w+", newline="") as file:
+            pass 
+        return
     fields = list(data[0].keys())
     # Write the data to the CSV file
     with open(path, mode='w+', newline='') as file:
         writer = csv.DictWriter(file, fieldnames=fields)
         writer.writeheader()
         for row in data:
-    
             writer.writerow(row)
 
 def read_csv(path:str) -> List[Dict[str, str]]:

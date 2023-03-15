@@ -130,8 +130,8 @@ class TextForm(QWidget):
                 toggleViewContainer.setLayout(toggleViewLayout)
                 self.mainVertical.setSpacing(0)
                 self.mainVertical.setContentsMargins(0,0,0,0)
-            else:
-                self.mainVertical.setSpacing(10)
+            # else:
+            #     self.mainVertical.setSpacing(10)
             
             """ create the label  """
             tittleKey = tittleKey.split(". ")[-1]

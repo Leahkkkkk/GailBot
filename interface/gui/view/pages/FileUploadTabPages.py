@@ -15,7 +15,7 @@ import pathlib
 from typing import List, TypedDict
 import os
 
-from view.config.Style import Color, FontSize, Dimension
+from view.config.Style import Color, FontSize, Dimension, FontFamily
 from view.config.Text import FileUploadPageText as Text
 from view.util.io import get_name, is_directory
 from gbLogger import makeLogger
@@ -38,6 +38,7 @@ from PyQt6.QtWidgets import (
     QTableWidgetItem,
     QPushButton)
 from PyQt6.QtCore import QSize, Qt
+from PyQt6.QtGui import QDragEnterEvent, QDropEvent
 
 center = Qt.AlignmentFlag.AlignHCenter
 
@@ -59,6 +60,7 @@ class OpenFile(TabPage):
     def __init__(self, *args, **kwargs) -> None:
         """ initializes class """
         super().__init__(*args, **kwargs)
+        self.setAcceptDrops(True)
         self.logger = makeLogger("F")
         self._initWidget()
         self._initLayout()
@@ -84,6 +86,7 @@ class OpenFile(TabPage):
     def _initWidget(self):
         """ initializes the widgets """
         self.logger.info("")
+        self.header = Label("Drop audio files below (Only wav files are supported)", FontSize.BTN, FontFamily.MAIN)
         self.fileDisplayList = QTableWidget()
         self.filePaths = dict()
         self.uploadFileBtn = ColoredBtn(
@@ -103,6 +106,7 @@ class OpenFile(TabPage):
         self.buttonContainer.setLayout(self.buttonContainerLayout)
         self.buttonContainerLayout.addWidget(self.uploadFileBtn)
         self.buttonContainerLayout.addWidget(self.uploadFolderBtn)
+        self.mainLayout.addWidget(self.header, alignment=center)
         self.mainLayout.addWidget(self.fileDisplayList, alignment=center)
         self.mainLayout.addWidget(self.buttonContainer,alignment=center)
         
@@ -161,7 +165,7 @@ class OpenFile(TabPage):
             if selectedFiles:
                 files, types = selectedFiles
                 for file in files:
-                    self._addFileToFileDisplay(file, icon="🔊")
+                    self._addFileToFileDisplay(file)
                 if self.filePaths:
                     self.signals.nextPage.emit()
                 else:
@@ -180,7 +184,7 @@ class OpenFile(TabPage):
             # dialog.setDirectory(userpaths.get_desktop())
             selectedFolder = dialog.getExistingDirectory()
             if selectedFolder:
-                self._addFileToFileDisplay(selectedFolder, icon="📁")
+                self._addFileToFileDisplay(selectedFolder)
                 if self.filePaths:
                     self.signals.nextPage.emit()
             else:
@@ -188,9 +192,10 @@ class OpenFile(TabPage):
         except:
             WarnBox("An error occurred when getting the uploaded folder")
 
-    def _addFileToFileDisplay(self, file, icon = "📁"):
+    def _addFileToFileDisplay(self, file):
         """ add the file to the file display table """
         self.logger.info("")
+        icon = "📁" if os.path.isdir(file) else "🔊"
         try:
             row = self.fileDisplayList.rowCount()
             self.fileDisplayList.insertRow(row)
@@ -203,7 +208,6 @@ class OpenFile(TabPage):
             btn.setContentsMargins(1,5,1,5)
             self.fileDisplayList.setCellWidget(row, 1, btn)
             btn.clicked.connect(lambda: self.removeFile(row, newFile))
-            # self.fileDisplayList.resizeColumnsToContents()
             self.fileDisplayList.resizeRowsToContents()
         except:
             WarnBox("An error occurred when displaying the added file")
@@ -218,6 +222,18 @@ class OpenFile(TabPage):
         except Exception as e:
             self.logger.error(e)
 
+    def dragEnterEvent(self, a0: QDragEnterEvent) -> None:
+        self.logger.info("get the drag event for user to upload file")
+        super().dragEnterEvent(a0)
+        if a0.mimeData().hasUrls():
+            urls = a0.mimeData().urls()
+            self.logger.info(f"received the dragged file{urls}")
+            for url in urls:
+                path = url.toLocalFile()
+                if url.isLocalFile() and path.endswith(".wav") or os.path.isdir(path):
+                    self._addFileToFileDisplay(path)
+                    self.signals.nextPage.emit()
+                    
 class ChooseSet(TabPage):
     """ implement a page for user to choose the setting profile
     
@@ -245,7 +261,7 @@ class ChooseSet(TabPage):
     def _initWidget(self):
         """ initializes the widgets """
         self.logger.info("")
-        self.label = Label("select setting profile", FontSize.HEADER3)
+        self.label = Label("select setting profile", FontSize.HEADER3, FontFamily.MAIN)
         self.selectSettings = ComboBox(self)
         self.selectSettings.addItem(Text.selectSetText)
         self.selectSettings.addItems(self.settings)
@@ -319,6 +335,11 @@ class ChooseOutPut(TabPage):
         self.dirPathText.setPlaceholderText(Text.chooseOutPutText)
         self.dirPathText.setMinimumHeight(40)
         self.dirPathText.setReadOnly(True)
+        self.dirPathText.setStyleSheet( "QLineEdit {"
+                                        "    padding: 5px;"
+                                        "    border-radius: 5px;"
+                                        "    border: 1px solid black;"
+                                        "}")
         self.chooseDirBtn.clicked.connect(self._addDir)
         
     def _initLayout(self):
