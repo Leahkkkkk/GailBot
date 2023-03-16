@@ -8,7 +8,9 @@ Last Modified: Wednesday, 25th January 2023 6:47:38 am
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
-
+from concurrent.futures import ThreadPoolExecutor
+from gailbot.core.utils.threads import ThreadPool
+from concurrent.futures import Future
 import pytest
 import os 
 import shutil
@@ -211,3 +213,37 @@ def test_csv():
     general.write_csv(file_path, data)
     result = general.read_csv(file_path)
     logging.info(result)
+
+
+def test_yaml_threads():
+    with ThreadPoolExecutor(max_workers=8) as executer:
+        futures = []
+        for _ in range (10):
+            futures.append(executer.submit(test_yaml_thread))
+        for f in futures:
+            assert not f.exception()
+
+def test_yaml_thread():
+    path = "/Users/yike/GailBot/Backend/gailbot_workspace/engine_source/whisper_workspace/cache/models/pyannote/models--pyannote--speaker-diarization/snapshots/2c6a571d14c3794623b098a065ff95fa22da7f25/config.yaml"
+    futures: list[Future] = []
+    with ThreadPoolExecutor(max_workers=8) as executer:
+        for _ in range(10):
+            futures.append(executer.submit(general.read_yaml, path=path))
+    for f in futures:
+        logging.info(f.result())
+        assert not f.exception()
+    return True
+        
+
+def test_single_yaml():
+    path = "/Users/yike/GailBot/Backend/gailbot_workspace/engine_source/whisper_workspace/cache/models/pyannote/models--pyannote--speaker-diarization/snapshots/2c6a571d14c3794623b098a065ff95fa22da7f25/config.yaml"
+    logging.info(general.read_yaml(path))
+
+
+def test_yaml_gb_threads(): 
+    keys: list[int] = []
+    with ThreadPool(max_workers=8) as executer:
+        for _ in range(10):
+           keys.append(executer.add_task(test_yaml_thread))
+    for key in keys:
+        logging.info(executer.get_task_result(key))

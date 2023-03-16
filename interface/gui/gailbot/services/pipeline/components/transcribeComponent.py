@@ -67,14 +67,17 @@ class TranscribeComponent(Component):
                     logger.info(f"payload {payload.name} is added to the threadpool, the key is {key}")
 
             # get the result from the thread pool
+            failure_payloads = []
             for payload in payloads:
                 if not payload.transcribed:
-                    assert threadpool.get_task_result(payload.name)
-                    payload.set_transcribed()
-
+                    if not threadpool.get_task_result(payload.name):
+                        failure_payloads.append(payload.name)
+                    else:
+                        payload.set_transcribed()
+            if not len(failure_payloads) == 0:
+                raise Exception(f"the following payloads are not transcribed: {failure_payloads}")
         except Exception as e:
-            logger.error(f"thread execution fails due to the error {e}")
-            logger.error(e, exc_info=e)
+            logger.error(f"Transcription failure {e}", exc_info=e)
             threadpool.shutdown(wait=True)
             return ComponentResult(
                 state=ComponentState.FAILED,

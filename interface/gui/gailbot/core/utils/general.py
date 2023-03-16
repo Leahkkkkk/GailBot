@@ -318,8 +318,12 @@ def read_yaml(path : str) -> Dict:
     """ given a path to a yaml file, return a dictionary 
         representation of the data stored in the yaml file 
     """
+    logger.info(f"path is {path}")
+    with open(path, "r") as f:
+        text = f.read()
+        logger.info(f"all the text in the file is {text}")
+        
     if is_file(path):
-        logger.info(f"path is {path}")
         try:
             with open(path, 'r') as f:
                 data = yaml.load(f, Loader=yaml.Loader)  # NOTE: added the required parameter Loader
