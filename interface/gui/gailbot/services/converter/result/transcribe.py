@@ -67,7 +67,7 @@ class UttResult(ResultInterface):
             self.saved_to_disk = True
             return True
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=e)
             return False
            
     def output(self, path) -> bool:
@@ -93,7 +93,7 @@ class UttResult(ResultInterface):
             return True
         except Exception as e:
             logger.error(f"the path is {path}")
-            logger.error(e)
+            logger.error(e, exc_info=e)
         return False
     
     def get_data(self) -> Dict[str, List[UttDict]]:
@@ -149,7 +149,7 @@ class UttResult(ResultInterface):
                 assert self.save_data(res)
             return True 
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=e)
             return False
         
     def _read_from_file(self, path: str) -> Dict[str, List[UttDict]]:
@@ -166,5 +166,5 @@ class UttResult(ResultInterface):
             res = {get_name(path): read_csv(path)}
             assert self.save_data(res)
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=e)
             return False

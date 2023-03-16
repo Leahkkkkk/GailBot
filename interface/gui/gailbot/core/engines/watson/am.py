@@ -315,8 +315,8 @@ class WatsonAMInterface:
                 return resp.get_result()
             raise ERR.WatsonMethodExecutionError
         except ApiException as e:
-            logger.info(f"Exception raised: {e}")
+            logger.info(f"Exception raised: {e}", exc_info=e)
             return False
         except ERR.WatsonMethodExecutionError as e:
-            logger.info(f"Exception raised: {e}")
+            logger.info(f"Exception raised: {e}", exc_info=e)
             return False

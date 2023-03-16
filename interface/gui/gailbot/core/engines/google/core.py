@@ -108,7 +108,7 @@ class GoogleCore:
                 logger.info(res)
                 return res
             except Exception as e:
-                logger.error(e)
+                logger.error(e, exc_info=e)
                 raise Err.TranscriptionError(
                     "ERROR: Failed to transcribe large file")
         try:
@@ -119,7 +119,7 @@ class GoogleCore:
         try:
             return self.prepare_utterance(response)
         except Exception as e :
-            logger.error(e)
+            logger.error(e, exc_info=e)
             raise Err.OutPutError(f"ERROR: Output Google STT failed, error message: {e}")
        
             
@@ -155,7 +155,7 @@ class GoogleCore:
                 request={"config": config, "audio": audio})
         
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=e)
             self.transcribe_error = True
             raise Err.TranscriptionError("Google STT Transcription failed")
         else:
@@ -248,7 +248,7 @@ class GoogleCore:
                 idx += 1
                 
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=e)
         else:
             return dir
     
@@ -297,5 +297,5 @@ class GoogleCore:
                 make_dir(self.workspace_dir, overwrite=False)
             assert is_directory(self.workspace_dir)
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=e)
             raise FileExistsError("ERROR: failed to create directory")

@@ -112,7 +112,7 @@ class SettingManager():
             self.settings[name] = setting
             return True
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=e)
             return False
 
     def is_setting(self, name: str) -> bool:
@@ -145,7 +145,7 @@ class SettingManager():
                 assert self.save_setting(name)
                 return True
             except Exception as e:
-                logger.error(e)
+                logger.error(e, exc_info=e)
         else:
             return False
 
@@ -195,7 +195,7 @@ class SettingManager():
             self.settings[name].save_setting(out_path) 
             return out_path
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=e)
             return False   
         
     def load_setting_from_file(self, file_path, overwrite: bool = False) ->bool:
@@ -217,7 +217,7 @@ class SettingManager():
                 data = read_toml(file_path)
                 return self.add_new_setting(name, data, overwrite)
             except Exception as e:
-                logger.error(e)
+                logger.error(e, exc_info=e)
                 return False
     
     def get_setting_dict(self, setting_name:str) -> Union[bool, SettingDict]:
@@ -263,7 +263,7 @@ class SettingManager():
                     self.remove_setting(setting)
             return True
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=e)
             return False
         
     

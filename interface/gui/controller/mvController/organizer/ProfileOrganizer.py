@@ -82,7 +82,7 @@ class ProfileOrganizer:
                 self.logger.info(f"New profile created {name}, {data}")
                 self.signals.profileAdded.emit(name)
         except Exception as e:
-            self.logger.error(f"Creating new profile error {e}")
+            self.logger.error(f"Creating new profile error {e}", exc_info=e)
         
     def delete(self, profileName:str) -> None :
         """ delete a file from database 
@@ -122,7 +122,7 @@ class ProfileOrganizer:
                 self.logger.error(f"Error updating setting {name}")
         except Exception as e:
             self.signals.error.emit(ErrorMsg.EDITERROR)
-            self.logger.error(f"error in updating the profile setting {e}")
+            self.logger.error(f"error in updating the profile setting {e}", exc_info=e)
      
     def get(self, profileName:str) -> None:
         """ 
@@ -138,5 +138,5 @@ class ProfileOrganizer:
                 self.signals.send.emit((profileName, data))
         except Exception as e:
             self.signals.error.emit(ErrorMsg.GETERROR)
-            self.logger.error(f"error getting the profile {e}")
+            self.logger.error(f"error getting the profile {e}", exc_info=e)
             

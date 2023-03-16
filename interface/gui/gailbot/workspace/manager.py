@@ -65,7 +65,7 @@ class WorkspaceManager:
                     make_dir(path, True)
             return folder
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=e)
             return False
 
     def get_output_space(self, outdir: str, name: str) -> Union[OutputFolder, bool]:
@@ -90,7 +90,7 @@ class WorkspaceManager:
                     make_dir(path, True)
             return folder
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=e)
             return False
 
 
@@ -114,7 +114,7 @@ class WorkspaceManager:
                     temp_space + self.file_extension.temp).root)
                 return True
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=e)
             return False
 
     def clear_gb_temp_dir(self):
@@ -128,7 +128,7 @@ class WorkspaceManager:
             if is_directory(self.path_config.tempspace_root):
                 delete(self.path_config.tempspace_root)
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=e)
             return False
 
     def get_setting_file(self) -> List[str]:
@@ -141,7 +141,7 @@ class WorkspaceManager:
             return paths_in_dir(
                 self.path_config.gailbot_data.setting_src, ["toml"])
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=e)
             return False
 
    

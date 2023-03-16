@@ -106,7 +106,8 @@ class TranscribeController(QObject):
                     raise ThreadException(ErrorMsg.RESOURCEERROR)
             except Exception as e:
                 self.signal.error.emit("failed to start transcription")
-                self.logger.error(f"failed to start transcribe due to error {e}")
+                self.logger.error(f"failed to start transcribe due to error {e}", exc_info=e)
+
 
     def cancelGailBot(self):
         """ handler for user's request to cancel the gailbot """
@@ -146,7 +147,7 @@ class GBWorker(QRunnable):
         except Exception as e:
             self.signal.error.emit(ErrorFormatter.DEFAULT_ERROR.format(
                 source="transcription", msg=e))
-            self.logger.error(f"Error during transcription: {e}")
+            self.logger.error(f"Error during transcription: {e}", exc_info=e)
             self.signal.finish.emit()
         else:
             if not self.killed:
@@ -166,7 +167,7 @@ class GBWorker(QRunnable):
             self.killed = True
             self.signal.killed.emit()
         except Exception as e:
-            self.logger.error(f"Error while killing  the thread {e}")
+            self.logger.error(f"Error while killing  the thread {e}", exc_info=e)
             self.signal.error("The task cannot been cancelled")
 
             

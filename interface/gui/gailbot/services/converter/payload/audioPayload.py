@@ -33,7 +33,7 @@ def load_audio_payload(
         return [AudioPayload(source, ws_manager)]
     except Exception as e:
         logger.error(source.__class__)
-        logger.error(e)
+        logger.error(e, exc_info=e)
         return False
 
 class AudioPayload(PayLoadObject):  

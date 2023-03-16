@@ -44,7 +44,6 @@ class WhisperEngine(Engine):
         logger.info(f"get transcribe request audio_path: {audio_path}, language: {language}, detect_speakers: {detect_speakers}")
         results = self.core.transcribe(audio_path,language, detect_speakers)
         self._successful = True
-        logger.info(f"transcription result {results}")
         return results
 
     def was_transcription_successful(self) -> bool:

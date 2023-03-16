@@ -84,7 +84,7 @@ class ConversationDirectoryPayload(PayLoadObject):
             for path in sub_paths:
                 self.data_files.append(path)
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=e)
     
     def _set_initial_status(self) -> None:
         """

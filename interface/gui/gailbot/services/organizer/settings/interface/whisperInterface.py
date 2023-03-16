@@ -50,5 +50,6 @@ def load_whisper_setting(setting: Dict[str, str]) -> Union[bool, EngineSettingIn
         whisper_set = WhisperInterface(**whisper_set)
         return whisper_set
     except ValidationError as e:
+        logger.error(e, exc_info=e)
         logger.error(f"error in validating whisper interface {e}")
         return False

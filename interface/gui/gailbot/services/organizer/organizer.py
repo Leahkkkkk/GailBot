@@ -33,7 +33,7 @@ class Organizer:
             assert self.apply_setting_to_source(name, DEFAULT_SETTING_NAME)
             return True
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=e)
             return False
         
     def remove_source(self, source_name: str) -> bool:
@@ -131,7 +131,7 @@ class Organizer:
                 assert self.apply_setting_to_source(source, setting_name, overwrite)
             return True
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=e)
             return False
         
     def create_new_setting(
@@ -195,7 +195,7 @@ class Organizer:
                 self.remove_setting_from_source(source)
             return True
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=e)
             return False
     
     def update_setting(self, setting_name:str, new_setting: Dict[str,str]) -> bool:
@@ -303,7 +303,7 @@ class Organizer:
                 assert source.setting_name() == DEFAULT_SETTING_NAME
             return True
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=e)
             return False
     
     def get_setting_names(self) -> List[str]:

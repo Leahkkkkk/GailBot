@@ -30,7 +30,7 @@ class SourceManager():
             name = source.name
             self.sources[name] = source  
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=e)
             return False
         else:
             return name

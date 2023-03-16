@@ -79,7 +79,7 @@ class OpenFile(TabPage):
                 fileList.append(fileObj)
             return fileList
         except Exception as e:
-            self.logger.error(e)
+            self.logger.error(e, exc_info=e)
             WarnBox("An error ocurred in getting the files to be transcribed")
             return False
         
@@ -220,7 +220,7 @@ class OpenFile(TabPage):
             self.fileDisplayList.removeRow(row)
             del self.filePaths[key]
         except Exception as e:
-            self.logger.error(e)
+            self.logger.error(e, exc_info=e)
 
     def dragEnterEvent(self, a0: QDragEnterEvent) -> None:
         self.logger.info("get the drag event for user to upload file")
@@ -261,7 +261,7 @@ class ChooseSet(TabPage):
     def _initWidget(self):
         """ initializes the widgets """
         self.logger.info("")
-        self.label = Label("select setting profile", FontSize.HEADER3, FontFamily.MAIN)
+        self.label = Label("Select Setting Profile", FontSize.HEADER3, FontFamily.MAIN)
         self.selectSettings = ComboBox(self)
         self.selectSettings.addItem(Text.selectSetText)
         self.selectSettings.addItems(self.settings)

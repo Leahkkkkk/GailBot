@@ -190,7 +190,7 @@ class SystemSettingPage(QWidget):
             dialog = SaveLogFile()
             dialog.exec()
         except Exception as e:
-            self.logger.error(e)
+            self.logger.error(e, exc_info=e)
 
     def _addFormButton(self, label, btnText, fun: callable):
         container = QWidget()

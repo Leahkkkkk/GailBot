@@ -66,5 +66,5 @@ def load_watson_setting(setting: Dict[str, str]) -> Union[bool, EngineSettingInt
         watson_set = WatsonInterface(**watson_set)
         return watson_set
     except ValidationError as e:
-        logger.error(e)
+        logger.error(e, exc_info=e)
         return False

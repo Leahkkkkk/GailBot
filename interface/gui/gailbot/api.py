@@ -44,7 +44,7 @@ class GailBot:
             self.ws_manager.init_workspace()
             return True
         except Exception as e:
-            logger.error(f"failed to reset workspace due to the error {e}")
+            logger.error(f"failed to reset workspace due to the error {e}", exc_info=e)
             return False
     
     

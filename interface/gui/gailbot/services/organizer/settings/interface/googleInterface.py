@@ -50,5 +50,5 @@ def load_google_setting(setting: Dict[str, str]) -> Union[bool, EngineSettingInt
         google_setting = GoogleInterface(**setting)
         return google_setting
     except ValidationError as e:
-        logger.error(e)
+        logger.error(e, exc_info=e)
         return False

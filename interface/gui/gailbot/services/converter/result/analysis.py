@@ -41,7 +41,7 @@ class AnalysisResult(ResultInterface):
             # write_json(self.data, os.path.join(path, "analysis.json"))
             return True
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=e)
             return True
         
     def get_data(self):

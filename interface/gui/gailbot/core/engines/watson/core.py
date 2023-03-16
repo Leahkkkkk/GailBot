@@ -128,7 +128,7 @@ class WatsonCore:
                 audio_path, base_model, 
                 language_customization_id, acoustic_customization_id)  
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=e)
             ERR.ConnectionError("ERROR: connection error")
            
         audio_name = get_name(audio_path)
@@ -151,7 +151,7 @@ class WatsonCore:
                 make_dir(self.workspace_dir, overwrite=False)
             self.engine_workspace_dir = self.workspace_dir
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=e)
             raise FileExistsError("ERROR: Failed to create directory")
     
     def _websockets_recognize(
@@ -275,6 +275,7 @@ class WatsonCore:
                 utterances.append(utt)
             return utterances
         except Exception as e:
+            logger.error(e, exc_info=e)
             return []
             
     def _is_api_key_valid(self, apikey: str, url: str) -> bool:

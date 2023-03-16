@@ -195,7 +195,7 @@ class ProfileSettingPage(QWidget):
             self.selectSettings.setCurrentText(key)
             self.RequiredSetPage.setValue(data["engine_setting"])
         except Exception as e:
-            self.logger.error(e)
+            self.logger.error(e, exc_info=e)
             WarnBox("An error occurred when loading the profile")
             
     def addProfile (self, profileName:str):

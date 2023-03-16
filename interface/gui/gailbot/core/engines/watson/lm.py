@@ -484,10 +484,10 @@ class WatsonLMInterface:
                 return resp.get_result()
             raise ERR.WatsonMethodExecutionError
         except ApiException as e:
-            logger.info(f"Exception raised: {e}")
+            logger.info(f"Exception raised: {e}", exc_info=e)
             return False
         except ERR.WatsonMethodExecutionError as e:
-            logger.info(f"Exception raised: {e}")
+            logger.info(f"Exception raised: {e}", exc_info=e)
             return False
         
     def _is_api_key_valid(self, apikey: str, url: str) -> bool:

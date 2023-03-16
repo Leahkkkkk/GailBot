@@ -212,7 +212,7 @@ class PayLoadObject(ABC):
             self.transcription_result.save_data(result)
             return True 
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=e)
             return False
     
     def set_format_result(
@@ -232,7 +232,7 @@ class PayLoadObject(ABC):
             self.format_result.save_data(result)
             return True
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=e)
             return False
     
     def set_analysis_result(
@@ -252,7 +252,7 @@ class PayLoadObject(ABC):
             self.analysis_result.save_data(result)
             return True
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=e)
             return False
         
     def set_transcription_process_stats(
@@ -332,7 +332,7 @@ class PayLoadObject(ABC):
             assert self.transcription_result.output(self.out_dir.transcribe_result)
             return True
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=e)
             return False
         
     def output_format_result(self) -> bool:
@@ -346,7 +346,7 @@ class PayLoadObject(ABC):
             assert self.format_result.output(self.out_dir.format_result)
             return True 
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=e)
             return False
     
     def output_analysis_result(self) -> bool:
@@ -360,7 +360,7 @@ class PayLoadObject(ABC):
             assert self.analysis_result.output(self.out_dir.analysis_result)
             return True
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=e)
             return False
     
     def save(self):

@@ -42,7 +42,7 @@ class Converter:
                     self.payloads_dict[source.name] = payloads
                     return True 
             except Exception as e:
-                logger.error(e) 
+                logger.error(e, exc_info=e) 
         return False
 
     
@@ -73,7 +73,7 @@ class Converter:
             return converters, invalid
         
         except Exception as e: 
-            logger.error(e)
+            logger.error(e, exc_info=e)
             return False
         
                 

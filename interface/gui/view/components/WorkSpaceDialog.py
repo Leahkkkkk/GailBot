@@ -100,7 +100,7 @@ class SaveLogFile(QDialog):
                      ".log")
             self.close()
         except Exception as e:
-            self.logger.error(e)
+            self.logger.error(e, exc_info=e)
           
     def _connectSignal(self):
         self.choose.clicked.connect(self._openDialog)

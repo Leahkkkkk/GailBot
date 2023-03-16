@@ -81,7 +81,7 @@ class MainWindow(QMainWindow):
         try:
             self.MainStack.gotoTranscribeInProgress()
         except Exception as e:
-            self.logger.error(e)
+            self.logger.error(e, exc_info=e)
             self.showError(f"Failed to load transcription in progress page due to the error {e}, please try to re-transcribe")
             
     def showTranscribeSuccess(self):
@@ -89,7 +89,7 @@ class MainWindow(QMainWindow):
         try:
             self.MainStack.gotoTranscribeSuccess()
         except Exception as e:
-            self.logger.error(e)
+            self.logger.error(e, exc_info=e)
             self.showError(f"Failed to load transcription success page due to the error {e}, please try to reload the application")
     
     def showFileUploadPage(self):
@@ -97,7 +97,7 @@ class MainWindow(QMainWindow):
         try:
             self.MainStack.gotoFileUploadPage()
         except Exception as e:
-            self.logger.error(e)
+            self.logger.error(e, exc_info=e)
             self.showError(f"Failed to load file upload page due to the error {e}, please try again")
     
     def busyThreadPool(self):
@@ -105,7 +105,7 @@ class MainWindow(QMainWindow):
         try:
             self.msgBox = MsgBox.WarnBox("The GailBot is too busy to receive your request!")
         except Exception as e:
-            self.logger.error(e)
+            self.logger.error(e, exc_info=e)
             self.showError(f"The GailBot is too bust to receive your request!")
         
     def showStatusMsg(self, msg, time=None):
@@ -120,7 +120,7 @@ class MainWindow(QMainWindow):
         try:
             self.fileTableSignals.progressChanged.emit(msg)
         except Exception as e:
-            self.logger.error(e)
+            self.logger.error(e, exc_info=e)
             self.showError(f"Failed to show file progress due to error {e}, please check back later ")
             
     def freeThread(self):
@@ -128,7 +128,7 @@ class MainWindow(QMainWindow):
         try:
             self.StatusBar.clearMessage()
         except Exception as e:
-            self.logger.error(e)
+            self.logger.error(e, exc_info=e)
     
     def TranscribeFailed(self, err:str):
         """shows transcription failed message"""
@@ -137,7 +137,7 @@ class MainWindow(QMainWindow):
                                         self.showFileUploadPage)
             self.MainStack.TranscribeProgressPage.IconImg.stop()
         except Exception as e:
-            self.logger.error(e)
+            self.logger.error(e, exc_info=e)
             
         
     def confirmCancel(self):
@@ -146,7 +146,7 @@ class MainWindow(QMainWindow):
             self.logger.info("")
             self.MainStack.gotoFileUploadPage()
         except Exception as e:
-            self.logger.error(e)
+            self.logger.error(e, exc_info=e)
             MsgBox.WarnBox(f"Error in canceling the application {e}")
 
     def addFileToTables(self, file:dict):
@@ -154,7 +154,7 @@ class MainWindow(QMainWindow):
         try:
             self.MainStack.addFileToTables(file)
         except Exception as e:
-            self.logger.error(e)
+            self.logger.error(e, exc_info=e)
             MsgBox.WarnBox(f"Error in adding files to table {e}")
             
     def updateFile(self, data:tuple):
@@ -162,7 +162,7 @@ class MainWindow(QMainWindow):
         try:
             self.MainStack.updateFile(data)
         except Exception as e:
-            self.logger.error(e)
+            self.logger.error(e, exc_info=e)
             MsgBox.WarnBox(f"Error in updating the file {e}")
             
     def changeFiletoTranscribed(self, key:str):
@@ -172,7 +172,7 @@ class MainWindow(QMainWindow):
         try:
             self.MainStack.changeToTranscribed(key)
         except Exception as e:
-            self.logger.error(e)
+            self.logger.error(e, exc_info=e)
             MsgBox.WarnBox(f"Error in changing the file status to be transcribed {e}")
             
     def closeEvent(self, a0) -> None:
@@ -180,7 +180,7 @@ class MainWindow(QMainWindow):
         try:
             super().closeEvent(a0)
         except Exception as e:
-            self.logger.error(e)
+            self.logger.error(e, exc_info=e)
             MsgBox.WarnBox(f"Failed to automatically relaunch gailbot, please restart application")
         
     def addProfile(self, profileName:str) -> None:
@@ -191,7 +191,7 @@ class MainWindow(QMainWindow):
             self.MainStack.ProfileSettingPage.addProfile(profileName)
             self.MainStack.FileUploadPage.fileTable.addProfile(profileName)
         except Exception as e:
-            self.logger.error(e)
+            self.logger.error(e, exc_info=e)
             MsgBox.WarnBox(f"Failed to add profile, get error {e}")
             
     def deleteProfile(self, profileName:str) -> None: 
@@ -202,14 +202,14 @@ class MainWindow(QMainWindow):
             self.MainStack.FileUploadPage.fileTable.deleteProfile(profileName)
             self.MainStack.ProfileSettingPage.deleteProfileConfirmed(True)
         except Exception as e:
-            self.logger.error(e)
+            self.logger.error(e, exc_info=e)
             MsgBox.WarnBox(f"Failed to delete profile")
         
     def loadProfile(self, data: Tuple[str, Dict]):
         try:
             self.MainStack.ProfileSettingPage.loadProfile(data)
         except Exception as e:
-            self.logger.error(e)
+            self.logger.error(e, exc_info=e)
             MsgBox.WarnBox(f"Failed to load profile, get the error {e}")
             
     def showError(self, errorMsg:str):

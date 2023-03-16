@@ -57,7 +57,7 @@ class GBPluginMethods(Methods):
         try:
             return self.payload.transcription_result()
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=e)
             return False
                 
     @property
@@ -114,7 +114,7 @@ class GBPluginMethods(Methods):
                 fun(path, data, **kwargs)
                 return True
             except Exception as e:
-                logger.error(e)
+                logger.error(e, exc_info=e)
                 return False
         if format not in self.format_to_out_fun:
             logger.error("the output format is not supported")
@@ -123,5 +123,5 @@ class GBPluginMethods(Methods):
             self.format_to_out_fun[format](path, data) 
             return True
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=e)
             return False

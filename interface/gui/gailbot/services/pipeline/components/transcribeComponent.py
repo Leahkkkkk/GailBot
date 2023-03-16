@@ -74,6 +74,7 @@ class TranscribeComponent(Component):
 
         except Exception as e:
             logger.error(f"thread execution fails due to the error {e}")
+            logger.error(e, exc_info=e)
             threadpool.shutdown(wait=True)
             return ComponentResult(
                 state=ComponentState.FAILED,
@@ -141,6 +142,7 @@ class TranscribeComponent(Component):
 
         except Exception as e:
             logger.error(f"Failed to transcribed {len(data_files)} file in parallel due to the error {e}")
+            logger.error(e, exc_info=e)
             return False
 
         end_time = time.time()

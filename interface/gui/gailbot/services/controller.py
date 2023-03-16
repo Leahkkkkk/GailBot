@@ -37,7 +37,7 @@ class ServiceController:
                 assert self.add_source(source_path, out_path)
             return True
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=e)
             return False
         
     def add_source(self, src_path: str, out_path: str) -> bool:
@@ -292,7 +292,7 @@ class ServiceController:
                 result = False
             return result, invalid
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=e)
             return False, []
         
     def register_plugin_suite(self, plugin_source: str) -> bool:

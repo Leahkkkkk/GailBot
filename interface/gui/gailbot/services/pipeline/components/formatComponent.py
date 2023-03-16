@@ -37,6 +37,7 @@ class FormatComponent(Component):
             )
          
         except Exception as e:
+            logger.error(e, exc_info=e)
             logger.error(f"error in formatting payload result {e}")
             return ComponentResult(
                 state=ComponentState.FAILED,

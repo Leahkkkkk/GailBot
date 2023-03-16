@@ -126,7 +126,7 @@ class FileOrganizer:
                 self.logger.error(ErrorMsg.DUPLICATEKEY)
         except Exception as e:
             self.signals.error.emit(ErrorFormatter.DEFAULT_ERROR.format(source="post file", msg=e))
-            self.logger.error(f"Error in posting file: {e}")
+            self.logger.error(f"Error in posting file: {e}", exc_info=e)
     
     
     def delete(self, key: str) -> None:
@@ -192,7 +192,7 @@ class FileOrganizer:
             self.editFileStatus((key, "Transcribed"))
             assert self.gb.remove_source(self.data[key].Name)
         except Exception as e:
-            self.logger.error("Deleting file from gailbot fails, error {e}")
+            self.logger.error("Deleting file from gailbot fails, error {e}", exc_info=e)
     
     
     def editFileProfile(self, data: Tuple[str, str]) -> None:
@@ -337,6 +337,6 @@ class FileOrganizer:
                     file.Profile = self.gb.get_src_setting_name(file.Name)
                     self._updateFileResponse(key, "Profile", file.Profile)
         except Exception as e:
-            self.logger.error(f"error deleting profile {e}")
+            self.logger.error(f"error deleting profile {e}", exc_info=e)
             
                 

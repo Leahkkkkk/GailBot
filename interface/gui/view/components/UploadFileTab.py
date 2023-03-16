@@ -80,6 +80,6 @@ class UploadFileTab(QDialog):
                 self.logger.info("File added")
                 self.logger.info(fileData)
         except Exception as e: 
-            self.logger.error(e)
+            self.logger.error(e, exc_info=e)
         self.close()
 

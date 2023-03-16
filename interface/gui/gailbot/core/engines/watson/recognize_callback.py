@@ -12,7 +12,6 @@ from copy import deepcopy
 from ibm_watson.websocket import RecognizeCallback
 from gailbot.core.utils.logger import makelogger
 
-""" TODO: eventually delete the logger  """
 logger = makelogger("callback")
 
 class CustomWatsonCallbacks(RecognizeCallback):
@@ -51,7 +50,7 @@ class CustomWatsonCallbacks(RecognizeCallback):
             closure["callback_status"]["on_transcription"] = True
             closure["results"]["transcript"].append(transcript)
         except Exception as e:
-            print(e)
+            logger.error(e, exc_info=e)
 
     def on_connected(self) -> None:
         """
@@ -63,8 +62,8 @@ class CustomWatsonCallbacks(RecognizeCallback):
             closure = self.closure
             closure["callback_status"]["on_connected"] = True
         except Exception as e:            
-            print(e)
-            
+           logger.error(e, exc_info=e) 
+    
     def on_error(self, error: str) -> None:
         """
         Called when there is an error in the Websocket connection.
@@ -76,6 +75,7 @@ class CustomWatsonCallbacks(RecognizeCallback):
             closure["results"]["error"] = error
         except Exception as e:
             logger.debug(e)
+            logger.error(e, exc_info=e)
 
     def on_inactivity_timeout(self, error: str) -> None:
         """

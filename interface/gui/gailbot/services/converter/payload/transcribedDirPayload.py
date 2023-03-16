@@ -32,7 +32,7 @@ def load_transcribed_dir_payload(
     try: 
         return [TranscribedDirPayload(source, ws_manager)]
     except Exception as e:
-        logger.error(e)
+        logger.error(e, exc_info=e)
         return False
 
 class TranscribedDirPayload(PayLoadObject):

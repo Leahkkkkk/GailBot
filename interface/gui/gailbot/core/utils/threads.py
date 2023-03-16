@@ -128,7 +128,7 @@ class ThreadPool(ThreadPoolExecutor):
                 self.next_key += 1
                 return self.next_key - 1
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=e)
             if error_fun: 
                 error_fun()
             else: 
@@ -256,7 +256,7 @@ class ThreadPool(ThreadPoolExecutor):
             wait([future])
             assert not future.exception()
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=e)
             if error_fun: 
                 error_fun()
             else: 
@@ -379,7 +379,7 @@ class ThreadPool(ThreadPoolExecutor):
             future.result()
             return self.add_task(fun, args, kwargs)
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=e)
             if error_fun: 
                 error_fun()
             else: 

@@ -31,7 +31,7 @@ class ResultInterface:
             self.processingStats:ProcessingStats = stats 
             return True
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=e)
             return False
     
     def output_processing_stats(self, outpath: str):
@@ -48,7 +48,7 @@ class ResultInterface:
             write_json(outpath, self.processingStats.__dict__)
             return True
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=e)
             return False
             
     def save_data(self, data) -> bool:

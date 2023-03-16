@@ -81,7 +81,7 @@ class SettingObject():
         try:
             write_toml(output, self.data)
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=e)
             return False
         else:
             return True

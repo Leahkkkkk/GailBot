@@ -107,7 +107,8 @@ class FileUploadPage(QWidget):
             {TableWidget.CHECK, 
              TableWidget.PROFILE_DETAIL, 
              TableWidget.CHANGE_PROFILE, 
-             TableWidget.REMOVE})
+             TableWidget.REMOVE},
+            transferListColor=Color.HIGHLIGHT)
         self.fileTable.resizeCol(FileTableDimension.fileUploadPage)
         
     def _initLayout(self):

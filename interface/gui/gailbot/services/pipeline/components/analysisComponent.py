@@ -72,7 +72,7 @@ class AnalysisComponent(Component):
                 runtime = time.time() - process_start_time)
             
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=e)
             return ComponentResult(
                 state=ComponentState.FAILED,
                 result= payloads,

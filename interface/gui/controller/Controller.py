@@ -100,7 +100,7 @@ class Controller(QObject):
             self.logger.info("Transcribe controller initialized")
 
         except Exception as e:
-            self.logger.error(f"Error in app initialization {e}")
+            self.logger.error(f"Error in app initialization {e}", exc_info=e)
 
 
     def run(self):
@@ -110,7 +110,7 @@ class Controller(QObject):
             self._handleViewSignal()
             self.logger.info("connect to view")
         except Exception as e:
-            self.logger.error(f"error connecting to view {e}")
+            self.logger.error(f"error connecting to view {e}", exc_info=e)
         try:
             self.ViewObj.show()
             self.MVController.exec()
@@ -118,7 +118,7 @@ class Controller(QObject):
             self._handleTranscribeSignal()
             self.logger.info("connect to transcribe signal")
         except Exception as e:
-            self.logger.error(f"error running the app {e}")
+            self.logger.error(f"error running the app {e}", exc_info=e)
         self._clearLog()
 
     def restart(self):
@@ -161,7 +161,7 @@ class Controller(QObject):
         try:
             self.transcribeController.runGailBot(files)
         except Exception as e:
-            self.logger.error(f"error in running gailbot transcription:{e}")
+            self.logger.error(f"error in running gailbot transcription:{e}", exc_info=e)
 
     def _clearLog(self):
         """ clear the log that is expired"""

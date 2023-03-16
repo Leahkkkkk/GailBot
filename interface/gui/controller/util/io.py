@@ -49,7 +49,7 @@ def paths_in_dir(
                     ext in extensions]
             ))
     except Exception as e:
-        logging.error(e)
+        logging.error(f"error in finding the paths in directory {path}", exc_info = e)
         return False
 
 def get_name(path : str) -> str:

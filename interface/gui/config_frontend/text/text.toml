@@ -195,7 +195,7 @@ help    = "Help"
 contact = "Contact Us"
 bugreport = "Report Bug"
 buglink = "https://docs.google.com/forms/d/e/1FAIpQLSey-yx8gj2k5n-pdoSqBzBRU9q1aqWfK6laiQCxTimvuGU0hg/viewform"
-email = "mailto: hil@elist.tufts.edu"
+email = "mailto:hil@elist.tufts.edu"
 mailFailed = "Cannot open mail application on your computer, please contact us by sending email to: hil@elist.tufts.edu"
 
 

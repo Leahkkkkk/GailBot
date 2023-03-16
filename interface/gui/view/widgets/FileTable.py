@@ -83,6 +83,7 @@ class FileTable(QTableWidget):
                  fileSignal: FileSignals,
                  profiles: List[str] = [Text.default],  
                  tableWidgetsSet: Set[TableWidget] = None, 
+                 transferListColor = Color.MAIN_BACKGROUND,
                  *args, 
                  **kwargs):
         """_summary_
@@ -96,7 +97,7 @@ class FileTable(QTableWidget):
                                    on each row
         """
         super().__init__(0, (len(headers)), *args, **kwargs)
-        
+
         self.headers = headers        
         self.profiles = profiles      
         self.filePins = dict()          # used to track file's position on 
@@ -113,7 +114,7 @@ class FileTable(QTableWidget):
         self.allSelected = False        # True if all files are selected 
         self.tableWidgetsSet = tableWidgetsSet
         self.logger =  makeLogger("F")
-        
+        self.transferlistBackground = transferListColor
         self.viewSignal = Signals()
         self.fileSignal = fileSignal
         self._setFileHeader()     # set file header 
@@ -371,7 +372,7 @@ class FileTable(QTableWidget):
                 newitem = QTableWidgetItem(profilekey)
                 self.setItem(row, 3, newitem)
                 if key in self.transferList: 
-                    newitem.setBackground(QColor(Color.HIGHLIGHT))
+                    newitem.setBackground(QColor(self.transferlistBackground))
             else:
                 self.viewSignal.error.emit(KEYERROR)
         except:
@@ -392,7 +393,7 @@ class FileTable(QTableWidget):
         try: 
             self.profiles.remove(profileName)
         except Exception as e:
-            self.logger.error(e)
+            self.logger.error(e, exc_info=e)
             
             
     ###################### edit file handler ###############################        
@@ -411,7 +412,7 @@ class FileTable(QTableWidget):
                 newitem = QTableWidgetItem(value)
                 self.setItem(row, col, newitem)
                 if key in self.transferList:
-                    newitem.setBackground(QColor(Color.HIGHLIGHT))
+                    newitem.setBackground(QColor(self.transferlistBackground))
         else:
             self.logger.error("File is not found")
     
@@ -446,7 +447,7 @@ class FileTable(QTableWidget):
             if key in self.filePins:
                 self.transferList.add(key)
                 rowIdx = self.indexFromItem(self.filePins[key]).row()
-                self._setColorRow(rowIdx, Color.HIGHLIGHT)
+                self._setColorRow(rowIdx,self.transferlistBackground)
                 self.viewSignal.nonZeroFile.emit()
             else: 
                 raise Exception("File is not found in the data")
