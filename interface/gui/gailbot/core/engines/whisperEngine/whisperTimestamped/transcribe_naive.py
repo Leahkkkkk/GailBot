@@ -2,11 +2,12 @@
 # @Author: Muhammad Umair
 # @Date:   2023-01-31 11:29:03
 # @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-31 11:46:19
+# @Last Modified time: 2023-03-15 15:53:40
 
 import sys
 import os
 
+import numpy as np
 import whisper
 import torch
 import torch.nn.functional as F
