@@ -24,7 +24,7 @@ from view.widgets import (
     Label,
     Button
 )
-from view.components.WorkSpaceDialog import ChangeWorkSpace, SaveLogFile
+from view.components.WorkSpaceDialog import SaveLogFile
 from config_frontend.ConfigPath import WorkSpaceConfigPath, SettingDataPath
 from view.config.Setting import SystemSetting, DefaultSetting
 from view.config.StyleSource import StyleSource, StyleTable
@@ -44,7 +44,6 @@ from PyQt6.QtWidgets import (
     QMessageBox
     )
 from PyQt6.QtCore import Qt, pyqtSignal, QObject
-
 
 class Signal(QObject):
     restart = pyqtSignal()
@@ -72,76 +71,31 @@ class SystemSettingPage(QWidget):
         self.Mainstack = QStackedWidget()
         self.SysSetForm = SettingForm.SettingForm(
             Text.header, self.data, Text.caption)
-        self.deleteLog = Button.BorderBtn(
-            "Clear",
-            Color.INPUT_TEXT,
-            other= f"background-color: {Color.INPUT_BACKGROUND}")
-        self.deleteLog.setFixedWidth(100)
-        self.deleteLog.setFixedHeight(Dimension.INPUTHEIGHT)
-        self.deleteLogLabel = Label.Label(Text.clearLog, FontSize.BODY)
-
-        self.changeDir = Button.BorderBtn(
-            "Change",
-            Color.INPUT_TEXT,
-            other= f"background-color: {Color.INPUT_BACKGROUND}")
-        self.changeDir.setFixedWidth(100)
-        self.changeDir.setFixedHeight(Dimension.INPUTHEIGHT)
-        self.changeDirLabel = Label.Label(
-            Text.changeWorkSpace, FontSize.BODY)
-        directory = getWorkBasePath()
-        self.directoryDisplay = Label.Label(
-            f"    Current work space: {directory}",
-            FontSize.SMALL,
-            Color.PRIMARY_INTENSE
-        )
-
-        self.buttomBtnContainer = QWidget()
-        self.bottomBtnLayout = QHBoxLayout()
-        self.buttomBtnContainer.setLayout(self.bottomBtnLayout)
-
-        self.restoreBtn = Button.BorderBtn(
-            "Restore Defaults",
-            Color.INPUT_TEXT,
-            other= f"background-color: {Color.INPUT_BACKGROUND}")
-        self.restoreBtn.setFixedHeight(Dimension.INPUTHEIGHT)
-
-        self.saveLogBtn = Button.BorderBtn(
-            "Save Log File",
-            Color.INPUT_TEXT,
-            other= f"background-color: {Color.INPUT_BACKGROUND}")
-        self.saveLogBtn.setFixedHeight(Dimension.INPUTHEIGHT)
-
-        self.bottomBtnLayout.addWidget(
-            self.restoreBtn, alignment=Qt.AlignmentFlag.AlignRight)
-        self.bottomBtnLayout.addWidget(
-            self.saveLogBtn, alignment=Qt.AlignmentFlag.AlignRight)
-
+        # self.clearLogBtn = Button.BorderBtn(
+        #     "Clear Log Files",
+        #     Color.INPUT_TEXT,
+        #     other= f"background-color: {Color.INPUT_BACKGROUND}")
+        # self.restoreDefaultBtn = Button.BorderBtn(
+        #     "Restore Defaults",
+        #     Color.INPUT_TEXT,
+        #     other= f"background-color: {Color.INPUT_BACKGROUND}")
+        # self.saveLogBtn = Button.BorderBtn(
+        #     "Save Log Files",
+        #     Color.INPUT_TEXT,
+        #     other= f"background-color: {Color.INPUT_BACKGROUND}")
+        # self.saveLogBtn.setFixedHeight(Dimension.INPUTHEIGHT)
         self.Mainstack.addWidget(self.SysSetForm)
         self.cancelBtn = Button.ColoredBtn(
             Text.cancelBtn, Color.CANCEL_QUIT)
         self.saveBtn = Button.ColoredBtn(
             Text.saveBtn, Color.SECONDARY_BUTTON)
 
-        self.deleteContainer = QWidget()
-        self.deleteLayout = QHBoxLayout()
-        self.changeDirContainer = QWidget()
-        self.changeDirLayout = QHBoxLayout()
-
     def _connectSignal(self):
         """ connect the signal to slots """
-        self.deleteLog.clicked.connect(self._clearLog)
+        # self.clearLogBtn.clicked.connect(self._clearLog)
         self.saveBtn.clicked.connect(self._confirmChangeSetting)
-        self.changeDir.clicked.connect(self._changeDirHandler)
-        self.restoreBtn.clicked.connect(self._confirmRestore)
-        self.saveLogBtn.clicked.connect(self._saveLog)
-
-    def _changeDirHandler(self):
-        dialog = ChangeWorkSpace()
-        dialog.exec()
-        directory = getWorkBasePath()
-        self.directoryDisplay.setText(
-            f"    Current work space: {directory}"
-        )
+        # self.restoreDefaultBtn.clicked.connect(self._confirmRestore)
+        # self.saveLogBtn.clicked.connect(self._saveLog)
 
     def _initLayout(self):
         """ initializes the layout of the page """
@@ -159,20 +113,9 @@ class SystemSettingPage(QWidget):
         self.sideBar.addStretch()
         self.sideBar.addFooter()
 
-        self.deleteContainer.setLayout(self.deleteLayout)
-        self.deleteLayout.addWidget(self.deleteLogLabel)
-        self.deleteLayout.addSpacing(55)
-        self.deleteLayout.addWidget(self.deleteLog)
-        self.SysSetForm.addWidget(self.deleteContainer)
-
-        self.changeDirContainer.setLayout(self.changeDirLayout)
-        # self.changeDirLayout.addWidget(self.changeDirLabel)
-        # self.changeDirLayout.addWidget(self.changeDir)
-
-        # self.SysSetForm.addWidget(self.changeDirContainer)
-        # self.SysSetForm.addWidget(self.directoryDisplay)
-        self.restoreBtn.setContentsMargins(10,50,10,20)
-        self.SysSetForm.addWidget(self.buttomBtnContainer)
+        self._addFormButton("Restore Default", "Restore", self._confirmRestore)
+        self._addFormButton("Clear Log Files", "Clear", self._clearLog)
+        self._addFormButton("Save Log Files", "Save", self._saveLog)
 
     def _initStyle(self):
         self.Mainstack.setObjectName(StyleSheet.sysSettingStackID)
@@ -232,7 +175,6 @@ class SystemSettingPage(QWidget):
         """ open confirm box to confirm clearing the log file """
         MsgBox.ConfirmBox(Text.confirmClear, clearAllLog)
 
-
     def _loadValue(self, setting):
         """ initialize the setting value """
         self.SysSetForm.setValue(setting)
@@ -249,3 +191,21 @@ class SystemSettingPage(QWidget):
             dialog.exec()
         except Exception as e:
             self.logger.error(e)
+
+    def _addFormButton(self, label, btnText, fun: callable):
+        container = QWidget()
+        layout = QHBoxLayout()
+        label = Label.Label(label, FontSize.BODY)
+        button = Button.BorderBtn(
+            btnText,
+            Color.INPUT_TEXT,
+            other= f"background-color: {Color.INPUT_BACKGROUND}"
+        )
+        button.setFixedHeight(Dimension.INPUTHEIGHT)
+        button.setFixedWidth(130)
+        container.setLayout(layout)
+        layout.addWidget(label)
+        layout.addSpacing(65)
+        layout.addWidget(button)
+        button.clicked.connect(fun)
+        self.SysSetForm.addWidget(container)

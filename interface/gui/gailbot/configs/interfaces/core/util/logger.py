@@ -8,7 +8,7 @@ import toml
 class LogConfig(DataclassFromDict):
     formatter: str = field_from_dict()
     sub_dir_prefix: str = field_from_dict()
-    temp_dir: str = field_from_dict()
+    log_dir: str = field_from_dict()
 
 def load_log_config(path):
     d = toml.load(path)

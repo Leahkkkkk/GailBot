@@ -34,7 +34,6 @@ HiLabSuite = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
 "Color Mode combo" = [ "Light Mode", "Dark Mode"]
 "Log file auto deletion time combo" = ["Daily", "Weekly", "Monthly", "Every 2 months"]
 
-["system setting form"."GailBot Work Space Setting"]
 
 ["log deletion"]
 "Daily"      = 1

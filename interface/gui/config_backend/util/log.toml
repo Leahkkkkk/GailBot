@@ -1,4 +1,4 @@
 [log]
 sub_dir_prefix = "log_files"
-temp_dir = "BackendLogFiles"        # name of temporary log file if no log file root is provided
 formatter = '%(asctime)s - %(funcName)s - %(lineno)s - %(levelname)s - %(message)s'
+log_dir = "GailBot/LogFiles/BackendLogFiles"

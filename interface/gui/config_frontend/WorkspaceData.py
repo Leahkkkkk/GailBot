@@ -28,21 +28,13 @@ class WorkSpacePathData(DataclassFromDict):
     frontendLogFiles                    : str = field_from_dict()
     backendLogFiles                     : str = field_from_dict()
 
-@dataclass 
-class WorkSpaceBaseDirData(DataclassFromDict):
-    userRoot : str = field_from_dict()
-
 @dataclass
 class FileManageData(DataclassFromDict):
     AUTO_DELETE_TIME: int = field_from_dict() 
 
 def getWorkBasePath() -> str:
     """  return the base directory of the gailbot workspace """
-    if os.path.exists(os.path.join(FRONTEND_CONFIG_ROOT,WorkSpaceConfigPath.userRoot)):
-        data = toml.load(os.path.join(FRONTEND_CONFIG_ROOT,WorkSpaceConfigPath.userRoot))
-        userBaseDir = WorkSpaceBaseDirData.from_dict(data).userRoot
-    else:
-        userBaseDir = userpaths.get_profile()
+    userBaseDir = os.path.join(userpaths.get_profile(), "GailBot")
     return userBaseDir
 
 def getWorkPath() -> WorkSpacePathData:

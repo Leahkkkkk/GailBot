@@ -3,7 +3,6 @@ import os
 from typing import Union, List
 from gailbot.configs import (
     workspace_config_loader,
-    save_ws_root,
     TemporaryFolder,
     OutputFolder)
 from gailbot.core.utils.general import (
@@ -21,12 +20,11 @@ class WorkspaceManager:
         create temporary and output directories
     """
     def __init__(self, user_root: str) -> None:
-        self.path_config         = workspace_config_loader(user_root)
+        self.path_config         = workspace_config_loader()
         self.user_root:      str = user_root
         self.setting_src:    str = self.path_config.gailbot_data.setting_src
         self.plugin_src:     str = self.path_config.gailbot_data.plugin_src
         self.tempspace_root: str = self.path_config.tempspace_root
-        self.log_root:       str = self.path_config.log_root
         self.file_extension      = self.path_config.file_extension
 
     def init_workspace(self):
@@ -45,10 +43,6 @@ class WorkspaceManager:
 
         if not is_directory(self.path_config.tempspace_root):
                 make_dir(self.path_config.tempspace_root, True)
-
-        save_ws_root(self.user_root) # store the workspace root in a toml file
-                                     # so that the logger module will have access
-                                     # to the workspace for storing log files
 
     def get_file_temp_space(self, name: str) -> Union[TemporaryFolder, bool]:
         """ given the file name, create a directory for the file
@@ -150,16 +144,4 @@ class WorkspaceManager:
             logger.error(e)
             return False
 
-    def clear_log(self) -> bool:
-        """ clear the log files in the gailbot workspace folder
-
-        Returns:
-            bool: true if the deletion is successful, false otherwise
-        """
-        try:
-            if is_directory(self.path_config.log_root):
-                delete(self.path_config.log_root)
-            return True
-        except Exception as e:
-            logger.error(e)
-            return False
+   

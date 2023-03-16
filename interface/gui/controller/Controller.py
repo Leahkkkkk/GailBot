@@ -16,26 +16,18 @@ Description:
 Main controller for the app
 Connect between the database, view object and the backend transcription process
 '''
-import toml
 import glob
 import os
 from typing import Set
 import time
-import logging
-from controller.util.io import delete
-from config_frontend.ConfigPath import WorkSpaceConfigPath
-from config_frontend import FRONTEND_CONFIG_ROOT
+from controller.util.io import is_directory
 from controller.transcribeController import TranscribeController
 from controller.mvController import MVController
 from gbLogger import makeLogger
-from config_frontend import getWorkBasePath, getWorkPath, getFileManagementData
+from config_frontend import  getWorkPath, getFileManagementData
 from gailbot.api import GailBot
-from controller.util.io import is_file, copy
-import userpaths
 # import from view
 from view import ViewController
-from view import WorkSpaceDialog
-from view.widgets.MsgBox import WarnBox
 from PyQt6.QtCore import pyqtSlot, QObject, QThreadPool, pyqtSignal
 class Signal(QObject):
     """ a signal object that contains signal for communication between
@@ -64,59 +56,21 @@ class Controller(QObject):
     def __init__(self):
         super().__init__()
         self.signal = Signal()
-        # get the user's work space root
-        backendRoot = self._prelaunch()
-
+        
+        # initialize the gailbot workspace
+        workSpace = getWorkPath()
+        for path in workSpace.__dict__.values():
+            if not is_directory(path):
+                os.makedirs(path) 
+        backendRoot = workSpace.backend 
+        
         # create logger
         self.logger = makeLogger("F")
         self.logger.info(f"controller initialized")
         self.logger.info(backendRoot)
-
+        
         # initialize the application
         self.initApp(backendRoot)
-
-
-    def _prelaunch(self) -> str:
-        """ run before initializing the app to create a toml file that stores
-            the user's root
-
-        Returns:
-            str: return a string that stores the root path to gailbot workspace
-        """
-        userRootConfigPath = os.path.join(FRONTEND_CONFIG_ROOT, WorkSpaceConfigPath.userRoot)
-        newRootConfigPath  = os.path.join(FRONTEND_CONFIG_ROOT, WorkSpaceConfigPath.newUserRoot)
-        try:
-            if not os.path.exists(userRootConfigPath):
-                assert self.createWs()
-            elif is_file(newRootConfigPath):
-                logging.info("detect new workspace path")
-                oldRoot = getWorkBasePath()
-                os.remove(userRootConfigPath)
-                copy(newRootConfigPath, userRootConfigPath)
-                os.remove(newRootConfigPath)
-                newRoot = getWorkBasePath()
-                copy(oldRoot, newRoot)
-                delete(oldRoot)
-           
-            backendRoot = getWorkPath().backend
-            return backendRoot
-        except Exception as e:
-            self.logger.error(e)
-           
-    def createWs(self):
-        ws = userpaths.get_profile()
-        workSpace = { "userRoot" : os.path.join(ws, "GailBot")}
-        try:
-            with open(
-                os.path.join(FRONTEND_CONFIG_ROOT, WorkSpaceConfigPath.userRoot), "w+") as f:
-                toml.dump(workSpace, f)
-            return True
-        except Exception as e:
-            WarnBox(f"cannot find the file path: "
-                    f"{os.path.join(FRONTEND_CONFIG_ROOT, WorkSpaceConfigPath.userRoot)}"
-                    f"error: {e}")
-        return False
-            
 
     def initApp(self, backendRoot) -> bool:
         try:

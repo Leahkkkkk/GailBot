@@ -10,7 +10,6 @@ from .interfaces import (
     workspace_config_loader,
     service_config_loader,
     get_ws_root,
-    save_ws_root,
     default_setting_loader,
     PATH,
     PROJECT_ROOT,

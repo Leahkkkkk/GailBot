@@ -3,8 +3,6 @@
 # @Date:   2023-01-08 16:28:03
 # @Last Modified by:   Muhammad Umair
 # @Last Modified time: 2023-01-16 14:39:45
-
-
 from enum import Enum 
 import sys
 import psutil
@@ -18,15 +16,13 @@ import csv
 import shutil
 import itertools
 from pathlib import Path
+import logging
 # Local imports
 # Third party imports
-from copy import deepcopy
 import subprocess
-import logging 
+from gailbot.core.utils.logger import makelogger
 
-logger = logging.getLogger("general")
-
-InvalidPathError = "Error: invalid path"
+logger = makelogger("general")
 
 class CMD_STATUS(Enum):
     RUNNING = 0 
@@ -316,23 +312,28 @@ def write_txt(path : str, data : List,  overwrite : bool = True) -> bool:
     except Exception as e:
         logger.error
         raise FileExistsError
-        
+    
+    
 def read_yaml(path : str) -> Dict:
     """ given a path to a yaml file, return a dictionary 
         representation of the data stored in the yaml file 
     """
     if is_file(path):
-        with open(path, 'r') as f:
-            data = yaml.load(f, Loader=yaml.Loader)  # NOTE: added the required parameter Loader
-            # Data loaded must be a dictionary
-            logger.info(f"the data is {data}")
-            if not type(data) == dict:
-                logger.error(f"the data is {data}")
-                raise Exception
-            return data
+        logger.info(f"path is {path}")
+        try:
+            with open(path, 'r') as f:
+                data = yaml.load(f, Loader=yaml.Loader)  # NOTE: added the required parameter Loader
+                # Data loaded must be a dictionary
+                if not type(data) == dict:
+                    logger.error(f" the data is not a valid dictionary: {data}")
+                    raise Exception
+                return data
+        except Exception as e:
+            logger.error(e, exc_info=e)
     else:
         logger.error("not a valid yaml file")
         raise FileExistsError
+ 
 
 def write_yaml(path : str, data : Dict, overwrite : bool = True) -> bool:
     """ given a path to a yaml file and data stored in a dictionary,

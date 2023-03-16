@@ -1,7 +1,6 @@
 import os
 from dataclasses import dataclass
 from dict_to_dataclass import field_from_dict, DataclassFromDict
-from gailbot.core.utils.general import is_file, write_toml, delete
 import toml
 from typing import Dict
 
@@ -55,7 +54,6 @@ class WorkSpaceConfig:
         self._ws_root = ws_root
         # public path data
         self.workspace_root = os.path.join(self._ws_root, self._workspace_d["ws_root"])
-        self.log_root       = os.path.join(self._ws_root, self._workspace_d["log_root"])
         self.tempspace_root = os.path.join(
             self.workspace_root, self._workspace_d["temporary"]["root"])
         self.gailbot_data: GailBotData = GailBotData(
@@ -107,19 +105,5 @@ def load_workspace_config(config_path, ws_root) -> WorkSpaceConfig:
     """ public function that load the workspace data and return it """
     return WorkSpaceConfig(config_path, ws_root)
 
-def load_ws_root(config_path) -> str:
-    """ public function that returns the workspace root if config_path is
-        a valid file that stores the workspace root
-    """
-    if is_file(config_path):
-        d = toml.load(config_path)
-        if "ws_root" in d:
-            return d["ws_root"]
-    return False
 
-def store_ws_root(config_path, ws_root: str) -> str:
-    """ public function to store the ws_root path to a configuration file
-    """
-    if is_file(config_path):
-        delete(config_path)
-    write_toml(config_path, {"ws_root": ws_root})
+

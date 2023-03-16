@@ -53,9 +53,7 @@ class WhisperCore:
     _SUPPORTED_FORMATS = ("wav", "mp3")
 
     def __init__(self):
-        # TODO: This should come from config file.
-
-        self.workspace_dir = workspace_config_loader(get_ws_root()).engine_ws.whisper
+        self.workspace_dir = workspace_config_loader().engine_ws.whisper
         logger.info(f"Whisper workspace path: {self.workspace_dir}")
         self.cache_dir = os.path.join(self.workspace_dir,"cache")
         self.models_dir = os.path.join(self.cache_dir,"models")
