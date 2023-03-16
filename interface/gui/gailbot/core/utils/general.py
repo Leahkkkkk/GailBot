@@ -319,15 +319,17 @@ def read_yaml(path : str) -> Dict:
         representation of the data stored in the yaml file 
     """
     logger.info(f"path is {path}")
-    with open(path, "r") as f:
-        text = f.read()
-        logger.info(f"all the text in the file is {text}")
+    # with open(path, "r") as f:
+    #     text = f.read()
+    #     logger.info(f"all the text in the file is {text}")
         
     if is_file(path):
         try:
             with open(path, 'r') as f:
                 data = yaml.load(f, Loader=yaml.Loader)  # NOTE: added the required parameter Loader
                 # Data loaded must be a dictionary
+                # if not data:
+                #     data = yaml.unsafe_load(path)
                 if not type(data) == dict:
                     logger.error(f" the data is not a valid dictionary: {data}, the file path is {path}")
                     raise Exception
