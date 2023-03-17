@@ -326,12 +326,13 @@ def read_yaml(path : str) -> Dict:
     if is_file(path):
         try:
             with open(path, 'r') as f:
-                data = yaml.load(f, Loader=yaml.Loader)  # NOTE: added the required parameter Loader
+                data = yaml.safe_load(f)  # NOTE: added the required parameter Loader
                 # Data loaded must be a dictionary
-                # if not data:
-                #     data = yaml.unsafe_load(path)
+                if not data:
+                    logger.warn(f"safe load data failed, try unsafe load")
+                    data = yaml.unsafe_load(path)
                 if not type(data) == dict:
-                    logger.error(f" the data is not a valid dictionary: {data}, the file path is {path}")
+                    logger.error(f"the data is not a valid dictionary: {data}, the file path is {path}")
                     raise Exception
                 return data
         except Exception as e:

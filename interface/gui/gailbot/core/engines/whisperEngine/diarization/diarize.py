@@ -59,21 +59,25 @@ class PyannoteDiarizer:
             repo_type="model" #TODO: check if the type is model
         )
         logger.info(f"Using diarizaton configuration from path: {config_path}")
-
+       
+        # copy path for configuration  
+        config_path_copy = config_path + "copy"
+        
         # Read the config and update the model path
         config = read_yaml(config_path)
         logger.info(f"the read configurarin is {config}")
+        
         try:
             config["pipeline"]["params"]["segmentation"] = model_path
         except Exception as e:
             logger.error(e, exc_info=e)
     
         try:
-            write_yaml(config_path, config, overwrite=True)
+            write_yaml(config_path_copy, config, overwrite=True)
             logger.info("configuration output")
             logger.info("ready to pretrained data")
             self.pipeline = Pipeline.from_pretrained(
-                config_path
+                config_path_copy
             )
             logger.info("after running from_pretrained")
         except Exception as e:

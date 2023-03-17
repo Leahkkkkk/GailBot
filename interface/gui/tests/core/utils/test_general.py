@@ -223,22 +223,21 @@ def test_yaml_threads():
         for f in futures:
             assert not f.exception()
 
-def test_yaml_thread():
-    path = "/Users/yike/GailBot/Backend/gailbot_workspace/engine_source/whisper_workspace/cache/models/pyannote/models--pyannote--speaker-diarization/snapshots/2c6a571d14c3794623b098a065ff95fa22da7f25/config.yaml"
-    futures: list[Future] = []
-    with ThreadPoolExecutor(max_workers=8) as executer:
-        for _ in range(10):
-            futures.append(executer.submit(general.read_yaml, path=path))
-    for f in futures:
-        logging.info(f.result())
-        assert not f.exception()
-    return True
         
 
 def test_single_yaml():
     path = "/Users/yike/GailBot/Backend/gailbot_workspace/engine_source/whisper_workspace/cache/models/pyannote/models--pyannote--speaker-diarization/snapshots/2c6a571d14c3794623b098a065ff95fa22da7f25/config.yaml"
     logging.info(general.read_yaml(path))
 
+def test_yaml_thread():
+    path = "/Users/yike/GailBot/Backend/gailbot_workspace/engine_source/whisper_workspace/cache/models/pyannote/models--pyannote--speaker-diarization/snapshots/2c6a571d14c3794623b098a065ff95fa22da7f25/config.yaml"
+    keys: list[int] = []
+    with ThreadPool(max_workers=8) as executer:
+        for _ in range(10):
+            keys.append(executer.submit(general.read_yaml, [path]))
+    for key in keys:
+        logging.info(executer.get_task_result(key))
+    return True
 
 def test_yaml_gb_threads(): 
     keys: list[int] = []

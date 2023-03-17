@@ -21,11 +21,10 @@ def parse_into_word_dicts(transcription : Dict) -> List[Dict]:
     """
     parsed = list()
     segments = transcription["segments"]
-    logger.info(f"get the segment{segment}")
     try:
         for segment in segments:
             if not "words" in segment:
-                logger.error(segment)
+                continue
             word_list = segment["words"]
             for item in word_list:
                 parsed.append({
