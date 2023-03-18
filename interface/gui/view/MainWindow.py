@@ -112,12 +112,11 @@ class MainWindow(QMainWindow):
         try:
             self.StatusBar.showStatusMsg(msg, time)
         except Exception as e:
-            self.logger.info("ERROR: failed to show error message in status bar {e}")
-            pass  # pass the error if the error bar cannot show the error TODO: revise with better handler
+            self.logger.info("ERROR: failed to show error message in status bar {e}", exc_info=e)
     
-    def showFileProgress(self, msg):
+    def showFileProgress(self, progress: Tuple[str, str]):
         try:
-            self.fileTableSignals.progressChanged.emit(msg)
+            self.fileTableSignals.progressChanged.emit(progress)
         except Exception as e:
             self.logger.error(e, exc_info=e)
             self.showError(f"Failed to show file progress due to error {e}, please check back later ")
@@ -231,8 +230,6 @@ class MainWindow(QMainWindow):
         self.hide()
         self.close()
 
-
-        
     def _initLogger(self):
         consoleLog = Logger.ConsoleHandler(self.Console.LogBox)
         logging.getLogger().addHandler(consoleLog)

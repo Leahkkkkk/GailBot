@@ -2,7 +2,7 @@ from .source import SourceObject, SourceManager
 from gailbot.core.utils.logger import makelogger
 from .settings import SettingManager, SettingObject, SettingDict
 from gailbot.configs import default_setting_loader
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Callable
 
 logger = makelogger("organizer")
 CONFIG = default_setting_loader() 
@@ -133,7 +133,10 @@ class Organizer:
         except Exception as e:
             logger.error(e, exc_info=e)
             return False
-        
+    
+    def add_progress_emitter(self, source_name: str, emitter: Callable):
+        return self.source_manager.add_progress_emitter(source_name, emitter)
+     
     def create_new_setting(
         self, setting_name: str, setting: SettingDict) -> bool: 
         """ create a new setting

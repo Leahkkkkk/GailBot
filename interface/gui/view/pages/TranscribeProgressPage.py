@@ -10,7 +10,7 @@ Modified By:  Siara Small  & Vivian Li
 '''
 
 import os
-
+from typing import Tuple
 from view.config.Style import (
     Color, 
     FontSize, 
@@ -148,11 +148,11 @@ class TranscribeProgressPage(QWidget):
         self.logger.info(Text.loggerMsg)
         self.signals.cancel.emit()
         
-    def editFileProgess(self, progress: str):
+    def editFileProgess(self, progress: Tuple[str, str]):
         """ change the display of file progress on the table
 
         Args:
             progress (str): the message to show the file progress
         """
         self.logger.info("change file progress status")
-        self.fileTable.changeAllFileProgress(progress)
+        self.fileTable.showOneFileProgress(progress)

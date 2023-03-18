@@ -58,7 +58,7 @@ class ViewController():
         """
         self.window.showStatusMsg(msg,time)     
    
-    def showFilesTranscriptionProgress(self, msg):
+    def showFilesTranscriptionProgress(self, msg: Tuple[str, str]):
         """ when called, show the transcribe process for all the file
             in gui
 

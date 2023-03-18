@@ -54,8 +54,9 @@ class TranscribeComponent(Component):
             # get the list of payloads from dependency_output
             payloads : List[PayLoadObject] = dep.result
             process_start_time = time.time()
-
+            
             for payload in payloads:
+                self.emit_progress(payload, "Waiting")
                 if not payload.transcribed:
                     # add the payload to the threadpool
                     key = threadpool.add_task(
@@ -64,7 +65,8 @@ class TranscribeComponent(Component):
                         key  = payload.name)
                     assert key == payload.name
                     logger.info(f"payload {payload.name} is added to the threadpool, the key is {key}")
-
+                else:
+                    self.emit_progress(payload, "Transcribed")
             # get the result from the thread pool
             failure_payloads = []
             for payload in payloads:
@@ -108,9 +110,7 @@ class TranscribeComponent(Component):
         """
         logger.info(f"Payload {payload} being transcribed")
         
-        
-        if payload.progress_emitter: 
-            payload.progress_emitter("Start transcribing")
+        self.emit_progress(payload, "Start transcribing")
         
         # Parse the payload
         start_time = time.time()
@@ -132,6 +132,7 @@ class TranscribeComponent(Component):
         utt_map = dict()
         threadpool = ThreadPool(DEFULT_NUM_THREAD)
 
+        self.emit_progress(payload, "Adding Task")
         for idx, file in enumerate(data_files):
             transcribe_kwargs = copy.deepcopy(transcribe_kwargs)
             transcribe_kwargs.update({"audio_path": file, "payload_workspace": transcribe_ws})
@@ -143,13 +144,15 @@ class TranscribeComponent(Component):
                 key = get_name(file))
             assert filename == get_name(file)
         try:
+            self.emit_progress(payload, "Transcribing")
+            """ TODO: consider adding a while loop to watch for progress instead of a for loop """
             for idx, file in enumerate (data_files):
                 utt_map[get_name(file)] = \
                     threadpool.get_task_result(get_name(file))
                 if payload.progress_emitter:
                     payload.progress_emitter(f"{idx + 1}/{num_file} files transcribed")
             if payload.progress_emitter:
-                payload.progress_emitter(f"all files transcribed")
+                payload.progress_emitter(f"Transcribed")
                 time.sleep(1)
 
         except Exception as e:
@@ -184,11 +187,11 @@ class TranscribeComponent(Component):
         utterances = engine.transcribe(**transcribe_kwargs)
         return utterances
 
-
     def __repr__(self):
         return "Transcription Component"
 
-
-
+    def emit_progress(self, payload: PayLoadObject, msg: str):
+        if payload.progress_emitter:
+            payload.progress_emitter(msg)
 
 

@@ -58,7 +58,7 @@ class PayLoadObject(ABC):
     
     # payload result
     
-    def __init__(self, source: SourceObject, workspace: WorkspaceManager, progress_emitter: callable = None) -> None:
+    def __init__(self, source: SourceObject, workspace: WorkspaceManager) -> None:
         """ initialize a payload object
 
         Args:
@@ -75,7 +75,7 @@ class PayLoadObject(ABC):
             workspace.get_file_temp_space(self.name)        
         self.out_dir: OutputFolder = \
             workspace.get_output_space(source.output, self.name)
-        self.progress_emitter = progress_emitter
+        self.progress_emitter = source.progress_emitter
         self.transcription_result: UttResult = UttResult(self.workspace.transcribe_ws)
         self.format_result: FormatResult = FormatResult(self.workspace.format_ws)
         self.analysis_result: AnalysisResult = AnalysisResult(self.workspace.analysis_ws)

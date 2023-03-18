@@ -23,7 +23,7 @@ class FileSignals(QObject):
     getFileToTranscribe = pyqtSignal(str)
     changeProfile = pyqtSignal(tuple)
     requestprofile = pyqtSignal(str)
-    progressChanged = pyqtSignal(str)
+    progressChanged = pyqtSignal(tuple)
     
 class ProfileSignals(QObject):
     """ profile signals for front end to communicate with profile database"""

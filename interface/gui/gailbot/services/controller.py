@@ -1,4 +1,4 @@
-from typing import Dict, List, Any, Tuple, Union
+from typing import Dict, List, Any, Tuple, Union, Callable
 from .organizer import Organizer, SettingDict
 from .converter import Converter 
 from .pipeline import PipelineService
@@ -263,6 +263,10 @@ class ServiceController:
             bool: return true if settings can be applied
         """
         return self.organizer.apply_setting_to_source(source, setting, overwrite)
+
+    def add_progress_emitter(self, source: str, progress_emitter: Callable):
+        return self.organizer.add_progress_emitter(source, progress_emitter)
+
 
     def transcribe(self, sources: List[str] = None) -> Tuple [bool, List[str]]:
         """ return a list of file that was not able to be transcribed, 

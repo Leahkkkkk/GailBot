@@ -209,8 +209,6 @@ def _transcribe_timestamped_naive(
 
             if len(ws):
                 previous_end = ws[-1]["end"]
-
-
     finally:
 
         # Remove hooks

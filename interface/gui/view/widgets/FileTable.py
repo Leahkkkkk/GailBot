@@ -341,15 +341,21 @@ class FileTable(QTableWidget):
                 self.viewSignal.error.emit(KEYERROR)
         except:
             MsgBox.WarnBox("An error occurred when updating the file status")
-            
-    def changeAllFileProgress(self, progress: str):
-        """ change the file progress for all files on the table """
-        try:
-            for key in self.filePins:
-                self.updateFileContent((key, "Progress", progress))
-        except:
-            MsgBox.WarnBox("An error occurred when updating the transcription progress")
         
+    def showOneFileProgress(self, progress: Tuple[str, str]):
+        """update the transcription progress of one file
+
+        Args:
+            progress (Tuple[str, str]): the Tuple stores the file key and the 
+            progress message
+        """     
+        fileKey, msg = progress
+        try:
+            self.updateFileContent((fileKey, "Progress", msg))
+        except:
+            MsgBox.WarnBox("An error occurred when updating file progress")
+        
+     
     def changeProfile(self, key:str):
         """ open a pop up for user to change file setting 
             ** connected to changeProfile button 
@@ -532,7 +538,6 @@ class _TableCellWidgets(QObject):
 
     def _initWidgets(self):
         """ initialize the widget """
-            
         if self.widgets:
             #create the widget
             self.Action = QWidget()

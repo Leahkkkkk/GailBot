@@ -15,7 +15,7 @@ class SourceObject():
         self.path: str = path
         self.output:str = output
         self.setting: SettingObject = None  
-        self.progess_emitter: Callable = None 
+        self.progress_emitter: Callable = None 
         
 
     def source_details(self) -> Dict[str, Union[str, SettingObject]]:

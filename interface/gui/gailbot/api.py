@@ -4,7 +4,7 @@
 # @Last Modified by:   Muhammad Umair
 # @Last Modified time: 2023-01-18 23:00:46
 
-from typing import List, Dict, Union, Tuple
+from typing import List, Dict, Union, Tuple, Callable
 from gailbot.services import ServiceController, SettingDict 
 from gailbot.workspace import WorkspaceManager
 from .plugins import PluginSuite
@@ -425,4 +425,5 @@ class GailBot:
         """
         return self.gb.delete_plugin_suite(suite_name)
    
-   
+    def add_progress_emitter(self, source: str, emitter: Callable) -> bool:
+        return self.gb.add_progress_emitter(source, emitter)

@@ -38,7 +38,7 @@ class Signal(QObject):
     fileTranscribed = pyqtSignal(str)
     error = pyqtSignal(str)
     busy = pyqtSignal()
-    progress = pyqtSignal(str)
+    progress = pyqtSignal(tuple)
     killed = pyqtSignal()
 
 
@@ -77,7 +77,6 @@ class TranscribeController(QObject):
         self.signal.killed.connect(view.showFileUploadPage)
         
         # view handler to show transcription status
-        self.signal.progress.connect(view.showStatusMsg)
         self.signal.progress.connect(view.showFilesTranscriptionProgress)
         
         # view handler for transcription field 
@@ -132,9 +131,14 @@ class GBWorker(QRunnable):
     @pyqtSlot()
     def run(self):
         self.logger.info(f"start to transcribe the files {self.files}")
+        try: 
+            for key, file in self.files.items():
+                self.gb.add_progress_emitter(file, self.getProgressEmitter(key))
+        except Exception as e:
+            self.logger.error(f"Failed to add progress emitter, get error {e}")
+      
         try:
             self.signal.start.emit()
-            self.signal.progress.emit("Transcribing")
             self.logger.info("Transcribing")
             result, invalid = self.gb.transcribe(list(self.files.values()))
             self.logger.info(f"the transcription result is {result}")
@@ -170,4 +174,11 @@ class GBWorker(QRunnable):
             self.logger.error(f"Error while killing  the thread {e}", exc_info=e)
             self.signal.error("The task cannot been cancelled")
 
-            
+    def getProgressEmitter(self, fileKey):
+        """private function to emit file progress
+
+        Args:
+            fileKey (_type_): _description_
+            msg (_type_): _description_
+        """
+        return lambda msg : self.signal.progress.emit((fileKey, msg))

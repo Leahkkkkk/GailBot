@@ -132,7 +132,23 @@ class SourceManager():
                 self.sources[source_name].apply_setting(setting, overwrite)
                 return self.sources[source_name].configured
         return False
-    
+   
+    def add_progress_emitter(self, source: str, emitter: callable) -> bool:
+        """ 
+        Add function to display file progress 
+
+        Args:
+            source (str): a string that identify the source
+            emitter (callable): the function that check for file progress
+
+        Returns:
+            bool: True if the emitter is applied, false otherwise
+        """
+        source_name = get_name(source) if is_path(source) else source
+        if self.is_source(source_name):
+            return self.sources[source_name].add_progress_emitter(emitter)    
+        return False
+        
     def get_sources_with_setting(self, setting_name:str) -> List[str]: 
         """
         Accesses all sources with a given settings profile
