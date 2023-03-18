@@ -44,19 +44,37 @@ class AnalysisComponent(Component):
             payloads: List [PayLoadObject] = dependency_res.result
             for payload in payloads:
                 logger.info(payload)
+                if payload.progress_emitter:
+                    payload.progress_emitter(f"start analyzing file")
                 start_time = time.time()
                 plugins = payload.setting.get_plugin_setting()
+                num_plugins = len(plugins)
                 logger.info(plugins)
-                for plugin in plugins:
-                    plugin_suite: PluginSuite = self.plugin_manager.get_suite(plugin)
-                    logger.info(plugin_suite)
-                    if plugin_suite:
-                        # create a method that get passed to plugin suite
-                        method = GBPluginMethods(payload)
-                        res : Dict[str, ComponentState] = plugin_suite(base_input = None, methods = method)
-                        for state in res.values():
-                            assert state == ComponentState.SUCCESS
-                        logger.info(res)
+               
+                for idx, plugin in enumerate (plugins):
+                    try:
+                        plugin_suite: PluginSuite = self.plugin_manager.get_suite(plugin)
+                    except Exception as e:
+                        logger.error(f"fail to get the plugin suite {plugin}, error {e}", exc_info=e)
+                        if payload.progress_emitter:
+                            payload.progress_emitter(f"applying plugin suite {plugin} failded")
+                        
+                        raise e
+                    else:
+                        logger.info(plugin_suite) 
+                        if payload.progress_emitter:
+                            payload.progress_emitter(f"applying plugin suite {plugin}")
+                        
+                        if plugin_suite:
+                            # create a method that get passed to plugin suite
+                            method = GBPluginMethods(payload)
+                            res : Dict[str, ComponentState] = plugin_suite(base_input = None, methods = method)
+                            for state in res.values():
+                                assert state == ComponentState.SUCCESS
+                            logger.info(res)
+                       
+                        if payload.progress_emitter:
+                            payload.progress_emitter(f"{idx + 1} / {num_plugins} plugin suites applied")
                         
                 end_time = time.time()
                 stats = ProcessingStats(

@@ -86,7 +86,10 @@ class FileTable(QTableWidget):
                  transferListColor = Color.MAIN_BACKGROUND,
                  *args, 
                  **kwargs):
-        """_summary_
+        """ a file table that display the files uploaded by the user, 
+            and support different widgets that can be added to the 
+            file table to edit the file's setting profile, removing file 
+            from database, as well as selecting file to be transcribed
 
         Args:
             headers (List[str]): list of headers 
@@ -117,7 +120,7 @@ class FileTable(QTableWidget):
         self.transferlistBackground = transferListColor
         self.viewSignal = Signals()
         self.fileSignal = fileSignal
-        self._setFileHeader()     # set file header 
+        self._setFileHeader()           # set file header 
         self._initStyle()
         self._connectViewSignal()
         self.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)  

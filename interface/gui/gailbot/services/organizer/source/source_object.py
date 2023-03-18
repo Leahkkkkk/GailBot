@@ -1,4 +1,4 @@
-from typing import Dict, Union
+from typing import Dict, Union, Callable
 from ..settings import SettingObject
 from gailbot.core.utils.general import get_name
 
@@ -15,6 +15,8 @@ class SourceObject():
         self.path: str = path
         self.output:str = output
         self.setting: SettingObject = None  
+        self.progess_emitter: Callable = None 
+        
 
     def source_details(self) -> Dict[str, Union[str, SettingObject]]:
         """
@@ -77,6 +79,23 @@ class SourceObject():
         if overwrite or not self.setting:
             self.setting = setting
     
+    def add_progress_emitter(self, emitter: Callable):
+        """ 
+        Add a function to the source object that will take 
+        in one string as argument
+        
+
+        Args:
+            emitter (Callable): a function that will take in the string 
+                                as a progress message 
+
+
+        """
+        if callable(emitter):
+            self.progress_emitter = emitter
+            return True 
+        else:
+            return False
 
     def __repr__(self) -> str:
         """

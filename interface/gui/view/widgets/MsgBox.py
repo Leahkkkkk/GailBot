@@ -45,7 +45,6 @@ class ConfirmBox:
         self.confirm = confirm 
         initSecondaryColorBackground(self.msgBox)
         self.msgBox.exec()
-        
     
     def _confirm(self, button):
         """ Check and handle user's confirmation 

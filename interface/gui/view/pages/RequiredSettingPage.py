@@ -8,12 +8,11 @@ Last Modified: Thursday, 6th October 2022 11:08:43 am
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
- 
+from typing import Dict
 from view.config.Style import FontSize,FontFamily, Color
 from view.config.Text import ProfilePageText as Text
 from view.widgets import  Label
 from view.components import RequiredSettingForm
-from view.widgets.MsgBox import WarnBox
 from view.widgets.Button import ColoredBtn
 from PyQt6.QtWidgets import (
     QWidget, 
@@ -31,7 +30,7 @@ class RequiredSettingPage(QWidget):
         self._initWidget()
         self._initLayout()
 
-    def setValue(self, data:dict):
+    def setValue(self, data: Dict[str, str]):
         """ sets the value of data
         Args: data:dict: dictionary that is passed in to be updated
         """

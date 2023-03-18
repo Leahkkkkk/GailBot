@@ -48,7 +48,6 @@ class TranscribeComponent(Component):
             and payloads data
         """
         try:
-
             threadpool = ThreadPool(self.num_thread)
             logger.info(dependency_output)
             dep: ComponentResult = dependency_output["base"]
@@ -108,11 +107,16 @@ class TranscribeComponent(Component):
               otherwise
         """
         logger.info(f"Payload {payload} being transcribed")
+        
+        
+        if payload.progress_emitter: 
+            payload.progress_emitter("Start transcribing")
+        
         # Parse the payload
         start_time = time.time()
         transcribe_ws = payload.workspace.transcribe_ws
         data_files = payload.data_files
-
+        num_file = len(data_files)
         # Parse the settings
         engine_name = payload.get_engine()
         init_kwargs = payload.get_engine_init_setting()
@@ -128,7 +132,7 @@ class TranscribeComponent(Component):
         utt_map = dict()
         threadpool = ThreadPool(DEFULT_NUM_THREAD)
 
-        for file in data_files:
+        for idx, file in enumerate(data_files):
             transcribe_kwargs = copy.deepcopy(transcribe_kwargs)
             transcribe_kwargs.update({"audio_path": file, "payload_workspace": transcribe_ws})
             filename = threadpool.add_task(
@@ -139,9 +143,14 @@ class TranscribeComponent(Component):
                 key = get_name(file))
             assert filename == get_name(file)
         try:
-            for file in data_files:
+            for idx, file in enumerate (data_files):
                 utt_map[get_name(file)] = \
                     threadpool.get_task_result(get_name(file))
+                if payload.progress_emitter:
+                    payload.progress_emitter(f"{idx + 1}/{num_file} files transcribed")
+            if payload.progress_emitter:
+                payload.progress_emitter(f"all files transcribed")
+                time.sleep(1)
 
         except Exception as e:
             logger.error(f"Failed to transcribed {len(data_files)} file in parallel due to the error {e}")

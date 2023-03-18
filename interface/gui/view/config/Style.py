@@ -49,3 +49,22 @@ class buttonStyle:
                     border-radius:5;\
                     font-size:{FontSize.BTN}"
                     
+
+
+
+@dataclass
+class StyleSource:
+    """ stores file paths to different style theme"""
+    CURRENT_COLOR       = StyleDataPath.currentColor
+    CURRENT_FONTSIZE    = StyleDataPath.currentFontSize
+
+
+""" a search table with all style choices and the path to the source"""
+StyleTable = {
+    "Dark Mode"     :   StyleDataPath.darkColor,
+    "Light Mode"    :   StyleDataPath.lightColor,
+    "Small"         :   StyleDataPath.smallFontSize,
+    "Large"         :   StyleDataPath.largeFontSize,
+    "Medium"        :   StyleDataPath.mediumFontSize 
+}
+    

@@ -23,7 +23,8 @@ class Image(QLabel):
         can be displayed  
         
         Args:
-            imagename (str): filename of the image
+            imagename (str): relative file path of the image, relative to the 
+                             project root 
             size (int, Optional) : size of the image, default to 50
     """
     def __init__(

@@ -25,8 +25,6 @@ from view.widgets.Label import Label
 from view.widgets.TabPage import TabPage
 from view.widgets.MsgBox import WarnBox
 from view.widgets.ComboBox import ComboBox
-
-import userpaths
 from PyQt6.QtWidgets import (
     QWidget,
     QFileDialog, 
@@ -38,7 +36,7 @@ from PyQt6.QtWidgets import (
     QTableWidgetItem,
     QPushButton)
 from PyQt6.QtCore import QSize, Qt
-from PyQt6.QtGui import QDragEnterEvent, QDropEvent
+from PyQt6.QtGui import QDragEnterEvent 
 
 center = Qt.AlignmentFlag.AlignHCenter
 
@@ -86,7 +84,7 @@ class OpenFile(TabPage):
     def _initWidget(self):
         """ initializes the widgets """
         self.logger.info("")
-        self.header = Label("Drop audio files below (Only wav files are supported)", FontSize.BTN, FontFamily.MAIN)
+        self.header = Label(Text.uploadInstruction, FontSize.BTN, FontFamily.MAIN)
         self.fileDisplayList = QTableWidget()
         self.filePaths = dict()
         self.uploadFileBtn = ColoredBtn(
@@ -159,7 +157,6 @@ class OpenFile(TabPage):
         self.logger.info("")
         try:
             dialog = QFileDialog()
-            # dialog.setDirectory(userpaths.get_desktop())
             fileFilter = Text.fileFilter
             selectedFiles = dialog.getOpenFileNames(filter = fileFilter)
             if selectedFiles:
@@ -181,7 +178,6 @@ class OpenFile(TabPage):
         self.logger.info("")
         try:
             dialog = QFileDialog() 
-            # dialog.setDirectory(userpaths.get_desktop())
             selectedFolder = dialog.getExistingDirectory()
             if selectedFolder:
                 self._addFileToFileDisplay(selectedFolder)
@@ -195,7 +191,7 @@ class OpenFile(TabPage):
     def _addFileToFileDisplay(self, file):
         """ add the file to the file display table """
         self.logger.info("")
-        icon = "📁" if os.path.isdir(file) else "🔊"
+        icon = Text.directoryLogo if os.path.isdir(file) else Text.audioLogo
         try:
             row = self.fileDisplayList.rowCount()
             self.fileDisplayList.insertRow(row)
@@ -203,7 +199,7 @@ class OpenFile(TabPage):
             filestr = os.path.join(os.path.basename(os.path.dirname(file)),os.path.basename(file))
             newFile = QTableWidgetItem(icon + filestr)
             self.fileDisplayList.setItem(row, 0, newFile)
-            btn = QPushButton("❌")
+            btn = QPushButton(Text.delete)
             btn.setFixedSize(QSize(20,20))
             btn.setContentsMargins(1,5,1,5)
             self.fileDisplayList.setCellWidget(row, 1, btn)
@@ -216,7 +212,7 @@ class OpenFile(TabPage):
         self.logger.info("remove the file with key {key}")
         try:
             row = self.fileDisplayList.indexFromItem(fileItem).row()
-            self.logger.info(f"removeing the row {row}")
+            self.logger.info(f"removing the row {row}")
             self.fileDisplayList.removeRow(row)
             del self.filePaths[key]
         except Exception as e:

@@ -90,10 +90,12 @@ class FileUploadPageText:
     removeWarnText        = "Remove all files?"
     tabAddfile            = "Add File"
     tabAddFolder          = "Add Folder"
+    uploadInstruction      = "Drop audio files below (Only wav files are supported)"
     ## unicode for an audio icon
     audioLogo = "\U0001F50A"
     ## unicode for a file folder icon
     directoryLogo = "\U0001F4C1"
+    delete = "\u274C"
 
 @dataclass
 class RecordPageText:

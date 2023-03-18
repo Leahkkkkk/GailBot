@@ -116,7 +116,7 @@ class EngineSetting(TabPage):
         self.verticallayout.addWidget(
             self.header, 
             alignment=Qt.AlignmentFlag.AlignHCenter)
-        self.mainForm = DependentCombo(Form.Engine, "Speech to Text Engine")
+        self.mainForm = DependentCombo(Form.Engine, "Speech to Text Engine", "engine")
         self.scrollArea  = ScrollArea()
         self.scrollArea.setWidget(self.mainForm)
         initSecondaryColorBackground(self.scrollArea)
@@ -140,7 +140,6 @@ class EngineSetting(TabPage):
             WarnBox("an error occurred when getting the form data")
 
 
-                
 class PluginSetting(TabPage):
     """ class for the plugin settings tab """
     def __init__(self, plugins, *args, **kwargs) -> None:
@@ -156,8 +155,6 @@ class PluginSetting(TabPage):
             self.confirmBtn,
             alignment=Qt.AlignmentFlag.AlignRight)
   
-        
-        
     def getData(self):
         """ gets current value of data """
         try:

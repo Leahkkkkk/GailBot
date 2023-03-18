@@ -27,7 +27,7 @@ from view.widgets import (
 from view.components.SaveLogDialog import SaveLogFile
 from config_frontend.ConfigPath import WorkSpaceConfigPath, SettingDataPath
 from view.config.Setting import SystemSetting, DefaultSetting
-from view.config.StyleSource import StyleSource, StyleTable
+from view.config import StyleSource, StyleTable
 from view.config.Text import SystemSetPageText as Text
 from view.config.Text import SystemSettingForm as Form
 from view.config.Text import LogDeleteTimeDict

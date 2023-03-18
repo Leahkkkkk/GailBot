@@ -27,7 +27,6 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import  Qt
 from PyQt6.QtGui import QIcon, QCursor
 
-
 class ColoredBtn(QPushButton):
     """ a button widget with colored background and white button text
 
@@ -163,82 +162,6 @@ class ToggleBtn(QPushButton):
         """ reset teh button's state to initial state"""
         self.setIcon(self.rightIcon)
         self.state = True
-
-class onOffButton(QWidget):
-    """ a toggle button that displays "on" or "off" text while being toggled
-    
-    Args: 
-        label(str): a line of text above the button 
-        childWidget(QWidget, optional): contains the content that can be hidden
-                                        or shown will the button is toggled
-    """
-    def __init__(
-        self, 
-        label: str, 
-        state = True,
-        *args, 
-        **kwargs
-    ) -> None:
-        super().__init__(*args, **kwargs)
-        self.label = label
-        self.state = state
-        self._initWidget()
-        self._initLayout()
-        self._connectSignal()
-    
-        
-    def _initWidget(self):
-        """initialize widgets for on-off select"""
-        self.label = Label.Label(self.label, FontSize.BTN)
-
-        if self.state:
-            self.onOffBtn = QPushButton(Text.on)
-        else:
-            self.onOffBtn = QPushButton(Text.off)
-        self.onOffBtn.setMaximumSize(
-            Dimension.ICONBTN, Dimension.ICONBTN)
-    
-    def _initLayout(self):
-        """initialize layout for on-off select"""
-        self.layout = QHBoxLayout(self)
-        self.setLayout(self.layout)
-        self.layout.addWidget(self.label)
-        self.layout.addWidget(
-            self.onOffBtn, alignment=Qt.AlignmentFlag.AlignLeft) 
-        
-    def _connectSignal(self):
-        """marked signal as clicked"""
-        self.onOffBtn.clicked.connect(self._updateStatus)
-
-    def _updateStatus(self):
-        """update status of on-off select"""
-        if self.state:
-            self.state = False
-            self.onOffBtn.setText(Text.off)
-        else:
-            self.state = True 
-            self.onOffBtn.setText(Text.on)
-
-    def value(self):
-        """ access state of on-off select """
-        return self.state
-    
-    def setText(self, text):
-        """ set the text of the button to be ON or OFF"""
-        if text == "ON" or text:
-            self.state = True 
-            self.onOffBtn.setText(Text.on)
-        else:
-            self.state = False 
-            self.onOffBtn.setText(Text.off)
-            
-    def enable(self):
-        """ public function to enable button click """
-        self.onOffBtn.setEnabled(True)
-    
-    def disable(self):
-        """ public function to disable button click """
-        self.onOffBtn.setEnabled(False)
 
 class iconBtn(QPushButton):
     """ A button with icon
