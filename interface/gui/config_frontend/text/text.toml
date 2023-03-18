@@ -37,7 +37,6 @@ moreInfoText              = "For more information, visit:"
 firstLaunchHeader         = "Welcome to GailBot's initial setup"
 firstLaunchInstruction    = """Please specify the path to GailBot's \
                              workspace directory on your computer.\nThis is where all internal and log files will be stored."""
-changeWorkDir            = "Change Path to GailBot Work Space"
 confirmBtn                = "Confirm"
 changeDirBtn              = "Change Directory"
 workspacePath             = "GailBot Work Space Path"
@@ -171,8 +170,8 @@ TabHeader6   = "Plugin Settings"
 pluginFilter = "json file (*.json) zip file (*.zip)"
 
 [MainStackText]
-ProfileSetting = "Profile Settings"
-SystemSetting  = "System Settings"
+profilesetting = "profile settings"
+systemsetting  = "system settings"
 
 [OutputFormatForm]
 header           = "Output File Format"
@@ -213,8 +212,6 @@ changeSet  = "Change Profile"
 profileDet = "Profile Details"
 
 [multipleComboText]
-username = "Username"
-password = "Password"
 
 [popUpText]
 ## unicode of left pointing arrow

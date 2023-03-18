@@ -50,9 +50,9 @@ class RequiredSettingPage(QWidget):
     def _initWidget(self):
         """ initializes the widgets on the page """
         self.label = Label.Label(
-            Text.requiredSetHeader, FontSize.HEADER2, FontFamily.MAIN )
+            Text.engineSettingHeader, FontSize.HEADER2, FontFamily.MAIN )
         self.description = Label.Label(
-            Text.requiredSetCaption, FontSize.DESCRIPTION, FontFamily.MAIN )
+            Text.engineSettingCaption,FontSize.DESCRIPTION, FontFamily.MAIN )
         self.deleteBtn = ColoredBtn (
             Text.deleteBtn, Color.CANCEL_QUIT
         )

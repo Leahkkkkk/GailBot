@@ -13,7 +13,7 @@ import datetime
 import logging
 import re
 
-from config_frontend import getWorkPath
+from view.config import getWorkPaths
 from PyQt6 import QtCore
 from PyQt6.QtWidgets import QLineEdit
 
@@ -35,7 +35,7 @@ def makeLogger(source:str):
     logger = logging.getLogger()
     # create log file handler
     global fileHandlerAdded
-    logdir = getWorkPath().frontendLogFiles
+    logdir = getWorkPaths().frontendLogFiles
     print(f"log files {logdir}")
     filePath = os.path.join(logdir, f"GailBot-GUI-Log-Report-{current_time}.log")
     if not os.path.isdir(logdir):

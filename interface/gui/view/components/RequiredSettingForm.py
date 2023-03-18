@@ -17,17 +17,14 @@ from view.widgets.Form.DependentComboBox import DependentCombo
 from view.config.Text import EngineSettingForm
 from view.config.Text import CreateNewProfilePageText as Text 
 from view.config.Style import Dimension
-import logging
+from gbLogger import makeLogger
 
-logger = logging.getLogger()
-logger = logging.LoggerAdapter(logger, {"source": "Frontend"})
 
 from PyQt6.QtWidgets import (
     QWidget, 
     QVBoxLayout, 
 )
 from PyQt6.QtCore import Qt
-
     
 class RequiredSettingForm(QWidget):
     """ implementation of a form that allow user to create required setting 
@@ -44,7 +41,8 @@ class RequiredSettingForm(QWidget):
         super().__init__(*args, **kwargs)
         self._initWidget()
         self._initLayout()
-         
+        self.logger =  makeLogger("F")
+        
     def _initWidget(self):
         """initialize widgets"""
         self.engineForm = DependentCombo(
@@ -68,14 +66,8 @@ class RequiredSettingForm(QWidget):
             data (Dict[str, Dict[str, dict]]): a dictionary that stores the 
                                                profile values
         """
-        logger.info(data)
-        formdict = dict()
-        engine = data.pop("engine", "whisper")
-        formdict[engine] = dict()
-        formdict[engine].update(data)
-        logger.info(formdict)
-        self.engineForm.setValue(formdict)
-    
+        self.logger.info(f"try to set the data {data}")
+        self.engineForm.setValue(data)
     
     def getValue(self) -> Dict [str, dict]:
         """ a public function that get the file value
@@ -83,10 +75,5 @@ class RequiredSettingForm(QWidget):
         Returns:
             dict: returns a dictionary that stores the profile values
         """
-        profile = dict() 
-        d = self.engineForm.getValue()
-        engine = list(d.keys())[0]
-        profile["engine"] = engine
-        profile.update(d[engine])
-        logger.info(profile)
+        profile = self.engineForm.getValue()
         return profile

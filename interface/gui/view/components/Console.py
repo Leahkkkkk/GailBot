@@ -27,11 +27,10 @@ class Console(QWidget):
     """ A console window that display all log messages """
     def __init__(self):
         super().__init__()
+        logging.getLogger().setLevel(logging.DEBUG)
         self.LogBox = QPlainTextEdit()
         self.LogBox.setReadOnly(True)
-        logging.getLogger().setLevel(logging.DEBUG)
         self.resize(QSize(Dimension.CONSOLEWIDTH, Dimension.CONSOLEHEIGHT))
-
         self.label = QLabel(WindowTitle.consoleWindow)
         layout = QVBoxLayout()
         layout.addWidget(self.label)

@@ -12,22 +12,18 @@ Description: a pop up dialogue that opens during the first launch of the
 '''
 import os 
 import datetime
-import toml 
-import logging
-from view.widgets import Label, Button, MsgBox
-from view.widgets.MsgBox import WarnBox
+from view.widgets import Label, Button
 from view.util.io import zip_file, is_directory, copy
 from PyQt6.QtWidgets import QDialog, QFileDialog, QVBoxLayout
-from config_frontend.ConfigPath import WorkSpaceConfigPath, PROJECT_ROOT, FRONTEND_CONFIG_ROOT
+from config_frontend.ConfigPath import PROJECT_ROOT
 from view.config.Style import Color, FontFamily, FontSize, Dimension
 from view.config.Text import WelcomePageText as TEXT 
 from gbLogger import makeLogger
-from config_frontend import getWorkPath, getWorkBasePath
+from view.config import getWorkBasePath
+
 from PyQt6.QtCore import QSize, Qt
 import userpaths
 center = Qt.AlignmentFlag.AlignHCenter
-USER_ROOT_NAME = "GailBot"
-BACKEND_LOG_NAME = "BackendLogFiles"
 
 class SaveLogFile(QDialog):
     """ 
@@ -88,16 +84,8 @@ class SaveLogFile(QDialog):
             by user
         """
         try:
-            """ TODO: find better implementation if we were to move 
-                      the backend log files 
-            """
-            backendLog = getWorkPath().backendLogFiles
-            if is_directory(os.path.join(PROJECT_ROOT, BACKEND_LOG_NAME)):
-                copy(os.path.join(PROJECT_ROOT, BACKEND_LOG_NAME), backendLog)
             logdir = getWorkBasePath()
-            zip_file(logdir, 
-                     os.path.join(self.userRoot, f"{TEXT.zipFileName}-{datetime.datetime.now()}.zip"),
-                     ".log")
+            zip_file(logdir, os.path.join(self.userRoot, f"{TEXT.zipFileName}-{datetime.datetime.now()}.zip"), ".log")
             self.close()
         except Exception as e:
             self.logger.error(e, exc_info=e)

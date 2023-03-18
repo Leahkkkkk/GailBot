@@ -1,7 +1,6 @@
 from typing import Dict, Tuple 
-
+from copy import deepcopy
 from view.config.Style import Color, Dimension, FontSize 
-from view.config.Text import MultipleComboText as Text 
 from view.widgets import  Label, ComboBox, TextForm
 from view.widgets.Form.FormWidget import FormWidget 
 
@@ -13,6 +12,11 @@ from PyQt6.QtWidgets import (
 
 class MultipleCombo(QWidget, FormWidget):
     def __init__(self, formData: Dict[str, dict], *args, **kwargs) -> None:
+        """ create a list of combobox 
+
+        Args:
+            formData (Dict[str, dict]): the form data stored in a dictionary 
+        """
         super().__init__(*args, **kwargs)
         self.formData = formData
         self.formWidgets = dict()
@@ -35,16 +39,62 @@ class MultipleCombo(QWidget, FormWidget):
         self.mainForm.setValues(data)
 
 class DependentCombo(QWidget, FormWidget):
-    def __init__(self, data: Dict[str, dict], label, *args, **kwargs) -> None:
+    def __init__(self, data: Dict[str, dict], label, pivotKey, *args, **kwargs) -> None:
+        """ a dependent combobox form which can dynamically change the form 
+            based on the user's choices of the first combobox 
+
+        Args:
+            data (Dict[str, dict]): a dictionary that stores the form values 
+            label (str): the label of the combo input 
+            pivotKey (str): the rest of the form will depends on the value in the pivot key. Defaults to None.
+        """
         super().__init__(*args, **kwargs)
         self.form = data 
         self.label = label 
         self.value = None
-        self.initUI()
-        self.connectSignal()
-        self.updateComboBox(self.mainCombo.currentIndex())
+        self.pivotKey = pivotKey
+        self._initUI()
+        self._connectSignal()
+        self._updateComboBox(self.mainCombo.currentIndex())
     
-    def initUI(self): 
+    def setValue(self, value: Dict[str, Dict[str, str]]):
+        """ given a dictionary that stores the form input as key 
+            value pair, set the dependent combobox widget to the 
+            given value 
+
+        Args:
+            value (Dict[str, Dict[str, str]]): _description_
+        
+        Raises:
+            raises a key error if the provided data dictionary does
+            not include the pivotKey 
+        """
+        d =  deepcopy(value)
+        temp: Dict[str, Dict[str, str]] = dict()
+        pivotValue = d.pop(self.pivotKey, "invalid")
+        if pivotValue != "invalid":
+            temp[pivotValue] = dict()
+            temp[pivotValue].update(d)
+            self.mainCombo.setCurrentText(pivotValue)
+            self.toggleList.setValue(temp[pivotValue])
+        else:
+            raise KeyError(self.pivotKey)
+    
+    def getValue(self) -> Dict[str, str]:
+        """get the value of the user input in the form of a 
+           dictionary with only one level  
+
+        Returns:
+            Dict[str, str]: stores the key value pairs to represent form  
+                            input 
+        """
+        value = dict()
+        mainComboValue = self.mainCombo.currentText()
+        value[self.pivotKey] = mainComboValue
+        value.update(self.toggleList.getValue())
+        return value 
+
+    def _initUI(self): 
         self.mainLabel = Label.Label(self.label, FontSize.BODY)
         self.mainCombo = ComboBox.ComboBox(self)
         self.mainCombo.setMaximumWidth(Dimension.TOGGLEBARMINWIDTH)
@@ -57,7 +107,13 @@ class DependentCombo(QWidget, FormWidget):
         self.verticalLayout.addWidget(self.mainLabel)
         self.verticalLayout.addWidget(self.mainCombo)
     
-    def updateComboBox(self, idx: int):
+    def _updateComboBox(self, idx: int):
+        """ private function called to update the form content based 
+            on the choice of the mainCombo
+
+        Args:
+            idx (int): the index of the current mainCombo value
+        """
         data = self.mainCombo.itemData(idx)
         if self.toggleList:
             self.verticalLayout.removeWidget(self.toggleList)
@@ -67,17 +123,9 @@ class DependentCombo(QWidget, FormWidget):
         self.toggleList.setContentsMargins(0,0,0,0)
         self.verticalLayout.addWidget(self.toggleList)
     
-    def connectSignal(self):
-        self.mainCombo.currentIndexChanged.connect(self.updateComboBox)
+    def _connectSignal(self):
+        """ 
+        private function called to connect signal
+        """
+        self.mainCombo.currentIndexChanged.connect(self._updateComboBox)
     
-    def setValue(self, value: Dict[str, Dict[str, dict]]):
-        super().setValue(value)
-        mainComboValue = list(value)[0]
-        self.mainCombo.setCurrentText(mainComboValue)
-        self.toggleList.setValue(value[mainComboValue])
-    
-    def getValue(self):
-        value = dict()
-        mainComboValue = self.mainCombo.currentText()
-        value[mainComboValue] = self.toggleList.getValue()
-        return value 

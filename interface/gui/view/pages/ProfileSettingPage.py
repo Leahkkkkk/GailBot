@@ -23,7 +23,6 @@ from gbLogger import makeLogger
 from view.Signals import ProfileSignals
 from view.pages import (
     RequiredSettingPage, 
-    PostSettingPage, 
     PluginPage
 )
 from view.widgets import (

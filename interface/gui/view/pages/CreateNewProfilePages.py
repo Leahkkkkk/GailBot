@@ -25,9 +25,7 @@ from view.widgets.TabPage import TabPage
 from view.widgets.Form.TextInput import TextInput
 from view.widgets.MsgBox import WarnBox
 from view.widgets.Background import initSecondaryColorBackground
-from view.components import OutputFormatForm
 from view.pages.PluginPage import PluginPage
-from view.pages.PostSettingPage import PostSettingPage
 
 
 from PyQt6.QtWidgets import  QVBoxLayout
@@ -141,64 +139,7 @@ class EngineSetting(TabPage):
         except:
             WarnBox("an error occurred when getting the form data")
 
-class OutPutFormatSetting(TabPage):
-    """ class for the output of settings """
-    def __init__(self, *args, **kwargs) -> None:
-        """ initializes class """
-        super().__init__(*args, **kwargs)
-        self.mainForm = OutputFormatForm.OutPutFormat()
-        self.scrollArea  = ScrollArea()
-        self.scrollArea.setWidget(self.mainForm)
-        self.scrollArea.setWidgetResizable(True)
-        self.scrollArea.setFixedHeight(Dimension.LARGEDIALOGHEIGHT//4 * 3)
-        initSecondaryColorBackground(self.scrollArea)
-        self.verticallayout = QVBoxLayout()
-        self.setLayout(self.verticallayout)
-        self.header = Label(
-            Text.outputSettingHeader, FontSize.HEADER2, FontFamily.MAIN)
-        self.verticallayout.addWidget(
-            self.header, alignment=hCenter|top)
-        self.verticallayout.addWidget(self.scrollArea)
-        self.confirmBtn = ColoredBtn(
-            Text.cofirmBtn, 
-            Color.SECONDARY_BUTTON)
-        self.confirmBtn.clicked.connect(lambda: self.signals.nextPage.emit())
-        self.verticallayout.addWidget(
-            self.confirmBtn, 
-            alignment=bottomRight)
-        
-    def getData(self):
-        """ gets current value of data """
-        try:
-            return self.mainForm.getValue()
-        except:
-            WarnBox("an error occurred when getting the form data")
-            
 
-class PostTranscribeSetting(TabPage):
-    """ class for the post-transcription settings tab """
-    def __init__(self, *args, **kwargs) -> None:
-        """ initializes tab """
-        super().__init__(*args, **kwargs)
-        self.logger = makeLogger("F")
-        self.mainForm = PostSettingPage()
-        self.confirmBtn = ColoredBtn(Text.cofirmBtn, Color.SECONDARY_BUTTON)
-        self.confirmBtn.clicked.connect(lambda: self.signals.nextPage.emit())
-        self.verticallayout = QVBoxLayout()
-        self.setLayout(self.verticallayout)
-        self.verticallayout.addWidget(self.mainForm)
-        self.verticallayout.addWidget(
-            self.confirmBtn, 
-            alignment=Qt.AlignmentFlag.AlignRight)
-
-        
-    def getData(self):
-        """ gets current value of data """
-        try:
-            self.logger.info(self.mainForm.getValue())
-            return self.mainForm.getValue() 
-        except:
-            WarnBox("an error occurred when getting the form data")
                 
 class PluginSetting(TabPage):
     """ class for the plugin settings tab """

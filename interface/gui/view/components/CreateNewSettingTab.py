@@ -19,8 +19,6 @@ from view.config.Style import Dimension
 from view.pages.CreateNewProfilePages import (
     ProfileName,
     EngineSetting, 
-    OutPutFormatSetting,
-    PostTranscribeSetting,
     PluginSetting
 )
 from view.widgets.PopUpTab import Tab
@@ -36,16 +34,13 @@ class Signals(QObject):
     """ a signal object to send new setting data values """
     newSetting = pyqtSignal(object)
     
-
 class CreateNewSetting(QDialog):
     def __init__(self, plugins : List[str], *agrs, **kwargs) -> None:
         """ a pop up dialog for user to create a new profile
             the tab implement below processes for creating a new profile:
             1. input for profile name
             2. a form to create speech engine setting 
-            3. a form to create output format setting 
-            4. a form to create post transcription setting 
-            5. a form to create plugin setting 
+            3. a form to select plugin setting 
              
         Constructor Args:
             plugins (List [str]): a list of string that stores the available 
@@ -64,7 +59,7 @@ class CreateNewSetting(QDialog):
             Text.WindowTitle,
             {
                 Text.TabHeader1: self.addProfileName,
-                Text.TabHeader3: self.engineSetting
+                Text.TabHeader2: self.engineSetting
             },
             QSize(Dimension.LARGEDIALOGWIDTH, Dimension.LARGEDIALOGHEIGHT)
         )
@@ -76,8 +71,7 @@ class CreateNewSetting(QDialog):
         self.logger.info("")
         
     def _postSetting(self):
-        """ a function that send the new setting data through signal"""
-    
+        """ a function that send the new setting data through signal""" 
         res = dict()
         engineSetting = dict() 
         profileName = self.addProfileName.getData()

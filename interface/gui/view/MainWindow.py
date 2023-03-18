@@ -67,8 +67,7 @@ class MainWindow(QMainWindow):
         self.MainStack = MainStack.MainStack(
             setting_data,
             self.fileTableSignals, 
-            self.profileSignals,
-            parent=self)
+            self.profileSignals)
         self.logger.info("main stack initialized")
         self.setCentralWidget(self.MainStack)
         self.setContentsMargins(0,0,0,0)

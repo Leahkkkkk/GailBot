@@ -24,7 +24,7 @@ from controller.util.io import is_directory
 from controller.transcribeController import TranscribeController
 from controller.mvController import MVController
 from gbLogger import makeLogger
-from config_frontend import  getWorkPath, getFileManagementData
+from view.config import getWorkPaths, getFileManagementData
 from gailbot.api import GailBot
 # import from view
 from view import ViewController
@@ -58,7 +58,7 @@ class Controller(QObject):
         self.signal = Signal()
         
         # initialize the gailbot workspace
-        workSpace = getWorkPath()
+        workSpace = getWorkPaths()
         for path in workSpace.__dict__.values():
             if not is_directory(path):
                 os.makedirs(path) 
@@ -167,7 +167,7 @@ class Controller(QObject):
         """ clear the log that is expired"""
         currentTime = int(time.time())
         deleteTime = currentTime - getFileManagementData().AUTO_DELETE_TIME * 24 * 60
-        logdir = getWorkPath().logFiles
+        logdir = getWorkPaths().logFiles
         files = glob.iglob(os.path.join(logdir, "*.log"))
         for file in files:
             fileTime = int(os.path.getctime(file))

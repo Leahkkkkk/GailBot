@@ -12,18 +12,17 @@ Modified By:  Siara Small  & Vivian Li
 import os
 import glob
 import shutil
-from config_frontend import getWorkPath, getFileManagementData
-
+from view.config import getWorkPaths
 
 def clearAllLog():
     """ clear all the log file  """
-    logdir = getWorkPath().frontendLogFiles
+    logdir = getWorkPaths().frontendLogFiles
     files = glob.iglob(os.path.join(logdir, "*.log"))
     for file in files:
         print(file)
         os.remove(file)
         
-    backendDir = getWorkPath().backendLogFiles
+    backendDir = getWorkPaths().backendLogFiles
     for root, dirs, files in os.walk(backendDir):
         for file in files:
             os.remove(os.path.join(root, file))

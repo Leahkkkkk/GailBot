@@ -24,7 +24,7 @@ from view.widgets import (
     Label,
     Button
 )
-from view.components.WorkSpaceDialog import SaveLogFile
+from view.components.SaveLogDialog import SaveLogFile
 from config_frontend.ConfigPath import WorkSpaceConfigPath, SettingDataPath
 from view.config.Setting import SystemSetting, DefaultSetting
 from view.config.StyleSource import StyleSource, StyleTable
@@ -34,7 +34,6 @@ from view.config.Text import LogDeleteTimeDict
 from config_frontend import FRONTEND_CONFIG_ROOT as dirname
 from view.util.FileManage import clearAllLog
 from gbLogger import makeLogger
-from config_frontend import getWorkBasePath
 from view.widgets import MsgBox
 
 from PyQt6.QtWidgets import (

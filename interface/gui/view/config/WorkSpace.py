@@ -37,7 +37,7 @@ def getWorkBasePath() -> str:
     userBaseDir = os.path.join(userpaths.get_profile(), "GailBot")
     return userBaseDir
 
-def getWorkPath() -> WorkSpacePathData:
+def getWorkPaths() -> WorkSpacePathData:
     """ return the data contains workspace directory  """
     # get the user's defined base directory
     userBaseDir = getWorkBasePath()
