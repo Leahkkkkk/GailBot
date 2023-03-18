@@ -19,6 +19,7 @@ from gailbot.core.utils.general import (
 from gailbot.core.utils.download import is_internet_connected
 from gailbot.configs import  whisper_config_loader
 from gailbot.core.utils.logger import makelogger
+from gailbot.core.utils.general import is_file
 
 logger = makelogger("pyannote_diarization")
 
@@ -73,7 +74,8 @@ class PyannoteDiarizer:
             logger.error(e, exc_info=e)
     
         try:
-            write_yaml(config_path_copy, config, overwrite=True)
+            if not is_file(config_path_copy):
+                write_yaml(config_path_copy, config, overwrite=True)
             logger.info("configuration output")
             logger.info("ready to pretrained data")
             self.pipeline = Pipeline.from_pretrained(
