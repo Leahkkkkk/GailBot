@@ -31,7 +31,8 @@ class PayLoadStatus(Enum):
     ANALYZING = 3
     ANALYZED = 4
     FORMATTING = 5
-    FORMATTED = 6 
+    FORMATTED = 6
+    FAILED = 7 
 
 class PayLoadObject(ABC):
     """ super class of the payloadObject, interface includes necessary method 
@@ -75,7 +76,7 @@ class PayLoadObject(ABC):
             workspace.get_file_temp_space(self.name)        
         self.out_dir: OutputFolder = \
             workspace.get_output_space(source.output, self.name)
-        self.progress_emitter = source.progress_emitter
+        self.progress_display = source.progress_display
         self.transcription_result: UttResult = UttResult(self.workspace.transcribe_ws)
         self.format_result: FormatResult = FormatResult(self.workspace.format_ws)
         self.analysis_result: AnalysisResult = AnalysisResult(self.workspace.analysis_ws)
@@ -106,7 +107,7 @@ class PayLoadObject(ABC):
     @property
     def transcribed(self) -> bool:
         """
-        Determines if payload object is transcribed
+        Check if payload object is transcribed
 
         Returns:
             bool: true if transcribed, false if not
@@ -116,7 +117,7 @@ class PayLoadObject(ABC):
     @property
     def analyzed(self) -> bool:
         """
-        Determines if payload object is analyzed
+        Check if payload object is analyzed
 
         Returns:
             bool: true if analyzed, false if not
@@ -126,12 +127,22 @@ class PayLoadObject(ABC):
     @property 
     def formatted(self) -> bool:
         """
-        Determines if payload object is formatted
+        Check if payload object is formatted
 
         Returns:
             bool: true if formatted, false if not
         """
         return self.status == PayLoadStatus.FORMATTED
+    
+    @property 
+    def failed(self) -> bool:
+        """ 
+        Check if payload object failed
+        
+        Returns:
+            bool: true if failed, false if not
+        """
+        return self.status == PayLoadStatus.FAILED
     
     def set_transcribed(self):
         """
@@ -151,6 +162,13 @@ class PayLoadObject(ABC):
         """
         self.status = PayLoadStatus.FORMATTED
    
+    def set_failure(self):
+        """ 
+        set the status of the payload object to be FAILED
+        """
+        self.status = PayLoadStatus.FAILED
+        
+        
     def get_engine(self) -> str:
         """
         Accesses and returns the current engine setting
@@ -373,10 +391,10 @@ class PayLoadObject(ABC):
         assert self.output_analysis_result()
         assert self.output_format_result()
         assert self.output_transcription_result()
-        
         with open(os.path.join(self.out_dir.root, OUTPUT_MARKER), "w+") as f:
             f.write(f"{self.name}")
-            
+    
+    def clear_temporary_workspace(self):
         delete(self.workspace.root)
     
     def __repr__(self) -> str:

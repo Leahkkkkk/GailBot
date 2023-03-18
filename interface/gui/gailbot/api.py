@@ -48,7 +48,7 @@ class GailBot:
             return False
     
     
-    def transcribe(self, sources: List[str] = None) -> Tuple[bool, List[str]]:
+    def transcribe(self, sources: List[str] = None) -> Tuple[List[str], List[str]]:
         """ given a list of the source name, and transcribe the sources 
 
         Args:
@@ -60,10 +60,9 @@ class GailBot:
 
         Returns:
             Tuple[bool, List[str]]: 
-                returns a tuple of boolean and a list of string, 
-                the boolean indicates if the transcription is successful or not,
-                the list of string stores a list of invalid files that cannot
-                be transcribed
+                returns a tuple of two lists of string 
+                the first lists consist of files that are not valid input 
+                the second lists consist of files that fails to be processed 
             
         """
         return self.gb.transcribe(sources)
@@ -425,5 +424,5 @@ class GailBot:
         """
         return self.gb.delete_plugin_suite(suite_name)
    
-    def add_progress_emitter(self, source: str, emitter: Callable) -> bool:
-        return self.gb.add_progress_emitter(source, emitter)
+    def add_progress_display(self, source: str, displayer: Callable) -> bool:
+        return self.gb.add_progress_display(source, displayer)

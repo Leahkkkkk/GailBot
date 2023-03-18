@@ -15,7 +15,7 @@ class SourceObject():
         self.path: str = path
         self.output:str = output
         self.setting: SettingObject = None  
-        self.progress_emitter: Callable = None 
+        self.progress_display: Callable = None 
         
 
     def source_details(self) -> Dict[str, Union[str, SettingObject]]:
@@ -79,20 +79,20 @@ class SourceObject():
         if overwrite or not self.setting:
             self.setting = setting
     
-    def add_progress_emitter(self, emitter: Callable):
+    def add_progress_display(self, displayer: Callable):
         """ 
         Add a function to the source object that will take 
         in one string as argument
         
 
         Args:
-            emitter (Callable): a function that will take in the string 
+            displayer (Callable): a function that will take in the string 
                                 as a progress message 
 
 
         """
-        if callable(emitter):
-            self.progress_emitter = emitter
+        if callable(displayer):
+            self.progress_display = displayer
             return True 
         else:
             return False

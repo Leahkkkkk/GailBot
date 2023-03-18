@@ -4,6 +4,7 @@ from .converter import Converter
 from .pipeline import PipelineService
 from ..plugins import PluginManager, PluginSuite
 from gailbot.core.utils.logger import makelogger
+from gailbot.core.utils.general import get_name
 from gailbot.workspace.manager import WorkspaceManager
 from gailbot.configs import service_config_loader
 
@@ -264,19 +265,22 @@ class ServiceController:
         """
         return self.organizer.apply_setting_to_source(source, setting, overwrite)
 
-    def add_progress_emitter(self, source: str, progress_emitter: Callable):
-        return self.organizer.add_progress_emitter(source, progress_emitter)
+    def add_progress_display(self, source: str, progress_display: Callable):
+        return self.organizer.add_progress_display(source, progress_display)
 
 
-    def transcribe(self, sources: List[str] = None) -> Tuple [bool, List[str]]:
+    def transcribe(self, sources: List[str] = None) -> Tuple [List[str], List[str]]:
         """ return a list of file that was not able to be transcribed, 
             and the transcription result of the rest of the file
 
         Args:
-            sources (List[str], optional): _description_. Defaults to None.
+            sources (List[str], optional): a list of file names. Defaults to None.
 
         Returns:
-            List[str]: _description_
+           Tuple [List[str], List[str]]: return a tuple of two list, 
+                                         the first list stores a list of invalid files, 
+                                         the second list stores a list of files that 
+                                         fail to be transcribed 
         """
         # get configured sources 
         try:
@@ -286,18 +290,17 @@ class ServiceController:
                 sources = [self.organizer.get_source(name) for name in sources]
             # load to converter 
             payloads, invalid = self.converter(sources)
+            
             if len(sources) != 0:
                 logger.info(payloads)
                 # put the payload to the pipeline
-                result = self.pipeline_service(payloads=payloads)
-                logger.info(f"the transcription result is {result}")
+                fails = self.pipeline_service(payloads=payloads)
+                logger.info(f"the failed transcriptions are {fails}")
                 logger.info(f"the invalid files are {invalid}")
-            else:
-                result = False
-            return result, invalid
+            return invalid, fails
         except Exception as e:
             logger.error(e, exc_info=e)
-            return False, []
+            return [], sources
         
     def register_plugin_suite(self, plugin_source: str) -> bool:
         """

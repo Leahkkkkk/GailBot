@@ -134,8 +134,8 @@ class Organizer:
             logger.error(e, exc_info=e)
             return False
     
-    def add_progress_emitter(self, source_name: str, emitter: Callable):
-        return self.source_manager.add_progress_emitter(source_name, emitter)
+    def add_progress_display(self, source_name: str, displayer: Callable):
+        return self.source_manager.add_progress_display(source_name, displayer)
      
     def create_new_setting(
         self, setting_name: str, setting: SettingDict) -> bool: 

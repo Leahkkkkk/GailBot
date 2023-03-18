@@ -2,6 +2,7 @@ from typing import Any, List, Dict
 from gailbot.core.pipeline import Component, ComponentState, ComponentResult
 from gailbot.core.utils.logger import makelogger
 from ...converter.result import  ProcessingStats
+from ..components.progress import ProgressMessage
 from ...converter.payload import PayLoadObject
 logger = makelogger("transcribeComponent")
 
@@ -27,7 +28,12 @@ class FormatComponent(Component):
             logger.info(payloads)
             for payload in payloads:
                 logger.info(f"saving {payload.name} result to {payload.out_dir}")
-                payload.save()
+                if not payload.failed:
+                    self.emit_progress(payload, "Writing output")
+                    payload.save()
+                    payload.set_formatted()
+                    self.emit_progress(payload, ProgressMessage.Finished)
+                payload.clear_temporary_workspace()
             
             assert dependency_res.state == ComponentState.SUCCESS    
             return ComponentResult(
@@ -35,7 +41,7 @@ class FormatComponent(Component):
                 result = payloads,
                 runtime = 0
             )
-         
+             
         except Exception as e:
             logger.error(e, exc_info=e)
             logger.error(f"error in formatting payload result {e}")
@@ -47,3 +53,9 @@ class FormatComponent(Component):
 
     def __repr__(self):
         return "Format component"
+    
+    def emit_progress(self, payload: PayLoadObject, msg: str):
+        if payload.progress_display:
+            payload.progress_display(msg)
+
+    

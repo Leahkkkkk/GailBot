@@ -133,20 +133,20 @@ class SourceManager():
                 return self.sources[source_name].configured
         return False
    
-    def add_progress_emitter(self, source: str, emitter: callable) -> bool:
+    def add_progress_display(self, source: str, displayer: callable) -> bool:
         """ 
         Add function to display file progress 
 
         Args:
             source (str): a string that identify the source
-            emitter (callable): the function that check for file progress
+            displayer (callable): the function that check for file progress
 
         Returns:
-            bool: True if the emitter is applied, false otherwise
+            bool: True if the displayer is applied, false otherwise
         """
         source_name = get_name(source) if is_path(source) else source
         if self.is_source(source_name):
-            return self.sources[source_name].add_progress_emitter(emitter)    
+            return self.sources[source_name].add_progress_display(displayer)    
         return False
         
     def get_sources_with_setting(self, setting_name:str) -> List[str]: 

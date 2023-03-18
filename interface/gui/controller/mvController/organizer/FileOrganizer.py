@@ -242,7 +242,7 @@ class FileOrganizer:
             self.logger.error(ErrorMsg.EDITERROR)
         
 
-    ##################### response emitter ############################# 
+    ##################### response displayer ############################# 
     def _updateFileResponse(self, key, field, value) -> None:
         """ send the signal to update the file data, which will be reflected
             on the front end 

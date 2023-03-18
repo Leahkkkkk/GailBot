@@ -131,23 +131,28 @@ class GBWorker(QRunnable):
     @pyqtSlot()
     def run(self):
         self.logger.info(f"start to transcribe the files {self.files}")
+        
+        # add the progress displayer to every file to be able to 
+        # display progress message sent by gailbot
         try: 
             for key, file in self.files.items():
-                self.gb.add_progress_emitter(file, self.getProgressEmitter(key))
+                self.gb.add_progress_display(file, self.getProgressDisplayer(key))
         except Exception as e:
-            self.logger.error(f"Failed to add progress emitter, get error {e}")
+            self.logger.error(f"Failed to add progress displayer, get error {e}")
       
         try:
             self.signal.start.emit()
             self.logger.info("Transcribing")
-            result, invalid = self.gb.transcribe(list(self.files.values()))
-            self.logger.info(f"the transcription result is {result}")
-            self.logger.info(f"the invalid files are {invalid}")
-            assert result
-            if len(invalid) != 0:
-                invalidFiles = str(invalid)
-                self.signal.error.emit(
-                    TranscribeError.INVALID_FILES.format(files=invalidFiles))
+            # get the transcription result
+            invalid, fails = self.gb.transcribe(list(self.files.values()))
+            self.logger.info(f"the failure files are {fails}, the invalid files are {invalid}")
+            if invalid and fails:
+                self.signal.error.emit(f"Received invalid files {invalid}"
+                                       f"Failed to transcribe {fails}")
+            elif fails:
+                self.signal.error.emit(f"Failed to transcribe {fails}")
+            elif invalid: 
+                self.signal.error.emit(f"Received invalid files {invalid}")                 
         except Exception as e:
             self.signal.error.emit(ErrorFormatter.DEFAULT_ERROR.format(
                 source="transcription", msg=e))
@@ -155,8 +160,10 @@ class GBWorker(QRunnable):
             self.signal.finish.emit()
         else:
             if not self.killed:
+                untranscribed = set(fails + invalid)
+                self.logger.warn(f" following files are not transcribed {untranscribed}")
                 for key, filename in self.files.items():
-                    if not filename in invalid:
+                    if not filename in untranscribed:
                         self.signal.fileTranscribed.emit(key)
             self.signal.finish.emit()
         finally:
@@ -174,7 +181,7 @@ class GBWorker(QRunnable):
             self.logger.error(f"Error while killing  the thread {e}", exc_info=e)
             self.signal.error("The task cannot been cancelled")
 
-    def getProgressEmitter(self, fileKey):
+    def getProgressDisplayer(self, fileKey):
         """private function to emit file progress
 
         Args:

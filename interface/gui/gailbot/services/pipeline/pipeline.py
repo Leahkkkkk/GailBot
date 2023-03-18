@@ -39,19 +39,29 @@ class PipelineService:
             num_threads = num_threads  
         )
 
-    def __call__(self, payloads : List[PayLoadObject]):
+    def __call__(self, payloads : List[PayLoadObject]) -> List[str]:
         """
         Creates and validates a pipeline from a list of payload objects
 
         Args:
             payloads : List[PayLoadObject]: list of objects to use as input
+            
+        Return: 
+            return a list of payload object that fails to be transcribed
         """
         res = self.pipeline(
             base_input= payloads
         )
+        fails = []
+        
         for name, result in res.items():
             if not result == ComponentState.SUCCESS:
-                return False 
-        return True
+                return [p.name for p in payloads]
+      
+        for payload in payloads:
+            if payload.failed:
+                fails.append(payload.name)
+        
+        return fails
 
         
