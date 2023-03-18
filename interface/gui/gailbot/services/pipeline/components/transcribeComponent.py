@@ -158,7 +158,6 @@ class TranscribeComponent(Component):
                     threadpool.get_task_result(get_name(file))
                 self.emit_progress(payload, f"{idx + 1}/{num_file} files transcribed")
            
-            self.emit_progress(payload, ProgressMessage.Transcribed)
             time.sleep(1)
             
             # if the transcription result is returned successfully
@@ -171,6 +170,7 @@ class TranscribeComponent(Component):
             
             assert payload.set_transcription_result(utt_map)
             assert payload.set_transcription_process_stats(stats)      
+            self.emit_progress(payload, ProgressMessage.Transcribed)
              
         except Exception as e:
             payload.progress_display(payload, ProgressMessage.Error)
