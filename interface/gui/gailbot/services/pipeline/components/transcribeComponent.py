@@ -125,8 +125,8 @@ class TranscribeComponent(Component):
             init_kwargs = payload.get_engine_init_setting()
             transcribe_kwargs = payload.get_engine_transcribe_setting()
             logger.info(f"get transcribed setting engine_name: {engine_name} \
-                        engine initialization setting {init_kwargs} \
-                        engine transcription setting {transcribe_kwargs}")
+                          engine initialization setting {init_kwargs} \
+                          engine transcription setting {transcribe_kwargs}")
 
             # check for valid engine engine
             if not self.engine_manager.is_engine(engine_name):

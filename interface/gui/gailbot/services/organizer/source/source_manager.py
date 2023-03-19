@@ -128,9 +128,10 @@ class SourceManager():
             bool: True if successfully applied, false if not
         """
         source_name = get_name(source) if is_path(source) else source
+        logger.info(f"apply setting {setting} to {source_name}")
         if self.is_source(source_name):
-                self.sources[source_name].apply_setting(setting, overwrite)
-                return self.sources[source_name].configured
+            self.sources[source_name].apply_setting(setting, overwrite)
+            return self.sources[source_name].configured
         return False
    
     def add_progress_display(self, source: str, displayer: callable) -> bool:

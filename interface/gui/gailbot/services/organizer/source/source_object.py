@@ -1,7 +1,8 @@
 from typing import Dict, Union, Callable
 from ..settings import SettingObject
-from gailbot.core.utils.general import get_name
+from gailbot.core.utils.logger import makelogger
 
+logger = makelogger("source_object")
 class SourceObject():
     name: str
     path: str
@@ -76,6 +77,7 @@ class SourceObject():
         Returns:
             None
         """
+        logger.info(f"the setting object that is about to be applied is {setting}")
         if overwrite or not self.setting:
             self.setting = setting
     

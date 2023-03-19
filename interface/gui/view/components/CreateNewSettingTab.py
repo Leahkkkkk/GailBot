@@ -72,19 +72,13 @@ class CreateNewSetting(QDialog):
         
     def _postSetting(self):
         """ a function that send the new setting data through signal""" 
-        res = dict()
-        engineSetting = dict() 
+        setting = dict()
         profileName = self.addProfileName.getData()
-        d = self.engineSetting.getData()
-        engine = list(d.keys())[0]
-        engineSetting["engine"] = engine
-        engineSetting.update(d[engine])
-        res["engine_setting"] = engineSetting
-        res["plugin_setting"] = []
-        self.logger.info(res)
+        setting["engine_setting"] = self.engineSetting.getData()
+        setting["plugin_setting"] = []
         try:
-            self.signals.newSetting.emit((profileName, res))
-            self.logger.info(res)
+            self.logger.info(setting)
+            self.signals.newSetting.emit((profileName, setting))
             self.close()
         except:
             WarnBox("an error occurred when posting the form data")

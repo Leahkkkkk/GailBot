@@ -40,5 +40,9 @@ class PATH:
     LARGE_CONVERSATION_DIR  = os.path.join(AUDIOROOT, "all")
     MANY_FILES_DIR          = os.path.join(AUDIOROOT, "many_files_dir")
     MANY_SMALL_FILES_DIR    = os.path.join(AUDIOROOT, "many_small_files_dir")
+    HELLO_1                 = os.path.join(AUDIOROOT, "small_test/hello1.wav")
+    HELLO_2                 = os.path.join(AUDIOROOT, "small_test/hello2.wav")
+    HELLO_3                 = os.path.join(AUDIOROOT, "small_test/hello3.wav")
+    HELLO_4                 = os.path.join(AUDIOROOT, "small_test/hello4.wav")
      
 

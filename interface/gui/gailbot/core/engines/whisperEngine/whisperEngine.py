@@ -42,7 +42,7 @@ class WhisperEngine(Engine):
     ) -> List[Dict]:
         """Use the engine to transcribe an item"""
         logger.info(f"get transcribe request audio_path: {audio_path}, language: {language}, detect_speakers: {detect_speakers}")
-        results = self.core.transcribe(audio_path,language, detect_speakers)
+        results = self.core.transcribe(audio_path, language, detect_speakers)
         self._successful = True
         return results
 

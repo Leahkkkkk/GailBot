@@ -39,7 +39,6 @@ class SettingObject():
             self._load_plugin_setting(setting["plugin_setting"])
             self.data = setting
         
-    
     def get_name(self):
         """
         Accesses and returns the object's name

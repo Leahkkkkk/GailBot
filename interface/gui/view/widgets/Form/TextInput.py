@@ -39,7 +39,7 @@ class TextInput(QWidget, FormWidget):
                  *args, **kwargs) -> None:
         super(TextInput, self).__init__(*args, **kwargs)
         self.label = deepcopy(label)
-        self.label.replace("_", " ").capitalize()
+        self.label = self.label.replace("_", " ").capitalize()
         self.vertical = vertical
         self.labelSize = labelSize
         self.value = inputText

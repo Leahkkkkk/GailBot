@@ -38,12 +38,13 @@ class SETTING_DATA:
 
     WATSON_SETTING = {
         "engine": "watson", 
-        "api_key" : WATSON_API_KEY, 
+        "apikey" : WATSON_API_KEY, 
         "region": WATSON_REGION,  
         "base_model": WATSON_BASE_LANG_MODEL,  
         "language_customization_id" : None,
         "acoustic_customization_id" : None
     }
+
 
     PLUGIN_SETTING = ["hilab"]
     NEW_PLUGIN = ["testmodule"]

@@ -40,7 +40,6 @@ def load_google_setting(setting: Dict[str, str]) -> Union[bool, EngineSettingInt
     """
     logger.info(setting)
     if  not "engine" in setting.keys() or setting["engine"] != "google": 
-        logger.error("not google")
         return False
     try:
         setting = setting.copy()

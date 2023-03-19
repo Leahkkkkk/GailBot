@@ -22,16 +22,12 @@ from gailbot.core.engines import exception as ERR
 from gailbot.configs import watson_config_loader
 from gailbot.core.utils.media import MediaHandler
 from gailbot.core.utils.general import (
-    make_dir,
-    is_directory,
     get_extension,
     get_name,
     is_file,
     get_size,
     run_cmd, 
     get_cmd_status,
-    delete,
-    write_json,
     CMD_STATUS
 )
 
@@ -42,26 +38,30 @@ class WatsonCore:
     Implement core functionalities to transcribe an audio file through 
     watson STT engine
     """
-    def __init__(self, apikey : str, region : str, workspace_dir: str): 
+    def __init__(self, apikey : str, region : str): 
         self.apikey = apikey
         self.region = region
         self.media_h = MediaHandler()
-        self.workspace_dir = workspace_dir
 
         # Parse confs
-        self._regions = WATSON_CONFIG.regions_uris
         self._format_to_content_types = WATSON_CONFIG.format_to_content 
         self._defaults = WATSON_CONFIG.defaults
-
-        if not self._is_api_key_valid(apikey, self._regions[region]):
-            raise Exception(f"Apikey {apikey} invalid")
-        if not region in self._regions:
-            raise Exception(
-                f"Region {region} not in {list(self._regions.keys())}"
-            )
-        # create recognize callback 
-        self.recognize_callbacks = CustomWatsonCallbacks()
         
+        if not WatsonCore.valid_region_api(apikey, region):
+            raise ApiException("invalid apikey and region")
+       
+        # create recognize callback 
+    
+    @staticmethod 
+    def valid_region_api(apikey, region):
+        if not region in WATSON_CONFIG.regions_uris:
+            logger.error("Region invalid")
+            return False
+        if not WatsonCore.is_api_valid(apikey, WATSON_CONFIG.regions_uris[region]):
+            logger.error("API invalid")
+            return False
+        return True
+          
     @property
     def supported_formats(self) -> List[str]:
         """
@@ -80,7 +80,7 @@ class WatsonCore:
         Returns: 
             Dict representing the regions
         """
-        return self._regions
+        return WATSON_CONFIG.regions_uris
 
     @property
     def defaults(self) -> Dict:
@@ -103,11 +103,12 @@ class WatsonCore:
         """
         return get_extension(file) in self.supported_formats
     
-    def transcribe(self, 
-                  audio_path: str, 
-                  base_model: str, 
-                  language_customization_id: str, 
-                  acoustic_customization_id: str):
+    def transcribe( self, 
+                    audio_path: str,
+                    payload_workspace: str,  
+                    base_model: str, 
+                    language_customization_id: str, 
+                    acoustic_customization_id: str):
         """
         Transcribes the provided audio stream using a websocket connections.
         And output the result to given output directory 
@@ -122,11 +123,23 @@ class WatsonCore:
             acoustic_customization_id (str) : 
                 ID of the custom language model.
         """
+        # compress the audio if it is too bog
         try:
-            self._init_workspace()
+            if get_size(audio_path) >= 1:
+                audio_path = self._convert_to_opus(audio_path, payload_workspace)
+                logger.info(f"the compressed auido_path is {audio_path}")
+        except Exception as e: 
+            logger.error("error in compressing the media file", exc_info=e)
+            raise ERR.AudioFileError("ERROR: Failed to compile large audio file to opus format")
+        
+        recognize_callbacks = CustomWatsonCallbacks()
+        try:
             self._websockets_recognize(
-                audio_path, base_model, 
-                language_customization_id, acoustic_customization_id)  
+                audio_path,
+                base_model, 
+                recognize_callbacks,
+                language_customization_id, 
+                acoustic_customization_id)  
         except Exception as e:
             logger.error(e, exc_info=e)
             ERR.ConnectionError("ERROR: connection error")
@@ -134,30 +147,17 @@ class WatsonCore:
         audio_name = get_name(audio_path)
         utterances = self._prepare_utterance(
             audio_name,
-            self.recognize_callbacks.get_results())   
+            recognize_callbacks.get_results())   
         return utterances   
     
 ###############
 # PRIVATE
 ##############
-    def _init_workspace(self):
-        repeat = 1
-        while is_directory(self.workspace_dir):
-            self.workspace_dir += str(repeat)
-            repeat += 1
-        logger.info(self.workspace_dir)
-        try: 
-            if not is_directory(self.workspace_dir):
-                make_dir(self.workspace_dir, overwrite=False)
-            self.engine_workspace_dir = self.workspace_dir
-        except Exception as e:
-            logger.error(e, exc_info=e)
-            raise FileExistsError("ERROR: Failed to create directory")
-    
     def _websockets_recognize(
         self,
         audio_path : str,
         base_model : str,
+        recognize_callbacks: CustomWatsonCallbacks,
         language_customization_id : str = None,
         acoustic_customization_id : str = None
     ) -> Any:
@@ -176,17 +176,9 @@ class WatsonCore:
                 ID of the custom language model.
         """
         # reset the callbacks
-        self.recognize_callbacks.reset()
+        recognize_callbacks.reset()
         assert is_file(audio_path), f"Not a file {audio_path}"
-        
-        try:
-            if get_size(audio_path) >= 1:
-                audio_path = self._convert_to_opus(
-                    audio_path, self.workspace_dir)
-                logger.info(f"the compressed auido_path is {audio_path}")
-        except: 
-            raise ERR.AudioFileError("ERROR: Failed to compile large audio file to opus format")
-
+    
         # Create the stt service and run
         try:
             authenticator = IAMAuthenticator(self.apikey)
@@ -194,13 +186,10 @@ class WatsonCore:
             stt.set_service_url(self.regions[self.region])
         except:
             raise ERR.APIKeyError("ERROR: API key error")
-
         with open(audio_path, "rb") as f:
             # Prepare args
             source = AudioSource(f)
             content_type = self._format_to_content_types[get_extension(audio_path)]
-            
-            
             """ 
             :  confirm current set of key word arguments is okay, 
                        headers and customized weight does not work  """
@@ -208,12 +197,11 @@ class WatsonCore:
             kwargs.update({
                 "audio": source,
                 "content_type" : content_type,
-                "recognize_callback": self.recognize_callbacks,
+                "recognize_callback": recognize_callbacks,
                 "model" : base_model,
                 "customization_id": language_customization_id,
             })
             stt.recognize_using_websocket(**kwargs)
-            delete(self.engine_workspace_dir)
             
     def _prepare_utterance(self, audio_name: str,  closure: Dict[str, Any]) -> List:
         """ 
@@ -235,13 +223,7 @@ class WatsonCore:
             # Aggregated data from recognition results
             labels = list()
             timestamps = list()
-            
-            write_json(os.path.join(self.workspace_dir, f"{audio_name}_data.json"), 
-                        closure["results"]["data"])
-            write_json(os.path.join(self.workspace_dir, f"{audio_name}_results.json"),
-                        closure["results"]["data"])
-            write_json(os.path.join(self.workspace_dir, f"{audio_name}_closure.json"), 
-                       closure)
+            logger.info(f"{audio_name} closure result is {closure}")
             # Creating RecognitionResults objects
             for item in closure["results"]["data"]:
                 recognition_result = RecognitionResult(item)
@@ -277,8 +259,10 @@ class WatsonCore:
         except Exception as e:
             logger.error(e, exc_info=e)
             return []
-            
-    def _is_api_key_valid(self, apikey: str, url: str) -> bool:
+    
+  
+    @staticmethod
+    def is_api_valid(apikey: str, url: str) -> bool:
         """
         Determines if given Watson API key is valid
 
@@ -287,14 +271,15 @@ class WatsonCore:
             url (str) : URL to set service url of speech to text service
         """
         try:
-            stt = self._initialize_stt_service(apikey)
+            stt = WatsonCore._initialize_stt_service(apikey)
             stt.set_service_url(url)
             stt.list_models()
             return True
         except:
             return False
 
-    def _initialize_stt_service(self, apikey: str) -> SpeechToTextV1:
+    @staticmethod
+    def _initialize_stt_service(apikey: str) -> SpeechToTextV1:
         """
         Initializes the speech to text services
 

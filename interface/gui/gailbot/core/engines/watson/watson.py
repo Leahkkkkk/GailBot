@@ -27,12 +27,10 @@ class Watson(Engine):
     Inheritance:
         Engine
     """
-
     def __init__(
         self,
         apikey : str,
         region : str,
-        workspace_dr: str
     ):
         """ constructor for IBM Watson STT engine
 
@@ -43,11 +41,9 @@ class Watson(Engine):
         self.apikey = apikey
         self.region = region
         # NOTE: Exception raised if not connected to the service.
-        self.core = WatsonCore(apikey, region, workspace_dr)
+        self.core = WatsonCore(apikey, region )
         self.lm = WatsonLMInterface(apikey ,region)
         self.am = WatsonAMInterface(apikey, region)
-        self.recognize_callbacks = CustomWatsonCallbacks()
-
         self.is_transcribe_success = False
 
     def __str__(self):
@@ -55,11 +51,11 @@ class Watson(Engine):
 
     def __repr__(self):
         """Returns all the configurations and additional metadata"""
-        return (
-            f"Watson engine with "
-            f"api_key: {self.apikey}, " \
-            f"region: {self.region}"
-        )
+        return self.core.__repr__()
+
+    @staticmethod 
+    def valid_init_kwargs(apikey: str, region: str):
+        return WatsonCore.valid_region_api(apikey, region)
 
     @property
     def supported_formats(self) -> List[str]:
@@ -86,6 +82,7 @@ class Watson(Engine):
     def transcribe(
         self,
         audio_path : str,
+        payload_workspace: str, 
         base_model : str,
         language_customization_id : str = "",
         acoustic_customization_id : str = ""
@@ -111,8 +108,11 @@ class Watson(Engine):
         """
         try:
             utterances = self.core.transcribe(
-                audio_path, base_model,
-                language_customization_id, acoustic_customization_id)
+                audio_path,
+                payload_workspace,
+                base_model,
+                language_customization_id,
+                acoustic_customization_id)
             self.is_transcribe_success = True
             return utterances
         except:
@@ -128,7 +128,7 @@ class Watson(Engine):
 
     def get_engine_name(self) -> str:
         """ return  the name of the watson engine"""
-        return self.ENGINE_NAME
+        return "watson"
 
     def get_supported_formats(self) -> List[str]:
         """
