@@ -1,7 +1,9 @@
 
 from .FormWidget import FormWidget
 from view.widgets import Label, Button, MsgBox
-from view.config.Style import Color, FontSize
+from view.config.Style import Color, FontSize, Dimension
+from view.widgets.Form.TextInput import InputField
+from copy import deepcopy
 from PyQt6.QtWidgets import (
     QGridLayout, 
     QVBoxLayout, 
@@ -15,15 +17,19 @@ from gbLogger import makeLogger
 class UploadFile(QWidget, FormWidget):
     def __init__(self, label: str) -> None:
         super().__init__()
-        self.label = label
-        self.initUI()
+        self.label = deepcopy(label)
         self.logger = makeLogger("FileUpload")
+        self.initUI()
+        self.selectFileBtn.clicked.connect(self.uploadFile)
     
     def initUI(self):
         self._layout = QGridLayout()
+        self.label = "Upload file for " + self.label.replace("_", " ")
         self.labelWidget = Label.Label(self.label, FontSize.BODY)
-        self.pathDisplay = QLineEdit()
-        self.selectFileBtn = Button.BorderBtn("...", Color.PRIMARY_BUTTON)
+        self.pathDisplay = InputField()
+        self.selectFileBtn = Button.BorderBtn("···", Color.PRIMARY_BUTTON, FontSize.HEADER1)
+        self.selectFileBtn.setFixedWidth(70)
+        self.selectFileBtn.setFixedHeight(Dimension.INPUTHEIGHT)
         self.setLayout(self._layout)
         self._layout.addWidget(self.labelWidget, 0, 0)
         self._layout.addWidget(self.pathDisplay, 1, 0)

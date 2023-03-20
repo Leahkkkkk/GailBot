@@ -10,7 +10,7 @@ import logging
 
 def transcribe(files, setting_name = "test", setting_data = SETTING_DATA.WHISPER_PROFILE, output = PATH.USER_ROOT):
     gb = GailBot(output)
-    assert gb.reset_workspace
+    assert gb.reset_workspace()
     input = [(f, PATH.OUTPUT_ROOT) for f in files]
     gb.add_sources(input)
     assert gb.create_new_setting(setting_name, setting_data)
@@ -24,14 +24,20 @@ def transcribe(files, setting_name = "test", setting_data = SETTING_DATA.WHISPER
 def test_gailbot():
     gb = GailBot(PATH.BACKUP_ROOT)
     assert gb.reset_workspace() 
-    
-def test_transcribe():
+ 
+#### test for whisper ###    
+def test_whisper():
     fails, invalid = transcribe([PATH.SMALL_AUDIO_WAV, PATH.SMALL_CONVERSATION_DIR])
     assert not fails
     assert not invalid
     assert invalid == []
     
-def test_transcribe_dir():
+def test_whisper_one():
+    fails, invalid = transcribe([PATH.HELLO_1], "whisper", SETTING_DATA.WHISPER_PROFILE)
+    logging.info(fails)
+    logging.info(invalid)
+    
+def test_whisper_dir():
     fails, invalid = transcribe([PATH.MANY_FILES_DIR, PATH.SMALL_CONVERSATION_DIR, PATH.TRANSCRIBED_DIR, PATH.MANY_SMALL_FILES_DIR])
     assert not fails
     assert not invalid
@@ -59,7 +65,10 @@ def test_invalid():
     fails, invalid = transcribe([PATH.INVALID_DATA_DIR, PATH.DUMMY_AUDIO, PATH.EMPTY, PATH.MIX])
     assert invalid
     logging.info(invalid)
-
+    
+    
+    
+#### test for watson    
 def test_watson():
     fails, invalid = transcribe([PATH.HELLO_1], "watson", SETTING_DATA.WATSON_PROFILE)
     logging.info(fails)
@@ -79,4 +88,20 @@ def test_watson_many():
     fails, invalid = transcribe([PATH.HELLO_1, PATH.HELLO_2, PATH.HELLO_3, PATH.HELLO_4], "watson", SETTING_DATA.WATSON_PROFILE)
     logging.info(fails)
     logging.info(invalid)
+
+# test for google
+def test_google():
+    fails, invalid = transcribe([PATH.HELLO_1], "google", SETTING_DATA.GOOGLE_PROFILE) 
+    logging.info(fails)
+    logging.info(invalid)
     
+def test_google_dir():
+    fails, invalid = transcribe([PATH.MANY_SMALL_FILES_DIR], "google", SETTING_DATA.GOOGLE_PROFILE)
+    logging.info(fails)
+    logging.info(invalid)
+
+
+def test_google_long():
+    fails, invalid = transcribe([PATH.LONG_PHONE_CALL], "google", SETTING_DATA.GOOGLE_PROFILE)
+    logging.info(fails)
+    logging.info(invalid)

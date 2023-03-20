@@ -210,6 +210,7 @@ def get_size(path : str) -> bytes:
 
 def make_dir(path : str, overwrite : bool = False):
     """ given the path, create a directory """
+    logger.info(f"making directory is called on making the path {path}")
     try:
         if is_directory(path) and overwrite:
             delete(path)

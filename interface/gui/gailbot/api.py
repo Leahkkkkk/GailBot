@@ -425,4 +425,18 @@ class GailBot:
         return self.gb.delete_plugin_suite(suite_name)
    
     def add_progress_display(self, source: str, displayer: Callable) -> bool:
+        """
+        Add a function displayer to track for the progress of source, 
+
+        Args:
+            source (str): the name of the source
+            displayer (Callable): displayer is a function that takes in a string as 
+                                  argument, and the string encodes the progress of 
+                                  the source
+
+        Returns:
+            bool: return true if the displayer is added, false otherwise
+        """
         return self.gb.add_progress_display(source, displayer)
+
+        

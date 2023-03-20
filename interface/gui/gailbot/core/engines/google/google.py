@@ -16,7 +16,8 @@ class Google(Engine):
         Engine 
     """
     ENGINE_NAME = "Google"
-    def __init__(self, google_api_key:str, args, **kwargs):
+    def __init__(self, google_api_key:str):
+        logger.info("google engine initialized")
         self.core = GoogleCore(google_api_key)
         self.transcribe_success = False
     

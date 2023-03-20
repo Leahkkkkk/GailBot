@@ -34,6 +34,7 @@ class SETTING_DATA:
 
     GOOGLE_SETTING = {
         "engine": "google",
+        "google_api_key": "/Users/yike/Desktop/input/googleApi/gailbot_key.json"
     }
 
     WATSON_SETTING = {

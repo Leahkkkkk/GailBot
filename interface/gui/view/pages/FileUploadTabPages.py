@@ -325,7 +325,7 @@ class ChooseOutPut(TabPage):
     def _iniWidget(self):
         """ initializes the widgets """
         self.logger.info("")
-        self.chooseDirBtn = ColoredBtn("...", Color.PRIMARY_BUTTON, FontSize.HEADER2)
+        self.chooseDirBtn = ColoredBtn("···", Color.PRIMARY_BUTTON, FontSize.HEADER2)
         self.chooseDirBtn.setFixedWidth(70)
         self.dirPathText = QLineEdit(self)
         self.dirPathText.setPlaceholderText(Text.chooseOutPutText)

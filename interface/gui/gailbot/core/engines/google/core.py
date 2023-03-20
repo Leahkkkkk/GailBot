@@ -163,9 +163,9 @@ class GoogleCore:
                 kwargs.update({"encoding": encoding, "sample_rate_hertz": 16000})
             
             config = speech.RecognitionConfig(**kwargs)
-            
+            client = speech.SpeechClient() 
             self.transcribing = True
-            response = self.client.recognize(
+            response = client.recognize(
                 request={"config": config, "audio": audio})
         
         except Exception as e:

@@ -27,17 +27,11 @@ class SettingObject():
      
     def __init__(self, setting: SettingDict, name: str) -> None:
         self.name = name
-        if not "engine_setting" in setting or not "plugin_setting" in setting:
-            logger.error(f"The setting data {setting} cannot be parsed since it"  + 
-                          " does not provide correct setting key, default setting " + 
-                          " will be loaded instead")
-            self._load_default_setting()
-            self.data = DEFAULT_ENGINE_SETTING
-        else: 
-            logger.info("initialize the setting object")
-            self._load_engine_setting(setting["engine_setting"])
-            self._load_plugin_setting(setting["plugin_setting"])
-            self.data = setting
+        assert"engine_setting" in setting and "plugin_setting" in setting
+        logger.info("initialize the setting object")
+        assert self._load_engine_setting(setting["engine_setting"])
+        assert self._load_plugin_setting(setting["plugin_setting"])
+        self.data = setting
         
     def get_name(self):
         """
@@ -120,8 +114,14 @@ class SettingObject():
             bool: true if successfully loaded, false if not
         """
         logger.info("initialize plugin setting ")
-        self.plugin_setting = PluginSettingsInterface(setting)
-
+        try:
+            self.plugin_setting = PluginSettingsInterface(setting)
+            return True
+        except Exception as e:
+            logger.error(f"failed to load plugin setting: {e}", exc_info=e)
+            return False
+        
+        
     def _load_engine_setting(self, setting : Dict[str, str]) -> bool:
         """
         Loads the engine settings
@@ -138,10 +138,6 @@ class SettingObject():
             set_obj = option(setting)
             if isinstance(set_obj, EngineSettingInterface):
                 self.engine_setting = set_obj
-                return 
+                return True
         logger.error(f"setting {setting} cannot be loaded, use default setting instead")
-        self._load_default_setting()
-        
-    def _load_default_setting(self):
-        self.engine_setting = load_whisper_setting(DEFAULT_ENGINE_SETTING)
-        return True
+        return False
