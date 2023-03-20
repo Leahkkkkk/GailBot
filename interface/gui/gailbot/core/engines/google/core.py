@@ -12,17 +12,17 @@ from google.cloud.speech_v1p1beta1.types import cloud_speech
 from typing import Dict, List 
 from gailbot.core.utils.general import (
     get_extension, 
-    write_json, 
+    get_extension,
     is_directory, 
     make_dir,
     paths_in_dir,
     delete,
-    get_name)
+    get_name,
+    copy)
 
 from gailbot.core.utils.logger import makelogger
 from ...engines import exception as Err
-from gailbot.configs import google_config_loader
-from gailbot.core.utils.general import get_size
+from gailbot.configs import google_config_loader, workspace_config_loader
 from gailbot.core.utils.media import MediaHandler
 
 logger = makelogger("google")
@@ -44,21 +44,36 @@ class GoogleCore:
         "amr": speech.RecognitionConfig.AudioEncoding.AMR
     }
     
-    def __init__(self, workspace_dir: str, google_key: Dict[str, str] = None ) -> None:  
-        self.workspace_dir = workspace_dir
+    def __init__(self, google_api_key) -> None:  
         self._init_status()
-        self._init_workspace()
+        client = GoogleCore.is_valid_google_api(google_api_key)
+        self.workspace = workspace_config_loader().engine_ws.google
+        assert client 
+        self.client = client
+        self.connected = True
+        
+    
+    @staticmethod
+    def is_valid_google_api(google_api_key: str):
+        """ Given a path to a json file that stores the google api key
+            return the google client if the api is valid, else return false     
+
+        Args:
+            google_api_key (str): a path to a file that stores the google api 
+                                 key 
+
+        Returns:
+            Union(SpeechCient, bool): if the api key is valid, return the google 
+                                      speech client, else return false 
+        """
         try:
-            if not google_key:
-                os.environ['GOOGLE_APPLICATION_CREDENTIALS']= os.path.join(os.getcwd(),'google_key.json')
-            else:
-                os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = google_key
-            self.client = speech.SpeechClient()   
-        except:
-            raise Err.ConnectionError("ERROR: Failed to connect to google cloud")
-        else:
-            self.connected = True
-            logger.info("Connected")
+            os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = google_api_key
+            client = speech.SpeechClient() 
+            return client  
+        except Exception as e:
+            logger.error("f failed to connect to google", exc_info=e)
+            return False 
+        
     
     @property
     def supported_formats(self) -> List[str]:
@@ -81,7 +96,7 @@ class GoogleCore:
         """
         return get_extension(file) in self.supported_formats
     
-    def transcribe(self, audio_path: str) -> List[Dict[str, str]]:
+    def transcribe(self, audio_path: str, payload_workspace: str) -> List[Dict[str, str]]:
         """
         Transcribes the provided audio stream using a websocket connections.
         And output the result to given output directory 
@@ -97,14 +112,13 @@ class GoogleCore:
             audio file, each part of the audio file is stored in the format 
             {speaker: , start_time: , end_time: , text: }
         """
-        self._init_workspace()
         mediaHandler = MediaHandler()
         stream = mediaHandler.read_file(audio_path)
         length = mediaHandler.info(stream)["duration_seconds"]
         if length >= GOOGLE_CONFIG.maximum_duration:
             try:
                 res = self._transcribe_large_file(
-                    audio_path, self.workspace_dir)
+                    audio_path, payload_workspace)
                 logger.info(res)
                 return res
             except Exception as e:
@@ -191,7 +205,7 @@ class GoogleCore:
             "request_id": response.request_id,
         }
         
-        write_json(os.path.join(self.workspace_dir, "results.json"), status_result)
+        logger.info(status_result)
         """ Prepare Utterance """
         utterances = list()
         for result in results:
@@ -284,18 +298,3 @@ class GoogleCore:
         delete(workspace)
         return utterances
     
-    def _init_workspace(self) -> None :    
-        """ 
-        initialize the work space
-        """ 
-        repeat = 1 
-        while is_directory(self.workspace_dir):
-            self.workspace_dir += str(repeat)
-       
-        try:
-            if not is_directory(self.workspace_dir):
-                make_dir(self.workspace_dir, overwrite=False)
-            assert is_directory(self.workspace_dir)
-        except Exception as e:
-            logger.error(e, exc_info=e)
-            raise FileExistsError("ERROR: failed to create directory")

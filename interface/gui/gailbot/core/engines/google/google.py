@@ -3,8 +3,10 @@ from ..engine import Engine
 from ...engines import exception as Err
 from ..google.core import GoogleCore
 from typing import Any, List, Dict
-from typing import Dict, List, Union 
+from typing import Dict, List, Union
+from gailbot.core.utils.logger import makelogger 
 
+logger = makelogger("google engine")
 class Google(Engine):
     """ 
     An Engine that connect to Google Cloud STT, provide function to transcribe 
@@ -14,9 +16,8 @@ class Google(Engine):
         Engine 
     """
     ENGINE_NAME = "Google"
-    def __init__(self, workspace_dir: str = None,  api_key: Dict = None, *args, **kwargs):
-        self.apikey = api_key
-        self.core = GoogleCore(workspace_dir, self.apikey)
+    def __init__(self, google_api_key:str, args, **kwargs):
+        self.core = GoogleCore(google_api_key)
         self.transcribe_success = False
     
     def __repr__(self):
@@ -29,7 +30,7 @@ class Google(Engine):
         """
         return self.core.supported_formats
     
-    def transcribe(self, audio_path: str) -> List[Dict[str, str]] :
+    def transcribe(self, audio_path: str, payload_workspace:str) -> List[Dict[str, str]] :
         """ use Google engine to transcribe the audio file 
 
         Args:
@@ -44,13 +45,9 @@ class Google(Engine):
             audio file, each part of the audio file is stored in the format 
             {speaker: , start_time: , end_time: , text: }
         """
-        try:
-            res = self.core.transcribe(audio_path)
-        except:
-            raise Err.TranscriptionError
-        else:
-            self.transcribe_success = True
-            return res
+        res = self.core.transcribe(audio_path, payload_workspace)
+        self.transcribe_success = True
+        return res
     
     def is_file_supported(self, file_path: str) -> bool:
         """ 
@@ -72,3 +69,8 @@ class Google(Engine):
     def was_transcription_successful(self) -> bool:
         return self.transcribe_success
     
+
+    @staticmethod 
+    def is_valid_google_api(google_api_key) -> bool:
+        engine = GoogleCore.is_valid_google_api(google_api_key)
+        return True if engine else False

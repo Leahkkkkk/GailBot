@@ -18,9 +18,9 @@ from view.widgets import (
 )
 from view.widgets.Form.TextInput import TextInput
 from view.widgets.Form.ComBoInput import InputCombo
-from view.widgets.Form.OnOffButton import onOffButton
+from view.widgets.Form.FileUpload import UploadFile 
 from view.widgets.Form.FormWidget import FormWidget
-
+from view.widgets.Form.OnOffButton import onOffButton
 from ..config.Style import (
     FontFamily, 
     FontSize, 
@@ -40,11 +40,12 @@ class InputFormat:
     BOOL = " bool"
     COMBO = " combo"
     DEPENDENT_COMBO = " dependent combo"
+    FILE = "file upload"
     
     
 class TextForm(QWidget):
     def __init__(self, 
-                 data: Dict[str, str], 
+                 data: Dict[str, Dict[str, str]], 
                  background : bool = True,
                  toggle : bool = False, 
                  *args, **kwargs) -> None:
@@ -63,7 +64,7 @@ class TextForm(QWidget):
         4. setValues(self, data: Dict[str, str])
         """
         super().__init__(*args, **kwargs)
-        self.data : Dict[str, dict] = data
+        self.data : Dict[str, Dict[str, str]] = data
         self.inputDict : Dict[str, FormWidget] = dict()
         self.toggle = toggle 
         if not self.toggle:
@@ -117,22 +118,21 @@ class TextForm(QWidget):
         count = 0
         
         for tittleKey, items in self.data.items():
+          
             """ adding spacing """
             if count != 0 and (not self.toggle):
-                self.mainVertical.addSpacing(Dimension.LARGE_SPACING)
+                self.mainVertical.addSpacing(Dimension.MEDIUM_SPACING)
                 count += 1
             
             """ create additional layout if the form elements are 
-            displayed in a toggle view """
+                displayed in a toggle view """
             if self.toggle:
                 toggleViewContainer = QWidget()
                 toggleViewLayout = QVBoxLayout()
                 toggleViewContainer.setLayout(toggleViewLayout)
                 self.mainVertical.setSpacing(0)
                 self.mainVertical.setContentsMargins(0,0,0,0)
-            # else:
-            #     self.mainVertical.setSpacing(10)
-            
+        
             """ create the label  """
             tittleKey = tittleKey.split(". ")[-1]
             if not self.toggle:
@@ -144,15 +144,15 @@ class TextForm(QWidget):
                 if InputFormat.BOOL in key:
                     key = key.replace( InputFormat.BOOL, "").split(". ")[-1]
                     newInput = onOffButton(key, state = value)
+                
                 elif InputFormat.COMBO in key:
                     key = key.replace( InputFormat.COMBO, "").split(". ")[-1]
-                    if self.toggle:
-                        newInput = InputCombo(
-                            label = key, selections = value, vertical=True)
-                    else:
-                        newInput = InputCombo(
-                            label=key, selections=value)
-                        newInput.setMinimumHeight(80)
+                    newInput = InputCombo(label = key, selections = value, vertical=self.toggle)
+                        
+                elif InputFormat.FILE in key:
+                    key = key.replace(InputFormat.FILE, "").split(". ")[-1]
+                    newInput = UploadFile(key)
+              
                 else:
                     key = key.split(". ")[-1]
                     newInput = TextInput(key, inputText=value)

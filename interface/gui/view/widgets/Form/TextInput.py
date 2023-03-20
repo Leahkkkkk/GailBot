@@ -9,7 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
-from view.widgets.Form.FormWidget import FormWidget
+from .FormWidget import FormWidget
 from view.widgets import Label
 from view.style.WidgetStyleSheet import INPUT_TEXT as INPUT_STYLE
 from view.config.Style import FontSize, Dimension

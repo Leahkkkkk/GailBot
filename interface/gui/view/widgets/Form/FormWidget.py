@@ -1,15 +1,14 @@
 from abc import ABC 
-from PyQt6 import QtWidgets
 
 class FormWidget():
     def __init__(self) -> None:
         self.value = None
         
     def initUI(self):
-        pass 
-    
+        raise NotImplementedError
+
     def connectSignal(self):
-        pass
+        raise NotImplementedError
     
     def getValue(self):
         try:
@@ -30,9 +29,9 @@ class FormWidget():
             pass 
     
     def enable(self):
-        pass 
+        raise NotImplementedError 
     
     def disable(self):
-        pass
+        raise NotImplementedError
     
     

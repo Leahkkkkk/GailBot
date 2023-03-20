@@ -2,8 +2,7 @@ from typing import Dict, Tuple
 from copy import deepcopy
 from view.config.Style import Color, Dimension, FontSize 
 from view.widgets import  Label, ComboBox, TextForm
-from view.widgets.Form.FormWidget import FormWidget 
-
+from .FormWidget import FormWidget
 from PyQt6.QtCore import QSize, Qt 
 from PyQt6.QtWidgets import (
     QWidget,

@@ -10,7 +10,7 @@ Modified By:  Siara Small  & Vivian Li
 '''
 from typing import List 
 
-from view.widgets.Form.FormWidget import FormWidget
+from .FormWidget import FormWidget
 from view.widgets import Label, ComboBox 
 from view.config.Style import Color, FontSize
 from PyQt6.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget
@@ -37,7 +37,6 @@ class InputCombo(QWidget, FormWidget):
         """ 
         initializing ui
         """
-        super().initUI()
         self.inputLabel = Label.Label(self.label, self.labelSize)
         self.inputField = ComboBox.ComboBox()
         self.inputField.addItems(self.selections)
@@ -49,6 +48,7 @@ class InputCombo(QWidget, FormWidget):
         self.setLayout(self._layout)
         self._layout.addWidget(self.inputLabel)
         self._layout.addWidget(self.inputField)
+        self.setMinimumHeight(80)
     
     def connectSignal(self):
         """ 

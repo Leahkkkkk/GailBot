@@ -15,6 +15,7 @@ workspace  = "google_workspace"
 maximum_size = 10485760
 maximum_duration = 60
 
+
 [google.key]
 type = "service_account"
 project_id = "gailbot-testing"

@@ -1,10 +1,9 @@
-from view.widgets.Form.FormWidget import FormWidget
 from view.widgets import Label
 from view.config.Style import Color, Dimension, FontFamily, FontSize
 from view.config.Text import BtnText as Text 
 from copy import deepcopy
 from PyQt6.QtWidgets import QWidget, QPushButton, QHBoxLayout
-
+from .FormWidget import FormWidget
 class onOffButton(QWidget, FormWidget):
     def __init__(self, 
                 label: str,
