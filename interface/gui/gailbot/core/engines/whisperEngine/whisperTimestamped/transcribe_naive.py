@@ -145,70 +145,71 @@ def _transcribe_timestamped_naive(
             mfcc = mfcc.unsqueeze(0)
 
             tokens = segment["tokens"]
-            assert len(tokens), "Got empty transcription!"
-            if tokens[0] == tokenizer.timestamp_begin:
-                tokens = tokens[1:]
-            while tokens[-1] >= tokenizer.timestamp_begin:
-                tokens = tokens[:-1]
-                assert len(tokens), "Got transcription with only timestamps!"
+            # assert len(tokens), "Got empty transcription!"
+            if tokens:
+                if tokens[0] == tokenizer.timestamp_begin:
+                    tokens = tokens[1:]
+                while tokens[-1] >= tokenizer.timestamp_begin:
+                    tokens = tokens[:-1]
+                    assert len(tokens), "Got transcription with only timestamps!"
 
-            tokens = [
-                    *tokenizer.sot_sequence,
-                    tokenizer.timestamp_begin,
-                ] + tokens
+                tokens = [
+                        *tokenizer.sot_sequence,
+                        tokenizer.timestamp_begin,
+                    ] + tokens
 
-            i_start = len(tokenizer.sot_sequence)
+                i_start = len(tokenizer.sot_sequence)
 
-            with torch.no_grad():
-                logprobs = model(mfcc, torch.Tensor(tokens).int().to(model.device).unsqueeze(0))
-                logprobs = F.log_softmax(logprobs, dim=-1)
+                with torch.no_grad():
+                    logprobs = model(mfcc, torch.Tensor(tokens).int().to(model.device).unsqueeze(0))
+                    logprobs = F.log_softmax(logprobs, dim=-1)
 
-            tokens = tokens[i_start:] + [tokenizer.timestamp_begin + round((end_sample - start_sample) // AUDIO_SAMPLES_PER_TOKEN)]
-            attention_weights = [w[:, :, i_start-1:, :] for w in attention_weights]
+                tokens = tokens[i_start:] + [tokenizer.timestamp_begin + round((end_sample - start_sample) // AUDIO_SAMPLES_PER_TOKEN)]
+                attention_weights = [w[:, :, i_start-1:, :] for w in attention_weights]
 
-            ws = perform_word_alignment(
-                tokens,
-                attention_weights,
-                tokenizer,
-                use_space=use_space,
-                remove_punctuation_from_words=remove_punctuation_from_words,
-                refine_whisper_precision_nframes=refine_whisper_precision_nframes,
-                mfcc=mfcc,
-                plot=plot_word_alignment,
-            )
+                ws = perform_word_alignment(
+                    tokens,
+                    attention_weights,
+                    tokenizer,
+                    use_space=use_space,
+                    remove_punctuation_from_words=remove_punctuation_from_words,
+                    refine_whisper_precision_nframes=refine_whisper_precision_nframes,
+                    mfcc=mfcc,
+                    plot=plot_word_alignment,
+                )
 
-            segment_logprobs = []
-            for w in ws:
+                segment_logprobs = []
+                for w in ws:
 
-                w["start"] = round(w["start"] + start, 2)
-                w["end"] = round(w["end"] + start, 2)
+                    w["start"] = round(w["start"] + start, 2)
+                    w["end"] = round(w["end"] + start, 2)
 
-                w.update({"idx_segment": i_segment})
+                    w.update({"idx_segment": i_segment})
 
-                if compute_word_confidence:
-                    tokens = w["tokens"]
-                    i_end = i_start + len(tokens)
-                    if include_punctuation_in_confidence:
-                        tokens_str = [tokenizer.decode([t]) for t in tokens]
-                        while len(tokens_str) > 1 and tokens_str[-1][-1] in _punctuation: # Note: look at the last character of token, to take into account "...", "!!", etc.
-                            tokens_str = tokens_str[:-1]
-                            tokens = tokens[:-1]
-                    word_logprobs = [logprobs[:, step, tok] for (step, tok) in zip(range(i_start, i_start + len(tokens)), tokens)]
-                    i_start = i_end
-                    word_logprobs = torch.cat(word_logprobs)
-                    w.update({"confidence": round_confidence(word_logprobs.mean().exp().item())})
-                    segment_logprobs.append(word_logprobs)
+                    if compute_word_confidence:
+                        tokens = w["tokens"]
+                        i_end = i_start + len(tokens)
+                        if include_punctuation_in_confidence:
+                            tokens_str = [tokenizer.decode([t]) for t in tokens]
+                            while len(tokens_str) > 1 and tokens_str[-1][-1] in _punctuation: # Note: look at the last character of token, to take into account "...", "!!", etc.
+                                tokens_str = tokens_str[:-1]
+                                tokens = tokens[:-1]
+                        word_logprobs = [logprobs[:, step, tok] for (step, tok) in zip(range(i_start, i_start + len(tokens)), tokens)]
+                        i_start = i_end
+                        word_logprobs = torch.cat(word_logprobs)
+                        w.update({"confidence": round_confidence(word_logprobs.mean().exp().item())})
+                        segment_logprobs.append(word_logprobs)
 
-                words.append(w)
+                    words.append(w)
 
-                if verbose:
-                    print_timestamped(w)
+                    if verbose:
+                        print_timestamped(w)
 
-            if len(segment_logprobs):
-                segment.update({"confidence": round_confidence(torch.cat(segment_logprobs).mean().exp().item())})
+                if len(segment_logprobs):
+                    segment.update({"confidence": round_confidence(torch.cat(segment_logprobs).mean().exp().item())})
 
-            if len(ws):
-                previous_end = ws[-1]["end"]
+                if len(ws):
+                    previous_end = ws[-1]["end"]
     finally:
 
         # Remove hooks

@@ -216,7 +216,8 @@ class FileTable(QTableWidget):
             addFileWindow = UploadFileTab(self.profiles)
             addFileWindow.signals.postFile.connect(self._postFile)
             addFileWindow.exec()
-        except: 
+        except Exception as e:
+            self.logger.error(e, exc_info=e) 
             MsgBox.WarnBox("An error occurred when uploading the file")
     
     def _postFile(self, file: fileObject):
@@ -388,7 +389,7 @@ class FileTable(QTableWidget):
     
     def initProfiles(self, profiles: List[str]):
         """ initialize a list of available profile"""
-        self.profile = profiles
+        self.profiles = profiles
     
     def addProfile(self, profileName:str)->None:
         """ add profile keys 

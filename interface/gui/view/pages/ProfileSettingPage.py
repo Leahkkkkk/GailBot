@@ -112,7 +112,7 @@ class ProfileSettingPage(QWidget):
         self.sidebarTopLayout.addWidget(self.pluginBtn)
         self.sidebarTopLayout.setSpacing(0)
         self.sideBar.addWidget(self.topSelectionContainer)
-        self.sideBar.addWidget(self.newPluginBtn) 
+        # self.sideBar.addWidget(self.newPluginBtn) 
         self.sideBar.addWidget(self.newProfileBtn)
         self.sideBar.addWidget(self.saveBtn)
         self.sideBar.addWidget(self.cancelBtn)

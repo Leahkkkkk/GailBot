@@ -124,14 +124,7 @@ class TranscribeProgressPage(QWidget):
         """ connects signal. change enableCancel to true when backend functionality allows for it. """
         enableCancel = False
         self.cancelBtn.setDisabled(True)
-        if (enableCancel):
-            self.cancelBtn.clicked.connect(self._confirm)
         self.signals.progressChanged.connect(self.editFileProgess)
-        
-    def _confirm(self):
-        """ pulls up message box that prompts user to confirm cancellation """
-        self.confirmCancel = MsgBox.ConfirmBox( 
-            Text.loggerMsg, self.cancelGailBot)
     
     def setLoadingText(self, text):
         """ functionality to be able to dynamically change the text under the loading icon 
@@ -145,7 +138,6 @@ class TranscribeProgressPage(QWidget):
 
     def cancelGailBot(self):
         """ simulates the cancellation of gailbot- will rely on backend functionality when complete """
-        self.logger.info(Text.loggerMsg)
         self.signals.cancel.emit()
         
     def editFileProgess(self, progress: Tuple[str, str]):

@@ -71,8 +71,8 @@ class RequiredSettingPage(QWidget):
         self.layout.addWidget(self.deleteBtn, alignment=center)
         self.layout.addWidget(self.engineForm, 
                               alignment=center)
-        self.layout.addWidget(self.pluginForm, 
-                              alignment=center)
+        # self.layout.addWidget(self.pluginForm, 
+                            #   alignment=center)
         self.layout.addStretch()
 
         

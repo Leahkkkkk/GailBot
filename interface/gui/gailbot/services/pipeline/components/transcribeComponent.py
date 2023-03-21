@@ -173,7 +173,7 @@ class TranscribeComponent(Component):
             self.emit_progress(payload, ProgressMessage.Transcribed)
              
         except Exception as e:
-            payload.progress_display(payload, ProgressMessage.Error)
+            self.emit_progress(payload, ProgressMessage.Error)
             logger.error(f"Failed to transcribed {len(data_files)} file in parallel due to the error {e}", exc_info=e)
             return False
         
