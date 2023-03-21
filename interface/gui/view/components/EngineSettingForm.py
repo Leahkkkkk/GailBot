@@ -1,5 +1,5 @@
 '''
-File: RequiredSettingForm.py
+File: EngineSettingForm.py
 Project: GailBot GUI
 File Created: Friday, 4th November 2022 1:01:27 pm
 Author: Siara Small  & Vivian Li
@@ -14,7 +14,7 @@ from typing import Dict, TypedDict
 
 from view.widgets import ToggleView
 from view.widgets.Form.DependentComboBox import DependentCombo
-from view.config.Text import EngineSettingForm
+from view.config.Text import EngineForm
 from view.config.Text import CreateNewProfilePageText as Text 
 from view.config.Style import Dimension
 from gbLogger import makeLogger
@@ -26,7 +26,7 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import Qt
     
-class RequiredSettingForm(QWidget):
+class EngineSettingForm(QWidget):
     """ implementation of a form that allow user to create required setting 
     
     Public Functions: 
@@ -46,7 +46,7 @@ class RequiredSettingForm(QWidget):
     def _initWidget(self):
         """initialize widgets"""
         self.engineForm = DependentCombo(
-            EngineSettingForm.Engine, "Speech to Text Engine", "engine")
+            EngineForm.Engine, "Speech to Text Engine", "engine")
         self.engineFormView = ToggleView.ToggleView(
             Text.engineSettingHeader, self.engineForm, header = True)
         self.engineFormView.setScrollHeight(Dimension.OUTPUT_FORM_HEIGHT)

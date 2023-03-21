@@ -57,20 +57,22 @@ class FileUploadPage(QWidget):
     """
     def __init__(
         self, 
-        profileNames: List[str],
         signal: FileSignals, 
         *args, 
         **kwargs) -> None:
         """ initializes file upload page """
         super().__init__(*args, **kwargs)
         self.signal = signal
-        self.profileNames = profileNames
         self.logger = makeLogger("F")
         self._initWidget()
         self._initLayout()
         self._initStyle()
         self._connectSignal()
-        
+    
+    def initAvailableProfiles(self, profiles: List[str]):
+        """ initialize a list of available profiles to file table """
+        self.fileTable.initProfiles(profiles)
+    
     def _connectSignal(self):
         """ connects signals to different functions upon button clicks """
         self.logger.info("")
@@ -103,7 +105,6 @@ class FileUploadPage(QWidget):
         self.fileTable = FileTable(
             FileTableHeader.fileUploadPage, 
             self.signal,
-            self.profileNames,
             {TableWidget.CHECK, 
              TableWidget.PROFILE_DETAIL, 
              TableWidget.CHANGE_PROFILE, 

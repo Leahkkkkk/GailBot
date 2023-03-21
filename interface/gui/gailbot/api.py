@@ -213,7 +213,15 @@ class GailBot:
             Union[bool, Dict[str, Union[str, Dict]]]: the setting content
         """
         return self.gb.get_all_settings_data()
-     
+    
+    def get_all_settings_name(self) -> List[str]:
+        """ get the names fo available settings
+
+        Returns:
+            List[str]: a list of available setting names
+        """
+        return self.gb.get_all_settings_name()
+        
     def rename_setting(
         self, 
         old_name: str,
@@ -250,21 +258,6 @@ class GailBot:
         """
         return self.gb.update_setting(setting_name, new_setting)
         
-    def get_engine_setting(
-        self, 
-        setting_name: str, 
-    ) -> Dict[str, str]:
-        """
-        Accesses the engine setting of a given setting
-
-        Args:
-            setting_name: str: name of the setting to get the engine setting of
-
-        Returns:
-            Dict[str, str]: dictionary representation of the engine setting
-        """
-        return self.gb.get_engine_setting(setting_name)
-    
     def get_plugin_setting(
         self, 
         setting_name: str
@@ -374,7 +367,7 @@ class GailBot:
     def register_plugin_suite(
         self, 
         plugin_source : str
-    ) -> str:
+    ) -> Union[str, bool]:
         """
         Registers a gailbot plugin suite
 
@@ -382,6 +375,7 @@ class GailBot:
             plugin_source : str: Name of the plugin suite to register
 
         Returns:
+            return the plugin name if the plugin is registered, false otherwise
         """
         return self.gb.register_plugin_suite(plugin_source)
     
@@ -439,4 +433,10 @@ class GailBot:
         """
         return self.gb.add_progress_display(source, displayer)
 
-        
+    def get_all_plugin_suites(self) -> List[str]:
+        """ get names of available plugin suites
+
+        Returns:
+            List[str]: a list of available plugin suites name
+        """
+        return self.gb.get_all_plugin_suites()

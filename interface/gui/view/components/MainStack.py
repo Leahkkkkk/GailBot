@@ -9,7 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 Description: implementation of the main page Stack
 '''
-from typing import Tuple
+from typing import Tuple, List
 
 from gbLogger import makeLogger
 from view.config.Style import Dimension
@@ -56,14 +56,11 @@ class MainStack(QStackedWidget):
     """
     def __init__(
         self, 
-        settingData,       
         fileTableSignal,   
         profileSignals,    
         *args, 
         **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.settingData = settingData
-        self.profileKeys = list(settingData)
         self.fileSignal = fileTableSignal
         self.profileSignals = profileSignals
         self.logger= makeLogger("F")
@@ -72,23 +69,17 @@ class MainStack(QStackedWidget):
         self._initPage()
         self._pageRedirect()
         self._connectSignal()
-        
-    def _connectSignal(self):
-        """ connecting the signal  """
-        self.FileUploadPage.fileTable.viewSignal.goSetting.connect(
-            self.gotoSettingPage)
-        self.ConfirmTranscribePage.fileTable.viewSignal.goSetting.connect(
-            self.gotoSettingPage)
-        """ signals to control the list of files to be presented on each 
-            file table
+    
+    def addAvailableSetting(self, profileNames: List[str], pluginSuites: List[str]):    
+        """ add the available setting to the profile setting interface
+
+        Args:
+            profileNames (List[str]): a list of profile names
+            pluginSuites (List[str]): a list of plugin suites names
         """
-        self.FileUploadPage.fileTable.viewSignal.transferState.connect(
-            self.ConfirmTranscribePage.fileTable.filterFile)
-        self.ConfirmTranscribePage.fileTable.viewSignal.transferState.connect(
-            self.TranscribeProgressPage.fileTable.filterFile)
-        self.ConfirmTranscribePage.fileTable.viewSignal.transferState.connect(
-            self.TranscribeSuccessPage.fileTable.filterFile)
- 
+        self.ProfileSettingPage.addAvailableSetting(profileNames, pluginSuites)
+        self.FileUploadPage.initAvailableProfiles(profileNames)
+        
     def gotoTranscribeInProgress(self):
         """ redirect to transcribe in progress page """
         self.TranscribeProgressPage.IconImg.start()
@@ -139,14 +130,12 @@ class MainStack(QStackedWidget):
             mimic the functionality of swapping pages """
         self.WelcomePage = WelcomePage.WelcomePage(self)
         initHomePageBackground(self.WelcomePage)
-        self.FileUploadPage = FileUploadPage.FileUploadPage(
-            self.profileKeys,self.fileSignal) 
+        self.FileUploadPage = FileUploadPage.FileUploadPage(self.fileSignal) 
         initSubPageBackground(self.FileUploadPage)
         self.ConfirmTranscribePage = ConfirmTranscribePage.ConfirmTranscribePage(
             self.fileSignal)
         initSubPageBackground(self.ConfirmTranscribePage)
-        self.ProfileSettingPage = ProfileSettingPage.ProfileSettingPage(
-            self.profileKeys, self.profileSignals)
+        self.ProfileSettingPage = ProfileSettingPage.ProfileSettingPage(self.profileSignals)
         initPrimaryColorBackground(self.ProfileSettingPage)
         self.TranscribeProgressPage = TranscribeProgressPage.TranscribeProgressPage(
             self.fileSignal)
@@ -199,3 +188,19 @@ class MainStack(QStackedWidget):
         #         self.setCurrentWidget(self.RecordPage))
         # self.RecordPage.cancelBtn.clicked.connect(self.gotoFileUploadPage)
         
+    def _connectSignal(self):
+        """ connecting the signal  """
+        self.FileUploadPage.fileTable.viewSignal.goSetting.connect(
+            self.gotoSettingPage)
+        self.ConfirmTranscribePage.fileTable.viewSignal.goSetting.connect(
+            self.gotoSettingPage)
+        """ signals to control the list of files to be presented on each 
+            file table
+        """
+        self.FileUploadPage.fileTable.viewSignal.transferState.connect(
+            self.ConfirmTranscribePage.fileTable.filterFile)
+        self.ConfirmTranscribePage.fileTable.viewSignal.transferState.connect(
+            self.TranscribeProgressPage.fileTable.filterFile)
+        self.ConfirmTranscribePage.fileTable.viewSignal.transferState.connect(
+            self.TranscribeSuccessPage.fileTable.filterFile)
+ 

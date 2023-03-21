@@ -313,7 +313,7 @@ class Links:
     guideLinkSideBar = _linkTemplate.format(Color.LINK, USER_MANUAL, WelcomePageText.tutorialText)
 
 ProfileSettingForm = ProfileSetting.from_dict(forms["profile form"])
-EngineSettingForm  = EngineSetting.from_dict(forms["profile form"]["RequiredSetting"])
+EngineForm  = EngineSetting.from_dict(forms["profile form"]["RequiredSetting"])
 SystemSettingForm  = forms["system setting form"]
 LogDeleteTimeDict  = forms["log deletion"]
 RecordForm         = forms["record form"]

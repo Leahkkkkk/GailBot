@@ -182,7 +182,7 @@ FileFormatHeader = "File Format"
 SpeakerHeader    = "Number of Speakers"
 TextWrap         = "Text-Wrapping"
 
-[RequiredSettingForm]
+[EngineSettingForm]
 engineSetHeader = "Speech to text settings"
 outputSetHeader = "Output File Format Settings"
 

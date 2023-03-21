@@ -14,7 +14,7 @@ from typing import TypedDict, Tuple
 
 from gailbot.api import GailBot
 from PyQt6.QtCore import QObject, pyqtSignal
-
+from controller.util.io import get_name
 
 class pluginObject(TypedDict):
     """ the scheme of a plugin data,
@@ -53,17 +53,15 @@ class PluginOrganizer:
         self.signals = Signals()
         self.gbCotroller = gbController
     
-    def post(self, plugin: Tuple[str, str]) -> None: 
+    def post(self, pluginSuitePath:str) -> None: 
         """ add a new pugin to the data base
 
         Args:
-            plugin (Tuple[str, str]): a tuple with the plugin name  and 
-                                      the path to the plugin source
+            pluginSuitePath: a string that stores the path to plugin suite
         """     
-        name, path = plugin 
-        if name not in self.data:
-            self.data[name] = path
-            self.signals.pluginAdded.emit(name)
+        # plugin = self.gbCotroller.register_plugin_suite(pluginSuitePath)
+        plugin = get_name(pluginSuitePath) 
+        if plugin:
+            self.signals.pluginAdded.emit(plugin)
         else:
-            self.signals.error.emit("plugin name has been taken ")
-    
+            self.signals.error.emit(f"failed to register plugin {get_name(pluginSuitePath)}")

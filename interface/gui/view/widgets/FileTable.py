@@ -81,7 +81,6 @@ class FileTable(QTableWidget):
     def __init__(self, 
                  headers: List[str], 
                  fileSignal: FileSignals,
-                 profiles: List[str] = [Text.default],  
                  tableWidgetsSet: Set[TableWidget] = None, 
                  transferListColor = Color.MAIN_BACKGROUND,
                  *args, 
@@ -100,9 +99,8 @@ class FileTable(QTableWidget):
                                    on each row
         """
         super().__init__(0, (len(headers)), *args, **kwargs)
-
+        self.profiles = []
         self.headers = headers        
-        self.profiles = profiles      
         self.filePins = dict()          # used to track file's position on 
                                         # table by pin
                                         
@@ -125,6 +123,7 @@ class FileTable(QTableWidget):
         self._connectViewSignal()
         self.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)  
         self.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+    
         
     def resizeCol(self, widths:List[int]) -> None:
         """ takes in a list of width and resize the width of the each 
@@ -386,6 +385,10 @@ class FileTable(QTableWidget):
                 self.viewSignal.error.emit(KEYERROR)
         except:
             MsgBox.WarnBox("an error occurred when updating the file profile")
+    
+    def initProfiles(self, profiles: List[str]):
+        """ initialize a list of available profile"""
+        self.profile = profiles
     
     def addProfile(self, profileName:str)->None:
         """ add profile keys 

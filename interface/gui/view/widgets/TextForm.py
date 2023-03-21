@@ -21,6 +21,7 @@ from view.widgets.Form.ComBoInput import InputCombo
 from view.widgets.Form.FileUpload import UploadFile 
 from view.widgets.Form.FormWidget import FormWidget
 from view.widgets.Form.OnOffButton import onOffButton
+from view.widgets.Form.MultiSelect import MultipleSelect 
 from ..config.Style import (
     FontFamily, 
     FontSize, 
@@ -41,6 +42,7 @@ class InputFormat:
     COMBO = " combo"
     DEPENDENT_COMBO = " dependent combo"
     FILE = "file upload"
+    MULTI_CHOICE = "multiple choice"
     
     
 class TextForm(QWidget):
@@ -153,6 +155,10 @@ class TextForm(QWidget):
                     key = key.replace(InputFormat.FILE, "").split(". ")[-1]
                     newInput = UploadFile(key)
               
+                elif InputFormat.MULTI_CHOICE in key:
+                    key = key.replace(InputFormat.MULTI_CHOICE, "").split(". ")[-1]
+                    newInput = MultipleSelect(key, value)
+             
                 else:
                     key = key.split(". ")[-1]
                     newInput = TextInput(key, inputText=value)

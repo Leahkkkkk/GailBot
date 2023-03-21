@@ -8,11 +8,12 @@ Last Modified: Thursday, 6th October 2022 11:08:43 am
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
-from typing import Dict
+from typing import Dict, List
 from view.config.Style import FontSize,FontFamily, Color
 from view.config.Text import ProfilePageText as Text
 from view.widgets import  Label
-from view.components import RequiredSettingForm
+from view.components import EngineSettingForm
+from view.components import PluginForm
 from view.widgets.Button import ColoredBtn
 from PyQt6.QtWidgets import (
     QWidget, 
@@ -30,19 +31,20 @@ class RequiredSettingPage(QWidget):
         self._initWidget()
         self._initLayout()
 
-    def setValue(self, data: Dict[str, str]):
+    def setValue(self, data: Dict[str, Dict]):
         """ sets the value of data
         Args: data:dict: dictionary that is passed in to be updated
         """
         try:
-            self.form.setValue(data)
+            self.engineForm.setValue(data["engine_setting"])
+            self.pluginForm.setValue(data["plugin_setting"])
         except:
             raise ValueError("Set Required Setting Data Error")
     
     def getValue(self) -> dict:
         """ gets the value of data """
         try:
-            return self.form.getValue()
+            return self.engineForm.getValue()
         except:
             raise ValueError("Get Required Setting Data Error")
         
@@ -55,7 +57,8 @@ class RequiredSettingPage(QWidget):
         self.deleteBtn = ColoredBtn (
             Text.deleteBtn, Color.CANCEL_QUIT
         )
-        self.form = RequiredSettingForm.RequiredSettingForm()
+        self.engineForm = EngineSettingForm.EngineSettingForm()
+        self.pluginForm = PluginForm.PluginForm()
     
     def _initLayout(self):
         """ initializes the layout of the page """
@@ -66,7 +69,9 @@ class RequiredSettingPage(QWidget):
         self.layout.addWidget(self.description,
                               alignment=center)
         self.layout.addWidget(self.deleteBtn, alignment=center)
-        self.layout.addWidget(self.form, 
+        self.layout.addWidget(self.engineForm, 
+                              alignment=center)
+        self.layout.addWidget(self.pluginForm, 
                               alignment=center)
         self.layout.addStretch()
 

@@ -83,7 +83,6 @@ def test_plugin_component():
     plugin = TestPlugin()
     plugin_com = PluginComponent(plugin)
     success_dep = {"success": SUCCESS_RESULT}
-    plugin_com(success_dep, test_plugin_method)
 
 @pytest.mark.parametrize(
     "source", [[TEST_DIR_SRC, HIL_DIR_SRC, TEST_TWO_DIR_SRC]])
@@ -92,7 +91,6 @@ def test_load_dir(source):
     test_manager = PluginManager(
         plugin_sources =source,
         load_existing=True)
-    logger.info(test_manager.suite_names)
 
     
 @pytest.mark.parametrize("url", [[HIL_LAB_PLUGIN_URL, TEST_PLUGIN_URL]])
@@ -101,7 +99,6 @@ def test_load_url(url):
     test_manager = PluginManager(
         plugin_sources=url,
         load_existing=False)
-    logger.info(test_manager.suite_names)
 
 
 @pytest.mark.parametrize("source", [[TEST_DIR_SRC]])

@@ -31,7 +31,7 @@ class ProfileSignals(QObject):
     edit = pyqtSignal(tuple)
     get  = pyqtSignal(object)
     delete = pyqtSignal(str)
-    addPlugin = pyqtSignal(tuple)
+    addPlugin = pyqtSignal(str)
 
 class ViewSignals(QObject):
     restart = pyqtSignal()

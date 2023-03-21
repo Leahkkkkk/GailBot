@@ -27,7 +27,6 @@ from view.pages import (
 )
 from view.widgets import (
     Button, 
-    Label, 
     ComboBox, 
     SideBar 
 )
@@ -50,15 +49,13 @@ class ProfileSettingPage(QWidget):
     """ class for settings page """
     def __init__(
         self, 
-        profilekeys:List[str],
-        signals:ProfileSignals,
+        signals: ProfileSignals,
         *args, 
         **kwargs) -> None:
         """ initializes class """
         super().__init__(*args, **kwargs)
     
         self.signals = signals
-        self.profilekeys = profilekeys
         self.plugins = list(Form.Plugins)
         self.logger = makeLogger("F")
         self._initWidget()
@@ -67,11 +64,15 @@ class ProfileSettingPage(QWidget):
         self._initStyle()
         self._initDimension()
     
+    def addAvailableSetting(self, profileKeys: List[str], pluginSuites: List[str]):
+        """ add a list of profile keys """
+        self.selectSettings.addItems(profileKeys)
+        self.RequiredSetPage.pluginForm.addPluginSuites(pluginSuites)
+         
     def _initWidget(self):
         """ initializes widgets"""
         self.sideBar = SideBar.SideBar()
         self.selectSettings = ComboBox.ComboBox()
-        self.selectSettings.addItems(self.profilekeys)
         self.cancelBtn = Button.ColoredBtn(
             Text.cancelBtn, Color.CANCEL_QUIT)
         self.saveBtn = Button.ColoredBtn(
@@ -111,7 +112,7 @@ class ProfileSettingPage(QWidget):
         self.sidebarTopLayout.addWidget(self.pluginBtn)
         self.sidebarTopLayout.setSpacing(0)
         self.sideBar.addWidget(self.topSelectionContainer)
-        # self.sideBar.addWidget(self.newPluginBtn)  NOTE: currently unused
+        self.sideBar.addWidget(self.newPluginBtn) 
         self.sideBar.addWidget(self.newProfileBtn)
         self.sideBar.addWidget(self.saveBtn)
         self.sideBar.addWidget(self.cancelBtn)
@@ -123,7 +124,6 @@ class ProfileSettingPage(QWidget):
    
     def _connectSignal(self):
         """ connects signals upon button clicks """
-        # self.postSetBtn.clicked.connect(self._activatePostSet)
         self.requiredSetBtn.clicked.connect(self._activeRequiredSet)
         self.pluginBtn.clicked.connect(self._activatePlugin)
         self.selectSettings.currentTextChanged.connect(self._getProfile)
@@ -146,7 +146,6 @@ class ProfileSettingPage(QWidget):
     
     def _setBtnDefault(self):
         """ private function that sets the default style of the buttons on the page """
-        # self.postSetBtn.setDefaultStyle()
         self.requiredSetBtn.setDefaultStyle()
         self.pluginBtn.setDefaultStyle()
     
@@ -158,7 +157,6 @@ class ProfileSettingPage(QWidget):
     def _initDimension(self):
         """ initializes the dimensions of the buttons on the page """
         self.requiredSetBtn.setFixedWidth(Dimension.LBTNWIDTH)
-        # self.postSetBtn.setFixedWidth(Dimension.LBTNWIDTH)
         self.pluginBtn.setFixedWidth(Dimension.LBTNWIDTH)
    
     def _getProfile(self, profileName:str):
@@ -192,7 +190,7 @@ class ProfileSettingPage(QWidget):
             self.logger.info(profile)
             key, data = profile 
             self.selectSettings.setCurrentText(key)
-            self.RequiredSetPage.setValue(data["engine_setting"])
+            self.RequiredSetPage.setValue(data)
         except Exception as e:
             self.logger.error(e, exc_info=e)
             WarnBox("An error occurred when loading the profile")
@@ -207,17 +205,6 @@ class ProfileSettingPage(QWidget):
         except: 
             WarnBox("An error occurred when adding the profile")
     
-    def addPluginRequest(self):
-        """ opens a pop up window to add plugin """
-        pluginDialog = PluginDialog(self.signals)
-        pluginDialog.exec()
-    
-    def addPluginHandler(self, plugin:str):
-        """ adds a new plugin to the plugin handler
-        Args: plugin(str): name of the plugin to be added
-        """
-        self.plugins.add(plugin)
-        self.PluginPage.addNewPlugin(plugin)
         
     def updateProfile(self):
         """ updates the new profile setting """
@@ -230,3 +217,14 @@ class ProfileSettingPage(QWidget):
             self.signals.edit.emit((profileKey, newSetting))
         except:
             WarnBox("An error occurred when updating the profile")
+
+    def addPluginRequest(self):
+        """ opens a pop up window to add plugin """
+        pluginDialog = PluginDialog(self.signals)
+        pluginDialog.exec()
+    
+    def addPluginHandler(self, plugin:str):
+        """ adds a new plugin to the plugin handler
+        Args: plugin(str): name of the plugin to be added
+        """
+        self.RequiredSetPage.pluginForm.addPluginSuite(plugin)

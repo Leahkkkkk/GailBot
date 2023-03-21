@@ -137,6 +137,14 @@ class ServiceController:
         """
         return self.organizer.get_all_settings_data()
     
+    def get_all_settings_name(self) -> List[str]: 
+        """ get the names fo available settings
+
+        Returns:
+            List[str]: a list of available setting names
+        """
+        return self.organizer.get_all_settings_name()
+    
     def get_src_setting_name(self, source_name: str) -> Union[bool, str]:
         """ given a source, return its setting name
 
@@ -302,7 +310,7 @@ class ServiceController:
             logger.error(e, exc_info=e)
             return [], sources
         
-    def register_plugin_suite(self, plugin_source: str) -> bool:
+    def register_plugin_suite(self, plugin_source: str) -> Union[str, bool]:
         """
         Registers a plugin suite to the object's plugin manager
 
@@ -310,7 +318,8 @@ class ServiceController:
             plugin_source: str: plugin suite to register
         
         Returns:
-            bool: True if successfully registered, false if not
+            Union[str, bool]: return the plugin name if successfully registered, 
+                              false if not
         """
         return self.plugin_manager.register_suite(plugin_source)
         
@@ -325,6 +334,15 @@ class ServiceController:
             PluginSuite: found plugin suite object
         """
         return self.plugin_manager.get_suite(suite_name)
+    
+    def get_all_plugin_suites(self) -> List[str]:
+        """ get names of available plugin suites
+
+        Returns:
+            List[str]: a list of available plugin suites name
+        """
+        return self.plugin_manager.get_all_suites_name()
+    
     
     def is_plugin_suite(self, suite_name: str) -> bool:
         """
@@ -351,3 +369,5 @@ class ServiceController:
             bool: True if successfully deleted, false if not
         """
         return self.plugin_manager.delete_suite(suite_name)
+    
+    

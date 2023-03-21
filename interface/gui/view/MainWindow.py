@@ -36,7 +36,6 @@ class MainWindow(QMainWindow):
     """ mainwindow  of the GUI App"""
     def __init__(
         self, 
-        setting_data: Dict[str, Dict]
     ):
         """initialize mainWindow object 
         
@@ -46,7 +45,6 @@ class MainWindow(QMainWindow):
         super().__init__()
         # initialize the main view controller 
         self.logger = Logger.makeLogger("F")
-        self.logger.info(f"start to initialize view object, get available profile {setting_data}")
         self.logger.info(f"the frontend configuration file is stored at {FRONTEND_CONFIG_ROOT}")
         # initialize the signal
         self.fileTableSignals = FileSignals()
@@ -64,16 +62,22 @@ class MainWindow(QMainWindow):
         self.setWindowTitle(About.APP_TITTLE)
         self.setMinimumSize(QSize(Dimension.WIN_MIN_WIDTH, Dimension.WIN_MIN_HEIGHT))
         self.setMaximumSize(QSize(Dimension.WINMAXWIDTH, Dimension.WINMAXHEIGHT))
-        self.MainStack = MainStack.MainStack(
-            setting_data,
-            self.fileTableSignals, 
-            self.profileSignals)
+        self.MainStack = MainStack.MainStack(self.fileTableSignals, self.profileSignals)
         self.logger.info("main stack initialized")
         self.setCentralWidget(self.MainStack)
         self.setContentsMargins(0,0,0,0)
         self._connectSignal()
         self._initLogger()
 
+
+    def addAvailableSetting(self, profileNames: List[str], pluginSuites: List[str]):
+        """ initialize available setting to interface"""
+        try:
+            self.MainStack.addAvailableSetting(profileNames, pluginSuites)
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            self.showError(f"failed to load profile and plugin")
+            
     """ Functions provided to controller """
     def showTranscribeInProgress(self):
         """goes to transcribe in progress page"""

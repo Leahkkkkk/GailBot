@@ -70,8 +70,7 @@ class PluginManager:
             if not self.register_suite(plugin_source):
                 logger.error(f"{get_name(plugin_source)} cannot be registered")
     
-    @property
-    def suite_names(self) -> List[str]:
+    def get_all_suites_name(self) -> List[str]:
         return set(self.suites.keys())
 
     def is_suite(self, suite_name : str) -> bool:
@@ -87,18 +86,22 @@ class PluginManager:
     def register_suite(
         self,
         plugin_source : str
-    ) -> bool:
+    ) -> Union[str, bool]:
         """
         Register a plugin suite from the given source, which can be
         a plugin directory, a url, a conf file, or a dictionary configuration.
         """
-        for loader in self.loaders:
-            suite = loader.load(plugin_source) 
-            if suite and isinstance(suite, PluginSuite):
-                self.suites[suite.name] = suite
-                return True
-        return False
-
+        try:
+            for loader in self.loaders:
+                suite = loader.load(plugin_source) 
+                if suite and isinstance(suite, PluginSuite):
+                    self.suites[suite.name] = suite
+                    return suite.name
+            return False
+        except Exception as e:
+            logger.error(e, exc_info=e)
+            return False
+        
     def get_suite(
         self,
         suite_name : str

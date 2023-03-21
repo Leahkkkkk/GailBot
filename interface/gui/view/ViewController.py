@@ -1,20 +1,27 @@
-from typing import Dict, TypedDict, Tuple, Any
+from typing import Dict, TypedDict, Tuple, Any, List
 from view.MainWindow import MainWindow
 from view.Signals import FileSignals, ProfileSignals, ViewSignals
 
 class SettingDict(TypedDict):
     engine_setting: Dict
-    plugin_setting: Dict 
-    
-    
+    plugin_setting: List[str] 
+
 class ViewController():
     """ 
         a view controller that provides functions that the caller 
         can use to interact with the frontend interface
     """
-    def __init__(self, 
-                 setting_data: SettingDict) -> None:
-        self.window: MainWindow = MainWindow(setting_data)
+    def __init__(self) -> None:
+        self.window: MainWindow = MainWindow()
+    
+    def addAvailableSettings(self, profileNames: List[str], pluginSuites: List[str]):
+        """ add the available setting to the profile setting interface
+
+        Args:
+            profileNames (List[str]): a list of profile names
+            pluginSuites (List[str]): a list of plugin suites names
+        """
+        self.window.addAvailableSetting(profileNames, pluginSuites)
     
     def show(self):
         """ 

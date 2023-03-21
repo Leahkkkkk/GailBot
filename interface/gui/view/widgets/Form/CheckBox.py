@@ -19,6 +19,7 @@ class CheckBox(QWidget, FormWidget):
         super(CheckBox, self).__init__(*args, **kwargs)
         self.label = label 
         self.state = state 
+        self.initUI()
         
     def initUI(self):
         self._layout = QHBoxLayout()
@@ -31,17 +32,14 @@ class CheckBox(QWidget, FormWidget):
         self._layout.addStretch()
         self.checkBox.setChecked(self.state)
     
-    def setValue(self, value: bool | str):
-        if value or (value.lower() == "true"):
-            self.checkBox.setChecked(True)
-        else: 
-            self.checkBox.setChecked(False)
+    def setValue(self, value: bool):
+        self.checkBox.setChecked(value)
     
     def getValue(self):
-        if self.checkBox.isChecked():
-            return "true"
-        else:
-            return "false"
+        return self.checkBox.isChecked()
+    
+    def isChecked(self):
+        return self.checkBox.isChecked()
    
     def enable(self):
         self.checkBox.setCheckable(True)

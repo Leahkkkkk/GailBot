@@ -17,7 +17,8 @@ from view.Signals import ProfileSignals
 from view.widgets import Button, MsgBox
 from view.config.Style import Color, Dimension
 from view.config.Text import CreateNewProfileTabText as Text 
-
+from view.util.io import get_name
+from gbLogger import makeLogger
 from PyQt6.QtWidgets import (
     QDialog, 
     QListWidget, 
@@ -39,8 +40,9 @@ class PluginDialog(QDialog):
         super().__init__(*arg, **kwarg)
         self.setMinimumSize(
             QSize(Dimension.DEFAULTTABHEIGHT, Dimension.DEFAULTTABHEIGHT))
-        self.plugins = dict()
+        self.plugins = list()
         self.signal = signal
+        self.logger = makeLogger("F")
         self._initWidget()
         self._initLayout()
         self._connectSignal()
@@ -68,29 +70,25 @@ class PluginDialog(QDialog):
 
     def _connectSignal(self):
         """ connects the file signals upon button click """
-        self.uploadBtn.clicked.connect(self._addPlugins)
-        self.addBtn.clicked.connect(self._postPlugins)
+        self.uploadBtn.clicked.connect(self._addPlugin)
+        self.addBtn.clicked.connect(self._postPlugin)
         
-    def _addPlugins(self):
+    def _addPlugin(self):
         """ open a file dialog to let user load file """
-        dialog = QFileDialog()
-        dialog.setFileMode(dialog.FileMode.ExistingFiles)
-        filter = Text.pluginFilter
-        dialog.setNameFilter(filter)
-        dialog.exec()
-        files = dialog.selectedFiles()
-        if files:
-            for file in files:
-                name = os.path.basename(file)
-                self.plugins[name] = file
-        self.displayPlugins.addItems(list(self.plugins))
-             
+        try:
+            dialog = QFileDialog()
+            selectedFolder = dialog.getExistingDirectory()
+            if selectedFolder:
+                self.plugins.append(selectedFolder)
+                self.displayPlugins.addItem(get_name(selectedFolder))
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
 
-    def _postPlugins(self):
+    def _postPlugin(self):
         """ send the new plugins through the signal """
         if not self.plugins:
             MsgBox.WarnBox("No plugin is added")
         else:
-            for key, plugin in self.plugins.items():
-                self.signal.addPlugin.emit((key, plugin))
+            for plugin in self.plugins:
+                self.signal.addPlugin.emit(plugin)
             self.close()

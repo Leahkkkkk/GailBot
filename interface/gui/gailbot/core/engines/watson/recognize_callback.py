@@ -37,7 +37,6 @@ class CustomWatsonCallbacks(RecognizeCallback):
 
     def get_results(self) -> Dict:
         logger.info("on get result")
-        logger.info(self.closure)
         return deepcopy(self.closure)
 
     def on_transcription(self, transcript: List) -> None:

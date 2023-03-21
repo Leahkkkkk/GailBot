@@ -80,9 +80,14 @@ class Controller(QObject):
             self.logger.info("GailBot initialized")
 
             # initialize view object
-            self.ViewObj = ViewController(self.gb.get_all_settings_data())
+            self.ViewObj = ViewController()
             assert self.ViewObj
             self.logger.info("View Object initialized")
+            
+            settingNames = self.gb.get_all_settings_name()
+            pluginSuites = self.gb.get_all_plugin_suites()
+            self.logger.info(f"get setting and profile {settingNames}, {pluginSuites}")
+            self.ViewObj.addAvailableSettings(settingNames, pluginSuites)
 
             # initialize model view controller for dynamically changing view
             self.MVController = MVController(self.ViewObj, self.gb)

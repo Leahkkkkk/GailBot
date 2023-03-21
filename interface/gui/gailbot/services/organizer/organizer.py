@@ -322,6 +322,12 @@ class Organizer:
         return a dictionary that stores all setting data
         """
         return self.setting_manager.get_all_settings_data()
+
+    def get_all_settings_name(self) -> List[str]:
+        """ 
+        return a list of string that stores all setting name
+        """
+        return self.setting_manager.get_setting_names()
     
     def get_default_setting_name(self) -> str:
         """ get the default setting name
