@@ -254,7 +254,6 @@ class GoogleCore:
             mediaHandler = MediaHandler()
             stream = mediaHandler.read_file(audiopath)
             chunks = mediaHandler.chunk(stream, GOOGLE_CONFIG.maximum_duration)
-            
             for chunk in chunks:
                 mediaHandler.write_stream(
                     chunk, dir, name=f"{basename}-{idx}", 
@@ -295,6 +294,5 @@ class GoogleCore:
             new_utt = self.prepare_utterance(response)
             logger.info(new_utt)
             utterances.append(new_utt)
-        delete(workspace)
         return utterances
     

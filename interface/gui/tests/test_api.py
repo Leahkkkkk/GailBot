@@ -71,11 +71,16 @@ def test_invalid():
 #### test for watson    
 def test_watson():
     fails, invalid = transcribe([PATH.HELLO_1], "watson", SETTING_DATA.WATSON_PROFILE)
-    logging.info(fails)
+    logging.info(fails) 
     logging.info(invalid)
 
 def test_watson_large():
     fails, invalid = transcribe([PATH.LONG_PHONE_CALL], "watson", SETTING_DATA.WATSON_PROFILE)
+    logging.info(fails)
+    logging.info(invalid)
+
+def test_watson_large_two():
+    fails, invalid = transcribe([PATH.LONG_LIB_RECORD], "watson", SETTING_DATA.WATSON_PROFILE)
     logging.info(fails)
     logging.info(invalid)
     
@@ -105,3 +110,13 @@ def test_google_long():
     fails, invalid = transcribe([PATH.LONG_PHONE_CALL], "google", SETTING_DATA.GOOGLE_PROFILE)
     logging.info(fails)
     logging.info(invalid)
+
+
+def test_transcribe():
+    import speech_recognition as sr
+    r = sr.Recognizer()
+    test = sr.AudioFile(PATH.LONG_LIB_RECORD)
+    with test as source: 
+        audio = r.record(source)
+        res = r.recognize_google(audio, show_all=True)
+    print(res)

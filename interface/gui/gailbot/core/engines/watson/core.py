@@ -125,7 +125,7 @@ class WatsonCore:
         """
         # compress the audio if it is too bog
         try:
-            if get_size(audio_path) >= 1:
+            if get_size(audio_path) >= WATSON_CONFIG.max_file_size_bytes:
                 audio_path = self._convert_to_opus(audio_path, payload_workspace)
                 logger.info(f"the compressed auido_path is {audio_path}")
         except Exception as e: 
