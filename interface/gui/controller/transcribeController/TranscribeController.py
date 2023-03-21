@@ -161,7 +161,8 @@ class GBWorker(QRunnable):
         else:
             if not self.killed:
                 untranscribed = set(fails + invalid)
-                self.logger.warn(f" following files are not transcribed {untranscribed}")
+                if len(untranscribed):
+                    self.logger.warn(f" following files are not transcribed {untranscribed}")
                 for key, filename in self.files.items():
                     if not filename in untranscribed:
                         self.signal.fileTranscribed.emit(key)
