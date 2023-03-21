@@ -74,33 +74,32 @@ class Pipeline:
         Note: 
             each component is contained in a Component class
         """
-        
         successors = self.get_dependency_graph()
         logger.info(successors) 
         logger.info(self.dependency_graph)
         logger.info(self.components)
-        results : Dict[str, ComponentResult] = dict()   # map component name to result
-        base_sentinel = True # handle additional input for the first component
+        
+        name_to_results : Dict[str, ComponentResult] = dict()   # map component name to result
        
         while True:
+            # executables is a list of Component who currently has no dependent node 
             executables: List[Component] = [
                 c for c, d in self.dependency_graph.in_degree if d == 0
             ]
             
-            # Stop if no nodes left.
+            # exit the loop if no nodes left.
             if len(executables) == 0:
                 break
             
-            #  mapping the task key in the thread to executable 
             for executable in executables:
-                key_to_exe: Dict[str, Component] = dict()       # map thread key to executable
-                exe_name = self.component_to_name[executable]
-                prepare = True
+                threadkey_to_exe: Dict[str, Component] = dict()       # map thread key to executable
+                exe_name: str = self.component_to_name[executable]
+                dependency_resolved = True
                 
-                # check the dependencies output 
+                # check the result output of exe_name's dependency component 
                 if len(successors[exe_name]) > 0:
                     dep_outputs : Dict[str, ComponentResult] = {
-                        k : results[k] for k in successors[exe_name]
+                        k : name_to_results[k] for k in successors[exe_name]
                     }
                 else:
                     dep_outputs = {
@@ -113,41 +112,40 @@ class Pipeline:
                     
                 for res in dep_outputs.values():
                     if res.state == ComponentState.FAILED:
-                        results[exe_name] = Failure
+                        name_to_results[exe_name] = Failure
                         if self.dependency_graph.has_node(executable):
                             self.dependency_graph.remove_node(executable)
-                        prepare = False
+                        dependency_resolved = False
        
          
                 args = [dep_outputs]          
                               
-                if prepare:                    
+                if dependency_resolved:                    
                     key = self.threadpool.add_task(
                         executable, 
                         args = args, 
                         kwargs = additional_component_kwargs) 
-                    logger.info(executable)
-                    logger.info(key)
-                    key_to_exe[key] = executable           
+                    logger.info(f" the component {executable} get the thread key {key}")
+                    threadkey_to_exe[key] = executable           
 
             # wait until all tasks finishes before next iteration
             self.threadpool.wait_for_all_completion(error_fun=lambda:None)
             
-            for key, exe in key_to_exe.items():
+            for key, exe in threadkey_to_exe.items():
                 # get the task result from the thread pool
                 logger.info(key)
                 logger.info(exe)
                 exe_res = self.threadpool.get_task_result(key)
                 logger.info(exe_res)
                 self.dependency_graph.remove_node(exe)
-                
+                name = self.component_to_name[exe]
+               
                 if exe_res and exe_res.state == ComponentState.SUCCESS:
                     # add to result if success
-                    results[self.component_to_name[exe]] = exe_res
+                    name_to_results[name] = exe_res
                 else:
                     # add the failed result on failure
-                    component_name = self.component_to_name[exe]
-                    results[component_name] = Failure
+                    name_to_results[name] = Failure
                         
         # Regenerate graph
         self._generate_dependency_graph(
@@ -155,7 +153,7 @@ class Pipeline:
         )
 
         return {
-            k : v.state for k, v in results.items()
+            k : v.state for k, v in name_to_results.items()
         }
 
     def component_names(self) -> List[str]:

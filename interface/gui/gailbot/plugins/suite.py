@@ -111,7 +111,7 @@ class PluginSuite:
         # Init the pipeline based on the components
         self.pipeline = Pipeline(dependency_map = self.dependency_map,
                                  components = self.components,
-                                 num_threads=5)
+                                 num_threads = 5)
         
         # Add vars here from conf.
         self._name = dict_conf["suite_name"]
