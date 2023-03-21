@@ -6,7 +6,7 @@
 
 import sys
 import os
-from typing import Dict, List, Any, TypedDict
+from typing import Dict, List, Any, TypedDict, Tuple
 from dataclasses import dataclass
 import time
 import importlib
@@ -128,7 +128,13 @@ class PluginSuite:
 
     def __repr__(self):
         return (
-            f"Suite: {self.name}\n"
+            f"Plugin Suite: {self.name}\n"
+            f"Dependency map: {self.dependency_graph()}"
+        )
+
+    def __str__(self) -> str:
+        return (
+            f"Plugin Suite: {self.name}\n"
             f"Dependency map: {self.dependency_graph()}"
         )
 
@@ -150,7 +156,6 @@ class PluginSuite:
                 "methods" : methods
             }
         )
-
         return result
 
     def is_plugin(self, plugin_name : str) -> bool:
@@ -162,7 +167,6 @@ class PluginSuite:
         return list(self.plugins.keys())
 
     def plugin_details(self, plugin_name : str) -> Dict:
-        # TODO: Potentially store additional things beyond plugin dependencies
         if self.is_plugin(plugin_name):
             return {"dependencies" : self.dependency_map[plugin_name]}
 
@@ -175,7 +179,7 @@ class PluginSuite:
     # PRIVATE
     ##########
 
-    def _load_from_config(self, dict_config, abs_path: str ) -> None:
+    def _load_from_config(self, dict_config, abs_path: str ) -> Tuple [ Dict[str, List[str]], Dict[str, Plugin]]:
         """
         load the plugin suite, the information about the each plugin name, 
         and its path is stored in the dict_config, all path information 
@@ -197,8 +201,8 @@ class PluginSuite:
                   "<abs_path>/<suite_name>/<rel_path>"
         """
         pkg_name = dict_config["suite_name"]
-        dependency_map = dict()
-        plugins = dict()
+        dependency_map : Dict[str, List] = dict()
+        plugins : Dict[str, Plugin] = dict()
         
         logger.info(dict_config)
         logger.info(f"absolute path: {abs_path}")

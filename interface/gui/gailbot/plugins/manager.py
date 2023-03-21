@@ -106,6 +106,14 @@ class PluginManager:
         self,
         suite_name : str
     ) -> PluginSuite:
+        """ Given a suite name, return the plugin suite object
+
+        Args:
+            suite_name (str): the name that identifies the plugin suite
+
+        Returns:
+            PluginSuite: the plugin suite object identified by suite name
+        """
         if not self.is_suite(suite_name):
             logger.error(f"Suite does not exist {suite_name}")
             return None
@@ -126,6 +134,9 @@ class PluginManager:
         make_dir(self.download_dir,overwrite=True)
     
     def delete_suite(self, name:str):
+        """ 
+        given a suite name, delete the plugin suite
+        """
         if self.is_suite(name):
             delete(os.path.join(self.suites_dir, name))
             del self.suites[name]

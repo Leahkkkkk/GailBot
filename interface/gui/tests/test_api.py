@@ -8,6 +8,8 @@ from tests.services.test_data import PATH
 from tests.services.test_data import SETTING_DATA
 import logging
 
+HIL_LAB = "/Users/yike/Documents/GitHub/GailBot/plugins/gb_hilab_suite"
+
 def transcribe(files, setting_name = "test", setting_data = SETTING_DATA.WHISPER_PROFILE, output = PATH.USER_ROOT):
     gb = GailBot(output)
     assert gb.reset_workspace()
@@ -120,3 +122,12 @@ def test_transcribe():
         audio = r.record(source)
         res = r.recognize_google(audio, show_all=True)
     print(res)
+
+    
+
+##### 
+def test_plugin():
+    gb = GailBot(PATH.USER_ROOT)
+    plugin_suite =  gb.register_plugin_suite(HIL_LAB)
+    logging.info(plugin_suite)
+    

@@ -5,7 +5,8 @@ HIL_CONFIG_SRC =  "/Users/yike/Documents/GitHub/GailBot/gb_hilab_suite/config.to
 
 """ using test below test files  """
 TEST_DIR_SRC = "/Users/yike/Documents/GitHub/GailBot/data/test_suite"
-HIL_DIR_SRC = "/Users/yike/Documents/GitHub/GailBot/gb_hilab_suite"
+
+HIL_DIR_SRC = "/Users/yike/Documents/GitHub/GailBot/plugins/gb_hilab_suite"
 TEST_TWO_DIR_SRC = "/Users/yike/Documents/GitHub/GailBot/data/s_test_suite"
 
 TEST_PLUGIN_URL = "https://github.com/YikeLi-Vivi/GailBotTestSuite/archive/refs/heads/main.zip"
