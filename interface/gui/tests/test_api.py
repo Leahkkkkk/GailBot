@@ -27,7 +27,7 @@ def test_gailbot():
     gb = GailBot(PATH.BACKUP_ROOT)
     assert gb.reset_workspace() 
  
-#### test for whisper ###    
+#####################  test for whisper #####################
 def test_whisper():
     fails, invalid = transcribe([PATH.SMALL_AUDIO_WAV, PATH.SMALL_CONVERSATION_DIR])
     assert not fails
@@ -70,7 +70,7 @@ def test_invalid():
     
     
     
-#### test for watson    
+###########################  test for watson #####################################
 def test_watson():
     fails, invalid = transcribe([PATH.HELLO_1], "watson", SETTING_DATA.WATSON_PROFILE)
     logging.info(fails) 
@@ -96,34 +96,36 @@ def test_watson_many():
     logging.info(fails)
     logging.info(invalid)
 
-# test for google
+################################### test for google ##################################
 def test_google():
     fails, invalid = transcribe([PATH.HELLO_1], "google", SETTING_DATA.GOOGLE_PROFILE) 
     logging.info(fails)
     logging.info(invalid)
     
-def test_google_dir():
-    fails, invalid = transcribe([PATH.MANY_SMALL_FILES_DIR], "google", SETTING_DATA.GOOGLE_PROFILE)
+def test_google_many_hello():
+    fails, invalid = transcribe([PATH.HELLO_1, PATH.HELLO_2, PATH.HELLO_3, PATH.HELLO_4], "google", SETTING_DATA.GOOGLE_PROFILE) 
+    logging.info(fails)
+    logging.info(invalid)
+    
+def test_google_two():
+    fails, invalid = transcribe([PATH.TWO_MIN_9], "google", SETTING_DATA.GOOGLE_PROFILE) 
     logging.info(fails)
     logging.info(invalid)
 
+def test_google_many_two():
+    fails, invalid = transcribe([PATH.TWO_MIN_10, PATH.TWO_MIN_6, PATH.TWO_MIN_7, PATH.TWO_MIN_9, PATH.TWO_MIN_8], "google", SETTING_DATA.GOOGLE_PROFILE) 
+    logging.info(fails)
+    logging.info(invalid)
+    
+def test_google_dir():
+    fails, invalid = transcribe([PATH.MANY_FILES_DIR], "google", SETTING_DATA.GOOGLE_PROFILE)
+    logging.info(fails)
+    logging.info(invalid)
 
 def test_google_long():
     fails, invalid = transcribe([PATH.LONG_PHONE_CALL], "google", SETTING_DATA.GOOGLE_PROFILE)
     logging.info(fails)
     logging.info(invalid)
-
-
-def test_transcribe():
-    import speech_recognition as sr
-    r = sr.Recognizer()
-    test = sr.AudioFile(PATH.LONG_LIB_RECORD)
-    with test as source: 
-        audio = r.record(source)
-        res = r.recognize_google(audio, show_all=True)
-    print(res)
-
-    
 
 ##### 
 def test_plugin():

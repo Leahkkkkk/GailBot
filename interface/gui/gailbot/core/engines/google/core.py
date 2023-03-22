@@ -49,7 +49,6 @@ class GoogleCore:
         client = GoogleCore.is_valid_google_api(google_api_key)
         self.workspace = workspace_config_loader().engine_ws.google
         assert client 
-        self.client = client
         self.connected = True
         
     
@@ -114,11 +113,20 @@ class GoogleCore:
         """
         mediaHandler = MediaHandler()
         stream = mediaHandler.read_file(audio_path)
-        length = mediaHandler.info(stream)["duration_seconds"]
-        if length >= GOOGLE_CONFIG.maximum_duration:
+        info = mediaHandler.info(stream)
+        logger.info(f"the audio file information is {info}")
+        audio_duration = info["duration_seconds"]
+        audio_channels = info["channels"] 
+       
+        #  convert stereo to mono 
+        if audio_channels > 1:
+            l_stream, r_stream = mediaHandler.stereo_to_mono(stream)
+            audio_path = mediaHandler.write_stream(l_stream, out_dir=payload_workspace, name=get_name(audio_path), format=info["format"])
+            
+        if audio_duration >= GOOGLE_CONFIG.maximum_duration:
+            logger.info(f"audio length exceeds maximum limit")
             try:
-                res = self._transcribe_large_file(
-                    audio_path, payload_workspace)
+                res = self._transcribe_large_file(audio_path, payload_workspace, audio_duration)
                 logger.info(res)
                 return res
             except Exception as e:
@@ -126,7 +134,7 @@ class GoogleCore:
                 raise Err.TranscriptionError(
                     "ERROR: Failed to transcribe large file")
         try:
-            response = self.run_engine(audio_path)
+            response = self.run_engine(audio_path, payload_workspace)
         except:
             raise Err.TranscriptionError("ERROR: Google STT transcription failed")
         
@@ -135,9 +143,8 @@ class GoogleCore:
         except Exception as e :
             logger.error(e, exc_info=e)
             raise Err.OutPutError(f"ERROR: Output Google STT failed, error message: {e}")
-       
-            
-    def run_engine(self, audio_path: str) -> cloud_speech.RecognizeResponse:
+             
+    def run_engine(self, audio_path: str, workspace) -> cloud_speech.RecognizeResponse:
         """ 
         run the google STT engine to transcribe the file 
         
@@ -149,24 +156,36 @@ class GoogleCore:
             return the response data from google STT 
         """
         try:
-            with io.open(audio_path, "rb") as audio:
-                content = audio.read()
-                audio = speech.RecognitionAudio(content = content)
-                self.read_audio = True
+            # initialize client
+            client = speech.SpeechClient() 
+            
+            # preprocessing the file 
             format = get_extension(audio_path).lower()
             encoding = self.ENCODING_TABLE[format]
             kwargs = deepcopy(GOOGLE_CONFIG.defaults)
             
-            if format == "wav" or format == "flac":
-                kwargs.update({"encoding": encoding})
-            else:
+            # add additional key word arguments for file that is no in wav or flac format
+            if not (format == "wav" or format == "flac"):
                 kwargs.update({"encoding": encoding, "sample_rate_hertz": 16000})
-            
-            config = speech.RecognitionConfig(**kwargs)
-            client = speech.SpeechClient() 
+
+            # convert wav file to 16 bit 
+            if format == "wav":
+                wav_copy_ws = os.path.join(workspace, f"{get_name(audio_path)}_wav_16bit")
+                if not is_directory(wav_copy_ws):
+                    make_dir(wav_copy_ws)
+                output_for16 = os.path.join(wav_copy_ws, f"{get_name(audio_path)}_16bit.wav")
+                audio_path = MediaHandler.convert_to_16bit_wav(audio_path, output_for16)
+                config = speech.RecognitionConfig(**kwargs)
+           
+            # read audio file 
+            with io.open(audio_path, "rb") as audio:
+                content = audio.read()
+                audio = speech.RecognitionAudio(content = content)
+                self.read_audio = True
+           
+            # transcribe audio file 
             self.transcribing = True
-            response = client.recognize(
-                request={"config": config, "audio": audio})
+            response = client.recognize(config=config, audio=audio)
         
         except Exception as e:
             logger.error(e, exc_info=e)
@@ -178,7 +197,7 @@ class GoogleCore:
             logger.info(response.results)
         return response
       
-    def prepare_utterance(self, response: cloud_speech.RecognizeResponse) -> List[Dict[str, str]]:
+    def prepare_utterance(self, response: cloud_speech.RecognizeResponse, start_time = 0) -> List[Dict[str, str]]:
         """
         output the response data from google STT, convert the raw data to 
         utterance data which is a list of dictionary in the format 
@@ -212,8 +231,8 @@ class GoogleCore:
             for word in result.alternatives[0].words:
                 utt = {
                     "speaker": word.speaker_tag,
-                    "start_time": word.start_time.seconds,
-                    "end_time":word.end_time.seconds,
+                    "start_time": word.start_time.seconds + start_time,
+                    "end_time":word.end_time.seconds + start_time,
                     "text":word.word
                 }
                 utterances.append(utt)
@@ -232,7 +251,7 @@ class GoogleCore:
         self.transcribe_error = False
         self.output_success = False
     
-    def _chunk_audio(self, audiopath: str, output: str) -> Union[str, bool]:
+    def _chunk_audio(self, audiopath: str,  output: str, chunk_duration: int) -> Union[str, bool]:
         """ given the audio path, chunking the audio into a series of audio
             segment
         
@@ -246,26 +265,25 @@ class GoogleCore:
         """
         if not is_directory(output):
             make_dir(output)
-        dir = os.path.join(output, "audio")
+        dir = os.path.join(output, f"{get_name(audiopath)}_audio_chunks")
         make_dir(dir)
         basename = get_name(audiopath)
         idx = 0
         try:
             mediaHandler = MediaHandler()
             stream = mediaHandler.read_file(audiopath)
-            chunks = mediaHandler.chunk(stream, GOOGLE_CONFIG.maximum_duration)
+            chunks = mediaHandler.chunk(stream, chunk_duration)
             for chunk in chunks:
                 mediaHandler.write_stream(
                     chunk, dir, name=f"{basename}-{idx}", 
                     format=get_extension(audiopath))
                 idx += 1
-                
         except Exception as e:
             logger.error(e, exc_info=e)
         else:
             return dir
     
-    def _transcribe_large_file(self, audiopath: str, workspace: str):
+    def _transcribe_large_file(self, audiopath: str, workspace: str, audio_duration: int):
         """ 
         transcribing large audio file that exceeds the google cloud's limit for
         transcribing local file size
@@ -281,18 +299,38 @@ class GoogleCore:
             audio file, each part of the audio file is stored in the format 
             {speaker: , start_time: , end_time: , text: }
         """
-        audio_chunks_dir = self._chunk_audio(audiopath, workspace)
+        # get the duration each chunk 
+        chunk_duration = GoogleCore._get_chunk_duration(audiopath, audio_duration)
+        
+        # chunk the file 
+        audio_chunks_dir = self._chunk_audio(audiopath, workspace, chunk_duration)
         audio_chunks = paths_in_dir(audio_chunks_dir)
+        
+        # sort the audio chunks in correct order 
         audio_chunks = sorted(audio_chunks, key = lambda file: (len(file), file))
         utterances = []
+        start_time = 0 
         for chunk in audio_chunks:
             logger.info(f"transcribe {chunk} in progress")
-            response = self.run_engine(chunk)
+            response = self.run_engine(chunk, workspace)
             assert response
             logger.info("geting the response in chunk")
             logger.info(response)
-            new_utt = self.prepare_utterance(response)
-            logger.info(new_utt)
-            utterances.append(new_utt)
+            new_utt = self.prepare_utterance(response, start_time)
+            if len(new_utt):
+                start_time = new_utt[-1]["end_time"]
+                logger.info(new_utt)
+                utterances.extend(new_utt)
         return utterances
+    
+    @staticmethod
+    def _get_chunk_duration(file_path: str, file_duration: int):
+        duration = GOOGLE_CONFIG.maximum_duration
+        filesize = os.path.getsize(file_path)
+        num_chunks = file_duration // GOOGLE_CONFIG.maximum_duration
+        size_60 = filesize / num_chunks
+        if size_60 >= GOOGLE_CONFIG.maximum_size:
+            duration = duration * (GOOGLE_CONFIG.maximum_size / size_60) 
+        logger.info(f"chunk audio to {duration}")
+        return duration
     

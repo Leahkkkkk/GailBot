@@ -12,7 +12,10 @@ from pydub import AudioSegment
 from .general import (
     get_extension,
     get_name,
-    make_dir
+    make_dir, 
+    run_cmd,
+    get_cmd_status,
+    CMD_STATUS
 )
 
 @dataclass
@@ -363,6 +366,21 @@ class AudioHandler:
             chunks.append(chunk)
         return chunks
 
+    @staticmethod
+    def convert_to_16bit_wav(input_path, output_path):
+        pid = run_cmd(["ffmpeg", "-i", input_path, "-acodec", "pcm_s16le", "-ar", "16000", output_path])
+        while True:
+            match get_cmd_status(pid):
+                case CMD_STATUS.STOPPED:
+                    raise ChildProcessError("ERROR: child process error")
+                case CMD_STATUS.FINISHED:
+                    break 
+                case CMD_STATUS.ERROR:
+                    raise ChildProcessError("ERROR: child process error")
+                case CMD_STATUS.NOTFOUND:
+                    raise ProcessLookupError(f"ERROR: process lookup error {get_cmd_status(pid)}") 
+        return output_path
+    
 # TODO: Implement methods.
 class VideoHandler:
 
@@ -698,3 +716,7 @@ class MediaHandler:
         Returns:
             AudioHandler or VideoHandler, depending on the type of the given stream. """
         return self.audio_h if isinstance(stream, AudioStream) else self.video_h
+    
+    @staticmethod
+    def convert_to_16bit_wav(input_path, output_path):
+        return AudioHandler.convert_to_16bit_wav(input_path, output_path)

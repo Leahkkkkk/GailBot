@@ -12,8 +12,8 @@ language_code                   = "en-US"
 [google]
 name = "Google Cloud Speech to Text Engine"
 workspace  = "google_workspace"
-maximum_size = 10485760
-maximum_duration = 60
+maximum_size = 9000000
+maximum_duration = 55
 
 
 [google.key]
