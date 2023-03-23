@@ -32,7 +32,7 @@ opus    = "audio/ogg;codecs=opus"
 ssl_verification                = true
 # customization_weight            = 0.3
 # base_model_version              = None
-inactivity_timeout              = -1
+inactivity_timeout              = 60000
 interim_results                 = false
 # keywords                        = None
 keyword_threshold               = 0.8

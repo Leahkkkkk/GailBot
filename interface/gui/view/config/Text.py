@@ -194,8 +194,8 @@ class CreateNewProfileTabText:
 @dataclass 
 class MainStackText:
     """class holding the text for the main stack"""
-    profilesetting = "profile settings"
-    systemsetting  = "system settings"
+    profilesetting = "Profile Settings"
+    systemsetting  = "System Settings"
     
 @dataclass 
 class MenuBarText:

@@ -6,6 +6,7 @@
 from gailbot import GailBot
 from tests.services.test_data import PATH
 from tests.services.test_data import SETTING_DATA
+from gailbot.core.engines.watson import Watson
 import logging
 
 HIL_LAB = "/Users/yike/Documents/GitHub/GailBot/plugins/gb_hilab_suite"

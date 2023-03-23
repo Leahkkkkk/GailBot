@@ -36,3 +36,6 @@ def _failed_test_train_model():
     logger.info(model.get_custom_models())
     
 
+def test_get_base():
+    model = WatsonLMInterface(WATSON_API_KEY, WATSON_REGION)
+    print(model.get_base_models())

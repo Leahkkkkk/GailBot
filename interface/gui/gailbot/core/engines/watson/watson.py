@@ -81,6 +81,7 @@ class Watson(Engine):
         """
         return self.core.defaults
 
+    
     def transcribe(
         self,
         audio_path : str,

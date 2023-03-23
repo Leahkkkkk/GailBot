@@ -170,8 +170,8 @@ TabHeader6   = "Plugin Settings"
 pluginFilter = "json file (*.json) zip file (*.zip)"
 
 [MainStackText]
-profilesetting = "profile settings"
-systemsetting  = "system settings"
+profilesetting = "Profile Settings"
+systemsetting  = "System Settings"
 
 [OutputFormatForm]
 header           = "Output File Format"

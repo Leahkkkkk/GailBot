@@ -205,6 +205,7 @@ class WatsonCore:
                 "model" : base_model,
                 "customization_id": language_customization_id,
             })
+            logger.info(kwargs)
             stt.recognize_using_websocket(**kwargs)
             
     def _prepare_utterance(self, audio_name: str,  closure: Dict[str, Any]) -> List:

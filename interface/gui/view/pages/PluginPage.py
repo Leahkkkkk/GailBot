@@ -44,7 +44,9 @@ class PluginPage(QWidget):
        
     def displayPlugin(self, plugins: Dict[str, List[str]]):
         raise NotImplementedError    
-       
+      
+    def getValue(self):
+        return [] 
         
     def _initWidget(self):
         """ initializes widgets """

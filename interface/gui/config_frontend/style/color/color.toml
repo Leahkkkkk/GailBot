@@ -20,8 +20,8 @@ TABLE_BORDER = "#484847"
 INPUT_TEXT = "#000000"
 INPUT_BORDER = "#000000"
 INPUT_BACKGROUND = "#FFFFFF"
-LINK = "#91C1C7"
-LINKLIGHT = "#D1F5F5"
+LINK = "#729A9F"
+LINKLIGHT = "#729A9F"
 
 [styleSheet]
 basic = "background-color: #fff; color: #000"
