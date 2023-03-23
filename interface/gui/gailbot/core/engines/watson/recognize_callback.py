@@ -14,6 +14,11 @@ from gailbot.core.utils.logger import makelogger
 
 logger = makelogger("callback")
 
+class WatsonException(Exception):
+    def __init__(self, msg: str) -> None:
+        super().__init__(msg)
+        self.msg = msg 
+    
 class CustomWatsonCallbacks(RecognizeCallback):
     """
     Extends the watson callback class to allow custom callbacks to be executed
@@ -22,7 +27,6 @@ class CustomWatsonCallbacks(RecognizeCallback):
     Inherits:
         (RecognizeCallback)
     """
-
     def __init__(self) -> None:
         """
         Args:
@@ -43,7 +47,7 @@ class CustomWatsonCallbacks(RecognizeCallback):
         """
         Called after the service returns the final result for the transcription.
         """
-        logger.info("")
+        logger.info("on transcription")
         try:
             closure = self.closure
             closure["callback_status"]["on_transcription"] = True
@@ -56,7 +60,6 @@ class CustomWatsonCallbacks(RecognizeCallback):
         Called when a Websocket connection was made
         """
         logger.info("connected")
-        print("connected")
         try:
             closure = self.closure
             closure["callback_status"]["on_connected"] = True
@@ -67,71 +70,68 @@ class CustomWatsonCallbacks(RecognizeCallback):
         """
         Called when there is an error in the Websocket connection.
         """
-        logger.debug("error")
-        try:
-            closure = self.closure
-            closure["callback_status"]["on_error"] = True
-            closure["results"]["error"] = error
-        except Exception as e:
-            logger.debug(e)
-            logger.error(e, exc_info=e)
+        logger.error(f"get error {error}")
+        closure = self.closure
+        closure["callback_status"]["on_error"] = True
+        closure["results"]["error"] = error
+        raise WatsonException(error)
 
     def on_inactivity_timeout(self, error: str) -> None:
         """
         Called when there is an inactivity timeout.
         """      
-        logger.info("") 
+        logger.info("inactivity time out") 
         try:
             closure = self.closure
             closure["callback_status"]["on_inactivity_timeout"] = True
             closure["results"]["error"] = error
-        except:
-            logger.debug("timeout")
+        except Exception as e:
+            logger.error(f"timeout error {e}", exc_info=e)
 
     def on_listening(self) -> None:
         """
         Called when the service is listening for audio.
         """   
-        logger.info("")   
+        logger.info("listening")   
         try:
             closure = self.closure
             closure["callback_status"]["on_listening"] = True
-        except:
-            pass
+        except Exception as e:
+            logger.error(f"on listening error {e}", exc_info=e)
 
     def on_hypothesis(self, hypothesis: str) -> None:
         """
         Called when an interim result is received.
         """
-        logger.info("")
+        logger.info(f"on hypothesis {hypothesis}")
         try:
             closure = self.closure
             closure["callback_status"]["on_hypothesis"] = True
-        except:
-            pass
+        except Exception as e:
+            logger.error(f"on hypothesis error {e}", exc_info=e)
 
     def on_data(self, data: Dict) -> None:
         """
         Called when the service returns results. The data is returned unparsed.
         """
-        logger.info("")
+        logger.info(f"on data")
         try:
             closure = self.closure
             closure["callback_status"]["on_data"] = True
             closure["results"]["data"].append(data)
-        except:
-            pass
+        except Exception as e:
+            logger.error(f"on data error {e}", exc_info=e)
 
     def on_close(self) -> None:
         """
         Called when the Websocket connection is closed
         """
-        logger.info("")
+        logger.info("on close")
         try:
             closure = self.closure
             closure["callback_status"]["on_close"] = True
-        except:
-            pass
+        except Exception as e:
+            logger.error(f"on close error {e}", exc_info=e)
 
     def _init_closure(self) -> Dict:      
         return  {

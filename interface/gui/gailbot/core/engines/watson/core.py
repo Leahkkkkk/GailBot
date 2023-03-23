@@ -142,13 +142,17 @@ class WatsonCore:
                 acoustic_customization_id)  
         except Exception as e:
             logger.error(e, exc_info=e)
-            ERR.ConnectionError("ERROR: connection error")
-           
-        audio_name = get_name(audio_path)
-        utterances = self._prepare_utterance(
-            audio_name,
-            recognize_callbacks.get_results())   
-        return utterances   
+            raise ERR.ConnectionError("ERROR: connection error")
+        
+        try:
+            audio_name = get_name(audio_path)
+            utterances = self._prepare_utterance(
+                audio_name,
+                recognize_callbacks.get_results())   
+            return utterances   
+        except Exception as e: 
+            logger.error(e, exc_info=e)
+            raise ERR.GetUttResultError()
     
 ###############
 # PRIVATE
@@ -216,49 +220,51 @@ class WatsonCore:
         Returns:
             List:  a list of dictionary that contains the output data
         """
-        try:
-            utterances = list()
-            # Mapping based on (start time, end time)
-            data = dict()
-            # Aggregated data from recognition results
-            labels = list()
-            timestamps = list()
-            logger.info(f"{audio_name} closure result is {closure}")
-            # Creating RecognitionResults objects
-            for item in closure["results"]["data"]:
-                recognition_result = RecognitionResult(item)
-                if recognition_result.is_configured():
-                    labels.extend(recognition_result.get_speaker_labels())
-                    timestamps.extend(
-                        recognition_result.get_timestamps_from_alternatives(
-                            only_final=False))
-            timestamps = list(chain(*timestamps))
-            # Creating the mappings
-            for label in labels:  # Label should be a dictionary
-                key = (label["start_time"], label["end_time"])
-                if not key in data:
-                    data[key] = {"speaker": label["speaker"]}
-                else:
-                    data[key]["speaker"] = label["speaker"]
-            for timestamp in timestamps:
-                key = (timestamp[1], timestamp[2])
-                if key not in data:
-                    data[key] = {"utterance": timestamp[0]}
-                else:
-                    data[key]["utterance"] = timestamp[0]
-            # Creating utterances
-            for times, value in data.items():
-                utt = {
-                    "speaker" : value["speaker"],
-                    "start_time" : times[0],
-                    "end_time" : times[1],
-                    "text" : value["utterance"]
-                }
-                utterances.append(utt)
-            return utterances
-        except Exception as e:
-            logger.error(e, exc_info=e)
-            return []
+        logger.info(f"prepare utterance for audio {audio_name}")
+        utterances = list()
+        # Mapping based on (start time, end time)
+        data = dict()
+        # Aggregated data from recognition results
+        labels = list()
+        timestamps = list()
+        
+        # from callback, check that the transcription is successful
+        assert not closure["callback_status"]["on_error"]
+    
+        # Creating RecognitionResults objects
+        for item in closure["results"]["data"]:
+            recognition_result = RecognitionResult(item)
+            if recognition_result.is_configured():
+                labels.extend(recognition_result.get_speaker_labels())
+                timestamps.extend(
+                    recognition_result.get_timestamps_from_alternatives(
+                        only_final=False))
+        timestamps = list(chain(*timestamps))
+       
+        # Creating the mappings
+        for label in labels:  # Label should be a dictionary
+            key = (label["start_time"], label["end_time"])
+            if not key in data:
+                data[key] = {"speaker": label["speaker"]}
+            else:
+                data[key]["speaker"] = label["speaker"]
+        for timestamp in timestamps:
+            key = (timestamp[1], timestamp[2])
+            if key not in data:
+                data[key] = {"utterance": timestamp[0]}
+            else:
+                data[key]["utterance"] = timestamp[0]
+      
+        # Creating utterances
+        for times, value in data.items():
+            utt = {
+                "speaker" : value["speaker"],
+                "start_time" : times[0],
+                "end_time" : times[1],
+                "text" : value["utterance"]
+            }
+            utterances.append(utt)
+        return utterances
     
   
     @staticmethod

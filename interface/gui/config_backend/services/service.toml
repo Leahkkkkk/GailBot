@@ -14,5 +14,5 @@ whisper_name = "whisper"
 audio_supported_format  = ["wav"]
 
 [thread]
-transcriber_num_threads = 5 
-payload_num_threads = 5
+transcriber_num_threads = 6
+payload_num_threads = 6

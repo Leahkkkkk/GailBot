@@ -16,9 +16,11 @@ from ..engine import Engine
 from gailbot.core.engines import exception as ERR
 from gailbot.core.utils.general import write_json
 from gailbot.configs import watson_config_loader
+from gailbot.core.utils.logger import makelogger
 WATSON_CONFIG = watson_config_loader()
 
 
+logger = makelogger("watson")
 class Watson(Engine):
     """
     An Engine that connect to IBM Watson STT, provide function to transcribe
@@ -115,8 +117,9 @@ class Watson(Engine):
                 acoustic_customization_id)
             self.is_transcribe_success = True
             return utterances
-        except:
-            raise ERR.TranscriptionError("Error raised: transcription error")
+        except Exception as e:
+            logger.error(e, exc_info=e)
+            raise ERR.TranscriptionError(error = e)
 
     def language_customization_interface(self) -> WatsonLMInterface:
         """ return the watson customized language model interface """

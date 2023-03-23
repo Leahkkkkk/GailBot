@@ -15,9 +15,13 @@ from .general import (
     make_dir, 
     run_cmd,
     get_cmd_status,
+    is_directory, 
+    paths_in_dir,
     CMD_STATUS
 )
+from gailbot.core.utils.logger import makelogger 
 
+logger = makelogger("media")
 @dataclass
 class Stream(ABC):
     """ Abstract class that defines the representation of a media stream 
@@ -381,7 +385,90 @@ class AudioHandler:
                     raise ProcessLookupError(f"ERROR: process lookup error {get_cmd_status(pid)}") 
         return output_path
     
-# TODO: Implement methods.
+    @staticmethod 
+    def compress_to_opus(audio_path:str, output_dir:str):
+        """ compress the audio file stored in audio_path to output_dir, 
+            with the same audio file name with opus format
+
+        Args:
+            audio_path (str): the path to original file 
+            output_dir (str): the path to the directory where the compressed file 
+                              will be stored
+
+        Raises:
+            ChildProcessError: 
+            ChildProcessError: 
+            ProcessLookupError: 
+
+        Returns:
+            str: the path to the compressed file
+        """
+        logger.info("Converting file")
+        out_path = "{}/{}.opus".format(output_dir, get_name(audio_path))
+        logger.info(f"Converting path{out_path}")
+        pid = run_cmd(["ffmpeg", "-y", "-i", audio_path, "-strict", "-2", out_path])
+        
+        while True:
+            match get_cmd_status(pid):
+                case CMD_STATUS.STOPPED:
+                    raise ChildProcessError("ERROR: child process error")
+                case CMD_STATUS.FINISHED:
+                    break 
+                case CMD_STATUS.ERROR:
+                    raise ChildProcessError("ERROR: child process error")
+                case CMD_STATUS.NOTFOUND:
+                    raise ProcessLookupError("ERROR: process lookup error")
+        
+        if get_cmd_status(pid) == CMD_STATUS.FINISHED:
+            return out_path
+        else: 
+            return False
+    
+    @staticmethod 
+    def chunk_audio_to_outpath(audio_path:str, output_path:str, chunk_duration:int) -> List[str]:
+        """ given the audio path, chunking the audio into a series of audio
+            segment
+        
+        Args:
+            audio_path[str]: the file path to the audio file 
+            output_path[str]: the output of the chunked file 
+            duration[int]: the length of each chunk
+            
+        Return:
+            Union[List[str], bool]: return a list of the audio path to the 
+                                    chunked audios in order 
+        """
+        if not is_directory(output_path):
+            make_dir(audio_path)
+        basename = get_name(audio_path)
+        dir = os.path.join(output_path, f"{basename}_audio_chunks")
+        make_dir(dir)
+        idx = 0
+        try:
+            mediaHandler = MediaHandler()
+            stream = mediaHandler.read_file(audio_path)
+            chunks = mediaHandler.chunk(stream, chunk_duration)
+            for chunk in chunks:
+                mediaHandler.write_stream(
+                    chunk, dir, name=f"{basename}-{idx}", 
+                    format=get_extension(audio_path))
+                idx += 1
+                
+            audio_chunks = paths_in_dir(dir)
+            audio_chunks = sorted(audio_chunks, key=lambda file: (len(file), file))
+            
+        except Exception as e:
+            logger.error(e, exc_info=e)
+        else:
+            
+            return audio_chunks
+
+
+
+
+
+
+
 class VideoHandler:
 
     _SUPPORTED_FORMATS = ["mxf"]
@@ -720,3 +807,40 @@ class MediaHandler:
     @staticmethod
     def convert_to_16bit_wav(input_path, output_path):
         return AudioHandler.convert_to_16bit_wav(input_path, output_path)
+
+        
+    @staticmethod 
+    def compress_to_opus(media_path:str, output_dir:str):
+        """ compress the  file stored in media_path to output_dir, 
+            with the same  file name with compressed format
+
+        Args:
+            media_path (str): the path to original file 
+            output_dir (str): the path to the directory where the compressed file 
+                              will be stored
+
+        Raises:
+            ChildProcessError: 
+            ChildProcessError: 
+            ProcessLookupError: 
+
+        Returns:
+            str: the path to the compressed file
+        """
+        return AudioHandler.compress_to_opus(media_path, output_dir)
+    
+    @staticmethod 
+    def chunk_audio_to_outpath(input_path:str, output_path:str, duration:int) -> List[str]:
+        """ given the audio path, chunking the audio into a series of audio
+            segments
+        
+        Args:
+            audiopath[str]: the file path to the audio file 
+            output_path[str]: the output of the chunked file 
+            duration[int]: the length of each chunk
+            
+        Return:
+            Union[List[str], bool]: return a list of the audio path to the 
+                                    chunked audios in order 
+        """
+        return AudioHandler.chunk_audio_to_outpath(input_path, output_path, duration)

@@ -51,8 +51,11 @@ class PATH:
     TWO_MIN_7               = os.path.join(AUDIOROOT, "many_small_files_dir/test7.wav")
     TEST_2b                 = os.path.join(AUDIOROOT, "wav/test2b.wav")
     TEST_2a                 = os.path.join(AUDIOROOT, "wav/test2a.wav")
+    TEST_2a_trim            = os.path.join(AUDIOROOT, "wav/test2a_trim.wav")
     TEST__                  = os.path.join(AUDIOROOT, "wav/test.wav")
     TEST_OUTPUT_AUDIO       = os.path.join(AUDIOROOT, "wav/test_output.wav")
     SineWaveMinus16         = os.path.join(AUDIOROOT, "wav/SineWaveMinus16.wav")
     assassination1          = os.path.join(AUDIOROOT, "wav/07assassination1.wav")
+    WAV_DIR                 = os.path.join(AUDIOROOT, "wav")
+    WAV_SUITE =[TEST_OUTPUT_AUDIO, SineWaveMinus16,TEST_2a, TEST_2b,  assassination1]
 

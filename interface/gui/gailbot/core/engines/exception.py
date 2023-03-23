@@ -3,8 +3,11 @@ class ConnectionError(Exception):
         return "STT Connection Error"
 
 class TranscriptionError(Exception):
+    def __init__(self, error: str = None) -> None:
+        super().__init__(error)
+        self.error = error
     def __str__(self) -> str:
-        return "Transcription error"
+        return f"Transcription error: {self.error}"
 
 class APIKeyError(Exception):
     def __str__(self) -> str:
@@ -25,3 +28,8 @@ class WatsonMethodExecutionError(Exception):
 class OutPutError(Exception):
     def __str__(self) -> str:
         return "Error writing output"
+
+
+class GetUttResultError(Exception):
+    def __str__(self) -> str:
+        return "Failed to get utterance result"
