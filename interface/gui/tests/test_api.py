@@ -42,7 +42,6 @@ def test_whisper():
 def test_whisper_one():
     fails, invalid = transcribe([PATH.HELLO_1], "whisper", SETTING_DATA.WHISPER_PROFILE)
 
-
 def test_whisper_dir():
     fails, invalid = transcribe([PATH.MANY_FILES_DIR, PATH.SMALL_CONVERSATION_DIR, PATH.TRANSCRIBED_DIR, PATH.MANY_SMALL_FILES_DIR])
     
@@ -58,7 +57,6 @@ def test_with_speaker_dir():
 def test_invalid():
     fails, invalid = transcribe([PATH.INVALID_DATA_DIR, PATH.DUMMY_AUDIO, PATH.EMPTY, PATH.MIX], fail_test=True)
     assert invalid
-    
     
 ###########################  test for watson #####################################
 def test_watson():
@@ -86,7 +84,7 @@ def test_watson_wav_test2a():
     fails, invalid = transcribe([PATH.TEST_2a], "watson", SETTING_DATA.WATSON_PROFILE)
     
 def test_watson_wav_test2a_trim():
-    fails, invalid = transcribe([PATH.TEST_2a], "watson", SETTING_DATA.WATSON_PROFILE)
+    fails, invalid = transcribe([PATH.TEST_2a_trim], "watson", SETTING_DATA.WATSON_PROFILE)
 
 def test_watson_wav_test2b():
     fails, invalid = transcribe([PATH.TEST_2b], "watson", SETTING_DATA.WATSON_PROFILE)

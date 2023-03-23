@@ -229,10 +229,10 @@ class GoogleCore:
         for result in results:
             for word in result.alternatives[0].words:
                 utt = {
-                    "speaker": word.speaker_tag,
-                    "start_time": word.start_time.seconds + start_time,
-                    "end_time":word.end_time.seconds + start_time,
-                    "text":word.word
+                    "start": word.start_time.seconds + start_time,
+                    "end":   word.end_time.seconds + start_time,
+                    "text":word.word,
+                    "speaker": word.speaker_tag
                 }
                 utterances.append(utt)
         

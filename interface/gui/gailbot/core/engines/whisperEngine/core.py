@@ -4,8 +4,6 @@
 # @Last Modified by:   Muhammad Umair
 # @Last Modified time: 2023-03-15 11:43:23
 
-import ssl
-ssl._create_default_https_context = ssl._create_unverified_context
 
 import sys
 import os
@@ -27,14 +25,12 @@ from .parsers import (
 )
 
 from .parsers import parse_into_word_dicts
-from gailbot.configs import  whisper_config_loader, workspace_config_loader, get_ws_root
+from gailbot.configs import  whisper_config_loader, workspace_config_loader
 from gailbot.core.utils.general import (
     is_file,
     make_dir
 )
 from gailbot.configs import whisper_config_loader
-# from gailbot.core.engines.whisperEngine.diarization.diarize import PyannoteDiarizer
-
 from gailbot.core.utils.logger import makelogger
 logger = makelogger("whisper")
 
@@ -50,15 +46,14 @@ class WhisperCore:
     # not tested other formats.
     # TODO: I'm not sure if this is the best place to define the supported
     # formats.
-    _SUPPORTED_FORMATS = ("wav", "mp3")
+    _SUPPORTED_FORMATS = ("wav")
 
     def __init__(self):
+        # initialize the workspace
         self.workspace_dir = workspace_config_loader().engine_ws.whisper
         logger.info(f"Whisper workspace path: {self.workspace_dir}")
         self.cache_dir = os.path.join(self.workspace_dir,"cache")
         self.models_dir = os.path.join(self.cache_dir,"models")
-        binary_path = os.environ['PATH']
-        logger.info(f"whisper using binary in the path {binary_path}")
         make_dir(self.workspace_dir,overwrite=False)
         make_dir(self.cache_dir,overwrite=False)
         make_dir(self.models_dir,overwrite=False)
