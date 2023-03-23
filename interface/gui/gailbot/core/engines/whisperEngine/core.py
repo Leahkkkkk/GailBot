@@ -129,11 +129,16 @@ class WhisperCore:
                     f"the duration of the audio"
                 )
             logger.info("Performing speaker diarization")
-            dir_result = self.diarization_pipeline(audio_path)
-            # Create and return results
-            res = add_speaker_info_to_text(asr_result, dir_result)
-            logger.info("get the result from parsed dict with speaker")
-            return res 
+            
+            try:
+                dir_result = self.diarization_pipeline(audio_path)
+                # Create and return results
+                res = add_speaker_info_to_text(asr_result, dir_result)
+                logger.info("get the result from parsed dict with speaker")
+                return res 
+            except ValueError as e:
+                logger.warn(e, exc_info=e)
+                return []
         else:
             res = parse_into_word_dicts(asr_result)
             logger.info("get the result from parse")

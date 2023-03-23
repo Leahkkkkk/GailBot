@@ -9,7 +9,7 @@ from typing import Any, Dict
 import random
 from math import floor
 
-from gailbot.plugins.plugin import Plugin, Methods, Utt
+from gailbot.plugins import Plugin, Methods, GBPluginMethods
 
 from gb_hilab_suite.src.core.nodes import Node
 
@@ -21,8 +21,9 @@ class WordTreePlugin(Plugin):
     def __init__(self):
         super().__init__()
 
-    def apply_plugin(self, dependency_outputs: Dict[str, Any],
-                     plugin_input: Methods) -> Node:
+    def apply_plugin(self, 
+                     dependency_outputs: Dict[str, Any],
+                     plugin_input: GBPluginMethods) -> Node:
         """
         Adds words from an utterance map to construct a balanced BST with each
         node containing a Word object corresponding to a word from transcript.
@@ -40,7 +41,7 @@ class WordTreePlugin(Plugin):
         Returns:
             Node: root node of the BST
         """
-        utterances_map = plugin_input.get_utterances()
+        utterances_map: Dict[str, Dict] = plugin_input.utterances()
         root = None
 
         i = 0
@@ -49,16 +50,16 @@ class WordTreePlugin(Plugin):
             random.shuffle(utterances)
             for utt in utterances:
                 if (root == None):
-                    root = Node(utt.start_time_seconds,
-                                utt.end_time_seconds,
-                                "0" + str(int(utt.speaker_label) + i),
-                                utt.text)
+                    root = Node(utt["start"],
+                                utt["end"],
+                                "0" + str(int(utt["speaker"]) + i),
+                                utt["text"])
                 else:
                     self._insert(
-                        root, utt.start_time_seconds,
-                        utt.end_time_seconds,
-                        "0" + str(int(utt.speaker_label) + i),
-                        utt.text)
+                        root, utt["start"],
+                        utt["end"],
+                        "0" + str(int(utt["speaker"]) + i),
+                        utt["text"])
             i += k
 
         self.successful = True
@@ -111,10 +112,10 @@ class WordTreePlugin(Plugin):
 
         mid = floor((len(arr)) / 2)
         root = Node(
-            arr[mid].start_time_seconds,
-            arr[mid].end_time_seconds,
-            arr[mid].speaker_label,
-            arr[mid].text)
+            arr[mid]["start"],
+            arr[mid]["end"],
+            arr[mid]["speaker"],
+            arr[mid]["text"])
         root.left = self.__sortedArrayToBST(arr[:mid])
         root.right = self.__sortedArrayToBST(arr[mid+1:])
 
@@ -133,8 +134,8 @@ class WordTreePlugin(Plugin):
         """
         speakerSet = set()
         for utt in utterances:
-            if utt.speaker_label not in speakerSet:
-                speakerSet.add(utt.speaker_label)
+            if utt["speaker"] not in speakerSet:
+                speakerSet.add(utt["speaker"])
         return len(speakerSet)
 
 

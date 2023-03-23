@@ -30,7 +30,7 @@ class UtteranceMapPlugin(Plugin):
         Returns:
             Dict: a dictionary of utterances.
         """
-        root = dependency_outputs["word_tree"]
+        root = dependency_outputs["WordTreePlugin"]
         # create the dictionary here
         uttDict = dict()
         # set the ID as 0 as first list element, populate dict and pop it

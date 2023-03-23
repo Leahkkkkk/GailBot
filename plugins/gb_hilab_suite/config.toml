@@ -6,74 +6,74 @@ rel_path = "src/core/word_tree.py"
 module_name = "word_tree"
 
 [[plugins]]
+plugin_name = "UtteranceMapPlugin"
 dependencies = [ "WordTreePlugin",]
 rel_path = "src/core/utterance_map.py"
 module_name = "utterance_map"
-plugin_name = "UtteranceMapPlugin"
 
 [[plugins]]
+plugin_name = "SpeakerMapPlugin"
 dependencies = [ "UtteranceMapPlugin",]
 rel_path = "src/core/speaker_map.py"
 module_name = "speaker_map"
-plugin_name = "SpeakerMapPlugin"
 
 [[plugins]]
+plugin_name = "ConversationMapPlugin"
 dependencies = [ "SpeakerMapPlugin",]
 rel_path = "src/core/conversation_map.py"
 module_name = "conversation_map"
-plugin_name = "ConversationMapPlugin"
 
 [[plugins]]
+plugin_name = "ConversationModelPlugin"
 dependencies = [ "WordTreePlugin", "UtteranceMapPlugin", "SpeakerMapPlugin", "ConversationMapPlugin",]
 rel_path = "src/core/conversation_model.py"
 module_name = "conv_model"
-plugin_name = "ConversationModelPlugin"
 
 [[plugins]]
+plugin_name = "OverlapPlugin"
 dependencies = [ "ConversationModelPlugin",]
 rel_path = "src/analysis/overlaps.py"
 module_name = "overlaps"
-plugin_name = "OverlapPlugin"
 
 [[plugins]]
+plugin_name = "PausePlugin"
 dependencies = [ "ConversationModelPlugin",]
 rel_path = "src/analysis/pauses.py"
 module_name = "pauses"
-plugin_name = "PausePlugin"
 
 [[plugins]]
+plugin_name = "GapPlugin"
 dependencies = [ "ConversationModelPlugin",]
 rel_path = "src/analysis/gaps.py"
 module_name = "gaps"
-plugin_name = "GapPlugin"
 
 [[plugins]]
+plugin_name = "SyllableRatePlugin"
 dependencies = [ "ConversationModelPlugin",]
 rel_path = "src/analysis/syllable_rate.py"
 module_name = "syllable_rate"
-plugin_name = "SyllableRatePlugin"
 
 [[plugins]]
+plugin_name = "ChatPlugin"
 dependencies = [ "ConversationModelPlugin", "GapPlugin", "PausePlugin", "OverlapPlugin",]
 rel_path = "src/format/chat.py"
 module_name = "chat"
-plugin_name = "ChatPlugin"
 
 [[plugins]]
+plugin_name = "TextPlugin"
 dependencies = [ "ConversationModelPlugin", "GapPlugin", "PausePlugin", "OverlapPlugin",]
 rel_path = "src/format/text.py"
 module_name = "text"
-plugin_name = "TextPlugin"
 
 [[plugins]]
+plugin_name = "CSVPlugin"
 dependencies = [ "ConversationModelPlugin", "GapPlugin", "PausePlugin", "OverlapPlugin",]
 rel_path = "src/format/csv.py"
 module_name = "csv"
-plugin_name = "CSVPlugin"
 
 [[plugins]]
+plugin_name = "XMLPlugin"
 dependencies = [ "ConversationModelPlugin", "GapPlugin", "PausePlugin", "OverlapPlugin",]
 rel_path = "src/format/xml.py"
 module_name = "xml"
-plugin_name = "XMLPlugin"
 

@@ -7,18 +7,15 @@
 import io
 from typing import Dict, Any, List
 # Local imports
-from gailbot.plugins.plugin import Plugin, Methods
+from gailbot.plugins import Plugin, Methods
 from gb_hilab_suite.src.gb_hilab_suite import *
 
-
 class GapPlugin(Plugin):
-
     def __init__(self) -> None:
         super().__init__()
         self.lb_gap = GAPS_LB
 
-    def apply_plugin(self, dependency_outputs: Dict[str, Any],
-                     plugin_input: Methods) -> List:
+    def apply_plugin(self, dependency_outputs: Dict[str, Any], plugin_input: Methods) -> List:
         """
         Inserts new nodes into the BST, which represents a gap.
 

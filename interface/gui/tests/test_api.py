@@ -38,6 +38,12 @@ def test_whisper():
     assert not fails
     assert not invalid
     assert invalid == []
+
+def test_whisper_wav_suite():
+    fails, invalid = transcribe(PATH.WAV_SUITE, "speaker", SETTING_DATA.WHISPER_SPEAKER_PROFILE)
+
+def test_whisper_wav_dir():
+    fails, invalid = transcribe([PATH.WAV_DIR], "whisper", SETTING_DATA.WHISPER_PROFILE)
     
 def test_whisper_one():
     fails, invalid = transcribe([PATH.HELLO_1], "whisper", SETTING_DATA.WHISPER_PROFILE)
@@ -47,6 +53,12 @@ def test_whisper_dir():
     
 def test_with_speaker_one_file():
     fails, invalid = transcribe([PATH.LONG_LIB_RECORD], "speaker", SETTING_DATA.WHISPER_SPEAKER_PROFILE)
+
+def test_with_speaker_empty():
+    fails, invalid = transcribe([PATH.SineWaveMinus16], "speaker", SETTING_DATA.WHISPER_SPEAKER_PROFILE)
+
+def test_with_speaker_seven():
+    fails, invalid = transcribe([PATH.assassination1], "speaker", SETTING_DATA.WHISPER_SPEAKER_PROFILE)
     
 def test_with_speaker_short():
     fails, invalid = transcribe([PATH.SHORT_AUDIO], "speaker", SETTING_DATA.WHISPER_SPEAKER_PROFILE)

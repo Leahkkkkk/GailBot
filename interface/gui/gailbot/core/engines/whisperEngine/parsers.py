@@ -47,6 +47,8 @@ def parse_into_timestamped_text(asr_res : Dict) -> List[Tuple]:
     """
     timestamp_texts = []
     for segment in asr_res['segments']:
+        if not "words" in segment:
+            continue
         word_list = segment["words"]
         for item in word_list:
             start = item['start']
