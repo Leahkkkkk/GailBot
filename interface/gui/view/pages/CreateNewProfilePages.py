@@ -17,6 +17,7 @@ from view.config.Text import CreateNewProfilePageText as Text
 from view.config.Text import EngineForm as Form 
 from gbLogger import makeLogger
 
+from view.util.ErrorMsg import ERR, WARN
 from view.widgets.Form.DependentComboBox import DependentCombo
 from view.widgets.ScrollArea import ScrollArea
 from view.widgets.Button import ColoredBtn
@@ -59,9 +60,9 @@ class ProfileName (TabPage):
         try:
             self.logger.info("")
             return self.profileName.value
-        except:
-            self.logger.error("An error occurred when reading the profile name")
-            WarnBox("An error occurred when reading the profile name")
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            WarnBox(ERR.ERR_WHEN_DUETO.format("reading profile name", str(e)))
         
     def _initWidget(self):
         """ initializes the widgets """
@@ -96,7 +97,7 @@ class ProfileName (TabPage):
     def _confirmHandler(self):
         """ event handler for confirm button  """
         if self.profileName.value == "":
-            WarnBox(Text.emptyNameMsg)
+            WarnBox(WARN.EMPTY_PROFILE_NAME)
         else:
             self.signals.nextPage.emit()
             self.signals.goToNextPage.emit()
@@ -136,8 +137,9 @@ class EngineSetting(TabPage):
         """ gets current value of key in dictionary """
         try:
             return self.mainForm.getValue()
-        except:
-            WarnBox("an error occurred when getting the form data")
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            WarnBox(ERR.ERR_WHEN_DUETO.format("getting setting data", str(e)))
 
 
 class PluginSetting(TabPage):
@@ -154,13 +156,15 @@ class PluginSetting(TabPage):
         self.verticalLayout.addWidget(
             self.confirmBtn,
             alignment=Qt.AlignmentFlag.AlignRight)
+        self.logger = makeLogger("F")
   
     def getData(self):
         """ gets current value of data """
         try:
             return self.mainForm.getValue()
-        except:
-            WarnBox("an error occurred when getting the form data")
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            WarnBox(ERR.ERR_WHEN_DUETO.format("getting plugin data", str(e)))
             
             
             

@@ -25,6 +25,7 @@ from view.widgets.Label import Label
 from view.widgets.TabPage import TabPage
 from view.widgets.MsgBox import WarnBox
 from view.widgets.ComboBox import ComboBox
+from view.util.ErrorMsg import WARN, ERR
 from PyQt6.QtWidgets import (
     QWidget,
     QFileDialog, 
@@ -78,7 +79,7 @@ class OpenFile(TabPage):
             return fileList
         except Exception as e:
             self.logger.error(e, exc_info=e)
-            WarnBox("An error ocurred in getting the files to be transcribed")
+            WarnBox(ERR.ERR_WHEN_DUETO.format("uploading files", str(e)))
             return False
         
     def _initWidget(self):
@@ -166,12 +167,13 @@ class OpenFile(TabPage):
                 if self.filePaths:
                     self.signals.nextPage.emit()
                 else:
-                    WarnBox("No file is uploaded by user")   
+                    WarnBox(WARN.NO_FILE)   
             else:
-                WarnBox("No file is uploaded is uploaded by user")
-                self.logger.warn("No file is uploaded by user")
-        except:
-            WarnBox("An error occurred when getting the uploaded file")
+                WarnBox(WARN.NO_FILE)
+                self.logger.warn(WARN.NO_FILE)
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            WarnBox(ERR.ERR_WHEN_DUETO.format("uploading files", str(e)))
             
     def _getFolders (self):
         """ gets the current directory and displays the selected file """
@@ -184,9 +186,10 @@ class OpenFile(TabPage):
                 if self.filePaths:
                     self.signals.nextPage.emit()
             else:
-                WarnBox("No file is uploaded by user")
-        except:
-            WarnBox("An error occurred when getting the uploaded folder")
+                WarnBox(WARN.NO_FILE)
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            WarnBox(ERR.ERR_WHEN_DUETO.format("uploading folder", str(e)))
 
     def _addFileToFileDisplay(self, file):
         """ add the file to the file display table """
@@ -205,8 +208,9 @@ class OpenFile(TabPage):
             self.fileDisplayList.setCellWidget(row, 1, btn)
             btn.clicked.connect(lambda: self.removeFile(row, newFile))
             self.fileDisplayList.resizeRowsToContents()
-        except:
-            WarnBox("An error occurred when displaying the added file")
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            WarnBox(ERR.ERR_WHEN_DUETO.format("displaying uploaded file", str(e)))
     
     def removeFile(self, key, fileItem: QTableWidgetItem):
         self.logger.info("remove the file with key {key}")
@@ -316,11 +320,12 @@ class ChooseOutPut(TabPage):
         try: 
             if not self.outPath:
                 logging.error("No output directory is chosen")
-                WarnBox("No output directory is chosen")
+                WarnBox(WARN.NO_OUT_PATH)
             else:
                 return {"Output": self.outPath}
-        except:
-            WarnBox("An error occurred when reading output directory")
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            WarnBox(ERR.ERR_WHEN_DUETO.format("getting output directory", str(e)))
         
     def _iniWidget(self):
         """ initializes the widgets """

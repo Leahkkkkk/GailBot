@@ -103,7 +103,6 @@ class Controller(QObject):
                 self.threadPool, self.ViewObj, self.gb)
             assert self.transcribeController
             self.logger.info("Transcribe controller initialized")
-
         except Exception as e:
             self.logger.error(f"Error in app initialization {e}", exc_info=e)
 
@@ -136,6 +135,7 @@ class Controller(QObject):
         """ handling signal to change the interface content from view object  """
         self.ViewObj.getViewSignal().restart.connect(self.restart)
 
+   
     ###################   gailbot  handler #############################
     def _handleTranscribeSignal(self):
         """ handle signal from View that requests to transcribe the file"""

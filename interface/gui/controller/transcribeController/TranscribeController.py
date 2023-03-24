@@ -13,7 +13,7 @@ so that the front end is able to reflect the transcription progress
 '''
 from dataclasses import dataclass
 from typing import List, Dict
-from controller.util.Error import ErrorMsg, ThreadException, ErrorFormatter
+from controller.util.Error import  ERR
 from view.MainWindow import MainWindow
 from view import ViewController
 from gbLogger import makeLogger
@@ -101,10 +101,9 @@ class TranscribeController(QObject):
                 self.logger.info(f"the files to be transcribeda are :{files}")
                 self.worker = GBWorker(files, self.signal, self.gb)
                 self.signal.start.emit()
-                if not self.ThreadPool.tryStart(self.worker):
-                    raise ThreadException(ErrorMsg.RESOURCEERROR)
+                assert self.ThreadPool.tryStart(self.worker)
             except Exception as e:
-                self.signal.error.emit("failed to start transcription")
+                self.signal.error.emit(ERR.ERROR_WHEN_DUETO("transcribing file", str(e)))
                 self.logger.error(f"failed to start transcribe due to error {e}", exc_info=e)
 
 
@@ -116,7 +115,7 @@ class TranscribeController(QObject):
              self.worker.kill()
               
         except:
-          self.signal.error.emit("failed to cancel gailbot")
+          self.signal.error.emit(ERR.ERROR_WHEN_DUETO("canceling transcription", str))
           self.logger.error("failed to cancel transcription")
 
 class GBWorker(QRunnable):
@@ -147,15 +146,13 @@ class GBWorker(QRunnable):
             invalid, fails = self.gb.transcribe(list(self.files.values()))
             self.logger.info(f"the failure files are {fails}, the invalid files are {invalid}")
             if invalid and fails:
-                self.signal.error.emit(f"Received invalid files {invalid}"
-                                       f"Failed to transcribe {fails}")
+                self.signal.error.emit(ERR.INVALID_FILE.format(str(invalid)) + "\n" + ERR.FAIL_TRANSCRIBE.format(str(fails)))
             elif fails:
-                self.signal.error.emit(f"Failed to transcribe {fails}")
+                self.signal.error.emit(ERR.FAIL_TRANSCRIBE.format(str(fails)))
             elif invalid: 
-                self.signal.error.emit(f"Received invalid files {invalid}")                 
+                self.signal.error.emit(ERR.INVALID_FILE.format(str(invalid)))
         except Exception as e:
-            self.signal.error.emit(ErrorFormatter.DEFAULT_ERROR.format(
-                source="transcription", msg=e))
+            self.signal.error.emit(ERR.ERROR_WHEN_DUETO.format("transcription", str(e)))
             self.logger.error(f"Error during transcription: {e}", exc_info=e)
             self.signal.finish.emit()
         else:
@@ -180,7 +177,7 @@ class GBWorker(QRunnable):
             self.signal.killed.emit()
         except Exception as e:
             self.logger.error(f"Error while killing  the thread {e}", exc_info=e)
-            self.signal.error("The task cannot been cancelled")
+            self.signal.error(ERR.ERROR_WHEN_DUETO.format("cancelling thread", str(e)))
 
     def getProgressDisplayer(self, fileKey):
         """private function to emit file progress

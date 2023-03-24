@@ -1,28 +1,9 @@
-# -*- coding: utf-8 -*-
-# @Author: Muhammad Umair
-# @Date:   2023-01-08 13:22:45
-# @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-01-12 13:29:53
+from pydantic import BaseModel
+from typing import TypedDict
+from typing import Dict, Union, List, Any
+import os 
 
-from typing import Any, Dict, TypedDict
-from abc import ABC, abstractmethod
-# Local imports
 
-class Utt(TypedDict):
-    start_time: str 
-    end_time: str
-    speaker: str 
-    text:str 
-class Methods:
-    """
-    Methods that will be passed to a plugin.
-    These can be custom defined and may be useful as 
-    a wrapper around objects
-    that may want to be passed to a plugin.
-    """
-
-    def __init__(self):
-        pass
 
 class Plugin:
     """
@@ -41,7 +22,7 @@ class Plugin:
     def apply(
         self,
         dependency_outputs : Dict[str, Any],
-        methods : Methods,
+        methods,
         *args,
         **kwargs
     ) -> Any:

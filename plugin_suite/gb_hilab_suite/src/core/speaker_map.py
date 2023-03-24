@@ -11,15 +11,16 @@ from typing import List, Any, Dict
 from copy import deepcopy
 # Local imports
 from gb_hilab_suite.src.core.nodes import Word, Node
-from gailbot.plugins.plugin import Plugin, Methods, Utt
-class SpeakerMapPlugin(Plugin):
+from gailbot.plugins import Plugin, Methods
 
+class SpeakerMapPlugin(Plugin):
     def __init__(self) -> None:
         super().__init__()
 
 
-    def apply_plugin(self, dependency_outputs: Dict[str, Any],
-                     plugin_input: Methods) -> Dict[int, Dict[str, Any]]:
+    def apply_plugin(self, 
+                     dependency_outputs: Dict[str, Any],
+                     plugin_input: Methods) -> Dict[str, Dict[str, List[List[Node]]]] :
         """
         Creates a dictionary for speaker-level analysis of transcription.
 
@@ -36,12 +37,12 @@ class SpeakerMapPlugin(Plugin):
             plugin_input (PluginMethodSuite):
 
         Returns:
-            Dict[int, Dict[str, Any]]: Dict of Dicts for each speaker
+           Dict[str, Dict[str, List[List[Node]]]]: Dict of Dicts for each speaker
         """
-        utteranceDict = dependency_outputs["utterance_map"]
+        utteranceDict: Dict[str, List[Node]] = dependency_outputs["UtteranceMapPlugin"]
 
         # create the dictionary here
-        speakerDict = dict()
+        speakerDict: Dict[str, Dict[str, List[List[Node]]]] = dict()
 
         # iterate through each utterance in the utterance dictionary
         for utteranceList in utteranceDict.values():

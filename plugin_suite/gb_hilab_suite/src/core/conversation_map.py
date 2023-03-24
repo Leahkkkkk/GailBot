@@ -9,15 +9,15 @@ from typing import Any, Dict
 # import re / import List
 from copy import deepcopy
 # Local imports
-from gailbot.plugins.plugin import Plugin, Methods, Utt
+from gailbot.plugins import Plugin, GBPluginMethods
 
-class ConversationMapPlugin(Methods):
-
+class ConversationMapPlugin(Plugin):
     def __init__(self) -> None:
         super().__init__()
 
-    def apply_plugin(self, dependency_outputs: Dict[str, Any],
-                     plugin_input: Plugin) -> Dict:
+    def apply_plugin(self, 
+                     dependency_outputs: Dict[str, Any],
+                     method: GBPluginMethods) -> Dict:
         """
         Creates a dictionary for conversational-level analysis of transcription.
 

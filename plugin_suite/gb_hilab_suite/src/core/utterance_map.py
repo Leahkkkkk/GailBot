@@ -9,15 +9,17 @@ from typing import List, Any, Dict
 #import re
 from copy import deepcopy
 # Local imports
-from gb_hilab_suite.src.gb_hilab_suite import *
-from gailbot.plugins.plugin import Plugin, Methods, Utt
+from gb_hilab_suite.src.hilab_suite import *
+from gailbot.plugins  import Plugin, Methods, UttDict
+from gb_hilab_suite.src.core.nodes import Node
 
 class UtteranceMapPlugin(Plugin):
     def __init__(self) -> None:
         super().__init__()
         self.turn_end_threshold_secs = TURN_END_THRESHOLD_SECS
 
-    def apply_plugin(self, dependency_outputs: Dict[str, Any],
+    def apply_plugin(self, 
+                     dependency_outputs: Dict[str, Any],
                      plugin_input: Methods) -> Dict:
         """
         Initializes, populates and returns a word-level dictionary of utterances,
@@ -30,9 +32,9 @@ class UtteranceMapPlugin(Plugin):
         Returns:
             Dict: a dictionary of utterances.
         """
-        root = dependency_outputs["WordTreePlugin"]
+        root: Node = dependency_outputs["WordTreePlugin"]
         # create the dictionary here
-        uttDict = dict()
+        uttDict : Dict[str, List[Node]] = dict()
         # set the ID as 0 as first list element, populate dict and pop it
         myFunction = self.outer_create_dict(0)
         myFunction(root, uttDict)
@@ -43,9 +45,8 @@ class UtteranceMapPlugin(Plugin):
 
     def outer_create_dict(self, id_arg):
         id = id_arg
-
-        def create_dict(currNode, uttDict):
-
+       
+        def create_dict(currNode: Node, uttDict: Dict[str, List[Node]]):
             nonlocal id
             currSL = currNode.val.sLabel
 
@@ -55,7 +56,7 @@ class UtteranceMapPlugin(Plugin):
 
             Args:
                 currNode (Node): current node to be added
-                uttDict (Dict[int:List[Node]]): utterence map
+                uttDict (Dict[int:List[Node]]): utterance map
             """
             if currNode.left is not None:
                 create_dict(currNode.left, uttDict)
@@ -116,5 +117,5 @@ class UtteranceMapPlugin(Plugin):
 
             if currNode.right is not None:
                 create_dict(currNode.right, uttDict)
-
+                
         return create_dict

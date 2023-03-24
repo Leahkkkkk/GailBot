@@ -16,7 +16,7 @@ from typing import Tuple, Union, Dict
 
 from gailbot.api import GailBot
 from gbLogger import makeLogger
-from controller.util.Error import ErrorMsg
+from controller.util.Error import ERR
 
 from PyQt6.QtCore import QObject, pyqtSignal 
 
@@ -45,13 +45,13 @@ class ProfileOrganizer:
     Public function:
     Database modifier: 
     1. post(self, profile: Tuple[str, dict]) -> None 
-    2. delete(self, profileName:str) -> None
+    2. delete(self, name:str) -> None
     
     Profile modifier:
     3. edit(self, profile: Tuple[str, dict]) -> None 
     
     Database access: 
-    4. get(self, profileName:str) -> None 
+    4. get(self, name:str) -> None 
     """
     def __init__(self, gb: GailBot) -> None:
         self.logger = makeLogger("B")
@@ -64,46 +64,47 @@ class ProfileOrganizer:
         """ post a new profile to profile database
 
         Args:
-            profile (Tuple[profile name, dict]): _description_
+            profile (Tuple[profile name, dict]): a tuple that stores the profile name 
+                                                 and profile data
         """
         name, data = profile
         data = data.copy() 
         try:
             if self.gb.is_setting(name): 
-                self.signals.error.emit("duplicated profile name") 
-                self.logger.error(f"Duplicated profile name {name}")
+                self.signals.error.emit(ERR.DUPLICATED_NAME.format(name)) 
+                self.logger.error(ERR.DUPLICATED_NAME.format(name))
             elif not self.gb.create_new_setting(name, data):
-                self.signals.error.emit("not a valid profile") 
-                self.logger.error(f"not a valid profile") 
+                self.signals.error.emit(ERR.INVALID_PROFILE.format(name)) 
+                self.logger.error(ERR.INVALID_PROFILE.format(name))
             elif not self.gb.save_setting(name):
-                self.signals.error.emit("profile cannot be saved locally")
-                self.logger.error(f"profile cannont be saved locally")
+                self.signals.error.emit(ERR.SAVE_PROFILE.format(name))
+                self.logger.error(ERR.SAVE_PROFILE.format(name))
             else:
                 self.logger.info(f"New profile created {name}, {data}")
                 self.signals.profileAdded.emit(name)
         except Exception as e:
             self.logger.error(f"Creating new profile error {e}", exc_info=e)
         
-    def delete(self, profileName:str) -> None :
+    def delete(self, name:str) -> None :
         """ delete a file from database 
 
         Args:
-            profileName (str): the profile name that identified the profile  
+            name (str): the profile name that identified the profile  
                               to be deleted
         """
-        self.logger.info(f"deleting profile {profileName}")
+        self.logger.info(f"deleting profile {name}")
         self.logger.info(f"the default setting is {self.gb.get_default_setting_name()}")
-        if not self.gb.is_setting(profileName):
-            self.signals.error.emit(f"The setting profile {profileName} does not exist")
-            self.logger.error(ErrorMsg.KEYERROR)
-        elif profileName == self.gb.get_default_setting_name():
-            self.signals.error.emit(ErrorMsg.DELETE_DEFAULT)
-            self.logger.error(ErrorMsg.DELETE_DEFAULT)
-        elif not self.gb.remove_setting(profileName):
-            self.signals.error.emit(f"Error: the profile {profileName} cannot be deleted")
-            self.logger.error(f"profile {profileName} cannot be deleted")
+        if not self.gb.is_setting(name):
+            self.signals.error.emit(ERR.PROFILE_NOT_FOUND.format(name))
+            self.logger.error(ERR.PROFILE_NOT_FOUND.format(name))
+        elif name == self.gb.get_default_setting_name():
+            self.signals.error.emit(ERR.DELETE_DEFAULT)
+            self.logger.error(ERR.DELETE_DEFAULT)
+        elif not self.gb.remove_setting(name):
+            self.signals.error.emit(ERR.DELETE_PROFILE.format(name))
+            self.logger.error(ERR.DELETE_PROFILE.format(name))
         else:
-            self.signals.deleteProfile.emit(profileName)
+            self.signals.deleteProfile.emit(name)
             self.signals.deleted.emit(True)
     
     def edit(self, profile: Tuple[str, dict]) -> None :
@@ -115,28 +116,28 @@ class ProfileOrganizer:
         try:
             name, data = profile
             if not self.gb.is_setting(name):
-                self.signals.error.emit(ErrorMsg.KEYERROR)
-                self.logger.error(KeyError)
+                self.signals.error.emit(ERR.PROFILE_NOT_FOUND.format(name))
+                self.logger.error(ERR.PROFILE_NOT_FOUND.format(name))
             elif not self.gb.update_setting(name, data):
-                self.signals.error.emit(f"Updating setting {name} failed")
-                self.logger.error(f"Error updating setting {name}")
+                self.signals.error.emit(ERR.PROFILE_EDIT.format(name))
+                self.logger.error(ERR.PROFILE_EDIT.format(name))
         except Exception as e:
-            self.signals.error.emit(ErrorMsg.EDITERROR)
-            self.logger.error(f"error in updating the profile setting {e}", exc_info=e)
+            self.signals.error.emit(ERR.PROFILE_EDIT.format(name))
+            self.logger.error(e, exc_info=e)
      
-    def get(self, profileName:str) -> None:
+    def get(self, name:str) -> None:
         """ 
         Args: send a signal that stores the profile information
-            profileName (str): the profile name that identifies a profile 
+            name (str): the profile name that identifies a profile 
         """
         try:
-            if not self.gb.is_setting(profileName):
-                self.signals.error.emit(ErrorMsg.KEYERROR)
+            if not self.gb.is_setting(name):
+                self.signals.error.emit(ERR.PROFILE_NOT_FOUND.format(name))
                 self.logger.error(KeyError)
             else:
-                data = self.gb.get_setting_dict(profileName)
-                self.signals.send.emit((profileName, data))
+                data = self.gb.get_setting_dict(name)
+                self.signals.send.emit((name, data))
         except Exception as e:
-            self.signals.error.emit(ErrorMsg.GETERROR)
-            self.logger.error(f"error getting the profile {e}", exc_info=e)
+            self.signals.error.emit(ERR.GET_PROFILE.format(name))
+            self.logger.error(ERR.GET_PROFILE.format(name))
             

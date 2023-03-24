@@ -33,9 +33,9 @@ from view.config.Text import SystemSettingForm as Form
 from view.config.Text import LogDeleteTimeDict
 from config_frontend import FRONTEND_CONFIG_ROOT as dirname
 from view.util.FileManage import clearAllLog
+from view.util.ErrorMsg import ERR, WARN
 from gbLogger import makeLogger
 from view.widgets import MsgBox
-
 from PyQt6.QtWidgets import (
     QWidget,
     QHBoxLayout,
@@ -156,12 +156,10 @@ class SystemSettingPage(QWidget):
             f = open (f"{os.path.join(dirname, SettingDataPath.systemSetting)}", "w+")
             toml.dump(setting, f)
             f.close()
-        except shutil.SameFileError:
-            MsgBox.WarnBox("No setting is changed")
-        except KeyError:
-            MsgBox.WarnBox("Error loading File")
-        except:
-            MsgBox.WarnBox(Text.changeError)
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            MsgBox.WarnBox(ERR.ERR_WHEN_DUETO.format("changing system setting", str(e)))
+       
         self.signal.restart.emit()
 
     def _copyTomlFile(self, source, des, base):

@@ -5,18 +5,18 @@
 # @Last Modified time: 2022-08-24 12:08:07
 
 # Standard imports
-from typing import Any, Dict
+from typing import Any, Dict, List
 import random
+import re
 from math import floor
 
-from gailbot.plugins import Plugin, Methods, GBPluginMethods
+from gailbot.plugins import Plugin, GBPluginMethods,  UttObj
 
 from gb_hilab_suite.src.core.nodes import Node
 
 
 class WordTreePlugin(Plugin):
     """Creates a Binary Search Tree of nodes for word-level analysis"""
-
 
     def __init__(self):
         super().__init__()
@@ -41,7 +41,7 @@ class WordTreePlugin(Plugin):
         Returns:
             Node: root node of the BST
         """
-        utterances_map: Dict[str, Dict] = plugin_input.utterances()
+        utterances_map: Dict[str, List[UttObj]] = plugin_input.get_utterance_objects()
         root = None
 
         i = 0
@@ -50,16 +50,18 @@ class WordTreePlugin(Plugin):
             random.shuffle(utterances)
             for utt in utterances:
                 if (root == None):
-                    root = Node(utt["start"],
-                                utt["end"],
-                                "0" + str(int(utt["speaker"]) + i),
-                                utt["text"])
+                    root = Node(utt.start,
+                                utt.end,
+                                # NOTE
+                                "0" + str(self._getIntLabel(utt.speaker) + i),
+                                utt.text)
                 else:
                     self._insert(
-                        root, utt["start"],
-                        utt["end"],
-                        "0" + str(int(utt["speaker"]) + i),
-                        utt["text"])
+                        root, 
+                        utt.start,
+                        utt.end,
+                        "0" + str(self._getIntLabel(utt.speaker) + i),
+                        utt.text)
             i += k
 
         self.successful = True
@@ -96,7 +98,7 @@ class WordTreePlugin(Plugin):
                     root.left, start_time, end_time, speaker_label, text)
         return root
 
-    def __sortedArrayToBST(self, arr):
+    def __sortedArrayToBST(self, arr: List[UttObj]):
         """
         Makes the binary search tree balanced
         credit: https://www.geeksforgeeks.org/sorted-array-to-balanced-bst/
@@ -112,17 +114,17 @@ class WordTreePlugin(Plugin):
 
         mid = floor((len(arr)) / 2)
         root = Node(
-            arr[mid]["start"],
-            arr[mid]["end"],
-            arr[mid]["speaker"],
-            arr[mid]["text"])
+            arr[mid].start,
+            arr[mid].end,
+            arr[mid].speaker,
+            arr[mid].text)
         root.left = self.__sortedArrayToBST(arr[:mid])
         root.right = self.__sortedArrayToBST(arr[mid+1:])
 
         return root
 
     # return the number of spealer in utterances
-    def __speakerNum(self, utterances):
+    def __speakerNum(self, utterances: List[UttObj]):
         """
         Returns the number of speakers in a file.
 
@@ -134,8 +136,12 @@ class WordTreePlugin(Plugin):
         """
         speakerSet = set()
         for utt in utterances:
-            if utt["speaker"] not in speakerSet:
-                speakerSet.add(utt["speaker"])
+            if utt.speaker not in speakerSet:
+                speakerSet.add(utt.speaker)
         return len(speakerSet)
 
 
+    def _getIntLabel(self, speakerLabel) -> int:
+        pattern = r"(?i)speaker\s*(\d{1,2})"
+        match = re.search(pattern, speakerLabel)
+        return int(match.group(1))

@@ -7,10 +7,11 @@
 import io
 from typing import Dict, Any, List
 # Local imports
-from gailbot.plugins.plugin import Plugin, Methods, Utt
-from gb_hilab_suite.src.core import Word
+from gailbot.plugins import Plugin, Methods, UttObj
+from gb_hilab_suite.src.core.nodes import Word
+from gb_hilab_suite.src.core.conversation_model import ConversationModel
 
-from gb_hilab_suite.src.gb_hilab_suite import *
+from gb_hilab_suite.src.hilab_suite import *
 
 
 class OverlapPlugin(Plugin):
@@ -20,8 +21,9 @@ class OverlapPlugin(Plugin):
         self.marker_limit = OVERLAP_MARKERLIMIT
 
 
-    def apply_plugin(self, dependency_outputs: Dict[str, Any],
-                     plugin_input: Methods) -> List[Utt]:
+    def apply_plugin(self, 
+                     dependency_outputs: Dict[str, Any],
+                     plugin_input: Methods) -> List[UttObj]:
         """
         Inserts new nodes into the BST, which represent an overlap.
 
@@ -39,7 +41,7 @@ class OverlapPlugin(Plugin):
         """
 
         # Get the output of the previous plugin
-        cm = dependency_outputs["conv_model"]
+        cm: ConversationModel = dependency_outputs["ConversationModelPlugin"]
         utterances = cm.getUttMap(False)
         unique_id = 0
 

@@ -6,9 +6,9 @@
 
 from typing import Dict, Any
 # Local imports
-from gailbot.plugins.plugin import Plugin, Methods, Utt
-
-from gb_hilab_suite.src.gb_hilab_suite import *
+from gailbot.plugins import Plugin, GBPluginMethods, UttObj
+from gb_hilab_suite.src.core.conversation_model import ConversationModel
+from gb_hilab_suite.src.hilab_suite import *
 
 class ChatPlugin(Plugin):
 
@@ -16,11 +16,11 @@ class ChatPlugin(Plugin):
         super().__init__()
 
     def apply_plugin(self, dependency_outputs: Dict[str, Any],
-                     plugin_input: Methods):
+                     plugin_input: GBPluginMethods):
         """
         Prints the entire tree in a user-specified chat format
         """
-        cm = dependency_outputs["conv_model"]
+        cm: ConversationModel = dependency_outputs["ConversationModelPlugin"]
         varDict = {
                 GAPS: CHAT_GAPMARKER,
                 MARKER1: OVERLAPMARKER_CURR_START,
@@ -43,7 +43,8 @@ class ChatPlugin(Plugin):
         data = [
             "@Begin\n@Languages:\t{0}\n".format("eng")
         ]
-        path = "{}/conversation.cha".format(plugin_input.get_result_directory_path())
+        
+        path = "{}/conversation.cha".format(plugin_input.output_path)
 
         utterances = newUttMap
         with open(path, "w", encoding='utf-8') as outfile:

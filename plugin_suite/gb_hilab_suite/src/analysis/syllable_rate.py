@@ -11,8 +11,9 @@ from typing import Dict, Any, List
 from scipy.stats import median_abs_deviation
 import syllables
 import numpy
-from gailbot.plugins.plugin import Plugin, Methods, Utt
-from gb_hilab_suite.src.gb_hilab_suite import *
+from gailbot.plugins import Plugin, Methods, UttObj
+from gb_hilab_suite.src.core.conversation_model import ConversationModel
+from gb_hilab_suite.src.hilab_suite import *
 
 
 # The number of deviations above or below the absolute median deviation.
@@ -34,7 +35,7 @@ class SyllableRatePlugin(Plugin):
         self.marker_limit = OVERLAP_MARKERLIMIT
 
     def apply_plugin(self, dependency_outputs: Dict[str, Any],
-                     plugin_input: Methods) -> List[Utt]:
+                     plugin_input: Methods) -> List[UttObj]:
         """
         Calculates the syllable rates for each utterance and statistics for
         the conversation as a whole, including the median, MAD, fast speech
@@ -44,7 +45,7 @@ class SyllableRatePlugin(Plugin):
             dependency_outputs (Dict[str, Any]):
             plugin_input (PluginMethodSuite):
         """
-        cm = dependency_outputs["conv_model"]
+        cm: ConversationModel = dependency_outputs["ConversationModelPlugin"]
         utterances = cm.getUttMap(False)
         syll_dict = self.syll_rate(cm, utterances)
 
@@ -56,9 +57,10 @@ class SyllableRatePlugin(Plugin):
         self.addDelims(cm, syll_dict, statsDic)
 
         self.successful = True
+        return cm
 
 
-    def syll_rate(self, cm, utterances):
+    def syll_rate(self, cm: ConversationModel, utterances: List[UttObj]):
         """
         Calculates the syllable rates for each utterance
         """
@@ -94,7 +96,7 @@ class SyllableRatePlugin(Plugin):
         return {"median": median, "medianAbsDev": median_absolute_deviation,
                 "upperLimit": upperLimit, "lowerLimit": lowerLimit}
 
-    def addDelims(self, cm, dictionaryList, statsDic):
+    def addDelims(self, cm: ConversationModel, dictionaryList, statsDic):
         """
         Adds fast and slow speech delimiter markers into the tree.
         """

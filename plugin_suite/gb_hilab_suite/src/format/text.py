@@ -9,22 +9,22 @@ from typing import Dict, Any, List, Tuple
 import re
 import io
 # Local imports
-from gailbot.plugins.plugin import Plugin, Methods, Utt
-from gb_hilab_suite.src.gb_hilab_suite import *
+from gailbot.plugins import Plugin, Methods, UttObj, GBPluginMethods
+from gb_hilab_suite.src.core.conversation_model import ConversationModel
+from gb_hilab_suite.src.hilab_suite import *
 
 
 
 class TextPlugin(Plugin):
-
     def __init__(self) -> None:
         super().__init__()
 
     def apply_plugin(self, dependency_outputs: Dict[str, Any],
-                     plugin_input: Methods):
+                     plugin_input: GBPluginMethods):
         """
         Prints the entire tree in a user-specified format
         """
-        cm = dependency_outputs["conv_model"]
+        cm: ConversationModel = dependency_outputs["ConversationModelPlugin"]
 
         varDict = {
             GAPS: TXT_GAPMARKER,
@@ -41,7 +41,7 @@ class TextPlugin(Plugin):
         myFunction = cm.outer_buildUttMapWithChange(0)
         myFunction(root, newUttMap, varDict)
 
-        path = "{}/conversation.txt".format(plugin_input.get_result_directory_path())
+        path = "{}/conversation.txt".format(plugin_input.output_path)
 
         utterances = newUttMap
 

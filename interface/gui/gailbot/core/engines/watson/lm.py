@@ -7,7 +7,6 @@
 """ TODO:
 1. only function to create and delete model are tested 
    function to train the model are not tested 
-
 """
 # Standard library imports
 from typing import Any, BinaryIO, List, TextIO, Tuple, Dict, Callable, Union

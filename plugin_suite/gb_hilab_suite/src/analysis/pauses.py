@@ -9,8 +9,9 @@ import io
 from typing import Dict, Any, List
 from dataclasses import dataclass
 # Local imports
-from gailbot.plugins.plugin import Plugin, Methods, Utt
-from gb_hilab_suite.src.gb_hilab_suite import *
+from gailbot.plugins import Plugin, Methods, UttObj
+from gb_hilab_suite.src.hilab_suite import *
+from gb_hilab_suite.src.core.conversation_model import ConversationModel
 
 
 class PausePlugin(Plugin):
@@ -36,7 +37,7 @@ class PausePlugin(Plugin):
         self.delimiters = Delimiters
 
     def apply_plugin(self, dependency_outputs: Dict[str, Any],
-                     plugin_input: Methods) -> List[Utt]:
+                     plugin_input: Methods) -> List[UttObj]:
         """
         Inserts new nodes into the BST, which represents a pause.
 
@@ -54,7 +55,7 @@ class PausePlugin(Plugin):
             convModelPlugin: the current conv model wrapper object
         """
         # Get the output of the previous plugin
-        cm = dependency_outputs["conv_model"]
+        cm: ConversationModel = dependency_outputs["ConversationModelPlugin"]
         utterances = cm.getUttMap(False)
 
         mapIter = cm.map_iterator(utterances)  # iterator
@@ -137,3 +138,4 @@ class PausePlugin(Plugin):
 
         cm.buildUttMap()
         self.successful = True
+        return cm

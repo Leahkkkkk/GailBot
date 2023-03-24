@@ -8,8 +8,8 @@ import io
 from typing import Dict, Any, List
 # Local imports
 from gailbot.plugins import Plugin, Methods
-from gb_hilab_suite.src.gb_hilab_suite import *
-
+from gb_hilab_suite.src.hilab_suite import *
+from gb_hilab_suite.src.core.conversation_model import ConversationModel
 class GapPlugin(Plugin):
     def __init__(self) -> None:
         super().__init__()
@@ -33,7 +33,7 @@ class GapPlugin(Plugin):
             convModelPlugin: the current conv model wrapper object
         """
         # Get the output of the previous plugin
-        cm = dependency_outputs["conv_model"]
+        cm: ConversationModel = dependency_outputs["ConversationModelPlugin"]
         utterances = cm.getUttMap(False)
 
         mapIter = cm.map_iterator(utterances)  # iterator

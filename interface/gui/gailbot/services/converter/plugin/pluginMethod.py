@@ -1,5 +1,7 @@
+from pydantic import BaseModel
 from gailbot.plugins import Methods
 from gailbot.core.utils.logger import makelogger
+from gailbot.services.converter.result import UttDict
 from ..payload.payloadObject import PayLoadObject
 from typing import Dict, Union, List, Any
 from gailbot.core.utils.general import (
@@ -15,6 +17,12 @@ import os
 
 
 logger = makelogger("pluginMethod")
+
+class UttObj(BaseModel):
+    start: float 
+    end: float 
+    speaker: str 
+    text: str
 
 class GBPluginMethods(Methods):
     format_to_out_fun = {
@@ -46,7 +54,7 @@ class GBPluginMethods(Methods):
         return self.audio_files
 
     @property
-    def utterances(self) -> Dict[str,Dict]:
+    def utterances(self) -> Dict[str,List[UttDict]]:
         """ 
         Accesses and returns the utterance data
 
@@ -55,7 +63,7 @@ class GBPluginMethods(Methods):
                             transcription result  
         """
         try:
-            return self.payload.transcription_result()
+            return self.payload.get_transcription_result()
         except Exception as e:
             logger.error(e, exc_info=e)
             return False
@@ -79,6 +87,21 @@ class GBPluginMethods(Methods):
             String containing the output path
         """
         return self.out_path
+    
+    def get_utterance_objects(self) -> Dict[str, List[UttObj]]: 
+        """ 
+        Access and return the utterance data as utterance object 
+        """
+        res = dict()
+        data = self.payload.get_transcription_result() 
+        for key, uttlist in data: 
+            newlist = list()
+            for utt in uttlist:
+                newlist.append(UttObj(**utt))
+            res[key] = newlist
+        
+        return res
+    
     
     def save_item(self, 
                   data: Union [Dict[str, Any], List],

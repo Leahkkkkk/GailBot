@@ -8,9 +8,10 @@ from typing import Dict, Any, List, Tuple
 import re
 import io
 # Local imports
-from gailbot.plugins.plugin import Plugin, Methods, Utt 
+from gailbot.plugins import Plugin, Methods, UttObj, GBPluginMethods
+from gb_hilab_suite.src.core.conversation_model import ConversationModel
 
-from gb_hilab_suite.src.gb_hilab_suite import *
+from gb_hilab_suite.src.hilab_suite import *
 
 # import xml.etree.ElementTree as etree
 from lxml import etree
@@ -21,7 +22,7 @@ class XMLPlugin(Plugin):
         super().__init__()
 
     def apply_plugin(self, dependency_outputs: Dict[str, Any],
-                     plugin_input: Methods):
+                     plugin_input: GBPluginMethods):
         """
         Prints the entire tree in a user-specified format
         """
@@ -32,9 +33,9 @@ class XMLPlugin(Plugin):
     def xml_native(
         self,
         dependency_outputs: Dict[str, Any],
-        plugin_input: Methods
+        plugin_input: GBPluginMethods
     ):
-        cm = dependency_outputs["conv_model"]
+        cm: ConversationModel = dependency_outputs["ConversationModelPlugin"]
         varDict = {
             GAPS: XML_GAPMARKER,
             OVERLAPS: XML_OVERLAPMARKER,
@@ -81,12 +82,13 @@ class XMLPlugin(Plugin):
         metadata8.set('content', 'test')
         metadata9 = etree.SubElement(head, "meta")
         metadata9.set('name', '@Conversation')
+       
         #retrieve list of files used for this conversation
-        filename = plugin_input.get_audio_paths();
+        files = plugin_input.filenames
         filenames = ""
-        for key, pathname in filename.items():
-            filename = pathname.rsplit('/', 1)[-1]
-            filenames = filenames + filename + " "
+        
+        for name in files:
+            filenames = filenames + name + " "
         metadata9.set('content', filenames.rstrip())
 
         for _, (_, nodeList) in enumerate(utterances.items()):
@@ -115,7 +117,7 @@ class XMLPlugin(Plugin):
 
         tree = etree.ElementTree(root)
 
-        path = "{}/native.xml".format(plugin_input.get_result_directory_path())
+        path = "{}/native.xml".format(plugin_input.output_path)
 
         utterances = cm.getUttMap(False)
         with open (path, "wb") as files :
@@ -124,9 +126,9 @@ class XMLPlugin(Plugin):
     def xml_talkbank(
         self,
         dependency_outputs: Dict[str, Any],
-        plugin_input: Methods
+        plugin_input: GBPluginMethods
     ):
-        cm = dependency_outputs["conv_model"]
+        cm: ConversationModel = dependency_outputs["ConversationModelPlugin"]
         varDict = {
             PAUSES: PAUSES,
             GAPS: XML_GAPMARKER,
@@ -325,7 +327,7 @@ class XMLPlugin(Plugin):
                 elem.tail = elem.tail.strip()
         tree = etree.ElementTree(root)
 
-        path = "{}/{}.xml".format(plugin_input.get_result_directory_path(),
+        path = "{}/{}.xml".format(plugin_input.output_path,
                                 "talkbank")
         with open (path, "wb") as files :
             tree.write(files)

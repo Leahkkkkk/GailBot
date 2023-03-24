@@ -15,6 +15,7 @@ from typing import TypedDict, Tuple
 from gailbot.api import GailBot
 from PyQt6.QtCore import QObject, pyqtSignal
 from controller.util.io import get_name
+from controller.util.Error import ERR
 
 class pluginObject(TypedDict):
     """ the scheme of a plugin data,
@@ -64,4 +65,5 @@ class PluginOrganizer:
         if plugin:
             self.signals.pluginAdded.emit(plugin)
         else:
-            self.signals.error.emit(f"failed to register plugin {get_name(pluginSuitePath)}")
+            self.signals.error.emit(ERR.ERROR_WHEN_DUETO.format(
+                f"register plugin {get_name(pluginSuitePath)}", "invalid plugin suite"))

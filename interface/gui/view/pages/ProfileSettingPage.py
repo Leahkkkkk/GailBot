@@ -25,6 +25,7 @@ from view.pages import (
     RequiredSettingPage, 
     PluginPage
 )
+from view.util.ErrorMsg import WARN, ERR
 from view.widgets import (
     Button, 
     ComboBox, 
@@ -33,7 +34,6 @@ from view.widgets import (
 from view.widgets.MsgBox import WarnBox, ConfirmBox
 from view.components.CreateNewSettingTab import CreateNewSetting
 from view.components.PluginDialog import PluginDialog
-
 from PyQt6.QtWidgets import (
     QWidget, 
     QStackedWidget, 
@@ -193,7 +193,7 @@ class ProfileSettingPage(QWidget):
             self.RequiredSetPage.setValue(data)
         except Exception as e:
             self.logger.error(e, exc_info=e)
-            WarnBox("An error occurred when loading the profile")
+            WarnBox(ERR.ERR_WHEN_DUETO.format("loading profile content", str(e)))
             
     def addProfile (self, profileName:str):
         """ adding a new profile option to the settings page 
@@ -202,8 +202,9 @@ class ProfileSettingPage(QWidget):
         """
         try:
             self.selectSettings.addItem(profileName)
-        except: 
-            WarnBox("An error occurred when adding the profile")
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            WarnBox(ERR.ERR_WHEN_DUETO.format("adding profile", str(e)))
     
         
     def updateProfile(self):
@@ -215,8 +216,9 @@ class ProfileSettingPage(QWidget):
             self.logger.info(newSetting)
             profileKey = self.selectSettings.currentText()
             self.signals.edit.emit((profileKey, newSetting))
-        except:
-            WarnBox("An error occurred when updating the profile")
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            WarnBox(ERR.ERR_WHEN_DUETO.format("updating profile", str(e)))
 
     def addPluginRequest(self):
         """ opens a pop up window to add plugin """

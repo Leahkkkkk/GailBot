@@ -8,8 +8,9 @@
 from typing import Dict, Any
 import csv
 # Local imports
-from gailbot.plugins.plugin import Plugin, Methods, Utt
-from gb_hilab_suite.src.gb_hilab_suite import *
+from gailbot.plugins import Plugin, Methods, UttObj, GBPluginMethods
+from gb_hilab_suite.src.core.conversation_model import ConversationModel
+from gb_hilab_suite.src.hilab_suite import *
 
 class CSVPlugin(Plugin):
 
@@ -17,7 +18,7 @@ class CSVPlugin(Plugin):
         super().__init__()
 
     def apply_plugin(self, dependency_outputs: Dict[str, Any],
-                    plugin_input: Methods):
+                    plugin_input: GBPluginMethods):
         self._utterance_level(dependency_outputs, plugin_input)
         self._word_level(dependency_outputs, plugin_input)
         self.successful = True
@@ -25,13 +26,13 @@ class CSVPlugin(Plugin):
     def _utterance_level(
         self,
         dependency_outputs: Dict[str, Any],
-        plugin_input: Methods
+        plugin_input: GBPluginMethods
     ):
 
         """
         Prints the entire tree into a CSV file
         """
-        cm = dependency_outputs["conv_model"]
+        cm: ConversationModel = dependency_outputs["ConversationModelPlugin"]
         varDict = {
             GAPS: CSV_GAPMARKER,
             OVERLAPS: CSV_OVERLAPMARKER,
@@ -47,7 +48,7 @@ class CSVPlugin(Plugin):
         myFunction = cm.outer_buildUttMapWithChange(0)
         myFunction(root, newUttMap, varDict)
 
-        path = "{}/{}.csv".format(plugin_input.get_result_directory_path(),
+        path = "{}/{}.csv".format(plugin_input.output_path,
                                 "utterance_level")
 
         with open(path, 'w', newline='') as outfile:
@@ -78,9 +79,9 @@ class CSVPlugin(Plugin):
     def _word_level(
         self,
         dependency_outputs: Dict[str, Any],
-        plugin_input: Methods
+        plugin_input: GBPluginMethods
     ):
-        cm = dependency_outputs["conv_model"]
+        cm: ConversationModel = dependency_outputs["ConversationModelPlugin"]
         varDict = {
             GAPS: CSV_GAPMARKER,
             OVERLAPS: CSV_OVERLAPMARKER,
@@ -96,7 +97,7 @@ class CSVPlugin(Plugin):
         myFunction = cm.outer_buildUttMapWithChange(0)
         myFunction(root, newUttMap, varDict)
 
-        path = "{}/{}.csv".format(plugin_input.get_result_directory_path(),
+        path = "{}/{}.csv".format(plugin_input.output_path,
                                     "word_level")
 
         with open(path, 'w', newline='') as outfile:

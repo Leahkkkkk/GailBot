@@ -23,6 +23,7 @@ from view.pages.CreateNewProfilePages import (
 )
 from view.widgets.PopUpTab import Tab
 from view.widgets.MsgBox import WarnBox
+from view.util.ErrorMsg import ERR, WARN
 from PyQt6.QtWidgets import (
     QVBoxLayout,
     QDialog
@@ -80,8 +81,9 @@ class CreateNewSetting(QDialog):
             self.logger.info(setting)
             self.signals.newSetting.emit((profileName, setting))
             self.close()
-        except:
-            WarnBox("an error occurred when posting the form data")
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            WarnBox(ERR.ERR_WHEN_DUETO.format("creating new profile", str(e)))
             
         
         

@@ -14,7 +14,6 @@ from .lm import WatsonLMInterface
 from .am import WatsonAMInterface
 from ..engine import Engine
 from gailbot.core.engines import exception as ERR
-from gailbot.core.utils.general import write_json
 from gailbot.configs import watson_config_loader
 from gailbot.core.utils.logger import makelogger
 WATSON_CONFIG = watson_config_loader()

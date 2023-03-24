@@ -18,6 +18,7 @@ from view.widgets import Button, MsgBox
 from view.config.Style import Color, Dimension
 from view.config.Text import CreateNewProfileTabText as Text 
 from view.util.io import get_name
+from view.util.ErrorMsg import WARN, ERR
 from gbLogger import makeLogger
 from PyQt6.QtWidgets import (
     QDialog, 
@@ -83,11 +84,12 @@ class PluginDialog(QDialog):
                 self.displayPlugins.addItem(get_name(selectedFolder))
         except Exception as e:
             self.logger.error(e, exc_info=e)
+            MsgBox.WarnBox(ERR.ERR_WHEN_DUETO.format("uploading plugin", str(e)))
 
     def _postPlugin(self):
         """ send the new plugins through the signal """
         if not self.plugins:
-            MsgBox.WarnBox("No plugin is added")
+            MsgBox.WarnBox(WARN.NO_PLUGIN)
         else:
             for plugin in self.plugins:
                 self.signal.addPlugin.emit(plugin)

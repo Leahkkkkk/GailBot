@@ -25,7 +25,7 @@ from gbLogger import makeLogger
 from ..config.Style import Dimension, Color
 from ..config.Text import FileTableText as Text
 from view.style.WidgetStyleSheet import FILE_TABLE, SCROLL_BAR, TABLE_HEADER
-
+from view.util.ErrorMsg import ERR, WARN
 from PyQt6.QtWidgets import (
     QTableWidget, 
     QTableWidgetItem, 
@@ -136,8 +136,9 @@ class FileTable(QTableWidget):
             else:
                 for i in range(len(widths)):
                     self.setColumnWidth(i, int(widths[i] * widthSum))
-        except:
-            MsgBox.WarnBox("Failed to resize the table")
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            MsgBox.WarnBox(ERR.FAIL_TO.format("resize file table column"))
     
     ########################  table initializer    #########################
     def  _connectViewSignal(self):
@@ -177,8 +178,9 @@ class FileTable(QTableWidget):
             self.horizontalHeader().sectionClicked.connect(
                 self._headerClickedHandler)
             self.verticalHeader().hide()
-        except:
-            MsgBox.WarnBox("An error occurred when setting the file table header")
+        except Exception as e:
+            self.logger.info(e, exc_info=e)
+            MsgBox.WarnBox(ERR.ERR_WHEN_DUETO.format("initialize file header", str(e)))
         
         self.horizontalHeader().setStyleSheet(TABLE_HEADER)
     
@@ -188,8 +190,8 @@ class FileTable(QTableWidget):
         try:
             if idx == 0:
                 self._toggleAllSelect()
-        except:
-            MsgBox.WarnBox("Failed to select all item")
+        except Exception as e:
+            MsgBox.WarnBox(ERR.ERR_WHEN_DUETO("select all files", e))
    
     def _toggleAllSelect(self, clear = False):
         """ select or unselect all items in the table """
@@ -258,8 +260,9 @@ class FileTable(QTableWidget):
             if self.tableWidgetsSet:
                 self._addFileWidgetToTable(newRowIdx, key) 
             self.resizeRowsToContents()  
-        except: 
-            MsgBox.WarnBox("An error occurred when uploading the file")
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            MsgBox.WarnBox(ERR.ERR_WHEN_DUETO.format("uploading file", str(e)))
     
     def _addFileWidgetToTable(self, row:int, key:str):
         """ Add the widget that manipulates each file in a certain row 
@@ -299,8 +302,9 @@ class FileTable(QTableWidget):
                     self.transferList.remove(key)
             else:
                 self.viewSignal.error(KEYERROR)
-        except:
-            MsgBox.WarnBox("An error occurred when removing the file")
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            MsgBox.WarnBox(ERR.ERR_WHEN_DUETO.format("removing file", str(e)))
     
     def removeAll(self):
         """ remove all the file from table
@@ -324,8 +328,9 @@ class FileTable(QTableWidget):
         try:
             self.fileSignal.requestprofile.emit(key) # make request to load profile data 
             self.viewSignal.goSetting.emit()
-        except:
-            MsgBox.WarnBox("An error occurred when retrieving the file's profile setting")
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            MsgBox.WarnBox(ERR.ERR_WHEN_DUETO.format("accessing file profile", str(e)))
         
     def changeFileToTranscribed(self, key:str):
         """ change one file's status to be transcribed, and delete the file
@@ -339,8 +344,9 @@ class FileTable(QTableWidget):
                 self.updateFileContent((key, "Status", "Transcribed"))
             else:
                 self.viewSignal.error.emit(KEYERROR)
-        except:
-            MsgBox.WarnBox("An error occurred when updating the file status")
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            MsgBox.WarnBox(ERR.ERR_WHEN_DUETO.format("updating file status", str(e)))
         
     def showOneFileProgress(self, progress: Tuple[str, str]):
         """update the transcription progress of one file
@@ -352,8 +358,9 @@ class FileTable(QTableWidget):
         fileKey, msg = progress
         try:
             self.updateFileContent((fileKey, "Progress", msg))
-        except:
-            MsgBox.WarnBox("An error occurred when updating file progress")
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            MsgBox.WarnBox(ERR.ERR_WHEN_DUETO.format("updating file progress", str(e)))
         
      
     def changeProfile(self, key:str):
@@ -367,8 +374,9 @@ class FileTable(QTableWidget):
             selectSetting.signals.changeProfile.connect(self.postNewFileProfile)
             selectSetting.exec()
             selectSetting.setFixedSize(QSize(200,200))
-        except:
-            MsgBox.WarnBox("An error occurred when updating the file profile")
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            MsgBox.WarnBox(ERR.ERR_WHEN_DUETO.format("changing file profile", str(e)))
     
     def postNewFileProfile(self, newprofile: Tuple[str, str]):
         """ post the newly updated file change to the database
@@ -384,8 +392,9 @@ class FileTable(QTableWidget):
                     newitem.setBackground(QColor(self.transferlistBackground))
             else:
                 self.viewSignal.error.emit(KEYERROR)
-        except:
-            MsgBox.WarnBox("an error occurred when updating the file profile")
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            MsgBox.WarnBox(ERR.ERR_WHEN_DUETO.format("adding new profile option", str(e)))
     
     def initProfiles(self, profiles: List[str]):
         """ initialize a list of available profile"""

@@ -3,6 +3,7 @@ from .FormWidget import FormWidget
 from view.widgets import Label, Button, MsgBox
 from view.config.Style import Color, FontSize, Dimension
 from view.widgets.Form.TextInput import InputField
+from view.util.ErrorMsg import ERR, WARN
 from copy import deepcopy
 from PyQt6.QtWidgets import (
     QGridLayout, 
@@ -44,9 +45,9 @@ class UploadFile(QWidget, FormWidget):
                 self.value = path 
                 self.pathDisplay.setText(path)
             else:
-                MsgBox.WarnBox("No file is uploaded by user")
+                MsgBox.WarnBox(WARN.NO_FILE)
         except Exception as e:
-            MsgBox.WarnBox("An error occurred when uploading file")
+            MsgBox.WarnBox(ERR.ERR_WHEN_DUETO.format("uploading file", str(e)))
             self.logger.error(exc_info=e)
 
     def getValue(self):

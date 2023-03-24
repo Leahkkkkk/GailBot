@@ -6,30 +6,23 @@
 
 # Standard imports
 from typing import List, Any, Dict
-#import re, random
-#from copy import deepcopy
-#from math import floor
 from dataclasses import dataclass
-#from sympy import N
-
-# Local imports
-from gailbot.plugins.plugin import Plugin, Methods, Utt
 
 @dataclass
 class Word:
-    startTime: int
-    endTime: int
+    startTime: float
+    endTime: float
     sLabel: str
     text: str
-
+    
 
 class Node:
-    def __init__(self, startTime, endTime, speakerLable, text):
-        self.val = Word(startTime, endTime, speakerLable, text)
-        self.left = None
-        self.right = None
+    def __init__(self, startTime, endTime, speakerLabel, text):
+        self.val = Word(startTime, endTime, speakerLabel, text)
+        self.left: Node = None
+        self.right: Node = None
 
-    def inorder(self, vals):
+    def inorder(self, vals: List[Word]):
         """
         Appends text of utterance to a list of utterances
 
@@ -47,7 +40,7 @@ class Node:
             self.right.inorder(vals)
         return vals
 
-    def inorderChange(self, varDict):
+    def inorderChange(self, varDict: Dict[str, str]):
         """
         Traverse the tree using an inorder traversal. Change the marker text
         to the user-desired format.
@@ -55,14 +48,14 @@ class Node:
         Args:
             varDict(Dict[str, str]): contains new text for output
         """
-        if self.left is not None:
+        if self.left:
             self.left.inorderChange(varDict)
-        if (self.val.sLabel in varDict.keys()):
+        if self.val.sLabel in varDict.keys():
             self.val.text = varDict[self.val.sLabel]
-        if self.right is not None:
+        if self.right:
             self.right.inorderChange(varDict)
 
-    def insert(self, root, startTime, endTime, speakerLabel, text) -> None:
+    def insert(self, root, startTime, endTime, speakerLabel, text):
         """
         Inserts a node into the BST by its unique start time
 
@@ -76,7 +69,7 @@ class Node:
         Returns:
             Node: void, insert the node at the correct position
         """
-        if root is None:
+        if root:
             return Node(startTime, endTime, speakerLabel, text)
         else:
             if root.val.startTime == startTime:
@@ -192,3 +185,17 @@ class Node:
             current = current.left
 
         return current
+    
+    
+    def __str__(self) -> str:
+        if not self.left and not self.right:
+            return str(self.val)
+        elif not self.right:
+            return str(self.left) + str(self.val)
+        elif not self.left:
+            return str(self.val) + str(self.right)
+        else:
+            return str(self.left) + str(self.val) + str(self.right)
+    
+    def __repr__(self) -> str:
+        return self.__str__() 

@@ -10,13 +10,12 @@ Modified By:  Siara Small  & Vivian Li
 Description: Implementation of a database that stores all the file data 
 '''
 
-
 from dataclasses import dataclass
 from typing import TypedDict, Tuple, Dict, Set
 from gailbot.api import GailBot
 
 from gbLogger import makeLogger
-from controller.util.Error import ErrorMsg, DBException, ErrorFormatter
+from controller.util.Error import  ERR
 from PyQt6.QtCore import QObject, pyqtSignal
 from dict_to_dataclass import DataclassFromDict, field_from_dict
 
@@ -122,10 +121,10 @@ class FileOrganizer:
                 self.currentKey += 1
                 assert self.gb.apply_setting_to_source(file.Name, file.Profile)
             else:
-                self.signals.error.emit(ErrorMsg.DUPLICATEKEY)
-                self.logger.error(ErrorMsg.DUPLICATEKEY)
+                self.signals.error.emit(ERR.DUPLICATE_FILE_KEY)
+                self.logger.error(ERR.DUPLICATE_FILE_KEY)
         except Exception as e:
-            self.signals.error.emit(ErrorFormatter.DEFAULT_ERROR.format(source="post file", msg=e))
+            self.signals.error.emit(ERR.ERROR_WHEN_DUETO.format("posting new file", str(e)))
             self.logger.error(f"Error in posting file: {e}", exc_info=e)
     
     
@@ -141,11 +140,11 @@ class FileOrganizer:
                 if key in self.data:
                     self.logger.error(f"file key {key} cannot be deleted from file database")
             else:
-                self.signals.error.emit(f"failed to remove {self.data[key].Name} from the database")
+                self.signals.error.emit(ERR.DELETE_FILE_ERROR)
                 self.logger.error(f"file key {key} is not found")
-        except DBException as err:
-            self.signals.error.emit(err)
-            self.logger.error(err)
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            self.signals.error.emit(ERR.DELETE_FILE_ERROR)
             
             
     def edit(self, file: Tuple[str,fileDict]) -> None:
@@ -157,12 +156,13 @@ class FileOrganizer:
         key, newFile  = file
         try:
             if key not in self.data:
-                self.logger.error(ErrorMsg.KEYERROR)
-                self.signals.error.emit(ErrorMsg.KEYERROR)
+                self.logger.error(ERR.FILE_KEY_ERR)
+                self.signals.error.emit(ERR.FILE_KEY_ERR)
             else:
                 self.data[key] = newFile
-        except:
-            self.signals.error.emit(ErrorMsg.EDITERROR) 
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            self.signals.error.emit(ERR.EDIT_FILE_ERROR) 
 
 
     def editFileStatus(self, data: Tuple[str, str]) -> None:
@@ -174,13 +174,14 @@ class FileOrganizer:
         key, status = data
         try:
             if key not in self.data:
-                self.signals.error.emit(ErrorMsg.KEYERROR)
-                self.logger.error(ErrorMsg.KEYERROR)
+                self.signals.error.emit(ERR.FILE_KEY_ERR)
+                self.logger.error(ERR.FILE_KEY_ERR)
             else:
                 self.data[key].Status = status
-        except:
-            self.signals.error.emit(ErrorMsg.EDITERROR)
-            self.logger.error(ErrorMsg.EDITERROR)
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            self.signals.error.emit(ERR.EDIT_FILE_ERROR)
+
             
     
     def changeFiletoTranscribed(self, key: str)-> None:
@@ -192,8 +193,8 @@ class FileOrganizer:
             self.editFileStatus((key, "Transcribed"))
             assert self.gb.remove_source(self.data[key].Name)
         except Exception as e:
-            self.logger.error("Deleting file from gailbot fails, error {e}", exc_info=e)
-    
+            self.logger.error(e, exc_info=e)
+            self.signals.error.emit(ERR.ERROR_WHEN_DUETO.format("change file status", str(e)))
     
     def editFileProfile(self, data: Tuple[str, str]) -> None:
         """change the profile information of the file 
@@ -205,20 +206,20 @@ class FileOrganizer:
         self.logger.info(f"request to change the file {self.data[key].Name}'s setting to {profile}")
         try:
             if key not in self.data or not self.gb.is_source(self.data[key].Name):
-                self.signals.error.emit(ErrorMsg.KEYERROR)
-                self.logger.error(ErrorMsg.KEYERROR)
+                self.signals.error.emit(ERR.FILE_KEY_ERR)
+                self.logger.error(ERR.FILE_KEY_ERR)
                 return 
             elif not self.gb.is_setting(profile):
-                self.signals.error.emit(ErrorMsg.PROFILE_NOT_FOUND)
-                self.logger.error(f"{profile}: {ErrorMsg.PROFILE_NOT_FOUND}")
+                self.signals.error.emit(ERR.PROFILE_NOT_FOUND)
+                self.logger.error(f"{profile}: {ERR.PROFILE_NOT_FOUND}")
             else:
                 self.data[key].Profile = profile
                 assert self.gb.apply_setting_to_source(self.data[key].Name, profile)
                 self.logger.info(f"the setting of the file {self.data[key].Name} is change to {self.gb.get_source_setting_dict(self.data[key].Name)}")
                 self._updateFileResponse(key, "Profile", profile)
         except:
-            self.signals.error.emit(ErrorMsg.EDITERROR)
-            self.logger.error(ErrorMsg.EDITERROR)
+            self.signals.error.emit(ERR.EDIT_FILE_ERROR)
+            self.logger.error(ERR.EDIT_FILE_ERROR)
             
             
     def updateFileProgress(self, data: Tuple [str, str]) -> None:
@@ -232,14 +233,14 @@ class FileOrganizer:
         key, progress = data
         try:
             if key not in self.data:
-                self.signals.error.emit(ErrorMsg.KEYERROR)
-                self.logger.error(ErrorMsg.KEYERROR)
+                self.signals.error.emit(ERR.FILE_KEY_ERR)
+                self.logger.error(ERR.FILE_KEY_ERR)
             else:
                 self.data[key].Progress = progress
                 self._updateFileResponse(key, "Progress", progress)
         except:
-            self.signals.error.emit(ErrorMsg.EDITERROR)
-            self.logger.error(ErrorMsg.EDITERROR)
+            self.signals.error.emit(ERR.EDIT_FILE_ERROR)
+            self.logger.error(ERR.EDIT_FILE_ERROR)
         
 
     ##################### response displayer ############################# 
@@ -256,8 +257,8 @@ class FileOrganizer:
         try:
             self.signals.fileUpdated.emit((key, field, value))
         except:
-            self.signals.error.emit(ErrorMsg.EDITERROR)
-            self.logger.error(ErrorMsg.EDITERROR)
+            self.signals.error.emit(ERR.EDIT_FILE_ERROR)
+            self.logger.error(ERR.EDIT_FILE_ERROR)
     
     
     def requestProfile(self, key:str) -> None:
@@ -268,15 +269,15 @@ class FileOrganizer:
         self.logger.info("request file profile setting from database")  
         try:
             if key not in self.data:
-                self.signals.error.emit(ErrorMsg.KEYERROR)
-                self.logger.error(ErrorMsg.KEYERROR)
+                self.signals.error.emit(ERR.FILE_KEY_ERR)
+                self.logger.error(ERR.FILE_KEY_ERR)
             else:
                 profile = self.data[key].Profile
                 self.signals.profileRequest.emit(profile)
                 self.logger.info((key,profile))
         except:
-            self.signals.error.emit(ErrorMsg.GETERROR)
-            self.logger.error(ErrorMsg.GETERROR)
+            self.signals.error.emit(ERR.GET_FILE_ERROR)
+            self.logger.error(ERR.GET_FILE_ERROR)
             
  
     def get(self, filekey:str) -> None:
@@ -288,13 +289,13 @@ class FileOrganizer:
         self.logger.info("get the file from the database")
         try:
             if filekey not in self.data:
-                self.signals.error.emit(ErrorMsg.KEYERROR)
-                self.logger.error(ErrorMsg.KEYERROR)
+                self.signals.error.emit(ERR.FILE_KEY_ERR)
+                self.logger.error(ERR.FILE_KEY_ERR)
             else:
                 self.signals.send.emit(self.data[filekey])
         except:
-            self.signals.error.emit(ErrorMsg.GETERROR)
-            self.logger.error(ErrorMsg.GETERROR)  
+            self.signals.error.emit(ERR.GET_FILE_ERROR)
+            self.logger.error(ERR.GET_FILE_ERROR)  
             
     def getTranscribeData(self, keys: Set[str]) -> Dict[str, str]:
         data = dict()
@@ -317,8 +318,8 @@ class FileOrganizer:
         """
         self.logger.info("get the file data that will be trancribed")
         if key not in self.data:
-            self.signals.error.emit(ErrorMsg.GETERROR)
-            self.logger.info(ErrorMsg.GETERROR)
+            self.signals.error.emit(ERR.GET_FILE_ERROR)
+            self.logger.info(ERR.GET_FILE_ERROR)
             return False
         else:
             return self.data[key].Name
@@ -338,5 +339,6 @@ class FileOrganizer:
                     self._updateFileResponse(key, "Profile", file.Profile)
         except Exception as e:
             self.logger.error(f"error deleting profile {e}", exc_info=e)
+            self.signals.error.emit(ERR.ERROR_WHEN_DUETO.format(f"deleting profile {profileName}"), str(e))
             
                 

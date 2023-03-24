@@ -11,8 +11,8 @@ from typing import Dict, Any, List
 # Local imports
 from gb_hilab_suite.src.core.nodes import Word, Node
 from gb_hilab_suite.src.core.utterance_map import UtteranceMapPlugin
-from gailbot.plugins.plugin import Plugin, Methods, Utt
-from gb_hilab_suite.src.gb_hilab_suite import *
+from gailbot.plugins import Plugin, Methods, UttObj
+from gb_hilab_suite.src.hilab_suite import *
 
 
 class ConversationModel:
@@ -22,7 +22,7 @@ class ConversationModel:
     Intended to be used for API calls by subsequent layers.
     """
 
-    Tree = None
+    Tree: Node = None
     Maps = dict()
 
     ######################################################################
@@ -35,7 +35,7 @@ class ConversationModel:
         Inner class that implements an iterator for the utterance map
         """
 
-        def __init__(self, map):
+        def __init__(self, map: Dict):
             """
             Sets the map to iterator over, with an initialized list of keys
             """
@@ -98,7 +98,7 @@ class ConversationModel:
         Inner class that implements an iterator of the tree
         """
 
-        def __init__(self, root):
+        def __init__(self, root: Node):
             """
             Returns the iterator object (of the tree)
             """
@@ -221,7 +221,7 @@ class ConversationModel:
         myFunction(root, uttDict)
         self.Maps["map1"] = uttDict
 
-    def toReplace(self, inputNode, varDict):
+    def toReplace(self, inputNode: Node, varDict: Dict):
         """
         Called to rebuild the utterance map after modification of the tree
 
@@ -272,7 +272,7 @@ class ConversationModel:
     def outer_buildUttMapWithChange(self, id_arg):
         id = id_arg
 
-        def buildUttMapWithChange(currNode, outputUttDict, varDict):
+        def buildUttMapWithChange(currNode: Node, outputUttDict: Dict[str, List[Node]], varDict):
             """
             Called to build a utterance map with marker nodes substituted with the
             corresponding external format
@@ -369,7 +369,7 @@ class ConversationModel:
     #         print()
 
     # TODO: Change the list generation loops to list comprehension.
-    def getWordFromNode(self, listNode):
+    def getWordFromNode(self, listNode: List[Node]):
         """
         Return a list of inner Words from a list of Node
 
@@ -381,12 +381,12 @@ class ConversationModel:
         """
         return [node.val for node in listNode]
 
-    def getUttFromUttMap(self, id, copy: bool):
+    def getUttFromUttMap(self, id, copy: bool) -> List[UttObj]:
         """
         Get the utterance speficied by the id
         """
-        listNode = self.Maps["map1"][id]
-        listWord = list()
+        listNode: List[Node] = self.Maps["map1"][id]
+        listWord: List[UttObj] = list()
 
         if copy:
             for node in listNode:
@@ -443,12 +443,12 @@ class ConversationModel:
 
 
 
-
 class ConversationModelPlugin(Plugin):
     def __init__(self) -> None:
         super().__init__()
 
-    def apply_plugin(self, dependency_outputs: Dict[str, Any],
+    def apply_plugin(self, 
+                     dependency_outputs: Dict[str, Any],
                      plugin_input: Plugin) -> ConversationModel:
         """
         Initializes, populates and returns an instance of ConversationModel,
@@ -464,12 +464,12 @@ class ConversationModelPlugin(Plugin):
 
         cm = ConversationModel()
 
-        cm.Tree = dependency_outputs["word_tree"]
+        cm.Tree = dependency_outputs["WordTreePlugin"]
 
         cm.Maps = dict()
-        cm.Maps["map1"] = dependency_outputs["utterance_map"]
-        cm.Maps["map2"] = dependency_outputs["speaker_map"]
-        cm.Maps["map3"] = dependency_outputs["conversation_map"]
+        cm.Maps["map1"] = dependency_outputs["UtteranceMapPlugin"]
+        cm.Maps["map2"] = dependency_outputs["SpeakerMapPlugin"]
+        cm.Maps["map3"] = dependency_outputs["ConversationMapPlugin"]
 
         self.successful = True
         return cm
