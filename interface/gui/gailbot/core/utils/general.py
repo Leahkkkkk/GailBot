@@ -38,7 +38,7 @@ def is_directory(dir_path: str) -> bool:
     try:
         return Path(dir_path).is_dir()
     except Exception as e:
-        logger.error(e)
+        logger.error(dir_path, exc_info =e)
         return False 
 
 def is_file(file_path: str) -> bool:
@@ -48,7 +48,7 @@ def is_file(file_path: str) -> bool:
     try:
         return Path(file_path).is_file()
     except Exception as e:
-        logger.error(e)
+        logger.error(file_path, exc_info =e)
         return False
 
 def num_items_in_dir(

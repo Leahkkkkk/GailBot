@@ -231,8 +231,8 @@ class GoogleCore:
                 utt = {
                     "start": word.start_time.seconds + start_time,
                     "end":   word.end_time.seconds + start_time,
-                    "text":word.word,
-                    "speaker": word.speaker_tag
+                    "text": word.word,
+                    "speaker": str(word.speaker_tag)
                 }
                 utterances.append(utt)
         

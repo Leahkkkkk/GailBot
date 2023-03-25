@@ -5,5 +5,7 @@ GBPlugin = GBPluginMethods()
 
 def test_word_tree():
     plg = WordTreePlugin()
-    res = plg.apply_plugin({}, GBPlugin)
+    res = plg.apply({}, GBPlugin)
     print(res)
+    assert plg._getIntLabel("1") == 1
+    assert plg._getIntLabel("SPEAKER_01") == 1

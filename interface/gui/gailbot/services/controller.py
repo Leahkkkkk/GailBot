@@ -52,7 +52,6 @@ class ServiceController:
             bool: true if the source can be added 
         """
         logger.info(f"add source {src_path}")
-        logger.info(self.organizer.get_configured_sources())
         return self.organizer.add_source(src_path, out_path)
         
     def remove_source(self, name: str) -> bool:

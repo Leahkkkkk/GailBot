@@ -10,6 +10,9 @@ from typing import Dict, Any, List
 from gailbot import Plugin, GBPluginMethods
 from gb_hilab_suite.src.hilab_suite import *
 from gb_hilab_suite.src.core.conversation_model import ConversationModel
+import logging 
+
+
 class GapPlugin(Plugin):
     def __init__(self) -> None:
         super().__init__()

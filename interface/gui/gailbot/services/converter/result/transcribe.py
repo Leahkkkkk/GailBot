@@ -43,6 +43,7 @@ class UttResult(ResultInterface):
         make_dir(self.workspace, overwrite=True)
         self.max_size = 1000 # TODO: move to toml 
         self.data = data 
+        self.filenames :  Dict [str, str] = dict()
         self.saved_to_disk: bool = False
             
     def save_data(
@@ -63,7 +64,10 @@ class UttResult(ResultInterface):
             return False
         try: 
             for name, result in data.items():
-                write_json(os.path.join(self.workspace, f"{name}.json"), result)
+                path = os.path.join(self.workspace, f"{name}.json")  
+                write_json(path, result)
+                if name not in self.filenames:
+                    self.filenames[name] = path
             self.saved_to_disk = True
             return True
         except Exception as e:
@@ -111,7 +115,24 @@ class UttResult(ResultInterface):
             return res 
         else:
             return self.data 
-    
+   
+    def get_one_file_data(self, name:str) -> Dict[str, List[UttDict]]:
+        """
+        Accesses and return the data of one file 
+
+        Args: 
+            name: the filename of one file 
+            
+        Return: a dictionary that contains the utterance data, the key of the 
+                dictionary will be the file name, and the value will be the 
+                list of utterance dictionary that stores the utterance data
+        """ 
+        res = dict()
+        path = self.filenames[name]
+        res[name] = read_json(path)
+        return res 
+        
+        
     def load_result(self, path: str) -> bool:
         """
         Loads the transcription result
@@ -168,3 +189,4 @@ class UttResult(ResultInterface):
         except Exception as e:
             logger.error(e, exc_info=e)
             return False
+    

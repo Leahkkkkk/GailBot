@@ -39,7 +39,16 @@ class PluginManager:
         load_existing : bool = True,
         over_write: bool = True
     ):
+        """
+        Args:
+        workspace (str) : the path to plugin workspace 
+        plugin_sources:   a list of paths to plugin sources
+        loading_existing: if true, load the existing plugin from plugin workspace
+        over_write: if true, overwrite the existing plugin if plugins_sources 
+                    contain plugin that has already been saved in workspace
+        """ 
         self.workspace = workspace
+        logger.info(f"get workspace {self.workspace}")
         self._init_workspace()
         """ check if the plugin has been installed  """
         self.loaders: List[PluginLoader] = [
@@ -49,14 +58,13 @@ class PluginManager:
         
         source_names = {get_name(path) for path in plugin_sources}
         subdirs = subdirs_in_dir(self.suites_dir, recursive=False)
+        logger.info(f"get existing plugin suite {subdirs}")
        
         for subdir in subdirs: 
             if get_name(subdir[:-1]) in source_names:
                 logger.info("duplicate found")
                 if over_write or (not load_existing): 
                     delete(subdir)
-                else: 
-                    raise DuplicatePlugin(f"plugin {get_name(subdir)} already exist") 
         
         if load_existing:
             # get a list of paths to existing suite 
@@ -71,9 +79,11 @@ class PluginManager:
                 logger.error(f"{get_name(plugin_source)} cannot be registered")
     
     def get_all_suites_name(self) -> List[str]:
+        """ return a list of available plugin suite names  """
         return set(self.suites.keys())
 
     def is_suite(self, suite_name : str) -> bool:
+        """ check if suite name is an available plugin suite """
         return suite_name in self.suites
 
     def reset_workspace(self) -> bool:
@@ -153,7 +163,7 @@ class PluginManager:
             if is_directory(path):
                 return path
             else:
-                del self.suite_names[name]
+                del self.suites[name]
                 return "WARNING: suite source has been deleted"
         else:
             return "suite not found"     

@@ -14,5 +14,6 @@ from .core.engines import (
     WatsonAMInterface,
     WatsonLMInterface
 )
-# from .plugins import Plugin
+from .plugins import Plugin, Methods
+from .services import GBPluginMethods, UttDict, UttObj
 

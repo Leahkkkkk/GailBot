@@ -69,12 +69,11 @@ class PluginComponent(Component):
         logger.info(dep_outputs)
         # Simply call the plugin and return its results
         start = time.time()
-        
         try:
             result = self.plugin.apply(dep_outputs, methods)
         except Exception as e:
             result = f"Error: {e}"
-            logger.error(e)
+            logger.error(e, exc_info=e)
             
         elapsed = time.time() - start
        
@@ -223,7 +222,7 @@ class PluginSuite:
 
             dependency_map[clazz_name] = conf["dependencies"]
             plugins[clazz_name] = instance
-            logger.info(dependency_map)
-            logger.info(plugins)
+        logger.info(f"plugin dependency map {dependency_map}")
+        logger.info(f"pluins {plugins}")
         return dependency_map, plugins # used to generate pipeline
 

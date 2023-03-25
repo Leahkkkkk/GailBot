@@ -9,7 +9,7 @@ from tests.services.test_data import SETTING_DATA
 from gailbot.core.engines.watson import Watson
 import logging
 
-HIL_LAB = "/Users/yike/Documents/GitHub/GailBot/plugins/gb_hilab_suite"
+HIL_LAB = "/Users/yike/Documents/GitHub/GailBot/gb_hilab_suite"
 
 def transcribe(files, setting_name = "test", setting_data = SETTING_DATA.WHISPER_PROFILE, output = PATH.USER_ROOT, fail_test = False):
     gb = GailBot(output)
@@ -128,5 +128,13 @@ def test_google_wav_suite():
 def test_plugin():
     gb = GailBot(PATH.USER_ROOT)
     plugin_suite =  gb.register_plugin_suite(HIL_LAB)
-    logging.info(plugin_suite)
-    
+    logging.warn(plugin_suite)
+    all_plugin = gb.get_all_plugin_suites()
+    logging.warn(all_plugin)
+
+
+def test_plugin_small():
+    fails, invalid = transcribe([PATH.TWO_MIN_7], "plugin", SETTING_DATA.PROFILE_WITH_PLUGIN) 
+
+def test_plugin_dir():
+    fails, invalid = transcribe([PATH.MANY_SMALL_FILES_DIR], "plugin", SETTING_DATA.PROFILE_WITH_PLUGIN) 

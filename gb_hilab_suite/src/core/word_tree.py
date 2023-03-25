@@ -142,16 +142,6 @@ class WordTreePlugin(Plugin):
 
 
     def _getIntLabel(self, speakerLabel) -> int:
-        patterns = [
-        r"(?i)speaker\s?(\d+)",
-        r"(?i)speaker(\d+)",
-        r"(?i)speaker(\d{2})",
-        r"(?i)speaker_?0?(\d)",
-        r"(\d+)"
-        ]
-
-        # Try each pattern in turn and return the first matching integer
-        for pattern in patterns:
-            match = re.search(pattern, speakerLabel)
-            if match:
-                return int(match.group(1))
+        pattern = r"(?i)speaker\s*(\d{1,2})"
+        match = re.search(pattern, speakerLabel)
+        return int(match.group(1))

@@ -14,7 +14,6 @@ setting:
                      and one invalid profile
                      
     audio source - different length
-    
 
 """
 @dataclass 
@@ -46,12 +45,14 @@ class SETTING_DATA:
         "acoustic_customization_id" : None
     }
 
-
     PLUGIN_SETTING = ["hilab"]
     NEW_PLUGIN = ["testmodule"]
-    
     # dummy profile for testing the organizer  & setting manager only 
     DUMMY_PROFILE = {
+        "engine_setting": WHISPER_SETTING, 
+        "plugin_setting": PLUGIN_SETTING
+    }
+    PROFILE = {
         "engine_setting": WHISPER_SETTING, 
         "plugin_setting": PLUGIN_SETTING
     }
@@ -61,9 +62,9 @@ class SETTING_DATA:
         "plugin_setting": NEW_PLUGIN
     }
     
-    PROFILE = {
+    PROFILE_WITH_PLUGIN = {
         "engine_setting": WHISPER_SETTING, 
-        "plugin_setting": ["gb_test_suite"]
+        "plugin_setting": ["gb_hilab_suite"]
     }
     
     PROFILE_NO_PLUGIN = {
