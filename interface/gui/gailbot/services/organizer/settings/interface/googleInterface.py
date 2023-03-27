@@ -1,8 +1,14 @@
+import os
 from pydantic import BaseModel, ValidationError
 from typing import Dict, Union
 from .engineSettingInterface import EngineSettingInterface
 from gailbot.core.utils.logger import makelogger
 from gailbot.core.engines.google import Google
+from gailbot.core.utils.general import copy, is_file, is_directory, make_dir, get_name
+from gailbot.configs import  workspace_config_loader
+
+
+API_KEY_DIR = workspace_config_loader().engine_ws.google_api
 
 logger = makelogger("google_interface")
 class ValidateGoogle(BaseModel):
@@ -14,6 +20,7 @@ class Transcribe(BaseModel):
     """
     pass 
 class Init(BaseModel):
+    # the path to a file that stores the google api key
     google_api_key: str 
 
 class GoogleInterface(EngineSettingInterface):
@@ -43,13 +50,23 @@ def load_google_setting(setting: Dict[str, str]) -> Union[bool, EngineSettingInt
     try:
         setting = setting.copy()
         validate = ValidateGoogle(**setting)
+        if not is_directory(API_KEY_DIR):
+            make_dir(API_KEY_DIR)
+        
+        # check that the api key is valid
+        assert Google.is_valid_google_api(setting["google_api_key"])
+        
+        # save a copied version of the api key file to the workspace
+        copied_api = os.path.join(API_KEY_DIR, get_name(setting["google_api_key"]) + ".json")
+        setting["google_api_key"] = copy(setting["google_api_key"], copied_api)
+    
         google_set = dict ()
         google_set["engine"] = setting.pop("engine")
         google_set["init"] = dict()
         google_set["transcribe"] = dict()
         google_set["init"].update(setting)
         google_setting = GoogleInterface(**google_set)
-        assert Google.is_valid_google_api(google_setting.init.google_api_key)
+        
         return google_setting
     except ValidationError as e:
         logger.error(e, exc_info=e)

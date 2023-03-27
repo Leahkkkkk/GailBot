@@ -138,7 +138,6 @@ def test_plugin_small():
 def test_plugin_dir():
     fails, invalid = transcribe([PATH.MANY_SMALL_FILES_DIR], "plugin", SETTING_DATA.PROFILE_WITH_PLUGIN) 
 
-### TODO : has bug ###
 def test_plugin_hello(): 
     fails, invalid = transcribe([PATH.HELLO_1], "plugin", SETTING_DATA.PROFILE_WITH_PLUGIN)
 
@@ -147,3 +146,21 @@ def test_plugin_multiple_files():
 
 def test_plugin_short_phone():
     fails, invalid = transcribe([PATH.SHORT_PHONE_CALL], "plugin", SETTING_DATA.PROFILE_WITH_PLUGIN)
+
+def test_plugin_assasination():
+    fails, invalid = transcribe([PATH.assassination1], "plugin", SETTING_DATA.PROFILE_WITH_PLUGIN)
+
+def test_plugin_wav():
+    fails, invalid = transcribe(PATH.WAV_SUITE, "plugin", SETTING_DATA.PROFILE_WITH_PLUGIN)
+
+def test_empty():
+    fails, invalid = transcribe([PATH.SineWaveMinus16], "plugin", SETTING_DATA.PROFILE_WITH_PLUGIN)
+
+def test_plugin_wav_dir():
+    fails, invalid = transcribe([PATH.WAV_DIR], "plugin", SETTING_DATA.PROFILE_WITH_PLUGIN)
+
+def test_plugin_multiple():
+    fails, invalid = transcribe([PATH.SHORT_AUDIO, PATH.SHORT_PHONE_CALL], "plugin", SETTING_DATA.PROFILE_WITH_PLUGIN)
+
+def test_plugin_lib():
+    fails, invalid = transcribe([PATH.LIB_RECORD_DIR], "plugin", SETTING_DATA.PROFILE_WITH_PLUGIN, invalid=True)

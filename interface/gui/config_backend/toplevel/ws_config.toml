@@ -30,4 +30,5 @@ data_copy     = "data_copy"
 whisper = "engine_source/whisper_workspace"
 watson  = "engine_source/watson_workspace"
 google  = "engine_source/google_workspace"
+google_api = "engine_source/google_workspace/api_key"
 

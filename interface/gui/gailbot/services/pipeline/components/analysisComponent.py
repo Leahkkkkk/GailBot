@@ -14,7 +14,7 @@ from gailbot.configs import service_config_loader
 
 
 NUM_THREAD = service_config_loader().thread.analysis_num_threads
-logger = makelogger("transcribeComponent")
+logger = makelogger("analysisComponent")
 
 class PluginError(Exception):
     def __init__(self, msg) -> None:
@@ -62,7 +62,7 @@ class AnalysisComponent(Component):
             logger.info(f"get payloads {payloads}")
             for payload in payloads:
                 if not payload.failed:
-                    assert self.analyze_payload(payload)
+                    self.analyze_payload(payload)
     
             return ComponentResult(
                 state  = ComponentState.SUCCESS,
@@ -84,7 +84,7 @@ class AnalysisComponent(Component):
         plugins = payload.setting.get_plugin_setting()
         logger.info(f"the following plugins are applied: {plugins}")
         if not plugins:
-            return
+            return True
         # try applying plugin
         try:
             for plugin in plugins:

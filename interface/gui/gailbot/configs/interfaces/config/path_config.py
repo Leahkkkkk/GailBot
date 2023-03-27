@@ -32,7 +32,7 @@ class EngineWS():
         self.whisper = os.path.join(ws_root, path_dict["whisper"])
         self.google = os.path.join(ws_root, path_dict["google"])
         self.watson = os.path.join(ws_root, path_dict["watson"])
-
+        self.google_api = os.path.join(ws_root, path_dict["google_api"])
 
 
 @dataclass

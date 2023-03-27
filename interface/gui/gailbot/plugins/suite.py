@@ -61,12 +61,10 @@ class PluginComponent(Component):
         """
         # Extract the actual dependency results
         logger.info("plugin component called")
-        logger.info(f"the dependency output is {dependency_outputs}")
         dep_outputs = {
             k : v.result for k,v in dependency_outputs.items()
         }
         logger.info("get the dependency output")
-        logger.info(dep_outputs)
         # Simply call the plugin and return its results
         start = time.time()
         try:
