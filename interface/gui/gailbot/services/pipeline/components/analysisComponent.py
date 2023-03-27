@@ -58,18 +58,12 @@ class AnalysisComponent(Component):
             logger.info(f"result from transcription {dependency_res}")
             assert dependency_res.state == ComponentState.SUCCESS
             
-            payload_thread = ThreadPool(NUM_THREAD)
             payloads: List [PayLoadObject] = dependency_res.result
             logger.info(f"get payloads {payloads}")
             for payload in payloads:
-                # add analyze payload function to the thread 
-                # NOTE: analyze_payload function is responsible to catch any 
-                #       error and report the error to the payload
                 if not payload.failed:
-                    payload_thread.add_task(self.analyze_payload, args=[payload])
-               
-            payload_thread.wait_for_all_completion()
-                 
+                    assert self.analyze_payload(payload)
+    
             return ComponentResult(
                 state  = ComponentState.SUCCESS,
                 result = payloads,
@@ -106,6 +100,7 @@ class AnalysisComponent(Component):
                 # create a method that get passed to plugin suite, and apply plugin suite
                 method = GBPluginMethods(payload)
                 res : Dict[str, ComponentState] = plugin_suite(base_input = None, methods = method)
+                
                 logger.info(f"get the plugin result {res}")
                 for state in res.values():
                     assert state == ComponentState.SUCCESS
@@ -118,13 +113,13 @@ class AnalysisComponent(Component):
             ) 
             payload.set_analysis_process_stats(stats)   
         except Exception as e:
-            logger.error(f"fail to get the plugin suite {plugin}, error {e}", exc_info=e)
+            logger.error(f"fail to apply the plugin suite {plugin}, error {e}", exc_info=e)
             self.emit_progress(payload, ProgressMessage.Error)
             payload.set_failure()
-            return True 
+            return False 
         else:
             payload.set_analyzed()
-            return False
+            return True
         
     def emit_progress(self, payload: PayLoadObject, msg: str):
         if payload.progress_display:

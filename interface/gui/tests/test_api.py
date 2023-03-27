@@ -143,4 +143,7 @@ def test_plugin_hello():
     fails, invalid = transcribe([PATH.HELLO_1], "plugin", SETTING_DATA.PROFILE_WITH_PLUGIN)
 
 def test_plugin_multiple_files():
-    fails, invalid = transcribe([PATH.SHORT_PHONE_CALL, PATH.MANY_FILES_DIR], "plugin", SETTING_DATA.PROFILE_WITH_PLUGIN)
+    fails, invalid = transcribe([PATH.HELLO_2, PATH.HELLO_1, PATH.HELLO_3], "plugin", SETTING_DATA.PROFILE_WITH_PLUGIN)
+
+def test_plugin_short_phone():
+    fails, invalid = transcribe([PATH.SHORT_PHONE_CALL], "plugin", SETTING_DATA.PROFILE_WITH_PLUGIN)
