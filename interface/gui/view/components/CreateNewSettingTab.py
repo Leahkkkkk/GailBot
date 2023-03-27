@@ -53,6 +53,7 @@ class CreateNewSetting(QDialog):
         self.signals = Signals()
         self.addProfileName = ProfileName()
         self.engineSetting = EngineSetting()
+        self.pluginSetting = PluginSetting(plugins)
         self.newSettingData = dict()
         self.setWindowTitle(Text.WindowTitle)
         
@@ -60,7 +61,8 @@ class CreateNewSetting(QDialog):
             Text.WindowTitle,
             {
                 Text.TabHeader1: self.addProfileName,
-                Text.TabHeader2: self.engineSetting
+                Text.TabHeader2: self.engineSetting,
+                Text.TabHeader3: self.pluginSetting
             },
             QSize(Dimension.LARGEDIALOGWIDTH, Dimension.LARGEDIALOGHEIGHT)
         )

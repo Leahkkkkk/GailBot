@@ -22,7 +22,7 @@ class Node:
         self.left: Node = None
         self.right: Node = None
 
-    def inorder(self, vals: List[Word]):
+    def inorder(self, vals: List[Word])->List[Word]:
         """
         Appends text of utterance to a list of utterances
 
@@ -117,7 +117,7 @@ class Node:
         Returns:
             root
 
-        sourse: https://www.geeksforgeeks.org/binary-search-tree-set-2-delete/
+        source: https://www.geeksforgeeks.org/binary-search-tree-set-2-delete/
         """
 
         # Base Case

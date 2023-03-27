@@ -16,19 +16,19 @@ class MultipleSelect(QWidget, FormWidget):
         
     def initUI(self):
         self._layout = QVBoxLayout()
+        self._layout.setAlignment(Qt.AlignmentFlag.AlignTop)
         self.labelwidget = Label(self.labeltxt, FontSize.BODY)
         self.setLayout(self._layout)
-        self._layout.addWidget(self.labelwidget)
+        self._layout.addWidget(self.labelwidget, alignment=Qt.AlignmentFlag.AlignTop)
         for c in self.choicesDict.values():
             self._layout.addWidget(c, alignment=Qt.AlignmentFlag.AlignTop)
-            self._layout.addSpacing(10)
-        self._layout.addStretch()
     
     def getValue(self) -> List[str]:
         res = []
         for choice, box in self.choicesDict.items():
             if box.isChecked():
                 res.append(choice)
+        return res
 
     
     def setValue(self, choices: List[str]):
@@ -42,4 +42,5 @@ class MultipleSelect(QWidget, FormWidget):
     def addChoice(self, newChoice:str):
         newBox = CheckBox(newChoice, False)
         self.choicesDict[newChoice] = newBox 
-        self._layout.addWidget(newBox)
+        self._layout.addWidget(newBox, alignment=Qt.AlignmentFlag.AlignTop)
+        # self._layout.addStretch() 

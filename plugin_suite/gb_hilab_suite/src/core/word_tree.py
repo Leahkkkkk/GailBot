@@ -9,9 +9,7 @@ from typing import Any, Dict, List
 import random
 import re
 from math import floor
-
 from gailbot import Plugin, GBPluginMethods,  UttObj
-
 from gb_hilab_suite.src.core.nodes import Node
 
 
@@ -21,8 +19,7 @@ class WordTreePlugin(Plugin):
     def __init__(self):
         super().__init__()
 
-    def apply(self, 
-                     dependency_outputs: Dict[str, Any],
+    def apply(self, dependency_outputs: Dict[str, Any],
                      methods: GBPluginMethods) -> Node:
         """
         Adds words from an utterance map to construct a balanced BST with each

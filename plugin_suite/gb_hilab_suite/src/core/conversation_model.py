@@ -12,8 +12,7 @@ from typing import Dict, Any, List
 from gb_hilab_suite.src.core.nodes import Word, Node
 from gb_hilab_suite.src.core.utterance_map import UtteranceMapPlugin
 from gailbot import Plugin, UttObj, GBPluginMethods
-from gb_hilab_suite.src.hilab_suite import *
-
+from gb_hilab_suite.src.config import MARKER, THRESHOLD, CONVERSATION, PLUGIN_NAME
 
 class ConversationModel:
     """
@@ -77,8 +76,7 @@ class ConversationModel:
                 self.curr += 1
                 return result
             elif self.curr == len(self.list) - 1:
-                result = [self.map[self.list[self.curr]],
-                          []]
+                result = [self.map[self.list[self.curr]], []]
                 self.curr += 1
                 return result
             else:
@@ -168,8 +166,8 @@ class ConversationModel:
             Map: either the word-level dictionary itself or its deep copy.
         """
         if copy:
-            return deepcopy(self.Maps["map1"])
-        return self.Maps["map1"]
+            return deepcopy(self.Maps[CONVERSATION.map1])
+        return self.Maps[CONVERSATION.map1]
 
     def getConvDict(self, copy: bool) -> map:
         """
@@ -185,8 +183,8 @@ class ConversationModel:
                  copy.
         """
         if copy:
-            return deepcopy(self.Maps["map3"])
-        return self.Maps["map3"]
+            return deepcopy(self.Maps[CONVERSATION.map3])
+        return self.Maps[CONVERSATION.map3]
 
     def insertToTree(self, startTime, endTime, sLabel, text) -> None:
         """
@@ -219,7 +217,7 @@ class ConversationModel:
         ud = UtteranceMapPlugin()
         myFunction = ud.outer_create_dict(0)
         myFunction(root, uttDict)
-        self.Maps["map1"] = uttDict
+        self.Maps[CONVERSATION.map1] = uttDict
 
     def toReplace(self, inputNode: Node, varDict: Dict):
         """
@@ -230,21 +228,21 @@ class ConversationModel:
 
         currSL = inputNode.val.sLabel
 
-        if inputNode.val.sLabel in INTERNAL_MARKER_SET:
-            arr = inputNode.val.text[1 : len(inputNode.val.text)-1].split(MARKER_SEP)
-            currSL = (arr[-1].split(KEYVALUE_SEP))[-1]
-            temp = arr[0].split(KEYVALUE_SEP)[-1]
-            markerInfo = arr[1].split(KEYVALUE_SEP)[-1]
+        if inputNode.val.sLabel in MARKER.INTERNAL_MARKER_SET:
+            arr = inputNode.val.text[1 : len(inputNode.val.text)-1].split(MARKER.MARKER_SEP)
+            currSL = (arr[-1].split(MARKER.KEYVALUE_SEP))[-1]
+            temp = arr[0].split(MARKER.KEYVALUE_SEP)[-1]
+            markerInfo = arr[1].split(MARKER.KEYVALUE_SEP)[-1]
 
             if inputNode.val.sLabel in varDict:
                 surfaceFormat = varDict[temp]
 
                 # specific to XMLSCHEMA plugin for PAUSES marker HACK
-                if surfaceFormat == PAUSES:
+                if surfaceFormat == MARKER.PAUSES:
                     newNode = Node(inputNode.val.startTime,
                                inputNode.val.endTime,
                                currSL,
-                               surfaceFormat + KEYVALUE_SEP + markerInfo)
+                               surfaceFormat + MARKER.KEYVALUE_SEP + markerInfo)
                     # print(surfaceFormat + KEYVALUE_SEP + markerInfo)
                     return newNode
 
@@ -280,9 +278,9 @@ class ConversationModel:
             """
             nonlocal id
             currSL = currNode.val.sLabel
-            if currNode.val.sLabel in INTERNAL_MARKER_SET:
-                arr = currNode.val.text[1 : len(currNode.val.text)-1].split(MARKER_SEP)
-                currSL = (arr[-1].split(KEYVALUE_SEP))[-1]
+            if currNode.val.sLabel in MARKER.INTERNAL_MARKER_SET:
+                arr = currNode.val.text[1 : len(currNode.val.text)-1].split(MARKER.MARKER_SEP)
+                currSL = (arr[-1].split(MARKER.KEYVALUE_SEP))[-1]
 
             if currNode.left is not None:
                 buildUttMapWithChange(currNode.left, outputUttDict, varDict)
@@ -299,7 +297,7 @@ class ConversationModel:
                     # calculate fto & combine utterance based on sLabel + threshold
                     fto = currNode.val.startTime - outputUttDict[id][-1].val.endTime
 
-                    if currSL == outputUttDict[id][-1].val.sLabel and fto < TURN_END_THRESHOLD_SECS:
+                    if currSL == outputUttDict[id][-1].val.sLabel and fto < THRESHOLD.TURN_END_THRESHOLD_SECS:
                         outputUttDict[id].append(self.toReplace(currNode, varDict))
                     # if not, create a new list add current node to new list
                     else:
@@ -313,7 +311,7 @@ class ConversationModel:
                     fto = currNode.val.startTime - outputUttDict[id][-1].val.endTime
 
                     index2 = id
-                    while index2 > 1 and outputUttDict[index2][-1].val.sLabel in INTERNAL_MARKER_SET:
+                    while index2 > 1 and outputUttDict[index2][-1].val.sLabel in MARKER.INTERNAL_MARKER_SET:
                         index2 -= 1
                     fto2 = currNode.val.startTime - outputUttDict[index2][-1].val.endTime
 
@@ -322,11 +320,11 @@ class ConversationModel:
                         index3 -= 1
                     fto3 = currNode.val.startTime - outputUttDict[index3][-1].val.endTime
 
-                    if currSL == outputUttDict[id][-1].val.sLabel and fto < TURN_END_THRESHOLD_SECS:
+                    if currSL == outputUttDict[id][-1].val.sLabel and fto < THRESHOLD.TURN_END_THRESHOLD_SECS:
                         outputUttDict[id].append(self.toReplace(currNode, varDict))
-                    elif currSL == outputUttDict[index2][-1].val.sLabel and fto2 < TURN_END_THRESHOLD_SECS:
+                    elif currSL == outputUttDict[index2][-1].val.sLabel and fto2 < THRESHOLD.TURN_END_THRESHOLD_SECS:
                         outputUttDict[index2].append(self.toReplace(currNode, varDict))
-                    elif fto3 < TURN_END_THRESHOLD_SECS and currSL == outputUttDict[index3][-1].val.sLabel:
+                    elif fto3 < THRESHOLD.TURN_END_THRESHOLD_SECS and currSL == outputUttDict[index3][-1].val.sLabel:
                         outputUttDict[index3].append(self.toReplace(currNode, varDict))
 
                     # if not, create a new list add current node to new list
@@ -355,14 +353,14 @@ class ConversationModel:
                  copy.
         """
         if copy:
-            return deepcopy(self.Maps["map1"])
-        return self.Maps["map1"]
+            return deepcopy(self.Maps[CONVERSATION.map1])
+        return self.Maps[CONVERSATION.map1]
 
     # def printUttMap(self):
     #     """
     #     Prints the keys and values of the word-level dictionary.
     #     """
-    #     for key, item in self.Maps["map1"].items():
+    #     for key, item in self.Maps[CONVERSATION.map1].items():
     #         print(key)
     #         for i in item:
     #             print(i.val.text, end=' ')
@@ -383,9 +381,9 @@ class ConversationModel:
 
     def getUttFromUttMap(self, id, copy: bool) -> List[UttObj]:
         """
-        Get the utterance speficied by the id
+        Get the utterance specified by the id
         """
-        listNode: List[Node] = self.Maps["map1"][id]
+        listNode: List[Node] = self.Maps[CONVERSATION.map1][id]
         listWord: List[UttObj] = list()
 
         if copy:
@@ -400,13 +398,13 @@ class ConversationModel:
         """
         Insert a new node to the utterance list specified by the id
         """
-        self.Maps["map1"][id].insert(pos, newNode)
+        self.Maps[CONVERSATION.map1][id].insert(pos, newNode)
 
     def updateUttMap(self, map):
         """
         Update the given map to ConversationModel
         """
-        self.Maps["map1"] = map
+        self.Maps[CONVERSATION.map1] = map
 
     ################## BELOW ARE SPEAKERMAP FUNCTIONS ########################
     def getSpeakerMap(self, copy: bool) -> map:
@@ -421,8 +419,8 @@ class ConversationModel:
             Map: either the speaker-level dictionary itself or its deep copy.
         """
         if copy:
-            return deepcopy(self.Maps["map2"])
-        return self.Maps["map2"]
+            return deepcopy(self.Maps[CONVERSATION.map2])
+        return self.Maps[CONVERSATION.map2]
 
     # def printSpeakerMap(self, speakerDict):
     #     """
@@ -464,12 +462,12 @@ class ConversationModelPlugin(Plugin):
 
         cm = ConversationModel()
 
-        cm.Tree = dependency_outputs["WordTreePlugin"]
+        cm.Tree = dependency_outputs[PLUGIN_NAME.WordTree]
 
         cm.Maps = dict()
-        cm.Maps["map1"] = dependency_outputs["UtteranceMapPlugin"]
-        cm.Maps["map2"] = dependency_outputs["SpeakerMapPlugin"]
-        cm.Maps["map3"] = dependency_outputs["ConversationMapPlugin"]
+        cm.Maps[CONVERSATION.map1] = dependency_outputs[PLUGIN_NAME.UttMap]
+        cm.Maps[CONVERSATION.map2] = dependency_outputs[PLUGIN_NAME.SpeakerMap]
+        cm.Maps[CONVERSATION.map3] = dependency_outputs[PLUGIN_NAME.ConvMap]
 
         self.successful = True
         return cm

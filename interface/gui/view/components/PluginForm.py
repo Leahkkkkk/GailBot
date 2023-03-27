@@ -12,6 +12,11 @@ class PluginForm(QWidget):
         self._initLayout()
     
     def addPluginSuites(self, pluginSuites: List[str]):
+        """add a list of plugin suites as available plugin options
+
+        Args:
+            pluginSuites (List[str]): a list of plugin suite names
+        """ 
         for suite in pluginSuites:
             self.addPluginSuite(suite)
     
@@ -23,11 +28,15 @@ class PluginForm(QWidget):
         self.toggleView = ToggleView(
             "Plugin Suites Settings", self.pluginSuitesList, header=True)
         self.toggleView.setScrollHeight(Dimension.OUTPUT_FORM_HEIGHT)
-        
         self.setLayout(self._layout)
         self._layout.addWidget(self.toggleView)
     
     def addPluginSuite(self, pluginSuite:str):
+        """add a single plugin suite as available option
+
+        Args:
+            pluginSuite (str): the name of the single plugin suite
+        """
         self.pluginSuitesList.addChoice(pluginSuite)
     
     def getValue(self):

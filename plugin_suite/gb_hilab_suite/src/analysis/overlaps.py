@@ -10,15 +10,14 @@ from typing import Dict, Any, List
 from gailbot import Plugin, UttObj, GBPluginMethods
 from gb_hilab_suite.src.core.nodes import Word
 from gb_hilab_suite.src.core.conversation_model import ConversationModel
-
-from gb_hilab_suite.src.hilab_suite import *
+from gb_hilab_suite.src.config import MARKER, THRESHOLD, PLUGIN_NAME
 
 
 class OverlapPlugin(Plugin):
 
     def __init__(self) -> None:
         super().__init__()
-        self.marker_limit = OVERLAP_MARKERLIMIT
+        self.marker_limit = THRESHOLD.OVERLAP_MARKERLIMIT
 
 
     def apply(self, 
@@ -41,7 +40,7 @@ class OverlapPlugin(Plugin):
         """
 
         # Get the output of the previous plugin
-        cm: ConversationModel = dependency_outputs["ConversationModelPlugin"]
+        cm: ConversationModel = dependency_outputs[PLUGIN_NAME.ConvModel]
         utterances = cm.getUttMap(False)
         unique_id = 0
 
@@ -69,66 +68,66 @@ class OverlapPlugin(Plugin):
                 if nxt_y >= len(nxt_utt):
                     nxt_y = -1
 
-                markerText1 = "({1}{0}{2}{0}{3})".format(MARKER_SEP,
-                                                    str(MARKERTYPE) +
-                                                    str(KEYVALUE_SEP) +
-                                                    str(MARKER1),
-                                                    str(MARKERINFO) +
-                                                    str(KEYVALUE_SEP) +
+                markerText1 = "({1}{0}{2}{0}{3})".format(MARKER.MARKER_SEP,
+                                                    str(MARKER.MARKERTYPE) +
+                                                    str(MARKER.KEYVALUE_SEP) +
+                                                    str(MARKER.MARKER1),
+                                                    str(MARKER.MARKERINFO) +
+                                                    str(MARKER.KEYVALUE_SEP) +
                                                     str(unique_id),
-                                                    str(MARKERSPEAKER) +
-                                                    str(KEYVALUE_SEP) +
+                                                    str(MARKER.MARKERSPEAKER) +
+                                                    str(MARKER.KEYVALUE_SEP) +
                                                     curr_utt[0].sLabel)
 
-                markerText2 = "({1}{0}{2}{0}{3})".format(MARKER_SEP,
-                                                    str(MARKERTYPE) +
-                                                    str(KEYVALUE_SEP) +
-                                                    str(MARKER2),
-                                                    str(MARKERINFO) +
-                                                    str(KEYVALUE_SEP) +
+                markerText2 = "({1}{0}{2}{0}{3})".format(MARKER.MARKER_SEP,
+                                                    str(MARKER.MARKERTYPE) +
+                                                    str(MARKER.KEYVALUE_SEP) +
+                                                    str(MARKER.MARKER2),
+                                                    str(MARKER.MARKERINFO) +
+                                                    str(MARKER.KEYVALUE_SEP) +
                                                     str(unique_id),
-                                                    str(MARKERSPEAKER) +
-                                                    str(KEYVALUE_SEP) +
+                                                    str(MARKER.MARKERSPEAKER) +
+                                                    str(MARKER.KEYVALUE_SEP) +
                                                     curr_utt[0].sLabel)
 
-                markerText3 = "({1}{0}{2}{0}{3})".format(MARKER_SEP,
-                                                    str(MARKERTYPE) +
-                                                    str(KEYVALUE_SEP) +
-                                                    str(MARKER3),
-                                                    str(MARKERINFO) +
-                                                    str(KEYVALUE_SEP) +
+                markerText3 = "({1}{0}{2}{0}{3})".format(MARKER.MARKER_SEP,
+                                                    str(MARKER.MARKERTYPE) +
+                                                    str(MARKER.KEYVALUE_SEP) +
+                                                    str(MARKER.MARKER3),
+                                                    str(MARKER.MARKERINFO) +
+                                                    str(MARKER.KEYVALUE_SEP) +
                                                     str(unique_id),
-                                                    str(MARKERSPEAKER) +
-                                                    str(KEYVALUE_SEP) +
+                                                    str(MARKER.MARKERSPEAKER) +
+                                                    str(MARKER.KEYVALUE_SEP) +
                                                     nxt_utt[0].sLabel)
 
-                markerText4 = "({1}{0}{2}{0}{3})".format(MARKER_SEP,
-                                                    str(MARKERTYPE) +
-                                                    str(KEYVALUE_SEP) +
-                                                    str(MARKER4),
-                                                    str(MARKERINFO) +
-                                                    str(KEYVALUE_SEP) +
+                markerText4 = "({1}{0}{2}{0}{3})".format(MARKER.MARKER_SEP,
+                                                    str(MARKER.MARKERTYPE) +
+                                                    str(MARKER.KEYVALUE_SEP) +
+                                                    str(MARKER.MARKER4),
+                                                    str(MARKER.MARKERINFO) +
+                                                    str(MARKER.KEYVALUE_SEP) +
                                                     str(unique_id),
-                                                    str(MARKERSPEAKER) +
-                                                    str(KEYVALUE_SEP) +
+                                                    str(MARKER.MARKERSPEAKER) +
+                                                    str(MARKER.KEYVALUE_SEP) +
                                                     nxt_utt[0].sLabel)
 
                 # insert the overlap markers into the tree
                 cm.insertToTree(curr_utt[curr_x].startTime,
                                 curr_utt[curr_x].startTime,
-                                OVERLAPS,
+                                MARKER.OVERLAPS,
                                 markerText1)
                 cm.insertToTree(curr_utt[curr_y].endTime,
                                 curr_utt[curr_y].endTime,
-                                OVERLAPS,
+                                MARKER.OVERLAPS,
                                 markerText2)
                 cm.insertToTree(nxt_utt[nxt_x].startTime,
                                 nxt_utt[nxt_x].startTime,
-                                OVERLAPS,
+                                MARKER.OVERLAPS,
                                 markerText3)
                 cm.insertToTree(nxt_utt[nxt_y].endTime,
                                 nxt_utt[nxt_y].endTime,
-                                OVERLAPS,
+                                MARKER.OVERLAPS,
                                 markerText4)
 
                 unique_id += 1

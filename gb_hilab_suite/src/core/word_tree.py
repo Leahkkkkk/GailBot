@@ -9,9 +9,7 @@ from typing import Any, Dict, List
 import random
 import re
 from math import floor
-
 from gailbot import Plugin, GBPluginMethods,  UttObj
-
 from gb_hilab_suite.src.core.nodes import Node
 
 
@@ -21,8 +19,7 @@ class WordTreePlugin(Plugin):
     def __init__(self):
         super().__init__()
 
-    def apply(self, 
-                     dependency_outputs: Dict[str, Any],
+    def apply(self, dependency_outputs: Dict[str, Any],
                      methods: GBPluginMethods) -> Node:
         """
         Adds words from an utterance map to construct a balanced BST with each
@@ -142,6 +139,16 @@ class WordTreePlugin(Plugin):
 
 
     def _getIntLabel(self, speakerLabel) -> int:
-        pattern = r"(?i)speaker\s*(\d{1,2})"
-        match = re.search(pattern, speakerLabel)
-        return int(match.group(1))
+        patterns = [
+        r"(?i)speaker\s?(\d+)",
+        r"(?i)speaker(\d+)",
+        r"(?i)speaker(\d{2})",
+        r"(?i)speaker_?0?(\d)",
+        r"(\d+)"
+        ]
+
+        # Try each pattern in turn and return the first matching integer
+        for pattern in patterns:
+            match = re.search(pattern, speakerLabel)
+            if match:
+                return int(match.group(1))

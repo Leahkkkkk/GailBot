@@ -10,8 +10,7 @@ import io
 # Local imports
 from gailbot import Plugin, UttObj, GBPluginMethods
 from gb_hilab_suite.src.core.conversation_model import ConversationModel
-
-from gb_hilab_suite.src.hilab_suite import *
+from gb_hilab_suite.src.config import MARKER, THRESHOLD, LABEL, PLUGIN_NAME
 
 # import xml.etree.ElementTree as etree
 from lxml import etree
@@ -35,14 +34,14 @@ class XMLPlugin(Plugin):
         dependency_outputs: Dict[str, Any],
         methods: GBPluginMethods
     ):
-        cm: ConversationModel = dependency_outputs["ConversationModelPlugin"]
+        cm: ConversationModel = dependency_outputs[PLUGIN_NAME.ConvModel]
         varDict = {
-            GAPS: XML_GAPMARKER,
-            OVERLAPS: XML_OVERLAPMARKER,
-            MARKER1: XML_OVERLAPMARKER,
-            MARKER2: XML_OVERLAPMARKER,
-            MARKER3: XML_OVERLAPMARKER,
-            MARKER4: XML_OVERLAPMARKER
+            MARKER.GAPS: LABEL.XML_GAPMARKER,
+            MARKER.OVERLAPS: LABEL.XML_OVERLAPMARKER,
+            MARKER.MARKER1: LABEL.XML_OVERLAPMARKER,
+            MARKER.MARKER2: LABEL.XML_OVERLAPMARKER,
+            MARKER.MARKER3: LABEL.XML_OVERLAPMARKER,
+            MARKER.MARKER4: LABEL.XML_OVERLAPMARKER
         }
         root = cm.getTree(False)
         newUttMap = dict()
@@ -104,7 +103,7 @@ class XMLPlugin(Plugin):
             sLabel = ""
             if (curr_utt[0].sLabel != "gaps" and
                 curr_utt[0].sLabel != "pauses"):
-                sLabel = XML_SPEAKERLABEL + str(curr_utt[0].sLabel)
+                sLabel = LABEL.XML_SPEAKERLABEL + str(curr_utt[0].sLabel)
             m1.set('speakerlabel', str(curr_utt[0].sLabel))
 
             for word in curr_utt:
@@ -128,19 +127,19 @@ class XMLPlugin(Plugin):
         dependency_outputs: Dict[str, Any],
         methods: GBPluginMethods
     ):
-        cm: ConversationModel = dependency_outputs["ConversationModelPlugin"]
+        cm: ConversationModel = dependency_outputs[PLUGIN_NAME.ConvModel]
         varDict = {
-            PAUSES: PAUSES,
-            GAPS: XML_GAPMARKER,
-            OVERLAPS: XML_OVERLAPMARKER,
-            MARKER1: OVERLAPMARKER_CURR_START,
-            MARKER2: OVERLAPMARKER_CURR_END,
-            MARKER3: OVERLAPMARKER_NEXT_START,
-            MARKER4: OVERLAPMARKER_NEXT_END,
-            FASTSPEECH_START: FASTSPEECH_START,
-            FASTSPEECH_END: FASTSPEECH_END,
-            SLOWSPEECH_START: SLOWSPEECH_START,
-            SLOWSPEECH_END: SLOWSPEECH_END
+            MARKER.PAUSES: MARKER.PAUSES,
+            MARKER.GAPS: LABEL.XML_GAPMARKER,
+            MARKER.OVERLAPS: LABEL.XML_OVERLAPMARKER,
+            MARKER.MARKER1: LABEL.OVERLAPMARKER_CURR_START,
+            MARKER.MARKER2: LABEL.OVERLAPMARKER_CURR_END,
+            MARKER.MARKER3: LABEL.OVERLAPMARKER_NEXT_START,
+            MARKER.MARKER4: LABEL.OVERLAPMARKER_NEXT_END,
+            MARKER.FASTSPEECH_START: MARKER.FASTSPEECH_START,
+            MARKER.FASTSPEECH_END: MARKER.FASTSPEECH_END,
+            MARKER.SLOWSPEECH_START: MARKER.SLOWSPEECH_START,
+            MARKER.SLOWSPEECH_END: MARKER.SLOWSPEECH_END
         }
         root = cm.getTree(False)
         newUttMap = dict()
@@ -164,7 +163,7 @@ class XMLPlugin(Plugin):
         comment.text = "HI_LAB"
 
         for speaker in speakerMap.keys():
-            Participants.append(etree.Element("participant", id=str(XML_SPEAKERLABEL + speaker), role="Unidentified"))
+            Participants.append(etree.Element("participant", id=str(LABEL.XML_SPEAKERLABEL + speaker), role="Unidentified"))
 
         count = 0
 
@@ -178,7 +177,7 @@ class XMLPlugin(Plugin):
                 continue
 
             utterance = etree.SubElement(root, "u")
-            utterance.set('who', str(XML_SPEAKERLABEL + str(curr_utt[0].sLabel)))
+            utterance.set('who', str(LABEL.XML_SPEAKERLABEL + str(curr_utt[0].sLabel)))
             utterance.set('uID', "u" + str(count))
 
             # traverse utt using index i
@@ -188,10 +187,10 @@ class XMLPlugin(Plugin):
                 word = curr_utt[i]
                 # print(word.text)
 
-                if '%' in word.text or ('.' in word.text and PAUSES not in word.text):
+                if '%' in word.text or ('.' in word.text and MARKER.PAUSES not in word.text):
                     i += 1
                     continue
-                currText = word.text.split(KEYVALUE_SEP)[0]
+                currText = word.text.split(MARKER.KEYVALUE_SEP)[0]
 
                 # set keeping track of startings of nested markers in nested markers
 
@@ -202,21 +201,21 @@ class XMLPlugin(Plugin):
                         if currText == value:
 
                             # if the start of an overlap is detected, create g-tag to nest other tags
-                            if key == MARKER1 or key == MARKER3:
+                            if key == MARKER.MARKER1 or key == MARKER.MARKER3:
 
                                 overlap = etree.SubElement(utterance, "g")
                                 exit = False # used to break out of the outter loop
                                 while i < (len(curr_utt)):
                                     word = curr_utt[i]
-                                    currText = word.text.split(KEYVALUE_SEP)[0]
+                                    currText = word.text.split(MARKER.KEYVALUE_SEP)[0]
                                     if currText in varDict.values():
                                         for key, value in varDict.items():
                                             if currText == value:
-                                                if  key == MARKER2:
+                                                if  key == MARKER.MARKER2:
                                                     overlap.append(etree.Element("overlap", type="overlap precedes"))
                                                     exit = True
                                                     break
-                                                elif key == MARKER4:
+                                                elif key == MARKER.MARKER4:
                                                     overlap.append(etree.Element("overlap", type="overlap follows"))
                                                     exit = True
                                                     break
@@ -238,21 +237,21 @@ class XMLPlugin(Plugin):
                                     overlap.append(etree.Element("overlap", type="overlap follows"))
 
                             # if a pause tag is detected
-                            elif key == PAUSES:
+                            elif key == MARKER.PAUSES:
                                 # print("pauses")
-                                tempArr = word.text.split(KEYVALUE_SEP)
+                                tempArr = word.text.split(MARKER.KEYVALUE_SEP)
                                 pause = etree.Element("pause")
                                 pause.set('length', tempArr[1])
                                 pause.set('symbolic-length', 'simple')
                                 utterance.append(pause)
 
                             # TODO: ADD OTHER MARKER AS NEW TAGS
-                            elif key == SLOWSPEECH_START or key == FASTSPEECH_START:
+                            elif key == MARKER.SLOWSPEECH_START or key == MARKER.FASTSPEECH_START:
 
                                 currWord = etree.SubElement(utterance, "w")
                                 speech = etree.SubElement(currWord, "ca-delimiter")
                                 speech.set('type', "begin")
-                                if key == SLOWSPEECH_START:
+                                if key == MARKER.SLOWSPEECH_START:
                                     speech.set('label', "slower")
                                     i += 1
                                 else:
@@ -264,12 +263,12 @@ class XMLPlugin(Plugin):
                                 exit = False
                                 while i < (len(curr_utt)):
                                     word = curr_utt[i]
-                                    currText = word.text.split(KEYVALUE_SEP)[0]
+                                    currText = word.text.split(MARKER.KEYVALUE_SEP)[0]
                                     if currText in varDict.values() and exit == False:
                                         for key, value in varDict.items():
                                             if currText == value:
                                                 # speech.tail = cumCurrText # TODO: verify if work
-                                                if key == SLOWSPEECH_END:
+                                                if key == MARKER.SLOWSPEECH_END:
                                                     #put text here
                                                     speech.tail = cumCurrText
                                                     speechEnd = etree.SubElement(currWord, "ca-delimiter")
@@ -277,7 +276,7 @@ class XMLPlugin(Plugin):
                                                     speechEnd.set('label', "slower")
                                                     exit = True
                                                     break
-                                                elif key == FASTSPEECH_END:
+                                                elif key == MARKER.FASTSPEECH_END:
                                                     #put text here
                                                     speech.tail = cumCurrText
                                                     speechEnd = etree.SubElement(currWord, "ca-delimiter")

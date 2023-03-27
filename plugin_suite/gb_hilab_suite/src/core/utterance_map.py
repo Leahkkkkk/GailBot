@@ -9,14 +9,14 @@ from typing import List, Any, Dict
 #import re
 from copy import deepcopy
 # Local imports
-from gb_hilab_suite.src.hilab_suite import *
+from gb_hilab_suite.src.config import MARKER, THRESHOLD
 from gailbot import Plugin, GBPluginMethods, UttDict
 from gb_hilab_suite.src.core.nodes import Node
 
 class UtteranceMapPlugin(Plugin):
     def __init__(self) -> None:
         super().__init__()
-        self.turn_end_threshold_secs = TURN_END_THRESHOLD_SECS
+        self.turn_end_threshold_secs = THRESHOLD.TURN_END_THRESHOLD_SECS
 
     def apply(self, 
                      dependency_outputs: Dict[str, Any],
@@ -61,7 +61,7 @@ class UtteranceMapPlugin(Plugin):
             if currNode.left is not None:
                 create_dict(currNode.left, uttDict)
 
-            if (currNode.val.startTime is not None) and (currSL not in INTERNAL_MARKER_SET):
+            if (currNode.val.startTime is not None) and (currSL not in MARKER.INTERNAL_MARKER_SET):
 
                 # create the first list in our dictionary
                 if id == 0:
@@ -89,7 +89,7 @@ class UtteranceMapPlugin(Plugin):
                     fto = currNode.val.startTime - uttDict[id][-1].val.endTime
 
                     index2 = id
-                    while index2 > 1 and uttDict[index2][-1].val.sLabel in INTERNAL_MARKER_SET:
+                    while index2 > 1 and uttDict[index2][-1].val.sLabel in MARKER.INTERNAL_MARKER_SET:
                         index2 -= 1
                     fto2 = currNode.val.startTime - \
                         uttDict[index2][-1].val.endTime

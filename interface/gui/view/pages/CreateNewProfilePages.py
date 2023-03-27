@@ -27,6 +27,8 @@ from view.widgets.Form.TextInput import TextInput
 from view.widgets.MsgBox import WarnBox
 from view.widgets.Background import initSecondaryColorBackground
 from view.pages.PluginPage import PluginPage
+from view.components import EngineSettingForm
+from view.components import PluginForm
 
 
 from PyQt6.QtWidgets import  QVBoxLayout
@@ -117,13 +119,9 @@ class EngineSetting(TabPage):
         self.verticallayout.addWidget(
             self.header, 
             alignment=Qt.AlignmentFlag.AlignHCenter)
-        self.mainForm = DependentCombo(Form.Engine, "Speech to Text Engine", "engine")
-        self.scrollArea  = ScrollArea()
-        self.scrollArea.setWidget(self.mainForm)
-        initSecondaryColorBackground(self.scrollArea)
-        self.verticallayout.addWidget(self.scrollArea)
-        self.scrollArea.setWidgetResizable(True)
-        self.scrollArea.setMaximumHeight(Dimension.LARGEDIALOGHEIGHT//4 * 3)
+        self.mainForm = EngineSettingForm.EngineSettingForm()
+        self.verticallayout.addWidget(self.mainForm)
+        self.verticallayout.addStretch()
         self.confirmBtn = ColoredBtn(Text.cofirmBtn, Color.SECONDARY_BUTTON)
         self.confirmBtn.clicked.connect(self._confirmHandler)
         self.verticallayout.addWidget(self.confirmBtn, alignment=bottomRight)
@@ -147,12 +145,19 @@ class PluginSetting(TabPage):
     def __init__(self, plugins, *args, **kwargs) -> None:
         """ initializes tab """
         super().__init__(*args, **kwargs)
-        self.mainForm = PluginPage(plugins)
+        self.header = Label(
+            Text.pluginSettingHeader, 
+            FontSize.HEADER2, 
+            FontFamily.MAIN)
+        self.mainForm = PluginForm.PluginForm()
+        self.mainForm.addPluginSuites(plugins)
         self.confirmBtn = ColoredBtn(Text.cofirmBtn, Color.SECONDARY_BUTTON)
         self.confirmBtn.clicked.connect(lambda: self.signals.close.emit())
         self.verticalLayout = QVBoxLayout()
         self.setLayout(self.verticalLayout)
+        self.verticalLayout.addWidget(self.header)
         self.verticalLayout.addWidget(self.mainForm)
+        self.verticalLayout.addStretch()
         self.verticalLayout.addWidget(
             self.confirmBtn,
             alignment=Qt.AlignmentFlag.AlignRight)

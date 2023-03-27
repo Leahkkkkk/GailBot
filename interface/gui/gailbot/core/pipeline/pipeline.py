@@ -116,8 +116,7 @@ class Pipeline:
                         if self.dependency_graph.has_node(executable):
                             self.dependency_graph.remove_node(executable)
                         dependency_resolved = False
-       
-         
+ 
                 args = [dep_outputs]          
                               
                 if dependency_resolved:                    

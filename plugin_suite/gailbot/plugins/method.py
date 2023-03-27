@@ -19,18 +19,18 @@ class Methods():
 class GBPluginMethods(Methods):
     def __init__(self):
         data = dict()
-       
-        for i in range(10):
-            l = list()
+        data["hello"] = [{"start": 0.0, "end": 1.4, "text": "hello", "speaker": "1"}] 
+        # for i in range(10):
+        #     l = list()
           
-            for j in range(100):
-                l.append(
-                    { "start":j, 
-                      "end": j+ 1, 
-                      "text": str(i + j) , 
-                      "speaker": f"speaker {j%3}"
-                      })
-            data[str(i) + "audio"] = l
+        #     for j in range(100):
+        #         l.append(
+        #             { "start":j, 
+        #               "end": j+ 1, 
+        #               "text": str(i + j) , 
+        #               "speaker": f"speaker {j%3}"
+        #               })
+        #     data[str(i) + "audio"] = l
         self.data = data 
     
     @property

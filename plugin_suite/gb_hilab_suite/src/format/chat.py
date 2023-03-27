@@ -8,7 +8,8 @@ from typing import Dict, Any
 # Local imports
 from gailbot import Plugin, GBPluginMethods, UttObj
 from gb_hilab_suite.src.core.conversation_model import ConversationModel
-from gb_hilab_suite.src.hilab_suite import *
+from gb_hilab_suite.src.config import MARKER, THRESHOLD, LABEL, PLUGIN_NAME
+
 
 class ChatPlugin(Plugin):
 
@@ -20,18 +21,18 @@ class ChatPlugin(Plugin):
         """
         Prints the entire tree in a user-specified chat format
         """
-        cm: ConversationModel = dependency_outputs["ConversationModelPlugin"]
+        cm: ConversationModel = dependency_outputs[PLUGIN_NAME.ConvModel]
         varDict = {
-                GAPS: CHAT_GAPMARKER,
-                MARKER1: OVERLAPMARKER_CURR_START,
-                MARKER2: OVERLAPMARKER_CURR_END,
-                MARKER3: OVERLAPMARKER_NEXT_START,
-                MARKER4: OVERLAPMARKER_NEXT_END,
-                PAUSES: CHAT_PAUSE,
-                FASTSPEECH_START: FASTSPEECH_START,
-                FASTSPEECH_END: FASTSPEECH_END,
-                SLOWSPEECH_START: SLOWSPEECH_START,
-                SLOWSPEECH_END: SLOWSPEECH_END
+                MARKER.GAPS: LABEL.CHAT_GAPMARKER,
+                MARKER.MARKER1: LABEL.OVERLAPMARKER_CURR_START,
+                MARKER.MARKER2: LABEL.OVERLAPMARKER_CURR_END,
+                MARKER.MARKER3: LABEL.OVERLAPMARKER_NEXT_START,
+                MARKER.MARKER4: LABEL.OVERLAPMARKER_NEXT_END,
+                MARKER.PAUSES: LABEL.CHAT_PAUSE,
+                MARKER.FASTSPEECH_START: MARKER.FASTSPEECH_START,
+                MARKER.FASTSPEECH_END: MARKER.FASTSPEECH_END,
+                MARKER.SLOWSPEECH_START: MARKER.SLOWSPEECH_START,
+                MARKER.SLOWSPEECH_END: MARKER.SLOWSPEECH_END
         }
 
         root = cm.getTree(False)
@@ -58,7 +59,7 @@ class ChatPlugin(Plugin):
                     l.append(word.text)
                 txt = ' '.join(l)
 
-                sLabel = SPEAKERLABEL + str(curr_utt[0].sLabel)
+                sLabel = LABEL.SPEAKERLABEL + str(curr_utt[0].sLabel)
 
                 turn = '{0}\t{1} {2}{4}_{3}{4}\n'.format(
                     sLabel, txt, curr_utt[0].startTime, curr_utt[-1].endTime,

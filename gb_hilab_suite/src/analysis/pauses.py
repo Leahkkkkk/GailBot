@@ -10,31 +10,13 @@ from typing import Dict, Any, List
 from dataclasses import dataclass
 # Local imports
 from gailbot import Plugin, GBPluginMethods, UttObj
-from gb_hilab_suite.src.hilab_suite import *
 from gb_hilab_suite.src.core.conversation_model import ConversationModel
+from gb_hilab_suite.src.config import MARKER, THRESHOLD, PLUGIN_NAME
 
 
 class PausePlugin(Plugin):
     def __init__(self) -> None:
         super().__init__()
-
-        @dataclass
-        class Thresholds:
-            lb_latch = LB_LATCH
-            ub_latch = UB_LATCH
-
-            lb_pause = LB_PAUSE
-            ub_pause = UB_PAUSE
-            lb_micropause = LB_MICROPAUSE
-            ub_micropause = UB_MICROPAUSE
-            lb_large_pause = LB_LARGE_PAUSE
-
-        @dataclass
-        class Delimiters:
-            latch_marker = u'\u2248'
-
-        self.thresholds = Thresholds
-        self.delimiters = Delimiters
 
     def apply(self, dependency_outputs: Dict[str, Any],
                      methods: GBPluginMethods) -> List[UttObj]:
@@ -55,7 +37,7 @@ class PausePlugin(Plugin):
             convModelPlugin: the current conv model wrapper object
         """
         # Get the output of the previous plugin
-        cm: ConversationModel = dependency_outputs["ConversationModelPlugin"]
+        cm: ConversationModel = dependency_outputs[PLUGIN_NAME.ConvModel]
         utterances = cm.getUttMap(False)
 
         mapIter = cm.map_iterator(utterances)  # iterator
@@ -70,70 +52,70 @@ class PausePlugin(Plugin):
                             curr_utt[-1].endTime, 2)
 
                 markerText = ""
-                if self.thresholds.lb_latch <= fto <= self.thresholds.ub_latch:
-                    markerText = "({1}{0}{2}{0}{3})".format(MARKER_SEP,
-                                                            str(MARKERTYPE)
-                                                            + str(KEYVALUE_SEP) +
-                                                            str(PAUSES),
-                                                            str(MARKERINFO) +
-                                                            str(KEYVALUE_SEP) +
-                                                            str(self.delimiters.latch_marker),
-                                                            str(MARKERSPEAKER) +
-                                                            str(KEYVALUE_SEP) +
+                if THRESHOLD.LB_LATCH <= fto <= THRESHOLD.UB_LATCH:
+                    markerText = "({1}{0}{2}{0}{3})".format(MARKER.MARKER_SEP,
+                                                            str(MARKER.MARKERTYPE)
+                                                            + str(MARKER.KEYVALUE_SEP) +
+                                                            str(MARKER.PAUSES),
+                                                            str(MARKER.MARKERINFO) +
+                                                            str(MARKER.KEYVALUE_SEP) +
+                                                            str(MARKER.LATCH_DELIM),
+                                                            str(MARKER.MARKERSPEAKER) +
+                                                            str(MARKER.KEYVALUE_SEP) +
                                                             str(curr_utt[-1].sLabel))
                     cm.insertToTree(curr_utt[-1].endTime,
                                     nxt_utt[0].startTime,
-                                    PAUSES,
+                                    MARKER.PAUSES,
                                     markerText)
-                elif self.thresholds.lb_pause <= fto <= self.thresholds.ub_pause:
+                elif THRESHOLD.LB_PAUSE <= fto <= THRESHOLD.UB_PAUSE:
                     # TODO: 0.8 vs -0.8
-                    markerText = "({1}{0}{2}{0}{3})".format(MARKER_SEP,
-                                                            str(MARKERTYPE) +
-                                                            str(KEYVALUE_SEP) +
-                                                            str(PAUSES),
-                                                            str(MARKERINFO) +
-                                                            str(KEYVALUE_SEP) +
+                    markerText = "({1}{0}{2}{0}{3})".format(MARKER.MARKER_SEP,
+                                                            str(MARKER.MARKERTYPE) +
+                                                            str(MARKER.KEYVALUE_SEP) +
+                                                            str(MARKER.PAUSES),
+                                                            str(MARKER.MARKERINFO) +
+                                                            str(MARKER.KEYVALUE_SEP) +
                                                             str(round(
                                                                 fto, 1)),
-                                                            str(MARKERSPEAKER) +
-                                                            str(KEYVALUE_SEP) +
+                                                            str(MARKER.MARKERSPEAKER) +
+                                                            str(MARKER.KEYVALUE_SEP) +
                                                             str(curr_utt[-1].sLabel))
                     cm.insertToTree(curr_utt[-1].endTime,
                                     nxt_utt[0].startTime,
-                                    PAUSES,
+                                    MARKER.PAUSES,
                                     markerText)
-                elif self.thresholds.lb_micropause <= fto \
-                        <= self.thresholds.ub_micropause:
-                    markerText = "({1}{0}{2}{0}{3})".format(MARKER_SEP,
-                                                            str(MARKERTYPE) +
-                                                            str(KEYVALUE_SEP) +
-                                                            str(PAUSES),
-                                                            str(MARKERINFO) +
-                                                            str(KEYVALUE_SEP) +
+                elif THRESHOLD.LB_MICROPAUSE == fto \
+                        <= THRESHOLD.UB_MICROPAUSE:
+                    markerText = "({1}{0}{2}{0}{3})".format(MARKER.MARKER_SEP,
+                                                            str(MARKER.MARKERTYPE) +
+                                                            str(MARKER.KEYVALUE_SEP) +
+                                                            str(MARKER.PAUSES),
+                                                            str(MARKER.MARKERINFO) +
+                                                            str(MARKER.KEYVALUE_SEP) +
                                                             str(round(
                                                                 fto, 1)),
-                                                            str(MARKERSPEAKER) +
-                                                            str(KEYVALUE_SEP) +
+                                                            str(MARKER.MARKERSPEAKER) +
+                                                            str(MARKER.KEYVALUE_SEP) +
                                                             str(curr_utt[-1].sLabel))
                     cm.insertToTree(curr_utt[-1].endTime,
                                     nxt_utt[0].startTime,
-                                    PAUSES,
+                                    MARKER.PAUSES,
                                     markerText)
-                elif fto >= self.thresholds.lb_large_pause:
-                    markerText = "({1}{0}{2}{0}{3})".format(MARKER_SEP,
-                                                            str(MARKERTYPE) +
-                                                            str(KEYVALUE_SEP) +
-                                                            str(PAUSES),
-                                                            str(MARKERINFO) +
-                                                            str(KEYVALUE_SEP) +
+                elif fto >= THRESHOLD.LB_LARGE_PAUSE:
+                    markerText = "({1}{0}{2}{0}{3})".format(MARKER.MARKER_SEP,
+                                                            str(MARKER.MARKERTYPE) +
+                                                            str(MARKER.KEYVALUE_SEP) +
+                                                            str(MARKER.PAUSES),
+                                                            str(MARKER.MARKERINFO) +
+                                                            str(MARKER.KEYVALUE_SEP) +
                                                             str(round(
                                                                 fto, 1)),
-                                                            str(MARKERSPEAKER) +
-                                                            str(KEYVALUE_SEP) +
+                                                            str(MARKER.MARKERSPEAKER) +
+                                                            str(MARKER.KEYVALUE_SEP) +
                                                             str(curr_utt[-1].sLabel))
                     cm.insertToTree(curr_utt[-1].endTime,
                                     nxt_utt[0].startTime,
-                                    PAUSES,
+                                    MARKER.PAUSES,
                                     markerText)
 
         cm.buildUttMap()

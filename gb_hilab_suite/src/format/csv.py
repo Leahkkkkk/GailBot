@@ -10,7 +10,7 @@ import csv
 # Local imports
 from gailbot import Plugin, UttObj, GBPluginMethods
 from gb_hilab_suite.src.core.conversation_model import ConversationModel
-from gb_hilab_suite.src.hilab_suite import *
+from gb_hilab_suite.src.config import MARKER, THRESHOLD, LABEL, PLUGIN_NAME
 
 class CSVPlugin(Plugin):
 
@@ -32,15 +32,15 @@ class CSVPlugin(Plugin):
         """
         Prints the entire tree into a CSV file
         """
-        cm: ConversationModel = dependency_outputs["ConversationModelPlugin"]
+        cm: ConversationModel = dependency_outputs[PLUGIN_NAME.ConvModel]
         varDict = {
-            GAPS: CSV_GAPMARKER,
-            OVERLAPS: CSV_OVERLAPMARKER,
-            MARKER1: CSV_OVERLAPMARKER,
-            MARKER2: CSV_OVERLAPMARKER,
-            MARKER3: CSV_OVERLAPMARKER,
-            MARKER4: CSV_OVERLAPMARKER,
-            PAUSES: CSV_PAUSE,
+            MARKER.GAPS: LABEL.CSV_GAPMARKER,
+            MARKER.OVERLAPS: LABEL.CSV_OVERLAPMARKER,
+            MARKER.MARKER1: LABEL.CSV_OVERLAPMARKER,
+            MARKER.MARKER2: LABEL.CSV_OVERLAPMARKER,
+            MARKER.MARKER3: LABEL.CSV_OVERLAPMARKER,
+            MARKER.MARKER4: LABEL.CSV_OVERLAPMARKER,
+            MARKER.PAUSES: LABEL.CSV_PAUSE,
         }
 
         root = cm.getTree(False)
@@ -69,7 +69,7 @@ class CSVPlugin(Plugin):
                 sLabel = ""
                 if (curr_utt[0].sLabel != "*GAP" and
                     curr_utt[0].sLabel != "pauses"):
-                    sLabel = CSV_SPEAKERLABEL + str(curr_utt[0].sLabel)
+                    sLabel = LABEL.CSV_SPEAKERLABEL + str(curr_utt[0].sLabel)
                     writer.writerow([sLabel, txt, curr_utt[0].startTime,
                                         curr_utt[-1].endTime])
                 else:
@@ -81,15 +81,15 @@ class CSVPlugin(Plugin):
         dependency_outputs: Dict[str, Any],
         methods: GBPluginMethods
     ):
-        cm: ConversationModel = dependency_outputs["ConversationModelPlugin"]
+        cm: ConversationModel = dependency_outputs[PLUGIN_NAME.ConvModel]
         varDict = {
-            GAPS: CSV_GAPMARKER,
-            OVERLAPS: CSV_OVERLAPMARKER,
-            MARKER1: CSV_OVERLAPMARKER,
-            MARKER2: CSV_OVERLAPMARKER,
-            MARKER3: CSV_OVERLAPMARKER,
-            MARKER4: CSV_OVERLAPMARKER,
-            PAUSES: CSV_PAUSE
+            MARKER.GAPS: LABEL.CSV_GAPMARKER,
+            MARKER.OVERLAPS: LABEL.CSV_OVERLAPMARKER,
+            MARKER.MARKER1: LABEL.CSV_OVERLAPMARKER,
+            MARKER.MARKER2: LABEL.CSV_OVERLAPMARKER,
+            MARKER.MARKER3: LABEL.CSV_OVERLAPMARKER,
+            MARKER.MARKER4: LABEL.CSV_OVERLAPMARKER,
+            MARKER.PAUSES: LABEL.CSV_PAUSE
         }
 
         root = cm.getTree(False)
@@ -111,8 +111,8 @@ class CSVPlugin(Plugin):
 
                 for word in curr_utt:
                     sLabel = curr_utt[0].sLabel
-                    if curr_utt[0].sLabel not in INTERNAL_MARKER_SET:
-                        sLabel = CSV_SPEAKERLABEL + str(curr_utt[0].sLabel)
+                    if curr_utt[0].sLabel not in MARKER.INTERNAL_MARKER_SET:
+                        sLabel = LABEL.CSV_SPEAKERLABEL + str(curr_utt[0].sLabel)
                         writer.writerow([word.sLabel, word.text,
                                             word.startTime, word.endTime])
                     else:

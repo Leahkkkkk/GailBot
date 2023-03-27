@@ -71,7 +71,6 @@ class TranscribeComponent(Component):
                 else:
                     self.emit_progress(payload, ProgressMessage.Finished)
            
-           
             # get the result from the thread pool
             for payload in payloads:
                 if not payload.transcribed:
@@ -138,6 +137,7 @@ class TranscribeComponent(Component):
             
             # adding the task to transcribe individual file to the thread
             self.emit_progress(payload, "Adding Task")
+            
             for idx, file in enumerate(data_files):
                 transcribe_kwargs = copy.deepcopy(transcribe_kwargs)
                 transcribe_kwargs.update({"audio_path": file, "payload_workspace": transcribe_ws})
@@ -148,17 +148,19 @@ class TranscribeComponent(Component):
                             "transcribe_kwargs": transcribe_kwargs},
                     key = get_name(file))
                 assert filename == get_name(file)
-       
-            # start getting the result of the file
-            self.emit_progress(payload, ProgressMessage.Transcribing)
-            """ TODO: consider adding a while loop to watch for progress 
-                     instead of a for loop, if we want better message """
-            for idx, file in enumerate (data_files):
-                utt_map[get_name(file)] = \
-                    threadpool.get_task_result(get_name(file))
-                self.emit_progress(payload, f"{idx + 1}/{num_file} files transcribed")
+                
+                # add callback function to update the progress bar whenever
+                # each task is finished
+                threadpool.add_callback(
+                    filename, lambda fun: self.display_progress_bar(payload, threadpool))
+            
+            # display the initial progress
+            self.display_progress_bar(payload, threadpool)
+
+            # get the task result
+            for file in data_files:
+                utt_map[get_name(file)] = threadpool.get_task_result(get_name(file))
            
-            time.sleep(1)
             
             # if the transcription result is returned successfully
             end_time = time.time()
@@ -176,10 +178,8 @@ class TranscribeComponent(Component):
             self.emit_progress(payload, ProgressMessage.Error)
             logger.error(f"Failed to transcribed {len(data_files)} file in parallel due to the error {e}", exc_info=e)
             return False
-        
         else: 
             return True
-
 
     def transcribe_single_file(self, engine_name, init_kwargs, transcribe_kwargs)  -> List[Dict[str, str]]:
         """
@@ -205,3 +205,27 @@ class TranscribeComponent(Component):
             payload.progress_display(msg)
 
 
+    def get_progress_string(self, finished: int, total: int) -> str:
+        BAR_FILL = "⬛"  # Full block
+        BAR_EMPTY = "⬜"  # Light shade
+        # Determine the length of the progress bar (50 characters)
+        bar_length = 20
+
+        # Calculate the number of filled and empty blocks in the progress bar
+        filled_blocks = int(finished / total * bar_length)
+        empty_blocks = bar_length - filled_blocks
+
+        # Construct the progress bar string using Unicode block characters
+        bar =  "Transcribing " + (BAR_FILL * filled_blocks) + (BAR_EMPTY * empty_blocks) 
+
+        # Print the progress bar string
+        return f"\r{bar} {finished}/{total}"
+    
+    
+    def display_progress_bar(self, payload: PayLoadObject, threadpool: ThreadPool):
+        if payload.progress_display:
+            progress_str = self.get_progress_string(
+                threadpool.count_completed_tasks(), 
+                threadpool.count_total_tasks())
+            self.emit_progress(payload, progress_str)
+        

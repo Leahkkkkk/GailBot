@@ -320,22 +320,6 @@ class PayLoadObject(ABC):
         """
         return self.transcription_result.get_data()
     
-    
-    def get_one_file_transcription(self, filename: str) -> Dict[str, List[UttDict]]:
-        """
-        Accesses and return the data of one file 
-
-        Args: 
-            name: the filename of one file 
-            
-        Return: a dictionary that contains the utterance data, the key of the 
-                dictionary will be the file name, and the value will be the 
-                list of utterance dictionary that stores the utterance data
-        """ 
-        return self.transcription_result.get_one_file_data(filename)
-   
-   
-   
    
     def get_format_result(self) -> FormatResultDict:
         """

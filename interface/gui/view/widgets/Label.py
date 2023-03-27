@@ -43,6 +43,7 @@ class Label(QLabel):
     ): 
         """initialize label class"""
         super().__init__(*args, **kwargs)
+        text = text.replace("_", " ")
         self.setText(text)
         if font == FontFamily.MAIN:
             self.loadHeaderFont()

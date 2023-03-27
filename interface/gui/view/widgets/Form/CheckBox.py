@@ -31,6 +31,8 @@ class CheckBox(QWidget, FormWidget):
         self._layout.setSpacing(20)
         self._layout.addStretch()
         self.checkBox.setChecked(self.state)
+        self.setContentsMargins(0,0,0,0)
+        self.setFixedHeight(50)
     
     def setValue(self, value: bool):
         self.checkBox.setChecked(value)

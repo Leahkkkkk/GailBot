@@ -167,9 +167,8 @@ class CreateNewProfilePageText:
     profileName           = "Profile Name"
     confirmProfileNameBtn = "Start"
     emptyNameMsg          = "A profile name must be specified"
-    emptyUserMsg          = "Please enter user name and password"
     engineSettingHeader   = "Speech to Text Settings"
-    outputSettingHeader   = "Output format settings"
+    pluginSettingHeader   = "Plugin Setting"
     cofirmBtn             = "Confirm"
 
 @dataclass

@@ -210,9 +210,7 @@ class ProfileSettingPage(QWidget):
     def updateProfile(self):
         """ updates the new profile setting """
         try:
-            newSetting = dict()
-            newSetting["engine_setting"] = self.RequiredSetPage.getValue()
-            newSetting["plugin_setting"] = self.PluginPage.getValue()
+            newSetting = self.RequiredSetPage.getValue()
             self.logger.info(newSetting)
             profileKey = self.selectSettings.currentText()
             self.signals.edit.emit((profileKey, newSetting))

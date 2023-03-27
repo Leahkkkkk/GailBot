@@ -5,25 +5,18 @@
 # @Last Modified time: 2022-08-24 12:12:15
 
 
-import io
 from typing import Dict, Any, List
-
+import logging
 from scipy.stats import median_abs_deviation
 import syllables
 import numpy
 from gailbot import Plugin, GBPluginMethods, UttObj
 from gb_hilab_suite.src.core.conversation_model import ConversationModel
-from gb_hilab_suite.src.hilab_suite import *
+from gb_hilab_suite.src.config import MARKER, THRESHOLD, PLUGIN_NAME
 
 
 # The number of deviations above or below the absolute median deviation.
 LimitDeviations = 2
-
-delims = {
-    "slowSpeech":  u'\u2207',
-    "fastSpeech":  u'\u2206'
-}
-
 
 class SyllableRatePlugin(Plugin):
 
@@ -32,7 +25,7 @@ class SyllableRatePlugin(Plugin):
         Note: marker_limit value set to 4 for testing purpose
         """
         super().__init__()
-        self.marker_limit = OVERLAP_MARKERLIMIT
+        self.marker_limit = THRESHOLD.OVERLAP_MARKERLIMIT
 
     def apply(self, dependency_outputs: Dict[str, Any],
                      methods: GBPluginMethods) -> List[UttObj]:
@@ -45,7 +38,7 @@ class SyllableRatePlugin(Plugin):
             dependency_outputs (Dict[str, Any]):
             methods (PluginMethodSuite):
         """
-        cm: ConversationModel = dependency_outputs["ConversationModelPlugin"]
+        cm: ConversationModel = dependency_outputs[PLUGIN_NAME.ConvModel]
         utterances = cm.getUttMap(False)
         syll_dict = self.syll_rate(cm, utterances)
 
@@ -75,7 +68,8 @@ class SyllableRatePlugin(Plugin):
             curr_utt = cm.getWordFromNode(utt)
             syll_num = sum([syllables.estimate(word.text)
                                 for word in curr_utt])
-            utt_syll_dict.append({"utt": utt, "syllableNum": syll_num,
+            utt_syll_dict.append({"utt": utt, 
+                                  "syllableNum": syll_num,
                                   "syllRate": round(syll_num/(abs(curr_utt[0].startTime - curr_utt[-1].endTime)), 2)})
         return utt_syll_dict
 
@@ -93,8 +87,10 @@ class SyllableRatePlugin(Plugin):
         median_absolute_deviation = round(median_abs_deviation(allRates), 2)
         lowerLimit = (median-(LimitDeviations*median_absolute_deviation))
         upperLimit = (median+(LimitDeviations*median_absolute_deviation))
-        return {"median": median, "medianAbsDev": median_absolute_deviation,
-                "upperLimit": upperLimit, "lowerLimit": lowerLimit}
+        return {"median": median, 
+                "medianAbsDev": median_absolute_deviation,
+                "upperLimit": upperLimit, 
+                "lowerLimit": lowerLimit}
 
     def addDelims(self, cm: ConversationModel, dictionaryList, statsDic):
         """
@@ -115,72 +111,67 @@ class SyllableRatePlugin(Plugin):
                         colons = self.numColons(statsDic['medianAbsDev'],
                                                 utt_dict['syllRate'],
                                                 statsDic['median'])
-                        # cm.insertToTree(utt_words[0].startTime,
-                        #                 utt_words[0].startTime,
-                        #                 SLOWSPEECH,
-                        #                 markerText)
-                        # utt_words[0].text = utt_words[0].text[:pos+1] + (":"*colons) + utt_words[0].text[pos+1:]
                     else:
-                        markerText1 = "({1}{0}{2}{0}{3})".format(MARKER_SEP,
-                                                            str(MARKERTYPE) +
-                                                            str(KEYVALUE_SEP) +
-                                                            str(SLOWSPEECH_START),
-                                                            str(MARKERINFO) +
-                                                            str(KEYVALUE_SEP) +
-                                                            delims['slowSpeech'],
-                                                            str(MARKERSPEAKER) +
-                                                            str(KEYVALUE_SEP) +
+                        markerText1 = "({1}{0}{2}{0}{3})".format(MARKER.MARKER_SEP,
+                                                            str(MARKER.MARKERTYPE) +
+                                                            str(MARKER.KEYVALUE_SEP) +
+                                                            str(MARKER.SLOWSPEECH_START),
+                                                            str(MARKER.MARKERINFO) +
+                                                            str(MARKER.KEYVALUE_SEP) +
+                                                            MARKER.SLOWSPEECH_DELIM, 
+                                                            str(MARKER.MARKERSPEAKER) +
+                                                            str(MARKER.KEYVALUE_SEP) +
                                                             utt_words[0].sLabel)
-                        markerText2 = "({1}{0}{2}{0}{3})".format(MARKER_SEP,
-                                                            str(MARKERTYPE) +
-                                                            str(KEYVALUE_SEP) +
-                                                            str(SLOWSPEECH_END),
-                                                            str(MARKERINFO) +
-                                                            str(KEYVALUE_SEP) +
-                                                            delims['slowSpeech'],
-                                                            str(MARKERSPEAKER) +
-                                                            str(KEYVALUE_SEP) +
+                        markerText2 = "({1}{0}{2}{0}{3})".format(MARKER.MARKER_SEP,
+                                                            str(MARKER.MARKERTYPE) +
+                                                            str(MARKER.KEYVALUE_SEP) +
+                                                            str(MARKER.SLOWSPEECH_END),
+                                                            str(MARKER.MARKERINFO) +
+                                                            str(MARKER.KEYVALUE_SEP) +
+                                                            MARKER.SLOWSPEECH_DELIM, 
+                                                            str(MARKER.MARKERSPEAKER) +
+                                                            str(MARKER.KEYVALUE_SEP) +
                                                             utt_words[0].sLabel)
 
                         cm.insertToTree(utt_words[0].startTime,
                                         utt_words[0].startTime,
-                                        SLOWSPEECH_START,
+                                        MARKER.SLOWSPEECH_START,
                                         markerText1)
                         cm.insertToTree(utt_words[-1].endTime,
                                         utt_words[-1].endTime,
-                                        SLOWSPEECH_END,
+                                        MARKER.SLOWSPEECH_END,
                                         markerText2)
                         slowCount += 1
                 elif utt_dict['syllRate'] >= statsDic['upperLimit']:
-                    markerText1 = "({1}{0}{2}{0}{3})".format(MARKER_SEP,
-                                                        str(MARKERTYPE) +
-                                                        str(KEYVALUE_SEP) +
-                                                        str(FASTSPEECH_START),
-                                                        str(MARKERINFO) +
-                                                        str(KEYVALUE_SEP) +
-                                                        delims['fastSpeech'],
-                                                        str(MARKERSPEAKER) +
-                                                        str(KEYVALUE_SEP) +
+                    markerText1 = "({1}{0}{2}{0}{3})".format(MARKER.MARKER_SEP,
+                                                        str(MARKER.MARKERTYPE) +
+                                                        str(MARKER.KEYVALUE_SEP) +
+                                                        str(MARKER.FASTSPEECH_START),
+                                                        str(MARKER.MARKERINFO) +
+                                                        str(MARKER.KEYVALUE_SEP) +
+                                                        MARKER.FASTSPEECH_DELIM, 
+                                                        str(MARKER.MARKERSPEAKER) +
+                                                        str(MARKER.KEYVALUE_SEP) +
                                                         utt_words[0].sLabel)
 
-                    markerText2 = "({1}{0}{2}{0}{3})".format(MARKER_SEP,
-                                                        str(MARKERTYPE) +
-                                                        str(KEYVALUE_SEP) +
-                                                        str(FASTSPEECH_END),
-                                                        str(MARKERINFO) +
-                                                        str(KEYVALUE_SEP) +
-                                                        delims['fastSpeech'],
-                                                        str(MARKERSPEAKER) +
-                                                        str(KEYVALUE_SEP) +
+                    markerText2 = "({1}{0}{2}{0}{3})".format(MARKER.MARKER_SEP,
+                                                        str(MARKER.MARKERTYPE) +
+                                                        str(MARKER.KEYVALUE_SEP) +
+                                                        str(MARKER.FASTSPEECH_END),
+                                                        str(MARKER.MARKERINFO) +
+                                                        str(MARKER.KEYVALUE_SEP) +
+                                                        MARKER.FASTSPEECH_DELIM, 
+                                                        str(MARKER.MARKERSPEAKER) +
+                                                        str(MARKER.KEYVALUE_SEP) +
                                                         utt_words[0].sLabel)
 
                     cm.insertToTree(utt_words[0].startTime,
                                     utt_words[0].startTime,
-                                    FASTSPEECH_START,
+                                    MARKER.FASTSPEECH_START,
                                     markerText1)
                     cm.insertToTree(utt_words[-1].endTime,
                                     utt_words[-1].endTime,
-                                    FASTSPEECH_END,
+                                    MARKER.FASTSPEECH_END,
                                     markerText2)
                     fastCount += 1
         statsDic['fastturncount'] = fastCount
@@ -205,5 +196,8 @@ class SyllableRatePlugin(Plugin):
         # Handling case where difference is 0 i.e. denominator cannot be 0.
         if syllRateDiff == 0:
             syllRateDiff = 0.1
+        if syllRateMAD == 0: 
+            syllRateMAD = 0.1
+        # OverflowError: cannot convert float infinity to integer
         colons = int(round(syllRateDiff / syllRateMAD))
         return colons

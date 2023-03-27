@@ -124,7 +124,7 @@ def test_google_long():
 def test_google_wav_suite():
     fails, invalid = transcribe(PATH.WAV_SUITE, "google", SETTING_DATA.GOOGLE_PROFILE)
 
-##### 
+################################## test for plugin ###########################################
 def test_plugin():
     gb = GailBot(PATH.USER_ROOT)
     plugin_suite =  gb.register_plugin_suite(HIL_LAB)
@@ -132,9 +132,15 @@ def test_plugin():
     all_plugin = gb.get_all_plugin_suites()
     logging.warn(all_plugin)
 
-
 def test_plugin_small():
-    fails, invalid = transcribe([PATH.TWO_MIN_7], "plugin", SETTING_DATA.PROFILE_WITH_PLUGIN) 
+    fails, invalid = transcribe([PATH.TWO_MIN_10], "plugin", SETTING_DATA.PROFILE_WITH_PLUGIN) 
 
 def test_plugin_dir():
     fails, invalid = transcribe([PATH.MANY_SMALL_FILES_DIR], "plugin", SETTING_DATA.PROFILE_WITH_PLUGIN) 
+
+### TODO : has bug ###
+def test_plugin_hello(): 
+    fails, invalid = transcribe([PATH.HELLO_1], "plugin", SETTING_DATA.PROFILE_WITH_PLUGIN)
+
+def test_plugin_multiple_files():
+    fails, invalid = transcribe([PATH.SHORT_PHONE_CALL, PATH.MANY_FILES_DIR], "plugin", SETTING_DATA.PROFILE_WITH_PLUGIN)

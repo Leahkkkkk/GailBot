@@ -15,8 +15,7 @@ class ConversationMapPlugin(Plugin):
     def __init__(self) -> None:
         super().__init__()
 
-    def apply(self, 
-                     dependency_outputs: Dict[str, Any],
+    def apply(self,  dependency_outputs: Dict[str, Any],
                      methods: GBPluginMethods) -> Dict:
         """
         Creates a dictionary for conversational-level analysis of transcription.

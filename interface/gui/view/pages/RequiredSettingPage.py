@@ -11,6 +11,7 @@ Modified By:  Siara Small  & Vivian Li
 from typing import Dict, List
 from view.config.Style import FontSize,FontFamily, Color
 from view.config.Text import ProfilePageText as Text
+from gbLogger import makeLogger
 from view.widgets import  Label
 from view.components import EngineSettingForm
 from view.components import PluginForm
@@ -28,6 +29,7 @@ class RequiredSettingPage(QWidget):
     def __init__(self, *args, **kwargs) -> None:
         """ initializes the page """
         super().__init__(*args, **kwargs)
+        self.logger = makeLogger("F")
         self._initWidget()
         self._initLayout()
 
@@ -44,8 +46,12 @@ class RequiredSettingPage(QWidget):
     def getValue(self) -> dict:
         """ gets the value of data """
         try:
-            return self.engineForm.getValue()
-        except:
+            setting = dict()
+            setting["engine_setting"] = self.engineForm.getValue()
+            setting["plugin_setting"] = self.pluginForm.getValue()
+            return setting 
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
             raise ValueError("Get Required Setting Data Error")
         
     def _initWidget(self):
@@ -71,8 +77,8 @@ class RequiredSettingPage(QWidget):
         self.layout.addWidget(self.deleteBtn, alignment=center)
         self.layout.addWidget(self.engineForm, 
                               alignment=center)
-        # self.layout.addWidget(self.pluginForm, 
-                            #   alignment=center)
+        self.layout.addWidget(self.pluginForm, 
+                              alignment=center)
         self.layout.addStretch()
 
         

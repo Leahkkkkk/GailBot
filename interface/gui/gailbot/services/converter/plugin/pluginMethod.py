@@ -19,18 +19,6 @@ import os
 logger = makelogger("pluginMethod")
 
 
-def get_plugin_methods(payload: PayLoadObject) -> List:
-    """ get a list of plugin method 
-
-    Args:
-        payload (PayLoadObject): the payload object
-
-    Returns:
-        List: a list of plugin method
-    """
-    methods = [GBPluginMethods(payload, file) for file in payload.data_files]
-    return methods
-
 class UttObj(BaseModel):
     start: float 
     end: float 
@@ -46,28 +34,26 @@ class GBPluginMethods(Methods):
         "txt": write_txt
     }
     
-    def __init__(self, payload: PayLoadObject, filepath: str):
+    def __init__(self, payload: PayLoadObject):
         self.payload: PayLoadObject = payload
-        self.filepath = filepath
-        self.filename: str = get_name(filepath)
         
-        self.work_path = os.path.join(self.payload.workspace.analysis_ws, self.filename)
+        self.work_path = self.payload.workspace.analysis_ws
         if not is_directory(self.work_path):
             make_dir(self.work_path)
         
-        self.out_path = os.path.join(self.payload.out_dir.analysis_result, self.filename)
+        self.out_path = self.payload.out_dir.analysis_result
         if not is_directory(self.out_path):
             make_dir(self.out_path)
               
-    def get_audio_path(self) -> str:
+    def get_audio_path(self) -> Dict[str, str]:
         """
         Returns a dictionary that maps the audio name to the audio source
         """
-        return self.filepath
+        return {get_name(path): path for path in self.payload.data_files}
     
     @property
     def filenames(self) -> List[str]:
-        return [self.filename]
+        return [get_name(file) for file in self.payload.data_files]
 
     @property
     def utterances(self) -> Dict[str,List[UttDict]]:
@@ -79,7 +65,7 @@ class GBPluginMethods(Methods):
                             transcription result  
         """
         try:
-            return self.payload.get_one_file_transcription(self.filename)
+            return self.payload.get_transcription_result()
         except Exception as e:
             logger.error(e, exc_info=e)
             return False
@@ -109,7 +95,7 @@ class GBPluginMethods(Methods):
         Access and return the utterance data as utterance object 
         """
         res = dict()
-        data = self.payload.get_one_file_transcription(self.filename) 
+        data = self.payload.get_transcription_result()
         for key, uttlist in data.items(): 
             newlist = list()
             for utt in uttlist:

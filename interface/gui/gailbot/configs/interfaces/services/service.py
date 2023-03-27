@@ -23,6 +23,7 @@ class Engines(DataclassFromDict):
 class Thread(DataclassFromDict): 
       transcriber_num_threads  : int = field_from_dict()
       payload_num_threads      : int = field_from_dict()
+      analysis_num_threads     : int = field_from_dict()
 @dataclass
 class ServiceConfig(DataclassFromDict):
     engines : Engines = field_from_dict()

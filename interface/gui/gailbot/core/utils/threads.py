@@ -113,8 +113,7 @@ class ThreadPool(ThreadPoolExecutor):
         Return:
             Union[str, int]: key that will be used to keep track of the task in the thread.
         """
-        logger.info(f"the task {task} is being added to the thread: \
-                    args: {args}, kwargs {kwargs}")
+        logger.info(f"the task {task} is being added to the thread")
         try:
             if not callable(task) or type(args) != list or type(kwargs) != dict:
                 logger.error(f"type error in adding thread task ")
@@ -147,9 +146,6 @@ class ThreadPool(ThreadPoolExecutor):
         """
         self._task_in_pool(key)
         future: Future = self.task_pool[key]
-        exception =future.exception()
-        if exception:
-            return Status.error
         return future._state
 
     def get_tasks_with_status(self, status: Status) -> List[Tuple[int, str]]:
@@ -403,6 +399,28 @@ class ThreadPool(ThreadPoolExecutor):
         """
         return self._work_queue.qsize()
 
+    def count_completed_tasks(self) -> int: 
+        """get the number of completed task 
+
+        Returns:
+            int: the number of completed task 
+        """
+        num = 0 
+        for future in self.task_pool.values():
+            if future.done():
+                num += 1
+        return num
+    
+    def count_total_tasks(self) -> int:
+        """get the number of all the tasks that has been added to the threadpool,
+           which includes failure task, completed task, running task and pending task 
+
+
+        Returns:
+            int:  the total number of task 
+        """
+        return len(self.task_pool)
+        
     ############ private function  ##########
     def _task_in_pool(self, key:int) -> None :
         """ 
