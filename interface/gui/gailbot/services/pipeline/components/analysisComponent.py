@@ -95,7 +95,6 @@ class AnalysisComponent(Component):
                     raise PluginError(f"{plugin} is not a valid plugin")
                 
                 logger.info(f"retrieved plugin suite {plugin_suite}")
-                self.emit_progress(payload, f"Applying plugin suite {plugin}")
                 
                 # create a method that get passed to plugin suite, and apply plugin suite
                 method = GBPluginMethods(payload)
@@ -104,7 +103,7 @@ class AnalysisComponent(Component):
                 logger.info(f"get the plugin result {res}")
                 for state in res.values():
                     assert state == ComponentState.SUCCESS
-                self.emit_progress(payload, f"{plugin} plugin suites applied")
+                # self.emit_progress(payload, f"{plugin} plugin suites applied")
             end_time = time.time()
             stats = ProcessingStats(
                 start_time=start_time,

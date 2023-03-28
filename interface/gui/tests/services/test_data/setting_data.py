@@ -74,7 +74,7 @@ class SETTING_DATA:
 
     WATSON_PROFILE = {
         "engine_setting": WATSON_SETTING,
-        "plugin_setting": []
+        "plugin_setting": ["gb_hilab_suite"]
     }
     
     GOOGLE_PROFILE = {
@@ -84,7 +84,7 @@ class SETTING_DATA:
 
     WHISPER_SPEAKER_PROFILE = {
         "engine_setting": WHISPER_SPEAKER,
-        "plugin_setting": []
+        "plugin_setting": ["gb_hilab_suite"]
     }
     
     WHISPER_PROFILE = {

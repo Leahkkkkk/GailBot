@@ -164,3 +164,6 @@ def test_plugin_multiple():
 
 def test_plugin_lib():
     fails, invalid = transcribe([PATH.LIB_RECORD_DIR], "plugin", SETTING_DATA.PROFILE_WITH_PLUGIN, invalid=True)
+
+def test_plugin_with_spk():
+    fails, invalid = transcribe([PATH.SHORT_PHONE_CALL], "plugin", SETTING_DATA.WATSON_PROFILE)

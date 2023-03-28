@@ -212,7 +212,7 @@ class WatsonCore:
         """ 
          output the response data from google STT, convert the raw data to 
         utterance data which is a list of dictionary in the format 
-        {speaker: , start_time: , end_time: , text: }
+        {speaker: , start: , end: , text: }
         
 
         Args:
@@ -260,8 +260,8 @@ class WatsonCore:
         for times, value in data.items():
             utt = {
                 "speaker" : value["speaker"],
-                "start_time" : times[0],
-                "end_time" : times[1],
+                "start" : times[0],
+                "end" : times[1],
                 "text" : value["utterance"]
             }
             utterances.append(utt)
