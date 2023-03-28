@@ -6,9 +6,10 @@
 
 import sys
 import os
-from typing import Dict, List, Union
+from typing import  List, Union
+
 from .suite import PluginSuite
-from.loader import (
+from .loader import (
     PluginURLLoader,  
     PluginDirectoryLoader,
     PluginLoader)

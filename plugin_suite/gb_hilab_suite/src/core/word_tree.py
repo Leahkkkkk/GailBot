@@ -42,25 +42,28 @@ class WordTreePlugin(Plugin):
         root = None
 
         i = 0
-        for _, utterances in utterances_map.items():
-            k = self.__speakerNum(utterances)
-            random.shuffle(utterances)
-            for utt in utterances:
-                if (root == None):
-                    root = Node(utt.start,
-                                utt.end,
-                                # NOTE
-                                "0" + str(self._getIntLabel(utt.speaker) + i),
-                                utt.text)
-                else:
-                    self._insert(
-                        root, 
-                        utt.start,
-                        utt.end,
-                        "0" + str(self._getIntLabel(utt.speaker) + i),
-                        utt.text)
-            i += k
-
+        if len(utterances_map.values()) == 1 and list(utterances_map.values())[0] == []:
+            root = Node(0, 1, "0", "empty")
+        else:
+            for _, utterances in utterances_map.items():
+                k = self.__speakerNum(utterances)
+                random.shuffle(utterances)
+                for utt in utterances:
+                    if (root == None):
+                        root = Node(utt.start,
+                                    utt.end,
+                                    # NOTE
+                                    "0" + str(self._getIntLabel(utt.speaker) + i),
+                                    utt.text)
+                    else:
+                        self._insert(
+                            root, 
+                            utt.start,
+                            utt.end,
+                            "0" + str(self._getIntLabel(utt.speaker) + i),
+                            utt.text)
+                i += k
+            
         self.successful = True
         return root
 

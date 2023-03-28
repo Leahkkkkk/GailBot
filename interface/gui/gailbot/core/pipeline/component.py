@@ -7,7 +7,7 @@
 
 from enum import Enum
 from dataclasses import dataclass
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 class ComponentState(Enum):
     """

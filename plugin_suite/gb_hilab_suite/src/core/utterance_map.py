@@ -10,7 +10,7 @@ from typing import List, Any, Dict
 from copy import deepcopy
 # Local imports
 from gb_hilab_suite.src.config import MARKER, THRESHOLD
-from gailbot import Plugin, GBPluginMethods, UttDict
+from gailbot import Plugin, GBPluginMethods
 from gb_hilab_suite.src.core.nodes import Node
 
 class UtteranceMapPlugin(Plugin):
@@ -84,7 +84,6 @@ class UtteranceMapPlugin(Plugin):
                         uttDict[id] = newList
 
                 else:
-                    # print("case 3")
                     # calculate fto & combine utterance based on sLabel + threshold
                     fto = currNode.val.startTime - uttDict[id][-1].val.endTime
 
@@ -99,7 +98,6 @@ class UtteranceMapPlugin(Plugin):
                         index3 -= 1
                     fto3 = currNode.val.startTime - \
                         uttDict[index3][-1].val.endTime
-                    # print(index3)
 
                     if currSL == uttDict[id][-1].val.sLabel and fto < self.turn_end_threshold_secs:
                         uttDict[id].append(currNode)

@@ -153,7 +153,6 @@ class SyllableRatePlugin(Plugin):
                                                         str(MARKER.MARKERSPEAKER) +
                                                         str(MARKER.KEYVALUE_SEP) +
                                                         utt_words[0].sLabel)
-
                     markerText2 = "({1}{0}{2}{0}{3})".format(MARKER.MARKER_SEP,
                                                         str(MARKER.MARKERTYPE) +
                                                         str(MARKER.KEYVALUE_SEP) +
@@ -164,7 +163,6 @@ class SyllableRatePlugin(Plugin):
                                                         str(MARKER.MARKERSPEAKER) +
                                                         str(MARKER.KEYVALUE_SEP) +
                                                         utt_words[0].sLabel)
-
                     cm.insertToTree(utt_words[0].startTime,
                                     utt_words[0].startTime,
                                     MARKER.FASTSPEECH_START,

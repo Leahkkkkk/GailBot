@@ -1,9 +1,10 @@
-from pydantic import BaseModel
+import os 
+from typing import Dict, Union, List, Any
+
+from ..payload.payloadObject import PayLoadObject
+from gailbot.services.converter.result import UttDict
 from gailbot.plugins import Methods
 from gailbot.core.utils.logger import makelogger
-from gailbot.services.converter.result import UttDict
-from ..payload.payloadObject import PayLoadObject
-from typing import Dict, Union, List, Any
 from gailbot.core.utils.general import (
     get_name, 
     is_directory, 
@@ -13,7 +14,8 @@ from gailbot.core.utils.general import (
     write_toml,
     write_yaml,
     write_txt)
-import os 
+
+from pydantic import BaseModel
 
 
 logger = makelogger("pluginMethod")

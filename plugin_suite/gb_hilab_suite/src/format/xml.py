@@ -100,7 +100,6 @@ class XMLPlugin(Plugin):
             m1.set('startTime', str(curr_utt[0].startTime))
             m1.set('endtime', str(curr_utt[-1].endTime))
 
-            sLabel = ""
             if (curr_utt[0].sLabel != "gaps" and
                 curr_utt[0].sLabel != "pauses"):
                 sLabel = LABEL.XML_SPEAKERLABEL + str(curr_utt[0].sLabel)
@@ -244,10 +243,7 @@ class XMLPlugin(Plugin):
                                 pause.set('length', tempArr[1])
                                 pause.set('symbolic-length', 'simple')
                                 utterance.append(pause)
-
-                            # TODO: ADD OTHER MARKER AS NEW TAGS
                             elif key == MARKER.SLOWSPEECH_START or key == MARKER.FASTSPEECH_START:
-
                                 currWord = etree.SubElement(utterance, "w")
                                 speech = etree.SubElement(currWord, "ca-delimiter")
                                 speech.set('type', "begin")
@@ -296,12 +292,6 @@ class XMLPlugin(Plugin):
                                         i -= 1
                                         break
                                     i += 1
-
-                                # # when slow/fast speech starts but does not finish HACK
-                                # if exit == False:
-                                #     currWord.remove(speech)
-
-
                 else:
                     # the rests are words
                     if '%' in word.text or '.' in word.text:
@@ -317,8 +307,6 @@ class XMLPlugin(Plugin):
             media.set('end', str(curr_utt[-1].endTime))
             media.set('unit', 's')
 
-            #root.append(utterance)
-
         for elem in root.iter('*'):
             if elem.text is not None:
                 elem.text = elem.text.strip()
@@ -326,8 +314,7 @@ class XMLPlugin(Plugin):
                 elem.tail = elem.tail.strip()
         tree = etree.ElementTree(root)
 
-        path = "{}/{}.xml".format(methods.output_path,
-                                "talkbank")
+        path = "{}/{}.xml".format(methods.output_path, "talkbank")
         with open (path, "wb") as files :
             tree.write(files)
 

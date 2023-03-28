@@ -1,8 +1,9 @@
+from typing import Dict, List, Union, Callable
+
 from .source import SourceObject, SourceManager
 from gailbot.core.utils.logger import makelogger
 from .settings import SettingManager, SettingObject, SettingDict
 from gailbot.configs import default_setting_loader
-from typing import Dict, List, Union, Callable
 
 logger = makelogger("organizer")
 CONFIG = default_setting_loader() 

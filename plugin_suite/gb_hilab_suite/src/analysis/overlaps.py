@@ -4,7 +4,6 @@
 # @Last Modified by:   Muhammad Umair
 # @Last Modified time: 2022-08-24 12:11:42
 # Standard imports
-import io
 from typing import Dict, Any, List
 # Local imports
 from gailbot import Plugin, UttObj, GBPluginMethods

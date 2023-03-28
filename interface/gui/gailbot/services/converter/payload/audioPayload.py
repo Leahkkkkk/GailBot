@@ -1,6 +1,6 @@
+from typing import List, Union
 from .payloadObject import PayLoadObject, PayLoadStatus
 from ...organizer.source import SourceObject
-from typing import List, Dict, Union
 from gailbot.core.utils.general import (
     get_extension,  
     copy)

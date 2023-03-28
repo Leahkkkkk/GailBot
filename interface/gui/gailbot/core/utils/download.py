@@ -5,7 +5,6 @@
 
 import shutil
 from typing import List
-# from tqdm.auto import *
 from tqdm.auto import tqdm
 import requests
 from zipfile import ZipFile

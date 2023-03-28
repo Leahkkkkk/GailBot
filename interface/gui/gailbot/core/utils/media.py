@@ -4,11 +4,10 @@
 # @Last Modified by:   Muhammad Umair
 # @Last Modified time: 2023-01-16 14:33:08
 
-from typing import List, Union, Dict, Any
+from typing import List, Union, Dict
 import os
 from dataclasses import dataclass
 from abc import ABC 
-from pydub import AudioSegment
 from .general import (
     get_extension,
     get_name,
@@ -20,6 +19,7 @@ from .general import (
     CMD_STATUS
 )
 from gailbot.core.utils.logger import makelogger 
+from pydub import AudioSegment
 
 logger = makelogger("media")
 @dataclass

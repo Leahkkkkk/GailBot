@@ -1,3 +1,4 @@
+import os 
 from .payloadObject import PayLoadObject, PayLoadStatus
 from ...organizer.source import SourceObject
 from typing import List, Union
@@ -5,7 +6,6 @@ from gailbot.core.utils.general import (
     get_extension, 
     copy
 )
-import os 
 """ NOTE: currently unused and not tested since gailbot does not support 
           for video transcription yet
 """

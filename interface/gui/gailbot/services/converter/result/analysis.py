@@ -1,14 +1,9 @@
-from typing import TypedDict, List, Dict
-from dataclasses import dataclass
+from typing import TypedDict,  Dict
+
 from .resultInterface import ResultInterface
-from gailbot.core.utils.general import write_toml, write_json, write_txt
 from gailbot.core.utils.logger import makelogger
-import os 
 logger = makelogger("analysis-result")
 
-""" TODO:
-1. update the interface after the plugin suite is connected 
-"""
 class AnalysisResultDict(TypedDict):
     name: str
     plugin_suite: str

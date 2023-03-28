@@ -1,9 +1,10 @@
+from typing import Dict, List, Union, Tuple
+
 from .payload import (
     load_transcribed_dir_payload, 
     load_audio_payload, 
     load_conversation_dir_payload,
     PayLoadObject)
-from typing import Dict, List, Union, Tuple
 from gailbot.core.utils.logger import makelogger
 from ..organizer.source import SourceObject
 from gailbot.workspace.manager import WorkspaceManager

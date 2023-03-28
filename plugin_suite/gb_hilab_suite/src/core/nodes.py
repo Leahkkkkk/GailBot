@@ -183,10 +183,8 @@ class Node:
         # loop down to find the leftmost leaf
         while(current.left is not None):
             current = current.left
-
         return current
-    
-    
+
     def __str__(self) -> str:
         if not self.left and not self.right:
             return str(self.val)

@@ -1,9 +1,9 @@
 import os 
 from datetime import date
 from pathlib import Path
-from gailbot.configs import  log_config_loader 
 import logging
 import userpaths
+from gailbot.configs import  log_config_loader 
 
 LOG_CONFIG  = log_config_loader()
 

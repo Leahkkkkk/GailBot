@@ -19,7 +19,8 @@ class Methods():
 class GBPluginMethods(Methods):
     def __init__(self):
         data = dict()
-        data["hello"] = [{"start": 0.0, "end": 1.4, "text": "hello", "speaker": "1"}] 
+        data["empty"] = []
+        # data["hello"] = [{"start": 0.0, "end": 1.4, "text": "hello", "speaker": "1"}] 
         # for i in range(10):
         #     l = list()
           

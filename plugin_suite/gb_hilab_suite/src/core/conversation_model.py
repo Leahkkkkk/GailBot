@@ -356,17 +356,7 @@ class ConversationModel:
             return deepcopy(self.Maps[CONVERSATION.map1])
         return self.Maps[CONVERSATION.map1]
 
-    # def printUttMap(self):
-    #     """
-    #     Prints the keys and values of the word-level dictionary.
-    #     """
-    #     for key, item in self.Maps[CONVERSATION.map1].items():
-    #         print(key)
-    #         for i in item:
-    #             print(i.val.text, end=' ')
-    #         print()
 
-    # TODO: Change the list generation loops to list comprehension.
     def getWordFromNode(self, listNode: List[Node]):
         """
         Return a list of inner Words from a list of Node
@@ -421,25 +411,6 @@ class ConversationModel:
         if copy:
             return deepcopy(self.Maps[CONVERSATION.map2])
         return self.Maps[CONVERSATION.map2]
-
-    # def printSpeakerMap(self, speakerDict):
-    #     """
-    #     Prints the keys and values of the speaker-level dictionary.
-    #     """
-    #     # iterate through the speaker dictionary by its speaker labels
-    #     for sLabelKey, item in speakerDict.items():
-    #         print("Speaker #: ", end='')
-    #         print(sLabelKey)
-
-    #         # iterate through the value, which is a Dict of Dicts
-    #         for utterancesList in item["utteranceList"]:
-    #             for utterances in utterancesList:
-    #                 print(utterances.val.text, end=' ')
-    #             print()
-
-    ################## HELPER FUNCTIONS ########################
-
-
 
 class ConversationModelPlugin(Plugin):
     def __init__(self) -> None:

@@ -1,4 +1,5 @@
 from typing import Union
+import os 
 
 from .payloadObject import PayLoadObject, PayLoadStatus
 from ...organizer.source import SourceObject
@@ -6,7 +7,6 @@ from gailbot.core.utils.general import is_directory, is_file, copy
 from gailbot.core.utils.logger import makelogger
 from gailbot.workspace.manager import WorkspaceManager
 from gailbot.configs import service_config_loader
-import os 
 
 HIDDEN_FILE = service_config_loader().directory_name.hidden_file
 logger = makelogger("transcribed_dir_payload")

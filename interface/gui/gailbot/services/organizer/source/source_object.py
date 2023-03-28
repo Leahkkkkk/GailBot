@@ -1,4 +1,5 @@
 from typing import Dict, Union, Callable
+
 from ..settings import SettingObject
 from gailbot.core.utils.logger import makelogger
 

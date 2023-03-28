@@ -1,21 +1,19 @@
 
-from typing import TypedDict, List, Dict, Union
+import os 
+from typing import TypedDict, List, Dict
+
 from gailbot.core.utils.general import (
     write_csv, 
     read_csv,
     write_json, 
     get_name, 
     make_dir,
-    copy, 
-    read_toml, 
     read_json, 
-    subdirs_in_dir, 
     paths_in_dir, 
     is_directory, 
     is_file)
 from gailbot.core.utils.logger import makelogger
 from gailbot.configs import service_config_loader
-import os 
 from .resultInterface import ResultInterface
 
 SERVICE_CONFIG = service_config_loader()

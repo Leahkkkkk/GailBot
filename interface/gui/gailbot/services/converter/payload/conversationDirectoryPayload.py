@@ -1,3 +1,6 @@
+import os 
+from typing import List,  Union
+
 from .payloadObject import PayLoadObject, PayLoadStatus
 from ...organizer.source import SourceObject
 from gailbot.core.utils.general import (
@@ -8,8 +11,6 @@ from gailbot.core.utils.general import (
 from gailbot.core.utils.logger import makelogger
 from gailbot.workspace.manager import WorkspaceManager
 from .audioPayload import AudioPayload
-import os 
-from typing import List, Dict, Union
 
 
 logger = makelogger("conversation_payload")

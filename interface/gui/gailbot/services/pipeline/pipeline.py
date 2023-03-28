@@ -5,11 +5,13 @@
 # @Last Modified time: 2023-01-12 14:37:40
 
 from typing import List
+
 from gailbot.core.pipeline import Pipeline, ComponentState
 from gailbot.plugins import PluginManager
 from gailbot.core.utils.logger import makelogger
 from ..converter import PayLoadObject
 from .components import TranscribeComponent, AnalysisComponent, FormatComponent
+
 logger = makelogger("service pipeline")
 class PipelineService:
     """

@@ -1,11 +1,7 @@
-from typing import TypedDict, List, Dict
-from dataclasses import dataclass
+from typing import TypedDict,  Dict
 from .resultInterface import ResultInterface, ProcessingStats
 
 
-""" TODO:
-1. update the interface after the pipeline is able to output the result
-"""
 class FormatResultDict(TypedDict):
    process_stats: Dict[str, str]
 

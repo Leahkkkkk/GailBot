@@ -3,16 +3,16 @@
 # @Date:   2023-03-15 10:31:49
 # @Last Modified by:   Muhammad Umair
 # @Last Modified time: 2023-03-15 12:22:53
+import copy
+import time
+
 from gailbot.core.engines.engineManager import EngineManager
-from dataclasses import dataclass
 from typing import Any, List, Dict
 from gailbot.core.pipeline import Component, ComponentState, ComponentResult
 from gailbot.core.utils.general import get_name
 from gailbot.core.utils.threads import ThreadPool
 from gailbot.core.utils.logger import makelogger
 
-import copy
-import time
 from ...converter.result import  ProcessingStats
 from ...converter.payload import PayLoadObject
 from ..components.progress import ProgressMessage

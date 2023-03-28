@@ -17,15 +17,7 @@ class Engine(ABC):
     def __repr__(self):
         """Returns all the configurations and additional metadata"""
         raise NotImplementedError()
-
-    # def configure(self, *args, **kwargs) -> bool:
-    #     """Configure all attributes"""
-    #     pass
-
-    # def get_configurations(self, *args, **kwargs) -> Dict:
-    #     """Get dictionary of all configured attrs."""
-    #     pass
-
+    
     @abstractmethod
     def transcribe(self, *args, **kwargs) -> Any:
         """Use the engine to transcribe an item"""

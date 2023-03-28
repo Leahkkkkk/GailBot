@@ -1,4 +1,5 @@
 from typing import List, Dict, Union
+
 from .source_object import SourceObject
 from ..settings import SettingObject
 from gailbot.core.utils.general import get_name, is_file, is_directory, is_path

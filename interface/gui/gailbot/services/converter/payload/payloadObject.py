@@ -2,6 +2,7 @@ from abc import ABC
 from typing import List, Dict 
 import os 
 from enum import Enum 
+
 from gailbot.configs import  OutputFolder, TemporaryFolder
 from gailbot.core.utils.logger import makelogger
 from ...organizer.source import SourceObject

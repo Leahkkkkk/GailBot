@@ -1,8 +1,8 @@
 import os 
 from typing import Dict, List, Union, TypedDict, Tuple
-from pydantic import BaseModel, ValidationError
-from gailbot.core.utils.logger import makelogger
+from abc import ABC
 from .suite import PluginSuite
+from gailbot.core.utils.logger import makelogger
 from gailbot.core.utils.general import (
     filepaths_in_dir,
     get_name,
@@ -13,8 +13,9 @@ from gailbot.core.utils.general import (
     is_directory,
 )
 from gailbot.core.utils.download import download_from_urls
+
+from pydantic import BaseModel, ValidationError
 from urllib.parse import urlparse
-from abc import ABC
 
 logger = makelogger("plugin_loader")
 

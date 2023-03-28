@@ -5,8 +5,6 @@
 # @Last Modified time: 2023-01-12 13:29:53
 
 from typing import Any, Dict, TypedDict
-from abc import ABC, abstractmethod
-# Local imports
 from gailbot.core.utils.logger import makelogger
 
 logger = makelogger("plugin")

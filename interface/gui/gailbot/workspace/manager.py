@@ -1,6 +1,6 @@
 from dataclasses import dataclass
-import os
 from typing import Union, List
+
 from gailbot.configs import (
     workspace_config_loader,
     TemporaryFolder,

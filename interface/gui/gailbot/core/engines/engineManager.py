@@ -9,7 +9,6 @@ from gailbot.core.engines import (
     Watson,
     Google,
     WhisperEngine
-    
 )
 
 _ENGINES = {

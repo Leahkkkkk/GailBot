@@ -9,7 +9,7 @@ from typing import Any, Dict
 # import re / import List
 from copy import deepcopy
 # Local imports
-from gailbot import Plugin, GBPluginMethods, UttObj
+from gailbot import Plugin, GBPluginMethods
 
 class ConversationMapPlugin(Plugin):
     def __init__(self) -> None:

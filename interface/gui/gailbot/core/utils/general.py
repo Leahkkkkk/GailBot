@@ -4,23 +4,20 @@
 # @Last Modified by:   Muhammad Umair
 # @Last Modified time: 2023-01-16 14:39:45
 from enum import Enum 
-import sys
+from typing import List, Dict
 import psutil
-from typing import Any, Callable, Tuple, List, Dict
 import os
 import glob
+import shutil
+import itertools
+from pathlib import Path
+import subprocess
+from gailbot.core.utils.logger import makelogger
+
 import json
 import yaml
 import toml
 import csv
-import shutil
-import itertools
-from pathlib import Path
-import logging
-# Local imports
-# Third party imports
-import subprocess
-from gailbot.core.utils.logger import makelogger
 
 logger = makelogger("general")
 

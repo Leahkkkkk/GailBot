@@ -11,7 +11,7 @@ import io
 # Local imports
 from gailbot import Plugin,  UttObj, GBPluginMethods
 from gb_hilab_suite.src.core.conversation_model import ConversationModel
-from gb_hilab_suite.src.config import MARKER, THRESHOLD, LABEL, PLUGIN_NAME
+from gb_hilab_suite.src.config import MARKER, LABEL, PLUGIN_NAME
 
 
 class TextPlugin(Plugin):

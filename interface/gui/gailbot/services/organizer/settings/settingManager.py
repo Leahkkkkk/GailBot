@@ -1,6 +1,7 @@
 from typing import Dict, Union, List
-from .settingObject import SettingObject, SettingDict
 import os
+
+from .settingObject import SettingObject, SettingDict
 from gailbot.core.utils.general import (
     is_file, 
     is_directory, 

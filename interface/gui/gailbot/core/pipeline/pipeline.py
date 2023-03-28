@@ -3,12 +3,14 @@
 # @Date:   2023-01-08 12:52:37
 # @Last Modified by:   Muhammad Umair
 # @Last Modified time: 2023-01-15 16:04:52
-from typing import List, Dict, Any, Tuple
+from typing import List, Dict, Any
 from dataclasses import dataclass
+
+from .component import Component, ComponentState, ComponentResult
 from gailbot.core.utils.threads import ThreadPool
 from gailbot.core.utils.logger import makelogger
+
 import networkx as nx
-from .component import Component, ComponentState, ComponentResult
 
 Failure = ComponentResult(ComponentState.FAILED, None, 0)
 logger = makelogger("pipeline")

@@ -6,19 +6,19 @@
 
 import sys
 import os
-from typing import Dict, List, Any, TypedDict, Tuple
-from dataclasses import dataclass
+from typing import Dict, List, Any, Tuple
 import time
-import importlib
-import imp
-from gailbot.core.utils.logger import makelogger
-from .plugin import Plugin, Methods
 
+from .plugin import Plugin, Methods
+from gailbot.core.utils.logger import makelogger
 from gailbot.core.pipeline import (
     Pipeline, 
     Component, 
     ComponentResult, 
-    ComponentState)
+    ComponentState
+)
+
+import importlib
 
 
 logger = makelogger("pluginSuite")

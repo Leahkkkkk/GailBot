@@ -7,8 +7,6 @@
 
 from dataclasses import dataclass
 from concurrent.futures import ThreadPoolExecutor, Future, wait
-from queue import Queue
-from enum import Enum
 from typing import Tuple, Callable, List, Dict, Any, Union
 from gailbot.core.utils.logger import makelogger
 
