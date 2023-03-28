@@ -9,7 +9,7 @@ from tests.services.test_data import SETTING_DATA
 from gailbot.core.engines.watson import Watson
 import logging
 
-HIL_LAB = "/Users/yike/Documents/GitHub/GailBot/gb_hilab_suite"
+HIL_LAB = "/Users/yike/Documents/GitHub/GailBot/plugin_suite/gb_hilab_suite"
 
 def transcribe(files, setting_name = "test", setting_data = SETTING_DATA.WHISPER_PROFILE, output = PATH.USER_ROOT, fail_test = False):
     gb = GailBot(output)

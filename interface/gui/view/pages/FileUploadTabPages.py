@@ -19,9 +19,11 @@ from view.config.Style import Color, FontSize, Dimension, FontFamily
 from view.config.Text import FileUploadPageText as Text
 from view.util.io import get_name, is_directory
 from gbLogger import makeLogger
-from view.widgets import ColoredBtn, Label, ComboBox
+from view.widgets.Label import Label
 from view.widgets.TabPage import TabPage
 from view.widgets.MsgBox import WarnBox
+from view.widgets.Button import ColoredBtn
+from view.widgets.ComboBox import ComboBox
 from view.util.ErrorMsg import WARN, ERR
 from PyQt6.QtWidgets import (
     QWidget,
