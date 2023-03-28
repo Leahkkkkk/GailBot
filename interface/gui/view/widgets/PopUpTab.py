@@ -14,12 +14,12 @@ Description: implement tab widgets that take in different page widget as child
 
 from typing import Dict
 
-from ..config.Style import Color, Dimension, buttonStyle
-from ..config.Text import PopUpText as Text
-
-from view.widgets import Button, ScrollArea
-from view.widgets.TabPage import TabPage
-from view.widgets.Background import initPrimaryColorBackground
+from .Button import ColoredBtn, BorderBtn
+from .ScrollArea import ScrollArea
+from .TabPage import TabPage
+from .Background import initPrimaryColorBackground
+from view.config.Style import Color, Dimension, buttonStyle
+from view.config.Text import PopUpText as Text
 
 from PyQt6.QtWidgets import (
     QTabWidget, 
@@ -151,13 +151,13 @@ class _ChangePageBtn(QWidget):
         self.subContainer = QWidget()
         self.subContainer.setLayout(self.horizontaLayout)
         self.setLayout(self.verticalLayout)
-        self.nextBtn = Button.BorderBtn(Text.leftArr, Color.GREYDARK)
-        self.prevBtn = Button.BorderBtn(Text.rightArr, Color.GREYDARK)
+        self.nextBtn = BorderBtn(Text.leftArr, Color.GREYDARK)
+        self.prevBtn = BorderBtn(Text.rightArr, Color.GREYDARK)
         self.nextBtn.setFixedSize(
             QSize(Dimension.SMALLICONBTN,Dimension.SMALLICONBTN))
         self.prevBtn.setFixedSize(
             QSize(Dimension.SMALLICONBTN,Dimension.SMALLICONBTN))
-        self.finishBtn = Button.ColoredBtn(Text.finish, Color.PRIMARY_BUTTON)
+        self.finishBtn = ColoredBtn(Text.finish, Color.PRIMARY_BUTTON)
         self.finishBtn.setFixedWidth(Dimension.SBTNWIDTH)
         self.deactivateNextButton()
         self.deactivatePrevButton()
@@ -223,7 +223,7 @@ class NoControlTab(QWidget):
             container  = QWidget()
             layout = QVBoxLayout()
             container.setLayout(layout)
-            scroll = ScrollArea.ScrollArea()
+            scroll = ScrollArea()
             scroll.setWidgetResizable(True)
             scroll.setWidget(tab)
             scroll.setVerticalScrollBarPolicy(

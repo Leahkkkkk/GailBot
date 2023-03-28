@@ -10,7 +10,7 @@ Modified By:  Siara Small  & Vivian Li
 '''
 
 from .FormWidget import FormWidget
-from view.widgets.Label import Label
+from ..Label import Label
 from view.config.Style import FontSize
 from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QCheckBox
 

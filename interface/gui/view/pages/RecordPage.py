@@ -25,7 +25,9 @@ from view.config.Text import RecordForm
 from view.config.Style import Dimension, StyleSheet
 from view.widgets.Background import addLogo
 from view.widgets import (
-    Button, 
+    ColoredBtn, 
+    ToggleBtn,
+    IconBtn,
     Label, 
     ToggleView, 
     TextForm,
@@ -56,15 +58,15 @@ class RecordPage(QWidget):
         
     def _initWidget(self):
         """ initializes the widgets """
-        self.header = Label.Label(Text.record, 
+        self.header = Label(Text.record, 
                                   FontSize.HEADER2, 
                                   FontFamily.MAIN)
         self.recordForm    = TextForm.TextForm(RecordForm)
-        self.toggleSetting = ToggleView.ToggleView(Text.recSet, 
+        self.toggleSetting = ToggleView(Text.recSet, 
                                                    self.recordForm,
                                                    header=True)
-        self.startRecordBtn = Button.ColoredBtn(Text.start, Color.PRIMARY_BUTTON)
-        self.cancelBtn = Button.ColoredBtn(Text.cancel, Color.CANCEL_QUIT)
+        self.startRecordBtn = ColoredBtn(Text.start, Color.PRIMARY_BUTTON)
+        self.cancelBtn = ColoredBtn(Text.cancel, Color.CANCEL_QUIT)
         self.recordInprogress =  RecordProgress()
         self.recordInprogress.hide()
         self.toggleSetting.setScrollHeight(Dimension.DEFAULTTABHEIGHT - 80)
@@ -170,16 +172,16 @@ class RecordProgress(QWidget):
         
     def _initWidget(self):
         """ initializes the widgets """
-        self.timeDisplay = Label.Label(
+        self.timeDisplay = Label(
             str(self.counter), 
             FontSize.HEADER1, 
             FontFamily.CLOCK, 
             others="text-align:center;")
-        self.iconBtn = Button.ToggleBtn((Asset.recordStop, Asset.recordPlay))
+        self.iconBtn = ToggleBtn((Asset.recordStop, Asset.recordPlay))
         self.iconBtn.setFixedSize(QSize(Dimension.SMALLICONBTN,Dimension.SMALLICONBTN))
         self.iconBtn.setIconSize(QSize(Dimension.SMALLICONBTN, Dimension.SMALLICONBTN))
         self.iconBtn.setStyleSheet(StyleSheet.iconBtn)
-        self.endIconBtn = Button.iconBtn(Asset.endRecording)
+        self.endIconBtn = IconBtn(Asset.endRecording)
         self.endIconBtn.setFixedSize(QSize(Dimension.SMALLICONBTN,Dimension.SMALLICONBTN))
         self.endIconBtn.setIconSize(QSize(Dimension.SMALLICONBTN, Dimension.SMALLICONBTN))
         self.endIconBtn.setStyleSheet(StyleSheet.iconBtn)

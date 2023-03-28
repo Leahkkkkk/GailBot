@@ -12,15 +12,14 @@ Description: a pop up dialogue that opens during the first launch of the
 '''
 import os 
 import datetime
-from view.widgets import Label, Button
-from view.util.io import zip_file, is_directory, copy
-from PyQt6.QtWidgets import QDialog, QFileDialog, QVBoxLayout
-from config_frontend.ConfigPath import PROJECT_ROOT
+from view.widgets import Label, ColoredBtn
+from view.util.io import zip_file
 from view.config.Style import Color, FontFamily, FontSize, Dimension
 from view.config.Text import WelcomePageText as TEXT 
 from gbLogger import makeLogger
 from view.config import getWorkBasePath
 
+from PyQt6.QtWidgets import QDialog, QFileDialog, QVBoxLayout
 from PyQt6.QtCore import QSize, Qt
 import userpaths
 center = Qt.AlignmentFlag.AlignHCenter
@@ -41,17 +40,17 @@ class SaveLogFile(QDialog):
     def _initWidget(self):
         self.userRoot = userpaths.get_desktop()
         self.workDir = getWorkBasePath()
-        self.header = Label.Label(
+        self.header = Label(
            TEXT.saveLogPrompt, FontSize.HEADER3, FontFamily.MAIN)
         linkFormat = "<a style='color:{0};' href='mailto: {1}'> {2} \n {1}</a>"
-        self.label = Label.Label(
+        self.label = Label(
             linkFormat.format(Color.MAIN_TEXT, TEXT.email, TEXT.sendZipMsg), FontSize.BODY, link=True)
-        self.displayPath = Label.Label(
+        self.displayPath = Label(
             f"{TEXT.saveLogPath}: {self.userRoot}", 
             FontSize.BODY, FontFamily.MAIN, 
             others=f"border: 1px solid {Color.MAIN_TEXT}; text-align:center;")
-        self.confirm = Button.ColoredBtn(TEXT.confirmBtn, Color.SECONDARY_BUTTON)
-        self.choose  = Button.ColoredBtn(TEXT.changeDirBtn, Color.PRIMARY_BUTTON)
+        self.confirm = ColoredBtn(TEXT.confirmBtn, Color.SECONDARY_BUTTON)
+        self.choose  = ColoredBtn(TEXT.changeDirBtn, Color.PRIMARY_BUTTON)
    
     def _initLayout(self):
         """ initialize the layout """

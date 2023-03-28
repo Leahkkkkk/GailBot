@@ -25,15 +25,13 @@ from view.config.Style import (
 )
 from config_frontend import PROJECT_ROOT
 from gbLogger import makeLogger
-from view.widgets.Background import addLogo
+from view.widgets import addLogo
 from view.Signals import FileSignals
-from view.widgets import MsgBox
 from view.widgets import (
     Label,   
-    Button,
+    ColoredBtn,
     FileTable
 )
-from view.widgets import Button
 
 
 from PyQt6.QtWidgets import QLabel, QVBoxLayout, QWidget
@@ -71,7 +69,7 @@ class TranscribeProgressPage(QWidget):
         
     def _initWidget(self):
         """ initialize widgets """
-        self.label = Label.Label(
+        self.label = Label(
             Text.mainLabelText, FontSize.HEADER2, FontFamily.MAIN)
         self.label.setAlignment(center)
         self.loadIcon = QLabel()
@@ -79,14 +77,14 @@ class TranscribeProgressPage(QWidget):
             os.path.join(PROJECT_ROOT, Asset.transcribing))
         self.loadIcon.setMovie(self.IconImg)
         self.loadStart()
-        self.loadingText = Label.Label(
+        self.loadingText = Label(
             Text.loadingText,FontSize.SMALL, FontFamily.OTHER)
         self.loadingText.setAlignment(center)
-        self.cancelBtn = Button.ColoredBtn(
+        self.cancelBtn = ColoredBtn(
             Text.cancelText, 
             Color.GREYDARK, 
             FontSize.BTN)
-        self.fileTable = FileTable.FileTable(
+        self.fileTable = FileTable(
             FileTableHeader.transcribePage, self.signals)
         self.fileTable.resizeCol(FileTableDimension.transcribePage)
         
@@ -132,7 +130,7 @@ class TranscribeProgressPage(QWidget):
         Args: 
             text (str): the message to display under the loading icon
         """
-        self.loadingText = Label.Label(text,
+        self.loadingText = Label(text,
                                       FontSize.SMALL,
                                       FontFamily.OTHER)
 

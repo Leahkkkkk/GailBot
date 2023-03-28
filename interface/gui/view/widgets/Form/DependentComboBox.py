@@ -1,9 +1,11 @@
 from typing import Dict, Tuple 
 from copy import deepcopy
 from view.config.Style import Color, Dimension, FontSize 
-from view.widgets import  Label, ComboBox, TextForm
+from ..Label import Label 
+from ..ComboBox import ComboBox 
+from ..TextForm import TextForm
 from .FormWidget import FormWidget
-from PyQt6.QtCore import QSize, Qt 
+from PyQt6.QtCore import Qt 
 from PyQt6.QtWidgets import (
     QWidget,
     QVBoxLayout, 
@@ -27,7 +29,7 @@ class MultipleCombo(QWidget, FormWidget):
         self.verticalLayout.setAlignment(Qt.AlignmentFlag.AlignLeft)
         self.verticalLayout.setSpacing(0)
         self.setLayout(self.verticalLayout)
-        self.mainForm = TextForm.TextForm(self.formData, toggle = True)
+        self.mainForm = TextForm(self.formData, toggle = True)
         self.verticalLayout.addWidget(self.mainForm)
     
     def getValue(self):
@@ -94,8 +96,8 @@ class DependentCombo(QWidget, FormWidget):
         return value 
 
     def _initUI(self): 
-        self.mainLabel = Label.Label(self.label, FontSize.BODY)
-        self.mainCombo = ComboBox.ComboBox(self)
+        self.mainLabel = Label(self.label, FontSize.BODY)
+        self.mainCombo = ComboBox(self)
         self.mainCombo.setMaximumWidth(Dimension.TOGGLEBARMINWIDTH)
         self.toggleList = None 
         for key, value in self.form.items():

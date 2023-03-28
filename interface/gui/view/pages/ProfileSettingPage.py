@@ -13,11 +13,10 @@ Modified By:  Siara Small  & Vivian Li
 from typing import List
 
 from view.config.Style import Color, Dimension
-from view.config.Text import ProfilePageText as Text, About
-from view.config.Style import FontSize as FS 
-from view.config.Style import StyleSheet as SS 
+from view.config.Text import ProfilePageText as Text
+from view.config.Style import FontSize 
+from view.config.Style import StyleSheet as STYLE 
 from view.config.Text import ProfileSettingForm as Form 
-from view.config.Text import Links
 from gbLogger import makeLogger
 
 from view.Signals import ProfileSignals
@@ -25,13 +24,16 @@ from view.pages import (
     RequiredSettingPage, 
     PluginPage
 )
-from view.util.ErrorMsg import WARN, ERR
+from view.util.ErrorMsg import  ERR
 from view.widgets import (
-    Button, 
+    ColoredBtn,
+    BorderBtn,
     ComboBox, 
-    SideBar 
+    SideBar,
+    WarnBox,
+    ConfirmBox 
 )
-from view.widgets.MsgBox import WarnBox, ConfirmBox
+
 from view.components.CreateNewSettingTab import CreateNewSetting
 from view.components.PluginDialog import PluginDialog
 from PyQt6.QtWidgets import (
@@ -71,20 +73,20 @@ class ProfileSettingPage(QWidget):
          
     def _initWidget(self):
         """ initializes widgets"""
-        self.sideBar = SideBar.SideBar()
-        self.selectSettings = ComboBox.ComboBox()
-        self.cancelBtn = Button.ColoredBtn(
+        self.sideBar = SideBar()
+        self.selectSettings = ComboBox()
+        self.cancelBtn = ColoredBtn(
             Text.cancelBtn, Color.CANCEL_QUIT)
-        self.saveBtn = Button.ColoredBtn(
+        self.saveBtn = ColoredBtn(
             Text.saveBtn, Color.SECONDARY_BUTTON)
-        self.newProfileBtn = Button.ColoredBtn(
+        self.newProfileBtn = ColoredBtn(
             Text.newProfileBtn,Color.PRIMARY_BUTTON)
-        self.requiredSetBtn = Button.BorderBtn(
-            Text.reuquiredSetBtn, Color.GREYDARK, FS.BTN, 0, SS.onlyTopBorder)
-        self.newPluginBtn = Button.ColoredBtn(
+        self.requiredSetBtn = BorderBtn(
+            Text.reuquiredSetBtn, Color.GREYDARK, FontSize.BTN, 0, STYLE.onlyTopBorder)
+        self.newPluginBtn = ColoredBtn(
             Text.newPluginBtn, Color.PRIMARY_BUTTON)
-        self.pluginBtn = Button.BorderBtn(
-            Text.pluginSetBtn, Color.GREYDARK, FS.BTN, 0, SS.onlyBottomBorder)
+        self.pluginBtn = BorderBtn(
+            Text.pluginSetBtn, Color.GREYDARK, FontSize.BTN, 0, STYLE.onlyBottomBorder)
         self.settingStack = QStackedWidget(self)
         self.RequiredSetPage = RequiredSettingPage.RequiredSettingPage()
         self.PluginPage = PluginPage.PluginPage()
@@ -151,8 +153,8 @@ class ProfileSettingPage(QWidget):
     
     def _initStyle(self):
         """ initializes the style of the setting stack """
-        self.settingStack.setObjectName(SS.settingStackID)
-        self.settingStack.setStyleSheet(SS.settingStack)
+        self.settingStack.setObjectName(STYLE.settingStackID)
+        self.settingStack.setStyleSheet(STYLE.settingStack)
     
     def _initDimension(self):
         """ initializes the dimensions of the buttons on the page """

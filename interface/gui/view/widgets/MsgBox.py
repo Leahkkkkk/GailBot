@@ -9,10 +9,9 @@ Modified By:  Siara Small  & Vivian Li
 -----
 Description implement pop up message dialogue to display message for user
 '''
-from typing import List 
 from ..config.Style import Color
 from gbLogger import makeLogger
-from view.widgets.Background import initSecondaryColorBackground
+from .Background import initSecondaryColorBackground
 from view.style.WidgetStyleSheet import MESSAGE_BOX, MESSAGE_BOX_BTN
 from PyQt6.QtWidgets import QMessageBox
 

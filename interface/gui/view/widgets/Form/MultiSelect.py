@@ -1,8 +1,8 @@
 from typing import List, Dict
 from .FormWidget import FormWidget
-from view.widgets.Label import Label
+from ..Label import Label
 from view.config.Style import FontSize
-from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QCheckBox
+from PyQt6.QtWidgets import QWidget, QVBoxLayout
 from .CheckBox import CheckBox
 from PyQt6.QtCore import Qt
 

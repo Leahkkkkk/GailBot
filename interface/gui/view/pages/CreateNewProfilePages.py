@@ -12,21 +12,17 @@ Description: implementation of pages for user to create new profile
 
 from typing import Dict
 
-from view.config.Style import Color, FontSize, FontFamily, Dimension
+from view.config.Style import Color, FontSize, FontFamily
 from view.config.Text import CreateNewProfilePageText as Text 
 from view.config.Text import EngineForm as Form 
 from gbLogger import makeLogger
 
 from view.util.ErrorMsg import ERR, WARN
-from view.widgets.Form.DependentComboBox import DependentCombo
-from view.widgets.ScrollArea import ScrollArea
 from view.widgets.Button import ColoredBtn
 from view.widgets.Label import Label
 from view.widgets.TabPage import TabPage
 from view.widgets.Form.TextInput import TextInput
 from view.widgets.MsgBox import WarnBox
-from view.widgets.Background import initSecondaryColorBackground
-from view.pages.PluginPage import PluginPage
 from view.components import EngineSettingForm
 from view.components import PluginForm
 

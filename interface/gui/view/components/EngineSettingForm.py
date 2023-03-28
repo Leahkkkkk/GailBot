@@ -12,8 +12,7 @@ Description: implementation of the required setting form
 
 from typing import Dict, TypedDict
 
-from view.widgets import ToggleView
-from view.widgets.Form.DependentComboBox import DependentCombo
+from view.widgets import ToggleView, DependentCombo
 from view.config.Text import EngineForm
 from view.config.Text import CreateNewProfilePageText as Text 
 from view.config.Style import Dimension
@@ -47,7 +46,7 @@ class EngineSettingForm(QWidget):
         """initialize widgets"""
         self.engineForm = DependentCombo(
             EngineForm.Engine, "Speech to Text Engine", "engine")
-        self.engineFormView = ToggleView.ToggleView(
+        self.engineFormView = ToggleView(
             Text.engineSettingHeader, self.engineForm, header = True)
         self.engineFormView.setScrollHeight(Dimension.OUTPUT_FORM_HEIGHT)
 

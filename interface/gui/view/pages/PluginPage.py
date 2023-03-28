@@ -14,14 +14,11 @@ from view.config.Style import FontSize, Dimension, FontFamily
 from view.config.Text import ProfilePageText as Text
 from view.config.Text import ProfileSettingForm as Form
 from gbLogger import makeLogger
-from view.widgets import Label, ScrollArea
-from view.widgets.Background import initSecondaryColorBackground
+from view.widgets import Label, ScrollArea, initSecondaryColorBackground
 
 from PyQt6.QtWidgets import (
     QWidget, 
-    QCheckBox, 
-    QVBoxLayout, 
-    QHBoxLayout)
+    QVBoxLayout)
 from PyQt6.QtCore import Qt
 
 center  = Qt.AlignmentFlag.AlignHCenter
@@ -50,12 +47,12 @@ class PluginPage(QWidget):
     def _initWidget(self):
         """ initializes widgets """
         self.logger.info("")
-        self.header = Label.Label(
+        self.header = Label(
             Text.pluginHeader, FontSize.HEADER2, FontFamily.MAIN, 
             alignment= center)
-        self.caption = Label.Label(
+        self.caption = Label(
             Text.pluginCaption, FontSize.DESCRIPTION, FontFamily.MAIN)
-        self.message = Label.Label(
+        self.message = Label(
             Text.tempMessage, FontSize.DESCRIPTION, FontFamily.MAIN)
 
     def _initlayout(self):
@@ -67,7 +64,7 @@ class PluginPage(QWidget):
         self.scrollLayout = QVBoxLayout()
         self.scrollContainer.setLayout(self.scrollLayout)
         self.scrollLayout.setSpacing(10)
-        self.scrollArea = ScrollArea.ScrollArea()
+        self.scrollArea = ScrollArea()
         self.scrollArea.setFixedWidth(Dimension.FORMWIDTH)
         self.scrollArea.setMinimumHeight(Dimension.FORMMINHEIGHT)
         self.scrollArea.setMaximumHeight(Dimension.FORMMAXHEIGHT)

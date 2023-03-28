@@ -15,7 +15,7 @@ from view.config.Style import Color, Asset, Dimension
 from view.widgets import Image
 from config_frontend import PROJECT_ROOT
 
-from PyQt6.QtCore import  Qt, QEvent
+from PyQt6.QtCore import  Qt
 from PyQt6.QtGui import (
     QBrush, 
     QColor, 

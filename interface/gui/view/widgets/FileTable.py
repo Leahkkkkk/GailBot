@@ -16,10 +16,11 @@ from typing import Dict, List, Set, Tuple, TypedDict
 import logging
 from enum import Enum 
 
-from view.widgets import MsgBox
+from .MsgBox import WarnBox, ConfirmBox
+from .Background import initSecondaryColorBackground
+
 from view.components.UploadFileTab import UploadFileTab
 from view.pages.FileUploadTabPages import ChooseSet
-from view.widgets.Background import initSecondaryColorBackground
 from view.Signals import FileSignals
 from gbLogger import makeLogger
 from ..config.Style import Dimension, Color
@@ -138,7 +139,7 @@ class FileTable(QTableWidget):
                     self.setColumnWidth(i, int(widths[i] * widthSum))
         except Exception as e:
             self.logger.error(e, exc_info=e)
-            MsgBox.WarnBox(ERR.FAIL_TO.format("resize file table column"))
+            WarnBox(ERR.FAIL_TO.format("resize file table column"))
     
     ########################  table initializer    #########################
     def  _connectViewSignal(self):
@@ -180,7 +181,7 @@ class FileTable(QTableWidget):
             self.verticalHeader().hide()
         except Exception as e:
             self.logger.info(e, exc_info=e)
-            MsgBox.WarnBox(ERR.ERR_WHEN_DUETO.format("initialize file header", str(e)))
+            WarnBox(ERR.ERR_WHEN_DUETO.format("initialize file header", str(e)))
         
         self.horizontalHeader().setStyleSheet(TABLE_HEADER)
     
@@ -191,7 +192,7 @@ class FileTable(QTableWidget):
             if idx == 0:
                 self._toggleAllSelect()
         except Exception as e:
-            MsgBox.WarnBox(ERR.ERR_WHEN_DUETO("select all files", e))
+            WarnBox(ERR.ERR_WHEN_DUETO("select all files", e))
    
     def _toggleAllSelect(self, clear = False):
         """ select or unselect all items in the table """
@@ -220,7 +221,7 @@ class FileTable(QTableWidget):
             addFileWindow.exec()
         except Exception as e:
             self.logger.error(e, exc_info=e) 
-            MsgBox.WarnBox("An error occurred when uploading the file")
+            WarnBox("An error occurred when uploading the file")
     
     def _postFile(self, file: fileObject):
         """ send signals to post file to the database 
@@ -262,7 +263,7 @@ class FileTable(QTableWidget):
             self.resizeRowsToContents()  
         except Exception as e:
             self.logger.error(e, exc_info=e)
-            MsgBox.WarnBox(ERR.ERR_WHEN_DUETO.format("uploading file", str(e)))
+            WarnBox(ERR.ERR_WHEN_DUETO.format("uploading file", str(e)))
     
     def _addFileWidgetToTable(self, row:int, key:str):
         """ Add the widget that manipulates each file in a certain row 
@@ -283,7 +284,7 @@ class FileTable(QTableWidget):
     ####################### delete file handlers  #########################
     def _confirmRemoveFile(self, key:str):
         """ open a pop up for confirm to remove file """
-        MsgBox.ConfirmBox("Are you sure to remove the file?", 
+        ConfirmBox("Are you sure to remove the file?", 
                           lambda: self.removeFile(key))
         
     def removeFile(self, key:str):
@@ -304,7 +305,7 @@ class FileTable(QTableWidget):
                 self.viewSignal.error(KEYERROR)
         except Exception as e:
             self.logger.error(e, exc_info=e)
-            MsgBox.WarnBox(ERR.ERR_WHEN_DUETO.format("removing file", str(e)))
+            WarnBox(ERR.ERR_WHEN_DUETO.format("removing file", str(e)))
     
     def removeAll(self):
         """ remove all the file from table
@@ -330,7 +331,7 @@ class FileTable(QTableWidget):
             self.viewSignal.goSetting.emit()
         except Exception as e:
             self.logger.error(e, exc_info=e)
-            MsgBox.WarnBox(ERR.ERR_WHEN_DUETO.format("accessing file profile", str(e)))
+            WarnBox(ERR.ERR_WHEN_DUETO.format("accessing file profile", str(e)))
         
     def changeFileToTranscribed(self, key:str):
         """ change one file's status to be transcribed, and delete the file
@@ -346,7 +347,7 @@ class FileTable(QTableWidget):
                 self.viewSignal.error.emit(KEYERROR)
         except Exception as e:
             self.logger.error(e, exc_info=e)
-            MsgBox.WarnBox(ERR.ERR_WHEN_DUETO.format("updating file status", str(e)))
+            WarnBox(ERR.ERR_WHEN_DUETO.format("updating file status", str(e)))
         
     def showOneFileProgress(self, progress: Tuple[str, str]):
         """update the transcription progress of one file
@@ -360,7 +361,7 @@ class FileTable(QTableWidget):
             self.updateFileContent((fileKey, "Progress", msg))
         except Exception as e:
             self.logger.error(e, exc_info=e)
-            MsgBox.WarnBox(ERR.ERR_WHEN_DUETO.format("updating file progress", str(e)))
+            WarnBox(ERR.ERR_WHEN_DUETO.format("updating file progress", str(e)))
         
      
     def changeProfile(self, key:str):
@@ -376,7 +377,7 @@ class FileTable(QTableWidget):
             selectSetting.setFixedSize(QSize(200,200))
         except Exception as e:
             self.logger.error(e, exc_info=e)
-            MsgBox.WarnBox(ERR.ERR_WHEN_DUETO.format("changing file profile", str(e)))
+            WarnBox(ERR.ERR_WHEN_DUETO.format("changing file profile", str(e)))
     
     def postNewFileProfile(self, newprofile: Tuple[str, str]):
         """ post the newly updated file change to the database
@@ -394,7 +395,7 @@ class FileTable(QTableWidget):
                 self.viewSignal.error.emit(KEYERROR)
         except Exception as e:
             self.logger.error(e, exc_info=e)
-            MsgBox.WarnBox(ERR.ERR_WHEN_DUETO.format("adding new profile option", str(e)))
+            WarnBox(ERR.ERR_WHEN_DUETO.format("adding new profile option", str(e)))
     
     def initProfiles(self, profiles: List[str]):
         """ initialize a list of available profile"""

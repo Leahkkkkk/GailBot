@@ -8,14 +8,14 @@ Last Modified: Thursday, 6th October 2022 11:08:43 am
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
-from typing import Dict, List
+from typing import Dict
 from view.config.Style import FontSize,FontFamily, Color
 from view.config.Text import ProfilePageText as Text
 from gbLogger import makeLogger
 from view.widgets import  Label
 from view.components import EngineSettingForm
 from view.components import PluginForm
-from view.widgets.Button import ColoredBtn
+from view.widgets import ColoredBtn, Label
 from PyQt6.QtWidgets import (
     QWidget, 
     QVBoxLayout, 
@@ -56,9 +56,9 @@ class RequiredSettingPage(QWidget):
         
     def _initWidget(self):
         """ initializes the widgets on the page """
-        self.label = Label.Label(
+        self.label = Label(
             Text.engineSettingHeader, FontSize.HEADER2, FontFamily.MAIN )
-        self.description = Label.Label(
+        self.description = Label(
             Text.engineSettingCaption,FontSize.DESCRIPTION, FontFamily.MAIN )
         self.deleteBtn = ColoredBtn (
             Text.deleteBtn, Color.CANCEL_QUIT

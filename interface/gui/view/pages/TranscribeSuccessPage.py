@@ -19,7 +19,7 @@ from view.config.Style import FontFamily
 from view.config.Text import TranscribeSuccessText as Text
 from view.config.Text import FileTableHeader
 from view.widgets import (
-    Button,
+    ColoredBtn,
     Label,
     FileTable
 )
@@ -49,20 +49,20 @@ class TranscribeSuccessPage(QWidget):
         
     def _initWidget(self):
         """ initializes widgets on the page """
-        self.label = Label.Label(
+        self.label = Label(
             Text.mainLabelText,
             FS.HEADER2,
             FontFamily.MAIN)
         self.label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
-        self.caption = Label.Label(
+        self.caption = Label(
             Text.transcribedFilesText, FS.HEADER3, FontFamily.MAIN)
         self.caption.setContentsMargins(Dimension.MEDIUM_SPACING,0,0,0)
-        self.moreBtn = Button.ColoredBtn(
+        self.moreBtn = ColoredBtn(
             Text.moreBtnText, Color.SECONDARY_BUTTON)
-        self.returnBtn = Button.ColoredBtn(
+        self.returnBtn = ColoredBtn(
             Text.returnBtnText, Color.PRIMARY_BUTTON)
         self._initHorizontalLayout()
-        self.fileTable = FileTable.FileTable(
+        self.fileTable = FileTable(
             FileTableHeader.successPage, self.signal)
         self.fileTable.resizeCol(FileTableDimension.successPage)
         

@@ -10,8 +10,8 @@ Modified By:  Siara Small  & Vivian Li
 Description: a side bar widget 
 '''
 
-from view.widgets.Background import initSideBarBackground
-from view.widgets.Label import Label
+from .Background import initSideBarBackground
+from .Label import Label
 from ..config.Style import Dimension, Color, FontSize
 from ..config.Text import About, Links
 

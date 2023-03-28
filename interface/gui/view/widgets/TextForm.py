@@ -16,12 +16,14 @@ from view.widgets import (
     Label,
     ToggleView
 )
-from view.widgets.Form.TextInput import TextInput
-from view.widgets.Form.ComBoInput import InputCombo
-from view.widgets.Form.FileUpload import UploadFile 
-from view.widgets.Form.FormWidget import FormWidget
-from view.widgets.Form.OnOffButton import onOffButton
-from view.widgets.Form.MultiSelect import MultipleSelect 
+from .Label import Label
+from .ToggleView import ToggleView
+from .Form.TextInput import TextInput
+from .Form.ComBoInput import InputCombo
+from .Form.FileUpload import UploadFile 
+from .Form.FormWidget import FormWidget
+from .Form.OnOffButton import onOffButton
+from .Form.MultiSelect import MultipleSelect 
 from ..config.Style import (
     FontFamily, 
     FontSize, 
@@ -138,7 +140,7 @@ class TextForm(QWidget):
             """ create the label  """
             tittleKey = tittleKey.split(". ")[-1]
             if not self.toggle:
-                newLabel = Label.Label(tittleKey, FontSize.BTN, FontFamily.MAIN)
+                newLabel = Label(tittleKey, FontSize.BTN, FontFamily.MAIN)
                 self.mainVertical.addWidget(newLabel)
             
             """ create the form component element """
@@ -174,7 +176,7 @@ class TextForm(QWidget):
                 height = len(items) * 100
                 toggleViewContainer.setFixedHeight(height)
                 toggleViewLayout.addStretch()
-                toggleView = ToggleView.ToggleView (
+                toggleView = ToggleView (
                     tittleKey, 
                     toggleViewContainer,
                     headercolor = Color.MAIN_BACKGROUND, 

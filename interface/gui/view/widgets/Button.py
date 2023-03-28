@@ -11,7 +11,6 @@ Description: implement reusable button widgets
 '''
 import os
 from typing import List
-from view.widgets import Label
 from view.config.Style import FontSize, Dimension, Color, StyleSheet, Asset
 from view.config.Text import BtnText as Text
 from config_frontend import PROJECT_ROOT
@@ -20,7 +19,6 @@ from view.util.ColorGenerator import colorScale
 from PyQt6.QtWidgets import (
     QPushButton, 
     QWidget, 
-    QHBoxLayout, 
     QVBoxLayout,
 )
 
@@ -163,7 +161,7 @@ class ToggleBtn(QPushButton):
         self.setIcon(self.rightIcon)
         self.state = True
 
-class iconBtn(QPushButton):
+class IconBtn(QPushButton):
     """ A button with icon
     icon (str): a string that indicate the icon file name
     label  (str, optional): the tex to be displayed on the icon 

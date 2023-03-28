@@ -10,7 +10,6 @@ Modified By:  Siara Small  & Vivian Li
 Description: implement the system setting page
 '''
 import os
-import shutil
 import toml
 from view.config.Style import (
     Color,
@@ -33,9 +32,9 @@ from view.config.Text import SystemSettingForm as Form
 from view.config.Text import LogDeleteTimeDict
 from config_frontend import FRONTEND_CONFIG_ROOT as dirname
 from view.util.FileManage import clearAllLog
-from view.util.ErrorMsg import ERR, WARN
+from view.util.ErrorMsg import ERR
 from gbLogger import makeLogger
-from view.widgets import MsgBox
+from view.widgets import ConfirmBox, WarnBox
 from PyQt6.QtWidgets import (
     QWidget,
     QHBoxLayout,
@@ -66,23 +65,10 @@ class SystemSettingPage(QWidget):
 
     def _initWidget(self):
         """ initializes widgets to be shown """
-        self.sideBar = SideBar.SideBar()
+        self.sideBar = SideBar()
         self.Mainstack = QStackedWidget()
         self.SysSetForm = SettingForm.SettingForm(
             Text.header, self.data, Text.caption)
-        # self.clearLogBtn = Button.BorderBtn(
-        #     "Clear Log Files",
-        #     Color.INPUT_TEXT,
-        #     other= f"background-color: {Color.INPUT_BACKGROUND}")
-        # self.restoreDefaultBtn = Button.BorderBtn(
-        #     "Restore Defaults",
-        #     Color.INPUT_TEXT,
-        #     other= f"background-color: {Color.INPUT_BACKGROUND}")
-        # self.saveLogBtn = Button.BorderBtn(
-        #     "Save Log Files",
-        #     Color.INPUT_TEXT,
-        #     other= f"background-color: {Color.INPUT_BACKGROUND}")
-        # self.saveLogBtn.setFixedHeight(Dimension.INPUTHEIGHT)
         self.Mainstack.addWidget(self.SysSetForm)
         self.cancelBtn = Button.ColoredBtn(
             Text.cancelBtn, Color.CANCEL_QUIT)
@@ -91,10 +77,7 @@ class SystemSettingPage(QWidget):
 
     def _connectSignal(self):
         """ connect the signal to slots """
-        # self.clearLogBtn.clicked.connect(self._clearLog)
         self.saveBtn.clicked.connect(self._confirmChangeSetting)
-        # self.restoreDefaultBtn.clicked.connect(self._confirmRestore)
-        # self.saveLogBtn.clicked.connect(self._saveLog)
 
     def _initLayout(self):
         """ initializes the layout of the page """
@@ -134,7 +117,7 @@ class SystemSettingPage(QWidget):
 
     def _confirmChangeSetting(self)->None:
         """ open a pop up box to confirm restarting the app and change the setting"""
-        MsgBox.ConfirmBox(
+        ConfirmBox(
             Text.confirmChange,
             self._changeSetting,
             QMessageBox.StandardButton.Reset)
@@ -158,7 +141,7 @@ class SystemSettingPage(QWidget):
             f.close()
         except Exception as e:
             self.logger.error(e, exc_info=e)
-            MsgBox.WarnBox(ERR.ERR_WHEN_DUETO.format("changing system setting", str(e)))
+            WarnBox(ERR.ERR_WHEN_DUETO.format("changing system setting", str(e)))
        
         self.signal.restart.emit()
 
@@ -170,7 +153,7 @@ class SystemSettingPage(QWidget):
 
     def _clearLog(self):
         """ open confirm box to confirm clearing the log file """
-        MsgBox.ConfirmBox(Text.confirmClear, clearAllLog)
+        ConfirmBox(Text.confirmClear, clearAllLog)
 
     def _loadValue(self, setting):
         """ initialize the setting value """
@@ -178,7 +161,7 @@ class SystemSettingPage(QWidget):
 
     def _confirmRestore(self):
         """ open confirm box to confirm restoring to the defaults """
-        MsgBox.ConfirmBox(
+        ConfirmBox(
             "Confirm to restore to default setting",
             lambda: self._loadValue(DefaultSetting))
 
@@ -192,7 +175,7 @@ class SystemSettingPage(QWidget):
     def _addFormButton(self, label, btnText, fun: callable):
         container = QWidget()
         layout = QHBoxLayout()
-        label = Label.Label(label, FontSize.BODY)
+        label = Label(label, FontSize.BODY)
         button = Button.BorderBtn(
             btnText,
             Color.INPUT_TEXT,

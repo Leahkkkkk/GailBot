@@ -11,10 +11,6 @@ Description: implement the main window for the GUI interface
 '''
 from typing import List, Dict, Tuple
 import logging 
-import os 
-import shutil
-import glob
-import logging
 from gbLogger import Logger
 from view.components import (
     MainStack, 
@@ -24,7 +20,7 @@ from view.components import (
 )
 from view.util.ErrorMsg import WARN, ERR
 from view.Signals import FileSignals, ViewSignals, ProfileSignals
-from view.widgets import MsgBox
+from view.widgets import WarnBox
 from view.config.Style import Dimension
 from view.config.Text import About
 from config_frontend import FRONTEND_CONFIG_ROOT
@@ -132,7 +128,7 @@ class MainWindow(QMainWindow):
     
     def TranscribeFailed(self, err:str):
         """shows transcription failed message"""
-        self.msgBox = MsgBox.WarnBox(
+        self.msgBox = WarnBox(
             f"Transcription Failed, error: {err}", self.showFileUploadPage)
         self.MainStack.TranscribeProgressPage.IconImg.stop()
             
@@ -210,7 +206,7 @@ class MainWindow(QMainWindow):
             self.showError(ERR.FAIL_TO.format("load profile"))
             
     def showError(self, errorMsg:str):
-        MsgBox.WarnBox(errorMsg) 
+        WarnBox(errorMsg) 
     
     def addPlugin(self, pluginName: str): 
         self.MainStack.ProfileSettingPage.addPluginHandler(pluginName)

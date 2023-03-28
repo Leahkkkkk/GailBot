@@ -23,8 +23,9 @@ from view.Signals import FileSignals
 from view.widgets.Background import addLogo
 from view.widgets import ( 
     Label, 
-    Button, 
-    FileTable) 
+    ColoredBtn,
+    FileTable,
+    TableWidget) 
 
 from PyQt6.QtWidgets import (
     QWidget, 
@@ -56,20 +57,20 @@ class ConfirmTranscribePage(QWidget):
     def _initWidget(self):
         """ initializes widgets """
         self.logger.info("")
-        self.label = Label.Label(Text.confirmLabel, 
+        self.label = Label(Text.confirmLabel, 
                                  FontSize.HEADER2, 
                                  FontFamily.MAIN)
         self.label.setAlignment(center)
         
-        self.fileTable = FileTable.FileTable(
+        self.fileTable = FileTable(
             FileTableHeader.confirmPage,
             self.signal,
-            tableWidgetsSet={FileTable.TableWidget.PROFILE_DETAIL})
+            tableWidgetsSet={TableWidget.PROFILE_DETAIL})
         
         self.fileTable.resizeCol(FileTableDimension.confirmPage)
         self.bottomButton = QWidget()
-        self.confirmBtn = Button.ColoredBtn(Text.confirm, Color.SECONDARY_BUTTON)
-        self.cancelBtn = Button.ColoredBtn(Text.cancel, Color.CANCEL_QUIT)
+        self.confirmBtn = ColoredBtn(Text.confirm, Color.SECONDARY_BUTTON)
+        self.cancelBtn = ColoredBtn(Text.cancel, Color.CANCEL_QUIT)
         
     def _initLayout(self):
         """ initializes layout"""

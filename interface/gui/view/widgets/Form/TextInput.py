@@ -10,7 +10,7 @@ Modified By:  Siara Small  & Vivian Li
 '''
 
 from .FormWidget import FormWidget
-from view.widgets import Label
+from ..Label import Label
 from view.style.WidgetStyleSheet import INPUT_TEXT as INPUT_STYLE
 from view.config.Style import FontSize, Dimension
 from copy import deepcopy
@@ -47,7 +47,7 @@ class TextInput(QWidget, FormWidget):
         self.connectSignal()
         
     def initUI(self):
-        self.inputLabel = Label.Label(self.label, self.labelSize)
+        self.inputLabel = Label(self.label, self.labelSize)
         self.inputField = InputField()
         if self.value:
             self.inputField.setText(str(self.value))

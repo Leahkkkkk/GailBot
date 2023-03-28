@@ -27,10 +27,14 @@ from view.config.Style import FontSize as FS
 from view.config.Style import buttonStyle
 from gbLogger import makeLogger
 from view.Signals import FileSignals
-from view.widgets import Label, Button
-from view.widgets.FileTable import FileTable, TableWidget
-from view.widgets.Background import addLogo
-from view.widgets import MsgBox
+from view.widgets import (
+    Label, 
+    ColoredBtn, 
+    IconBtn, 
+    FileTable, 
+    TableWidget, 
+    ConfirmBox, 
+    addLogo)
 
 from PyQt6.QtWidgets import (
     QWidget, 
@@ -86,20 +90,20 @@ class FileUploadPage(QWidget):
     def _initWidget(self):
         """ initializes widgets """
         self.logger.info("")
-        self.label = Label.Label(Text.header, FS.HEADER2, FontFamily.MAIN)
-        self.gotoMainBtn = Button.iconBtn(
+        self.label = Label(Text.header, FS.HEADER2, FontFamily.MAIN)
+        self.gotoMainBtn = IconBtn(
             Asset.arrowImg, Text.returnMainText) 
-        self.uploadFileBtn = Button.ColoredBtn(
+        self.uploadFileBtn = ColoredBtn(
             Text.uploadBtnText, Color.PRIMARY_BUTTON, FontSize.BTN)
-        self.transcribeBtn = Button.ColoredBtn(
+        self.transcribeBtn = ColoredBtn(
             Text.transcribeBtnText, Color.SECONDARY_BUTTON, FontSize.BTN)
-        self.settingBtn = Button.ColoredBtn(
+        self.settingBtn = ColoredBtn(
             Text.settingBtnText, Color.PRIMARY_BUTTON, FS.SETTINGICON)
         self.settingBtn.setFixedSize(
             QSize(Dimension.ICONBTN,Dimension.ICONBTN))
-        self.removeAll = Button.ColoredBtn(
+        self.removeAll = ColoredBtn(
             Text.removeBtnText, Color.PRIMARY_BUTTON, FontSize.BTN)
-        # self.recordBtn = Button.ColoredBtn(
+        # self.recordBtn = ColoredBtn(
         #     Text.recordBtnText, Color.PRIMARY_BUTTON, FontSize.BTN)
         
         self.fileTable = FileTable(
@@ -167,6 +171,6 @@ class FileUploadPage(QWidget):
     def _confirmRemove(self):
         """ open pop up message to confirm removal of all files """
         self.logger.info("")
-        MsgBox.ConfirmBox(Text.removeWarnText, self.fileTable.removeAll)
+        ConfirmBox(Text.removeWarnText, self.fileTable.removeAll)
     
     

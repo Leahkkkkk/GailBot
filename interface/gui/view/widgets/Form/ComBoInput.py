@@ -11,7 +11,8 @@ Modified By:  Siara Small  & Vivian Li
 from typing import List 
 
 from .FormWidget import FormWidget
-from view.widgets import Label, ComboBox 
+from ..Label import Label 
+from ..ComboBox import ComboBox
 from view.config.Style import Color, FontSize
 from PyQt6.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget
 
@@ -37,8 +38,8 @@ class InputCombo(QWidget, FormWidget):
         """ 
         initializing ui
         """
-        self.inputLabel = Label.Label(self.label, self.labelSize)
-        self.inputField = ComboBox.ComboBox()
+        self.inputLabel = Label(self.label, self.labelSize)
+        self.inputField = ComboBox()
         self.inputField.addItems(self.selections)
         
         if self.value:

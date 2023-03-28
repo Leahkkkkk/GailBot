@@ -14,7 +14,7 @@ Description: implementation of the plugin dialog for user to upload new plugin
 import os 
 
 from view.Signals import ProfileSignals
-from view.widgets import Button, MsgBox
+from view.widgets import ColoredBtn, WarnBox
 from view.config.Style import Color, Dimension
 from view.config.Text import CreateNewProfileTabText as Text 
 from view.util.io import get_name
@@ -50,11 +50,11 @@ class PluginDialog(QDialog):
         
     def _initWidget(self):
         """ initializes the widget """
-        self.uploadBtn = Button.ColoredBtn(
+        self.uploadBtn = ColoredBtn(
             "Load Plugins",
             Color.PRIMARY_BUTTON)
         self.displayPlugins = QListWidget()
-        self.addBtn = Button.ColoredBtn(
+        self.addBtn = ColoredBtn(
             "Add Plugins",
             Color.SECONDARY_BUTTON
         )
@@ -84,12 +84,12 @@ class PluginDialog(QDialog):
                 self.displayPlugins.addItem(get_name(selectedFolder))
         except Exception as e:
             self.logger.error(e, exc_info=e)
-            MsgBox.WarnBox(ERR.ERR_WHEN_DUETO.format("uploading plugin", str(e)))
+            WarnBox(ERR.ERR_WHEN_DUETO.format("uploading plugin", str(e)))
 
     def _postPlugin(self):
         """ send the new plugins through the signal """
         if not self.plugins:
-            MsgBox.WarnBox(WARN.NO_PLUGIN)
+            WarnBox(WARN.NO_PLUGIN)
         else:
             for plugin in self.plugins:
                 self.signal.addPlugin.emit(plugin)

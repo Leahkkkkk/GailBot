@@ -1,19 +1,17 @@
 
 from .FormWidget import FormWidget
-from view.widgets import Label, Button, MsgBox
+from .TextInput import InputField
+from ..Label import Label
+from ..Button import BorderBtn
+from ..MsgBox import WarnBox
 from view.config.Style import Color, FontSize, Dimension
-from view.widgets.Form.TextInput import InputField
 from view.util.ErrorMsg import ERR, WARN
 from copy import deepcopy
 from PyQt6.QtWidgets import (
     QGridLayout, 
-    QVBoxLayout, 
     QWidget, 
-    QFileDialog, 
-    QLineEdit,
-    QPushButton)
+    QFileDialog)
 from gbLogger import makeLogger
-
 
 class UploadFile(QWidget, FormWidget):
     def __init__(self, label: str) -> None:
@@ -26,9 +24,9 @@ class UploadFile(QWidget, FormWidget):
     def initUI(self):
         self._layout = QGridLayout()
         self.label = "Upload file for " + self.label.replace("_", " ")
-        self.labelWidget = Label.Label(self.label, FontSize.BODY)
+        self.labelWidget = Label(self.label, FontSize.BODY)
         self.pathDisplay = InputField()
-        self.selectFileBtn = Button.BorderBtn("···", Color.PRIMARY_BUTTON, FontSize.HEADER1)
+        self.selectFileBtn = BorderBtn("···", Color.PRIMARY_BUTTON, FontSize.HEADER1)
         self.selectFileBtn.setFixedWidth(70)
         self.selectFileBtn.setFixedHeight(Dimension.INPUTHEIGHT)
         self.setLayout(self._layout)
@@ -45,9 +43,9 @@ class UploadFile(QWidget, FormWidget):
                 self.value = path 
                 self.pathDisplay.setText(path)
             else:
-                MsgBox.WarnBox(WARN.NO_FILE)
+                WarnBox(WARN.NO_FILE)
         except Exception as e:
-            MsgBox.WarnBox(ERR.ERR_WHEN_DUETO.format("uploading file", str(e)))
+            WarnBox(ERR.ERR_WHEN_DUETO.format("uploading file", str(e)))
             self.logger.error(exc_info=e)
 
     def getValue(self):

@@ -10,8 +10,9 @@ Modified By:  Siara Small  & Vivian Li
 Description: a toggle widget with the functionalities to hide and show 
              a view object 
 '''
-from view.widgets import Button, ScrollArea
-from ..config.Style import (
+from .Button import ToggleBtn
+from .ScrollArea import ScrollArea
+from view.config.Style import (
     Color, 
     FontSize, 
     Dimension, 
@@ -73,7 +74,7 @@ class ToggleView(QWidget):
         
     def _configHeader(self):
         """ configures the toggle header """
-        self.Btn = Button.ToggleBtn(text=self.labelStr)
+        self.Btn = ToggleBtn(text=self.labelStr)
         self.Btn.setStyleSheet(f"{StyleSheet.toggleBtnBasic}"
                                f"background-color: {self.headercolor};"
                                f"font-size: {FontSize.BODY};"
@@ -85,7 +86,7 @@ class ToggleView(QWidget):
        
     def _configViewField(self):
         """ configures the toggle view """
-        self.scroll = ScrollArea.ScrollArea()
+        self.scroll = ScrollArea()
         self.scroll.setMinimumWidth(self.Btn.width() - Dimension.TOGGLEVIEWOFFSET)
         self.scroll.setMaximumWidth(self.Btn.width())
         self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)

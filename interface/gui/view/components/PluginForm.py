@@ -1,6 +1,5 @@
 from typing import List
-from view.widgets.Form.MultiSelect import MultipleSelect
-from view.widgets.ToggleView import ToggleView
+from view.widgets import MultipleSelect, ToggleView
 from PyQt6.QtWidgets import QWidget , QHBoxLayout
 from view.config.Style import Dimension
 

@@ -30,7 +30,7 @@ from view.widgets.Background import (
     initPrimaryColorBackground
 )
 
-from PyQt6.QtWidgets import QStackedWidget, QTabWidget, QWidget
+from PyQt6.QtWidgets import QStackedWidget, QTabWidget
 from PyQt6.QtCore import QSize
 
 

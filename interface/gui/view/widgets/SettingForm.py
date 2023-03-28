@@ -12,8 +12,10 @@ Description: a form page widget that display a page with a form  that accept
 '''
 from typing import Dict 
 
-from view.widgets import Label,TextForm, ScrollArea
-from view.widgets.Background import initSecondaryColorBackground
+from .Label import Label 
+from .TextForm import TextForm
+from .ScrollArea import ScrollArea
+from .Background import initSecondaryColorBackground
 from ..config.Style import (
     FontFamily, 
     FontSize, 
@@ -65,13 +67,13 @@ class SettingForm(QWidget):
 
     def _initWidget(self):
         """ initializes the widgets """
-        self.header = Label.Label(
+        self.header = Label(
             self.headerText, FontSize.HEADER2,FontFamily.MAIN)
         if self.captionText:
-            self.caption = Label.Label(
+            self.caption = Label(
                 self.captionText, FontSize.DESCRIPTION, FontFamily.MAIN)
-        self.setForm = TextForm.TextForm(self.formData)
-        self.scroll = ScrollArea.ScrollArea()
+        self.setForm = TextForm(self.formData)
+        self.scroll = ScrollArea()
         self.scroll.setWidgetResizable(False)
         self.scroll.setVerticalScrollBarPolicy(
             Qt.ScrollBarPolicy.ScrollBarAlwaysOn)

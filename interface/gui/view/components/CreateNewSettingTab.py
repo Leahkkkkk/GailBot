@@ -21,9 +21,8 @@ from view.pages.CreateNewProfilePages import (
     EngineSetting, 
     PluginSetting
 )
-from view.widgets.PopUpTab import Tab
-from view.widgets.MsgBox import WarnBox
-from view.util.ErrorMsg import ERR, WARN
+from view.widgets import Tab, WarnBox
+from view.util.ErrorMsg import ERR
 from PyQt6.QtWidgets import (
     QVBoxLayout,
     QDialog
