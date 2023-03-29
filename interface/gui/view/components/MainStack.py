@@ -58,11 +58,13 @@ class MainStack(QStackedWidget):
         self, 
         fileTableSignal,   
         profileSignals,    
+        pluginSignals,
         *args, 
         **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.fileSignal = fileTableSignal
         self.profileSignals = profileSignals
+        self.pluginSignals = pluginSignals
         self.logger= makeLogger("F")
         self.setMaximumSize(
             QSize(Dimension.WINMAXWIDTH, Dimension.WINMAXHEIGHT))

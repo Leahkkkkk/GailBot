@@ -13,3 +13,4 @@ from .PopUpTab import Tab
 from .Form.DependentComboBox import DependentCombo
 from .Form.FormWidget import FormWidget
 from .Form.MultiSelect import MultipleSelect
+from .Form.TextInput import TextInput

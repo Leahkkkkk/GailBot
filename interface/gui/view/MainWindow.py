@@ -19,7 +19,7 @@ from view.components import (
     Console, 
 )
 from view.util.ErrorMsg import WARN, ERR
-from view.Signals import FileSignals, ViewSignals, ProfileSignals
+from view.Signals import FileSignals, ViewSignals, ProfileSignals, PluginSignals
 from view.widgets import WarnBox
 from view.config.Style import Dimension
 from view.config.Text import About
@@ -46,6 +46,7 @@ class MainWindow(QMainWindow):
         self.fileTableSignals = FileSignals()
         self.profileSignals = ProfileSignals()
         self.viewSignal = ViewSignals()
+        self.pluginSignal = PluginSignals()
         self.logger.info(f"signals initialized")
         
         # initialzie the menu bar and the footer
@@ -58,7 +59,10 @@ class MainWindow(QMainWindow):
         self.setWindowTitle(About.APP_TITTLE)
         self.setMinimumSize(QSize(Dimension.WIN_MIN_WIDTH, Dimension.WIN_MIN_HEIGHT))
         self.setMaximumSize(QSize(Dimension.WINMAXWIDTH, Dimension.WINMAXHEIGHT))
-        self.MainStack = MainStack.MainStack(self.fileTableSignals, self.profileSignals)
+        self.MainStack = MainStack.MainStack(
+            self.fileTableSignals, 
+            self.profileSignals, 
+            self.pluginSignal)
         self.logger.info("main stack initialized")
         self.setCentralWidget(self.MainStack)
         self.setContentsMargins(0,0,0,0)
@@ -209,8 +213,18 @@ class MainWindow(QMainWindow):
         WarnBox(errorMsg) 
     
     def addPlugin(self, pluginName: str): 
+        """ 
+        add a plugin identified by pluginName
+        """
         self.MainStack.ProfileSettingPage.addPluginHandler(pluginName)
-        
+     
+    # TODO:   
+    def displayPluginSuiteDetail(self, suiteInfo) -> None :
+        """ 
+        open a frontend dialog to display suiteInfo 
+        """
+        raise NotImplementedError
+    
     """ private function """
     def _connectSignal(self):
         """ connect to signal """
@@ -231,4 +245,4 @@ class MainWindow(QMainWindow):
         logging.getLogger().setLevel(logging.DEBUG) 
         
         
-  
+    

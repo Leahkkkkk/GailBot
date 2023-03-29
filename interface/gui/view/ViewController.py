@@ -1,6 +1,6 @@
 from typing import Dict, TypedDict, Tuple, Any, List
 from view.MainWindow import MainWindow
-from view.Signals import FileSignals, ProfileSignals, ViewSignals
+from view.Signals import FileSignals, ProfileSignals, ViewSignals, PluginSignals
 
 class SettingDict(TypedDict):
     engine_setting: Dict
@@ -201,5 +201,15 @@ class ViewController():
         returns the view signal
         """
         return self.window.viewSignal
+   
+    def getPluginSignal(self) -> PluginSignals:
+        """ 
+        returns the plugin signal
+        """
+        return self.window.pluginSignal
     
-    
+    def displayPluginSuiteDetail(self, suiteInfo) -> None :
+        """ 
+        open a frontend dialog to display suiteInfo 
+        """
+        raise NotImplementedError

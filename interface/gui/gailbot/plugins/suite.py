@@ -8,6 +8,7 @@ import sys
 import os
 from typing import Dict, List, Any, Tuple
 import time
+from pydantic import BaseModel
 
 from .plugin import Plugin, Methods
 from gailbot.core.utils.logger import makelogger
@@ -17,9 +18,12 @@ from gailbot.core.pipeline import (
     ComponentResult, 
     ComponentState
 )
+from gailbot.core.utils.general import is_file
 
 import importlib
 
+## TODO: put to config
+DOCUMENTATION = "DOCUMENT.md"
 
 logger = makelogger("pluginSuite")
 
@@ -31,6 +35,15 @@ class PluginResult(ComponentResult):
     result: Any = None
     runtime: float  = 0
 
+
+class MetaData(BaseModel):
+    """ 
+    schema for base meta-data
+    """
+    author: str 
+    email: str 
+    version: str
+    
 class PluginComponent(Component):
     """
     This is an adapter because the Plugin expects different args as compared
@@ -98,6 +111,8 @@ class PluginSuite:
 
         """ a dictionary of the dependency map  -> pipeline argument  """
         self.dict_conf = dict_conf
+        self.metadata : MetaData = None
+        self.document_path : str = None
         self.dependency_map, self.plugins = self._load_from_config(dict_conf, abs_path)
         
         # Wrap the plugins in PluginComponent
@@ -171,6 +186,9 @@ class PluginSuite:
         """Return the entire dependency graph as a dictionary"""
         return self.pipeline.get_dependency_graph()
 
+    def get_meta_data(self) -> MetaData:
+        """ get the metadata about this plugin """
+        return self.metadata    
 
     ##########
     # PRIVATE
@@ -197,18 +215,23 @@ class PluginSuite:
                   to, each plugins's absolute path can be form as 
                   "<abs_path>/<suite_name>/<rel_path>"
         """
-        pkg_name = dict_config["suite_name"]
+        suite_name = dict_config["suite_name"]
         dependency_map : Dict[str, List] = dict()
         plugins : Dict[str, Plugin] = dict()
-        
         logger.info(dict_config)
         logger.info(f"absolute path: {abs_path}")
         
+        metadata = dict_config["metadata"]
+        self.metadata = MetaData(**metadata)
+        
+        self.document_path = os.path.join(abs_path, suite_name, DOCUMENTATION)
+        assert is_file(self.document_path)
+       
         for conf in dict_config["plugins"]:
             module_name = conf["module_name"]
-            module_full_name = f"{pkg_name}.{module_name}"
+            module_full_name = f"{suite_name}.{module_name}"
             rel_path = conf["rel_path"]
-            path = os.path.join(abs_path, pkg_name, rel_path)
+            path = os.path.join(abs_path, suite_name, rel_path)
             clazz_name = conf["plugin_name"]
             spec = importlib.util.spec_from_file_location(
                 module_full_name, path)

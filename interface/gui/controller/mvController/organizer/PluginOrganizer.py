@@ -33,6 +33,7 @@ class Signals(QObject):
     send = pyqtSignal(object)
     pluginAdded = pyqtSignal(str)
     error = pyqtSignal(str)
+    pluginDetail = pyqtSignal(object)
 
 
 class PluginOrganizer:
@@ -52,7 +53,7 @@ class PluginOrganizer:
     def __init__(self, gbController: GailBot) -> None:
         self.data = dict()
         self.signals = Signals()
-        self.gbCotroller = gbController
+        self.gb = gbController
     
     def post(self, pluginSuitePath:str) -> None: 
         """ add a new pugin to the data base
@@ -60,10 +61,18 @@ class PluginOrganizer:
         Args:
             pluginSuitePath: a string that stores the path to plugin suite
         """     
-        # plugin = self.gbCotroller.register_plugin_suite(pluginSuitePath)
+        # plugin = self.gb.register_plugin_suite(pluginSuitePath)
         plugin = get_name(pluginSuitePath) 
         if plugin:
             self.signals.pluginAdded.emit(plugin)
         else:
             self.signals.error.emit(ERR.ERROR_WHEN_DUETO.format(
                 f"register plugin {get_name(pluginSuitePath)}", "invalid plugin suite"))
+
+    def sendPluginSuiteDetail(self, pluginName:str) -> None:
+        details = dict()
+        details["suite name"] = pluginName
+        details["metadata"] = self.gb.get_plugin_suite_metadata(pluginName)
+        details["dependency graph"] = self.gb.get_plugin_suite_dependency_graph(pluginName)
+        details["documentation"] = self.gb.get_plugin_suite_documentation_path(pluginName)
+        self.signals.pluginDetail.emit(details)

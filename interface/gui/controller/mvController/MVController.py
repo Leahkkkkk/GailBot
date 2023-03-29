@@ -90,7 +90,7 @@ class MVController:
             store, delete or edit the database based on the view's request
         """
         self.logger.info("initialize model&view connection")
-        viewSignal = self.view.getProfileSignal()
+        viewSignal = self.view.getPluginSignal()
         # handle view's request to load new plugin
         viewSignal.addPlugin.connect(self.pluginOrganizer.post)
     

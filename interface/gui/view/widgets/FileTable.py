@@ -13,7 +13,6 @@ Description: implementation of file table
 KEYERROR = "File key not found"
 
 from typing import Dict, List, Set, Tuple, TypedDict
-import logging
 from enum import Enum 
 
 from .MsgBox import WarnBox, ConfirmBox
@@ -172,9 +171,9 @@ class FileTable(QTableWidget):
             headers: (List[str]) a list of header names
         """
         try:
-            for i in range(len(self.headers)):
-                headerItem = QTableWidgetItem(self.headers[i])
-                self.setHorizontalHeaderItem(i, headerItem)
+            for idx, header in enumerate(self.headers):
+                headerItem = QTableWidgetItem(header)
+                self.setHorizontalHeaderItem(idx, headerItem)
                     
             self.horizontalHeader().sectionClicked.connect(
                 self._headerClickedHandler)
@@ -363,7 +362,6 @@ class FileTable(QTableWidget):
             self.logger.error(e, exc_info=e)
             WarnBox(ERR.ERR_WHEN_DUETO.format("updating file progress", str(e)))
         
-     
     def changeProfile(self, key:str):
         """ open a pop up for user to change file setting 
             ** connected to changeProfile button 
@@ -447,8 +445,6 @@ class FileTable(QTableWidget):
         Args:
             files (List[str]) a list of file keys
         """
-        logging.info("Filter file")
-        logging.info(len(self.filePins))
         self.transferList.clear()
         for key, pin in self.filePins.items():
             rowidx = self.indexFromItem(pin).row()
@@ -506,7 +502,6 @@ class FileTable(QTableWidget):
         """ send a signal that includes all the files that will be 
             transfer to the next state
         """
-        logging.info(self.transferList)
         self.viewSignal.transferState.emit(self.transferList)
         
     def transcribeFile(self):

@@ -370,4 +370,11 @@ class ServiceController:
         """
         return self.plugin_manager.delete_suite(suite_name)
     
-    
+    def get_plugin_suite_metadata(self, suite_name: str) :
+        return self.plugin_manager.get_suite_metadata(suite_name)
+
+    def get_plugin_suite_dependency_graph(self, suite_name: str) :
+        return self.plugin_manager.get_suite_dependency_graph(suite_name)
+
+    def get_plugin_suite_documentation_path(self, suite_name: str) :
+        return self.plugin_manager.get_suite_documentation_path(suite_name)

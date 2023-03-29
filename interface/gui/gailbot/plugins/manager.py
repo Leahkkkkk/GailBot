@@ -6,9 +6,9 @@
 
 import sys
 import os
-from typing import  List, Union
+from typing import  List, Union, Dict
 
-from .suite import PluginSuite
+from .suite import PluginSuite, MetaData
 from .loader import (
     PluginURLLoader,  
     PluginDirectoryLoader,
@@ -130,6 +130,25 @@ class PluginManager:
             return None
         return self.suites[suite_name]
 
+    def get_suite_metadata(self, suite_name:str) -> MetaData:
+        if not self.is_suite(suite_name):
+            logger.error(f"Suite does not exist {suite_name}")
+            return None
+        return self.suites[suite_name].get_meta_data()
+    
+    def get_suite_dependency_graph(self, suite_name:str) -> Dict[str, List[str]]:
+        if not self.is_suite(suite_name):
+            logger.error(f"Suite does not exist {suite_name}")
+            return None
+        return self.suites[suite_name].dependency_graph()
+    
+    
+    def get_suite_documentation_path(self, suite_name) -> str:
+        if not self.is_suite(suite_name):
+            logger.error(f"Suite does not exist {suite_name}")
+            return None
+        return self.suites[suite_name].document_path
+     
     def _init_workspace(self):
         """
         Init workspace and load plugins from the specified sources.
@@ -137,7 +156,7 @@ class PluginManager:
         self.suites_dir = f"{self.workspace}/suites"
         self.download_dir = f"{self.workspace}/downloads"
         sys.path.append(self.suites_dir)
-        self.suites = dict()
+        self.suites: Dict [str, PluginSuite] = dict()
         
         # Make the directory
         make_dir(self.workspace,overwrite=False)
@@ -165,8 +184,8 @@ class PluginManager:
                 return path
             else:
                 del self.suites[name]
-                return "WARNING: suite source has been deleted"
+                return None
         else:
-            return "suite not found"     
+            return None
     
     

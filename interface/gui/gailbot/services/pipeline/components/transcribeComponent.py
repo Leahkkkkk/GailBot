@@ -206,18 +206,16 @@ class TranscribeComponent(Component):
 
 
     def get_progress_string(self, finished: int, total: int) -> str:
+        ## TODO: reduce the chunking , no chunking ; green bar for bar_fill
         BAR_FILL = "⬛"  # Full block
         BAR_EMPTY = "⬜"  # Light shade
         # Determine the length of the progress bar (50 characters)
         bar_length = 20
-
         # Calculate the number of filled and empty blocks in the progress bar
         filled_blocks = int(finished / total * bar_length)
         empty_blocks = bar_length - filled_blocks
-
         # Construct the progress bar string using Unicode block characters
         bar =  "Transcribing " + (BAR_FILL * filled_blocks) + (BAR_EMPTY * empty_blocks) 
-
         # Print the progress bar string
         return f"\r{bar} {finished}/{total}"
     

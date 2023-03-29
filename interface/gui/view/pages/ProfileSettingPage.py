@@ -9,7 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
-
+from enum import Enum
 from typing import List
 
 from view.config.Style import Color, Dimension
@@ -47,6 +47,10 @@ from PyQt6 import QtCore
 center = QtCore.Qt.AlignmentFlag.AlignHCenter
 bottom = QtCore.Qt.AlignmentFlag.AlignBottom
 
+
+class SET_STATE(Enum):
+    REQUIRED = 0
+    PLUGIN = 1
 class ProfileSettingPage(QWidget):
     """ class for settings page """
     def __init__(
@@ -56,7 +60,7 @@ class ProfileSettingPage(QWidget):
         **kwargs) -> None:
         """ initializes class """
         super().__init__(*args, **kwargs)
-    
+        self.setState : SET_STATE = SET_STATE.REQUIRED
         self.signals = signals
         self.plugins = list(Form.Plugins)
         self.logger = makeLogger("F")
@@ -79,12 +83,10 @@ class ProfileSettingPage(QWidget):
             Text.cancelBtn, Color.CANCEL_QUIT)
         self.saveBtn = ColoredBtn(
             Text.saveBtn, Color.SECONDARY_BUTTON)
-        self.newProfileBtn = ColoredBtn(
+        self.newSetBtn = ColoredBtn(
             Text.newProfileBtn,Color.PRIMARY_BUTTON)
         self.requiredSetBtn = BorderBtn(
             Text.reuquiredSetBtn, Color.GREYDARK, FontSize.BTN, 0, STYLE.onlyTopBorder)
-        self.newPluginBtn = ColoredBtn(
-            Text.newPluginBtn, Color.PRIMARY_BUTTON)
         self.pluginBtn = BorderBtn(
             Text.pluginSetBtn, Color.GREYDARK, FontSize.BTN, 0, STYLE.onlyBottomBorder)
         self.settingStack = QStackedWidget(self)
@@ -114,8 +116,7 @@ class ProfileSettingPage(QWidget):
         self.sidebarTopLayout.addWidget(self.pluginBtn)
         self.sidebarTopLayout.setSpacing(0)
         self.sideBar.addWidget(self.topSelectionContainer)
-        # self.sideBar.addWidget(self.newPluginBtn) 
-        self.sideBar.addWidget(self.newProfileBtn)
+        self.sideBar.addWidget(self.newSetBtn)
         self.sideBar.addWidget(self.saveBtn)
         self.sideBar.addWidget(self.cancelBtn)
         self.sideBar.addStretch()
@@ -129,20 +130,27 @@ class ProfileSettingPage(QWidget):
         self.requiredSetBtn.clicked.connect(self._activeRequiredSet)
         self.pluginBtn.clicked.connect(self._activatePlugin)
         self.selectSettings.currentTextChanged.connect(self._getProfile)
-        self.newProfileBtn.clicked.connect(self.createNewSetting)
+        self.newSetBtn.clicked.connect(self._addNew)
         self.saveBtn.clicked.connect(self.updateProfile)
-        self.newPluginBtn.clicked.connect(self.addPluginRequest)
         self.RequiredSetPage.deleteBtn.clicked.connect(self._deleteProfile)
   
     def _activeRequiredSet(self):
         """ switches current page from post transcription settings page to required settings page """
         self._setBtnDefault()
+        self.newSetBtn.setText(Text.newProfileBtn)
+        self.setState = SET_STATE.REQUIRED
+        self.selectSettings.show()
+        self.saveBtn.show()
         self.requiredSetBtn.setActiveStyle(Color.HIGHLIGHT)
         self.settingStack.setCurrentWidget(self.RequiredSetPage)
     
     def _activatePlugin(self):
         """ switches current page to plugin page """
         self._setBtnDefault()
+        self.newSetBtn.setText(Text.newPluginBtn)
+        self.setState = SET_STATE.PLUGIN
+        self.selectSettings.hide()
+        self.saveBtn.hide()
         self.pluginBtn.setActiveStyle(Color.HIGHLIGHT)
         self.settingStack.setCurrentWidget(self.PluginPage)
     
@@ -180,11 +188,16 @@ class ProfileSettingPage(QWidget):
         if deleted:
             self.selectSettings.removeItem(self.selectSettings.currentIndex())
         
-    def createNewSetting(self):
+    def _addNew(self):
         """ opens a pop up window for user to create new setting profile """
-        createNewSettingTab = CreateNewSetting(self.plugins)
-        createNewSettingTab.signals.newSetting.connect(self._postNewProfile)
-        createNewSettingTab.exec()
+        if self.setState == SET_STATE.REQUIRED:
+            createNewSettingTab = CreateNewSetting(self.plugins)
+            createNewSettingTab.signals.newSetting.connect(self._postNewProfile)
+            createNewSettingTab.exec()
+        elif self.setState == SET_STATE.PLUGIN:
+            """ opens a pop up window to add plugin """
+            pluginDialog = PluginDialog(self.signals)
+            pluginDialog.exec()
         
     def loadProfile(self, profile:tuple):
         """ loads the profile data to be presented onto the table """
@@ -220,10 +233,7 @@ class ProfileSettingPage(QWidget):
             self.logger.error(e, exc_info=e)
             WarnBox(ERR.ERR_WHEN_DUETO.format("updating profile", str(e)))
 
-    def addPluginRequest(self):
-        """ opens a pop up window to add plugin """
-        pluginDialog = PluginDialog(self.signals)
-        pluginDialog.exec()
+    
     
     def addPluginHandler(self, plugin:str):
         """ adds a new plugin to the plugin handler

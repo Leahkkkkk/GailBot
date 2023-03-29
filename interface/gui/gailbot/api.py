@@ -8,7 +8,7 @@ from typing import List, Dict, Union, Tuple, Callable
 
 from gailbot.services import ServiceController, SettingDict 
 from gailbot.workspace import WorkspaceManager
-from .plugins import PluginSuite
+from .plugins.suite import PluginSuite, MetaData
 from gailbot.core.utils.logger import makelogger
 
 logger = makelogger("gb_api")
@@ -441,3 +441,37 @@ class GailBot:
             List[str]: a list of available plugin suites name
         """
         return self.gb.get_all_plugin_suites()
+    
+    def get_plugin_suite_metadata(self, suite_name:str) -> MetaData:
+        """ get the metadata of a plugin suite identified by suite name
+
+        Args:
+            suite_name (str): the name of the suite
+
+        Returns:
+            MetaData: a MetaData object that stores the suite's metadata, 
+                      
+        """
+        return self.gb.get_plugin_suite_metadata(suite_name)
+
+    def get_plugin_suite_dependency_graph(self, suite_name:str) -> Dict[str, List[str]]:
+        """ get the dependency map of the plugin suite identified by suite_name
+
+        Args:
+            suite_name (str): the name of the suite
+
+        Returns:
+            Dict[str, List[str]]: the dependency graph of the suite
+        """
+        return self.gb.get_plugin_suite_dependency_graph(suite_name)
+
+    def get_plugin_suite_documentation_path(self, suite_name:str) -> str:
+        """ get the path to the documentation map of the plugin suite identified by suite_name
+
+        Args:
+            suite_name (str): the name of the suite
+
+        Returns:
+            str: the path to the documentation file
+        """
+        return self.gb.get_plugin_suite_documentation_path(suite_name)

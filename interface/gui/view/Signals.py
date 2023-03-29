@@ -33,5 +33,11 @@ class ProfileSignals(QObject):
     delete = pyqtSignal(str)
     addPlugin = pyqtSignal(str)
 
+class PluginSignals(QObject):
+    addPlugin = pyqtSignal(str)
+    pluginDetails = pyqtSignal(str)
+    deletePlugin = pyqtSignal(str)
+    updatePlugin = pyqtSignal(str)
+
 class ViewSignals(QObject):
     restart = pyqtSignal()
