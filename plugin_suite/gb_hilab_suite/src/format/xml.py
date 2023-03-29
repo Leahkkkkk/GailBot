@@ -12,7 +12,6 @@ from gailbot import Plugin, UttObj, GBPluginMethods
 from gb_hilab_suite.src.core.conversation_model import ConversationModel
 from gb_hilab_suite.src.config import MARKER, THRESHOLD, LABEL, PLUGIN_NAME
 
-# import xml.etree.ElementTree as etree
 from lxml import etree
 
 class XMLPlugin(Plugin):
@@ -100,8 +99,8 @@ class XMLPlugin(Plugin):
             m1.set('startTime', str(curr_utt[0].startTime))
             m1.set('endtime', str(curr_utt[-1].endTime))
 
-            if (curr_utt[0].sLabel != "gaps" and
-                curr_utt[0].sLabel != "pauses"):
+            if (curr_utt[0].sLabel != MARKER.GAPS and
+                curr_utt[0].sLabel != MARKER.PAUSES):
                 sLabel = LABEL.XML_SPEAKERLABEL + str(curr_utt[0].sLabel)
             m1.set('speakerlabel', str(curr_utt[0].sLabel))
 
@@ -184,7 +183,6 @@ class XMLPlugin(Plugin):
             while i < (len(curr_utt)):
 
                 word = curr_utt[i]
-                # print(word.text)
 
                 if '%' in word.text or ('.' in word.text and MARKER.PAUSES not in word.text):
                     i += 1

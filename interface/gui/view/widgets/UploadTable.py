@@ -1,4 +1,5 @@
-from typing import Dict
+from typing import Dict, List
+import validators
 import os
 from view.config.Style import Color, FontSize, Dimension, FontFamily
 from view.config.Text import FileUploadPageText as Text
@@ -18,12 +19,18 @@ from PyQt6.QtCore import QSize, Qt
 from view.util.ErrorMsg import WARN, ERR
 from PyQt6.QtGui import QDragEnterEvent 
 
-
 class UploadTable(QTableWidget):
+    """ a table widget to display a list of data 
+    """
     def __init__(self) -> None:
         super().__init__()
         self.logger = makeLogger("F")
         self.keyToItem: Dict[str, str] = dict()
+
+    def isAudioFile(self, file_path):
+        audio_extensions = {'.mp3', '.wav', '.flac', '.aac', '.m4a', '.wma', '.ogg', '.opus'}
+        file_extension:str  = os.path.splitext(file_path)[1]
+        return file_extension.lower() in audio_extensions 
     
     def _initStyle(self) -> None:
         self.insertColumn(0)
@@ -43,7 +50,16 @@ class UploadTable(QTableWidget):
         self.setColumnWidth(1, 25)
     
     def addItem(self, item:str) -> bool:
-        icon = Text.directoryLogo if os.path.isdir(item) else Text.audioLogo
+        self.logger.info(f"{item} item added")
+        if os.path.isdir(item):
+            icon = Text.directoryLogo
+        elif validators.url(item):
+            icon = Text.urlLogo
+        elif self.isAudioFile(item):
+            icon = Text.audioLogo
+        else:
+            icon = " "
+            
         try:
             row = self.rowCount()
             self.insertRow(row)
@@ -60,7 +76,6 @@ class UploadTable(QTableWidget):
         except Exception as e:
             self.logger.error(e, exc_info=e)
             WarnBox(ERR.ERR_WHEN_DUETO.format("displaying uploaded item", str(e)))
-        raise NotImplementedError
     
     def deleteItem(self, key, item: QTableWidgetItem) -> bool:
         try:
@@ -69,3 +84,7 @@ class UploadTable(QTableWidget):
             del self.keyToItem[key]
         except Exception as e:
             self.logger.error(e, exc_info=e)
+        
+        
+    def getValues(self) -> List[str]:
+        return list(self.keyToItem.values())

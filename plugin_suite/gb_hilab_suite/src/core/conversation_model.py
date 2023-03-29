@@ -243,7 +243,6 @@ class ConversationModel:
                                inputNode.val.endTime,
                                currSL,
                                surfaceFormat + MARKER.KEYVALUE_SEP + markerInfo)
-                    # print(surfaceFormat + KEYVALUE_SEP + markerInfo)
                     return newNode
 
                 newNode = Node(inputNode.val.startTime,

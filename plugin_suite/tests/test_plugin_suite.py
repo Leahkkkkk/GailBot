@@ -1,3 +1,7 @@
+import logging 
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
+
 from gailbot.plugins import GBPluginMethods
 from gb_hilab_suite.src.core.word_tree import WordTreePlugin
 from gb_hilab_suite.src.core.utterance_map import UtteranceMapPlugin
@@ -58,33 +62,33 @@ def test_analysis():
     assert type(overlap_res) == ConversationModel
     
     pause = PausePlugin()
-    pause_res = pause.apply({"ConversationModelPlugin": overlap_res},
+    pause_res = pause.apply({"ConversationModelPlugin": conv_model_res},
                                    GBPlugin)
     assert type(pause_res) == ConversationModel
     
     gap = GapPlugin()
-    gap_res = gap.apply({"ConversationModelPlugin":pause_res},
+    gap_res = gap.apply({"ConversationModelPlugin":conv_model_res},
                                GBPlugin)
     assert type(gap_res) == ConversationModel
     
     syllable = SyllableRatePlugin()
-    syllable_res = syllable.apply({"ConversationModelPlugin":gap_res},
+    syllable_res = syllable.apply({"ConversationModelPlugin":conv_model_res},
                                GBPlugin)
     assert type(syllable_res) == ConversationModel
 
     chat = ChatPlugin()
-    chat.apply({"ConversationModelPlugin": syllable_res},
+    chat.apply({"ConversationModelPlugin": conv_model_res},
                       GBPlugin)
     
     text = TextPlugin()
-    text.apply({"ConversationModelPlugin": syllable_res},
+    text.apply({"ConversationModelPlugin": conv_model_res},
                       GBPlugin)
     
     csv = CSVPlugin()
-    csv.apply({"ConversationModelPlugin": syllable_res},
+    csv.apply({"ConversationModelPlugin": conv_model_res},
                       GBPlugin)
     
     
     xml = XMLPlugin()
-    xml.apply({"ConversationModelPlugin": syllable_res},
+    xml.apply({"ConversationModelPlugin": conv_model_res},
                       GBPlugin)

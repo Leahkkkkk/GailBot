@@ -15,7 +15,7 @@ import os
 import validators
 
 from view.Signals import ProfileSignals
-from view.widgets import ColoredBtn, WarnBox
+from view.widgets import ColoredBtn, WarnBox, UploadTable
 from view.widgets import TextInput
 from view.config.Style import Color, Dimension
 from view.config.Text import CreateNewProfileTabText as Text 
@@ -45,7 +45,6 @@ class PluginDialog(QDialog):
         super().__init__(*arg, **kwarg)
         self.setMinimumSize(
             QSize(Dimension.DEFAULTTABHEIGHT, Dimension.DEFAULTTABHEIGHT))
-        self.plugins = list()
         self.signal = signal
         self.logger = makeLogger("F")
         self._initWidget()
@@ -61,7 +60,7 @@ class PluginDialog(QDialog):
             "Load from URL", 
             Color.PRIMARY_BUTTON
         )
-        self.displayPlugins = QListWidget()
+        self.displayPlugins = UploadTable()
         self.addBtn = ColoredBtn(
             "Register Plugin",
             Color.SECONDARY_BUTTON
@@ -95,14 +94,12 @@ class PluginDialog(QDialog):
             dialog = QFileDialog()
             selectedFolder = dialog.getExistingDirectory()
             if selectedFolder:
-                self.plugins.append(selectedFolder)
-                self.displayPlugins.addItem(get_name(selectedFolder))
+                self.displayPlugins.addItem(selectedFolder)
         except Exception as e:
             self.logger.error(e, exc_info=e)
             WarnBox(ERR.ERR_WHEN_DUETO.format("uploading plugin", str(e)))
 
     def _addToPluginList(self, source):
-        self.plugins.append(source)
         self.displayPlugins.addItem(source)
         
     def _addFromURL(self):
@@ -113,10 +110,11 @@ class PluginDialog(QDialog):
     
     def _postPlugin(self):
         """ send the new plugins through the signal """
-        if not self.plugins:
+        plugins =self.displayPlugins.getValues() 
+        if len(plugins) == 0:
             WarnBox(WARN.NO_PLUGIN)
         else:
-            for plugin in self.plugins:
+            for plugin in plugins:
                 self.signal.addPlugin.emit(plugin)
             self.close()
             

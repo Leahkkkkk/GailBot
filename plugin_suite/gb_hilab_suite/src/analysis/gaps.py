@@ -4,7 +4,7 @@
 # @Last Modified by:   Muhammad Umair
 # @Last Modified time: 2022-08-24 12:12:08
 # Standard imports
-import io
+import logging
 from typing import Dict, Any, List
 # Local imports
 from gailbot import Plugin, GBPluginMethods
@@ -49,11 +49,11 @@ class GapPlugin(Plugin):
             # calculate the floor transfer offset
             fto = round(nxt_utt[0].startTime -
                         curr_utt[-1].endTime, 2)
-
+            
             # only add a gap marker if speakers are different
             if fto >= self.lb_gap and \
                     curr_utt[0].sLabel != nxt_utt[0].sLabel:
-
+                logging.debug("gaps detected")
                 markerText = "({1}{0}{2}{0}{3})".format(
                     MARKER.MARKER_SEP,
                     str(MARKER.MARKERTYPE) +

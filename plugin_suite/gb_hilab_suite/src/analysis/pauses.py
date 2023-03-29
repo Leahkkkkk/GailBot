@@ -4,7 +4,7 @@
 # @Last Modified by:   Muhammad Umair
 # @Last Modified time: 2022-08-24 12:26:25
 
-
+import logging
 import io
 from typing import Dict, Any, List
 from dataclasses import dataclass
@@ -50,9 +50,9 @@ class PausePlugin(Plugin):
             if curr_utt[0].sLabel == nxt_utt[0].sLabel:
                 fto = round(nxt_utt[0].startTime -
                             curr_utt[-1].endTime, 2)
-
                 markerText = ""
-                if THRESHOLD.LB_LATCH <= fto <= THRESHOLD.UB_LATCH:
+                if  (THRESHOLD.LB_LATCH <= fto) and (fto <= THRESHOLD.UB_LATCH):
+                    logging.debug("pauses")
                     markerText = "({1}{0}{2}{0}{3})".format(MARKER.MARKER_SEP,
                                                             str(MARKER.MARKERTYPE)
                                                             + str(MARKER.KEYVALUE_SEP) +
@@ -68,6 +68,7 @@ class PausePlugin(Plugin):
                                     MARKER.PAUSES,
                                     markerText)
                 elif THRESHOLD.LB_PAUSE <= fto <= THRESHOLD.UB_PAUSE:
+                    logging.debug("pauses")
                     # TODO: 0.8 vs -0.8
                     markerText = "({1}{0}{2}{0}{3})".format(MARKER.MARKER_SEP,
                                                             str(MARKER.MARKERTYPE) +
@@ -86,6 +87,7 @@ class PausePlugin(Plugin):
                                     markerText)
                 elif THRESHOLD.LB_MICROPAUSE == fto \
                         <= THRESHOLD.UB_MICROPAUSE:
+                    logging.debug("pauses")
                     markerText = "({1}{0}{2}{0}{3})".format(MARKER.MARKER_SEP,
                                                             str(MARKER.MARKERTYPE) +
                                                             str(MARKER.KEYVALUE_SEP) +
@@ -102,6 +104,7 @@ class PausePlugin(Plugin):
                                     MARKER.PAUSES,
                                     markerText)
                 elif fto >= THRESHOLD.LB_LARGE_PAUSE:
+                    logging.debug("pauses")
                     markerText = "({1}{0}{2}{0}{3})".format(MARKER.MARKER_SEP,
                                                             str(MARKER.MARKERTYPE) +
                                                             str(MARKER.KEYVALUE_SEP) +

@@ -18,20 +18,12 @@ class Methods():
 
 class GBPluginMethods(Methods):
     def __init__(self):
+        pause_utt = [{"start":  i, "end": i + 0.91, "speaker": 1, "text": f"word{i}"} for i in range(0, 20, 1)]
+        gap_utt =   [{"start":  i, "end": i + 0.5, "speaker": (0 + i) % 4, "text": f"word{i}"} for i in range(20, 60, 1)]
+        overlap_utt = [{"start": i, "end": i + 4, "speaker": (0 + i) % 2, "text": f"word{i}"} for i in range(60, 80, 1)]
         data = dict()
-        data["empty"] = []
-        # data["hello"] = [{"start": 0.0, "end": 1.4, "text": "hello", "speaker": "1"}] 
-        # for i in range(10):
-        #     l = list()
-          
-        #     for j in range(100):
-        #         l.append(
-        #             { "start":j, 
-        #               "end": j+ 1, 
-        #               "text": str(i + j) , 
-        #               "speaker": f"speaker {j%3}"
-        #               })
-        #     data[str(i) + "audio"] = l
+        data["test"] = pause_utt + gap_utt + overlap_utt
+        
         self.data = data 
     
     @property

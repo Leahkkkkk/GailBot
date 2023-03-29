@@ -10,7 +10,7 @@ from gailbot import Plugin, UttObj, GBPluginMethods
 from gb_hilab_suite.src.core.nodes import Word
 from gb_hilab_suite.src.core.conversation_model import ConversationModel
 from gb_hilab_suite.src.config import MARKER, THRESHOLD, PLUGIN_NAME
-
+import logging
 
 class OverlapPlugin(Plugin):
 
@@ -52,7 +52,7 @@ class OverlapPlugin(Plugin):
 
             # In the case of an overlap, get its 4 marker positions
             if nxt_utt[0].startTime < curr_utt[-1].endTime:
-
+                logging.debug("overlap detected")
                 curr_x, curr_y, nxt_x, nxt_y = self._get_overlap_positions(
                     curr_utt, nxt_utt)
                 if (curr_x, curr_y, nxt_x, nxt_y) == (-1, -1, -1, -1):
@@ -110,7 +110,7 @@ class OverlapPlugin(Plugin):
                                                     str(MARKER.MARKERSPEAKER) +
                                                     str(MARKER.KEYVALUE_SEP) +
                                                     nxt_utt[0].sLabel)
-
+                logging.debug("insert overlap to the tree")
                 # insert the overlap markers into the tree
                 cm.insertToTree(curr_utt[curr_x].startTime,
                                 curr_utt[curr_x].startTime,

@@ -95,6 +95,7 @@ class FileUploadPageText:
     audioLogo = "\U0001F50A"
     ## unicode for a file folder icon
     directoryLogo = "\U0001F4C1"
+    urlLogo = "\U0001F517"
     delete = "\u274C"
 
 @dataclass

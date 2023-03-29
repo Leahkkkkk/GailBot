@@ -48,6 +48,7 @@ class ChatPlugin(Plugin):
         path = "{}/conversation.cha".format(methods.output_path)
 
         utterances = newUttMap
+        
         with open(path, "w", encoding='utf-8') as outfile:
             for item in data:
                 outfile.write(item)

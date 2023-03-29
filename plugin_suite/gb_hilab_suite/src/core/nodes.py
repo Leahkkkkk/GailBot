@@ -7,7 +7,7 @@
 # Standard imports
 from typing import List, Any, Dict
 from dataclasses import dataclass
-
+import logging
 @dataclass
 class Word:
     startTime: float
@@ -15,7 +15,6 @@ class Word:
     sLabel: str
     text: str
     
-
 class Node:
     def __init__(self, startTime, endTime, speakerLabel, text):
         self.val = Word(startTime, endTime, speakerLabel, text)
@@ -55,21 +54,19 @@ class Node:
         if self.right:
             self.right.inorderChange(varDict)
 
-    def insert(self, root, startTime, endTime, speakerLabel, text):
+    def insert(self, root, startTime, endTime, speakerLabel, text) -> None:
         """
         Inserts a node into the BST by its unique start time
-
         Args:
             root (Node):
             startTime (int): unique start time for node identifier
             endTime (int): end time
             speakerLabel (str): speaker label
             text (str): text
-
         Returns:
             Node: void, insert the node at the correct position
         """
-        if root:
+        if root is None:
             return Node(startTime, endTime, speakerLabel, text)
         else:
             if root.val.startTime == startTime:
@@ -82,6 +79,7 @@ class Node:
             else:
                 root.left = self.insert(root.left, startTime, endTime, speakerLabel, text)
         return root
+
 
     def search(self, curr, s) -> Word:
         """

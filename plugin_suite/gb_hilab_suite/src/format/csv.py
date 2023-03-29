@@ -54,8 +54,7 @@ class CSVPlugin(Plugin):
         with open(path, 'w', newline='') as outfile:
             writer = csv.writer(outfile)
 
-            writer.writerow(["SPEAKER LABEL", "TEXT", "START TIME",
-                                "END TIME"])
+            writer.writerow(["SPEAKER LABEL", "TEXT", "START TIME", "END TIME"])
 
             utterances = newUttMap
             for _, (_, nodeList) in enumerate(utterances.items()):
@@ -103,8 +102,7 @@ class CSVPlugin(Plugin):
         with open(path, 'w', newline='') as outfile:
             writer = csv.writer(outfile)
 
-            writer.writerow(["SPEAKER LABEL", "TEXT", "START TIME",
-                                "END TIME"])
+            writer.writerow(["SPEAKER LABEL", "TEXT", "START TIME", "END TIME"])
             utterances = newUttMap
             for _, (_, nodeList) in enumerate(utterances.items()):
                 curr_utt = cm.getWordFromNode(nodeList)
