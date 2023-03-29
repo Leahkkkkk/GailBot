@@ -222,7 +222,8 @@ class PluginSuite:
         logger.info(f"absolute path: {abs_path}")
         
         metadata = dict_config["metadata"]
-        self.metadata = MetaData(**metadata)
+        MetaData(**metadata)
+        self.metadata = metadata
         
         self.document_path = os.path.join(abs_path, suite_name, DOCUMENTATION)
         assert is_file(self.document_path)

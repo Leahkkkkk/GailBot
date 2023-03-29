@@ -23,9 +23,10 @@ class UploadTable(QTableWidget):
     """ a table widget to display a list of data 
     """
     def __init__(self) -> None:
-        super().__init__()
+        super().__init__(0,2)
         self.logger = makeLogger("F")
         self.keyToItem: Dict[str, str] = dict()
+        self._initStyle()
 
     def isAudioFile(self, file_path):
         audio_extensions = {'.mp3', '.wav', '.flac', '.aac', '.m4a', '.wma', '.ogg', '.opus'}
@@ -33,8 +34,6 @@ class UploadTable(QTableWidget):
         return file_extension.lower() in audio_extensions 
     
     def _initStyle(self) -> None:
-        self.insertColumn(0)
-        self.insertColumn(1)
         self.setSelectionMode(
             QAbstractItemView.SelectionMode.NoSelection)
         self.setEditTriggers(
@@ -64,9 +63,10 @@ class UploadTable(QTableWidget):
             row = self.rowCount()
             self.insertRow(row)
             self.keyToItem[row] = item
-            filestr = os.path.join(os.path.basename(os.path.dirname(item)),os.path.basename(item))
+            filestr = item
             newFile = QTableWidgetItem(icon + filestr)
             self.setItem(row, 0, newFile)
+            
             btn = QPushButton(Text.delete)
             btn.setFixedSize(QSize(20,20))
             btn.setContentsMargins(1,5,1,5)

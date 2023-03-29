@@ -8,7 +8,7 @@ from typing import List, Dict, Union, Tuple, Callable
 
 from gailbot.services import ServiceController, SettingDict 
 from gailbot.workspace import WorkspaceManager
-from .plugins.suite import PluginSuite, MetaData
+from .plugins.suite import PluginSuite
 from gailbot.core.utils.logger import makelogger
 
 logger = makelogger("gb_api")
@@ -442,7 +442,7 @@ class GailBot:
         """
         return self.gb.get_all_plugin_suites()
     
-    def get_plugin_suite_metadata(self, suite_name:str) -> MetaData:
+    def get_plugin_suite_metadata(self, suite_name:str) -> Dict[str, str]:
         """ get the metadata of a plugin suite identified by suite name
 
         Args:

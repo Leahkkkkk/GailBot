@@ -15,3 +15,5 @@ from .Form.FormWidget import FormWidget
 from .Form.MultiSelect import MultipleSelect
 from .Form.TextInput import TextInput
 from .UploadTable import UploadTable
+from .GraphDisplay import GraphDisplay
+from .TextDisplay import MarkdownDisplay, TextDisplay

@@ -19,7 +19,7 @@ from view.config.Style import StyleSheet as STYLE
 from view.config.Text import ProfileSettingForm as Form 
 from gbLogger import makeLogger
 
-from view.Signals import ProfileSignals
+from view.Signals import ProfileSignals, PluginSignals
 from view.pages import (
     RequiredSettingPage, 
     PluginPage
@@ -55,13 +55,15 @@ class ProfileSettingPage(QWidget):
     """ class for settings page """
     def __init__(
         self, 
-        signals: ProfileSignals,
+        profileSignal: ProfileSignals,
+        pluginSignal: PluginSignals,
         *args, 
         **kwargs) -> None:
         """ initializes class """
         super().__init__(*args, **kwargs)
         self.setState : SET_STATE = SET_STATE.REQUIRED
-        self.signals = signals
+        self.profileSignal = profileSignal
+        self.pluginSignal = pluginSignal
         self.plugins = list(Form.Plugins)
         self.logger = makeLogger("F")
         self._initWidget()
@@ -91,7 +93,7 @@ class ProfileSettingPage(QWidget):
             Text.pluginSetBtn, Color.GREYDARK, FontSize.BTN, 0, STYLE.onlyBottomBorder)
         self.settingStack = QStackedWidget(self)
         self.RequiredSetPage = RequiredSettingPage.RequiredSettingPage()
-        self.PluginPage = PluginPage.PluginPage()
+        self.PluginPage = PluginPage.PluginPage(self.pluginSignal)
         self.selectSettings.setCurrentIndex(0)     
         self.placeHolder = QWidget()
         self.settingStack.addWidget(self.placeHolder)
@@ -126,7 +128,7 @@ class ProfileSettingPage(QWidget):
         self.settingStack.setContentsMargins(0,0,0,0)
    
     def _connectSignal(self):
-        """ connects signals upon button clicks """
+        """ connects profileSignal upon button clicks """
         self.requiredSetBtn.clicked.connect(self._activeRequiredSet)
         self.pluginBtn.clicked.connect(self._activatePlugin)
         self.selectSettings.currentTextChanged.connect(self._getProfile)
@@ -171,17 +173,17 @@ class ProfileSettingPage(QWidget):
    
     def _getProfile(self, profileName:str):
         """ sends the request to database to get profile data  """
-        self.signals.get.emit(profileName)
+        self.profileSignal.get.emit(profileName)
         
     def _postNewProfile(self, profile: tuple):
         """ sends the request to database to post a new profile data """
-        self.signals.post.emit(profile)
+        self.profileSignal.post.emit(profile)
         
     def _deleteProfile(self):
         """ sends the delete signal to delete the profile"""
         profileName = self.selectSettings.currentText()
         ConfirmBox(Text.confirmDelete + profileName, 
-                   lambda: self.signals.delete.emit(self.selectSettings.currentText()))
+                   lambda: self.profileSignal.delete.emit(self.selectSettings.currentText()))
          
     def deleteProfileConfirmed(self, deleted: bool):
         """ if deleted, remove the current setting name from available setting"""
@@ -192,11 +194,11 @@ class ProfileSettingPage(QWidget):
         """ opens a pop up window for user to create new setting profile """
         if self.setState == SET_STATE.REQUIRED:
             createNewSettingTab = CreateNewSetting(self.plugins)
-            createNewSettingTab.signals.newSetting.connect(self._postNewProfile)
+            createNewSettingTab.profileSignal.newSetting.connect(self._postNewProfile)
             createNewSettingTab.exec()
         elif self.setState == SET_STATE.PLUGIN:
             """ opens a pop up window to add plugin """
-            pluginDialog = PluginDialog(self.signals)
+            pluginDialog = PluginDialog(self.profileSignal)
             pluginDialog.exec()
         
     def loadProfile(self, profile:tuple):
@@ -228,7 +230,7 @@ class ProfileSettingPage(QWidget):
             newSetting = self.RequiredSetPage.getValue()
             self.logger.info(newSetting)
             profileKey = self.selectSettings.currentText()
-            self.signals.edit.emit((profileKey, newSetting))
+            self.profileSignal.edit.emit((profileKey, newSetting))
         except Exception as e:
             self.logger.error(e, exc_info=e)
             WarnBox(ERR.ERR_WHEN_DUETO.format("updating profile", str(e)))

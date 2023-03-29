@@ -174,14 +174,12 @@ class FileTable(QTableWidget):
             for idx, header in enumerate(self.headers):
                 headerItem = QTableWidgetItem(header)
                 self.setHorizontalHeaderItem(idx, headerItem)
-                    
             self.horizontalHeader().sectionClicked.connect(
                 self._headerClickedHandler)
             self.verticalHeader().hide()
         except Exception as e:
             self.logger.info(e, exc_info=e)
             WarnBox(ERR.ERR_WHEN_DUETO.format("initialize file header", str(e)))
-        
         self.horizontalHeader().setStyleSheet(TABLE_HEADER)
     
     

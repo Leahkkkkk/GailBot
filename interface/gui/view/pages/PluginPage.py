@@ -9,37 +9,36 @@ Modified By:  Siara Small  & Vivian Li
 -----
 Description: implementation of the plugin page
 '''
-from typing import Dict, List
+from typing import Dict, List, Any
 from view.config.Style import FontSize, Dimension, FontFamily
 from view.config.Text import ProfilePageText as Text
 from view.config.Text import ProfileSettingForm as Form
 from gbLogger import makeLogger
 from view.widgets import Label, ScrollArea, initSecondaryColorBackground
-
+from view.widgets.PluginTable import PluginTable
 from PyQt6.QtWidgets import (
     QWidget, 
     QVBoxLayout)
 from PyQt6.QtCore import Qt
 
 center  = Qt.AlignmentFlag.AlignHCenter
-defaultPlugin = list (Form.Plugins)
 
 class PluginPage(QWidget):
     """" class for the plugins page """
     def __init__(
         self,
-        plugins = defaultPlugin,
+        signal, 
         *args, 
         **kwargs) -> None:
         super().__init__( *args, **kwargs)
         """ initializes class """
-        self.plugins = plugins
+        self.signal = signal
         self.logger = makeLogger("F")
         self._initWidget()
         self._initlayout()
        
-    def displayPlugin(self, plugins: Dict[str, List[str]]):
-        raise NotImplementedError    
+    def displayPlugin(self, pluginInfo: Dict[str, Any]):
+        self.pluginTable.displayPluginDetails(pluginInfo)
       
     def getValue(self):
         return [] 
@@ -54,24 +53,16 @@ class PluginPage(QWidget):
             Text.pluginCaption, FontSize.DESCRIPTION, FontFamily.MAIN)
         self.message = Label(
             Text.tempMessage, FontSize.DESCRIPTION, FontFamily.MAIN)
-
+        self.pluginTable = PluginTable(self.signal)
+        
     def _initlayout(self):
         """" initializes layout """
         self.logger.info("")
         self.verticalLayout = QVBoxLayout()
         self.setLayout(self.verticalLayout)
-        self.scrollContainer = QWidget()
-        self.scrollLayout = QVBoxLayout()
-        self.scrollContainer.setLayout(self.scrollLayout)
-        self.scrollLayout.setSpacing(10)
-        self.scrollArea = ScrollArea()
-        self.scrollArea.setFixedWidth(Dimension.FORMWIDTH)
-        self.scrollArea.setMinimumHeight(Dimension.FORMMINHEIGHT)
-        self.scrollArea.setMaximumHeight(Dimension.FORMMAXHEIGHT)
-        self.scrollArea.setWidgetResizable(True)
         self.verticalLayout.addWidget(self.header)
         self.verticalLayout.setSpacing(Dimension.SMALL_SPACING)
         self.verticalLayout.addWidget(self.message, alignment=center)
+        self.verticalLayout.addSpacing(Dimension.SMALL_SPACING)
+        self.verticalLayout.addWidget(self.pluginTable, alignment=center)
         self.verticalLayout.addStretch()
-        initSecondaryColorBackground(self.scrollArea)
-        initSecondaryColorBackground(self.scrollContainer)

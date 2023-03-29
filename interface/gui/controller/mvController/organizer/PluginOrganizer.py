@@ -71,8 +71,8 @@ class PluginOrganizer:
 
     def sendPluginSuiteDetail(self, pluginName:str) -> None:
         details = dict()
-        details["suite name"] = pluginName
+        details["suite_name"] = pluginName
         details["metadata"] = self.gb.get_plugin_suite_metadata(pluginName)
-        details["dependency graph"] = self.gb.get_plugin_suite_dependency_graph(pluginName)
+        details["dependency_graph"] = self.gb.get_plugin_suite_dependency_graph(pluginName)
         details["documentation"] = self.gb.get_plugin_suite_documentation_path(pluginName)
         self.signals.pluginDetail.emit(details)

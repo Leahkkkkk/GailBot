@@ -137,7 +137,7 @@ class MainStack(QStackedWidget):
         self.ConfirmTranscribePage = ConfirmTranscribePage.ConfirmTranscribePage(
             self.fileSignal)
         initSubPageBackground(self.ConfirmTranscribePage)
-        self.ProfileSettingPage = ProfileSettingPage.ProfileSettingPage(self.profileSignals)
+        self.ProfileSettingPage = ProfileSettingPage.ProfileSettingPage(self.profileSignals, self.pluginSignals)
         initPrimaryColorBackground(self.ProfileSettingPage)
         self.TranscribeProgressPage = TranscribeProgressPage.TranscribeProgressPage(
             self.fileSignal)

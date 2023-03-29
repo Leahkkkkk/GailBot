@@ -38,6 +38,7 @@ class PluginSignals(QObject):
     pluginDetails = pyqtSignal(str)
     deletePlugin = pyqtSignal(str)
     updatePlugin = pyqtSignal(str)
+    requestPluginDetails = pyqtSignal(str)
 
 class ViewSignals(QObject):
     restart = pyqtSignal()

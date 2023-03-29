@@ -130,7 +130,7 @@ class PluginManager:
             return None
         return self.suites[suite_name]
 
-    def get_suite_metadata(self, suite_name:str) -> MetaData:
+    def get_suite_metadata(self, suite_name:str) -> Dict[str, str]:
         if not self.is_suite(suite_name):
             logger.error(f"Suite does not exist {suite_name}")
             return None
