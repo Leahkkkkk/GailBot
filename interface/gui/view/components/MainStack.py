@@ -72,14 +72,13 @@ class MainStack(QStackedWidget):
         self._pageRedirect()
         self._connectSignal()
     
-    def addAvailableSetting(self, profileNames: List[str], pluginSuites: List[str]):    
+    def addAvailableSetting(self, profileNames: List[str]):    
         """ add the available setting to the profile setting interface
 
         Args:
             profileNames (List[str]): a list of profile names
-            pluginSuites (List[str]): a list of plugin suites names
         """
-        self.ProfileSettingPage.addAvailableSetting(profileNames, pluginSuites)
+        self.ProfileSettingPage.addAvailableSetting(profileNames)
         self.FileUploadPage.initAvailableProfiles(profileNames)
         
     def gotoTranscribeInProgress(self):

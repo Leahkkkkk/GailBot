@@ -137,8 +137,8 @@ class ProfilePageText:
     pluginSetBtn       = "Plugin Settings"
     engineSettingHeader  = "Speech to Text Settings"
     engineSettingCaption = "These settings are applied to the selected settings profile and are required for transcription"
-    pluginHeader       = "Choose Plugins"
-    pluginCaption      = "These plugins are applied to the transcription process"
+    pluginHeader       = "Available Plugin Suites"
+    pluginCaption      = "These plugins are available in GailBot"
     tempMessage        = "This page has been temporarily disabled to allow for further updates and developments. Please check back later."
     confirmDelete      = "Confirm deleting the profile: "
 
@@ -149,8 +149,7 @@ class SystemSetPageText:
     caption       = "Control various aspects of the graphical interface"
     cancelBtn     = "Cancel"
     saveBtn       = "Save and Exit"
-    confirmChange = """The changes applied require GailBot to relaunch. All uploaded \
-                    files will be removed. Do you wish to proceed?"""
+    confirmChange = """The changes applied require GailBot to relaunch. All uploaded files will be removed. Do you wish to proceed?"""
     changeError   = "System settings change failed"
     clearLog      = "Clear all log files"
     confirmClear  = "All log files will be removed. Proceed?"
@@ -311,6 +310,22 @@ class Links:
     guideLink        = _linkTemplate.format(Color.LINK, GUIDE, WelcomePageText.guideText)
     gbWebLink        = _linkTemplate.format(Color.LINK, HILAB, WelcomePageText.gbLinkText)
     guideLinkSideBar = _linkTemplate.format(Color.LINK, USER_MANUAL, WelcomePageText.tutorialText)
+
+
+@dataclass
+class PLUGIN_SUITE_TEXT:
+    LOAD_DIR = "Load from Directory"
+    LOAD_URL = "Load from URL"
+    REGISTER = "Register Plugin Suite"
+    URL = "Plugin Suite URL"
+    UPLOAD = "Upload"
+    URL_INSTRUCTION = "GailBot currently accepts url from: Amazon S3"
+    TABLE_HEADER = ["Plugin Suite Name", "Author", "Version", "Actions"]
+    TABLE_DIMENSION = [0.3,0.3,0.2,0.2]
+    
+    
+    
+
 
 ProfileSettingForm = ProfileSetting.from_dict(forms["profile form"])
 EngineForm  = EngineSetting.from_dict(forms["profile form"]["RequiredSetting"])

@@ -14,15 +14,27 @@ class ViewController():
     def __init__(self) -> None:
         self.window: MainWindow = MainWindow()
     
-    def addAvailableSettings(self, profileNames: List[str], pluginSuites: List[str]):
+    def addAvailableSettings(self, profileNames: List[str]):
         """ add the available setting to the profile setting interface
 
         Args:
             profileNames (List[str]): a list of profile names
-            pluginSuites (List[str]): a list of plugin suites names
         """
-        self.window.addAvailableSetting(profileNames, pluginSuites)
+        self.window.addAvailableSetting(profileNames)
     
+    
+    def addAvailablePluginSuites(self, pluginSuites: List[Tuple[str, Dict[str, str]]]):
+        """ add the available plugin suites to the interface
+
+        Args:
+            pluginSuites (List[Tuple[str, Dict[str, str]]]): a list of tuples 
+            that stores the plugin suites information, 
+            the first element of the tuple stores the plugin name as a string
+            and the second element stores the plugin metadata as a dictionary
+        """
+        self.window.addAvailablePluginSuites(pluginSuites)
+        
+        
     def show(self):
         """ 
         run the interface
@@ -158,13 +170,16 @@ class ViewController():
         self.window.loadProfile(profileData)
         
    
-    def addPlugin(self, pluginName:str):
+    def addPlugin(self, pluginSuite: Tuple[str, Dict[str, str]]):
         """ add plugin identified by plugin name to the view
 
         Args:
-            pluginName (str): the name of the plugin to be added
+            pluginSuite: Tuple[str, Dict[str, str]]: 
+            a tuple that stores the plugin suite information 
+            the tuple contains the name of the plugin suite and a 
+            dictionary of the plugin suite information
         """
-        self.window.addPlugin(pluginName)
+        self.window.addPlugin(pluginSuite)
    
     # function that involves the entire view object
     def closeEvent(self, id: int ) -> None:
@@ -212,4 +227,4 @@ class ViewController():
         """ 
         open a frontend dialog to display suiteInfo 
         """
-        raise NotImplementedError
+        self.window.displayPluginSuiteDetail(suiteInfo) 

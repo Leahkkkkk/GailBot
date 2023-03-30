@@ -10,20 +10,12 @@ Modified By:  Siara Small  & Vivian Li
 -----
 Description: implementation of a the plugin database 
 '''
-from typing import TypedDict, Tuple
+from typing import TypedDict, Tuple, Dict
 
 from gailbot.api import GailBot
 from PyQt6.QtCore import QObject, pyqtSignal
 from controller.util.io import get_name
 from controller.util.Error import ERR
-
-class pluginObject(TypedDict):
-    """ the scheme of a plugin data,
-        a plugin is poste dto the database through a dictionary object 
-        that follows this scheme 
-    """
-    Name:str 
-    Path:str 
 
 class Signals(QObject):
     """ 
@@ -31,10 +23,9 @@ class Signals(QObject):
         plugin database and view 
     """
     send = pyqtSignal(object)
-    pluginAdded = pyqtSignal(str)
+    pluginAdded = pyqtSignal(tuple)
     error = pyqtSignal(str)
     pluginDetail = pyqtSignal(object)
-
 
 class PluginOrganizer:
     """ Implementation of a plugin database that 
@@ -55,24 +46,26 @@ class PluginOrganizer:
         self.signals = Signals()
         self.gb = gbController
     
-    def post(self, pluginSuitePath:str) -> None: 
-        """ add a new pugin to the data base
+    def addPlugin(self, pluginSuitePath:str) -> None: 
+        """ add a new plugin to the data base
 
         Args:
             pluginSuitePath: a string that stores the path to plugin suite
         """     
-        # plugin = self.gb.register_plugin_suite(pluginSuitePath)
-        plugin = get_name(pluginSuitePath) 
-        if plugin:
-            self.signals.pluginAdded.emit(plugin)
+        suite = self.gb.register_plugin_suite(pluginSuitePath)
+        # suite = get_name(pluginSuitePath) 
+        if suite:
+            metaInfo = self.gb.get_plugin_suite_metadata(suite)
+            self.signals.pluginAdded.emit((suite, metaInfo))
         else:
             self.signals.error.emit(ERR.ERROR_WHEN_DUETO.format(
                 f"register plugin {get_name(pluginSuitePath)}", "invalid plugin suite"))
 
-    def sendPluginSuiteDetail(self, pluginName:str) -> None:
+    def gerPluginSuiteDetail(self, pluginName:str) -> Dict[str, str]:
         details = dict()
         details["suite_name"] = pluginName
         details["metadata"] = self.gb.get_plugin_suite_metadata(pluginName)
         details["dependency_graph"] = self.gb.get_plugin_suite_dependency_graph(pluginName)
         details["documentation"] = self.gb.get_plugin_suite_documentation_path(pluginName)
         self.signals.pluginDetail.emit(details)
+        return details

@@ -1,4 +1,5 @@
 from typing import Dict, List
+from view.config.Style import Color, StyleSheet
 from PyQt6.QtWidgets import QTextEdit, QWidget
 from PyQt6.QtGui import QPainter, QFont
 from PyQt6.QtCore import Qt, QSize
@@ -14,6 +15,6 @@ class GraphDisplay(QGraphicsView):
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.setMinimumSize(QSize(200,200)) # TODO: check the size
-      
+        self.setStyleSheet(StyleSheet.basic)
     def displayGaph(self):
         raise NotImplementedError

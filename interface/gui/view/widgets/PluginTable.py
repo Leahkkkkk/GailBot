@@ -1,9 +1,10 @@
 from typing import List, Dict, Tuple, Any
-from view.config.Style import Dimension, Color
+from view.config.Style import Dimension
+from view.config.Text import PLUGIN_SUITE_TEXT
 from view.style.WidgetStyleSheet import FILE_TABLE, SCROLL_BAR, TABLE_HEADER
 from view.Signals import PluginSignals
 from view.util.ErrorMsg import ERR  
-from view.components.PluginDetails import PluginPopUp
+from view.components.PluginSuiteDetails import PluginSuiteDetails
 
 from .MsgBox import WarnBox
 from gbLogger import makeLogger
@@ -14,7 +15,8 @@ from PyQt6.QtWidgets import (
     QHeaderView,
     QPushButton,
     QHeaderView, 
-    QVBoxLayout
+    QVBoxLayout,
+    QAbstractItemView
 )
 
 from PyQt6.QtCore import (
@@ -31,10 +33,10 @@ class PluginTable(QTableWidget):
         self.signal = signal
         self.plugins: Dict[str, Dict[str, str]] = dict()
         self.nameToTablepins: Dict[str, QTableWidgetItem] = dict()
-        self.headers = ["Plugin Name", "Author", "Version", "Actions"]
+        self.headers = PLUGIN_SUITE_TEXT.TABLE_HEADER
         self._initWidget()
         self._initStyle()
-        self.resizeCol([0.3, 0.2, 0.2, 0.3])
+        self.resizeCol(PLUGIN_SUITE_TEXT.TABLE_DIMENSION)
     
     def _initStyle(self) -> None:
         """ Initialize the table style """
@@ -48,6 +50,8 @@ class PluginTable(QTableWidget):
         self.setMinimumHeight(Dimension.FORMMINHEIGHT)
         self.verticalScrollBar().setStyleSheet(SCROLL_BAR) 
         self.horizontalScrollBar().setStyleSheet(SCROLL_BAR)
+        self.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)  
+        self.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
     
     def resizeCol(self, widths:List[float]) -> None:
         """ takes in a list of width and resize the width of the each 
@@ -67,8 +71,18 @@ class PluginTable(QTableWidget):
             self.setHorizontalHeaderItem(idx, headerItem)
         self.verticalHeader().hide()
         self.horizontalHeader().setStyleSheet(TABLE_HEADER)
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
 
-    def addPlugins(self, plugins: List[Dict]):
+
+    def addPlugins(self, plugins: List[Tuple[str, Dict[str, str]]]):
+        """ 
+        add a list of plugins to the plugin suite table
+        Args:
+            plugins (List[Tuple[str, Dict[str, str]]]):  
+            a list of tuple that stores the plugin suite information 
+            the tuple contains the name of the plugin suite and a dictionary of the 
+            plugin suite information
+        """
         for plugin in plugins:
             self.addPlugin(plugin)
     
@@ -79,10 +93,10 @@ class PluginTable(QTableWidget):
             newRowIdx = self.rowCount()
             self.insertRow(newRowIdx)
             suiteNameItem = QTableWidgetItem(str(suiteName))
-            self.setItem = (newRowIdx, 0, suiteNameItem)
+            self.setItem(newRowIdx, 0, suiteNameItem)
             for col in range(len(self.headers)):
                 if self.headers[col].lower() in metadata.keys():
-                    newItem = QTableWidgetItem(str(metadata[self.headers[col]]))
+                    newItem = QTableWidgetItem(str(metadata[self.headers[col].lower()]))
                     self.setItem(newRowIdx, col, newItem)
             self.addCellWidget(suiteName, suiteNameItem, newRowIdx)
             self.resizeRowsToContents()  
@@ -102,10 +116,6 @@ class PluginTable(QTableWidget):
     def seeSuiteDetail(self, suiteName:str):
         self.signal.requestPluginDetails.emit(suiteName)
         
-    def displayPluginDetails(self, pluginInfo: Dict[str, Any]):
-        infoDisplay = PluginPopUp(pluginInfo)
-        infoDisplay.exec()
-    
     def addCellWidget(self, suiteName: str, tableItem: QTableWidgetItem, row:int):
         cellWidget = QWidget()
         layout = QVBoxLayout()

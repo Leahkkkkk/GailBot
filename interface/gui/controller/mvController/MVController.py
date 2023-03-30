@@ -42,6 +42,20 @@ class MVController:
         self.pluginOrganizer = PluginOrganizer(gb)
         self.logger = makeLogger("F")
         self.view  = view 
+        self.gb = gb 
+        
+        # add available setting to the frontend interface
+        settingNames = self.gb.get_all_settings_name()
+        self.logger.info(f"get profile {settingNames}")
+        self.view.addAvailableSettings(settingNames)
+        
+        # add available plugin suite to the frontend interface
+        pluginSuites = self.gb.get_all_plugin_suites()
+        self.logger.info(f"get plugin suites {pluginSuites}")
+        pluginInfo =[(suite, self.gb.get_plugin_suite_metadata(suite)) for suite in pluginSuites]
+        self.logger.info(f"get plugin suite info {pluginInfo}")
+        self.view.addAvailablePluginSuites(pluginInfo)
+
     
     def exec(self):
         """ public function to execute the model view controller """
@@ -92,16 +106,20 @@ class MVController:
         self.logger.info("initialize model&view connection")
         viewSignal = self.view.getPluginSignal()
         # handle view's request to load new plugin
-        viewSignal.addPlugin.connect(self.pluginOrganizer.post)
+        viewSignal.addPlugin.connect(self.pluginOrganizer.addPlugin)
+        viewSignal.requestPluginDetails.connect(self.pluginOrganizer.gerPluginSuiteDetail)
+    
     
     def _connectPluginDBToView(self):
         """ connect the signal from the plugin database to view
             change the presentation of data on the view
         """
         self.logger.info("initialize model&view connection")
-        dbSignal = self.pluginOrganizer.signals
+        signal = self.pluginOrganizer.signals
         # reflect the plugin database's changes on view
-        dbSignal.pluginAdded.connect(self.view.addPlugin)
+        signal.pluginAdded.connect(self.view.addPlugin)
+        signal.pluginDetail.connect(self.view.displayPluginSuiteDetail)
+    
         
     def _connectViewToProfileDB(self):
         """ connect the signal from the view to profile database  

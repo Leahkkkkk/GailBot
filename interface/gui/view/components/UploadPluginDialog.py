@@ -13,12 +13,12 @@ Description: implementation of the plugin dialog for user to upload new plugin
 
 import os 
 import validators
-
+from view.config.Text import PLUGIN_SUITE_TEXT as TEXT
+from view.config.Style import FontSize
 from view.Signals import ProfileSignals
-from view.widgets import ColoredBtn, WarnBox, UploadTable
+from view.widgets import ColoredBtn, WarnBox, UploadTable, Label, TextInput, initPrimaryColorBackground
 from view.widgets import TextInput
 from view.config.Style import Color, Dimension
-from view.config.Text import CreateNewProfileTabText as Text 
 from view.util.io import get_name
 from view.util.ErrorMsg import WARN, ERR
 from gbLogger import makeLogger
@@ -32,7 +32,7 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import Qt, QSize, pyqtSignal, QObject
 
-class PluginDialog(QDialog):
+class UploadPlugin(QDialog):
     def __init__(self, signal:ProfileSignals, *arg, **kwarg) -> None:
         """ a pop up dialog that allow  user to load new plugin
             once the user confirms adding the plugin, the widget will 
@@ -50,19 +50,20 @@ class PluginDialog(QDialog):
         self._initWidget()
         self._initLayout()
         self._connectSignal()
+        initPrimaryColorBackground(self)
         
     def _initWidget(self):
         """ initializes the widget """
         self.uploadDir = ColoredBtn(
-            "Load from Directory",
+            TEXT.LOAD_DIR,
             Color.PRIMARY_BUTTON)
         self.uploadUrl = ColoredBtn(
-            "Load from URL", 
+            TEXT.LOAD_URL, 
             Color.PRIMARY_BUTTON
         )
         self.displayPlugins = UploadTable()
         self.addBtn = ColoredBtn(
-            "Register Plugin",
+            TEXT.REGISTER,
             Color.SECONDARY_BUTTON
         )
         
@@ -76,11 +77,12 @@ class PluginDialog(QDialog):
         
         self.verticalLayout = QVBoxLayout()
         self.setLayout(self.verticalLayout)
-        self.verticalLayout.addWidget(self.displayPlugins)
+        self.verticalLayout.addWidget(self.displayPlugins,
+                                      alignment=Qt.AlignmentFlag.AlignHCenter)
         self.verticalLayout.addWidget(hContainer, 
-                                      alignment=Qt.AlignmentFlag.AlignCenter)
+                                      alignment=Qt.AlignmentFlag.AlignHCenter)
         self.verticalLayout.addWidget(self.addBtn, 
-                                      alignment=Qt.AlignmentFlag.AlignCenter)
+                                      alignment=Qt.AlignmentFlag.AlignHCenter)
 
     def _connectSignal(self):
         """ connects the file signals upon button click """
@@ -103,7 +105,6 @@ class PluginDialog(QDialog):
         self.displayPlugins.addItem(source)
         
     def _addFromURL(self):
-        """ TODO: """
         self.uploadUrl = UploadURL()
         self.uploadUrl.sendurl.connect(self._addToPluginList)
         self.uploadUrl.exec()
@@ -125,12 +126,14 @@ class UploadURL(QDialog):
         super().__init__()
         
         self._layout = QVBoxLayout()
-        self.input = TextInput("Plugin URL", vertical=True)
-        self.confirm = ColoredBtn("Upload", Color.PRIMARY_BUTTON)
+        self.caption = Label(TEXT.URL_INSTRUCTION, FontSize.BODY)
+        self.input = TextInput(TEXT.URL, vertical=True, width=250)
+        self.confirm = ColoredBtn(TEXT.UPLOAD, Color.PRIMARY_BUTTON)
         self.setLayout(self._layout)
         self._layout.setAlignment(Qt.AlignmentFlag.AlignHCenter)
-        self._layout.addWidget(self.input)
-        self._layout.addWidget(self.confirm)
+        self._layout.addWidget(self.caption, alignment=Qt.AlignmentFlag.AlignHCenter)
+        self._layout.addWidget(self.input, alignment=Qt.AlignmentFlag.AlignHCenter)
+        self._layout.addWidget(self.confirm, alignment=Qt.AlignmentFlag.AlignHCenter)
         self.confirm.clicked.connect(self.upload)
     
     def getValue(self) -> str:

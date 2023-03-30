@@ -18,6 +18,7 @@ from view.components import (
     MenuBar, 
     Console, 
 )
+from view.components.PluginSuiteDetails import PluginSuiteDetails
 from view.util.ErrorMsg import WARN, ERR
 from view.Signals import FileSignals, ViewSignals, ProfileSignals, PluginSignals
 from view.widgets import WarnBox
@@ -26,7 +27,6 @@ from view.config.Text import About
 from config_frontend import FRONTEND_CONFIG_ROOT
 from PyQt6.QtCore import QSize
 from PyQt6.QtWidgets import QMainWindow
-
 
 class MainWindow(QMainWindow):
     """ mainwindow  of the GUI App"""
@@ -70,13 +70,22 @@ class MainWindow(QMainWindow):
         self._initLogger()
 
 
-    def addAvailableSetting(self, profileNames: List[str], pluginSuites: List[str]):
+    def addAvailableSetting(self, profileNames: List[str]):
         """ initialize available setting to interface"""
         try:
-            self.MainStack.addAvailableSetting(profileNames, pluginSuites)
+            self.MainStack.addAvailableSetting(profileNames)
         except Exception as e:
             self.logger.error(e, exc_info=e)
             self.showError(ERR.FAIL_TO.format("load setting"))
+    
+    def addAvailablePluginSuites(self, pluginSuites: List[Tuple[str, Dict[str, str]]]):
+        """ initialize available plugin to interface """
+        try:
+            for suite in pluginSuites:
+                self.addPlugin(suite)
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            self.showError(ERR.FAIL_TO.format("load plugin"))
             
     """ Functions provided to controller """
     def showTranscribeInProgress(self):
@@ -106,6 +115,7 @@ class MainWindow(QMainWindow):
     def busyThreadPool(self):
         """shows busy thread pool message"""
         self.showError(WARN.BUSY_THREAD)
+    
         
     def showStatusMsg(self, msg, time=None):
         """shows status message"""
@@ -212,18 +222,23 @@ class MainWindow(QMainWindow):
     def showError(self, errorMsg:str):
         WarnBox(errorMsg) 
     
-    def addPlugin(self, pluginName: str): 
+    def addPlugin(self, pluginSuite: Tuple[str, Dict[str, str]]): 
         """ 
         add a plugin identified by pluginName
         """
-        self.MainStack.ProfileSettingPage.addPluginHandler(pluginName)
+        self.MainStack.ProfileSettingPage.addPluginHandler(pluginSuite)
      
     # TODO:   
     def displayPluginSuiteDetail(self, suiteInfo) -> None :
         """ 
         open a frontend dialog to display suiteInfo 
         """
-        raise NotImplementedError
+        try:
+            display = PluginSuiteDetails(suiteInfo)
+            display.exec()
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            self.showError(ERR.FAIL_TO.format("display plugin suite detail"))
     
     """ private function """
     def _connectSignal(self):

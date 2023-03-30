@@ -19,10 +19,10 @@ from PyQt6.QtWidgets import QLineEdit, QHBoxLayout, QVBoxLayout, QWidget
 from PyQt6.QtCore import QSize
 
 class InputField(QLineEdit, FormWidget):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, width, height, *args, **kwargs):
         super(InputField, self).__init__(*args, **kwargs)
         self.setFixedSize(
-            QSize(Dimension.INPUTWIDTH, Dimension.INPUTHEIGHT)
+            QSize(width, height)
         )
         self.setStyleSheet(INPUT_STYLE)
         
@@ -36,6 +36,8 @@ class TextInput(QWidget, FormWidget):
                  labelSize = FontSize.BODY, 
                  inputText = None,
                  vertical = False,
+                 width = Dimension.INPUTWIDTH,
+                 height = Dimension.INPUTHEIGHT,
                  *args, **kwargs) -> None:
         super(TextInput, self).__init__(*args, **kwargs)
         self.label = deepcopy(label)
@@ -43,12 +45,14 @@ class TextInput(QWidget, FormWidget):
         self.vertical = vertical
         self.labelSize = labelSize
         self.value = inputText
+        self._width = width
+        self._height = height 
         self.initUI()
         self.connectSignal()
         
     def initUI(self):
         self.inputLabel = Label(self.label, self.labelSize)
-        self.inputField = InputField()
+        self.inputField = InputField(self._width, self._height)
         if self.value:
             self.inputField.setText(str(self.value))
         

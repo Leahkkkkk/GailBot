@@ -48,7 +48,7 @@ LINKLIGHT        = "#D1F5F5"
 
 [styleSheet]
 ## dark mode style sheet values, to be set as css by elements
-basic             = "background-color: #000; color: #fff"
+basic             = "background-color: #1D303F; color: #fff"
 goToMain          = "border:none; color:#D2E4EE;"
 settingStackID    = "settingStack"
 settingStack      = "#settingStack {border: none; border-left:0.5px solid #EBEBEB;}"

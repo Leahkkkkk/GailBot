@@ -37,9 +37,6 @@ class PluginPage(QWidget):
         self._initWidget()
         self._initlayout()
        
-    def displayPlugin(self, pluginInfo: Dict[str, Any]):
-        self.pluginTable.displayPluginDetails(pluginInfo)
-      
     def getValue(self):
         return [] 
         
@@ -51,8 +48,6 @@ class PluginPage(QWidget):
             alignment= center)
         self.caption = Label(
             Text.pluginCaption, FontSize.DESCRIPTION, FontFamily.MAIN)
-        self.message = Label(
-            Text.tempMessage, FontSize.DESCRIPTION, FontFamily.MAIN)
         self.pluginTable = PluginTable(self.signal)
         
     def _initlayout(self):
@@ -62,7 +57,7 @@ class PluginPage(QWidget):
         self.setLayout(self.verticalLayout)
         self.verticalLayout.addWidget(self.header)
         self.verticalLayout.setSpacing(Dimension.SMALL_SPACING)
-        self.verticalLayout.addWidget(self.message, alignment=center)
+        self.verticalLayout.addWidget(self.caption, alignment=center)
         self.verticalLayout.addSpacing(Dimension.SMALL_SPACING)
         self.verticalLayout.addWidget(self.pluginTable, alignment=center)
         self.verticalLayout.addStretch()

@@ -84,11 +84,6 @@ class Controller(QObject):
             assert self.ViewObj
             self.logger.info("View Object initialized")
             
-            settingNames = self.gb.get_all_settings_name()
-            pluginSuites = self.gb.get_all_plugin_suites()
-            self.logger.info(f"get setting and profile {settingNames}, {pluginSuites}")
-            self.ViewObj.addAvailableSettings(settingNames, pluginSuites)
-
             # initialize model view controller for dynamically changing view
             self.MVController = MVController(self.ViewObj, self.gb)
             assert self.MVController

@@ -6,6 +6,7 @@ INPUT_TEXT = f" color: {Color.INPUT_TEXT};\
 
  
 COMBO_BOX =  f"QComboBox {{background-color: {Color.INPUT_BACKGROUND};\
+                text-align:center;\
                 color:{Color.INPUT_TEXT};\
                 border:1px solid {Color.INPUT_BORDER};\
                 padding: 3px 12px 3px 12px;\

@@ -12,7 +12,7 @@ Implementation of a database that stores the profile data
 '''
 
 
-from typing import Tuple, Union, Dict
+from typing import Tuple
 
 from gailbot.api import GailBot
 from gbLogger import makeLogger

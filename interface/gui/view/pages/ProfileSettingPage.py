@@ -10,8 +10,7 @@ Modified By:  Siara Small  & Vivian Li
 '''
 
 from enum import Enum
-from typing import List
-
+from typing import List, Dict, List, Tuple
 from view.config.Style import Color, Dimension
 from view.config.Text import ProfilePageText as Text
 from view.config.Style import FontSize 
@@ -35,7 +34,7 @@ from view.widgets import (
 )
 
 from view.components.CreateNewSettingTab import CreateNewSetting
-from view.components.PluginDialog import PluginDialog
+from view.components.UploadPluginDialog import UploadPlugin
 from PyQt6.QtWidgets import (
     QWidget, 
     QStackedWidget, 
@@ -72,11 +71,10 @@ class ProfileSettingPage(QWidget):
         self._initStyle()
         self._initDimension()
     
-    def addAvailableSetting(self, profileKeys: List[str], pluginSuites: List[str]):
+    def addAvailableSetting(self, profileKeys: List[str]):
         """ add a list of profile keys """
         self.selectSettings.addItems(profileKeys)
-        self.RequiredSetPage.pluginForm.addPluginSuites(pluginSuites)
-         
+     
     def _initWidget(self):
         """ initializes widgets"""
         self.sideBar = SideBar()
@@ -194,11 +192,11 @@ class ProfileSettingPage(QWidget):
         """ opens a pop up window for user to create new setting profile """
         if self.setState == SET_STATE.REQUIRED:
             createNewSettingTab = CreateNewSetting(self.plugins)
-            createNewSettingTab.profileSignal.newSetting.connect(self._postNewProfile)
+            createNewSettingTab.signals.newSetting.connect(self._postNewProfile)
             createNewSettingTab.exec()
         elif self.setState == SET_STATE.PLUGIN:
             """ opens a pop up window to add plugin """
-            pluginDialog = PluginDialog(self.profileSignal)
+            pluginDialog = UploadPlugin(self.profileSignal)
             pluginDialog.exec()
         
     def loadProfile(self, profile:tuple):
@@ -236,9 +234,7 @@ class ProfileSettingPage(QWidget):
             WarnBox(ERR.ERR_WHEN_DUETO.format("updating profile", str(e)))
 
     
-    
-    def addPluginHandler(self, plugin:str):
-        """ adds a new plugin to the plugin handler
-        Args: plugin(str): name of the plugin to be added
-        """
-        self.RequiredSetPage.pluginForm.addPluginSuite(plugin)
+    def addPluginHandler(self, pluginSuite: Tuple[str, Dict[str, str]]):
+        name , info = pluginSuite
+        self.RequiredSetPage.pluginForm.addPluginSuite(name)
+        self.PluginPage.pluginTable.addPlugin(pluginSuite)
