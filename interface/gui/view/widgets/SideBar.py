@@ -17,7 +17,8 @@ from ..config.Text import About, Links
 
 from PyQt6.QtWidgets import (
     QWidget, 
-    QVBoxLayout
+    QVBoxLayout,
+    QGridLayout
 )
 from PyQt6.QtCore import Qt
 
@@ -29,34 +30,61 @@ class SideBar(QWidget):
     2. addStretch(self) -> None
     """
     def __init__(self, *args, **kwargs) -> None:
-       
         super().__init__(*args, **kwargs)
-        self.verticalLayout = QVBoxLayout()
-        self.setLayout(self.verticalLayout)
+        # initialize the top level grid layout 
+        self.gridLayout  = QGridLayout()
+        self.gridLayout.setRowMinimumHeight(0, 100)
+        self.gridLayout.setRowMinimumHeight(2, 150)
+        self.gridLayout.setRowStretch(1, 2)
+        
+        # initialize the top container 
+        self.topContainer = QWidget()
+        self.toplayout = QVBoxLayout()
+        self.toplayout.setContentsMargins(0,0,0,0)
+        self.toplayout.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+        self.topContainer.setLayout(self.toplayout)
+        self.gridLayout.addWidget(self.topContainer,0,0)
+
+        # initialize the bottom container
+        self.btmContainer = QWidget()
+        self.btmlayout = QVBoxLayout()
+        self.btmlayout.setContentsMargins(0,0,0,0)
+        self.btmlayout.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+        self.btmContainer.setLayout(self.btmlayout)
+        self.gridLayout.addWidget(self.btmContainer,2,0)
+
+        
+        # initialize the middle container
+        self.midContainer = QWidget()
+        self.midlayout = QVBoxLayout()
+        self.midlayout.setContentsMargins(0,0,0,0)
+        self.midlayout.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+        self.midContainer.setLayout(self.midlayout)
+        self.gridLayout.addWidget(self.midContainer,1,0)
+        
+        self.setLayout(self.gridLayout )
         self.setFixedWidth(Dimension.SIDEBAR)
-        self.verticalLayout.setContentsMargins(0,0,0,0)
+        self.gridLayout.setContentsMargins(0,0,0,0)
+        self.addFooter()
         initSideBarBackground(self)
         
-    def addWidget(self, widget: QWidget, alignment = None) -> None:
-        """ adds a widget to the sidebar
-        Args: widget(QWidget): widget to add
-              alignment: alignment of the added widget
-        """
-        center = Qt.AlignmentFlag.AlignHCenter
-        if alignment:
-            center = center | alignment
-        self.verticalLayout.addWidget(widget, alignment = center)
-        
-    def addStretch(self) -> None:
-        """ adds a stretch to the sidebar """
-        self.verticalLayout.addStretch()
-        
+    def addTopWidget(self, widget) -> None:
+        self.toplayout.addWidget(widget)
+    
+    def addMidWidget(self, widget) -> None:
+        self.midlayout.addWidget(widget)
+    
+    def addBtmWidget(self, widget) -> None:
+        self.btmlayout.addWidget(widget)
+
     def addFooter(self) -> None:
         self.GuideLink = Label(Links.guideLinkSideBar, FontSize.LINK, link=True)
         self.versionLabel = Label(About.version, FontSize.SMALL)
         self.copyRightLabel = Label(About.copyRight, FontSize.SMALL)
-        self.addWidget(self.GuideLink)
-        self.addWidget(self.versionLabel)
-        self.addWidget(self.copyRightLabel)
-        self.verticalLayout.addSpacing(30) 
+        self.btmlayout.addStretch()
+        self.btmlayout.addWidget(self.GuideLink, alignment=Qt.AlignmentFlag.AlignHCenter)
+        self.btmlayout.addWidget(self.versionLabel,alignment=Qt.AlignmentFlag.AlignHCenter)
+        self.btmlayout.addWidget(self.copyRightLabel,alignment=Qt.AlignmentFlag.AlignHCenter)
+        self.btmlayout.addStretch()
+
         

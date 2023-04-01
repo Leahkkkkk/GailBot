@@ -10,7 +10,8 @@ from gailbot.core.engines.watson import Watson
 import logging
 
 HIL_LAB = "/Users/yike/Documents/GitHub/GailBot/plugin_suite/gb_hilab_suite"
-
+HIL_LAB_GITHUB = "https://github.com/YikeLi-Vivi/hillab/archive/refs/heads/main.zip"
+HIL_LAB_AWS = "https://gailbot-plugin.s3.us-east-2.amazonaws.com/gb_hilab_suite.zip"
 def transcribe(files, setting_name = "test", setting_data = SETTING_DATA.WHISPER_PROFILE, output = PATH.USER_ROOT, fail_test = False):
     gb = GailBot(output)
     assert gb.reset_workspace()
@@ -125,6 +126,14 @@ def test_google_wav_suite():
     fails, invalid = transcribe(PATH.WAV_SUITE, "google", SETTING_DATA.GOOGLE_PROFILE)
 
 ################################## test for plugin ###########################################
+def test_github_url():
+    gb = GailBot(PATH.USER_ROOT)
+    gb.register_plugin_suite(HIL_LAB_GITHUB)
+    
+def test_s3_url():
+    gb = GailBot(PATH.USER_ROOT)
+    gb.register_plugin_suite(HIL_LAB_AWS)
+    
 def test_plugin():
     gb = GailBot(PATH.USER_ROOT)
     plugin_suite =  gb.register_plugin_suite(HIL_LAB)

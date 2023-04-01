@@ -21,7 +21,8 @@ from gbLogger import makeLogger
 from view.Signals import ProfileSignals, PluginSignals
 from view.pages import (
     RequiredSettingPage, 
-    PluginPage
+    PluginPage,
+    SysSetPage
 )
 from view.util.ErrorMsg import  ERR
 from view.widgets import (
@@ -29,8 +30,6 @@ from view.widgets import (
     BorderBtn,
     ComboBox, 
     SideBar,
-    WarnBox,
-    ConfirmBox 
 )
 
 from view.components.CreateNewSettingTab import CreateNewSetting
@@ -60,7 +59,6 @@ class ProfileSettingPage(QWidget):
         **kwargs) -> None:
         """ initializes class """
         super().__init__(*args, **kwargs)
-        self.setState : SET_STATE = SET_STATE.REQUIRED
         self.profileSignal = profileSignal
         self.pluginSignal = pluginSignal
         self.plugins = list(Form.Plugins)
@@ -69,34 +67,35 @@ class ProfileSettingPage(QWidget):
         self._initLayout()
         self._connectSignal()
         self._initStyle()
-        self._initDimension()
     
     def addAvailableSetting(self, profileKeys: List[str]):
         """ add a list of profile keys """
-        self.selectSettings.addItems(profileKeys)
+        self.RequiredSetPage.addAvailableSetting(profileKeys)
      
     def _initWidget(self):
         """ initializes widgets"""
         self.sideBar = SideBar()
-        self.selectSettings = ComboBox()
-        self.cancelBtn = ColoredBtn(
-            Text.cancelBtn, Color.CANCEL_QUIT)
-        self.saveBtn = ColoredBtn(
-            Text.saveBtn, Color.SECONDARY_BUTTON)
-        self.newSetBtn = ColoredBtn(
-            Text.newProfileBtn,Color.PRIMARY_BUTTON)
-        self.requiredSetBtn = BorderBtn(
-            Text.reuquiredSetBtn, Color.GREYDARK, FontSize.BTN, 0, STYLE.onlyTopBorder)
-        self.pluginBtn = BorderBtn(
-            Text.pluginSetBtn, Color.GREYDARK, FontSize.BTN, 0, STYLE.onlyBottomBorder)
+        # button on the sidebar
+        self.transcibeSetBtn = BorderBtn(
+            Text.reuquiredSetBtn, Color.GREYDARK, FontSize.BTN, 0, 
+            STYLE.onlyTopBorder, width=Dimension.LBTNWIDTH)
+       
+        self.pluginSetBtn = BorderBtn(
+            Text.pluginSetBtn, Color.GREYDARK, FontSize.BTN, 0, 
+            STYLE.onlyBottomBorder, width=Dimension.LBTNWIDTH)
+        
+        self.systemSetBtn = BorderBtn(
+            Text.sysSetBtn, Color.GREYDARK, FontSize.BTN, 0, 
+            STYLE.onlyBottomBorder, width=Dimension.LBTNWIDTH)
+        
+        self.cancelBtn = ColoredBtn(Text.cancelBtn, Color.CANCEL_QUIT)
         self.settingStack = QStackedWidget(self)
-        self.RequiredSetPage = RequiredSettingPage.RequiredSettingPage()
+        self.RequiredSetPage = RequiredSettingPage.RequiredSettingPage(self.profileSignal)
         self.PluginPage = PluginPage.PluginPage(self.pluginSignal)
-        self.selectSettings.setCurrentIndex(0)     
-        self.placeHolder = QWidget()
-        self.settingStack.addWidget(self.placeHolder)
+        self.SysPage = SysSetPage.SystemSettingPage()
         self.settingStack.addWidget(self.RequiredSetPage)
         self.settingStack.addWidget(self.PluginPage)
+        self.settingStack.addWidget(self.SysPage)
         self.settingStack.setCurrentWidget(self.RequiredSetPage)
     
     def _initLayout(self):
@@ -111,130 +110,67 @@ class ProfileSettingPage(QWidget):
         self.sidebarTopLayout.setContentsMargins(0,0,0,0)
         self.topSelectionContainer.setLayout(self.sidebarTopLayout)
         """ adds widgets to layout """
-        self.sidebarTopLayout.addWidget(self.selectSettings)
-        self.sidebarTopLayout.addWidget(self.requiredSetBtn)
-        self.sidebarTopLayout.addWidget(self.pluginBtn)
+        self.sidebarTopLayout.addWidget(self.transcibeSetBtn)
+        self.sidebarTopLayout.addWidget(self.pluginSetBtn)
+        self.sidebarTopLayout.addWidget(self.systemSetBtn)
         self.sidebarTopLayout.setSpacing(0)
-        self.sideBar.addWidget(self.topSelectionContainer)
-        self.sideBar.addWidget(self.newSetBtn)
-        self.sideBar.addWidget(self.saveBtn)
-        self.sideBar.addWidget(self.cancelBtn)
-        self.sideBar.addStretch()
-        self.sideBar.addFooter() 
+        self.sideBar.addTopWidget(self.topSelectionContainer)
+        self.sideBar.addMidWidget(self.cancelBtn)
         self.horizontalLayout.addWidget(self.sideBar)
         self.horizontalLayout.addWidget(self.settingStack)
         self.settingStack.setContentsMargins(0,0,0,0)
    
     def _connectSignal(self):
         """ connects profileSignal upon button clicks """
-        self.requiredSetBtn.clicked.connect(self._activeRequiredSet)
-        self.pluginBtn.clicked.connect(self._activatePlugin)
-        self.selectSettings.currentTextChanged.connect(self._getProfile)
-        self.newSetBtn.clicked.connect(self._addNew)
-        self.saveBtn.clicked.connect(self.updateProfile)
-        self.RequiredSetPage.deleteBtn.clicked.connect(self._deleteProfile)
+        self.transcibeSetBtn.clicked.connect(self._activeRequiredSet)
+        self.pluginSetBtn.clicked.connect(self._activatePlugin)
+        self.systemSetBtn.clicked.connect(self._activateSystemSet)
   
     def _activeRequiredSet(self):
         """ switches current page from post transcription settings page to required settings page """
         self._setBtnDefault()
-        self.newSetBtn.setText(Text.newProfileBtn)
-        self.setState = SET_STATE.REQUIRED
-        self.selectSettings.show()
-        self.saveBtn.show()
-        self.requiredSetBtn.setActiveStyle(Color.HIGHLIGHT)
+        self.transcibeSetBtn.setActiveStyle(Color.HIGHLIGHT)
         self.settingStack.setCurrentWidget(self.RequiredSetPage)
     
     def _activatePlugin(self):
         """ switches current page to plugin page """
         self._setBtnDefault()
-        self.newSetBtn.setText(Text.newPluginBtn)
-        self.setState = SET_STATE.PLUGIN
-        self.selectSettings.hide()
-        self.saveBtn.hide()
-        self.pluginBtn.setActiveStyle(Color.HIGHLIGHT)
+        self.pluginSetBtn.setActiveStyle(Color.HIGHLIGHT)
         self.settingStack.setCurrentWidget(self.PluginPage)
+    
+    def _activateSystemSet(self):
+        self._setBtnDefault()
+        self.systemSetBtn.setActiveStyle(Color.HIGHLIGHT)
+        self.settingStack.setCurrentWidget(self.SysPage)
     
     def _setBtnDefault(self):
         """ private function that sets the default style of the buttons on the page """
-        self.requiredSetBtn.setDefaultStyle()
-        self.pluginBtn.setDefaultStyle()
+        self.transcibeSetBtn.setDefaultStyle()
+        self.pluginSetBtn.setDefaultStyle()
+        self.systemSetBtn.setDefaultStyle()
     
     def _initStyle(self):
         """ initializes the style of the setting stack """
         self.settingStack.setObjectName(STYLE.settingStackID)
         self.settingStack.setStyleSheet(STYLE.settingStack)
     
-    def _initDimension(self):
-        """ initializes the dimensions of the buttons on the page """
-        self.requiredSetBtn.setFixedWidth(Dimension.LBTNWIDTH)
-        self.pluginBtn.setFixedWidth(Dimension.LBTNWIDTH)
-   
-    def _getProfile(self, profileName:str):
-        """ sends the request to database to get profile data  """
-        self.profileSignal.get.emit(profileName)
         
-    def _postNewProfile(self, profile: tuple):
-        """ sends the request to database to post a new profile data """
-        self.profileSignal.post.emit(profile)
-        
-    def _deleteProfile(self):
-        """ sends the delete signal to delete the profile"""
-        profileName = self.selectSettings.currentText()
-        ConfirmBox(Text.confirmDelete + profileName, 
-                   lambda: self.profileSignal.delete.emit(self.selectSettings.currentText()))
-         
     def deleteProfileConfirmed(self, deleted: bool):
         """ if deleted, remove the current setting name from available setting"""
-        if deleted:
-            self.selectSettings.removeItem(self.selectSettings.currentIndex())
-        
-    def _addNew(self):
-        """ opens a pop up window for user to create new setting profile """
-        if self.setState == SET_STATE.REQUIRED:
-            createNewSettingTab = CreateNewSetting(self.plugins)
-            createNewSettingTab.signals.newSetting.connect(self._postNewProfile)
-            createNewSettingTab.exec()
-        elif self.setState == SET_STATE.PLUGIN:
-            """ opens a pop up window to add plugin """
-            pluginDialog = UploadPlugin(self.profileSignal)
-            pluginDialog.exec()
+        self.RequiredSetPage.deleteProfileConfirmed(deleted) 
         
     def loadProfile(self, profile:tuple):
         """ loads the profile data to be presented onto the table """
-        try:
-            self.logger.info(profile)
-            key, data = profile 
-            self.selectSettings.setCurrentText(key)
-            self.RequiredSetPage.setValue(data)
-        except Exception as e:
-            self.logger.error(e, exc_info=e)
-            WarnBox(ERR.ERR_WHEN_DUETO.format("loading profile content", str(e)))
-            
+        self.RequiredSetPage.loadProfile(profile)
+         
     def addProfile (self, profileName:str):
         """ adding a new profile option to the settings page 
         Arg:
             profileName(str): name to be added as profile name to the new profile entry
         """
-        try:
-            self.selectSettings.addItem(profileName)
-        except Exception as e:
-            self.logger.error(e, exc_info=e)
-            WarnBox(ERR.ERR_WHEN_DUETO.format("adding profile", str(e)))
-    
+        self.RequiredSetPage.addProfile(profileName) 
         
-    def updateProfile(self):
-        """ updates the new profile setting """
-        try:
-            newSetting = self.RequiredSetPage.getValue()
-            self.logger.info(newSetting)
-            profileKey = self.selectSettings.currentText()
-            self.profileSignal.edit.emit((profileKey, newSetting))
-        except Exception as e:
-            self.logger.error(e, exc_info=e)
-            WarnBox(ERR.ERR_WHEN_DUETO.format("updating profile", str(e)))
-
-    
     def addPluginHandler(self, pluginSuite: Tuple[str, Dict[str, str]]):
         name , info = pluginSuite
-        self.RequiredSetPage.pluginForm.addPluginSuite(name)
-        self.PluginPage.pluginTable.addPlugin(pluginSuite)
+        self.RequiredSetPage.addPluginSuite(name)
+        self.PluginPage.addPluginSuiteConfirmed(pluginSuite)

@@ -35,7 +35,7 @@ from view.widgets import (
 
 
 from PyQt6.QtWidgets import QLabel, QVBoxLayout, QWidget
-from PyQt6.QtGui import QMovie
+from PyQt6.QtGui import QMovie, QFont
 from PyQt6 import QtCore
 from PyQt6.QtCore import Qt
 
@@ -69,6 +69,7 @@ class TranscribeProgressPage(QWidget):
         
     def _initWidget(self):
         """ initialize widgets """
+        font = QFont("Arial", 14, weight=600)
         self.label = Label(
             Text.mainLabelText, FontSize.HEADER2, FontFamily.MAIN)
         self.label.setAlignment(center)
@@ -87,6 +88,7 @@ class TranscribeProgressPage(QWidget):
         self.fileTable = FileTable(
             FileTableHeader.transcribePage, self.signals)
         self.fileTable.resizeCol(FileTableDimension.transcribePage)
+        self.fileTable.setFont(font)
         
     def _initstyle(self):
         """ styles loading icon movie """

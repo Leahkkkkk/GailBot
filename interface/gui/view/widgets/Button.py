@@ -91,6 +91,8 @@ class BorderBtn(QPushButton):
         fontSize:str = FontSize.BTN, 
         borderRadius:int = 5,
         other:str = None,
+        width:int = Dimension.BTNWIDTH,
+        height:int = Dimension.BTNHEIGHT,
         *args, 
         **kwargs
     ):
@@ -102,7 +104,7 @@ class BorderBtn(QPushButton):
         self.borderRadius = borderRadius
         self.fontSize = fontSize
         self.other = other 
-        self.setFixedSize(Dimension.BTNWIDTH, Dimension.BTNHEIGHT)
+        self.setFixedSize(width, height)
         self.defaultStyle =f"border: 1px solid {self.color};"\
                            f"color:{self.color};"\
                            f"border-radius:{self.borderRadius};"\

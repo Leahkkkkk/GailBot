@@ -57,18 +57,18 @@ class ToggleView(QWidget):
         self._configViewField()
         self._initLayout()
         self._connectSignal()
-        self.setScrollHeight(self.view.height())
+        self._scroll.setMaximumHeight(self.view.height())
     
     def setScrollHeight(self, size:int):
-        """ public function to resize the scroll area height 
+        """ public function to resize the _scroll area height 
         Args:
-        size: the height of the scroll area
+        size: the height of the _scroll area
         """
-        self.scroll.setMinimumHeight(size)
+        self._scroll.setMinimumHeight(size)
     
     def hideView(self) -> None :
         """ hide the view area """
-        self.scroll.hide()
+        self._scroll.hide()
         self.hide = True
         self.Btn.resetBtn()
         
@@ -86,23 +86,23 @@ class ToggleView(QWidget):
        
     def _configViewField(self):
         """ configures the toggle view """
-        self.scroll = ScrollArea()
-        self.scroll.setMinimumWidth(self.Btn.width() - Dimension.TOGGLEVIEWOFFSET)
-        self.scroll.setMaximumWidth(self.Btn.width())
-        self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
-        self.scroll.setWidgetResizable(True)
-        self.scroll.setWidget(self.view)
-        self.scroll.ensureWidgetVisible(self.view)
-        self.scroll.setBaseSize(self.view.width(), self.view.height())
+        self._scroll = ScrollArea()
+        self._scroll.setMinimumWidth(self.Btn.width() - Dimension.TOGGLEVIEWOFFSET)
+        self._scroll.setMaximumWidth(self.Btn.width())
+        self._scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
+        self._scroll.setWidgetResizable(True)
+        self._scroll.setWidget(self.view)
+        self._scroll.ensureWidgetVisible(self.view)
+        self._scroll.setBaseSize(self.view.width(), self.view.height())
         self.setObjectName("viewWrapper")
-        self.scroll.setObjectName("view")
-        self.scroll.setStyleSheet(
+        self._scroll.setObjectName("view")
+        self._scroll.setStyleSheet(
             f"#viewWrapper, #view {{background-color:{self.viewcolor}; color: {Color.MAIN_TEXT}}}")
         self.view.setObjectName("viewContainer")
         self.view.setStyleSheet(
             f"#viewContainer {{background-color:{self.viewcolor}}}")
-        self.scroll.verticalScrollBar().setStyleSheet(f"background-color:{Color.SCROLL_BAR}; border: 1px solid {Color.MAIN_BACKGROUND}")
-        self.scroll.hide()
+        self._scroll.verticalScrollBar().setStyleSheet(f"background-color:{Color.SCROLL_BAR}; border: 1px solid {Color.MAIN_BACKGROUND}")
+        self._scroll.hide()
         self.hide = True
         
           
@@ -114,7 +114,7 @@ class ToggleView(QWidget):
             Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
         self.layout.addWidget(
             self.Btn, alignment=Qt.AlignmentFlag.AlignLeft)
-        self.layout.addWidget(self.scroll)
+        self.layout.addWidget(self._scroll)
     
     def _connectSignal(self):
         """ connects signals upon button clicks """
@@ -123,10 +123,10 @@ class ToggleView(QWidget):
     def _toggleView(self):
         """ sets view for toggle class """
         if self.hide:
-            self.scroll.show()
+            self._scroll.show()
             self.hide = False
         else:
-            self.scroll.hide()
+            self._scroll.hide()
             self.hide = True
     
 

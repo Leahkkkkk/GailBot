@@ -15,16 +15,14 @@ import os
 import validators
 from view.config.Text import PLUGIN_SUITE_TEXT as TEXT
 from view.config.Style import FontSize
-from view.Signals import ProfileSignals
+from view.Signals import PluginSignals
 from view.widgets import ColoredBtn, WarnBox, UploadTable, Label, TextInput, initPrimaryColorBackground
 from view.widgets import TextInput
 from view.config.Style import Color, Dimension
-from view.util.io import get_name
 from view.util.ErrorMsg import WARN, ERR
 from gbLogger import makeLogger
 from PyQt6.QtWidgets import (
     QDialog, 
-    QListWidget, 
     QVBoxLayout, 
     QHBoxLayout,
     QFileDialog,
@@ -33,7 +31,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt, QSize, pyqtSignal, QObject
 
 class UploadPlugin(QDialog):
-    def __init__(self, signal:ProfileSignals, *arg, **kwarg) -> None:
+    def __init__(self, signal:PluginSignals, *arg, **kwarg) -> None:
         """ a pop up dialog that allow  user to load new plugin
             once the user confirms adding the plugin, the widget will 
             send a signal to post the newly added plugin to the database

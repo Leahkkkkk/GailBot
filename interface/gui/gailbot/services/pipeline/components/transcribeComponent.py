@@ -137,7 +137,6 @@ class TranscribeComponent(Component):
             
             # adding the task to transcribe individual file to the thread
             self.emit_progress(payload, "Adding Task")
-            
             for idx, file in enumerate(data_files):
                 transcribe_kwargs = copy.deepcopy(transcribe_kwargs)
                 transcribe_kwargs.update({"audio_path": file, "payload_workspace": transcribe_ws})
@@ -207,7 +206,7 @@ class TranscribeComponent(Component):
 
     def get_progress_string(self, finished: int, total: int) -> str:
         ## TODO: reduce the chunking , no chunking ; green bar for bar_fill
-        BAR_FILL = "⬛"  # Full block
+        BAR_FILL = "🟩"  # Full block
         BAR_EMPTY = "⬜"  # Light shade
         # Determine the length of the progress bar (50 characters)
         bar_length = 20

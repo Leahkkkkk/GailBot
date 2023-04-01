@@ -60,18 +60,13 @@ class SystemSettingPage(QWidget):
         self.logger = makeLogger("F")
         self._initWidget()
         self._initLayout()
-        self._initStyle()
         self._connectSignal()
         self._loadValue(SystemSetting)
 
     def _initWidget(self):
         """ initializes widgets to be shown """
-        self.sideBar = SideBar()
-        self.Mainstack = QStackedWidget()
         self.SysSetForm = SettingForm.SettingForm(
             Text.header, self.data, Text.caption)
-        self.cancelBtn = Button.ColoredBtn(
-            Text.cancelBtn, Color.CANCEL_QUIT)
         self.saveBtn = Button.ColoredBtn(
             Text.saveBtn, Color.PRIMARY_BUTTON)
 
@@ -80,32 +75,16 @@ class SystemSettingPage(QWidget):
         self.saveBtn.clicked.connect(self._confirmChangeSetting)
 
     def _initLayout(self):
-        """ initialize the layout of the page """
-        self.horizontalLayout = QHBoxLayout()
-        self.horizontalLayout.setContentsMargins(0,0,0,0)
-        self.horizontalLayout.setSpacing(0)
-
         """ initialize the form section """
-        self.formContainer = QWidget()
         self.formLayout = QVBoxLayout()
-        self.formContainer.setLayout(self.formLayout)
+        self.setLayout(self.formLayout)
         self.formLayout.addWidget(self.SysSetForm,alignment=Qt.AlignmentFlag.AlignHCenter)
         self.formLayout.addWidget(self.saveBtn, alignment=Qt.AlignmentFlag.AlignHCenter)
-        self.Mainstack.addWidget(self.formContainer)
-        self.setLayout(self.horizontalLayout)
-        """ add widgets to horizontal layout """
-        self.horizontalLayout.addWidget(self.sideBar)
-        self.horizontalLayout.addWidget(self.Mainstack)
-        self.sideBar.addMidWidget(self.cancelBtn)
 
         self._addFormButton("Restore Default", "Restore", self._confirmRestore)
         self._addFormButton("Clear Log Files", "Clear", self._clearLog)
         self._addFormButton("Save Log Files", "Save", self._saveLog)
 
-    def _initStyle(self):
-        self.Mainstack.setObjectName(StyleSheet.sysSettingStackID)
-        """ add this to an external stylesheet"""
-        self.Mainstack.setStyleSheet(StyleSheet.sysSettingStack)
 
     def setValue(self, values:dict):
         """ public function to set the system setting form value

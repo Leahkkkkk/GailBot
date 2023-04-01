@@ -4,7 +4,7 @@ from view.widgets import GraphDisplay, MarkdownDisplay, TextDisplay, Label
 from view.widgets.Background import initPrimaryColorBackground
 from PyQt6.QtWidgets import QDialog, QVBoxLayout
 from PyQt6.QtCore import Qt, QSize
-
+from PyQt6.QtGui import QFont
 
 class PluginInfo(TypedDict):
     suite_name : str 
@@ -25,7 +25,8 @@ class PluginSuiteDetails(QDialog):
         self._layout.addWidget(self.metadata)
         self._layout.addWidget(self.documentation)
         self._layout.addWidget(self.graph)
-        self.setFixedWidth(Dimension.FORMWIDTH)
-        self.setMaximumHeight(Dimension.FORMMAXHEIGHT)
-        self.setMinimumHeight(Dimension.FORMMINHEIGHT)
+        self.setMinimumWidth(Dimension.WIN_MIN_WIDTH)
+        self.setMaximumWidth(Dimension.WINMAXWIDTH)
+        self.setMaximumHeight(900)
+        self.setMinimumHeight(600)
         initPrimaryColorBackground(self)

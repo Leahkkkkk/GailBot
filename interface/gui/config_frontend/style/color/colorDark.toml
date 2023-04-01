@@ -21,7 +21,7 @@ LOW_CONTRAST     = "#686C71"
 LOW_CONTRAST2    = "#5B5B5B"
 ##outline of the file table
 OUTLINE          = "#F0F6F9"
-GREYDARK         = "#5B5B5B"
+GREYDARK         = "#F0F6F9"
 ##file table border
 BORDER           = "#797979"
 ##high contrast color

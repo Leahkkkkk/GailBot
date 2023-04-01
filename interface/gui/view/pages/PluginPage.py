@@ -10,12 +10,13 @@ Modified By:  Siara Small  & Vivian Li
 Description: implementation of the plugin page
 '''
 from typing import Dict, List, Any
-from view.config.Style import FontSize, Dimension, FontFamily
+from view.config.Style import FontSize, Dimension, FontFamily, Color
 from view.config.Text import ProfilePageText as Text
 from view.config.Text import ProfileSettingForm as Form
 from gbLogger import makeLogger
-from view.widgets import Label, ScrollArea, initSecondaryColorBackground
+from view.widgets import Label, ColoredBtn
 from view.widgets.PluginTable import PluginTable
+from view.components.UploadPluginDialog import UploadPlugin
 from PyQt6.QtWidgets import (
     QWidget, 
     QVBoxLayout)
@@ -37,9 +38,6 @@ class PluginPage(QWidget):
         self._initWidget()
         self._initlayout()
        
-    def getValue(self):
-        return [] 
-        
     def _initWidget(self):
         """ initializes widgets """
         self.logger.info("")
@@ -49,6 +47,7 @@ class PluginPage(QWidget):
         self.caption = Label(
             Text.pluginCaption, FontSize.DESCRIPTION, FontFamily.MAIN)
         self.pluginTable = PluginTable(self.signal)
+        self.addBtn = ColoredBtn(Text.newPluginBtn, Color.SECONDARY_BUTTON)
         
     def _initlayout(self):
         """" initializes layout """
@@ -61,3 +60,12 @@ class PluginPage(QWidget):
         self.verticalLayout.addSpacing(Dimension.SMALL_SPACING)
         self.verticalLayout.addWidget(self.pluginTable, alignment=center)
         self.verticalLayout.addStretch()
+        self.verticalLayout.addWidget(self.addBtn, alignment=center)
+
+    def addPluginSuite(self):
+        pluginDialog = UploadPlugin(self.signal)
+        pluginDialog.exec()
+    
+    def addPluginSuiteConfirmed(self, pluginSuite):
+        self.pluginTable.addPluginSuite(pluginSuite)
+        

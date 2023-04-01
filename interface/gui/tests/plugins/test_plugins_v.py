@@ -5,7 +5,6 @@ from typing import Dict, Any, List
 from gailbot.core.utils.logger import makelogger
 from .plugin_data import hilab_plugin, test_config, TEST_PLUGIN_URL, HIL_LAB_PLUGIN_URL, TEST_TWO_DIR_SRC, Invalid
 from gailbot.plugins.manager import PluginManager, DuplicatePlugin
-from gailbot.configs import top_level_config_loader 
 import pytest 
 import os
 import time

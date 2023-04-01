@@ -84,9 +84,9 @@ class PluginTable(QTableWidget):
             plugin suite information
         """
         for plugin in plugins:
-            self.addPlugin(plugin)
+            self.addPluginSuite(plugin)
     
-    def addPlugin(self, suiteInfo: Tuple[str, Dict[str, str]]):
+    def addPluginSuite(self, suiteInfo: Tuple[str, Dict[str, str]]):
         self.logger.info(suiteInfo)
         suiteName, metadata = suiteInfo
         try:

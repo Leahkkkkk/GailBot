@@ -9,6 +9,7 @@ COMBO_BOX =  f"QComboBox {{background-color: {Color.INPUT_BACKGROUND};\
                 text-align:center;\
                 color:{Color.INPUT_TEXT};\
                 border:1px solid {Color.INPUT_BORDER};\
+                margin: 5px;\
                 padding: 3px 12px 3px 12px;\
                 border-radius: 7px;\
                 margin: 5px;}}"

@@ -6,7 +6,7 @@ from .Background import initPrimaryColorBackground
 from PyQt6.QtGui import  QTextDocument
 from PyQt6.QtWidgets import QTextEdit, QWidget, QGridLayout
 from typing import List, Dict
-
+from PyQt6.QtCore import Qt
 class MarkdownDisplay(QTextEdit):
     def __init__(self, filePath):
         super().__init__()
@@ -32,8 +32,8 @@ class TextDisplay(QWidget):
         for key, value in data.items():
             caption = Label(key, FontSize.HEADER3)
             content = Label(value, FontSize.BODY)
-            self._layout.addWidget(caption, row, 0)
-            self._layout.addWidget(content, row, 1)
+            self._layout.addWidget(caption, row, 0, alignment=Qt.AlignmentFlag.AlignHCenter)
+            self._layout.addWidget(content, row, 1, alignment=Qt.AlignmentFlag.AlignLeft)
             row += 1
         initPrimaryColorBackground(self)
         self.setStyleSheet(StyleSheet.basic)
