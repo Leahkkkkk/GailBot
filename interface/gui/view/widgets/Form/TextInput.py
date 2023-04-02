@@ -19,7 +19,7 @@ from PyQt6.QtWidgets import QLineEdit, QHBoxLayout, QVBoxLayout, QWidget
 from PyQt6.QtCore import QSize
 
 class InputField(QLineEdit, FormWidget):
-    def __init__(self, width, height, *args, **kwargs):
+    def __init__(self, width=Dimension.INPUTWIDTH, height = Dimension.INPUTHEIGHT, *args, **kwargs):
         super(InputField, self).__init__(*args, **kwargs)
         self.setFixedSize(
             QSize(width, height)

@@ -34,7 +34,6 @@ class MultipleSelect(QWidget, FormWidget):
                 res.append(choice)
         self.logger.info(f"return the plugin setting {res}")
         return res
-
     
     def setValue(self, choices: List[str]):
         choiceSet = set(choices)
