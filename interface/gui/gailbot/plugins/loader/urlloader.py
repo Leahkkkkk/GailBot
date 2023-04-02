@@ -1,5 +1,7 @@
 import os 
 import re
+import boto3
+from botocore.exceptions import ParamValidationError
 from typing import Dict, List, Union, TypedDict, Tuple
 from abc import ABC
 from .directoryloader import PluginDirectoryLoader
@@ -9,7 +11,9 @@ from gailbot.core.utils.logger import makelogger
 from gailbot.core.utils.general import (
     get_extension,
     read_toml,
+    delete
 )
+from gailbot.configs import PLUGIN_CONFIG
 from gailbot.core.utils.download import download_from_urls
 from urllib.parse import urlparse
 
@@ -29,7 +33,7 @@ class UrlLoader(ABC):
         """
         raise NotImplementedError
     
-    def load(self, url: str) -> PluginSuite:
+    def load(self, url: str) -> List[PluginSuite]:
         """ load the source from the url """
         raise NotImplementedError
     
@@ -48,7 +52,8 @@ class PluginURLLoader(PluginLoader):
         
         self.url_loaders: List[UrlLoader] = [
             GitHubURLLoader(download_dir, suites_dir),
-            S3ZipLoader(download_dir, suites_dir)]
+            S3ZipLoader(download_dir, suites_dir),
+            S3BucketLoader(download_dir, suites_dir)]
 
     @property
     def supported_url_source(self):
@@ -86,13 +91,9 @@ class PluginURLLoader(PluginLoader):
             Bool: return false if the url is not supported by current url loader
         """
         for loader in self.url_loaders:
-            if not self.is_valid_url(url):
-                return False
-    
-            suite = loader.load(url)
-            if isinstance(suite, PluginSuite):
-                return suite
-        
+            suites = loader.load(url)
+            if isinstance(suites, List):
+                return suites 
         return False
             
 class GitHubURLLoader(UrlLoader):
@@ -120,7 +121,7 @@ class GitHubURLLoader(UrlLoader):
         else:
             return False
         
-    def load(self, url : str) -> PluginSuite:
+    def load(self, url : str) -> List[PluginSuite]:
         """ download the plugin from a given url and stored a copy of the 
             plugins in the suites directory 
 
@@ -157,7 +158,10 @@ class GitHubURLLoader(UrlLoader):
                 break
             
         # Move to the suites dir.
-        return self.dir_loader.load(suite_path)
+        suites = self.dir_loader.load(suite_path)
+        delete(download_path)
+        return suites
+
 
 class S3ZipLoader(UrlLoader):
     """ load plugin from an url source  """
@@ -219,4 +223,73 @@ class S3ZipLoader(UrlLoader):
                 break
             
         # Move to the suites dir.
-        return self.dir_loader.load(suite_path)
+        suites = self.dir_loader.load(suite_path)
+        delete(download_path)
+        return suites
+
+class S3BucketLoader(UrlLoader):
+    """ load plugin from an url source  """
+    def __init__(self, download_dir, suites_dir) -> None:
+        """ initialize the plugin loader
+        
+        Args:
+            download_dir (str): path to where the plugin suite will be downloaded 
+            suites_dir (str): path to where the plugin will be stored after 
+                              download
+        """
+        self.download_dir = download_dir
+        self.suites_dir = suites_dir
+        
+    def is_supported_url(self, bucket: str) -> bool:
+        """  given a url, returns true if the url is supported by the 
+             github loader
+        
+        Args:
+            url (str): the url string
+        """
+        r3 = boto3.resource('s3',
+                aws_access_key_id=PLUGIN_CONFIG.AWS_ACCESS_ID,
+                aws_secret_access_key=PLUGIN_CONFIG.AWS_ACCESS_KEY)
+        try:
+            r3.meta.client.head_bucket(Bucket=bucket)
+            return True
+        except ParamValidationError:
+            return False
+        except Exception as e:
+            logger.error(e, exc_info=e)
+            return False
+    
+    def load(self, bucket : str) -> List[PluginSuite]:
+        """ download the plugin from a given url and stored a copy of the 
+            plugins in the suites directory 
+
+        Args:
+            url (str): url for downloading the suite 
+            suites_directory  (str): path to where a copy of the plugin suite 
+                                    will be store 
+
+        Returns:
+            PluginSuite: return a PluginSuite object that stores the loaded suite
+        """
+        if not self.is_supported_url(bucket):
+            return False
+        
+        s3 = boto3.client("s3", aws_access_key_id=PLUGIN_CONFIG.AWS_ACCESS_ID,
+                                aws_secret_access_key=PLUGIN_CONFIG.AWS_ACCESS_KEY)
+        
+        pluginsuites = []
+        # get all object from teh bucket 
+        objects = s3.list_objects_v2(Bucket=bucket)['Contents']
+        for obj in objects:
+            key = obj['Key']
+            if "zip" in key:
+                # Generate a presigned URL for the object
+                url = s3.generate_presigned_url('get_object',
+                                            Params={'Bucket': bucket, 'Key': key},
+                                        ExpiresIn=3600) 
+                url = url[0 : url.index('?')]
+                logger.info(f"loading plugin from url {url}")
+                ZipLoader = S3ZipLoader(self.download_dir, self.suites_dir)
+                pluginsuites.extend(ZipLoader.load(url))
+        return pluginsuites
+                

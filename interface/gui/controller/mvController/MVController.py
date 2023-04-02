@@ -37,9 +37,9 @@ class MVController:
         exec(): driver function that starts to run the model view controller
     """
     def __init__(self, view: ViewController, gb: GailBot) -> None:
-        self.fileOrganizer = FileOrganizer(gb)
-        self.profileOrganizer = ProfileOrganizer(gb)
-        self.pluginOrganizer = PluginOrganizer(gb)
+        self.fileOrganizer = FileOrganizer(gb, view.getFileSignal())
+        self.profileOrganizer = ProfileOrganizer(gb, view.getProfileSignal())
+        self.pluginOrganizer = PluginOrganizer(gb, view.getPluginSignal())
         self.logger = makeLogger("F")
         self.view  = view 
         self.gb = gb 
@@ -61,10 +61,7 @@ class MVController:
         """ public function to execute the model view controller """
         self._connectFileDBToView()
         self._connectViewToFileDB()
-        self._connectPluginDBToView()
-        self._connectViewToPluginDB()
         self._connectProfileDBToView()
-        self._connectViewToProfileDB()
         
     def _connectFileDBToView(self):
         """ connect the signal from the file database to view
@@ -78,7 +75,7 @@ class MVController:
         dbSignal.fileUpdated.connect(view.updateFile)
         
         # handle file database's request to load the profile of one file
-        dbSignal.profileRequest.connect(self.profileOrganizer.get)
+        dbSignal.profileRequest.connect(self.view.loadProfile)
         dbSignal.error.connect(self.view.showErr)
      
     def _connectViewToFileDB(self):
@@ -99,44 +96,27 @@ class MVController:
         # handle remove file 
         viewSignal.delete.connect(db.delete)
     
-    def _connectViewToPluginDB(self):
-        """ connect the signal from the view to plugin database  
-            store, delete or edit the database based on the view's request
-        """
-        self.logger.info("initialize model&view connection")
-        viewSignal = self.view.getPluginSignal()
-        # handle view's request to load new plugin
-        viewSignal.addPlugin.connect(self.pluginOrganizer.addPlugin)
-        viewSignal.requestPluginDetails.connect(self.pluginOrganizer.gerPluginSuiteDetail)
+    #     """ connect the signal from the view to plugin database  
+    #         store, delete or edit the database based on the view's request
+    #     """
+    #     self.logger.info("initialize model&view connection")
+    #     viewSignal = self.view.getPluginSignal()
+    #     # handle view's request to load new plugin
+    #     viewSignal.addPlugin.connect(self.pluginOrganizer.addPlugin)
+    #     viewSignal.detailRequest.connect(self.pluginOrganizer.gerPluginSuiteDetail)
     
     
-    def _connectPluginDBToView(self):
-        """ connect the signal from the plugin database to view
-            change the presentation of data on the view
-        """
-        self.logger.info("initialize model&view connection")
-        signal = self.pluginOrganizer.signals
-        # reflect the plugin database's changes on view
-        signal.pluginAdded.connect(self.view.addPlugin)
-        signal.pluginDetail.connect(self.view.displayPluginSuiteDetail)
+    # def _connectPluginDBToView(self):
+    #     """ connect the signal from the plugin database to view
+    #         change the presentation of data on the view
+    #     """
+    #     self.logger.info("initialize model&view connection")
+    #     signal = self.pluginOrganizer.signals
+    #     # reflect the plugin database's changes on view
+    #     signal.pluginAdded.connect(self.view.addPlugin)
+    #     signal.pluginDetail.connect(self.view.displayPluginSuiteDetail)
     
         
-    def _connectViewToProfileDB(self):
-        """ connect the signal from the view to profile database  
-            store, delete or edit the database based on the view's request
-        """
-        self.logger.info("initialize model&view connection")
-        viewSignal = self.view.getProfileSignal()
-        db = self.profileOrganizer
-        # handle view's request to post new profile
-        viewSignal.post.connect(db.post)
-        # handle view's request to get profile data 
-        viewSignal.get.connect(db.get)
-        # handle view's request to edit profile data 
-        viewSignal.edit.connect(db.edit)
-        # handle view's reques to delete profile 
-        viewSignal.delete.connect(db.delete)
-    
     def _connectProfileDBToView(self):
         """ connect the signal from the profile database to view
             change the presentation of data on the view
@@ -146,7 +126,7 @@ class MVController:
         # connect db's response to load profile data 
         dbSignal.send.connect(self.view.loadProfile)
         # connect db's response to add new profile selection on view
-        dbSignal.profileAdded.connect(self.view.addProfile) 
+        # dbSignal.profileAdded.connect(self.view.addProfile) 
         dbSignal.deleteProfile.connect(self.view.deleteProfile)
         dbSignal.deleteProfile.connect(self.fileOrganizer.profileDeleted)
         dbSignal.error.connect(self.view.showErr)

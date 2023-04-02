@@ -13,13 +13,15 @@ from typing import Dict, List, Any
 from view.config.Style import FontSize, Dimension, FontFamily, Color
 from view.config.Text import ProfilePageText as Text
 from view.config.Text import ProfileSettingForm as Form
+from view.Signals import PluginSignals, Request
 from gbLogger import makeLogger
 from view.widgets import Label, ColoredBtn
 from view.widgets.PluginTable import PluginTable
 from view.components.UploadPluginDialog import UploadPlugin
 from PyQt6.QtWidgets import (
     QWidget, 
-    QVBoxLayout)
+    QVBoxLayout,
+    QHBoxLayout)
 from PyQt6.QtCore import Qt
 
 center  = Qt.AlignmentFlag.AlignHCenter
@@ -28,15 +30,16 @@ class PluginPage(QWidget):
     """" class for the plugins page """
     def __init__(
         self,
-        signal, 
+        signal: PluginSignals,
         *args, 
         **kwargs) -> None:
         super().__init__( *args, **kwargs)
         """ initializes class """
-        self.signal = signal
+        self.signal = PluginSignals()
         self.logger = makeLogger("F")
         self._initWidget()
         self._initlayout()
+        self._connectSignal()
        
     def _initWidget(self):
         """ initializes widgets """
@@ -48,6 +51,7 @@ class PluginPage(QWidget):
             Text.pluginCaption, FontSize.DESCRIPTION, FontFamily.MAIN)
         self.pluginTable = PluginTable(self.signal)
         self.addBtn = ColoredBtn(Text.newPluginBtn, Color.SECONDARY_BUTTON)
+        self.deleteBtn = ColoredBtn(Text.deleteBtn, Color.CANCEL_QUIT)
         
     def _initlayout(self):
         """" initializes layout """
@@ -60,12 +64,28 @@ class PluginPage(QWidget):
         self.verticalLayout.addSpacing(Dimension.SMALL_SPACING)
         self.verticalLayout.addWidget(self.pluginTable, alignment=center)
         self.verticalLayout.addStretch()
-        self.verticalLayout.addWidget(self.addBtn, alignment=center)
+        self.btnContainer = QWidget()
+        self.btnLayout = QHBoxLayout()
+        self.btnContainer.setLayout(self.btnLayout)
+        self.btnLayout.addWidget(self.addBtn)
+        self.btnLayout.addWidget(self.deleteBtn)
+        self.btnLayout.setSpacing(Dimension.MEDIUM_SPACING)
+        self.verticalLayout.addWidget(self.btnContainer, alignment=center)
 
+    def _connectSignal(self):
+        self.addBtn.clicked.connect(self.addPluginSuite)
+        self.signal.addPlugin.connect(self.addRequestWrapper)
+        
+    def addRequestWrapper(self, suiteData):
+        self.signal.addRequest.emit(
+            Request(data = suiteData, succeed=self.addPluginSuiteConfirmed))
+    
     def addPluginSuite(self):
         pluginDialog = UploadPlugin(self.signal)
         pluginDialog.exec()
     
     def addPluginSuiteConfirmed(self, pluginSuite):
+        name, data = pluginSuite
         self.pluginTable.addPluginSuite(pluginSuite)
+        self.signal.pluginAdded.emit(name)
         

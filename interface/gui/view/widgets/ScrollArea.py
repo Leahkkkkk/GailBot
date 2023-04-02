@@ -11,7 +11,7 @@ Modified By:  Siara Small  & Vivian Li
 
 from view.style.WidgetStyleSheet import SCROLL_BAR
 from PyQt6.QtWidgets import QScrollArea 
-from PyQt6.QtCore import QSize
+from PyQt6.QtCore import QSize, Qt
 
 class ScrollArea(QScrollArea):
     """ a customized QComboBox Widget """
@@ -21,6 +21,7 @@ class ScrollArea(QScrollArea):
         self.verticalScrollBar().setStyleSheet(SCROLL_BAR)
         self.horizontalScrollBar().setStyleSheet(SCROLL_BAR)
         self.setWidgetResizable(True)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
         
 
         

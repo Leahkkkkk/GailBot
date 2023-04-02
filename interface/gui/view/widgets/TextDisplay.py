@@ -2,6 +2,7 @@ import markdown
 from .Label import Label
 from gbLogger import makeLogger
 from view.config.Style import FontFamily, FontSize, Color, StyleSheet
+from view.style.WidgetStyleSheet import SCROLL_BAR
 from .Background import initPrimaryColorBackground
 from PyQt6.QtGui import  QTextDocument
 from PyQt6.QtWidgets import QTextEdit, QWidget, QGridLayout
@@ -21,6 +22,8 @@ class MarkdownDisplay(QTextEdit):
         self.setReadOnly(True)
         initPrimaryColorBackground(self)
         self.setStyleSheet(StyleSheet.basic)
+        self.setMinimumHeight(350)
+        self.verticalScrollBar().setStyleSheet(SCROLL_BAR)
         
 
 class TextDisplay(QWidget):
@@ -37,3 +40,4 @@ class TextDisplay(QWidget):
             row += 1
         initPrimaryColorBackground(self)
         self.setStyleSheet(StyleSheet.basic)
+        

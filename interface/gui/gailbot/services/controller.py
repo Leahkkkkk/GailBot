@@ -310,7 +310,7 @@ class ServiceController:
             logger.error(e, exc_info=e)
             return [], sources
         
-    def register_plugin_suite(self, plugin_source: str) -> Union[str, bool]:
+    def register_plugin_suite(self, plugin_source: str) -> Union[List[str], bool]:
         """
         Registers a plugin suite to the object's plugin manager
 
@@ -370,7 +370,7 @@ class ServiceController:
         """
         return self.plugin_manager.delete_suite(suite_name)
     
-    def get_plugin_suite_metadata(self, suite_name: str) :
+    def get_plugin_suite_metadata(self, suite_name: str):
         return self.plugin_manager.get_suite_metadata(suite_name)
 
     def get_plugin_suite_dependency_graph(self, suite_name: str) :

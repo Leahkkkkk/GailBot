@@ -69,7 +69,6 @@ class MainWindow(QMainWindow):
         self._connectSignal()
         self._initLogger()
 
-
     def addAvailableSetting(self, profileNames: List[str]):
         """ initialize available setting to interface"""
         try:
@@ -195,7 +194,7 @@ class MainWindow(QMainWindow):
             setting page and file table file profile options
         """
         try:
-            self.MainStack.ProfileSettingPage.addProfile(profileName)
+            self.MainStack.SettingPage.addProfile(profileName)
             self.MainStack.FileUploadPage.fileTable.addProfile(profileName)
         except Exception as e:
             self.logger.error(e, exc_info=e)
@@ -207,14 +206,14 @@ class MainWindow(QMainWindow):
         """
         try:
             self.MainStack.FileUploadPage.fileTable.deleteProfile(profileName)
-            self.MainStack.ProfileSettingPage.deleteProfileConfirmed(True)
+            self.MainStack.SettingPage.deleteProfileConfirmed(True)
         except Exception as e:
             self.logger.error(e, exc_info=e)
             self.showError(ERR.FAIL_TO.format("delete profile"))
         
-    def loadProfile(self, data: Tuple[str, Dict]):
+    def loadProfile(self, name):
         try:
-            self.MainStack.ProfileSettingPage.loadProfile(data)
+            self.MainStack.loadProfile(name)
         except Exception as e:
             self.logger.error(e, exc_info=e)
             self.showError(ERR.FAIL_TO.format("load profile"))
@@ -226,7 +225,7 @@ class MainWindow(QMainWindow):
         """ 
         add a plugin identified by pluginName
         """
-        self.MainStack.ProfileSettingPage.addPluginHandler(pluginSuite)
+        self.MainStack.SettingPage.addPluginHandler(pluginSuite)
      
     # TODO:   
     def displayPluginSuiteDetail(self, suiteInfo) -> None :
@@ -243,7 +242,7 @@ class MainWindow(QMainWindow):
     """ private function """
     def _connectSignal(self):
         """ connect to signal """
-        self.MainStack.SystemSettingPage.signal.restart.connect(self._restart)
+        self.MainStack.SettingPage.SysPage.signal.restart.connect(self._restart)
         self.MenuBar.OpenConsole.triggered.connect(lambda: self.Console.show())
         self.MenuBar.CloseConsole.triggered.connect(lambda: self.Console.hide())
         self.fileTableSignals.cancel.connect(self.confirmCancel)

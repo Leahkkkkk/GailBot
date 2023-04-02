@@ -32,7 +32,7 @@ from PyQt6.QtCore import QObject, pyqtSignal, QSize
 
 class Signals(QObject):
     """ a signal object to send new setting data values """
-    newSetting = pyqtSignal(object)
+    newSetting = pyqtSignal(tuple)
     
 class CreateNewSetting(QDialog):
     def __init__(self, plugins : List[str], *agrs, **kwargs) -> None:
@@ -77,7 +77,7 @@ class CreateNewSetting(QDialog):
         setting = dict()
         profileName = self.addProfileName.getData()
         setting["engine_setting"] = self.engineSetting.getData()
-        setting["plugin_setting"] = []
+        setting["plugin_setting"] = self.pluginSetting.getData()
         try:
             self.logger.info(setting)
             self.signals.newSetting.emit((profileName, setting))

@@ -160,14 +160,14 @@ class ViewController():
         """
         self.window.addProfile(profileName)
     
-    def loadProfile(self, profileData: Tuple[str, Dict]):
+    def loadProfile(self, name):
         """ load the profile data to the front end profile setting page
 
         Args:
             profileData (Tuple[str, Dict]):  a tuple that stores the name of 
                                              the profile and the setting data
         """
-        self.window.loadProfile(profileData)
+        self.window.loadProfile(name)
         
    
     def addPlugin(self, pluginSuite: Tuple[str, Dict[str, str]]):
@@ -209,7 +209,7 @@ class ViewController():
         """ 
         returns the profile signals 
         """
-        return self.window.profileSignals
+        return self.window.MainStack.SettingPage.TranscriptionSetPage.signal
     
     def getViewSignal(self) -> ViewSignals:
         """ 
@@ -221,10 +221,11 @@ class ViewController():
         """ 
         returns the plugin signal
         """
-        return self.window.pluginSignal
+        return self.window.MainStack.SettingPage.PluginPage.signal
     
     def displayPluginSuiteDetail(self, suiteInfo) -> None :
         """ 
         open a frontend dialog to display suiteInfo 
         """
         self.window.displayPluginSuiteDetail(suiteInfo) 
+    

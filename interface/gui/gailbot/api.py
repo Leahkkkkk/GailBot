@@ -368,7 +368,7 @@ class GailBot:
     def register_plugin_suite(
         self, 
         plugin_source : str
-    ) -> Union[str, bool]:
+    ) -> Union[List[str], bool]:
         """
         Registers a gailbot plugin suite
 
@@ -376,7 +376,8 @@ class GailBot:
             plugin_source : str: Name of the plugin suite to register
 
         Returns:
-            return the plugin name if the plugin is registered, false otherwise
+            return the a list of plugin name if the plugin is registered, 
+            false otherwise
         """
         return self.gb.register_plugin_suite(plugin_source)
     

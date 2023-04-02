@@ -13,6 +13,7 @@ Description: implementation of a the plugin database
 from typing import TypedDict, Tuple, Dict
 
 from gailbot.api import GailBot
+from view.Signals import PluginSignals, Request
 from PyQt6.QtCore import QObject, pyqtSignal
 from controller.util.io import get_name
 from controller.util.Error import ERR
@@ -41,31 +42,60 @@ class PluginOrganizer:
         functions that delete or add file to the database
     1. post(self, plugin: Tuple[str, str]) -> None
     """
-    def __init__(self, gbController: GailBot) -> None:
+    def __init__(self, gbController: GailBot, pluginSignals: PluginSignals) -> None:
         self.data = dict()
         self.signals = Signals()
         self.gb = gbController
-    
-    def addPlugin(self, pluginSuitePath:str) -> None: 
+        self.registerSignals(pluginSignals)
+        
+    def registerSignals(self, signals: PluginSignals):
+        signals.addRequest.connect(self.addSuite)
+        signals.detailRequest.connect(self.getPluginSuiteDetail)
+        signals.deleteRequest.connect(self.deleteSuite)
+        
+    def addSuite(self, addRequest: Request) -> None: 
         """ add a new plugin to the data base
 
         Args:
             pluginSuitePath: a string that stores the path to plugin suite
         """     
-        suite = self.gb.register_plugin_suite(pluginSuitePath)
+        suites = self.gb.register_plugin_suite(addRequest.data)
         # suite = get_name(pluginSuitePath) 
-        if suite:
-            metaInfo = self.gb.get_plugin_suite_metadata(suite)
-            self.signals.pluginAdded.emit((suite, metaInfo))
+        if suites:
+            for suite in suites:
+                metaInfo = self.gb.get_plugin_suite_metadata(suite)
+                addRequest.succeed((suite, metaInfo))
         else:
             self.signals.error.emit(ERR.ERROR_WHEN_DUETO.format(
-                f"register plugin {get_name(pluginSuitePath)}", "invalid plugin suite"))
+                f"register plugin {get_name(addRequest.data)}", "invalid plugin suite"))
 
-    def gerPluginSuiteDetail(self, pluginName:str) -> Dict[str, str]:
+    def deleteSuite(self, deleteRequest: Request) -> None:
+        """ delete the plugin
+
+        Args:
+            deleteRequest (Request): _description_
+        """
+        deleted = self.gb.delete_plugin_suite(deleteRequest.data)
+        if deleted:
+            deleteRequest.succeed(deleteRequest.data)
+        else:
+            self.signals.error.emit(ERR.ERROR_WHEN_DUETO.format(
+                f"delete plugin suite {deleteRequest.data}", "cannot be deleted"))
+    
+    def getPluginSuiteDetail(self, detailRequest: Request) -> Dict[str, str]:
+        """get the plugin details
+
+        Args:
+            detailRequest (Request): _description_
+
+        Returns:
+            Dict[str, str]: _description_
+        """
         details = dict()
+        pluginName = detailRequest.data
         details["suite_name"] = pluginName
         details["metadata"] = self.gb.get_plugin_suite_metadata(pluginName)
         details["dependency_graph"] = self.gb.get_plugin_suite_dependency_graph(pluginName)
         details["documentation"] = self.gb.get_plugin_suite_documentation_path(pluginName)
-        self.signals.pluginDetail.emit(details)
+        detailRequest.succeed(details)
         return details

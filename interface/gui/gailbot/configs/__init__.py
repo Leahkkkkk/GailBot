@@ -14,5 +14,6 @@ from .interfaces import (
     PATH,
     PROJECT_ROOT,
     TemporaryFolder, 
-    OutputFolder
+    OutputFolder,
+    PLUGIN_CONFIG
 )

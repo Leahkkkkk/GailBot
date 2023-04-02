@@ -12,13 +12,14 @@ Description: implementation of the main page Stack
 from typing import Tuple, List
 
 from gbLogger import makeLogger
+from view.Signals import ProfileSignals, FileSignals, PluginSignals, ViewSignals
 from view.config.Style import Dimension
 from view.config.Text import MainStackText
 from view.pages import (
         WelcomePage, 
         ConfirmTranscribePage,
         FileUploadPage,
-        ProfileSettingPage,
+        SettingPage,
         TranscribeProgressPage,
         TranscribeSuccessPage,
         RecordPage, 
@@ -56,9 +57,9 @@ class MainStack(QStackedWidget):
     """
     def __init__(
         self, 
-        fileTableSignal,   
-        profileSignals,    
-        pluginSignals,
+        fileTableSignal: FileSignals,   
+        profileSignals: ProfileSignals,    
+        pluginSignals: PluginSignals,
         *args, 
         **kwargs) -> None:
         super().__init__(*args, **kwargs)
@@ -78,7 +79,7 @@ class MainStack(QStackedWidget):
         Args:
             profileNames (List[str]): a list of profile names
         """
-        self.ProfileSettingPage.addAvailableSetting(profileNames)
+        self.SettingPage.addAvailableSetting(profileNames)
         self.FileUploadPage.initAvailableProfiles(profileNames)
         
     def gotoTranscribeInProgress(self):
@@ -96,13 +97,10 @@ class MainStack(QStackedWidget):
     
     def gotoSettingPage(self, setting:str = None):
         """ go to setting page with the setting data """
-        self.setCurrentWidget(self.MainSetting)
-        self.MainSetting.setCurrentWidget(self.ProfileSettingPage)
-        self.ProfileSettingPage.settingStack.setCurrentIndex(1)
-        if setting:
-            self.ProfileSettingPage.selectSettings.setCurrentText(setting)
-    
-     
+        self.setCurrentWidget(self.SettingPage)
+        self.SettingPage.settingStack.setCurrentWidget(
+            self.SettingPage.TranscriptionSetPage)
+      
     def addFileToTables(self, file:dict):
         """ public function that add files to all the file tables """
         self.FileUploadPage.fileTable.addFile(file)
@@ -136,8 +134,8 @@ class MainStack(QStackedWidget):
         self.ConfirmTranscribePage = ConfirmTranscribePage.ConfirmTranscribePage(
             self.fileSignal)
         initSubPageBackground(self.ConfirmTranscribePage)
-        self.ProfileSettingPage = ProfileSettingPage.ProfileSettingPage(self.profileSignals, self.pluginSignals)
-        initPrimaryColorBackground(self.ProfileSettingPage)
+        self.SettingPage = SettingPage.SettingPage(self.profileSignals, self.pluginSignals)
+        initPrimaryColorBackground(self.SettingPage)
         self.TranscribeProgressPage = TranscribeProgressPage.TranscribeProgressPage(
             self.fileSignal)
         initSubPageBackground(self.TranscribeProgressPage)
@@ -149,20 +147,20 @@ class MainStack(QStackedWidget):
         # self.RecordPage = RecordPage.RecordPage()
         # initSubPageBackground(self.RecordPage)
         
-        self.SystemSettingPage = SystemSettingPage.SystemSettingPage()
-        initPrimaryColorBackground(self.SystemSettingPage)
-        self.MainSetting = QTabWidget()
-        self.MainSetting.addTab(
-            self.ProfileSettingPage, MainStackText.profilesetting)
-        self.MainSetting.addTab(
-            self.SystemSettingPage, MainStackText.systemsetting) 
+        # self.SystemSettingPage = SystemSettingPage.SystemSettingPage()
+        # initPrimaryColorBackground(self.SystemSettingPage)
+        # self.MainSetting = QTabWidget()
+        # self.MainSetting.addTab(
+        #     self.SettingPage, MainStackText.profilesetting)
+        # self.MainSetting.addTab(
+        #     self.SystemSettingPage, MainStackText.systemsetting) 
         
         self.addWidget(self.WelcomePage)
         self.addWidget(self.ConfirmTranscribePage)
         self.addWidget(self.FileUploadPage)
         self.addWidget(self.TranscribeProgressPage)
         self.addWidget(self.TranscribeSuccessPage)
-        self.addWidget(self.MainSetting)
+        self.addWidget(self.SettingPage)
         self.setCurrentWidget(self.WelcomePage)
         # self.addWidget(self.RecordPage)
     
@@ -170,20 +168,21 @@ class MainStack(QStackedWidget):
         """ initializes button click to page redirect functionality  """
         self.WelcomePage.StartBtn.clicked.connect(self.gotoFileUploadPage)
         self.FileUploadPage.settingBtn.clicked.connect(lambda: 
-                self.setCurrentWidget(self.MainSetting))
+                self.setCurrentWidget(self.SettingPage))
         self.TranscribeSuccessPage.moreBtn.clicked.connect(self.gotoFileUploadPage)
         self.TranscribeSuccessPage.returnBtn.clicked.connect(lambda: 
                 self.setCurrentWidget(self.WelcomePage))
         self.ConfirmTranscribePage.confirmBtn.clicked.connect(
             self.FileUploadPage._disallowTranscribe)
-        self.ProfileSettingPage.cancelBtn.clicked.connect(self.gotoFileUploadPage)
+        self.SettingPage.cancelBtn.clicked.connect(self.gotoFileUploadPage)
         self.FileUploadPage.gotoMainBtn.clicked.connect(lambda:
                 self.setCurrentWidget(self.WelcomePage))
         self.FileUploadPage.transcribeBtn.clicked.connect(lambda:
             self.setCurrentWidget(self.ConfirmTranscribePage))
         self.ConfirmTranscribePage.cancelBtn.clicked.connect(self.gotoFileUploadPage)
-        self.SystemSettingPage.cancelBtn.clicked.connect(self.gotoFileUploadPage)
-        self.SystemSettingPage.saveBtn.clicked.connect(self.gotoFileUploadPage)
+        
+        # self.SystemSettingPage.cancelBtn.clicked.connect(self.gotoFileUploadPage)
+        # self.SystemSettingPage.saveBtn.clicked.connect(self.gotoFileUploadPage)
         # self.FileUploadPage.recordBtn.clicked.connect(lambda:
         #         self.setCurrentWidget(self.RecordPage))
         # self.RecordPage.cancelBtn.clicked.connect(self.gotoFileUploadPage)
@@ -203,4 +202,11 @@ class MainStack(QStackedWidget):
             self.TranscribeProgressPage.fileTable.filterFile)
         self.ConfirmTranscribePage.fileTable.viewSignal.transferState.connect(
             self.TranscribeSuccessPage.fileTable.filterFile)
- 
+        ##### when profile is added, the file table stores new profile name
+        ####  for selection
+        self.SettingPage.TranscriptionSetPage.signal.profileAdded.connect(
+            self.FileUploadPage.fileTable.addProfile)
+        
+    def loadProfile(self, name):
+        self.SettingPage.TranscriptionSetPage.getProfile(name)
+        

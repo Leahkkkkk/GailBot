@@ -46,17 +46,17 @@ class EngineSettingForm(QWidget):
         """initialize widgets"""
         self.engineForm = DependentCombo(
             EngineForm.Engine, "Speech to Text Engine", "engine")
-        self.engineFormView = ToggleView(
+        self.toggleView = ToggleView(
             Text.engineSettingHeader, self.engineForm, header = True)
-        self.engineFormView.setScrollHeight(Dimension.OUTPUT_FORM_HEIGHT)
-
+        self.toggleView.setScrollHeight(Dimension.OUTPUT_FORM_HEIGHT)
+    
     def _initLayout(self):
         """initialize layout"""
         self.verticalLayout = QVBoxLayout()
         self.setLayout(self.verticalLayout)
         """ add widget to layout """
         self.verticalLayout.addWidget(
-            self.engineFormView, alignment=Qt.AlignmentFlag.AlignTop)
+            self.toggleView, alignment=Qt.AlignmentFlag.AlignTop)
     
     def setValue(self, data: Dict [str, dict]):
         """ a public function to set the form value

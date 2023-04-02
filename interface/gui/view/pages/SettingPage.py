@@ -20,7 +20,7 @@ from gbLogger import makeLogger
 
 from view.Signals import ProfileSignals, PluginSignals
 from view.pages import (
-    RequiredSettingPage, 
+    TranscriptionSetPage, 
     PluginPage,
     SysSetPage
 )
@@ -49,7 +49,8 @@ bottom = QtCore.Qt.AlignmentFlag.AlignBottom
 class SET_STATE(Enum):
     REQUIRED = 0
     PLUGIN = 1
-class ProfileSettingPage(QWidget):
+    
+class SettingPage(QWidget):
     """ class for settings page """
     def __init__(
         self, 
@@ -59,9 +60,8 @@ class ProfileSettingPage(QWidget):
         **kwargs) -> None:
         """ initializes class """
         super().__init__(*args, **kwargs)
-        self.profileSignal = profileSignal
+        self.profileSignal = profileSignal 
         self.pluginSignal = pluginSignal
-        self.plugins = list(Form.Plugins)
         self.logger = makeLogger("F")
         self._initWidget()
         self._initLayout()
@@ -70,7 +70,7 @@ class ProfileSettingPage(QWidget):
     
     def addAvailableSetting(self, profileKeys: List[str]):
         """ add a list of profile keys """
-        self.RequiredSetPage.addAvailableSetting(profileKeys)
+        self.TranscriptionSetPage.addAvailableSetting(profileKeys)
      
     def _initWidget(self):
         """ initializes widgets"""
@@ -90,13 +90,13 @@ class ProfileSettingPage(QWidget):
         
         self.cancelBtn = ColoredBtn(Text.cancelBtn, Color.CANCEL_QUIT)
         self.settingStack = QStackedWidget(self)
-        self.RequiredSetPage = RequiredSettingPage.RequiredSettingPage(self.profileSignal)
+        self.TranscriptionSetPage = TranscriptionSetPage.TranscriptionSetPage(self.profileSignal)
         self.PluginPage = PluginPage.PluginPage(self.pluginSignal)
         self.SysPage = SysSetPage.SystemSettingPage()
-        self.settingStack.addWidget(self.RequiredSetPage)
+        self.settingStack.addWidget(self.TranscriptionSetPage)
         self.settingStack.addWidget(self.PluginPage)
         self.settingStack.addWidget(self.SysPage)
-        self.settingStack.setCurrentWidget(self.RequiredSetPage)
+        self.settingStack.setCurrentWidget(self.TranscriptionSetPage)
     
     def _initLayout(self):
         """initializes layout"""
@@ -125,12 +125,14 @@ class ProfileSettingPage(QWidget):
         self.transcibeSetBtn.clicked.connect(self._activeRequiredSet)
         self.pluginSetBtn.clicked.connect(self._activatePlugin)
         self.systemSetBtn.clicked.connect(self._activateSystemSet)
+        self.PluginPage.signal.pluginAdded.connect(self.TranscriptionSetPage.addPluginSuite)
+        self.PluginPage.signal.pluginDeleted.connect(self.TranscriptionSetPage.deletePlugin)
   
     def _activeRequiredSet(self):
         """ switches current page from post transcription settings page to required settings page """
         self._setBtnDefault()
         self.transcibeSetBtn.setActiveStyle(Color.HIGHLIGHT)
-        self.settingStack.setCurrentWidget(self.RequiredSetPage)
+        self.settingStack.setCurrentWidget(self.TranscriptionSetPage)
     
     def _activatePlugin(self):
         """ switches current page to plugin page """
@@ -154,23 +156,24 @@ class ProfileSettingPage(QWidget):
         self.settingStack.setObjectName(STYLE.settingStackID)
         self.settingStack.setStyleSheet(STYLE.settingStack)
     
-        
     def deleteProfileConfirmed(self, deleted: bool):
         """ if deleted, remove the current setting name from available setting"""
-        self.RequiredSetPage.deleteProfileConfirmed(deleted) 
+        # self.TranscriptionSetPage.deleteProfileConfirmed(deleted) 
+        pass
         
     def loadProfile(self, profile:tuple):
         """ loads the profile data to be presented onto the table """
-        self.RequiredSetPage.loadProfile(profile)
+        # self.TranscriptionSetPage.loadProfile(profile)
+        pass
          
     def addProfile (self, profileName:str):
         """ adding a new profile option to the settings page 
         Arg:
             profileName(str): name to be added as profile name to the new profile entry
         """
-        self.RequiredSetPage.addProfile(profileName) 
+        self.TranscriptionSetPage.createSucceed(profileName) 
         
     def addPluginHandler(self, pluginSuite: Tuple[str, Dict[str, str]]):
         name , info = pluginSuite
-        self.RequiredSetPage.addPluginSuite(name)
+        # self.TranscriptionSetPage.addPluginSuite(name)
         self.PluginPage.addPluginSuiteConfirmed(pluginSuite)

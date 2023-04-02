@@ -20,5 +20,5 @@ logger = makelogger("plugin_loader")
 
 class PluginLoader(ABC):
     """ base class for plugin loader """
-    def load(self, *args, **kwargs) -> PluginSuite:
+    def load(self, *args, **kwargs) -> List[PluginSuite]:
         raise NotImplementedError()

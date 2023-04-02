@@ -13,6 +13,7 @@ from .core.engines.whisper import load_whisper_config
 from .core.setting.defaults import load_default_config
 from .core.util.logger import load_log_config
 from .config.path_config import load_workspace_config
+from .plugin import PLUGIN_CONFIG
 from .services import load_service_config, load_default_setting
 from .config.path_config import TemporaryFolder, OutputFolder
 

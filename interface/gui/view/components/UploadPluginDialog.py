@@ -124,7 +124,7 @@ class UploadURL(QDialog):
         super().__init__()
         
         self._layout = QVBoxLayout()
-        self.caption = Label(TEXT.URL_INSTRUCTION, FontSize.BODY)
+        self.caption = Label(TEXT.URL_INSTRUCTION, FontSize.INSTRUCTION_CAPTION, others="line-height: 1.5; weight:400;")
         self.input = TextInput(TEXT.URL, vertical=True, width=250)
         self.confirm = ColoredBtn(TEXT.UPLOAD, Color.PRIMARY_BUTTON)
         self.setLayout(self._layout)
@@ -133,18 +133,16 @@ class UploadURL(QDialog):
         self._layout.addWidget(self.input, alignment=Qt.AlignmentFlag.AlignHCenter)
         self._layout.addWidget(self.confirm, alignment=Qt.AlignmentFlag.AlignHCenter)
         self.confirm.clicked.connect(self.upload)
+        self.caption.setStyleSheet("line-height: 40px; font-size: 15px")
     
     def getValue(self) -> str:
         return self.input.getValue()
 
     def upload(self):
         url = self.input.getValue()
-        if validators.url(url):
-            self.sendurl.emit(url)
-            self.close()
-        else:
-            WarnBox(WARN.INVALID_PLUGIN_URL)
-        
+        self.sendurl.emit(url)
+        self.close()
+   
 
     
         

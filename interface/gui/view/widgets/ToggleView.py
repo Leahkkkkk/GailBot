@@ -23,8 +23,10 @@ from PyQt6.QtWidgets import (
     QWidget, 
     QVBoxLayout
 )
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, pyqtSignal, QObject
 
+class Signal(QObject):
+    showview = pyqtSignal()
 class ToggleView(QWidget):
     """ 
     A toggle view widget that shows and hides content,
@@ -35,6 +37,7 @@ class ToggleView(QWidget):
         view(object): the content that will be toggled 
         header(bool): if set to true, the width of the label will be wider
     """
+    
     def __init__(
         self, 
         label:str, 
@@ -46,11 +49,13 @@ class ToggleView(QWidget):
         **kwargs):
         
         super().__init__(*args, **kwargs)
+        QObject.__init__(self)
         self.labelStr = label
         self.view = view
         self.header = header
         self.headercolor = headercolor
         self.viewcolor = viewcolor
+        self.signal = Signal() 
         self.setContentsMargins(0,0,0,0)
     
         self._configHeader()
@@ -124,6 +129,7 @@ class ToggleView(QWidget):
         """ sets view for toggle class """
         if self.hide:
             self._scroll.show()
+            self.signal.showview.emit()
             self.hide = False
         else:
             self._scroll.hide()

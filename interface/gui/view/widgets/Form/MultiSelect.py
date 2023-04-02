@@ -2,17 +2,36 @@ from typing import List, Dict
 from .FormWidget import FormWidget
 from ..Label import Label
 from view.config.Style import FontSize
+from gbLogger import makeLogger
 from PyQt6.QtWidgets import QWidget, QVBoxLayout
 from .CheckBox import CheckBox
 from PyQt6.QtCore import Qt
 
+CHECKBOX_STYLE = """
+     {
+        font-size: 13px;
+        font-family: Arial, sans-serif;
+        color: #333333;
+        font-weight:800;
+        spacing: 5px;
+        padding-left: 20px;
+    };
+    QCheckBox::indicator {
+        width: 16px;
+        height: 16px;
+    }
+   
+"""
 class MultipleSelect(QWidget, FormWidget):
     def __init__(self, label: str,  choices: List[str]) -> None:
         super().__init__()
+        self.logger = makeLogger("F")
         self.choices = choices 
         self.labeltxt = label
-        self.choicesDict: Dict[str, CheckBox] = {c: CheckBox(c, False) for c in self.choices}
+        self.choicesDict: Dict[str, CheckBox] = dict()
         self.initUI()
+        for choice in choices: 
+            self.addChoice(choice)
         
     def initUI(self):
         self._layout = QVBoxLayout()
@@ -20,14 +39,14 @@ class MultipleSelect(QWidget, FormWidget):
         self.labelwidget = Label(self.labeltxt, FontSize.BODY)
         self.setLayout(self._layout)
         self._layout.addWidget(self.labelwidget, alignment=Qt.AlignmentFlag.AlignTop)
-        for c in self.choicesDict.values():
-            self._layout.addWidget(c, alignment=Qt.AlignmentFlag.AlignTop)
+        
     
     def getValue(self) -> List[str]:
         res = []
         for choice, box in self.choicesDict.items():
             if box.isChecked():
                 res.append(choice)
+        self.logger.info(f"return the plugin setting {res}")
         return res
 
     
@@ -41,6 +60,16 @@ class MultipleSelect(QWidget, FormWidget):
 
     def addChoice(self, newChoice:str):
         newBox = CheckBox(newChoice, False)
+        self.logger.info(CHECKBOX_STYLE)
+        newBox.setStyleSheet(CHECKBOX_STYLE)
         self.choicesDict[newChoice] = newBox 
         self._layout.addWidget(newBox, alignment=Qt.AlignmentFlag.AlignTop)
         # self._layout.addStretch() 
+    
+    
+    def removeChoice(self,choice: str):
+        if choice in self.choicesDict:
+            try:
+                self.choicesDict[choice].hide()
+            except Exception as e:
+                self.logger.error(e, exc_info=e)

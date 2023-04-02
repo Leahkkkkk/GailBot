@@ -97,17 +97,21 @@ class PluginManager:
     def register_suite(
         self,
         plugin_source : str
-    ) -> Union[str, bool]:
+    ) -> Union[List[str], bool]:
         """
         Register a plugin suite from the given source, which can be
         a plugin directory, a url, a conf file, or a dictionary configuration.
         """
+        registered = []
         try:
             for loader in self.loaders:
-                suite = loader.load(plugin_source) 
-                if suite and isinstance(suite, PluginSuite):
-                    self.suites[suite.name] = suite
-                    return suite.name
+                suites = loader.load(plugin_source) 
+                if suites and isinstance(suites, list):
+                    for suite in suites: 
+                        if isinstance(suite, PluginSuite):
+                            self.suites[suite.name] = suite
+                            registered.append(suite.name)
+                    return registered
             return False
         except Exception as e:
             logger.error(e, exc_info=e)
@@ -142,7 +146,6 @@ class PluginManager:
             return None
         return self.suites[suite_name].dependency_graph()
     
-    
     def get_suite_documentation_path(self, suite_name) -> str:
         if not self.is_suite(suite_name):
             logger.error(f"Suite does not exist {suite_name}")
@@ -167,11 +170,15 @@ class PluginManager:
         """ 
         given a suite name, delete the plugin suite
         """
-        if self.is_suite(name):
-            delete(os.path.join(self.suites_dir, name))
-            del self.suites[name]
-            return True 
-        else:
+        try:
+            if self.is_suite(name):
+                delete(os.path.join(self.suites_dir, name))
+                del self.suites[name]
+                return True 
+            else:
+                return False
+        except Exception as e:
+            logger.error(e, exc_info=e)
             return False
                 
     def get_suite_path(self, name:str) -> str:

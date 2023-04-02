@@ -38,6 +38,9 @@ class PluginForm(QWidget):
         """
         self.pluginSuitesList.addChoice(pluginSuite)
     
+    def deletePluginSuite(self, pluginSuite:str):
+        self.pluginSuitesList.removeChoice(pluginSuite)
+    
     def getValue(self):
         return self.pluginSuitesList.getValue()
 

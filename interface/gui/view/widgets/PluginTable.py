@@ -2,11 +2,11 @@ from typing import List, Dict, Tuple, Any
 from view.config.Style import Dimension
 from view.config.Text import PLUGIN_SUITE_TEXT
 from view.style.WidgetStyleSheet import FILE_TABLE, SCROLL_BAR, TABLE_HEADER
-from view.Signals import PluginSignals
+from view.Signals import PluginSignals, Request
 from view.util.ErrorMsg import ERR  
 from view.components.PluginSuiteDetails import PluginSuiteDetails
 
-from .MsgBox import WarnBox
+from .MsgBox import WarnBox, ConfirmBox
 from gbLogger import makeLogger
 from PyQt6.QtWidgets import (
     QTableWidget, 
@@ -73,7 +73,6 @@ class PluginTable(QTableWidget):
         self.horizontalHeader().setStyleSheet(TABLE_HEADER)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
 
-
     def addPlugins(self, plugins: List[Tuple[str, Dict[str, str]]]):
         """ 
         add a list of plugins to the plugin suite table
@@ -106,15 +105,26 @@ class PluginTable(QTableWidget):
     
     def deleteSuite(self, suiteName:str, tableItem: QTableWidgetItem):
         try:
-            self.signal.deletePlugin.emit(suiteName)
-            rowidx = self.indexFromItem(tableItem).row()
-            self.removeRow(rowidx)
+            self.logger.info(f"trying to delete the plugin suite {suiteName}")
+            succeed = lambda data: self.deleteSuiteSucceed(suiteName, tableItem)
+            requestDelete = lambda : self.signal.deleteRequest.emit(
+                Request(data=suiteName, succeed= succeed)
+            )
+            ConfirmBox(
+                PLUGIN_SUITE_TEXT.CONFIRM_DELETE.format(suiteName),
+                requestDelete)
         except Exception as e:
             self.logger.error(e, exc_info=e)
             WarnBox(ERR.ERR_WHEN_DUETO.format("deleting plugin suite", str(e)))
    
+    def deleteSuiteSucceed(self, name: str, tableItem: QTableWidgetItem):
+        rowidx = self.indexFromItem(tableItem).row()
+        self.removeRow(rowidx)
+        self.signal.pluginDeleted.emit(name)
+        
     def seeSuiteDetail(self, suiteName:str):
-        self.signal.requestPluginDetails.emit(suiteName)
+        self.signal.detailRequest.emit(
+            Request(data = suiteName, succeed=self.displayPluginSuiteDetail))
         
     def addCellWidget(self, suiteName: str, tableItem: QTableWidgetItem, row:int):
         cellWidget = QWidget()
@@ -127,3 +137,14 @@ class PluginTable(QTableWidget):
         deleteBtn.clicked.connect(lambda: self.deleteSuite(suiteName, tableItem))
         detailBtn.clicked.connect(lambda: self.seeSuiteDetail(suiteName))
         self.setCellWidget(row, len(self.headers) - 1, cellWidget)
+
+    def displayPluginSuiteDetail(self, suiteInfo) -> None :
+        """ 
+        open a frontend dialog to display suiteInfo 
+        """
+        try:
+            display = PluginSuiteDetails(suiteInfo)
+            display.exec()
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            WarnBox(ERR.FAIL_TO.format("display plugin suite detail"))

@@ -128,6 +128,7 @@ class RecordPageProgressText:
 class ProfilePageText:
     """class holding the text for the profile page"""
     cancelBtn          = "Exit"
+    confirm            = "Confirm"
     saveBtn            = "Save Edit"
     deleteBtn          = "Delete Profile"
     newProfileBtn      = "Create New Profile"
@@ -142,7 +143,6 @@ class ProfilePageText:
     pluginCaption      = "These plugins are available in GailBot"
     tempMessage        = "This page has been temporarily disabled to allow for further updates and developments. Please check back later."
     confirmDelete      = "Confirm deleting the profile: "
-
 @dataclass 
 class SystemSetPageText:
     """class holding the text for the system settings page"""
@@ -316,13 +316,14 @@ class Links:
 @dataclass
 class PLUGIN_SUITE_TEXT:
     LOAD_DIR = "Load from Directory"
-    LOAD_URL = "Load from URL"
+    LOAD_URL = "Load from Cloud"
     REGISTER = "Register Plugin Suite"
-    URL = "Plugin Suite URL"
+    URL = ""
     UPLOAD = "Upload"
-    URL_INSTRUCTION = "GailBot currently accepts url from: Amazon S3"
+    URL_INSTRUCTION = "GailBot currently accepts plugin suite from: \n 1. Amazon S3 object url \n 2. Amazon S3 Public Bucket Name"
     TABLE_HEADER = ["Plugin Suite Name", "Author", "Version", "Actions"]
     TABLE_DIMENSION = [0.3,0.3,0.2,0.2]
+    CONFIRM_DELETE = "Confirm deleting plugin suite {0}"
     
     
     

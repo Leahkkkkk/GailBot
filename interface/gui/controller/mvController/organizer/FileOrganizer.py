@@ -13,7 +13,7 @@ Description: Implementation of a database that stores all the file data
 from dataclasses import dataclass
 from typing import TypedDict, Tuple, Dict, Set
 from gailbot.api import GailBot
-
+from view.Signals import FileSignals, Request  
 from gbLogger import makeLogger
 from controller.util.Error import  ERR
 from PyQt6.QtCore import QObject, pyqtSignal
@@ -63,7 +63,7 @@ class Signals(QObject):
     fileUpdated    = pyqtSignal(tuple)
     
 class FileOrganizer:
-    def __init__(self, gbController: GailBot) -> None:
+    def __init__(self, gbController: GailBot, fileSignal: FileSignals) -> None:
         """ implementation of File database
         
         Field:
@@ -103,6 +103,8 @@ class FileOrganizer:
         self.currentKey = 1
         self.logger = makeLogger("F")
     
+    def registerSignal(self, signal:FileSignals):
+        signal.requestprofile.connect(self.requestProfile)
     
     ##########################  request handler ###########################
     def post(self, data : fileDict) -> None:

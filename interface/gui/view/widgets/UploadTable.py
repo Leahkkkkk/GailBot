@@ -52,10 +52,10 @@ class UploadTable(QTableWidget):
         self.logger.info(f"{item} item added")
         if os.path.isdir(item):
             icon = Text.directoryLogo
-        elif validators.url(item):
-            icon = Text.urlLogo
         elif self.isAudioFile(item):
             icon = Text.audioLogo
+        elif validators.url(item):
+            icon = Text.urlLogo
         else:
             icon = " "
             

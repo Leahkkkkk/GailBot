@@ -159,6 +159,6 @@ class PluginDictLoader(PluginLoader):
             return
         suite = PluginSuite(dict_conf, suites_directory)
         if suite.is_ready:
-            return suite
+            return [suite]
         else:
             return False

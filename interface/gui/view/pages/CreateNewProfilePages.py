@@ -121,7 +121,7 @@ class EngineSetting(TabPage):
         self.confirmBtn = ColoredBtn(Text.cofirmBtn, Color.SECONDARY_BUTTON)
         self.confirmBtn.clicked.connect(self._confirmHandler)
         self.verticallayout.addWidget(self.confirmBtn, alignment=bottomRight)
-        self.confirmBtn.clicked.connect(lambda: self.signals.close.emit())
+        # self.confirmBtn.clicked.connect(lambda: self.signals.close.emit())
     
     def _confirmHandler(self):
         """" handles if user should be able to go to the next page in popup """
@@ -151,7 +151,7 @@ class PluginSetting(TabPage):
         self.confirmBtn.clicked.connect(lambda: self.signals.close.emit())
         self.verticalLayout = QVBoxLayout()
         self.setLayout(self.verticalLayout)
-        self.verticalLayout.addWidget(self.header)
+        self.verticalLayout.addWidget(self.header, alignment=center)
         self.verticalLayout.addWidget(self.mainForm)
         self.verticalLayout.addStretch()
         self.verticalLayout.addWidget(

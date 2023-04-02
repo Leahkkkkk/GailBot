@@ -69,7 +69,7 @@ class TranscribeProgressPage(QWidget):
         
     def _initWidget(self):
         """ initialize widgets """
-        font = QFont("Arial", 14, weight=600)
+        # font = QFont("Arial", 14, weight=600)
         self.label = Label(
             Text.mainLabelText, FontSize.HEADER2, FontFamily.MAIN)
         self.label.setAlignment(center)
@@ -88,7 +88,7 @@ class TranscribeProgressPage(QWidget):
         self.fileTable = FileTable(
             FileTableHeader.transcribePage, self.signals)
         self.fileTable.resizeCol(FileTableDimension.transcribePage)
-        self.fileTable.setFont(font)
+        # self.fileTable.setFont(font)
         
     def _initstyle(self):
         """ styles loading icon movie """

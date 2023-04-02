@@ -8,9 +8,9 @@ Last Modified: Thursday, 6th October 2022 11:08:43 am
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
-from typing import Dict, List
+from typing import Dict, List, Tuple
 from view.config.Style import FontSize,FontFamily, Color, Dimension
-from view.Signals import ProfileSignals
+from view.Signals import ProfileSignals, Request
 from view.config.Text import ProfilePageText as Text
 from gbLogger import makeLogger
 from view.components import EngineSettingForm
@@ -23,20 +23,22 @@ from PyQt6.QtWidgets import (
     QVBoxLayout, 
     QHBoxLayout
 )
-from PyQt6.QtCore import Qt, QSize 
+from PyQt6.QtCore import Qt, QSize, pyqtSignal, QObject
 
 center = Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignHCenter
 
-class RequiredSettingPage(QWidget):
+
+class TranscriptionSetPage(QWidget):
     """ class for the required settings page """
     def __init__(self, signal: ProfileSignals, *args, **kwargs) -> None:
         """ initializes the page """
         super().__init__(*args, **kwargs)
         self.logger = makeLogger("F")
-        self.signal = signal
+        self.signal = ProfileSignals()
         self.plugins = []
         self._initWidget()
         self._initLayout()
+        self._connectSignal()
 
     def setValue(self, data: Dict[str, Dict]):
         """ sets the value of data
@@ -108,25 +110,32 @@ class RequiredSettingPage(QWidget):
     def _connectSignal(self):
         """ connects profileSignal upon button clicks """
         self.selectSettings.currentTextChanged.connect(self.getProfile)
-        self.editBtn.clicked.connect(self.updateProfile)
+        self.editBtn.clicked.connect(self.editProfile)
         self.deleteBtn.clicked.connect(self.deleteProfile)
-        self.createBtn.clicked.connect(self.createProfileHandler) 
+        self.createBtn.clicked.connect(self.createProfile) 
+        # for toggling between different toggle view 
+        self.engineForm.toggleView.signal.showview.connect(self.pluginForm.toggleView.hideView)
+        self.pluginForm.toggleView.signal.showview.connect(self.engineForm.toggleView.hideView)
+        
     
     def addAvailableSetting(self, profileKeys: List[str]):
         """ add a list of profile keys """
         self.selectSettings.addItems(profileKeys)
     
+    # function that will send request to get data
     def getProfile(self, profileName:str):
         """ sends the request to database to get profile data  """
-        self.signal.get.emit(profileName)
+        self.signal.getRequest.emit(
+            Request(data = profileName, succeed = self.getSucceed))
     
-    def updateProfile(self):
+    def editProfile(self):
         """ updates the new profile setting """
         try:
             newSetting = self.getValue()
             self.logger.info(newSetting)
             profileKey = self.selectSettings.currentText()
-            self.signal.edit.emit((profileKey, newSetting))
+            self.signal.editRequest.emit(
+                Request(data = (profileKey, newSetting), succeed = self.editSucceed))
         except Exception as e:
             self.logger.error(e, exc_info=e)
             WarnBox(ERR.ERR_WHEN_DUETO.format("updating profile", str(e)))
@@ -135,42 +144,53 @@ class RequiredSettingPage(QWidget):
         """ sends the delete signal to delete the profile"""
         profileName = self.selectSettings.currentText()
         ConfirmBox(Text.confirmDelete + profileName, 
-                lambda: self.signal.delete.emit(self.selectSettings.currentText()))
+        lambda: self.signal.deleteRequest.emit(
+            Request(data = self.selectSettings.currentText(), succeed = self.deleteSucceed)))
     
-    def deleteProfileConfirmed(self, deleted: bool):
+    def createProfile(self):
+        createNewSettingTab = CreateNewSetting(self.plugins)
+        createNewSettingTab.signals.newSetting.connect(
+            lambda profile: self.signal.postRequest.emit(
+            Request(data = profile, succeed = self.createSucceed)))
+        createNewSettingTab.exec()
+    
+    # continuation function when request succeeds
+    def deleteSucceed(self, data = None):
         """ if deleted, remove the current setting name from available setting"""
-        if deleted:
-            self.selectSettings.removeItem(self.selectSettings.currentIndex())
+        self.selectSettings.removeItem(self.selectSettings.currentIndex())
     
-    
-    def addProfile (self, profileName:str):
+    def createSucceed (self, profileName:str):
         """ adding a new profile option to the settings page 
         Arg:
             profileName(str): name to be added as profile name to the new profile entry
         """
+        self.logger.info(f"create profile {profileName} succeeds")
         try:
             self.selectSettings.addItem(profileName)
+            self.signal.profileAdded.emit(profileName)
         except Exception as e:
             self.logger.error(e, exc_info=e)
             WarnBox(ERR.ERR_WHEN_DUETO.format("adding profile", str(e)))
     
-    def createProfileHandler(self):
-        createNewSettingTab = CreateNewSetting(self.plugins)
-        createNewSettingTab.signals.newSetting.connect(
-            lambda profile: self.signal.post.emit(profile))
-        createNewSettingTab.exec()
+    def editSucceed(self, profilename:str):
+        pass 
     
-    def addPluginSuite(self, suite: str):
-        self.plugins.append(suite)
-    
-    def loadProfile(self, profile:tuple):
+    def getSucceed(self, profile: Tuple[str,Dict[str, Dict]]):
         """ loads the profile data to be presented onto the table """
         try:
             self.logger.info(profile)
-            key, data = profile 
-            self.selectSettings.setCurrentText(key)
+            name, data = profile
+            self.selectSettings.setCurrentText(name)
             self.setValue(data)
         except Exception as e:
             self.logger.error(e, exc_info=e)
             WarnBox(ERR.ERR_WHEN_DUETO.format("loading profile content", str(e)))
     
+    #### for adding plugin
+    def addPluginSuite(self, suite: str):
+        self.plugins.append(suite)
+        self.pluginForm.addPluginSuite(suite)
+    
+    def deletePlugin(self, suite: str):
+        self.plugins.remove(suite)
+        self.pluginForm.deletePluginSuite(suite)

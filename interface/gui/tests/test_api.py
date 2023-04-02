@@ -133,6 +133,10 @@ def test_github_url():
 def test_s3_url():
     gb = GailBot(PATH.USER_ROOT)
     gb.register_plugin_suite(HIL_LAB_AWS)
+
+def test_s3_bucket():
+    gb = GailBot(PATH.USER_ROOT)
+    gb.register_plugin_suite("gailbot-plugin")
     
 def test_plugin():
     gb = GailBot(PATH.USER_ROOT)
@@ -140,6 +144,10 @@ def test_plugin():
     logging.warn(plugin_suite)
     all_plugin = gb.get_all_plugin_suites()
     logging.warn(all_plugin)
+
+def test_delete_plugin():
+    gb = GailBot(PATH.USER_ROOT)
+    gb.delete_plugin_suite("gb_hilab_suite")
 
 def test_plugin_small():
     fails, invalid = transcribe([PATH.TWO_MIN_10], "plugin", SETTING_DATA.PROFILE_WITH_PLUGIN) 
