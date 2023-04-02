@@ -13,6 +13,7 @@ from gailbot.core.utils.general import (
     read_toml,
     get_parent_path,
     is_directory,
+    delete
 )
 
 from pydantic import BaseModel, ValidationError
@@ -78,9 +79,13 @@ class PluginDirectoryLoader(PluginLoader):
         logger.info(f"suite name is {suite_dir_name}, suite path is {suite_dir_path}") 
         tgt_path = f"{self.suites_dir}/{get_name(suite_dir_path)}"
        
-        if not is_directory(tgt_path):
-            copy(suite_dir_path, tgt_path)
+        # delete the previous plugin suite if the user is re-loading the same 
+        # plugin suite
+        if is_directory(tgt_path):
+            delete(tgt_path)
+        copy(suite_dir_path, tgt_path)
         
+        # get the config.toml file in the plugin suite
         conf = filepaths_in_dir(suite_dir_path,["toml"])[0]
         return self.toml_loader.load(conf, suite_dir_name, self.suites_dir)
 

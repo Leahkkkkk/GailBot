@@ -14,6 +14,7 @@ from .loader import (
     PluginDirectoryLoader,
     PluginLoader)
 from gailbot.core.utils.logger import makelogger
+from gailbot.configs import PLUGIN_CONFIG
 from gailbot.core.utils.general import (
     make_dir,
     subdirs_in_dir,
@@ -36,7 +37,6 @@ class PluginManager:
     def __init__(
         self,
         workspace: str, 
-        plugin_sources : List[str] = [],
         load_existing : bool = True,
         over_write: bool = True
     ):
@@ -48,37 +48,34 @@ class PluginManager:
         over_write: if true, overwrite the existing plugin if plugins_sources 
                     contain plugin that has already been saved in workspace
         """ 
+
         self.workspace = workspace
         logger.info(f"get workspace {self.workspace}")
         self._init_workspace()
-        """ check if the plugin has been installed  """
+      
         self.loaders: List[PluginLoader] = [
             PluginURLLoader(self.download_dir, self.suites_dir),
             PluginDirectoryLoader(self.suites_dir)
         ]
         
-        source_names = {get_name(path) for path in plugin_sources}
+         
         subdirs = subdirs_in_dir(self.suites_dir, recursive=False)
         logger.info(f"get existing plugin suite {subdirs}")
-       
-        for subdir in subdirs: 
-            if get_name(subdir[:-1]) in source_names:
-                logger.info("duplicate found")
-                if over_write or (not load_existing): 
-                    delete(subdir)
         
         if load_existing:
             # get a list of paths to existing suite 
-            subdirs = subdirs_in_dir(self.suites_dir, recursive=False)
+            plugin_sources = subdirs_in_dir(self.suites_dir, recursive=False)
             logger.info(f"all sub directories are {subdirs}")
-            subdirs = [dir[:-1] for dir in subdirs] 
-            
-            plugin_sources.extend(subdirs)
+            plugin_sources = [dir[:-1] for dir in subdirs]  
 
         for plugin_source in plugin_sources:
             if not self.register_suite(plugin_source):
                 logger.error(f"{get_name(plugin_source)} cannot be registered")
-    
+        try:
+            self.register_suite(PLUGIN_CONFIG.HILAB_BUCKET)
+        except Exception as e:
+            logger.error(e, exc_info=e)
+        
     def get_all_suites_name(self) -> List[str]:
         """ return a list of available plugin suite names  """
         return set(self.suites.keys())
@@ -162,7 +159,7 @@ class PluginManager:
         self.suites: Dict [str, PluginSuite] = dict()
         
         # Make the directory
-        make_dir(self.workspace,overwrite=False)
+        make_dir(self.workspace, overwrite=False)
         make_dir(self.suites_dir,overwrite=False)
         make_dir(self.download_dir,overwrite=True)
     

@@ -20,7 +20,6 @@ CHECKBOX_STYLE = """
         width: 16px;
         height: 16px;
     }
-   
 """
 class MultipleSelect(QWidget, FormWidget):
     def __init__(self, label: str,  choices: List[str]) -> None:
@@ -40,7 +39,6 @@ class MultipleSelect(QWidget, FormWidget):
         self.setLayout(self._layout)
         self._layout.addWidget(self.labelwidget, alignment=Qt.AlignmentFlag.AlignTop)
         
-    
     def getValue(self) -> List[str]:
         res = []
         for choice, box in self.choicesDict.items():

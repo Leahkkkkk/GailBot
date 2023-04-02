@@ -25,8 +25,6 @@ from view.widgets.Form.TextInput import TextInput
 from view.widgets.MsgBox import WarnBox
 from view.components import EngineSettingForm
 from view.components import PluginForm
-
-
 from PyQt6.QtWidgets import  QVBoxLayout
 from PyQt6.QtCore import (
     Qt, 

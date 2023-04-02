@@ -51,7 +51,6 @@ class PluginPage(QWidget):
             Text.pluginCaption, FontSize.DESCRIPTION, FontFamily.MAIN)
         self.pluginTable = PluginTable(self.signal)
         self.addBtn = ColoredBtn(Text.newPluginBtn, Color.SECONDARY_BUTTON)
-        self.deleteBtn = ColoredBtn(Text.deleteBtn, Color.CANCEL_QUIT)
         
     def _initlayout(self):
         """" initializes layout """
@@ -64,13 +63,7 @@ class PluginPage(QWidget):
         self.verticalLayout.addSpacing(Dimension.SMALL_SPACING)
         self.verticalLayout.addWidget(self.pluginTable, alignment=center)
         self.verticalLayout.addStretch()
-        self.btnContainer = QWidget()
-        self.btnLayout = QHBoxLayout()
-        self.btnContainer.setLayout(self.btnLayout)
-        self.btnLayout.addWidget(self.addBtn)
-        self.btnLayout.addWidget(self.deleteBtn)
-        self.btnLayout.setSpacing(Dimension.MEDIUM_SPACING)
-        self.verticalLayout.addWidget(self.btnContainer, alignment=center)
+        self.verticalLayout.addWidget(self.addBtn, alignment=center)
 
     def _connectSignal(self):
         self.addBtn.clicked.connect(self.addPluginSuite)

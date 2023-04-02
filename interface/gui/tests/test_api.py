@@ -129,7 +129,11 @@ def test_google_wav_suite():
 def test_github_url():
     gb = GailBot(PATH.USER_ROOT)
     gb.register_plugin_suite(HIL_LAB_GITHUB)
-    
+
+def test_auto_load():
+    gb = GailBot(PATH.USER_ROOT)
+    assert gb.is_plugin_suite("gb_hilab_suite")    
+
 def test_s3_url():
     gb = GailBot(PATH.USER_ROOT)
     gb.register_plugin_suite(HIL_LAB_AWS)
