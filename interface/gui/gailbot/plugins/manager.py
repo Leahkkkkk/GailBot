@@ -57,20 +57,13 @@ class PluginManager:
             PluginURLLoader(self.download_dir, self.suites_dir),
             PluginDirectoryLoader(self.suites_dir)
         ]
-        
          
-        subdirs = subdirs_in_dir(self.suites_dir, recursive=False)
-        logger.info(f"get existing plugin suite {subdirs}")
-        
         if load_existing:
-            # get a list of paths to existing suite 
-            plugin_sources = subdirs_in_dir(self.suites_dir, recursive=False)
-            logger.info(f"all sub directories are {subdirs}")
-            plugin_sources = [dir[:-1] for dir in subdirs]  
-
-        for plugin_source in plugin_sources:
-            if not self.register_suite(plugin_source):
-                logger.error(f"{get_name(plugin_source)} cannot be registered")
+            subdirs = subdirs_in_dir(self.suites_dir, recursive=False)
+            for plugin_source in subdirs:
+                if not self.register_suite(plugin_source):
+                    logger.error(f"{get_name(plugin_source)} cannot be registered")
+        
         try:
             self.register_suite(PLUGIN_CONFIG.HILAB_BUCKET)
         except Exception as e:

@@ -7,20 +7,8 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout
 from .CheckBox import CheckBox
 from PyQt6.QtCore import Qt
 
-CHECKBOX_STYLE = """
-     {
-        font-size: 13px;
-        font-family: Arial, sans-serif;
-        color: #333333;
-        font-weight:800;
-        spacing: 5px;
-        padding-left: 20px;
-    };
-    QCheckBox::indicator {
-        width: 16px;
-        height: 16px;
-    }
-"""
+CHECKBOX_STYLE = ""
+
 class MultipleSelect(QWidget, FormWidget):
     def __init__(self, label: str,  choices: List[str]) -> None:
         super().__init__()
