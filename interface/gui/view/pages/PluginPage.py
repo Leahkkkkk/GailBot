@@ -13,7 +13,8 @@ from typing import Dict, List, Any
 from view.config.Style import FontSize, Dimension, FontFamily, Color
 from view.config.Text import ProfilePageText as Text
 from view.config.Text import ProfileSettingForm as Form
-from view.Signals import PluginSignals, Request
+from view.Signals import PluginSignals
+from view.Request import Request
 from gbLogger import makeLogger
 from view.widgets import Label, ColoredBtn
 from view.widgets.PluginTable import PluginTable

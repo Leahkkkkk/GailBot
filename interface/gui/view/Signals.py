@@ -11,13 +11,6 @@ Description: main siganls for view object to communicate with backend database
 '''
 
 from PyQt6.QtCore import QObject, pyqtSignal
-
-class Request:
-    def __init__(self, data, succeed: callable = None, fail: callable = None) -> None:
-        self.data = data
-        self.succeed = succeed
-        self.fail = fail
-        
 class FileSignals(QObject):
     """ file signals for frontend to communicate with file database  """
     postFile = pyqtSignal(object)

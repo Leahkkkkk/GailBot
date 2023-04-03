@@ -79,16 +79,27 @@ class PluginDirectoryLoader(PluginLoader):
         logger.info(f"suite name is {suite_dir_name}, suite path is {suite_dir_path}") 
         tgt_path = f"{self.suites_dir}/{get_name(suite_dir_path)}"
         
+        # search for the configuration file
+        conf = filepaths_in_dir(suite_dir_path,["toml"])
+        if not conf:
+            return False
+        else:
+            conf = conf[0]
+            
+        # make a copy of the original plugin suite
         if not is_directory(tgt_path):
             copy(suite_dir_path, tgt_path)
     
         if is_directory(tgt_path) and self.suites_dir not in suite_dir_path:
             delete(tgt_path)
             copy(suite_dir_path, tgt_path)
-        
-        conf = filepaths_in_dir(suite_dir_path,["toml"])[0]
-        return self.toml_loader.load(conf, suite_dir_name, self.suites_dir)
-
+   
+        suite = self.toml_loader.load(conf, suite_dir_name, self.suites_dir)
+        if suite:
+            return suite
+        else:
+            delete(tgt_path)
+            return False
 
 class PluginTOMLLoader(PluginLoader):
     """  import all modules in the plugin, all plugin sources and dependencies 

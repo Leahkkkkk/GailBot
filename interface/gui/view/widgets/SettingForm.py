@@ -82,6 +82,7 @@ class SettingForm(QWidget):
         self.scroll.setFixedHeight(Dimension.FORMMINHEIGHT)
         initSecondaryColorBackground(self.scroll)
     
+    
     def _initLayout(self):
         """ initializes the layout"""
         self.verticalLayout = QVBoxLayout()
@@ -91,6 +92,7 @@ class SettingForm(QWidget):
             self.verticalLayout.addWidget(self.caption, alignment = center )
         self.verticalLayout.addWidget(self.scroll, alignment = center)
         self.verticalLayout.addStretch()
+        self.verticalLayout.setContentsMargins(0,0,0,0)
     
     def addWidget(self, widget: QWidget):
         self.setForm.addWidget(widget)

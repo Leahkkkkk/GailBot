@@ -23,7 +23,6 @@ from view.pages import (
         TranscribeProgressPage,
         TranscribeSuccessPage,
         RecordPage, 
-        SystemSettingPage
 )
 from view.widgets.Background import (
     initHomePageBackground, 

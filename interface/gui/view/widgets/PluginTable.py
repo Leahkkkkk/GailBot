@@ -2,7 +2,8 @@ from typing import List, Dict, Tuple, Any
 from view.config.Style import Dimension
 from view.config.Text import PLUGIN_SUITE_TEXT
 from view.style.WidgetStyleSheet import FILE_TABLE, SCROLL_BAR, TABLE_HEADER
-from view.Signals import PluginSignals, Request
+from view.Signals import PluginSignals
+from view.Request import Request
 from view.util.ErrorMsg import ERR  
 from view.components.PluginSuiteDetails import PluginSuiteDetails
 

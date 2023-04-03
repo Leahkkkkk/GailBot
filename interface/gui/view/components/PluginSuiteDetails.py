@@ -1,5 +1,5 @@
 from typing import TypedDict
-from view.config import FontFamily, FontSize, Dimension
+from view.config import FontFamily, FontSize, Dimension, Color
 from view.widgets import GraphDisplay, MarkdownDisplay, TextDisplay, Label, ScrollArea
 from view.widgets.Background import initPrimaryColorBackground
 from PyQt6.QtWidgets import QDialog, QVBoxLayout, QWidget

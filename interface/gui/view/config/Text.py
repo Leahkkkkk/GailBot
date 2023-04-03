@@ -320,7 +320,10 @@ class PLUGIN_SUITE_TEXT:
     REGISTER = "Register Plugin Suite"
     URL = ""
     UPLOAD = "Upload"
-    URL_INSTRUCTION = "GailBot currently accepts plugin suite from: \n 1. Amazon S3 object url \n 2. Amazon S3 Public Bucket Name"
+    URL_INSTRUCTION = "GailBot currently accepts plugin suite from: "
+    SOURCES = ["1. Amazon S3 object url storing plugin suite as zip file",
+               "2. Amazon S3 Public Bucket Name",
+               "3. Github url storing plugin suite as zip file"]
     TABLE_HEADER = ["Plugin Suite Name", "Author", "Version", "Actions"]
     TABLE_DIMENSION = [0.3,0.3,0.2,0.2]
     CONFIRM_DELETE = "Confirm deleting plugin suite {0}"

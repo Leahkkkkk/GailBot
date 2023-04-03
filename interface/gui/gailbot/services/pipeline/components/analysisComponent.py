@@ -79,7 +79,7 @@ class AnalysisComponent(Component):
 
     def analyze_payload(self, payload: PayLoadObject):
         logger.info("start analyzing payload")
-        self.emit_progress(payload, ProgressMessage.Analyzing)
+        # self.emit_progress(payload, ProgressMessage.Analyzing)
         start_time = time.time()
         plugins = payload.setting.get_plugin_setting()
         logger.info(f"the following plugins are applied: {plugins}")
@@ -103,7 +103,6 @@ class AnalysisComponent(Component):
                 logger.info(f"get the plugin result {res}")
                 for state in res.values():
                     assert state == ComponentState.SUCCESS
-                # self.emit_progress(payload, f"{plugin} plugin suites applied")
             end_time = time.time()
             stats = ProcessingStats(
                 start_time=start_time,

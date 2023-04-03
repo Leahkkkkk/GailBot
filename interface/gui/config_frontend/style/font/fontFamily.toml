@@ -1,6 +1,6 @@
 [fontFamily]
 MAIN       = "Raleway"
-OTHER      = "Helvetica"
+OTHER      = "Verdana"
 CLOCK      = "Digital"
 
 [fontSource]

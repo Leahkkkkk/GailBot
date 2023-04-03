@@ -29,10 +29,9 @@ class FormatComponent(Component):
             for payload in payloads:
                 logger.info(f"saving {payload.name} result to {payload.out_dir}")
                 if not payload.failed:
-                    self.emit_progress(payload, "Writing output")
                     payload.save()
                     payload.set_formatted()
-                    self.emit_progress(payload, ProgressMessage.Finished)
+                    # self.emit_progress(payload, ProgressMessage.Finished)
                 payload.clear_temporary_workspace()
             
             assert dependency_res.state == ComponentState.SUCCESS    

@@ -11,9 +11,21 @@ Modified By:  Siara Small  & Vivian Li
 
 from .FormWidget import FormWidget
 from ..Label import Label
-from view.config.Style import FontSize
+from view.config.Style import FontSize, FontFamily
 from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QCheckBox
 
+
+CHECKBOX_STYLESHEET = \
+""" 
+QCheckBox {
+    spacing: 5px;
+}
+
+QCheckBox::indicator {
+    width: 13px;
+    height: 13px;
+}
+"""
 class CheckBox(QWidget, FormWidget):
     def __init__(self, label:str, state = False, *args, **kwargs) -> None:
         super(CheckBox, self).__init__(*args, **kwargs)
@@ -24,10 +36,11 @@ class CheckBox(QWidget, FormWidget):
     def initUI(self):
         self._layout = QHBoxLayout()
         self.checkBox = QCheckBox()
-        self.pluginLabel = Label(self.label, FontSize.BODY)
+        self.label = Label(self.label, FontSize.BTN, FontFamily.MAIN)
+        self.checkBox.setStyleSheet(CHECKBOX_STYLESHEET)
         self.setLayout(self._layout)
         self._layout.addWidget(self.checkBox)
-        self._layout.addWidget(self.pluginLabel)
+        self._layout.addWidget(self.label)
         self._layout.setSpacing(20)
         self._layout.addStretch()
         self.checkBox.setChecked(self.state)

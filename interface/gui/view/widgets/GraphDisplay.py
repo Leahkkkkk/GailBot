@@ -9,9 +9,9 @@ from PyQt6.QtWidgets import QApplication, QGraphicsView, QGraphicsScene, QGraphi
 from PyQt6.QtGui import QPen, QBrush,  QFont, QColor
 from PyQt6.QtCore import QRectF, QLineF, Qt
 
-NODE_COLOR = "#D3D3D3"
-LINE_COLOR = "#000"
-TEXT_COLOR = "#000"
+NODE_COLOR = Color.HIGHLIGHT
+LINE_COLOR = Color.MAIN_TEXT
+TEXT_COLOR = Color.MAIN_TEXT
 class GraphDisplay(QGraphicsView):
     def __init__(self, dependencyGraph: Dict[str, List[str]]):
         super().__init__()
@@ -35,28 +35,24 @@ class GraphDisplay(QGraphicsView):
         # add title
                 # Create a QGraphicsTextItem and set its font and text
         title = QGraphicsTextItem("Plugin Map")
+        title.setDefaultTextColor(QColor(TEXT_COLOR))
         titlefont = QFont("Arial", 22)
         titlefont.setWeight(600)
         title.setFont(titlefont)
-    
-
-        # Get the bounding rectangle of the scene and the title item
-        scene_rect = self.scene.sceneRect()
-        title_rect = title.boundingRect()
 
         # Set the position of the title item to the center of the scene's top edge
         title.setPos(200, 120)
-
+        
         # Add the title item to the scene
         self.scene.addItem(title)
+       
         poses = evenlyDistributedPoints(
             len(self.graph.keys()), 
             self.width , self.height )
         poses = sorted(poses, key =lambda p: (p[0], p[1]))
         sortedNodes = self.sort_nodes()
         sortedNodes.reverse()
-        print(poses)
-        print(sortedNodes)
+  
         
         for node, pos in zip (sortedNodes, poses):
             newNode = NodeItem(node, pos[0], pos[1])
@@ -70,9 +66,8 @@ class GraphDisplay(QGraphicsView):
                 if neighbor_item is None:
                     self.nodes[neighbor] = neighbor_item
                 pen = QPen(Qt.PenStyle.SolidLine)
-                brush = QBrush()
-                brush.setStyle(Qt.BrushStyle.SolidPattern)
                 pen.setWidth(2)
+                pen.setColor(QColor(LINE_COLOR))
                 line = QGraphicsLineItem(node_item.x, node_item.y, neighbor_item.x, neighbor_item.y)
                 line.setPen(pen)
                 line.setZValue(-1) 
@@ -99,13 +94,15 @@ class NodeItem(QGraphicsItem):
         painter.drawEllipse(self.x - 45, self.y - 25, 90, 45)
         rect = QRectF(self.x - 35, self.y - 15, 90, 35)
         # painter.drawRect(rect)
-       
+        pen = QPen()
+        pen.setColor(QColor(TEXT_COLOR)) 
         brush.setColor(QColor(TEXT_COLOR))
         painter.setBrush(brush)
         text = getShortHand(self.name)
         font = QFont("Arial", 12)
         font.setWeight(QFont.Weight.DemiBold)
         painter.setFont(font)
+        painter.setPen(pen)
         painter.drawText(rect,text)
 
 class EdgeItem(QGraphicsLineItem):

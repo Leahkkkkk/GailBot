@@ -13,7 +13,7 @@ Description: Implementation of a database that stores all the file data
 from dataclasses import dataclass
 from typing import TypedDict, Tuple, Dict, Set
 from gailbot.api import GailBot
-from view.Signals import FileSignals, Request  
+from view.Signals import FileSignals
 from gbLogger import makeLogger
 from controller.util.Error import  ERR
 from PyQt6.QtCore import QObject, pyqtSignal

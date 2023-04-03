@@ -3,11 +3,12 @@ from .FormWidget import FormWidget
 from ..Label import Label
 from view.config.Style import FontSize
 from gbLogger import makeLogger
-from PyQt6.QtWidgets import QWidget, QVBoxLayout
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QStyle
 from .CheckBox import CheckBox
 from PyQt6.QtCore import Qt
 
-CHECKBOX_STYLE = ""
+CHECKBOX_STYLE = "font-size:18px"
+
 
 class MultipleSelect(QWidget, FormWidget):
     def __init__(self, label: str,  choices: List[str]) -> None:
@@ -49,7 +50,7 @@ class MultipleSelect(QWidget, FormWidget):
         newBox.setStyleSheet(CHECKBOX_STYLE)
         self.choicesDict[newChoice] = newBox 
         self._layout.addWidget(newBox, alignment=Qt.AlignmentFlag.AlignTop)
-        # self._layout.addStretch() 
+        
     
     
     def removeChoice(self,choice: str):

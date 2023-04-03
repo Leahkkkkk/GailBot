@@ -12,9 +12,9 @@ Implementation of a database that stores the profile data
 '''
 
 
-from typing import Tuple
 
-from view.Signals import ProfileSignals, Request
+from view.Signals import ProfileSignals
+from controller.Request import Request
 from gailbot.api import GailBot
 from gbLogger import makeLogger
 from controller.util.Error import ERR
@@ -79,18 +79,19 @@ class ProfileOrganizer:
         data = data.copy() 
         try:
             if self.gb.is_setting(name): 
-                self.signals.error.emit(ERR.DUPLICATED_NAME.format(name)) 
+                postRequest.fail(ERR.DUPLICATED_NAME.format(name)) 
                 self.logger.error(ERR.DUPLICATED_NAME.format(name))
             elif not self.gb.create_new_setting(name, data):
-                self.signals.error.emit(ERR.INVALID_PROFILE.format(name)) 
+                postRequest.fail(ERR.INVALID_PROFILE.format(name)) 
                 self.logger.error(ERR.INVALID_PROFILE.format(name))
             elif not self.gb.save_setting(name):
-                self.signals.error.emit(ERR.SAVE_PROFILE.format(name))
+                postRequest.fail(ERR.SAVE_PROFILE.format(name))
                 self.logger.error(ERR.SAVE_PROFILE.format(name))
             else:
                 self.logger.info(f"New profile created {name}, {data}")
                 postRequest.succeed(name)
         except Exception as e:
+            postRequest.fail(ERR.SAVE_PROFILE.format(name))
             self.logger.error(f"Creating new profile error {e}", exc_info=e)
         
     def deleteHandler(self, deleteRequest: Request) -> None :
@@ -118,14 +119,14 @@ class ProfileOrganizer:
             deleteRequest.succeed(name)
             self.signals.deleted.emit(True)
     
-    def editHandler(self, postRequest: Request) -> None :
+    def editHandler(self, editRequest: Request) -> None :
         """ update a file
         Args:
             profile (Tuple[name, dict]): a name that identified the profile 
                                         and new profile
         """
         try:
-            name, data = postRequest.data
+            name, data = editRequest.data
             if not self.gb.is_setting(name):
                 self.signals.error.emit(ERR.PROFILE_NOT_FOUND.format(name))
                 self.logger.error(ERR.PROFILE_NOT_FOUND.format(name))
@@ -133,10 +134,10 @@ class ProfileOrganizer:
                 self.signals.error.emit(ERR.PROFILE_EDIT.format(name))
                 self.logger.error(ERR.PROFILE_EDIT.format(name))
         except Exception as e:
-            self.signals.error.emit(ERR.PROFILE_EDIT.format(name))
+            editRequest.fail(ERR.PROFILE_EDIT.format(name))
             self.logger.error(e, exc_info=e)
         else:
-            postRequest.succeed(name)
+            editRequest.succeed(name)
      
     def getHandler(self, getRequest: Request) -> None:
         """ 
@@ -150,7 +151,6 @@ class ProfileOrganizer:
                 self.logger.error(KeyError)
             else:
                 data = self.gb.get_setting_dict(name)
-                # self.signals.send.emit((name, data))
                 getRequest.succeed((name, data))
         except Exception as e:
             self.signals.error.emit(ERR.GET_PROFILE.format(name))

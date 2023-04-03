@@ -14,7 +14,7 @@ Description: implementation of the plugin dialog for user to upload new plugin
 import os 
 import validators
 from view.config.Text import PLUGIN_SUITE_TEXT as TEXT
-from view.config.Style import FontSize
+from view.config.Style import FontSize, FontFamily
 from view.Signals import PluginSignals
 from view.widgets import ColoredBtn, WarnBox, UploadTable, Label, TextInput, initPrimaryColorBackground
 from view.widgets import TextInput
@@ -124,16 +124,21 @@ class UploadURL(QDialog):
         super().__init__()
         
         self._layout = QVBoxLayout()
-        self.caption = Label(TEXT.URL_INSTRUCTION, FontSize.INSTRUCTION_CAPTION, others="line-height: 1.5; weight:400;")
-        self.input = TextInput(TEXT.URL, vertical=True, width=250)
         self.confirm = ColoredBtn(TEXT.UPLOAD, Color.PRIMARY_BUTTON)
         self.setLayout(self._layout)
         self._layout.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+        self.input = TextInput(TEXT.URL, vertical=True, width=400)
+        
+        self.caption = Label(TEXT.URL_INSTRUCTION, FontSize.BTN, FontFamily.MAIN)
         self._layout.addWidget(self.caption, alignment=Qt.AlignmentFlag.AlignHCenter)
+        for source in TEXT.SOURCES:
+            sourceText = Label(source, FontSize.BTN, FontFamily.MAIN)
+            self._layout.addWidget(sourceText)
         self._layout.addWidget(self.input, alignment=Qt.AlignmentFlag.AlignHCenter)
         self._layout.addWidget(self.confirm, alignment=Qt.AlignmentFlag.AlignHCenter)
         self.confirm.clicked.connect(self.upload)
-        self.caption.setStyleSheet("line-height: 40px; font-size: 15px")
+        # self.caption.setStyleSheet("line-height: 40px; font-size: 15px")
+        initPrimaryColorBackground(self)
     
     def getValue(self) -> str:
         return self.input.getValue()

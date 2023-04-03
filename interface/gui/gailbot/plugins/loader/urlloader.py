@@ -200,6 +200,7 @@ class S3ZipLoader(UrlLoader):
         """
         # check if the type is valid
         if not self.is_supported_url(url):
+            logger.info(f"url is not a supported url" )
             return False
         
         download_path = download_from_urls(
@@ -207,7 +208,7 @@ class S3ZipLoader(UrlLoader):
             download_dir = self.download_dir,
             unzip = True
         )[0]
-        
+        logger.info(f"file is downloaded to {download_path}")
         # get the suite name from the toml file
         for dirpath, dirnames, filenames in os.walk(download_path):
             for file in filenames:

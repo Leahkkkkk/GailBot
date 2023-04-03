@@ -10,7 +10,8 @@ Modified By:  Siara Small  & Vivian Li
 '''
 from typing import Dict, List, Tuple
 from view.config.Style import FontSize,FontFamily, Color, Dimension
-from view.Signals import ProfileSignals, Request
+from view.Signals import ProfileSignals
+from view.Request import Request
 from view.config.Text import ProfilePageText as Text
 from gbLogger import makeLogger
 from view.components import EngineSettingForm
