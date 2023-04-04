@@ -243,6 +243,8 @@ class MainWindow(QMainWindow):
     def _connectSignal(self):
         """ connect to signal """
         self.MainStack.SettingPage.SysPage.signal.restart.connect(self._restart)
+        self.MainStack.SettingPage.SysPage.signal.clearCache.connect(
+            lambda: self.viewSignal.clearcache.emit())
         self.MenuBar.OpenConsole.triggered.connect(lambda: self.Console.show())
         self.MenuBar.CloseConsole.triggered.connect(lambda: self.Console.hide())
         self.fileTableSignals.cancel.connect(self.confirmCancel)

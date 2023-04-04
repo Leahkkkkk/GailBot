@@ -477,3 +477,9 @@ class GailBot:
             str: the path to the documentation file
         """
         return self.gb.get_plugin_suite_documentation_path(suite_name)
+    
+    
+    def reset_workspace(self) -> bool:
+        """ reset the gailbot workspace
+        """
+        return self.ws_manager.reset_workspace()

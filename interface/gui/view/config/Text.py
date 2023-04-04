@@ -163,7 +163,9 @@ class SystemSetPageText:
     ClearLogBtn     = "Clear"
     SaveLogLabel    = "Save Log Files"
     SaveLogBtn      = "Save"
-    
+    ClearCacheLabel   = "Clear All Cache"
+    ClearCacheBtn   = "Clear" 
+    ConfirmClearCache = "Confirm clearing cache? This will restart the application and remove all data."
 
 class ConfirmTranscribeText:
     """class holding the text for the confirm transcription popup"""

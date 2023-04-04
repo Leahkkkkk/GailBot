@@ -43,7 +43,8 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt, pyqtSignal, QObject
 
 class Signal(QObject):
-    restart = pyqtSignal()
+    restart    = pyqtSignal()
+    clearCache = pyqtSignal()
 
 bottom = Qt.AlignmentFlag.AlignBottom
 
@@ -67,6 +68,7 @@ class SystemSettingPage(QWidget):
             Text.header, self.data, Text.caption)
         self.saveBtn = Button.ColoredBtn(
             Text.saveBtn, Color.PRIMARY_BUTTON)
+        
 
     def _connectSignal(self):
         """ connect the signal to slots """
@@ -82,6 +84,7 @@ class SystemSettingPage(QWidget):
         self._addFormButton(Text.restoreLabel, Text.restoreBtn, self._confirmRestore)
         self._addFormButton(Text.ClearLogLabel, Text.ClearLogBtn, self._clearLog)
         self._addFormButton(Text.SaveLogLabel, Text.SaveLogBtn, self._saveLog)
+        self._addFormButton(Text.ClearCacheLabel, Text.ClearCacheBtn, self._clearCache)
 
     def setValue(self, values:dict):
         """ public function to set the system setting form value
@@ -150,11 +153,19 @@ class SystemSettingPage(QWidget):
             dialog.exec()
         except Exception as e:
             self.logger.error(e, exc_info=e)
-
+    
+    def _clearCache(self):
+        try:
+            ConfirmBox(Text.ConfirmClearCache, lambda : self.signal.clearCache.emit())
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            
+            
     def _addFormButton(self, label, btnText, fun: callable):
         container = QWidget()
         layout = QHBoxLayout()
         label = Label(label, FontSize.BODY)
+        label.setFixedWidth(Dimension.INPUTWIDTH)
         button = Button.BorderBtn(
             btnText,
             Color.INPUT_TEXT,
@@ -164,7 +175,7 @@ class SystemSettingPage(QWidget):
         button.setFixedWidth(130)
         container.setLayout(layout)
         layout.addWidget(label)
-        layout.addSpacing(65)
+        layout.addSpacing(30)
         layout.addWidget(button)
         button.clicked.connect(fun)
         self.SysSetForm.addWidget(container)

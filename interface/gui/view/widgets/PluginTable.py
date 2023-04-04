@@ -21,10 +21,7 @@ from PyQt6.QtWidgets import (
 )
 
 from PyQt6.QtCore import (
-    QObject,
     Qt,
-    QSize,
-    pyqtSignal
 )
 
 class PluginTable(QTableWidget):

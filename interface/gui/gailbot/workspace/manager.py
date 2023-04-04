@@ -43,6 +43,17 @@ class WorkspaceManager:
 
         if not is_directory(self.path_config.tempspace_root):
                 make_dir(self.path_config.tempspace_root, True)
+    
+    def reset_workspace(self):
+        try:
+            if is_directory(self.path_config._ws_root):
+                delete(self.path_config._ws_root)
+            make_dir(self.path_config._ws_root)
+            self.init_workspace()
+            return True
+        except Exception as e:
+            logger.error(e, exc_info=e)
+            return False
 
     def get_file_temp_space(self, name: str) -> Union[TemporaryFolder, bool]:
         """ given the file name, create a directory for the file

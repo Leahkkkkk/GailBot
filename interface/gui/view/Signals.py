@@ -43,3 +43,4 @@ class PluginSignals(QObject):
 
 class ViewSignals(QObject):
     restart = pyqtSignal()
+    clearcache = pyqtSignal()

@@ -188,3 +188,10 @@ def test_plugin_lib():
 
 def test_plugin_with_spk():
     fails, invalid = transcribe([PATH.SHORT_PHONE_CALL], "plugin", SETTING_DATA.WATSON_PROFILE)
+
+
+
+##### test workspace ###
+def test_reset_ws():
+    gb = GailBot(PATH.USER_ROOT)
+    assert gb.reset_workspace()

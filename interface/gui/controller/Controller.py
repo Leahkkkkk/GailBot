@@ -20,7 +20,7 @@ import glob
 import os
 from typing import Set
 import time
-from controller.util.io import is_directory
+from controller.util.io import is_directory, delete
 from controller.transcribeController import TranscribeController
 from controller.mvController import MVController
 from gbLogger import makeLogger
@@ -120,6 +120,16 @@ class Controller(QObject):
             self.logger.error(f"error running the app {e}", exc_info=e)
         self._clearLog()
 
+    def clearCache(self):
+        workSpace = getWorkPaths()
+        for path in workSpace.__dict__.values():
+            if is_directory(path):
+                delete(path)
+                os.makedirs(path, exist_ok=True) 
+        self.gb.reset_workspace()
+        self.restart()
+        
+        
     def restart(self):
         """ send signal to restart the application, the owner of controller
             class is expected to handle this signal by relaunching the application
@@ -129,6 +139,7 @@ class Controller(QObject):
     def _handleViewSignal(self):
         """ handling signal to change the interface content from view object  """
         self.ViewObj.getViewSignal().restart.connect(self.restart)
+        self.ViewObj.getViewSignal().clearcache.connect(self.clearCache)
 
    
     ###################   gailbot  handler #############################
