@@ -41,7 +41,7 @@ from PyQt6.QtCore import (
     QObject, 
     Qt, 
     QSize, 
-    pyqtSignal
+    pyqtSignal,
 )
 from PyQt6.QtGui import QColor, QFont
 
@@ -164,6 +164,7 @@ class FileTable(QTableWidget):
         self.horizontalScrollBar().setStyleSheet(SCROLL_BAR)
         font = QFont(FontFamily.OTHER, FontSize.TABLE_ROW)
         self.setFont(font)
+        self.setTextElideMode(Qt.TextElideMode.ElideMiddle)
           
     def _setFileHeader(self) -> None:
         """ initialize file headers

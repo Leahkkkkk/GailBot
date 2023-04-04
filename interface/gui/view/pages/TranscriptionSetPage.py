@@ -100,6 +100,7 @@ class TranscriptionSetPage(QWidget):
         self.buttonLayout.addWidget(self.createBtn)
         self.buttonLayout.addWidget(self.editBtn)
         self.buttonLayout.addWidget(self.deleteBtn)
+        self.selectSettings.setFixedWidth(Dimension.FORMWIDTH // 2)
         self.setLayout(self.layout)
         self.layout.addWidget(self.label, alignment=center)
         self.layout.addWidget(self.description, alignment=center)

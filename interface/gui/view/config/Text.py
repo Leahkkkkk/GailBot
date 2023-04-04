@@ -132,11 +132,11 @@ class ProfilePageText:
     saveBtn            = "Save"
     deleteBtn          = "Delete Profile"
     newProfileBtn      = "Create New Profile"
-    reuquiredSetBtn    = "Profiles" # TODO: 
-    sysSetBtn          = "Settings" # TODO:
+    reuquiredSetBtn    = "Profiles"  
+    sysSetBtn          = "Settings" 
     postSetBtn         = "Post-Transcription Settings"
     newPluginBtn       = "Add New Plugin"
-    pluginSetBtn       = "Plugins" # TODO: 
+    pluginSetBtn       = "Plugins"  
     engineSettingHeader  = "Profiles" 
     engineSettingCaption = "These settings are applied to the selected settings profile and are required for transcription"
     pluginHeader       = "Available Plugin Suites"

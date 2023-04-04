@@ -53,6 +53,7 @@ class PluginTable(QTableWidget):
         self.horizontalScrollBar().setStyleSheet(SCROLL_BAR)
         self.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)  
         self.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.setTextElideMode(Qt.TextElideMode.ElideMiddle)
     
     def resizeCol(self, widths:List[float]) -> None:
         """ takes in a list of width and resize the width of the each 
