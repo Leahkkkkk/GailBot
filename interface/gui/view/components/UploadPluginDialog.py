@@ -137,7 +137,6 @@ class UploadURL(QDialog):
         self._layout.addWidget(self.input, alignment=Qt.AlignmentFlag.AlignHCenter)
         self._layout.addWidget(self.confirm, alignment=Qt.AlignmentFlag.AlignHCenter)
         self.confirm.clicked.connect(self.upload)
-        # self.caption.setStyleSheet("line-height: 40px; font-size: 15px")
         initPrimaryColorBackground(self)
     
     def getValue(self) -> str:

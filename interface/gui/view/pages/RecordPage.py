@@ -119,7 +119,6 @@ class RecordPage(QWidget):
         self.recordForm.enableForm()
         
 
-        
 class Thread(QThread):
     """ Thread to control the value displayed on the progressbar """
     _signal = pyqtSignal(int)

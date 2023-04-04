@@ -51,7 +51,7 @@ class PluginPage(QWidget):
         self.caption = Label(
             Text.pluginCaption, FontSize.DESCRIPTION, FontFamily.MAIN)
         self.pluginTable = PluginTable(self.signal)
-        self.addBtn = ColoredBtn(Text.newPluginBtn, Color.SECONDARY_BUTTON)
+        self.addBtn = ColoredBtn(Text.newPluginBtn, Color.PRIMARY_BUTTON)
         
     def _initlayout(self):
         """" initializes layout """

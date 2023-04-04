@@ -22,7 +22,7 @@ from view.components.UploadFileTab import UploadFileTab
 from view.pages.FileUploadTabPages import ChooseSet
 from view.Signals import FileSignals
 from gbLogger import makeLogger
-from ..config.Style import Dimension, Color
+from ..config.Style import Dimension, Color, FontSize, FontFamily
 from ..config.Text import FileTableText as Text
 from view.style.WidgetStyleSheet import FILE_TABLE, SCROLL_BAR, TABLE_HEADER
 from view.util.ErrorMsg import ERR, WARN
@@ -43,7 +43,7 @@ from PyQt6.QtCore import (
     QSize, 
     pyqtSignal
 )
-from PyQt6.QtGui import QColor
+from PyQt6.QtGui import QColor, QFont
 
 class TableWidget(Enum):
     REMOVE = 1
@@ -162,7 +162,8 @@ class FileTable(QTableWidget):
         self.setMinimumHeight(Dimension.TABLEMINHEIGHT)
         self.verticalScrollBar().setStyleSheet(SCROLL_BAR) 
         self.horizontalScrollBar().setStyleSheet(SCROLL_BAR)
-
+        font = QFont(FontFamily.OTHER, FontSize.TABLE_ROW)
+        self.setFont(font)
           
     def _setFileHeader(self) -> None:
         """ initialize file headers

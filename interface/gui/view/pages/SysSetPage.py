@@ -79,9 +79,9 @@ class SystemSettingPage(QWidget):
         self.formLayout.addWidget(self.SysSetForm,alignment=Qt.AlignmentFlag.AlignHCenter)
         self.formLayout.addStretch()
         self.formLayout.addWidget(self.saveBtn, alignment=Qt.AlignmentFlag.AlignHCenter)
-        self._addFormButton("Restore Default", "Restore", self._confirmRestore)
-        self._addFormButton("Clear Log Files", "Clear", self._clearLog)
-        self._addFormButton("Save Log Files", "Save", self._saveLog)
+        self._addFormButton(Text.restoreLabel, Text.restoreBtn, self._confirmRestore)
+        self._addFormButton(Text.ClearLogLabel, Text.ClearLogBtn, self._clearLog)
+        self._addFormButton(Text.SaveLogLabel, Text.SaveLogBtn, self._saveLog)
 
     def setValue(self, values:dict):
         """ public function to set the system setting form value

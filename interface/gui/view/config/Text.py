@@ -129,15 +129,15 @@ class ProfilePageText:
     """class holding the text for the profile page"""
     cancelBtn          = "Exit"
     confirm            = "Confirm"
-    saveBtn            = "Save Edit"
+    saveBtn            = "Save"
     deleteBtn          = "Delete Profile"
     newProfileBtn      = "Create New Profile"
-    reuquiredSetBtn    = "Transcription Settings"
-    sysSetBtn          = "System Setting"
+    reuquiredSetBtn    = "Profiles" # TODO: 
+    sysSetBtn          = "Settings" # TODO:
     postSetBtn         = "Post-Transcription Settings"
     newPluginBtn       = "Add New Plugin"
-    pluginSetBtn       = "Plugin Settings"
-    engineSettingHeader  = "Speech to Text Settings"
+    pluginSetBtn       = "Plugins" # TODO: 
+    engineSettingHeader  = "Profiles" 
     engineSettingCaption = "These settings are applied to the selected settings profile and are required for transcription"
     pluginHeader       = "Available Plugin Suites"
     pluginCaption      = "These plugins are available in GailBot"
@@ -148,15 +148,22 @@ class ProfilePageText:
 @dataclass 
 class SystemSetPageText:
     """class holding the text for the system settings page"""
-    header        = "System Settings"
-    caption       = "Control various aspects of the graphical interface"
-    cancelBtn     = "Exit"
-    saveBtn       = "Save Setting"
-    confirmChange = """The changes applied require GailBot to relaunch. All uploaded files will be removed. Do you wish to proceed?"""
-    changeError   = "System settings change failed"
-    clearLog      = "Clear all log files"
-    confirmClear  = "All log files will be removed. Proceed?"
+    header          = "System Settings"
+    caption         = "Control various aspects of the graphical interface"
+    cancelBtn       = "Exit"
+    saveBtn         = "Save"
+    confirmChange   = """The changes applied require GailBot to relaunch. All uploaded files will be removed. Do you wish to proceed?"""
+    changeError     = "System settings change failed"
+    clearLog        = "Clear all log files"
+    confirmClear    = "All log files will be removed. Proceed?"
     changeWorkSpace = "Change GailBot workspace"
+    restoreLabel    = "Restore Default"
+    restoreBtn      = "Restore"
+    ClearLogLabel   = "Clear Log Files"
+    ClearLogBtn     = "Clear"
+    SaveLogLabel    = "Save Log Files"
+    SaveLogBtn      = "Save"
+    
 
 class ConfirmTranscribeText:
     """class holding the text for the confirm transcription popup"""

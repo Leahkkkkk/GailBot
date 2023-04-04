@@ -54,11 +54,11 @@ class FontSizeData(DataclassFromDict):
     HEADER2            : str = field_from_dict()
     HEADER3            : str = field_from_dict()
     HEADER4            : str = field_from_dict()
-    TABLE_ROW          : str = field_from_dict()
     DESCRIPTION        : str = field_from_dict()
     INSTRUCTION_CAPTION: str = field_from_dict()
     BTN                : str = field_from_dict()
     SETTINGICON        : str = field_from_dict()
+    TABLE_ROW          : int = field_from_dict()
     
     
 @dataclass

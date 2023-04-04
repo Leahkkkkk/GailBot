@@ -28,7 +28,6 @@ from PyQt6.QtCore import Qt, QSize, pyqtSignal, QObject
 
 center = Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignHCenter
 
-
 class TranscriptionSetPage(QWidget):
     """ class for the required settings page """
     def __init__(self, signal: ProfileSignals, *args, **kwargs) -> None:
@@ -48,7 +47,10 @@ class TranscriptionSetPage(QWidget):
         try:
             self.engineForm.setValue(data["engine_setting"])
             self.pluginForm.setValue(data["plugin_setting"])
-        except:
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            WarnBox(ERR.ERR_WHEN_DUETO.format("setting transcription setting data", str(e)))
+
             raise ValueError("Set Required Setting Data Error")
     
     def getValue(self) -> dict:
@@ -60,7 +62,7 @@ class TranscriptionSetPage(QWidget):
             return setting 
         except Exception as e:
             self.logger.error(e, exc_info=e)
-            raise ValueError("Get Required Setting Data Error")
+            WarnBox(ERR.ERR_WHEN_DUETO.format("getting transcription setting data", str(e)))
         
     def _initWidget(self):
         """ initializes the widgets on the page """
@@ -79,7 +81,7 @@ class TranscriptionSetPage(QWidget):
         
         # buttom button
         self.createBtn = ColoredBtn (
-            Text.newProfileBtn, Color.SECONDARY_BUTTON
+            Text.newProfileBtn, Color.PRIMARY_BUTTON
         )
         self.deleteBtn = ColoredBtn (
             Text.deleteBtn, Color.CANCEL_QUIT
@@ -174,6 +176,7 @@ class TranscriptionSetPage(QWidget):
             WarnBox(ERR.ERR_WHEN_DUETO.format("adding profile", str(e)))
     
     def editSucceed(self, profilename:str):
+        self.logger.info("updating profile succeed")
         pass 
     
     def getSucceed(self, profile: Tuple[str,Dict[str, Dict]]):
