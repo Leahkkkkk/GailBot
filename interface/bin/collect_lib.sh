@@ -16,8 +16,8 @@ PACKAGES=(
   "pytorch_metric_learning"
   "hmmlearn"
   "speechbrain"
-  "certifi",
-  "
+  "certifi"
+  "syllables"
 )
 
 # Copy packages from source to destination directories

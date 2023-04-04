@@ -129,7 +129,6 @@ class Controller(QObject):
         self.gb.reset_workspace()
         self.restart()
         
-        
     def restart(self):
         """ send signal to restart the application, the owner of controller
             class is expected to handle this signal by relaunching the application

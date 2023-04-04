@@ -27,10 +27,10 @@ class GailBot:
             ws_root (str): the path to workspace root
         """
         self.ws_manager: WorkspaceManager = WorkspaceManager(ws_root)
+        self.reset_workspace()
         logger.info("workspace manager initialized")
         self.gb: ServiceController = ServiceController(
             self.ws_manager, load_exist_setting = True)
-        self.reset_workspace()
         logger.info("gailbot service controller initialized")
         
     def reset_workspace(self):
