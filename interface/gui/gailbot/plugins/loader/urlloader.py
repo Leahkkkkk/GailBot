@@ -59,7 +59,8 @@ class PluginURLLoader(PluginLoader):
     def supported_url_source(self):
         """ return a list of supported url downloading source """
         return ["github", "amazon s3"] 
-    
+   
+    @staticmethod 
     def is_valid_url(self, url: str) -> bool:
         """ 
         check if the url string is valid 
@@ -70,12 +71,11 @@ class PluginURLLoader(PluginLoader):
         Returns:
             bool: true if the string is valid url false otherwise
         """
-        if not type(url) == str: 
-            return False
-        result = urlparse(url)
-        if not all([result.scheme, result.netloc]):
-            return False
-        return True
+        for loader in self.url_loaders:
+            if loader.is_supported_url(url):
+                return True
+        
+        return False
     
         
     def load(self, url : str) -> Union [PluginSuite, bool]:

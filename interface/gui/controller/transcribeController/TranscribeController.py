@@ -12,6 +12,7 @@ connect the backend transcription process with the front end view object,
 so that the front end is able to reflect the transcription progress
 '''
 from dataclasses import dataclass
+import time
 from typing import List, Dict
 from controller.util.Error import  ERR
 from view.MainWindow import MainWindow
@@ -163,6 +164,7 @@ class GBWorker(QRunnable):
                 for key, filename in self.files.items():
                     if not filename in untranscribed:
                         self.signal.fileTranscribed.emit(key)
+            time.sleep(0.2) 
             self.signal.finish.emit()
         finally:
             self.setAutoDelete(True)

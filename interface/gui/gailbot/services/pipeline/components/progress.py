@@ -9,4 +9,5 @@ class ProgressMessage:
     Transcribed = "\u2705 Transcribed"
     Error = "\U0001F6AB Error"
     Analyzing  = "\U0001F4AC Analyzing" 
+    Analyzed = "\u2705 Analyzed" 
     

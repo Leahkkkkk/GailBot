@@ -117,7 +117,9 @@ class FileOrganizer:
         self.logger.info(data)
         file = FileObj.from_dict(data)
         try:
-            if key not in self.data and self.gb.add_source(file.FullPath, file.Output):
+            if self.gb.is_source(file.Name):
+                self.signals.error.emit(ERR.DUPLICATE_FILE_NAME)
+            elif key not in self.data and self.gb.add_source(file.FullPath, file.Output):
                 self.data[key] = file 
                 self.signals.fileAdded.emit((key, data))
                 self.currentKey += 1

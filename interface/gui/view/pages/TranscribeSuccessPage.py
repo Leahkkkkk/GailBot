@@ -54,9 +54,6 @@ class TranscribeSuccessPage(QWidget):
             FS.HEADER2,
             FontFamily.MAIN)
         self.label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
-        self.caption = Label(
-            Text.transcribedFilesText, FS.HEADER3, FontFamily.MAIN)
-        self.caption.setContentsMargins(Dimension.MEDIUM_SPACING,0,0,0)
         self.moreBtn = ColoredBtn(
             Text.moreBtnText, Color.SECONDARY_BUTTON)
         self.returnBtn = ColoredBtn(
@@ -73,7 +70,6 @@ class TranscribeSuccessPage(QWidget):
         self.containerLayout = QVBoxLayout()
         self.container.setFixedWidth(Dimension.TABLECONTAINERWIDTH)
         self.container.setLayout(self.containerLayout)
-        self.containerLayout.addWidget(self.caption)
         self.containerLayout.addWidget(self.fileTable)
         self.setLayout(self.verticalLayout)
         addLogo(self.verticalLayout)

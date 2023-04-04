@@ -22,8 +22,8 @@ QCheckBox {
 }
 
 QCheckBox::indicator {
-    width: 13px;
-    height: 13px;
+    width: 30px;
+    height: 30px;
 }
 """
 class CheckBox(QWidget, FormWidget):
@@ -36,7 +36,7 @@ class CheckBox(QWidget, FormWidget):
     def initUI(self):
         self._layout = QHBoxLayout()
         self.checkBox = QCheckBox()
-        self.label = Label(self.label, FontSize.BTN, FontFamily.MAIN)
+        self.label = Label(self.label, FontSize.INSTRUCTION_CAPTION, FontFamily.MAIN)
         self.checkBox.setStyleSheet(CHECKBOX_STYLESHEET)
         self.setLayout(self._layout)
         self._layout.addWidget(self.checkBox)

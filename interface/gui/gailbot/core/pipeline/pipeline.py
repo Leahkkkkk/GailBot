@@ -130,14 +130,13 @@ class Pipeline:
                     threadkey_to_exe[key] = executable           
 
             # wait until all tasks finishes before next iteration
-            self.threadpool.wait_for_all_completion(error_fun=lambda:None)
+            # self.threadpool.wait_for_all_completion(error_fun=lambda:None)
             
             for key, exe in threadkey_to_exe.items():
                 # get the task result from the thread pool
                 logger.info(key)
                 logger.info(exe)
                 exe_res = self.threadpool.get_task_result(key)
-                logger.info(exe_res)
                 self.dependency_graph.remove_node(exe)
                 name = self.component_to_name[exe]
                

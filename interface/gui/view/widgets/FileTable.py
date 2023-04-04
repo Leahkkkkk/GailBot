@@ -339,7 +339,7 @@ class FileTable(QTableWidget):
         """
         try:
             if key in self.filePins:
-                self.updateFileContent((key, "Status", "Transcribed"))
+                self.updateFileContent((key, "Status", Text.complete))
             else:
                 self.viewSignal.error.emit(KEYERROR)
         except Exception as e:

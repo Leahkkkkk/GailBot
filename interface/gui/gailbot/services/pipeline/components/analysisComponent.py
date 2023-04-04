@@ -50,9 +50,9 @@ class AnalysisComponent(Component):
         Returns:
             ComponentResult: the result of the analysis process
         """
+        threads = ThreadPool(NUM_THREAD)
         process_start_time = time.time()
         logger.info(dependency_outputs)
-         
         try: 
             dependency_res: ComponentResult = dependency_outputs["transcription"]
             logger.info(f"result from transcription {dependency_res}")
@@ -62,13 +62,12 @@ class AnalysisComponent(Component):
             logger.info(f"get payloads {payloads}")
             for payload in payloads:
                 if not payload.failed:
-                    self.analyze_payload(payload)
-    
+                    threads.add_task(self.analyze_payload, [payload])
+            threads.wait_for_all_completion()
             return ComponentResult(
                 state  = ComponentState.SUCCESS,
                 result = payloads,
                 runtime = time.time() - process_start_time)
-            
         except Exception as e:
             logger.error(e, exc_info=e)
             return ComponentResult(
@@ -79,7 +78,7 @@ class AnalysisComponent(Component):
 
     def analyze_payload(self, payload: PayLoadObject):
         logger.info("start analyzing payload")
-        # self.emit_progress(payload, ProgressMessage.Analyzing)
+        self.emit_progress(payload, ProgressMessage.Analyzing)
         start_time = time.time()
         plugins = payload.setting.get_plugin_setting()
         logger.info(f"the following plugins are applied: {plugins}")
@@ -110,6 +109,7 @@ class AnalysisComponent(Component):
                 elapsed_time_sec=end_time - start_time
             ) 
             payload.set_analysis_process_stats(stats)   
+            self.emit_progress(payload, ProgressMessage.Analyzed)
         except Exception as e:
             logger.error(f"fail to apply the plugin suite {plugin}, error {e}", exc_info=e)
             self.emit_progress(payload, ProgressMessage.Error)
@@ -122,6 +122,7 @@ class AnalysisComponent(Component):
     def emit_progress(self, payload: PayLoadObject, msg: str):
         if payload.progress_display:
             payload.progress_display(msg)
+        time.sleep(0.1)
 
                         
 

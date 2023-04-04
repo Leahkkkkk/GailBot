@@ -310,7 +310,7 @@ class ServiceController:
             logger.error(e, exc_info=e)
             return [], sources
         
-    def register_plugin_suite(self, plugin_source: str) -> Union[List[str], bool]:
+    def register_plugin_suite(self, plugin_source: str) -> Union[List[str], str]:
         """
         Registers a plugin suite to the object's plugin manager
 
@@ -319,7 +319,8 @@ class ServiceController:
         
         Returns:
             Union[str, bool]: return the plugin name if successfully registered, 
-                              false if not
+                              return the string that stores the error message if 
+                              the plugin is not registered
         """
         return self.plugin_manager.register_suite(plugin_source)
         

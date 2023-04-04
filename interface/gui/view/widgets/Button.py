@@ -149,6 +149,7 @@ class ToggleBtn(QPushButton):
         self._changeSymbol()
         self.update()
         self.show()
+        self.setStyleSheet(f"font-size:{FontSize.HEADER4}")
 
     def _changeSymbol(self):
         """ changes the button symbol """

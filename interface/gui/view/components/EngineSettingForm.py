@@ -14,7 +14,7 @@ from typing import Dict, TypedDict
 
 from view.widgets import ToggleView, DependentCombo
 from view.config.Text import EngineForm
-from view.config.Text import CreateNewProfilePageText as Text 
+from view.config.Text import ProfilePageText as Text 
 from view.config.Style import Dimension
 from gbLogger import makeLogger
 
@@ -45,7 +45,7 @@ class EngineSettingForm(QWidget):
     def _initWidget(self):
         """initialize widgets"""
         self.engineForm = DependentCombo(
-            EngineForm.Engine, "Speech to Text Engine", "engine")
+            EngineForm.Engine, Text.selectengine, Text.formPivotKey)
         self.toggleView = ToggleView(
             Text.engineSettingHeader, self.engineForm, header = True)
         self.toggleView.setScrollHeight(Dimension.OUTPUT_FORM_HEIGHT)

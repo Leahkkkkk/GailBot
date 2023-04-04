@@ -143,6 +143,8 @@ class ProfilePageText:
     pluginCaption      = "These plugins are available in GailBot"
     tempMessage        = "This page has been temporarily disabled to allow for further updates and developments. Please check back later."
     confirmDelete      = "Confirm deleting the profile: "
+    selectengine       = "Select Speech to Text Engine"
+    formPivotKey       = "engine"
 @dataclass 
 class SystemSetPageText:
     """class holding the text for the system settings page"""
@@ -227,6 +229,7 @@ class FileTableText:
     delete     = "Remove"
     changeSet  = "Change Profile"
     profileDet = "Profile Details"
+    complete   = "\u2705 Completed"
     
 @dataclass
 class WindowTitle:
@@ -315,10 +318,12 @@ class Links:
 
 @dataclass
 class PLUGIN_SUITE_TEXT:
+    SELECT_PLUGIN = "Select Plugin Suites"
     LOAD_DIR = "Load from Directory"
     LOAD_URL = "Load from Cloud"
     REGISTER = "Register Plugin Suite"
     URL = ""
+    
     UPLOAD = "Upload"
     URL_INSTRUCTION = "GailBot currently accepts plugin suite from: "
     SOURCES = ["1. Amazon S3 object url storing plugin suite as zip file",

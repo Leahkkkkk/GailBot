@@ -19,17 +19,18 @@ class ERR:
     FAIL_TRANSCRIBE  = "ERROR: fail to transcribe {0}"
     
     ### error for file organizer
-    FILE_KEY_ERR         = "ERROR: File key not found."
-    DUPLICATE_FILE_KEY      = "ERROR: Duplicate file key."
-    POST_FILE_ERROR         = "ERROR: Fail to add file to database."
-    GET_FILE_ERROR          = "ERROR: Fail to get data."
-    EDIT_FILE_ERROR         = "ERROR: Fail to edit the data."
-    DELETE_FILE_ERROR        = "ERROR: Unable to delete data."
+    FILE_KEY_ERR        = "ERROR: File key not found."
+    DUPLICATE_FILE_KEY  = "ERROR: Duplicate file key."
+    DUPLICATE_FILE_NAME = "ERROR: Duplicate file name."
+    POST_FILE_ERROR     = "ERROR: Fail to add file to database."
+    GET_FILE_ERROR      = "ERROR: Fail to get data."
+    EDIT_FILE_ERROR     = "ERROR: Fail to edit the data."
+    DELETE_FILE_ERROR   = "ERROR: Unable to delete data."
     
     
     ## error for profile organizer
-    INVALID_FILE     = "ERROR: {0} is an invalid file."
-    DUPLICATED_NAME  = "ERROR: The name {0} has been taken."
+    INVALID_FILE      = "ERROR: {0} is an invalid file."
+    DUPLICATED_NAME   = "ERROR: The name {0} has been taken."
     DELETE_DEFAULT    = "Default setting cannot be deleted."
     INVALID_PROFILE   = "ERROR: {0} is an invalid profile."
     SAVE_PROFILE      = "ERROR: Fail to save profile {0} locally."

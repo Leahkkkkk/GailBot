@@ -12,6 +12,7 @@ from pydantic import BaseModel
 
 from .plugin import Plugin, Methods
 from gailbot.core.utils.logger import makelogger
+from gailbot.configs import PLUGIN_CONFIG
 from gailbot.core.pipeline import (
     Pipeline, 
     Component, 
@@ -23,7 +24,7 @@ from gailbot.core.utils.general import is_file
 import importlib
 
 ## TODO: put to config
-DOCUMENTATION = "DOCUMENT.md"
+DOCUMENTATION = PLUGIN_CONFIG.DOCUMENT
 
 logger = makelogger("pluginSuite")
 
@@ -111,8 +112,10 @@ class PluginSuite:
 
         """ a dictionary of the dependency map  -> pipeline argument  """
         self.dict_conf = dict_conf
+        # metadata and document_path will be loaded in _load_from_config
         self.metadata : MetaData = None
         self.document_path : str = None
+        
         self.dependency_map, self.plugins = self._load_from_config(dict_conf, abs_path)
         
         # Wrap the plugins in PluginComponent
@@ -123,8 +126,7 @@ class PluginSuite:
         # Init the pipeline based on the components
         self.pipeline = Pipeline(dependency_map = self.dependency_map,
                                  components = self.components,
-                                 num_threads = 5)
-        
+                                 num_threads = PLUGIN_CONFIG.THREAD_NUM)
         # Add vars here from conf.
         self._name = dict_conf["suite_name"]
         self._is_ready = True
@@ -161,8 +163,12 @@ class PluginSuite:
         """
         logger.info(methods)
         logger.info(base_input)
+       
+        pipeline = Pipeline(dependency_map = self.dependency_map,
+                                 components = self.components,
+                                 num_threads = 1)
         
-        result = self.pipeline(
+        result = pipeline(
             base_input=base_input, 
             additional_component_kwargs= {
                 "methods" : methods
@@ -224,10 +230,9 @@ class PluginSuite:
         metadata = dict_config["metadata"]
         MetaData(**metadata)
         self.metadata = metadata
-        
         self.document_path = os.path.join(abs_path, suite_name, DOCUMENTATION)
         assert is_file(self.document_path)
-       
+        
         for conf in dict_config["plugins"]:
             module_name = conf["module_name"]
             module_full_name = f"{suite_name}.{module_name}"
@@ -241,7 +246,6 @@ class PluginSuite:
             spec.loader.exec_module(module)
             clazz = getattr(module, clazz_name)
             instance = clazz()
-
             dependency_map[clazz_name] = conf["dependencies"]
             plugins[clazz_name] = instance
         logger.info(f"plugin dependency map {dependency_map}")

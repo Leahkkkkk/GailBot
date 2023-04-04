@@ -2,7 +2,7 @@
 [colors] 
 ##dark mode button colors
 ##secondary button color, used in save, continue, and get started buttons
-SECONDARY_BUTTON = "#BED8D7"
+SECONDARY_BUTTON = "#95adad"
 ##cancel and quit button color
 CANCEL_QUIT      = "#A25952"
 ##highlight background color, primarily used in the background of the file table

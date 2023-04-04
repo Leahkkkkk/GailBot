@@ -3,11 +3,11 @@
 # @Date:   2023-01-08 13:22:01
 # @Last Modified by:   Muhammad Umair
 # @Last Modified time: 2023-01-16 13:10:15
-
+from dataclasses import dataclass
 import sys
 import os
 from typing import  List, Union, Dict
-
+import validators
 from .suite import PluginSuite, MetaData
 from .loader import (
     PluginURLLoader,  
@@ -20,11 +20,21 @@ from gailbot.core.utils.general import (
     subdirs_in_dir,
     delete, 
     get_name, 
-    is_directory
+    is_directory,
+    filepaths_in_dir,
+    paths_in_dir
 )
 
-
 logger = makelogger("plugin_manager")
+
+@dataclass 
+class ERROR: 
+    INVALID_URL    = "The given url is not supported by gailbot"
+    MISSING_CONFIG = "The plugin suite is missing config.toml that specifies the plugins dependency"
+    MISSING_DOC    = "The plugin suite is missing a DOCUMENT.md file"
+    MODULE_ERROR   = "Fail to load import plugin module"
+    INVALID_INPUT  = "The plugin suite source can only be URL, a valid Amazon S3 Bucket name, or path to directory"
+    
 class DuplicatePlugin(Exception):
     def __str__(self) -> str:
         return "ERROR: loading existing plugin" 
@@ -63,7 +73,6 @@ class PluginManager:
             for plugin_source in subdirs:
                 if not self.register_suite(plugin_source):
                     logger.error(f"{get_name(plugin_source)} cannot be registered")
-        
         try:
             self.register_suite(PLUGIN_CONFIG.HILAB_BUCKET)
         except Exception as e:
@@ -87,7 +96,7 @@ class PluginManager:
     def register_suite(
         self,
         plugin_source : str
-    ) -> Union[List[str], bool]:
+    ) -> Union[List[str], str]:
         """
         Register a plugin suite from the given source, which can be
         a plugin directory, a url, a conf file, or a dictionary configuration.
@@ -102,10 +111,10 @@ class PluginManager:
                             self.suites[suite.name] = suite
                             registered.append(suite.name)
                     return registered
-            return False
+            return self.report_registration_err(plugin_source)
         except Exception as e:
             logger.error(e, exc_info=e)
-            return False
+            return self.report_registration_err(plugin_source)
         
     def get_suite(
         self,
@@ -185,4 +194,22 @@ class PluginManager:
         else:
             return None
     
-    
+    # TODO: improve this function to generate more specific error message
+    def report_registration_err(self, suite:str) -> str:
+        if validators.url(suite):
+            if not PluginURLLoader.is_valid_url(suite):
+                return ERROR.INVALID_URL
+            else:
+                return ERROR.MODULE_ERROR 
+        elif is_directory(suite):
+            tomls = filepaths_in_dir(suite, ["toml"])
+            if len(tomls) == 0 or not tomls:
+                return ERROR.MISSING_CONFIG
+            mds = filepaths_in_dir(suite, ["md"])
+            if len(mds) == 0 or not mds:
+                return ERROR.MISSING_DOC
+                
+            return ERROR.MODULE_ERROR 
+        else:
+            return ERROR.INVALID_INPUT
+            

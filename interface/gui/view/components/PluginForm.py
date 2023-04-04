@@ -2,6 +2,7 @@ from typing import List
 from view.widgets import MultipleSelect, ToggleView
 from PyQt6.QtWidgets import QWidget , QHBoxLayout
 from view.config.Style import Dimension
+from view.config.Text import PLUGIN_SUITE_TEXT
 
 class PluginForm(QWidget):
     def __init__(self) -> None:
@@ -20,7 +21,7 @@ class PluginForm(QWidget):
             self.addPluginSuite(suite)
     
     def _initWidget(self):
-        self.pluginSuitesList = MultipleSelect("Select Plugin Suites", self.pluginSuites)
+        self.pluginSuitesList = MultipleSelect(PLUGIN_SUITE_TEXT.SELECT_PLUGIN, self.pluginSuites)
     
     def _initLayout(self):
         self._layout = QHBoxLayout()

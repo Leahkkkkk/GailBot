@@ -1,7 +1,7 @@
 
 import os 
 from typing import Dict, List, Union, TypedDict, Tuple
-from abc import ABC
+from dataclasses import dataclass
 from .pluginLoader import PluginLoader
 from ..suite import PluginSuite
 from gailbot.core.utils.logger import makelogger
@@ -19,6 +19,8 @@ from gailbot.core.utils.general import (
 from pydantic import BaseModel, ValidationError
 
 logger = makelogger("plugin directory loader")
+
+     
 
 class PluginDict(BaseModel):
     """ dictionary type for individual plugin """
@@ -173,7 +175,7 @@ class PluginDictLoader(PluginLoader):
     """
     def load(self, dict_conf : Dict, suites_directory : str) -> PluginSuite:
         if not type(dict_conf) == dict:
-            return
+            return ""
         suite = PluginSuite(dict_conf, suites_directory)
         if suite.is_ready:
             return [suite]

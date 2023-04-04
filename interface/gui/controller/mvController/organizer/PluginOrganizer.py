@@ -61,14 +61,15 @@ class PluginOrganizer:
             pluginSuitePath: a string that stores the path to plugin suite
         """     
         suites = self.gb.register_plugin_suite(addRequest.data)
-        # suite = get_name(pluginSuitePath) 
-        if suites:
+        if isinstance(suites, list):
             for suite in suites:
                 metaInfo = self.gb.get_plugin_suite_metadata(suite)
                 addRequest.succeed((suite, metaInfo))
+        elif isinstance(suites, str):
+            addRequest.fail(suites)
         else:
             self.signals.error.emit(ERR.ERROR_WHEN_DUETO.format(
-                f"register plugin {get_name(addRequest.data)}", "invalid plugin suite"))
+                f"register plugin", "invalid plugin suite"))
 
     def deleteSuite(self, deleteRequest: Request) -> None:
         """ delete the plugin

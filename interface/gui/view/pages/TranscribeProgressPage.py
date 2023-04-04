@@ -115,10 +115,6 @@ class TranscribeProgressPage(QWidget):
         self.verticalLayout.addWidget(self.loadingText, alignment = top)
         self.verticalLayout.addWidget(self.container, alignment = top|center)
         self.verticalLayout.addStretch()
-        #NOTE: disable cancel function 
-        # self.verticalLayout.addWidget(self.cancelBtn, 
-        #                               alignment = center)
-        self.verticalLayout.addStretch()
         
     def _connectSignal(self):
         """ connects signal. change enableCancel to true when backend functionality allows for it. """
