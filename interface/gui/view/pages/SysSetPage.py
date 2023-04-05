@@ -160,7 +160,6 @@ class SystemSettingPage(QWidget):
         except Exception as e:
             self.logger.error(e, exc_info=e)
             
-            
     def _addFormButton(self, label, btnText, fun: callable):
         container = QWidget()
         layout = QHBoxLayout()

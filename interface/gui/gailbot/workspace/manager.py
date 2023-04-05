@@ -42,9 +42,10 @@ class WorkspaceManager:
                 make_dir(path, True)
 
         if not is_directory(self.path_config.tempspace_root):
-                make_dir(self.path_config.tempspace_root, True)
+            make_dir(self.path_config.tempspace_root)
     
     def reset_workspace(self):
+        logger.error(f"delete is called")
         try:
             if is_directory(self.path_config._ws_root):
                 delete(self.path_config._ws_root)

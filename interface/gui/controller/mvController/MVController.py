@@ -44,11 +44,11 @@ class MVController:
         self.view  = view 
         self.gb = gb 
         
-        # add available setting to the frontend interface
-        settingNames = self.gb.get_all_settings_name()
-        self.logger.info(f"get profile {settingNames}")
-        self.view.addAvailableSettings(settingNames)
-        
+    def exec(self):
+        """ public function to execute the model view controller """
+        self._connectFileDBToView()
+        self._connectViewToFileDB()
+        self._connectProfileDBToView()
         # add available plugin suite to the frontend interface
         pluginSuites = self.gb.get_all_plugin_suites()
         self.logger.info(f"get plugin suites {pluginSuites}")
@@ -56,12 +56,10 @@ class MVController:
         self.logger.info(f"get plugin suite info {pluginInfo}")
         self.view.addAvailablePluginSuites(pluginInfo)
 
-    
-    def exec(self):
-        """ public function to execute the model view controller """
-        self._connectFileDBToView()
-        self._connectViewToFileDB()
-        self._connectProfileDBToView()
+        # add available setting to the frontend interface
+        settingNames = self.gb.get_all_settings_name()
+        self.logger.info(f"get profile {settingNames}")
+        self.view.addAvailableSettings(settingNames)
         
     def _connectFileDBToView(self):
         """ connect the signal from the file database to view
