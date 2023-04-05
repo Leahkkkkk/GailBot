@@ -286,13 +286,30 @@ class SettingManager():
             name (str): the name of the setting
 
         Returns:
-            bool: return true if the default setting can be set, false otherwise
+            bool: return true if the default setting can be set, 
+                  false otherwise
         """
         if setting_name in self.settings:
              self.default_setting = setting_name
              return True
         else:
              return False 
+
+    def is_suite_in_use(self, suite_name:str) -> bool:
+        """given a suite_name, check if this suite is used 
+           in any of the setting
+
+        Args:
+            suite_name (str): the name of the plugin suite
+
+        Returns:
+            bool: return true if the suite is used in any of the setting, 
+                  false otherwise
+        """
+        for setting_obj in self.settings.values():
+            if suite_name in setting_obj.get_plugin_setting():
+                return True
+        return False
     
     def get_default_setting_name(self) -> str:
         """get the default setting name

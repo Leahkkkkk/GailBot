@@ -273,7 +273,30 @@ class ServiceController:
         """
         return self.organizer.apply_setting_to_source(source, setting, overwrite)
 
+    def is_setting_in_use(self, setting_name: str) -> bool:
+        """check if a setting is being used by any source
+
+        Args:
+            setting_name (str): the name of the setting
+
+        Returns:
+            bool: return true if the setting is being used, false otherwise
+        """
+        return self.organizer.is_setting_in_use(setting_name)    
+    
     def add_progress_display(self, source: str, progress_display: Callable):
+        """ add a displayer function to the source to track the progress of the 
+            source in the pipeline 
+
+        Args:
+            source_name (str): the name of the source
+            displayer (Callable): a callable function that only takes in 
+                                  one argument that stores the progress message 
+                                  as a string
+
+        Returns:
+            bool: true if the displayer is added correctly, false other wise
+        """
         return self.organizer.add_progress_display(source, progress_display)
 
 
@@ -290,25 +313,32 @@ class ServiceController:
                                          the second list stores a list of files that 
                                          fail to be transcribed 
         """
+        invalid, fails = [], []
+        
         # get configured sources 
         try:
             if not sources:
-                sources = self.organizer.get_configured_sources(sources)
+                source_objs = self.organizer.get_configured_sources(sources)
             else: 
-                sources = [self.organizer.get_source(name) for name in sources]
+                source_objs = [self.organizer.get_source(name) for name in sources]
             # load to converter 
-            payloads, invalid = self.converter(sources)
+            payloads, invalid = self.converter(source_objs)
             
-            if len(sources) != 0:
+            if len(source_objs) != 0:
                 logger.info(payloads)
                 # put the payload to the pipeline
                 fails = self.pipeline_service(payloads=payloads)
                 logger.info(f"the failed transcriptions are {fails}")
                 logger.info(f"the invalid files are {invalid}")
+            
+            # remove source from organizer
+            for source in sources:
+                self.organizer.remove_source(source)
+           
             return invalid, fails
         except Exception as e:
             logger.error(e, exc_info=e)
-            return [], sources
+            return invalid, sources
         
     def register_plugin_suite(self, plugin_source: str) -> Union[List[str], str]:
         """
@@ -335,6 +365,7 @@ class ServiceController:
             PluginSuite: found plugin suite object
         """
         return self.plugin_manager.get_suite(suite_name)
+  
     
     def get_all_plugin_suites(self) -> List[str]:
         """ get names of available plugin suites
@@ -372,10 +403,49 @@ class ServiceController:
         return self.plugin_manager.delete_suite(suite_name)
     
     def get_plugin_suite_metadata(self, suite_name: str):
+        """ get the metadata of a plugin suite identified by suite name
+
+        Args:
+            suite_name (str): the name of the suite
+
+        Returns:
+            MetaData: a MetaData object that stores the suite's metadata, 
+                      
+        """
         return self.plugin_manager.get_suite_metadata(suite_name)
 
     def get_plugin_suite_dependency_graph(self, suite_name: str) :
+        """ get the dependency map of the plugin suite identified by suite_name
+
+        Args:
+            suite_name (str): the name of the suite
+
+        Returns:
+            Dict[str, List[str]]: the dependency graph of the suite
+        """
         return self.plugin_manager.get_suite_dependency_graph(suite_name)
 
     def get_plugin_suite_documentation_path(self, suite_name: str) :
+        """ get the path to the documentation map of the plugin suite identified by suite_name
+
+        Args:
+            suite_name (str): the name of the suite
+
+        Returns:
+            str: the path to the documentation file
+        """
         return self.plugin_manager.get_suite_documentation_path(suite_name)
+    
+    
+    def is_suite_in_use(self, suite_name:str) -> bool:
+        """given a suite_name, check if this suite is used 
+           in any of the setting
+
+        Args:
+            suite_name (str): the name of the plugin suite
+
+        Returns:
+            bool: return true if the suite is used in any of the setting, 
+                  false otherwise
+        """
+        return self.organizer.is_suite_in_use(suite_name)

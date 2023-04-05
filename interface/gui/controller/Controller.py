@@ -32,7 +32,6 @@ from PyQt6.QtCore import pyqtSlot, QObject, QThreadPool, pyqtSignal
 class Signal(QObject):
     """ a signal object that contains signal for communication between
         backend transcription process and frontend view object"""
-    fileProgress = pyqtSignal(tuple)
     restart      = pyqtSignal()
 
 class Controller(QObject):
@@ -144,23 +143,8 @@ class Controller(QObject):
     ###################   gailbot  handler #############################
     def _handleTranscribeSignal(self):
         """ handle signal from View that requests to transcribe the file"""
-        self.ViewObj.getFileSignal().transcribe.connect(self._transcribeFiles)
-        self.signal.fileProgress.connect(
-            self.MVController.fileOrganizer.updateFileProgress)
-
-
-    @pyqtSlot(set)
-    def _transcribeFiles(self, files: Set[str]):
-        """ transcribing the files
-        Args:
-            files (Set[str]): a set of file keys that identify the files that
-                              will be transcribed
-        """
-        self.logger.info(files)
-        transcribeList = self.MVController.fileOrganizer.getTranscribeData(files)
-        self._runGailBot(transcribeList)
-
-
+        self.ViewObj.getFileSignal().transcribe.connect(self._runGailBot)
+    
     def _runGailBot(self, files):
         """run gailbot on a separate thread
 

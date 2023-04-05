@@ -13,16 +13,16 @@ Description: main siganls for view object to communicate with backend database
 from PyQt6.QtCore import QObject, pyqtSignal
 class FileSignals(QObject):
     """ file signals for frontend to communicate with file database  """
-    postFile = pyqtSignal(object)
-    editFile = pyqtSignal(object)
-    delete = pyqtSignal(object)
-    getFile = pyqtSignal(str)
-    transcribe = pyqtSignal(set)
-    cancel = pyqtSignal()
-    getFileToTranscribe = pyqtSignal(str)
-    changeProfile = pyqtSignal(tuple)
-    requestprofile = pyqtSignal(str)
+    postFileRequest = pyqtSignal(object)
+    deleteRequest = pyqtSignal(object)
+    changeProfileRequest = pyqtSignal(object)
+    requestprofile = pyqtSignal(object)
+    
+    transcribe = pyqtSignal(list)
     progressChanged = pyqtSignal(tuple)
+    cancel = pyqtSignal()
+
+    # signal for controlling view only
     
 class ProfileSignals(QObject):
     """ profile signals for front end to communicate with profile database"""
@@ -31,6 +31,7 @@ class ProfileSignals(QObject):
     deleteRequest = pyqtSignal(object)
     postRequest   = pyqtSignal(object)
     profileAdded  = pyqtSignal(str)
+    profileDeleted = pyqtSignal(str)
 
 class PluginSignals(QObject):
     addRequest = pyqtSignal(object)

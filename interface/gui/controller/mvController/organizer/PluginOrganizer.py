@@ -77,6 +77,10 @@ class PluginOrganizer:
         Args:
             deleteRequest (Request): _description_
         """
+        if self.gb.is_suite_in_use(deleteRequest.data):
+            deleteRequest.fail(ERR.PLUGIN_IN_USE.format(deleteRequest.data))
+            return
+        
         deleted = self.gb.delete_plugin_suite(deleteRequest.data)
         if deleted:
             deleteRequest.succeed(deleteRequest.data)

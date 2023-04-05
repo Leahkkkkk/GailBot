@@ -10,11 +10,11 @@ Modified By:  Siara Small  & Vivian Li
 Description: implementation of the main page Stack
 '''
 from typing import Tuple, List
-
 from gbLogger import makeLogger
 from view.Signals import ProfileSignals, FileSignals, PluginSignals, ViewSignals
 from view.config.Style import Dimension
 from view.config.Text import MainStackText
+from view.widgets.MsgBox import WarnBox, ConfirmBox
 from view.pages import (
         WelcomePage, 
         ConfirmTranscribePage,
@@ -32,7 +32,6 @@ from view.widgets.Background import (
 
 from PyQt6.QtWidgets import QStackedWidget, QTabWidget
 from PyQt6.QtCore import QSize
-
 
 class MainStack(QStackedWidget):
     """ Implementation of the main page stack.
@@ -100,12 +99,6 @@ class MainStack(QStackedWidget):
         self.SettingPage.settingStack.setCurrentWidget(
             self.SettingPage.TranscriptionSetPage)
       
-    def addFileToTables(self, file:dict):
-        """ public function that add files to all the file tables """
-        self.FileUploadPage.fileTable.addFile(file)
-        self.ConfirmTranscribePage.fileTable.addFile(file)
-        self.TranscribeProgressPage.fileTable.addFile(file)
-        self.TranscribeSuccessPage.fileTable.addFile(file)
     
     def updateFile(self, data:Tuple[str,str,str]):
         """ public function that update the files to all the file tables  """
@@ -116,11 +109,9 @@ class MainStack(QStackedWidget):
     
     def changeToTranscribed(self, key: str):
         """ public function that change the file status on all file tables """
-        self.FileUploadPage.fileTable.changeFileToTranscribed(key)
-        self.ConfirmTranscribePage.fileTable.changeFileToTranscribed(key)
         self.TranscribeProgressPage.fileTable.changeFileToTranscribed(key)
         self.TranscribeSuccessPage.fileTable.changeFileToTranscribed(key)
-        self.FileUploadPage.fileTable.removeFile(key)
+        self.FileUploadPage.fileTable.removeSucceed(key)
         self.ConfirmTranscribePage.fileTable.transferList.clear()
     
     def _initPage(self):
@@ -145,14 +136,6 @@ class MainStack(QStackedWidget):
         # NOTE: the current record page is not used
         # self.RecordPage = RecordPage.RecordPage()
         # initSubPageBackground(self.RecordPage)
-        
-        # self.SystemSettingPage = SystemSettingPage.SystemSettingPage()
-        # initPrimaryColorBackground(self.SystemSettingPage)
-        # self.MainSetting = QTabWidget()
-        # self.MainSetting.addTab(
-        #     self.SettingPage, MainStackText.profilesetting)
-        # self.MainSetting.addTab(
-        #     self.SystemSettingPage, MainStackText.systemsetting) 
         
         self.addWidget(self.WelcomePage)
         self.addWidget(self.ConfirmTranscribePage)
@@ -180,32 +163,50 @@ class MainStack(QStackedWidget):
             self.setCurrentWidget(self.ConfirmTranscribePage))
         self.ConfirmTranscribePage.cancelBtn.clicked.connect(self.gotoFileUploadPage)
         
-        # self.SystemSettingPage.cancelBtn.clicked.connect(self.gotoFileUploadPage)
-        # self.SystemSettingPage.saveBtn.clicked.connect(self.gotoFileUploadPage)
-        # self.FileUploadPage.recordBtn.clicked.connect(lambda:
-        #         self.setCurrentWidget(self.RecordPage))
-        # self.RecordPage.cancelBtn.clicked.connect(self.gotoFileUploadPage)
-        
     def _connectSignal(self):
         """ connecting the signal  """
         self.FileUploadPage.fileTable.viewSignal.goSetting.connect(
             self.gotoSettingPage)
         self.ConfirmTranscribePage.fileTable.viewSignal.goSetting.connect(
             self.gotoSettingPage)
+        
         """ signals to control the list of files to be presented on each 
             file table
         """
         self.FileUploadPage.fileTable.viewSignal.transferState.connect(
-            self.ConfirmTranscribePage.fileTable.filterFile)
+            self.ConfirmTranscribePage.fileTable.resetFileDisplay)
         self.ConfirmTranscribePage.fileTable.viewSignal.transferState.connect(
-            self.TranscribeProgressPage.fileTable.filterFile)
+            self.TranscribeProgressPage.fileTable.resetFileDisplay)
         self.ConfirmTranscribePage.fileTable.viewSignal.transferState.connect(
-            self.TranscribeSuccessPage.fileTable.filterFile)
+            self.TranscribeSuccessPage.fileTable.resetFileDisplay)
+      
         ##### when profile is added, the file table stores new profile name
         ####  for selection
         self.SettingPage.TranscriptionSetPage.signal.profileAdded.connect(
             self.FileUploadPage.fileTable.addProfile)
+        ##### when profile is deleted, the file table  delete profile name
+        ####  from selection 
+        self.SettingPage.TranscriptionSetPage.signal.profileDeleted.connect(
+            self.FileUploadPage.fileTable.deleteProfile)
+        
+        ### when file upload page is requesting to show a profile
+        self.FileUploadPage.fileTable.viewSignal.requestProfile.connect(
+            lambda filename : self.fileSignal.requestprofile.emit(
+                Request(data=filename, succeed = self.showProfile)))
         
     def loadProfile(self, name):
         self.SettingPage.TranscriptionSetPage.getProfile(name)
-        
+    
+    # show a specific profile identified by profile name
+    def showProfile(self, profilename):
+        self.setCurrentWidget(self.SettingPage)
+        self.SettingPage.settingStack.setCurrentWidget(self.SettingPage.TranscriptionSetPage) 
+        self.SettingPage.TranscriptionSetPage.selectSettings.setCurrentText(profilename)
+
+class Request:
+    def __init__(self, data, succeed: callable = None) -> None:
+        self.data = data
+        self.succeed = succeed
+    
+    def fail(self, msg: str):
+        WarnBox(msg)

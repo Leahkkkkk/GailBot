@@ -10,7 +10,7 @@ import io
 # Local imports
 from gailbot import Plugin, GBPluginMethods
 from gb_hilab_suite.src.core.conversation_model import ConversationModel
-from gb_hilab_suite.src.config import MARKER, THRESHOLD, LABEL, PLUGIN_NAME
+from gb_hilab_suite.src.config import MARKER, THRESHOLD, LABEL, PLUGIN_NAME, XML
 
 from lxml import etree
 
@@ -51,8 +51,8 @@ class XMLPlugin(Plugin):
         utterances = newUttMap
         #Root element is the conversation
         count = 0
-        #Add metadata tags
-        root = etree.Element("Conversation")
+
+        root = etree.Element(XML.CONV)
         head = etree.SubElement(root, "head")
        
         metadata1 = etree.SubElement(head, "meta")
@@ -96,7 +96,7 @@ class XMLPlugin(Plugin):
         
         for name in files:
             filenames = filenames + name + " "
-        metadata9.set('content', filenames.rstrip())
+        metadata9.set(XML.CONTENT, filenames.rstrip())
 
         for _, (_, nodeList) in enumerate(utterances.items()):
             count += 1
@@ -104,9 +104,9 @@ class XMLPlugin(Plugin):
             curr_utt = cm.getWordFromNode(nodeList)
 
             #Create utterance elements
-            m1 = etree.SubElement(root, "Utterance")
-            m1.set('startTime', str(curr_utt[0].startTime))
-            m1.set('endtime', str(curr_utt[-1].endTime))
+            m1 = etree.SubElement(root, XML.UTT)
+            m1.set(XML.START, str(curr_utt[0].startTime))
+            m1.set(XML.END, str(curr_utt[-1].endTime))
 
             # TODO: check sLabel
             if (curr_utt[0].sLabel != MARKER.GAPS and
@@ -119,8 +119,8 @@ class XMLPlugin(Plugin):
 
             for word in curr_utt:
                 b2 = etree.SubElement(m1, "Word")
-                b2.set('startTime', str(word.startTime))
-                b2.set('endTime', str(word.endTime))
+                b2.set(XML.START, str(word.startTime))
+                b2.set(XML.END, str(word.endTime))
                 b2.text = word.text
             root.append(m1)
 
@@ -159,7 +159,7 @@ class XMLPlugin(Plugin):
 
         #Root element is the CHAT tag
         root = etree.Element("CHAT")
-        root.set('xmlns', 'http://www.talkbank.org/ns/talkbank')
+        root.set('xmlns', XML.TALKBANK_LINK)
         root.set('Corpus', 'timmy')
         root.set('Version', '2.16.0')
         root.set('Lang', 'eng')
