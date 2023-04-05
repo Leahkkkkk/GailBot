@@ -34,6 +34,7 @@ class ChatPlugin(Plugin):
                 MARKER.SLOWSPEECH_START: MARKER.SLOWSPEECH_START,
                 MARKER.SLOWSPEECH_END: MARKER.SLOWSPEECH_END
         }
+        # Gets tree and utterance map from conversation model generated from dependency map
 
         root = cm.getTree(False)
         newUttMap = dict()
@@ -41,6 +42,7 @@ class ChatPlugin(Plugin):
         myFunction(root, newUttMap, varDict)
 
         # start printing to file
+        # header of the file 
         data = [
             "@Begin\n@Languages:\t{0}\n".format("eng")
         ]
@@ -48,7 +50,6 @@ class ChatPlugin(Plugin):
         path = "{}/conversation.cha".format(methods.output_path)
 
         utterances = newUttMap
-        
         with open(path, "w", encoding='utf-8') as outfile:
             for item in data:
                 outfile.write(item)
@@ -61,7 +62,8 @@ class ChatPlugin(Plugin):
                 txt = ' '.join(l)
 
                 sLabel = LABEL.SPEAKERLABEL + str(curr_utt[0].sLabel)
-
+                
+                # actual text content 
                 turn = '{0}\t{1} {2}{4}_{3}{4}\n'.format(
                     sLabel, txt, curr_utt[0].startTime, curr_utt[-1].endTime,
                     0x15)

@@ -39,7 +39,7 @@ class Node:
             self.right.inorder(vals)
         return vals
 
-    def inorderChange(self, varDict: Dict[str, str]):
+    def inorderChange(self, varDict: Dict[str, str]) -> None:
         """
         Traverse the tree using an inorder traversal. Change the marker text
         to the user-desired format.

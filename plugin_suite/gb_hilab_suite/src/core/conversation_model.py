@@ -335,7 +335,6 @@ class ConversationModel:
 
             if currNode.right is not None:
                 buildUttMapWithChange(currNode.right, outputUttDict, varDict)
-
         return buildUttMapWithChange
 
     def getUttMap(self, copy: bool):

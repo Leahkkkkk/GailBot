@@ -102,6 +102,12 @@ class PluginDirectoryLoader(PluginLoader):
         else:
             delete(tgt_path)
             return False
+    
+    def download_packages(self, req_file, dest):
+        pass
+
+
+
 
 class PluginTOMLLoader(PluginLoader):
     """  import all modules in the plugin, all plugin sources and dependencies 
@@ -168,6 +174,9 @@ class PluginTOMLLoader(PluginLoader):
         else:
             logger.error(f"suite name is {suite_name}")
             return (False, "suite name must be the same as the folder name")
+ 
+ 
+ 
                
 class PluginDictLoader(PluginLoader):
     """ load a plugin suite from a dictionary that contains the configuration 

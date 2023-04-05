@@ -100,4 +100,35 @@ class CONVERSATION:
 @dataclass 
 class FORMAT:
     CSV_HEADER = ["SPEAKER LABEL", "TEXT", "START TIME", "END TIME"]
-    
+   
+
+
+
+@dataclass 
+class XML:
+    LABEL = "label"
+    S_LABEL = "speakerlabel"
+    UTT = "Utterance"
+    START = "startTime"
+    END = "endTime"
+    NAME = "name"
+    CONTENT = "content"
+    META = "meta"
+    GB_VERSION = 'Gailbot 0.3.0'
+    TEST = "test"
+    CONV = "Conversation"
+    HIL = "HiLab"
+
+@dataclass 
+class PARTICIPANTS_ATT:
+    pass 
+
+@dataclass
+class U_ATT:
+    SEP_MARK1 = "%"
+    SEP_MARK2 = "."
+
+@dataclass
+class COMMENT_ATT:
+    pass 
+
