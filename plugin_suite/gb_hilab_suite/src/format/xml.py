@@ -8,9 +8,9 @@ from typing import Dict, Any, List, Tuple
 import re
 import io
 # Local imports
-from gailbot import Plugin, UttObj, GBPluginMethods
+from gailbot import Plugin, GBPluginMethods
 from gb_hilab_suite.src.core.conversation_model import ConversationModel
-from gb_hilab_suite.src.config import MARKER, THRESHOLD, LABEL, PLUGIN_NAME
+from gb_hilab_suite.src.config import MARKER, THRESHOLD, LABEL, PLUGIN_NAME, XML
 
 from lxml import etree
 
@@ -51,35 +51,44 @@ class XMLPlugin(Plugin):
         utterances = newUttMap
         #Root element is the conversation
         count = 0
-        #Add metadata tags
-        root = etree.Element("Conversation")
+
+        root = etree.Element(XML.CONV)
         head = etree.SubElement(root, "head")
-        metadata1 = etree.SubElement(head, "meta")
-        metadata1.set('name', '@Languages')
-        metadata1.set('content', 'eng')
-        metadata2 = etree.SubElement(head, "meta")
-        metadata2.set('name', '@Options')
-        metadata2.set('content', 'CA')
-        metadata3 = etree.SubElement(head, "meta")
-        metadata3.set('name', '@Media')
-        metadata3.set('content', 'test, audio')
-        metadata4 = etree.SubElement(head, "meta")
-        metadata4.set('name', '@Comment')
-        metadata4.set('content', 'absolute')
-        metadata5 = etree.SubElement(head, "meta")
-        metadata5.set('name', '@Transcriber')
-        metadata5.set('content', 'Gailbot 0.3.0')
-        metadata6 = etree.SubElement(head, "meta")
-        metadata6.set('name', '@Location')
-        metadata6.set('content', 'Hilab')
-        metadata7 = etree.SubElement(head, "meta")
-        metadata7.set('name', '@Room')
-        metadata7.set('content', 'big')
-        metadata8 = etree.SubElement(head, "meta")
-        metadata8.set('name', '@Situation')
-        metadata8.set('content', 'test')
-        metadata9 = etree.SubElement(head, "meta")
-        metadata9.set('name', '@Conversation')
+       
+        metadata1 = etree.SubElement(head, XML.META)
+        metadata1.set(XML.NAME, '@Languages')
+        metadata1.set(XML.CONTENT, 'eng')
+        
+        metadata2 = etree.SubElement(head, XML.META)
+        metadata2.set(XML.NAME, '@Options')
+        metadata2.set(XML.CONTENT, 'CA')
+        
+        metadata3 = etree.SubElement(head, XML.META)
+        metadata3.set(XML.NAME, '@Media')
+        metadata3.set(XML.CONTENT, 'test, audio')
+        
+        metadata4 = etree.SubElement(head, XML.META)
+        metadata4.set(XML.NAME, '@Comment')
+        metadata4.set(XML.CONTENT, 'absolute')
+        
+        metadata5 = etree.SubElement(head, XML.META)
+        metadata5.set(XML.NAME, '@Transcriber')
+        metadata5.set(XML.CONTENT, XML.GB_VERSION)
+        
+        metadata6 = etree.SubElement(head, XML.META)
+        metadata6.set(XML.NAME, '@Location')
+        metadata6.set(XML.CONTENT, XML.HIL)
+        
+        metadata7 = etree.SubElement(head, XML.META)
+        metadata7.set(XML.NAME, '@Room')
+        metadata7.set(XML.CONTENT, 'big')
+        
+        metadata8 = etree.SubElement(head, XML.META)
+        metadata8.set(XML.NAME, '@Situation')
+        metadata8.set(XML.CONTENT, XML.TEST)
+        
+        metadata9 = etree.SubElement(head, XML.META)
+        metadata9.set(XML.NAME, '@Conversation')
        
         #retrieve list of files used for this conversation
         files = methods.filenames
@@ -87,7 +96,7 @@ class XMLPlugin(Plugin):
         
         for name in files:
             filenames = filenames + name + " "
-        metadata9.set('content', filenames.rstrip())
+        metadata9.set(XML.CONTENT, filenames.rstrip())
 
         for _, (_, nodeList) in enumerate(utterances.items()):
             count += 1
@@ -95,21 +104,24 @@ class XMLPlugin(Plugin):
             curr_utt = cm.getWordFromNode(nodeList)
 
             #Create utterance elements
-            m1 = etree.SubElement(root, "Utterance")
-            m1.set('startTime', str(curr_utt[0].startTime))
-            m1.set('endtime', str(curr_utt[-1].endTime))
+            m1 = etree.SubElement(root, XML.UTT)
+            m1.set(XML.START, str(curr_utt[0].startTime))
+            m1.set(XML.END, str(curr_utt[-1].endTime))
 
+            # TODO: check sLabel
             if (curr_utt[0].sLabel != MARKER.GAPS and
                 curr_utt[0].sLabel != MARKER.PAUSES):
                 sLabel = LABEL.XML_SPEAKERLABEL + str(curr_utt[0].sLabel)
-            m1.set('speakerlabel', str(curr_utt[0].sLabel))
+            else:
+                sLabel = curr_utt[0].sLabel
+            
+            m1.set(XML.S_LABEL, str(sLabel))
 
             for word in curr_utt:
                 b2 = etree.SubElement(m1, "Word")
-                b2.set('startTime', str(word.startTime))
-                b2.set('endTime', str(word.endTime))
+                b2.set(XML.START, str(word.startTime))
+                b2.set(XML.END, str(word.endTime))
                 b2.text = word.text
-
             root.append(m1)
 
         tree = etree.ElementTree(root)
@@ -144,27 +156,28 @@ class XMLPlugin(Plugin):
         myFunction = cm.outer_buildUttMapWithChange(0)
         myFunction(root, newUttMap, varDict)
 
-        utterances = newUttMap
 
         #Root element is the CHAT tag
         root = etree.Element("CHAT")
-        root.set('xmlns', 'http://www.talkbank.org/ns/talkbank')
+        root.set('xmlns', XML.TALKBANK_LINK)
         root.set('Corpus', 'timmy')
         root.set('Version', '2.16.0')
         root.set('Lang', 'eng')
         root.set('Date', '1996-02-29')
 
+        # populate Participants tag
         speakerMap = cm.getSpeakerMap(True)
         Participants = etree.SubElement(root, "Participants")
         comment = etree.SubElement(root, "comment")
         comment.set('type', 'Location')
         comment.text = "HI_LAB"
-
         for speaker in speakerMap.keys():
             Participants.append(etree.Element("participant", id=str(LABEL.XML_SPEAKERLABEL + speaker), role="Unidentified"))
-
+            
+        # populate the u tag
         count = 0
-
+        utterances = newUttMap
+        
         for _, (_, nodeList) in enumerate(utterances.items()):
             count += 1
 
@@ -173,38 +186,45 @@ class XMLPlugin(Plugin):
             # Create utterance elements
             if curr_utt[0].sLabel == "NONE":
                 continue
-
+            
+            
+            # outer level utterance 
             utterance = etree.SubElement(root, "u")
             utterance.set('who', str(LABEL.XML_SPEAKERLABEL + str(curr_utt[0].sLabel)))
             utterance.set('uID', "u" + str(count))
 
             # traverse utt using index i
             i = 0
+
+            # within tag
+            # populate "w" tag
             while i < (len(curr_utt)):
 
                 word = curr_utt[i]
-
+                # utterance separater
                 if '%' in word.text or ('.' in word.text and MARKER.PAUSES not in word.text):
                     i += 1
                     continue
                 currText = word.text.split(MARKER.KEYVALUE_SEP)[0]
 
-                # set keeping track of startings of nested markers in nested markers
+                # set keeping track of starting of nested markers in nested markers
 
                 # if the word is a marker, use their own tag
                 if currText in varDict.values():
                     for key, value in varDict.items():
 
                         if currText == value:
-
                             # if the start of an overlap is detected, create g-tag to nest other tags
                             if key == MARKER.MARKER1 or key == MARKER.MARKER3:
-
+                                # add overlap tag
                                 overlap = etree.SubElement(utterance, "g")
                                 exit = False # used to break out of the outter loop
+                               
                                 while i < (len(curr_utt)):
                                     word = curr_utt[i]
                                     currText = word.text.split(MARKER.KEYVALUE_SEP)[0]
+                                    
+                                    # add overlap tag within utterance list 
                                     if currText in varDict.values():
                                         for key, value in varDict.items():
                                             if currText == value:
@@ -216,7 +236,7 @@ class XMLPlugin(Plugin):
                                                     overlap.append(etree.Element("overlap", type="overlap follows"))
                                                     exit = True
                                                     break
-
+                                    # add word "w" tag 
                                     elif exit == False:
                                         if '%' in word.text or '.' in word.text:
                                             word.text = word.text.replace('%', '')
@@ -234,6 +254,7 @@ class XMLPlugin(Plugin):
                                     overlap.append(etree.Element("overlap", type="overlap follows"))
 
                             # if a pause tag is detected
+                            # add pauses tag 
                             elif key == MARKER.PAUSES:
                                 # print("pauses")
                                 tempArr = word.text.split(MARKER.KEYVALUE_SEP)
@@ -255,6 +276,7 @@ class XMLPlugin(Plugin):
                                 # trying to fix empty syllRate surrounding tags
                                 cumCurrText = "EMPTY"
                                 exit = False
+                                
                                 while i < (len(curr_utt)):
                                     word = curr_utt[i]
                                     currText = word.text.split(MARKER.KEYVALUE_SEP)[0]
@@ -304,7 +326,6 @@ class XMLPlugin(Plugin):
             media.set('start', str(curr_utt[0].startTime))
             media.set('end', str(curr_utt[-1].endTime))
             media.set('unit', 's')
-
         for elem in root.iter('*'):
             if elem.text is not None:
                 elem.text = elem.text.strip()
