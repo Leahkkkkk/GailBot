@@ -345,6 +345,17 @@ class GailBot:
         """
         return self.gb.apply_setting_to_sources(sources, setting, overwrite)
    
+    def is_setting_in_use(self, setting_name: str) -> bool:
+        """check if a setting is being used by any source
+
+        Args:
+            setting_name (str): the name of the setting
+
+        Returns:
+            bool: return true if the setting is being used, false otherwise
+        """
+        return self.gb.is_setting_in_use(setting_name)    
+    
     def get_default_setting_name(self) -> str:
         """ get the name of current default setting
 
@@ -478,6 +489,18 @@ class GailBot:
         """
         return self.gb.get_plugin_suite_documentation_path(suite_name)
     
+    def is_suite_in_use(self, suite_name:str) -> bool:
+        """given a suite_name, check if this suite is used 
+           in any of the setting
+
+        Args:
+            suite_name (str): the name of the plugin suite
+
+        Returns:
+            bool: return true if the suite is used in any of the setting, 
+                  false otherwise
+        """
+        return self.gb.is_suite_in_use(suite_name)
     
     def reset_workspace(self) -> bool:
         """ reset the gailbot workspace

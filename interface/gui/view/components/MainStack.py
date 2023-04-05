@@ -146,14 +146,6 @@ class MainStack(QStackedWidget):
         # self.RecordPage = RecordPage.RecordPage()
         # initSubPageBackground(self.RecordPage)
         
-        # self.SystemSettingPage = SystemSettingPage.SystemSettingPage()
-        # initPrimaryColorBackground(self.SystemSettingPage)
-        # self.MainSetting = QTabWidget()
-        # self.MainSetting.addTab(
-        #     self.SettingPage, MainStackText.profilesetting)
-        # self.MainSetting.addTab(
-        #     self.SystemSettingPage, MainStackText.systemsetting) 
-        
         self.addWidget(self.WelcomePage)
         self.addWidget(self.ConfirmTranscribePage)
         self.addWidget(self.FileUploadPage)
@@ -180,11 +172,6 @@ class MainStack(QStackedWidget):
             self.setCurrentWidget(self.ConfirmTranscribePage))
         self.ConfirmTranscribePage.cancelBtn.clicked.connect(self.gotoFileUploadPage)
         
-        # self.SystemSettingPage.cancelBtn.clicked.connect(self.gotoFileUploadPage)
-        # self.SystemSettingPage.saveBtn.clicked.connect(self.gotoFileUploadPage)
-        # self.FileUploadPage.recordBtn.clicked.connect(lambda:
-        #         self.setCurrentWidget(self.RecordPage))
-        # self.RecordPage.cancelBtn.clicked.connect(self.gotoFileUploadPage)
         
     def _connectSignal(self):
         """ connecting the signal  """
@@ -201,10 +188,15 @@ class MainStack(QStackedWidget):
             self.TranscribeProgressPage.fileTable.filterFile)
         self.ConfirmTranscribePage.fileTable.viewSignal.transferState.connect(
             self.TranscribeSuccessPage.fileTable.filterFile)
+      
         ##### when profile is added, the file table stores new profile name
         ####  for selection
         self.SettingPage.TranscriptionSetPage.signal.profileAdded.connect(
             self.FileUploadPage.fileTable.addProfile)
+        ##### when profile is deleted, the file table  delete profile name
+        ####  from selection 
+        self.SettingPage.TranscriptionSetPage.signal.profileDeleted.connect(
+            self.FileUploadPage.fileTable.deleteProfile)
         
     def loadProfile(self, name):
         self.SettingPage.TranscriptionSetPage.getProfile(name)

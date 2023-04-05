@@ -14,6 +14,7 @@ from dataclasses import dataclass
 from typing import TypedDict, Tuple, Dict, Set
 from gailbot.api import GailBot
 from view.Signals import FileSignals
+from controller.Request import Request
 from gbLogger import makeLogger
 from controller.util.Error import  ERR
 from PyQt6.QtCore import QObject, pyqtSignal
@@ -55,11 +56,9 @@ class Signals(QObject):
         file database and view 
     """
     send           = pyqtSignal(object)
-    deleted        = pyqtSignal(str)
     error          = pyqtSignal(str)
     success        = pyqtSignal(str)
     profileRequest = pyqtSignal(str)
-    fileAdded      = pyqtSignal(tuple)
     fileUpdated    = pyqtSignal(tuple)
     
 class FileOrganizer:
@@ -107,48 +106,49 @@ class FileOrganizer:
         signal.requestprofile.connect(self.requestProfile)
     
     ##########################  request handler ###########################
-    def post(self, data : fileDict) -> None:
+    def post(self, request : Request) -> None:
         """ add file to file database 
         data: (fileDict) a dictionary that contains the file data to be 
               added to the database
         """
         self.logger.info("post file to database")
         key = str(self.currentKey)
-        self.logger.info(data)
-        file = FileObj.from_dict(data)
+        self.logger.info(request.data)
+        file = FileObj.from_dict(request.data)
         try:
             if self.gb.is_source(file.Name):
                 self.signals.error.emit(ERR.DUPLICATE_FILE_NAME)
             elif key not in self.data and self.gb.add_source(file.FullPath, file.Output):
                 self.data[key] = file 
-                self.signals.fileAdded.emit((key, data))
+                request.succeed((key, request.data))
                 self.currentKey += 1
                 assert self.gb.apply_setting_to_source(file.Name, file.Profile)
             else:
-                self.signals.error.emit(ERR.DUPLICATE_FILE_KEY)
+                request.fail(ERR.DUPLICATE_FILE_KEY)
                 self.logger.error(ERR.DUPLICATE_FILE_KEY)
         except Exception as e:
             self.signals.error.emit(ERR.ERROR_WHEN_DUETO.format("posting new file", str(e)))
             self.logger.error(f"Error in posting file: {e}", exc_info=e)
     
-    
-    def delete(self, key: str) -> None:
+    def delete(self, request: Request) -> None:
         """delete the file from the database
         Args:
             key (str): the file key of the file to be deleted 
         """
+        key = request.data 
         self.logger.info("delete file from database")
         try:
             if key in self.data and self.gb.remove_source(self.data[key].Name):
                 del self.data[key]
                 if key in self.data:
                     self.logger.error(f"file key {key} cannot be deleted from file database")
+                request.succeed(key)
             else:
-                self.signals.error.emit(ERR.DELETE_FILE_ERROR)
+                request.fail(ERR.DELETE_FILE_ERROR)
                 self.logger.error(f"file key {key} is not found")
         except Exception as e:
             self.logger.error(e, exc_info=e)
-            self.signals.error.emit(ERR.DELETE_FILE_ERROR)
+            request.fail(ERR.DELETE_FILE_ERROR)
             
             
     def edit(self, file: Tuple[str,fileDict]) -> None:
@@ -200,29 +200,29 @@ class FileOrganizer:
             self.logger.error(e, exc_info=e)
             self.signals.error.emit(ERR.ERROR_WHEN_DUETO.format("change file status", str(e)))
     
-    def editFileProfile(self, data: Tuple[str, str]) -> None:
+    def editFileProfile(self, request: Request) -> None:
         """change the profile information of the file 
         Args:
             data (Tuple[key, new profile]): a tuple  that stores the file key 
                                             and a the new profile name
         """
-        key, profile = data
+        key, profile = request.data
         self.logger.info(f"request to change the file {self.data[key].Name}'s setting to {profile}")
         try:
             if key not in self.data or not self.gb.is_source(self.data[key].Name):
-                self.signals.error.emit(ERR.FILE_KEY_ERR)
+                request.fail(ERR.FILE_KEY_ERR)
                 self.logger.error(ERR.FILE_KEY_ERR)
                 return 
             elif not self.gb.is_setting(profile):
-                self.signals.error.emit(ERR.PROFILE_NOT_FOUND)
+                request.fail(ERR.PROFILE_NOT_FOUND)
                 self.logger.error(f"{profile}: {ERR.PROFILE_NOT_FOUND}")
             else:
                 self.data[key].Profile = profile
                 assert self.gb.apply_setting_to_source(self.data[key].Name, profile)
                 self.logger.info(f"the setting of the file {self.data[key].Name} is change to {self.gb.get_source_setting_dict(self.data[key].Name)}")
-                self._updateFileResponse(key, "Profile", profile)
+                request.succeed(request.data)
         except:
-            self.signals.error.emit(ERR.EDIT_FILE_ERROR)
+            request.fail(ERR.EDIT_FILE_ERROR)
             self.logger.error(ERR.EDIT_FILE_ERROR)
             
             

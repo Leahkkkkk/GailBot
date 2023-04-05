@@ -6,7 +6,6 @@ from gailbot.core.utils.general import get_name, is_file, is_directory, is_path
 from gailbot.core.utils.logger import makelogger
 
 logger = makelogger("source_manager")
-
 class SourceManager():
     """
     Holds and handles all functionality for managing all sources
@@ -67,7 +66,6 @@ class SourceManager():
             return True
         else:
             return False
-
 
     def source_names(self) -> List[str]:
         """
@@ -187,7 +185,6 @@ class SourceManager():
                 if src.setting != None:
                     configured.append(source)
 
-    
     def is_source_configured(self, source:str) -> bool:
         """
         Determines if given source has been configured with settings

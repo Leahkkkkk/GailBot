@@ -27,6 +27,7 @@ from view.config.Style import FontSize as FS
 from view.config.Style import buttonStyle
 from gbLogger import makeLogger
 from view.Signals import FileSignals
+from view.Request import Request
 from view.widgets import (
     Label, 
     ColoredBtn, 

@@ -136,6 +136,18 @@ class Organizer:
             return False
     
     def add_progress_display(self, source_name: str, displayer: Callable):
+        """ add a displayer function to the source to track the progress of the 
+            source in the pipeline 
+
+        Args:
+            source_name (str): the name of the source
+            displayer (Callable): a callable function that only takes in 
+                                  one argument that stores the progress message 
+                                  as a string
+
+        Returns:
+            bool: true if the displayer is added correctly, false other wise
+        """
         return self.source_manager.add_progress_display(source_name, displayer)
      
     def create_new_setting(
@@ -249,6 +261,21 @@ class Organizer:
         """
         return self.setting_manager.is_setting(setting_name)
     
+    def is_setting_in_use(self, setting_name: str) -> bool:
+        """check if a setting is being used by any source
+
+        Args:
+            setting_name (str): the name of the setting
+
+        Returns:
+            bool: return true if the setting is being used, false otherwise
+        """
+        src_with_set = self.source_manager.get_sources_with_setting(setting_name)
+        if len(src_with_set) == 0 : 
+            return False 
+        else:
+            return True
+    
     def remove_setting_from_source(self, source_name: str) -> bool:
         """ given a source name, remove the current setting from the source, 
             set the setting of the source to default
@@ -348,3 +375,16 @@ class Organizer:
             bool:return true if the setting can be set, false otherwise
         """
         return self.setting_manager.set_to_default_setting(setting_name)
+    
+    def is_suite_in_use(self, suite_name:str) -> bool:
+        """given a suite_name, check if this suite is used 
+           in any of the setting
+
+        Args:
+            suite_name (str): the name of the plugin suite
+
+        Returns:
+            bool: return true if the suite is used in any of the setting, 
+                  false otherwise
+        """
+        return self.setting_manager.is_suite_in_use(suite_name)

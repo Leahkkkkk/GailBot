@@ -10,9 +10,6 @@ Modified By:  Siara Small  & Vivian Li
 Description:
 Implementation of a database that stores the profile data
 '''
-
-
-
 from view.Signals import ProfileSignals
 from controller.Request import Request
 from gailbot.api import GailBot
@@ -23,9 +20,6 @@ from PyQt6.QtCore import QObject, pyqtSignal
 
 class Signals(QObject):
     """ signals sent by profile model """
-    send    = pyqtSignal(tuple)
-    deleteProfile  = pyqtSignal(str)  
-    deleted = pyqtSignal(bool)
     error   = pyqtSignal(str)
     success = pyqtSignal(str)
     profileAdded = pyqtSignal(str)
@@ -102,22 +96,22 @@ class ProfileOrganizer:
                               to be deleted
         """
         name = deleteRequest.data
-        
         self.logger.info(f"deleting profile {name}")
         self.logger.info(f"the default setting is {self.gb.get_default_setting_name()}")
         if not self.gb.is_setting(name):
-            self.signals.error.emit(ERR.PROFILE_NOT_FOUND.format(name))
+            deleteRequest.fail(ERR.PROFILE_NOT_FOUND.format(name))
             self.logger.error(ERR.PROFILE_NOT_FOUND.format(name))
         elif name == self.gb.get_default_setting_name():
-            self.signals.error.emit(ERR.DELETE_DEFAULT)
+            deleteRequest.fail(ERR.DELETE_DEFAULT)
             self.logger.error(ERR.DELETE_DEFAULT)
+        elif self.gb.is_setting_in_use(name):
+            deleteRequest.fail(ERR.PROFILE_IN_USE.format(name))
+            self.logger.error(ERR.PROFILE_IN_USE.format(name)) 
         elif not self.gb.remove_setting(name):
-            self.signals.error.emit(ERR.DELETE_PROFILE.format(name))
+            deleteRequest.fail(ERR.DELETE_PROFILE.format(name))
             self.logger.error(ERR.DELETE_PROFILE.format(name))
         else:
-            self.signals.deleteProfile.emit(name)
             deleteRequest.succeed(name)
-            self.signals.deleted.emit(True)
     
     def editHandler(self, editRequest: Request) -> None :
         """ update a file
@@ -128,10 +122,10 @@ class ProfileOrganizer:
         try:
             name, data = editRequest.data
             if not self.gb.is_setting(name):
-                self.signals.error.emit(ERR.PROFILE_NOT_FOUND.format(name))
+                editRequest.fail(ERR.PROFILE_NOT_FOUND.format(name))
                 self.logger.error(ERR.PROFILE_NOT_FOUND.format(name))
             elif not self.gb.update_setting(name, data):
-                self.signals.error.emit(ERR.PROFILE_EDIT.format(name))
+                editRequest.fail(ERR.PROFILE_EDIT.format(name))
                 self.logger.error(ERR.PROFILE_EDIT.format(name))
         except Exception as e:
             editRequest.fail(ERR.PROFILE_EDIT.format(name))
@@ -147,12 +141,12 @@ class ProfileOrganizer:
         name = getRequest.data
         try:
             if not self.gb.is_setting(name):
-                self.signals.error.emit(ERR.PROFILE_NOT_FOUND.format(name))
+                getRequest.fail(ERR.PROFILE_NOT_FOUND.format(name))
                 self.logger.error(KeyError)
             else:
                 data = self.gb.get_setting_dict(name)
                 getRequest.succeed((name, data))
         except Exception as e:
-            self.signals.error.emit(ERR.GET_PROFILE.format(name))
-            self.logger.error(ERR.GET_PROFILE.format(name))
+            getRequest.fail(ERR.GET_PROFILE.format(name))
+            self.logger.error(e, exc_info=e)
             

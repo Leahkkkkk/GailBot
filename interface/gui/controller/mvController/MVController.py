@@ -48,7 +48,6 @@ class MVController:
         """ public function to execute the model view controller """
         self._connectFileDBToView()
         self._connectViewToFileDB()
-        self._connectProfileDBToView()
         # add available plugin suite to the frontend interface
         pluginSuites = self.gb.get_all_plugin_suites()
         self.logger.info(f"get plugin suites {pluginSuites}")
@@ -69,7 +68,7 @@ class MVController:
         dbSignal = self.fileOrganizer.signals
         view = self.view
         # connect database response to view to display change
-        dbSignal.fileAdded.connect(view.addFile)
+        # dbSignal.fileAdded.connect(view.addFile)
         dbSignal.fileUpdated.connect(view.updateFile)
         
         # handle file database's request to load the profile of one file
@@ -84,28 +83,14 @@ class MVController:
         viewSignal = self.view.getFileSignal()
         db = self.fileOrganizer
         # handle view's request to pfost new file
-        viewSignal.postFile.connect(db.post)
+        viewSignal.postFileRequest.connect(db.post)
         # handle view's request to edit file data
-        viewSignal.editFile.connect(db.edit)
         # handle view's request to change file profile 
-        viewSignal.changeProfile.connect(db.editFileProfile)
+        viewSignal.changeProfileRequest.connect(db.editFileProfile)
         # handle view's reuqesgt to see file profile
         viewSignal.requestprofile.connect(db.requestProfile)
         # handle remove file 
-        viewSignal.delete.connect(db.delete)
+        viewSignal.deleteRequest.connect(db.delete)
     
-        
-    def _connectProfileDBToView(self):
-        """ connect the signal from the profile database to view
-            change the presentation of data on the view
-        """
-        self.logger.info("initialize model&view connection")
-        dbSignal = self.profileOrganizer.signals
-        # connect db's response to load profile data 
-        dbSignal.send.connect(self.view.loadProfile)
-        # connect db's response to add new profile selection on view
-        dbSignal.deleteProfile.connect(self.view.deleteProfile)
-        dbSignal.deleteProfile.connect(self.fileOrganizer.profileDeleted)
-        dbSignal.error.connect(self.view.showErr)
         
     

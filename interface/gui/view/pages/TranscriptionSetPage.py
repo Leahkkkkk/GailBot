@@ -159,9 +159,15 @@ class TranscriptionSetPage(QWidget):
         createNewSettingTab.exec()
     
     # continuation function when request succeeds
-    def deleteSucceed(self, data = None):
+    def deleteSucceed(self, profielName: str):
         """ if deleted, remove the current setting name from available setting"""
-        self.selectSettings.removeItem(self.selectSettings.currentIndex())
+        self.logger.info(f"delete profile {profielName} succeeds")
+        try:
+            self.signal.profileDeleted.emit(profielName)
+            self.selectSettings.removeItem(self.selectSettings.currentIndex())
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            WarnBox(ERR.ERR_WHEN_DUETO.format("deleting profile", str(e)))
     
     def createSucceed (self, profileName:str):
         """ adding a new profile option to the settings page 
@@ -178,7 +184,6 @@ class TranscriptionSetPage(QWidget):
     
     def editSucceed(self, profilename:str):
         self.logger.info("updating profile succeed")
-        pass 
     
     def getSucceed(self, profile: Tuple[str,Dict[str, Dict]]):
         """ loads the profile data to be presented onto the table """

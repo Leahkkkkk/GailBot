@@ -14,8 +14,8 @@ KEYERROR = "File key not found"
 
 from typing import Dict, List, Set, Tuple, TypedDict
 from enum import Enum 
-
-from .MsgBox import WarnBox, ConfirmBox
+from view.Request import Request
+from view.widgets.MsgBox import WarnBox, ConfirmBox
 from .Background import initSecondaryColorBackground
 
 from view.components.UploadFileTab import UploadFileTab
@@ -67,7 +67,7 @@ class Signals(QObject):
     requestProfile = pyqtSignal(str)
     requestChangeProfile = pyqtSignal(str)
     goSetting = pyqtSignal()
-    changeProfile = pyqtSignal(tuple)
+    changeProfileRequest = pyqtSignal(tuple)
     nonZeroFile = pyqtSignal()
     ZeroFile = pyqtSignal()
     delete = pyqtSignal(str)
@@ -146,8 +146,9 @@ class FileTable(QTableWidget):
         self.viewSignal.delete.connect(self._confirmRemoveFile)
         self.viewSignal.select.connect(self.addToNextState)
         self.viewSignal.unselect.connect(self.removeFromNextState)
-        self.viewSignal.requestChangeProfile.connect(self.changeProfile)  
+        self.viewSignal.requestChangeProfile.connect(self.changeProfileRequest)  
         self.viewSignal.requestProfile.connect(self.settingDetails)
+        self.fileSignal.postFileSucceed.connect(self.addFile)
     
     def _initStyle(self) -> None:
         """ Initialize the table style """
@@ -216,7 +217,7 @@ class FileTable(QTableWidget):
         """
         try:
             addFileWindow = UploadFileTab(self.profiles)
-            addFileWindow.signals.postFile.connect(self._postFile)
+            addFileWindow.signals.postFileRequest.connect(self._postFile)
             addFileWindow.exec()
         except Exception as e:
             self.logger.error(e, exc_info=e) 
@@ -226,7 +227,10 @@ class FileTable(QTableWidget):
         """ send signals to post file to the database 
             ** connected to the upload file button 
         """
-        self.fileSignal.postFile.emit(file)
+        self.fileSignal.postFileRequest.emit(Request(data=file, succeed=self._postFileSucceed))
+        
+    def _postFileSucceed(self, file: Tuple):
+        self.fileSignal.postFileSucceed.emit(file)
     
     def addFiles(self, files: List[Tuple]):
         """ adding a list of files to file table
@@ -292,19 +296,25 @@ class FileTable(QTableWidget):
             key (str): file key 
         """
         try:
+            self.fileSignal.deleteRequest.emit(Request(key, succeed=self.removeSucceed))
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            WarnBox(ERR.ERR_WHEN_DUETO.format("removing file", str(e)))
+    
+    def removeSucceed(self, key):
+        try:
             if key in self.filePins:
                 rowIdx = self.indexFromItem(self.filePins[key]).row()
                 self.removeRow(rowIdx)
-                self.fileSignal.delete.emit(key)
                 del self.fileWidgets[key]
                 del self.filePins[key]
                 if key in self.transferList:
-                    self.transferList.remove(key)
+                    self.transferList.remove(key) 
             else:
                 self.viewSignal.error(KEYERROR)
         except Exception as e:
             self.logger.error(e, exc_info=e)
-            WarnBox(ERR.ERR_WHEN_DUETO.format("removing file", str(e)))
+            WarnBox(ERR.ERR_WHEN_DUETO.format("removing file from table", str(e)))
     
     def removeAll(self):
         """ remove all the file from table
@@ -317,7 +327,6 @@ class FileTable(QTableWidget):
         self.filePins.clear()
         self.viewSignal.ZeroFile.emit()
         
-
     ##################### edit profile handlers #########################
     def settingDetails(self, key:str):
         """ send a request to see file details
@@ -362,15 +371,15 @@ class FileTable(QTableWidget):
             self.logger.error(e, exc_info=e)
             WarnBox(ERR.ERR_WHEN_DUETO.format("updating file progress", str(e)))
         
-    def changeProfile(self, key:str):
+    def changeProfileRequest(self, key:str):
         """ open a pop up for user to change file setting 
-            ** connected to changeProfile button 
+            ** connected to changeProfileRequest button 
         Args:
             key (str): a key to identify file
         """
         try:
             selectSetting = _ChangeProfileDialog(self.profiles, key)
-            selectSetting.signals.changeProfile.connect(self.postNewFileProfile)
+            selectSetting.signals.changeProfileRequest.connect(self.postNewFileProfile)
             selectSetting.exec()
             selectSetting.setFixedSize(QSize(200,200))
         except Exception as e:
@@ -380,9 +389,12 @@ class FileTable(QTableWidget):
     def postNewFileProfile(self, newprofile: Tuple[str, str]):
         """ post the newly updated file change to the database
         """
+        self.fileSignal.changeProfileRequest.emit(
+            Request(data=newprofile, succeed=self.changeProfileSucceed)) 
+   
+    def changeProfileSucceed(self, result: Tuple[str, str]):
         try:
-            key, profilekey = newprofile
-            self.fileSignal.changeProfile.emit(newprofile) 
+            key, profilekey = result
             if key in self.filePins:
                 row = self.indexFromItem(self.filePins[key]).row()
                 newitem = QTableWidgetItem(profilekey)
@@ -394,6 +406,7 @@ class FileTable(QTableWidget):
         except Exception as e:
             self.logger.error(e, exc_info=e)
             WarnBox(ERR.ERR_WHEN_DUETO.format("adding new profile option", str(e)))
+        
     
     def initProfiles(self, profiles: List[str]):
         """ initialize a list of available profile"""
@@ -654,6 +667,6 @@ class _ChangeProfileDialog(QDialog):
         self.logger.info("update signal send")
         newSetting = self.selectSetting.getProfile()["Profile"]
         self.logger.info((self.fileKey, newSetting))
-        self.signals.changeProfile.emit((self.fileKey,newSetting))
+        self.signals.changeProfileRequest.emit((self.fileKey,newSetting))
         self.close()
     
