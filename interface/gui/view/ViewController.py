@@ -123,14 +123,6 @@ class ViewController():
         """
         return self.window.updateFile(data)
     
-    def addFile(self, file: Dict[str, str]):
-        """add file to the data base
-
-        Args:
-            file (Dict[str, str]): _description_
-
-        """
-        return self.window.addFileToTables(file)
     
     def changeFileToTranscribed(self, filekey: str):
         """change the file status to be transcribed

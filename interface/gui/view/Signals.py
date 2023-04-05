@@ -16,14 +16,13 @@ class FileSignals(QObject):
     postFileRequest = pyqtSignal(object)
     deleteRequest = pyqtSignal(object)
     changeProfileRequest = pyqtSignal(object)
-    requestprofile = pyqtSignal(str)
+    requestprofile = pyqtSignal(object)
     
-    transcribe = pyqtSignal(set)
-    cancel = pyqtSignal()
+    transcribe = pyqtSignal(list)
     progressChanged = pyqtSignal(tuple)
+    cancel = pyqtSignal()
 
     # signal for controlling view only
-    postFileSucceed = pyqtSignal(tuple)
     
 class ProfileSignals(QObject):
     """ profile signals for front end to communicate with profile database"""

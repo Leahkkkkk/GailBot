@@ -155,14 +155,6 @@ class MainWindow(QMainWindow):
             self.logger.error(e, exc_info=e)
             self.showError(ERR.FAIL_TO.format("cancel transcription"))
 
-    def addFileToTables(self, file:dict):
-        """ add file to file upload table """
-        try:
-            self.MainStack.addFileToTables(file)
-        except Exception as e:
-            self.logger.error(e, exc_info=e)
-            self.showError(ERR.FAIL_TO.format("upload file"))
-            
     def updateFile(self, data:tuple):
         """ update file information on file upload file """
         try:

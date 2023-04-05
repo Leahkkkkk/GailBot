@@ -95,6 +95,7 @@ class ConfirmTranscribePage(QWidget):
     def _sendTranscribeSignal(self):
         """sends a signal with a set of file keys that will be transcribed """
         self.logger.info(self.fileTable.transferList)
-        self.signal.transcribe.emit(self.fileTable.transferList)
+        self.fileTable.transferAll()
+        self.signal.transcribe.emit(list(self.fileTable.transferList))
         self.fileTable.transferState()
 

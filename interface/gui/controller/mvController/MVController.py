@@ -10,7 +10,6 @@ Modified By:  Siara Small  & Vivian Li
 Description:
 Model view controller than connect ths database to a front end view object 
 '''
-
 from gbLogger import makeLogger 
 from view import ViewController
 from .organizer import FileOrganizer, PluginOrganizer, ProfileOrganizer
@@ -46,8 +45,6 @@ class MVController:
         
     def exec(self):
         """ public function to execute the model view controller """
-        self._connectFileDBToView()
-        self._connectViewToFileDB()
         # add available plugin suite to the frontend interface
         pluginSuites = self.gb.get_all_plugin_suites()
         self.logger.info(f"get plugin suites {pluginSuites}")
@@ -60,37 +57,7 @@ class MVController:
         self.logger.info(f"get profile {settingNames}")
         self.view.addAvailableSettings(settingNames)
         
-    def _connectFileDBToView(self):
-        """ connect the signal from the file database to view
-            change the presentation of data on the view
-        """
-        self.logger.info("")
-        dbSignal = self.fileOrganizer.signals
-        view = self.view
-        # connect database response to view to display change
-        # dbSignal.fileAdded.connect(view.addFile)
-        dbSignal.fileUpdated.connect(view.updateFile)
-        
-        # handle file database's request to load the profile of one file
-        dbSignal.profileRequest.connect(self.view.loadProfile)
-        dbSignal.error.connect(self.view.showErr)
+
      
-    def _connectViewToFileDB(self):
-        """ connect the signal from the view to file database  
-            store, delete or edit the database based on the view's request
-        """
-        self.logger.info("initialize model&view connection")
-        viewSignal = self.view.getFileSignal()
-        db = self.fileOrganizer
-        # handle view's request to pfost new file
-        viewSignal.postFileRequest.connect(db.post)
-        # handle view's request to edit file data
-        # handle view's request to change file profile 
-        viewSignal.changeProfileRequest.connect(db.editFileProfile)
-        # handle view's reuqesgt to see file profile
-        viewSignal.requestprofile.connect(db.requestProfile)
-        # handle remove file 
-        viewSignal.deleteRequest.connect(db.delete)
-    
-        
+     
     

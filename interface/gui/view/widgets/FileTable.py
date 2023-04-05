@@ -26,6 +26,7 @@ from ..config.Style import Dimension, Color, FontSize, FontFamily
 from ..config.Text import FileTableText as Text
 from view.style.WidgetStyleSheet import FILE_TABLE, SCROLL_BAR, TABLE_HEADER
 from view.util.ErrorMsg import ERR, WARN
+from view.util.io import get_name
 from PyQt6.QtWidgets import (
     QTableWidget, 
     QTableWidgetItem, 
@@ -101,14 +102,14 @@ class FileTable(QTableWidget):
         super().__init__(0, (len(headers)), *args, **kwargs)
         self.profiles = []
         self.headers = headers        
-        self.filePins = dict()          # used to track file's position on 
+        self.nameToTablePins = dict()   # used to track file's position on 
                                         # table by pin
-                                        
+        self.nameToData = dict()                                
         self.transferList: set[str] = set()  
                                         # a set of keys of the file that will
                                         # be transferred to the next state
                                    
-        self.fileWidgets: Dict[str, _TableCellWidgets] = dict()      
+        self.nameToWidgets: Dict[str, _TableCellWidgets] = dict()      
                                         # a dictionary to keep track of current
                                         # widget on the table 
                                         
@@ -147,8 +148,6 @@ class FileTable(QTableWidget):
         self.viewSignal.select.connect(self.addToNextState)
         self.viewSignal.unselect.connect(self.removeFromNextState)
         self.viewSignal.requestChangeProfile.connect(self.changeProfileRequest)  
-        self.viewSignal.requestProfile.connect(self.settingDetails)
-        self.fileSignal.postFileSucceed.connect(self.addFile)
     
     def _initStyle(self) -> None:
         """ Initialize the table style """
@@ -184,8 +183,7 @@ class FileTable(QTableWidget):
             self.logger.info(e, exc_info=e)
             WarnBox(ERR.ERR_WHEN_DUETO.format("initialize file header", str(e)))
         self.horizontalHeader().setStyleSheet(TABLE_HEADER)
-    
-    
+      
     def _headerClickedHandler(self, idx):
         """ handle header clicked signal  """
         try:
@@ -197,12 +195,12 @@ class FileTable(QTableWidget):
     def _toggleAllSelect(self, clear = False):
         """ select or unselect all items in the table """
         if self.allSelected or clear:
-            for key, widget in self.fileWidgets.items():
+            for key, widget in self.nameToWidgets.items():
                 widget.setCheckState(False)
                 if key in self.transferList:
                     self.transferList.remove(key) 
         else:
-            for key, widget in self.fileWidgets.items():
+            for key, widget in self.nameToWidgets.items():
                 widget.setCheckState(True)
                 if not key in self.transferList:
                     self.transferList.add(key)
@@ -227,11 +225,27 @@ class FileTable(QTableWidget):
         """ send signals to post file to the database 
             ** connected to the upload file button 
         """
-        self.fileSignal.postFileRequest.emit(Request(data=file, succeed=self._postFileSucceed))
-        
-    def _postFileSucceed(self, file: Tuple):
-        self.fileSignal.postFileSucceed.emit(file)
+        self.fileSignal.postFileRequest.emit(Request(data=file, succeed=self.addFile))
     
+    def resetFileDisplay(self, files: List[Tuple]):
+        """ clear all previously displayed file on the table  and only display 
+            the list of files passed by caller
+
+        Args:
+            files (List[Tuple]): a list of tuple that stores the file data and 
+                                 file names
+        """
+        self.setRowCount(0)
+        self.nameToData = dict()
+        self.nameToTablePins = dict()
+        self.nameToWidgets = dict()
+        self.addFiles(files)
+
+    def transferAll(self):
+        """add all files to the transfer state
+        """
+        self.transferList = set(self.nameToData)
+        
     def addFiles(self, files: List[Tuple]):
         """ adding a list of files to file table
             ** connected to sendfile signal from file database
@@ -253,12 +267,13 @@ class FileTable(QTableWidget):
         try:
             newRowIdx = self.rowCount()
             self.insertRow(newRowIdx)
+            self.nameToData[key] = data
             for col in range(len(self.headers)):
                 if self.headers[col] in data.keys():
                     newItem = QTableWidgetItem(str(data[self.headers[col]]))
                     if col == 1: 
                         filePin = newItem
-                        self.filePins[key] = filePin
+                        self.nameToTablePins[key] = filePin
                     self.setItem(newRowIdx, col, newItem)
             
             if self.tableWidgetsSet:
@@ -282,7 +297,7 @@ class FileTable(QTableWidget):
             row,
             self.tableWidgetsSet)
         
-        self.fileWidgets[key] = newFileWidget
+        self.nameToWidgets[key] = newFileWidget
 
     ####################### delete file handlers  #########################
     def _confirmRemoveFile(self, key:str):
@@ -303,15 +318,16 @@ class FileTable(QTableWidget):
     
     def removeSucceed(self, key):
         try:
-            if key in self.filePins:
-                rowIdx = self.indexFromItem(self.filePins[key]).row()
+            if key in self.nameToTablePins:
+                rowIdx = self.indexFromItem(self.nameToTablePins[key]).row()
                 self.removeRow(rowIdx)
-                del self.fileWidgets[key]
-                del self.filePins[key]
+                del self.nameToWidgets[key]
+                del self.nameToTablePins[key]
+                del self.nameToData[key]
                 if key in self.transferList:
                     self.transferList.remove(key) 
             else:
-                self.viewSignal.error(KEYERROR)
+                WarnBox(KEYERROR)
         except Exception as e:
             self.logger.error(e, exc_info=e)
             WarnBox(ERR.ERR_WHEN_DUETO.format("removing file from table", str(e)))
@@ -319,28 +335,15 @@ class FileTable(QTableWidget):
     def removeAll(self):
         """ remove all the file from table
         """
-        keys = list(self.filePins)
+        keys = list(self.nameToTablePins)
         for key in keys:
             self.removeFile(key)
             
         self.transferList.clear()
-        self.filePins.clear()
+        self.nameToTablePins.clear()
         self.viewSignal.ZeroFile.emit()
         
     ##################### edit profile handlers #########################
-    def settingDetails(self, key:str):
-        """ send a request to see file details
-            *** connected to setting details page
-            
-        Args: key(str): a file key 
-        """
-        try:
-            self.fileSignal.requestprofile.emit(key) # make request to load profile data 
-            self.viewSignal.goSetting.emit()
-        except Exception as e:
-            self.logger.error(e, exc_info=e)
-            WarnBox(ERR.ERR_WHEN_DUETO.format("accessing file profile", str(e)))
-        
     def changeFileToTranscribed(self, key:str):
         """ change one file's status to be transcribed, and delete the file
             from the file table
@@ -349,7 +352,7 @@ class FileTable(QTableWidget):
             key (str): a file key that identifies the file
         """
         try:
-            if key in self.filePins:
+            if key in self.nameToTablePins:
                 self.updateFileContent((key, "Status", Text.complete))
             else:
                 self.viewSignal.error.emit(KEYERROR)
@@ -395,8 +398,8 @@ class FileTable(QTableWidget):
     def changeProfileSucceed(self, result: Tuple[str, str]):
         try:
             key, profilekey = result
-            if key in self.filePins:
-                row = self.indexFromItem(self.filePins[key]).row()
+            if key in self.nameToTablePins:
+                row = self.indexFromItem(self.nameToTablePins[key]).row()
                 newitem = QTableWidgetItem(profilekey)
                 self.setItem(row, 3, newitem)
                 if key in self.transferList: 
@@ -406,8 +409,7 @@ class FileTable(QTableWidget):
         except Exception as e:
             self.logger.error(e, exc_info=e)
             WarnBox(ERR.ERR_WHEN_DUETO.format("adding new profile option", str(e)))
-        
-    
+         
     def initProfiles(self, profiles: List[str]):
         """ initialize a list of available profile"""
         self.profiles = profiles
@@ -439,9 +441,9 @@ class FileTable(QTableWidget):
         """
         self.logger.info(f"get updated information {file}")
         key, field, value = file 
-        if key in self.filePins:
+        if key in self.nameToTablePins:
             if field in self.headers:
-                row = self.indexFromItem(self.filePins[key]).row()
+                row = self.indexFromItem(self.nameToTablePins[key]).row()
                 col = self.headers.index(field)
                 newitem = QTableWidgetItem(value)
                 self.setItem(row, col, newitem)
@@ -451,22 +453,6 @@ class FileTable(QTableWidget):
             self.logger.error("File is not found")
     
     ###################### file transfer handler ##############################       
-    def filterFile(self, files: Set[str]):
-        """ given a set of file keys, the table will only show the file that 
-            is in the list 
-        
-        Args:
-            files (List[str]) a list of file keys
-        """
-        self.transferList.clear()
-        for key, pin in self.filePins.items():
-            rowidx = self.indexFromItem(pin).row()
-            if key in files:
-                self.showRow(rowidx)
-                self.transferList.add(key)
-            else:
-                self.hideRow(rowidx)
-    
     def addToNextState(self, key:str) -> None:
         """ add the file to transcribe list
 
@@ -476,9 +462,9 @@ class FileTable(QTableWidget):
         self.logger.info(key)
         self.logger.info(self.transferList)
         try:
-            if key in self.filePins:
+            if key in self.nameToTablePins:
                 self.transferList.add(key)
-                rowIdx = self.indexFromItem(self.filePins[key]).row()
+                rowIdx = self.indexFromItem(self.nameToTablePins[key]).row()
                 self._setColorRow(rowIdx,self.transferlistBackground)
                 self.viewSignal.nonZeroFile.emit()
             else: 
@@ -499,7 +485,7 @@ class FileTable(QTableWidget):
         try:
             if key in self.transferList:
                 self.transferList.remove(key)
-                rowIdx = self.indexFromItem(self.filePins[key]).row()
+                rowIdx = self.indexFromItem(self.nameToTablePins[key]).row()
                 self._setColorRow(rowIdx, Color.MAIN_BACKGROUND)
                 self.clearSelection()
                 if len(self.transferList) == 0:
@@ -515,11 +501,10 @@ class FileTable(QTableWidget):
         """ send a signal that includes all the files that will be 
             transfer to the next state
         """
-        self.viewSignal.transferState.emit(self.transferList)
-        
-    def transcribeFile(self):
-        """ send signal to controller to transcribe file """
-        self.fileSignal.transcribe.emit(self.transferList)  
+        data = list()
+        for file in self.transferList:
+            data.append((file, self.nameToData[file]))
+        self.viewSignal.transferState.emit(data)
         
     def _setColorRow(self, rowIdx, color):
         """ change the color of the row at rowIdx """
@@ -634,8 +619,7 @@ class _TableCellWidgets(QObject):
         if state:
             self.checkBox.setCheckState(Qt.CheckState.Checked)
         else: 
-            self.checkBox.setCheckState(Qt.CheckState.Unchecked)
-            
+            self.checkBox.setCheckState(Qt.CheckState.Unchecked)        
 class _ChangeProfileDialog(QDialog):
     def __init__(self, 
                  profiles: List[str], 

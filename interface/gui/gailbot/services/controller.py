@@ -318,13 +318,13 @@ class ServiceController:
         # get configured sources 
         try:
             if not sources:
-                sources = self.organizer.get_configured_sources(sources)
+                source_objs = self.organizer.get_configured_sources(sources)
             else: 
-                sources = [self.organizer.get_source(name) for name in sources]
+                source_objs = [self.organizer.get_source(name) for name in sources]
             # load to converter 
-            payloads, invalid = self.converter(sources)
+            payloads, invalid = self.converter(source_objs)
             
-            if len(sources) != 0:
+            if len(source_objs) != 0:
                 logger.info(payloads)
                 # put the payload to the pipeline
                 fails = self.pipeline_service(payloads=payloads)
