@@ -39,3 +39,6 @@ class ERR:
     PROFILE_NOT_FOUND = "ERROR: Profile {0} not found."
     PROFILE_EDIT      = "ERROR: Fail to update profile {0}."
     PROFILE_IN_USE    = "ERROR: profile {0} is in use"
+ 
+    ## error for plugin organizer
+    PLUGIN_IN_USE    = "ERROR: plugin {0} is in use"

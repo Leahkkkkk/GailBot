@@ -217,7 +217,7 @@ class FileTable(QTableWidget):
         """
         try:
             addFileWindow = UploadFileTab(self.profiles)
-            addFileWindow.signals.postFileRequest.connect(self._postFile)
+            addFileWindow.signals.postFile.connect(self._postFile)
             addFileWindow.exec()
         except Exception as e:
             self.logger.error(e, exc_info=e) 
