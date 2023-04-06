@@ -7,4 +7,6 @@ class PLUGIN_CONFIG:
     AWS_ACCESS_KEY = "BUbtBRJFx85xcDGCWBzo61KTxPRwPxujNvQzNeXH"
     THREAD_NUM = 1
     DOCUMENT = "DOCUMENT.md"
+    REQUIREMENT = "requirement.txt"
+    CONFIG = "config.toml"
     

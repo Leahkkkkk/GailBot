@@ -1,5 +1,6 @@
 
 import os 
+import pip 
 from typing import Dict, List, Union, TypedDict, Tuple
 from dataclasses import dataclass
 from .pluginLoader import PluginLoader
@@ -15,8 +16,10 @@ from gailbot.core.utils.general import (
     is_directory,
     delete
 )
-
+from config_backend import PROJECT_ROOT
+from gailbot.configs import PLUGIN_CONFIG
 from pydantic import BaseModel, ValidationError
+
 
 logger = makelogger("plugin directory loader")
 
@@ -81,12 +84,27 @@ class PluginDirectoryLoader(PluginLoader):
         logger.info(f"suite name is {suite_dir_name}, suite path is {suite_dir_path}") 
         tgt_path = f"{self.suites_dir}/{get_name(suite_dir_path)}"
         
-        # search for the configuration file
-        conf = filepaths_in_dir(suite_dir_path,["toml"])
-        if not conf:
+        config = None 
+        requirement = None
+        # search for the requirements and config file 
+        for root, dirs, files in os.walk(suite_dir_path):
+            if PLUGIN_CONFIG.REQUIREMENT in files:
+                requirement = os.path.join(root, PLUGIN_CONFIG.REQUIREMENT)
+            if PLUGIN_CONFIG.CONFIG in files:
+                config = os.path.join(root, PLUGIN_CONFIG.CONFIG)
+            if config and requirement:
+                break 
+        
+        # download required package 
+        try:
+            if requirement:
+                self.download_packages(requirement, PROJECT_ROOT)
+        except Exception as e:
+            logger.error(f"failed to download package", exc_info=e)
             return False
-        else:
-            conf = conf[0]
+        
+        if not config:
+            return False
             
         # make a copy of the original plugin suite
         if not is_directory(tgt_path):
@@ -96,7 +114,8 @@ class PluginDirectoryLoader(PluginLoader):
             delete(tgt_path)
             copy(suite_dir_path, tgt_path)
    
-        suite = self.toml_loader.load(conf, suite_dir_name, self.suites_dir)
+        suite = self.toml_loader.load(config, suite_dir_name, self.suites_dir)
+       
         if suite:
             return suite
         else:
@@ -104,7 +123,14 @@ class PluginDirectoryLoader(PluginLoader):
             return False
     
     def download_packages(self, req_file, dest):
-        pass
+        """ download packages listed under req_file to dest
+
+        Args:
+            req_file(str): a string that specifies the path to requirments.txt file
+            dest (str): a string to the directory where the file will be downloaded
+        """
+        if hasattr(pip, 'main'):
+            pip.main(['install', "-t", str(dest),'-r', req_file])
 
 
 
