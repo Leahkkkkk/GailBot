@@ -1,10 +1,9 @@
 from typing import TypedDict
-from view.config import FontFamily, FontSize, Dimension, Color
+from view.config import FontFamily, FontSize, Dimension
 from view.widgets import GraphDisplay, MarkdownDisplay, TextDisplay, Label, ScrollArea
 from view.widgets.Background import initPrimaryColorBackground
 from PyQt6.QtWidgets import QDialog, QVBoxLayout, QWidget
-from PyQt6.QtCore import Qt, QSize
-from PyQt6.QtGui import QFont
+from PyQt6.QtCore import Qt
 
 class PluginInfo(TypedDict):
     suite_name : str 

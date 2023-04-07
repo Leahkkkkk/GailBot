@@ -45,3 +45,9 @@ class PluginSignals(QObject):
 class ViewSignals(QObject):
     restart = pyqtSignal()
     clearcache = pyqtSignal()
+
+class StyleSignals(QObject):
+    changeColor = pyqtSignal(str)
+    changeFont  = pyqtSignal(str)
+
+GlobalStyleSignal = StyleSignals()

@@ -13,9 +13,10 @@ from enum import Enum
 from typing import List, Dict, List, Tuple
 from view.config.Style import Color, Dimension
 from view.config.Text import ProfilePageText as Text
-from view.config.Style import FontSize 
+from view.config.Style import FontSize, COLOR_DICT, STYLE_DICT
 from view.config.Style import StyleSheet as STYLE 
 from view.config.Text import ProfileSettingForm as Form 
+from view.Signals import GlobalStyleSignal
 from gbLogger import makeLogger
 
 from view.Signals import ProfileSignals, PluginSignals
@@ -66,19 +67,19 @@ class SettingPage(QWidget):
         self._initWidget()
         self._initLayout()
         self._connectSignal()
-        self._initStyle()
     
     def addAvailableSetting(self, profileKeys: List[str]):
         """ add a list of profile keys """
         self.TranscriptionSetPage.addAvailableSetting(profileKeys)
      
     def _initWidget(self):
+        self.HIGH_LIGHT = Color.HIGHLIGHT
         """ initializes widgets"""
         self.sideBar = SideBar()
         # button on the sidebar
         self.transcibeSetBtn = BorderBtn(
             Text.reuquiredSetBtn, Color.GREYDARK, FontSize.BTN, 0, 
-            STYLE.onlyTopBorder, width=Dimension.LBTNWIDTH)
+            STYLE.onlyBottomBorder, width=Dimension.LBTNWIDTH)
        
         self.pluginSetBtn = BorderBtn(
             Text.pluginSetBtn, Color.GREYDARK, FontSize.BTN, 0, 
@@ -97,7 +98,7 @@ class SettingPage(QWidget):
         self.settingStack.addWidget(self.PluginPage)
         self.settingStack.addWidget(self.SysPage)
         self.settingStack.setCurrentWidget(self.TranscriptionSetPage)
-    
+         
     def _initLayout(self):
         """initializes layout"""
         self.horizontalLayout = QHBoxLayout()
@@ -127,22 +128,23 @@ class SettingPage(QWidget):
         self.systemSetBtn.clicked.connect(self._activateSystemSet)
         self.PluginPage.signal.pluginAdded.connect(self.TranscriptionSetPage.addPluginSuite)
         self.PluginPage.signal.pluginDeleted.connect(self.TranscriptionSetPage.deletePlugin)
-  
+        GlobalStyleSignal.changeColor.connect(self.colorchange)
+        
     def _activeRequiredSet(self):
         """ switches current page from post transcription settings page to required settings page """
         self._setBtnDefault()
-        self.transcibeSetBtn.setActiveStyle(Color.HIGHLIGHT)
+        self.transcibeSetBtn.setActiveStyle(self.HIGH_LIGHT)
         self.settingStack.setCurrentWidget(self.TranscriptionSetPage)
     
     def _activatePlugin(self):
         """ switches current page to plugin page """
         self._setBtnDefault()
-        self.pluginSetBtn.setActiveStyle(Color.HIGHLIGHT)
+        self.pluginSetBtn.setActiveStyle(self.HIGH_LIGHT)
         self.settingStack.setCurrentWidget(self.PluginPage)
     
     def _activateSystemSet(self):
         self._setBtnDefault()
-        self.systemSetBtn.setActiveStyle(Color.HIGHLIGHT)
+        self.systemSetBtn.setActiveStyle(self.HIGH_LIGHT)
         self.settingStack.setCurrentWidget(self.SysPage)
     
     def _setBtnDefault(self):
@@ -151,10 +153,16 @@ class SettingPage(QWidget):
         self.pluginSetBtn.setDefaultStyle()
         self.systemSetBtn.setDefaultStyle()
     
-    def _initStyle(self):
-        """ initializes the style of the setting stack """
-        self.settingStack.setObjectName(STYLE.settingStackID)
-        self.settingStack.setStyleSheet(STYLE.settingStack)
+    
+    def colorchange(self, colormode):
+        self.transcibeSetBtn.addOtherStyle(STYLE_DICT[colormode].onlyBottomBorder)
+        self.systemSetBtn.addOtherStyle(STYLE_DICT[colormode].onlyBottomBorder)
+        self.pluginSetBtn.addOtherStyle(STYLE_DICT[colormode].onlyBottomBorder)
+        self.transcibeSetBtn.colorChange(COLOR_DICT[colormode].GREYDARK)
+        self.systemSetBtn.colorChange(COLOR_DICT[colormode].GREYDARK)
+        self.pluginSetBtn.colorChange(COLOR_DICT[colormode].GREYDARK)
+        self.HIGH_LIGHT = COLOR_DICT[colormode].HIGHLIGHT
+   
     
     def deleteProfileConfirmed(self, deleted: bool):
         """ if deleted, remove the current setting name from available setting"""

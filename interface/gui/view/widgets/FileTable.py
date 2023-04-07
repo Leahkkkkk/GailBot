@@ -20,11 +20,10 @@ from .Background import initSecondaryColorBackground
 
 from view.components.UploadFileTab import UploadFileTab
 from view.pages.FileUploadTabPages import ChooseSet
-from view.Signals import FileSignals
+from view.Signals import FileSignals, GlobalStyleSignal
 from gbLogger import makeLogger
-from ..config.Style import Dimension, Color, FontSize, FontFamily
+from ..config.Style import Dimension, Color, FontSize, FontFamily, COLOR_DICT, FONT_DICT, STYLE_DICT, StyleSheet
 from ..config.Text import FileTableText as Text
-from view.style.WidgetStyleSheet import FILE_TABLE, SCROLL_BAR, TABLE_HEADER
 from view.util.ErrorMsg import ERR, WARN
 from view.util.io import get_name
 from PyQt6.QtWidgets import (
@@ -76,7 +75,8 @@ class Signals(QObject):
     unselect = pyqtSignal(str)
     transferState = pyqtSignal(list)
     error = pyqtSignal(str)
-
+    
+## TODO: show the transfer list color background
 class FileTable(QTableWidget):
     """ class for the file tables """
     def __init__(self, 
@@ -124,7 +124,6 @@ class FileTable(QTableWidget):
         self._connectViewSignal()
         self.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)  
         self.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-    
         
     def resizeCol(self, widths:List[int]) -> None:
         """ takes in a list of width and resize the width of the each 
@@ -148,24 +147,30 @@ class FileTable(QTableWidget):
         self.viewSignal.select.connect(self.addToNextState)
         self.viewSignal.unselect.connect(self.removeFromNextState)
         self.viewSignal.requestChangeProfile.connect(self.changeProfileRequest)  
-    
+        GlobalStyleSignal.changeColor.connect(self.colorChange)
+         
     def _initStyle(self) -> None:
         """ Initialize the table style """
         self.horizontalHeader().setFixedHeight(45)
         self.setObjectName("FileTable")
-        self.setStyleSheet(f"#FileTable{FILE_TABLE}")
-
+        self.setStyleSheet(f"#FileTable{StyleSheet.FILE_TABLE}")
         for i in range(self.columnCount()):
             self.horizontalHeader().setSectionResizeMode(
                 i, QHeaderView.ResizeMode.Fixed)
         self.setFixedWidth(Dimension.TABLEWIDTH)
         self.setMinimumHeight(Dimension.TABLEMINHEIGHT)
-        self.verticalScrollBar().setStyleSheet(SCROLL_BAR) 
-        self.horizontalScrollBar().setStyleSheet(SCROLL_BAR)
+        self.verticalScrollBar().setStyleSheet(StyleSheet.SCROLL_BAR) 
+        self.horizontalScrollBar().setStyleSheet(StyleSheet.SCROLL_BAR)
         font = QFont(FontFamily.OTHER, FontSize.TABLE_ROW)
         self.setFont(font)
         self.setTextElideMode(Qt.TextElideMode.ElideMiddle)
-          
+    
+    def colorChange(self, colormode):
+        self.setStyleSheet(f"#FileTable{STYLE_DICT[colormode].FILE_TABLE}")
+        self.verticalScrollBar().setStyleSheet(STYLE_DICT[colormode].SCROLL_BAR) 
+        self.horizontalScrollBar().setStyleSheet(STYLE_DICT[colormode].SCROLL_BAR)
+        self.horizontalHeader().setStyleSheet(STYLE_DICT[colormode].TABLE_HEADER)
+
     def _setFileHeader(self) -> None:
         """ initialize file headers
         
@@ -182,7 +187,7 @@ class FileTable(QTableWidget):
         except Exception as e:
             self.logger.info(e, exc_info=e)
             WarnBox(ERR.ERR_WHEN_DUETO.format("initialize file header", str(e)))
-        self.horizontalHeader().setStyleSheet(TABLE_HEADER)
+        self.horizontalHeader().setStyleSheet(StyleSheet.TABLE_HEADER)
       
     def _headerClickedHandler(self, idx):
         """ handle header clicked signal  """

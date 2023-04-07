@@ -9,8 +9,8 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 from typing import Dict, List, Tuple
-from view.config.Style import FontSize,FontFamily, Color, Dimension
-from view.Signals import ProfileSignals
+from view.config.Style import FontSize,FontFamily, Color, Dimension, COLOR_DICT, FONT_DICT
+from view.Signals import ProfileSignals, GlobalStyleSignal
 from view.Request import Request
 from view.config.Text import ProfilePageText as Text
 from gbLogger import makeLogger
@@ -80,15 +80,9 @@ class TranscriptionSetPage(QWidget):
         self.pluginForm = PluginForm.PluginForm()
         
         # buttom button
-        self.createBtn = ColoredBtn (
-            Text.newProfileBtn, Color.PRIMARY_BUTTON
-        )
-        self.deleteBtn = ColoredBtn (
-            Text.deleteBtn, Color.CANCEL_QUIT
-        )
-        self.editBtn = ColoredBtn (
-            Text.saveBtn, Color.PRIMARY_BUTTON
-        )
+        self.createBtn = ColoredBtn (Text.newProfileBtn, Color.PRIMARY_BUTTON)
+        self.deleteBtn = ColoredBtn (Text.deleteBtn, Color.CANCEL_QUIT)
+        self.editBtn = ColoredBtn (Text.saveBtn, Color.PRIMARY_BUTTON)
     
     def _initLayout(self):
         """ initializes the layout of the page """
@@ -120,7 +114,12 @@ class TranscriptionSetPage(QWidget):
         # for toggling between different toggle view 
         self.engineForm.toggleView.signal.showview.connect(self.pluginForm.toggleView.hideView)
         self.pluginForm.toggleView.signal.showview.connect(self.engineForm.toggleView.hideView)
-        
+        GlobalStyleSignal.changeColor.connect(self.colorChange)
+    
+    def colorChange(self, colormode):
+        self.createBtn.colorChange(COLOR_DICT[colormode].PRIMARY_BUTTON)
+        self.editBtn.colorChange(COLOR_DICT[colormode].PRIMARY_BUTTON)
+        self.deleteBtn.colorChange(COLOR_DICT[colormode].CANCEL_QUIT)
     
     def addAvailableSetting(self, profileKeys: List[str]):
         """ add a list of profile keys """

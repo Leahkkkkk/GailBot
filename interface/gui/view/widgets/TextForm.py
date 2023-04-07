@@ -12,6 +12,7 @@ Description: a form widget that implement a form that takes in user input
 from dataclasses import dataclass
 from typing import Dict 
 
+from view.Signals import GlobalStyleSignal
 from view.widgets import (
     Label,
     ToggleView
@@ -27,11 +28,10 @@ from .Form.MultiSelect import MultipleSelect
 from ..config.Style import (
     FontFamily, 
     FontSize, 
-    Dimension, 
-    Color
+    Dimension,
+    COLOR_DICT 
 )
-from view.widgets.Background import initSecondaryColorBackground
-
+from view.widgets.Background import initSecondaryColorBackground, _initBackground
 from PyQt6.QtWidgets import (
     QWidget, 
     QVBoxLayout,
@@ -76,8 +76,18 @@ class TextForm(QWidget):
             self.setMinimumWidth(Dimension.WIN_MIN_WIDTH // 2)
         self._initWidget()
         self._initLayout()
+        self._connectSignal()
         if background:
             self._initStyle()
+    
+    def _connectSignal(self):
+        GlobalStyleSignal.changeColor.connect(self.changeColor)
+
+    
+    def changeColor(self, colormode):
+        print("calllled")
+        # initSecondaryColorBackground(self)
+        _initBackground(self, COLOR_DICT[colormode].SUB_BACKGROUND)
         
     
     def enableForm(self) -> None:
@@ -179,8 +189,7 @@ class TextForm(QWidget):
                 toggleView = ToggleView (
                     tittleKey, 
                     toggleViewContainer,
-                    headercolor = Color.MAIN_BACKGROUND, 
-                    viewcolor = Color.MAIN_BACKGROUND)
+                    secondaryStyle=False)
                 toggleView.setScrollHeight(height)
                 self.mainVertical.addWidget(toggleView)
                 toggleView.setContentsMargins(0,0,0,0)

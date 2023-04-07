@@ -11,16 +11,16 @@ Description: a form page widget that display a page with a form  that accept
             user input 
 '''
 from typing import Dict 
-
+from view.Signals import GlobalStyleSignal
 from .Label import Label 
 from .TextForm import TextForm
 from .ScrollArea import ScrollArea
-from .Background import initSecondaryColorBackground
+from .Background import initSecondaryColorBackground, _initBackground
 from ..config.Style import (
     FontFamily, 
     FontSize, 
     Dimension,
-    Color
+    COLOR_DICT
 )
 from PyQt6.QtWidgets import (
     QWidget, 
@@ -56,7 +56,16 @@ class SettingForm(QWidget):
         self.captionText = caption
         self._initWidget()
         self._initLayout()
+        self._connectSignal()
+    
+    def _connectSignal(self):
+        GlobalStyleSignal.changeColor.connect(self.colorChange)
 
+    def colorChange(self, colormode):
+        print(colormode)
+        print(COLOR_DICT[colormode].SUB_BACKGROUND)
+        _initBackground(self._scroll, COLOR_DICT[colormode].SUB_BACKGROUND)
+        
     def setValue(self, values:dict) -> None:
         """ public function to set the values in the form  """
         self.setForm.setValues(values)
@@ -73,15 +82,14 @@ class SettingForm(QWidget):
             self.caption = Label(
                 self.captionText, FontSize.DESCRIPTION, FontFamily.MAIN)
         self.setForm = TextForm(self.formData)
-        self.scroll = ScrollArea()
-        self.scroll.setWidgetResizable(False)
-        self.scroll.setVerticalScrollBarPolicy(
+        self._scroll = ScrollArea()
+        self._scroll.setWidgetResizable(True)
+        self._scroll.setVerticalScrollBarPolicy(
             Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
-        self.scroll.setWidget(self.setForm)
-        self.scroll.setFixedWidth(Dimension.FORMWIDTH)
-        self.scroll.setFixedHeight(Dimension.FORMMINHEIGHT)
-        initSecondaryColorBackground(self.scroll)
-    
+        self._scroll.setWidget(self.setForm)
+        self._scroll.setFixedWidth(Dimension.FORMWIDTH)
+        self._scroll.setFixedHeight(Dimension.FORMMINHEIGHT)
+        initSecondaryColorBackground(self._scroll)
     
     def _initLayout(self):
         """ initializes the layout"""
@@ -90,7 +98,7 @@ class SettingForm(QWidget):
         self.verticalLayout.addWidget(self.header, alignment = center)
         if self.captionText:
             self.verticalLayout.addWidget(self.caption, alignment = center )
-        self.verticalLayout.addWidget(self.scroll, alignment = center)
+        self.verticalLayout.addWidget(self._scroll, alignment = center)
         self.verticalLayout.addStretch()
         self.verticalLayout.setContentsMargins(0,0,0,0)
     

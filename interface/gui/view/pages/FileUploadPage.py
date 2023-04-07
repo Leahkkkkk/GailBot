@@ -19,12 +19,15 @@ from view.config.Style import (
     Color, 
     FontSize,
     Dimension,
-    FontFamily
+    FontFamily,
+    STYLE_DICT,
+    COLOR_DICT
 )
 from view.config.Text import FileTableHeader
 from view.config.Text import FileUploadPageText as Text 
 from view.config.Style import FontSize as FS
 from view.config.Style import buttonStyle
+from view.Signals import GlobalStyleSignal
 from gbLogger import makeLogger
 from view.Signals import FileSignals
 from view.Request import Request
@@ -87,6 +90,7 @@ class FileUploadPage(QWidget):
         self.fileTable.viewSignal.nonZeroFile.connect(self._allowTranscribe)
         self.fileTable.viewSignal.ZeroFile.connect(self._disallowTranscribe)
         self._disallowTranscribe()
+        GlobalStyleSignal.changeColor.connect(self.colorChange)
         
     def _initWidget(self):
         """ initializes widgets """
@@ -157,6 +161,11 @@ class FileUploadPage(QWidget):
             QSize(Dimension.LBTNWIDTH,Dimension.BTNHEIGHT))
         self.gotoMainBtn.setStyleSheet(StyleSheet.goToMain)
 
+    def colorChange(self, colormode):
+        self.gotoMainBtn.setStyleSheet(STYLE_DICT[colormode].goToMain)
+        self.settingBtn.colorChange(COLOR_DICT[colormode].PRIMARY_BUTTON)
+        self.removeAll.colorChange(COLOR_DICT[colormode].PRIMARY_BUTTON)
+    
     def _allowTranscribe(self):
         """ activates the transcribe button """
         self.logger.info("")

@@ -12,7 +12,6 @@ Description: implementation of pages for user to create new profile
 
 from typing import Dict
 
-from view.config.Style import Color, FontSize, FontFamily
 from view.config.Text import CreateNewProfilePageText as Text 
 from view.config.Text import EngineForm as Form 
 from gbLogger import makeLogger
@@ -32,6 +31,39 @@ from PyQt6.QtCore import (
     QObject
 )
 
+#### controlling style changes 
+from view.config.Style import (
+    FontSize, 
+    Color, 
+    StyleSheet, 
+    FontFamily,
+    Asset, 
+    ASSET_DICT, 
+    STYLE_DICT,  
+    FONT_DICT,
+    COLOR_DICT)  
+from view.Signals import GlobalStyleSignal
+
+FONT_SIZE = FontSize
+COLOR = Color
+STYLESHEET = StyleSheet
+ASSET = Asset
+
+def colorchange(colormode):
+    global COLOR 
+    global STYLESHEET
+    global ASSET
+    COLOR = COLOR_DICT[colormode]
+    STYLESHEET = STYLE_DICT[colormode]
+    ASSET = ASSET_DICT[colormode]
+
+def fontchange(fontsize):
+    global FONT_SIZE
+    FONT_SIZE = FONT_DICT[fontsize]
+
+GlobalStyleSignal.changeColor.connect(colorchange)
+GlobalStyleSignal.changeFont.connect(fontchange)
+######################
 
 hCenter = Qt.AlignmentFlag.AlignHCenter
 vCenter = Qt.AlignmentFlag.AlignVCenter
@@ -63,15 +95,15 @@ class ProfileName (TabPage):
     def _initWidget(self):
         """ initializes the widgets """
         self.header = Label(Text.profileName, 
-            FontSize.HEADER2, 
+            FONT_SIZE.HEADER2, 
             FontFamily.MAIN)
         self.profileName = TextInput(
             "", 
-            labelSize = FontSize.HEADER3,
+            labelSize = FONT_SIZE.HEADER3,
             vertical=False)
         self.confirmBtn = ColoredBtn(
             "Start", 
-            Color.SECONDARY_BUTTON)
+            COLOR.SECONDARY_BUTTON)
         self.confirmBtn.clicked.connect(self._confirmHandler)
 
     def _initLayout(self):
@@ -108,7 +140,7 @@ class EngineSetting(TabPage):
         self.setLayout(self.verticallayout)
         self.header = Label(
             Text.engineSettingHeader, 
-            FontSize.HEADER2, 
+            FONT_SIZE.HEADER2, 
             FontFamily.MAIN)
         self.verticallayout.addWidget(
             self.header, 
@@ -116,7 +148,7 @@ class EngineSetting(TabPage):
         self.mainForm = EngineSettingForm.EngineSettingForm()
         self.verticallayout.addWidget(self.mainForm)
         self.verticallayout.addStretch()
-        self.confirmBtn = ColoredBtn(Text.cofirmBtn, Color.SECONDARY_BUTTON)
+        self.confirmBtn = ColoredBtn(Text.cofirmBtn, COLOR.SECONDARY_BUTTON)
         self.confirmBtn.clicked.connect(self._confirmHandler)
         self.verticallayout.addWidget(self.confirmBtn, alignment=bottomRight)
         # self.confirmBtn.clicked.connect(lambda: self.signals.close.emit())
@@ -141,11 +173,11 @@ class PluginSetting(TabPage):
         super().__init__(*args, **kwargs)
         self.header = Label(
             Text.pluginSettingHeader, 
-            FontSize.HEADER2, 
+            FONT_SIZE.HEADER2, 
             FontFamily.MAIN)
         self.mainForm = PluginForm.PluginForm()
         self.mainForm.addPluginSuites(plugins)
-        self.confirmBtn = ColoredBtn(Text.cofirmBtn, Color.SECONDARY_BUTTON)
+        self.confirmBtn = ColoredBtn(Text.cofirmBtn, COLOR.SECONDARY_BUTTON)
         self.confirmBtn.clicked.connect(lambda: self.signals.close.emit())
         self.verticalLayout = QVBoxLayout()
         self.setLayout(self.verticalLayout)

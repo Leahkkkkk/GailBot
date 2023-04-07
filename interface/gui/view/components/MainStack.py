@@ -11,7 +11,12 @@ Description: implementation of the main page Stack
 '''
 from typing import Tuple, List
 from gbLogger import makeLogger
-from view.Signals import ProfileSignals, FileSignals, PluginSignals, ViewSignals
+from view.Signals import (
+    ProfileSignals, 
+    FileSignals, 
+    PluginSignals, 
+    ViewSignals, 
+    GlobalStyleSignal)
 from view.config.Style import Dimension
 from view.config.Text import MainStackText
 from view.widgets.MsgBox import WarnBox, ConfirmBox
@@ -29,7 +34,6 @@ from view.widgets.Background import (
     initSubPageBackground,
     initPrimaryColorBackground
 )
-
 from PyQt6.QtWidgets import QStackedWidget, QTabWidget
 from PyQt6.QtCore import QSize
 
@@ -99,7 +103,6 @@ class MainStack(QStackedWidget):
         self.SettingPage.settingStack.setCurrentWidget(
             self.SettingPage.TranscriptionSetPage)
       
-    
     def updateFile(self, data:Tuple[str,str,str]):
         """ public function that update the files to all the file tables  """
         self.FileUploadPage.fileTable.updateFileContent(data)
@@ -146,6 +149,14 @@ class MainStack(QStackedWidget):
         self.setCurrentWidget(self.WelcomePage)
         # self.addWidget(self.RecordPage)
     
+    def _changeBkg(self, colormode):
+        initHomePageBackground(self.WelcomePage)
+        initSubPageBackground(self.FileUploadPage)
+        initSubPageBackground(self.ConfirmTranscribePage)
+        initPrimaryColorBackground(self.SettingPage)
+        initSubPageBackground(self.TranscribeProgressPage)
+        initSubPageBackground(self.TranscribeSuccessPage)
+        
     def _pageRedirect(self):
         """ initializes button click to page redirect functionality  """
         self.WelcomePage.StartBtn.clicked.connect(self.gotoFileUploadPage)
@@ -193,6 +204,9 @@ class MainStack(QStackedWidget):
         self.FileUploadPage.fileTable.viewSignal.requestProfile.connect(
             lambda filename : self.fileSignal.requestprofile.emit(
                 Request(data=filename, succeed = self.showProfile)))
+
+        ### signal to change view color 
+        GlobalStyleSignal.changeColor.connect(self._changeBkg)
         
     def loadProfile(self, name):
         self.SettingPage.TranscriptionSetPage.getProfile(name)

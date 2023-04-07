@@ -1,17 +1,32 @@
 from typing import Dict, List, Tuple
 from collections import deque
 import math
-from view.config.Style import Color, StyleSheet
-from view.style.WidgetStyleSheet import SCROLL_BAR
+from view.config.Style import Color, StyleSheet, STYLE_DICT, COLOR_DICT
+from view.Signals import GlobalStyleSignal
 from PyQt6.QtGui import QPainter, QFont
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtWidgets import QApplication, QGraphicsView, QGraphicsScene, QGraphicsItem, QGraphicsLineItem, QGraphicsTextItem
 from PyQt6.QtGui import QPen, QBrush,  QFont, QColor
 from PyQt6.QtCore import QRectF, QLineF, Qt
 
+
 NODE_COLOR = Color.HIGHLIGHT
 LINE_COLOR = Color.MAIN_TEXT
 TEXT_COLOR = Color.MAIN_TEXT
+STYLESHEET = StyleSheet
+
+def colorchange(colormode):
+    global NODE_COLOR 
+    global LINE_COLOR
+    global TEXT_COLOR 
+    global STYLESHEET 
+    NODE_COLOR = COLOR_DICT[colormode].HIGHLIGHT
+    LINE_COLOR = COLOR_DICT[colormode].MAIN_TEXT
+    TEXT_COLOR = COLOR_DICT[colormode].MAIN_TEXT
+    STYLESHEET = STYLE_DICT[colormode]
+
+GlobalStyleSignal.changeColor.connect(colorchange)
+
 class GraphDisplay(QGraphicsView):
     def __init__(self, dependencyGraph: Dict[str, List[str]]):
         super().__init__()
@@ -26,8 +41,8 @@ class GraphDisplay(QGraphicsView):
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
         self.setMinimumSize(QSize(self.width,self.height)) 
-        self.verticalScrollBar().setStyleSheet(SCROLL_BAR)
-        self.setStyleSheet(StyleSheet.basic)
+        self.verticalScrollBar().setStyleSheet(STYLESHEET.SCROLL_BAR)
+        self.setStyleSheet(STYLESHEET.basic)
         self.setScene(self.scene)
         self.draw_graph()
         

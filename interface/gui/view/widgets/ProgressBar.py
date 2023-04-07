@@ -10,7 +10,7 @@ Modified By:  Siara Small  & Vivian Li
 '''
 
 from ..config.Style import Dimension, Color
-from view.style.WidgetStyleSheet import PROGRESS_BAR
+from view.config.Style import StyleSheet
 from PyQt6.QtWidgets import QSlider
 from PyQt6 import QtCore, QtGui, QtWidgets
 
@@ -26,7 +26,7 @@ class ProgressBar (QSlider):
         self.setMaximum(100)
     
     def initStyle(self):
-        self.setStyleSheet(PROGRESS_BAR)
+        self.setStyleSheet(StyleSheet.PROGRESS_BAR)
         self.setEnabled(False)
     
     def updateValue(self, value: int):

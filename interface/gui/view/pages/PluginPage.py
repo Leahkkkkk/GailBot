@@ -10,10 +10,10 @@ Modified By:  Siara Small  & Vivian Li
 Description: implementation of the plugin page
 '''
 from typing import Dict, List, Any
-from view.config.Style import FontSize, Dimension, FontFamily, Color
+from view.config.Style import FontSize, Dimension, FontFamily, Color, COLOR_DICT
 from view.config.Text import ProfilePageText as Text
 from view.config.Text import ProfileSettingForm as Form
-from view.Signals import PluginSignals
+from view.Signals import PluginSignals, GlobalStyleSignal
 from view.Request import Request
 from gbLogger import makeLogger
 from view.widgets import Label, ColoredBtn
@@ -52,7 +52,7 @@ class PluginPage(QWidget):
             Text.pluginCaption, FontSize.DESCRIPTION, FontFamily.MAIN)
         self.pluginTable = PluginTable(self.signal)
         self.addBtn = ColoredBtn(Text.newPluginBtn, Color.PRIMARY_BUTTON)
-        
+     
     def _initlayout(self):
         """" initializes layout """
         self.logger.info("")
@@ -69,6 +69,7 @@ class PluginPage(QWidget):
     def _connectSignal(self):
         self.addBtn.clicked.connect(self.addPluginSuite)
         self.signal.addPlugin.connect(self.addRequestWrapper)
+        GlobalStyleSignal.changeColor.connect(self.changeColor)
         
     def addRequestWrapper(self, suiteData):
         self.signal.addRequest.emit(
@@ -82,4 +83,7 @@ class PluginPage(QWidget):
         name, data = pluginSuite
         self.pluginTable.addPluginSuite(pluginSuite)
         self.signal.pluginAdded.emit(name)
+    
+    def changeColor(self, colormode):
+        self.addBtn.colorChange(COLOR_DICT[colormode].PRIMARY_BUTTON)
         

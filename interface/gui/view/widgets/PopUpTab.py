@@ -10,15 +10,12 @@ Modified By:  Siara Small  & Vivian Li
 Description: implement tab widgets that take in different page widget as child
              elements, and display those pages in a tab 
 '''
-
-
 from typing import Dict
 
 from .Button import ColoredBtn, BorderBtn
 from .ScrollArea import ScrollArea
 from .TabPage import TabPage
 from .Background import initPrimaryColorBackground
-from view.config.Style import Color, Dimension, buttonStyle
 from view.config.Text import PopUpText as Text
 
 from PyQt6.QtWidgets import (
@@ -29,8 +26,33 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import QObject, pyqtSignal, QSize, Qt
 
 """ default tab size """
-TabSize = QSize(Dimension.DEFAULTTABWIDTH, Dimension.DEFAULTTABHEIGHT)
 
+#### controlling style changes 
+from view.config.Style import (
+    FontSize, 
+    Dimension, 
+    Color, 
+    FontFamily,
+    buttonStyle, 
+    FONT_DICT,
+    COLOR_DICT)  
+from view.Signals import GlobalStyleSignal
+
+FONT_SIZE = FontSize
+COLOR = Color
+
+def colorchange(colormode):
+    global COLOR 
+    COLOR = COLOR_DICT[colormode]
+
+def fontchange(fontsize):
+    global FONT_SIZE
+    FONT_SIZE = FONT_DICT[fontsize]
+
+GlobalStyleSignal.changeColor.connect(colorchange)
+GlobalStyleSignal.changeFont.connect(fontchange)
+######################
+TabSize = QSize(Dimension.DEFAULTTABWIDTH, Dimension.DEFAULTTABHEIGHT)
 class Signals(QObject):
     """ a close tab signal """
     closeTab = pyqtSignal()
@@ -151,13 +173,13 @@ class _ChangePageBtn(QWidget):
         self.subContainer = QWidget()
         self.subContainer.setLayout(self.horizontaLayout)
         self.setLayout(self.verticalLayout)
-        self.nextBtn = BorderBtn(Text.leftArr, Color.GREYDARK)
-        self.prevBtn = BorderBtn(Text.rightArr, Color.GREYDARK)
+        self.nextBtn = BorderBtn(Text.leftArr, COLOR.GREYDARK)
+        self.prevBtn = BorderBtn(Text.rightArr, COLOR.GREYDARK)
         self.nextBtn.setFixedSize(
             QSize(Dimension.SMALLICONBTN,Dimension.SMALLICONBTN))
         self.prevBtn.setFixedSize(
             QSize(Dimension.SMALLICONBTN,Dimension.SMALLICONBTN))
-        self.finishBtn = ColoredBtn(Text.finish, Color.PRIMARY_BUTTON)
+        self.finishBtn = ColoredBtn(Text.finish, COLOR.PRIMARY_BUTTON)
         self.finishBtn.setFixedWidth(Dimension.SBTNWIDTH)
         self.deactivateNextButton()
         self.deactivatePrevButton()
@@ -188,7 +210,6 @@ class _ChangePageBtn(QWidget):
         self.prevBtn.setEnabled(False)
         self.prevBtn.setStyleSheet(buttonStyle.ButtonInactive)
     
-
 class NoControlTab(QWidget): 
     def __init__(
         self, 

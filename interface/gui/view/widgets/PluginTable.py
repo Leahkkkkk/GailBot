@@ -1,8 +1,7 @@
 from typing import List, Dict, Tuple, Any
-from view.config.Style import Dimension
+from view.config.Style import Dimension, STYLE_DICT, StyleSheet
 from view.config.Text import PLUGIN_SUITE_TEXT
-from view.style.WidgetStyleSheet import FILE_TABLE, SCROLL_BAR, TABLE_HEADER
-from view.Signals import PluginSignals
+from view.Signals import PluginSignals, GlobalStyleSignal
 from view.Request import Request
 from view.util.ErrorMsg import ERR  
 from view.components.PluginSuiteDetails import PluginSuiteDetails
@@ -35,23 +34,30 @@ class PluginTable(QTableWidget):
         self._initWidget()
         self._initStyle()
         self.resizeCol(PLUGIN_SUITE_TEXT.TABLE_DIMENSION)
+        GlobalStyleSignal.changeColor.connect(self.colorchange)
     
     def _initStyle(self) -> None:
         """ Initialize the table style """
         self.horizontalHeader().setFixedHeight(45)
         self.setObjectName("FileTable")
-        self.setStyleSheet(f"#FileTable{FILE_TABLE}")
+        self.setStyleSheet(f"#FileTable{StyleSheet.FILE_TABLE}")
         for i in range(self.columnCount()):
             self.horizontalHeader().setSectionResizeMode(
                 i, QHeaderView.ResizeMode.Fixed)
         self.setFixedWidth(Dimension.FORMWIDTH)
         self.setMinimumHeight(Dimension.FORMMINHEIGHT)
-        self.verticalScrollBar().setStyleSheet(SCROLL_BAR) 
-        self.horizontalScrollBar().setStyleSheet(SCROLL_BAR)
+        self.verticalScrollBar().setStyleSheet(StyleSheet.SCROLL_BAR) 
+        self.horizontalScrollBar().setStyleSheet(StyleSheet.SCROLL_BAR)
         self.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)  
         self.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         self.setTextElideMode(Qt.TextElideMode.ElideMiddle)
     
+    def colorchange(self, colormode):
+        self.setStyleSheet(f"#FileTable{STYLE_DICT[colormode].FILE_TABLE}")
+        self.verticalScrollBar().setStyleSheet(STYLE_DICT[colormode].SCROLL_BAR) 
+        self.horizontalScrollBar().setStyleSheet(STYLE_DICT[colormode].SCROLL_BAR)
+        self.horizontalHeader().setStyleSheet(STYLE_DICT[colormode].TABLE_HEADER)
+        
     def resizeCol(self, widths:List[float]) -> None:
         """ takes in a list of width and resize the width of the each 
             column to the width
@@ -69,7 +75,7 @@ class PluginTable(QTableWidget):
             headerItem = QTableWidgetItem(header)
             self.setHorizontalHeaderItem(idx, headerItem)
         self.verticalHeader().hide()
-        self.horizontalHeader().setStyleSheet(TABLE_HEADER)
+        self.horizontalHeader().setStyleSheet(StyleSheet.TABLE_HEADER)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
 
     def addPlugins(self, plugins: List[Tuple[str, Dict[str, str]]]):
@@ -147,3 +153,4 @@ class PluginTable(QTableWidget):
         except Exception as e:
             self.logger.error(e, exc_info=e)
             WarnBox(ERR.FAIL_TO.format("display plugin suite detail"))
+    

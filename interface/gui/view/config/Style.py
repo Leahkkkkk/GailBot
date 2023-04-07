@@ -11,16 +11,27 @@ Description: contain instances of dataclass with style data
 '''
 import os 
 from dataclasses import dataclass
+from typing import Dict
 import toml
 
 from config_frontend.ConfigPath import StyleDataPath, FRONTEND_CONFIG_ROOT
 from .interface import StyleParser
+from view.Signals import GlobalStyleSignal
 
 # reading data from toml files
 color      = toml.load(os.path.join (FRONTEND_CONFIG_ROOT, StyleDataPath.currentColor))
 fontSize   = toml.load(os.path.join (FRONTEND_CONFIG_ROOT, StyleDataPath.currentFontSize))
 dimension  = toml.load(os.path.join(FRONTEND_CONFIG_ROOT, StyleDataPath.dimension))
 fontFamily = toml.load(os.path.join (FRONTEND_CONFIG_ROOT, StyleDataPath.fontFamily))
+
+lightcolor = toml.load(os.path.join(FRONTEND_CONFIG_ROOT, StyleDataPath.lightColor))
+darkcolor = toml.load(os.path.join(FRONTEND_CONFIG_ROOT, StyleDataPath.darkColor))
+
+
+smallfont   = toml.load(os.path.join(FRONTEND_CONFIG_ROOT, StyleDataPath.smallFontSize))
+mediumfont  = toml.load(os.path.join(FRONTEND_CONFIG_ROOT, StyleDataPath.mediumFontSize))
+largfont   = toml.load(os.path.join(FRONTEND_CONFIG_ROOT, StyleDataPath.largeFontSize))
+
 
 # parse toml files to dataclass object
 Color              = StyleParser.ColorData.from_dict(color["colors"])
@@ -32,6 +43,38 @@ FileTableDimension = StyleParser.FileTableDimension.from_dict(dimension["filetab
 FontFamily         = StyleParser.FontFamilyData.from_dict(fontFamily ["fontFamily"])
 FontSource         = StyleParser.FontSource.from_dict(fontFamily ["fontSource"])
 
+COLOR_DICT : Dict[str, StyleParser.ColorData] = \
+    {"Light Mode": StyleParser.ColorData.from_dict(lightcolor["colors"]), 
+     "Dark Mode" : StyleParser.ColorData.from_dict(darkcolor["colors"]),
+     "Default": Color}
+
+FONT_DICT : Dict[str, StyleParser.FontSizeData] = \
+    { "Small" : StyleParser.FontSizeData.from_dict(smallfont["fontSizes"]), 
+      "Large" : StyleParser.FontSizeData.from_dict(largfont["fontSizes"]),
+      "Medium": StyleParser.FontSizeData.from_dict(mediumfont["fontSizes"]),
+      "Default": FontSize}
+
+ASSET_DICT : Dict[str, StyleParser.Asset] = \
+    {"Light Mode" : StyleParser.Asset.from_dict(lightcolor["asset"]),
+     "Dark Mode"  : StyleParser.Asset.from_dict(darkcolor["asset"]),
+     "Default": Asset}
+
+STYLE_DICT : Dict[str, StyleParser.StyleSheet] = \
+    {"Light Mode" : StyleParser.StyleSheet.from_dict(lightcolor["styleSheet"]),
+     "Dark Mode"  : StyleParser.StyleSheet.from_dict(darkcolor["styleSheet"]),
+     "Default": StyleSheet}
+
+###### style control
+def colorchange(colormode):
+    global StyleSheet
+    global Color
+    global Asset
+    
+    StyleSheet = STYLE_DICT[colormode]
+    Color = COLOR_DICT[colormode]
+    Asset = ASSET_DICT[colormode]
+
+GlobalStyleSignal.changeColor.connect(colorchange)
 @dataclass
 class buttonStyle:
     '''class holding style values for buttons, allowing for buttons to toggle 
@@ -67,4 +110,4 @@ StyleTable = {
     "Large"         :   StyleDataPath.largeFontSize,
     "Medium"        :   StyleDataPath.mediumFontSize 
 }
-    
+

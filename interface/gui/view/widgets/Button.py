@@ -11,7 +11,7 @@ Description: implement reusable button widgets
 '''
 import os
 from typing import List
-from view.config.Style import FontSize, Dimension, Color, StyleSheet, Asset
+from view.Signals import GlobalStyleSignal
 from view.config.Text import BtnText as Text
 from config_frontend import PROJECT_ROOT
 from view.util.ColorGenerator import colorScale
@@ -24,6 +24,35 @@ from PyQt6.QtWidgets import (
 
 from PyQt6.QtCore import  Qt
 from PyQt6.QtGui import QIcon, QCursor
+
+#### controlling style changes 
+from view.config.Style import (
+    FontSize, 
+    Dimension, 
+    Color, 
+    StyleSheet, 
+    Asset, 
+    ASSET_DICT, 
+    STYLE_DICT,  
+    FONT_DICT,
+    COLOR_DICT)  
+
+FONT_SIZE = FontSize
+COLOR = Color
+STYLESHEET = StyleSheet
+ASSET = Asset
+
+def colorchange(colormode):
+    global COLOR 
+    global STYLESHEET
+    global ASSET
+    COLOR = COLOR_DICT[colormode]
+    STYLESHEET = STYLE_DICT[colormode]
+    ASSET = ASSET_DICT[colormode]
+
+def fontchange(fontsize):
+    global FONT_SIZE
+    FONT_SIZE = FONT_DICT[fontsize]
 
 class ColoredBtn(QPushButton):
     """ a button widget with colored background and white button text
@@ -71,7 +100,17 @@ class ColoredBtn(QPushButton):
         """ sets the button color to original color """
         self.setStyleSheet(self.defaultStyle + 
                            f"background-color:{self.origColor};")
-        
+
+    def colorChange(self, color):
+        self.origColor = color
+        self.pressColor = colorScale(color, 0.7)
+        self.defaultStyle = f"border-radius:{self.borderRadius};"\
+                            f"padding:1;"\
+                            f"color:#fff;"\
+                            f"font-size:{self.fontSIze};"\
+                            f"{self.other};"
+        self._releaseStyle()
+
 class BorderBtn(QPushButton):
     """ a button widget with colored border and text 
         and white background
@@ -98,7 +137,6 @@ class BorderBtn(QPushButton):
     ):
         """"define and initialize class for border button"""
         super().__init__(*args, **kwargs)
-    
         self.setText(label)
         self.color = color 
         self.borderRadius = borderRadius
@@ -110,7 +148,7 @@ class BorderBtn(QPushButton):
                            f"border-radius:{self.borderRadius};"\
                            f"padding:1;"\
                            f"font-size:{self.fontSize};"\
-                           f"{self.other};"
+                           f"{self.other};" 
         self.setDefaultStyle()
         self.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
 
@@ -120,8 +158,25 @@ class BorderBtn(QPushButton):
     
     def setActiveStyle(self, color: str):
         """ sets to current style sheet """
-        self.setStyleSheet(self.defaultStyle + f"background-color:{color}")
+        self.setStyleSheet(self.defaultStyle + f"background-color:{color};")
     
+    def colorChange(self, color):
+        self.color = color
+        self.pressColor = colorScale(color, 0.7)
+        self.defaultStyle =f"border: 1px solid {self.color};"\
+                           f"color:{self.color};"\
+                           f"border-radius:{self.borderRadius};"\
+                           f"padding:1;"\
+                           f"font-size:{self.fontSize};"\
+                           f"{self.other};" 
+        self.setDefaultStyle()
+    
+    def addOtherStyle(self, style):
+        self.other = style
+    
+    def applyOtherStyle(self):
+        self.setDefaultStyle()
+
 class ToggleBtn(QPushButton):
     """ A toggle button that display different label when being toggled 
     
@@ -140,8 +195,8 @@ class ToggleBtn(QPushButton):
         super().__init__(*args, **kwargs)
         self.text = text
         self.setText(self.text)
-        self.rightIcon = QIcon(os.path.join(PROJECT_ROOT, f"{label[0]}"))
-        self.downIcon = QIcon(os.path.join(PROJECT_ROOT, f"{label[1]}"))
+        self.rightIcon = QIcon(os.path.join(PROJECT_ROOT, Asset.rightImg))
+        self.downIcon = QIcon(os.path.join(PROJECT_ROOT, Asset.downImg))
         self.setCheckable(True)
         self.clicked.connect(self._changeSymbol)
         self.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
@@ -150,6 +205,7 @@ class ToggleBtn(QPushButton):
         self.update()
         self.show()
         self.setStyleSheet(f"font-size:{FontSize.HEADER4}")
+        # GlobalStyleSignal.changeColor.connect(self.changeColor)
 
     def _changeSymbol(self):
         """ changes the button symbol """
@@ -164,22 +220,30 @@ class ToggleBtn(QPushButton):
         self.setIcon(self.rightIcon)
         self.state = True
 
+    def changeColor(self, colormode):
+        """ change color  """
+        self.rightIcon = QIcon(os.path.join(PROJECT_ROOT, ASSET_DICT[colormode].rightImg))
+        self.downIcon = QIcon(os.path.join(PROJECT_ROOT, ASSET_DICT[colormode].downImg))
+        self.state = not self.state
+        self._changeSymbol()
+    
 class IconBtn(QPushButton):
     """ A button with icon
     icon (str): a string that indicate the icon file name
     label  (str, optional): the tex to be displayed on the icon 
     """
     def __init__(self, icon:str, label:str=None,*args, **kwargs):
-      super().__init__(*args, **kwargs)
-      icon = QIcon(os.path.join(PROJECT_ROOT, f"{icon}"))
-      self.setIcon(icon)
-      self.setObjectName(Text.icon)
-      self.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
-      
-      
-      if label:
-          self.setText(label)
-          
+        super().__init__(*args, **kwargs)
+        icon = QIcon(os.path.join(PROJECT_ROOT, icon))
+        self.setIcon(icon)
+        self.setObjectName(Text.icon)
+        self.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        if label:
+            self.setText(label)
+    
+    def changeIcon(self, icon):
+        icon = QIcon(os.path.join(PROJECT_ROOT, icon))
+        self.setIcon(icon)
 """ NOTE: currently unused in the interface  """  
 class dropDownButton(QWidget):
     """ a dropdown button widget, when the button is clicked,

@@ -8,13 +8,16 @@ Last Modified: Thursday, 6th October 2022 11:11:47 am
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
-
+from typing import List
 from view.config.Style import  (
     Color,  
     Dimension,  
     FontFamily,  
     Asset,
-    StyleSheet
+    StyleSheet, 
+    COLOR_DICT,
+    ASSET_DICT,
+    FONT_DICT    
 )
 from view.config.Style import FontSize as FS
 from view.config.Text import WelcomePageText as Text
@@ -25,6 +28,7 @@ from view.widgets import (
     Image,
     addLogo 
 )
+from view.Signals import GlobalStyleSignal
 
 from PyQt6.QtWidgets import (
     QWidget, 
@@ -42,6 +46,7 @@ class WelcomePage(QWidget):
         self._initWidget()
         self._initLayout()
         self._initStyle()
+        GlobalStyleSignal.changeColor.connect(self.changeColor)
         
     def _initWidget(self):
         """ initialize widgets """
@@ -51,7 +56,6 @@ class WelcomePage(QWidget):
         self._initInstructionGrid()
         self._initLinkText()
         
-    
     def _initLayout(self): 
         """ horizontal layout """
         self.horizontoalBox = QWidget()
@@ -111,6 +115,12 @@ class WelcomePage(QWidget):
                                            FS.INSTRUCTION_CAPTION, 
                                            FontFamily.OTHER,
                                            Color.LOW_CONTRAST2)
+        self.insLabels : List[Label]= [
+            self.AudioInstruction, 
+            self.SettingsInstruction, 
+            self.TranscribeInstruction, 
+            self.FileInstruction, 
+            self.EditInstruction]
 
         """ instruction icons """
         self.AudioIcon = Image(Asset.instructionSound)
@@ -197,3 +207,13 @@ class WelcomePage(QWidget):
                                         FS.SMALL, FontFamily.OTHER)
         
         self.MoreInfoText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
+        self.buttomText : List[Label] = [self.GuideText, self.TutorialText, self.GBLinkText]
+    
+    
+    def changeColor(self, colormode):
+        for label in self.insLabels:
+            label.colorChange(COLOR_DICT[colormode].LOW_CONTRAST2)
+        for label in self.buttomText:
+            label.colorChange(COLOR_DICT[colormode].PRIMARY_BUTTON)
+        self.CaptionText.colorChange(COLOR_DICT[colormode].GREYDARK)
+        self.StartBtn.colorChange(COLOR_DICT[colormode].SECONDARY_BUTTON)

@@ -10,11 +10,14 @@ Modified By:  Siara Small  & Vivian Li
 Description: implement the system setting page
 '''
 import os
+from typing import List
 import toml
 from view.config.Style import (
     Color,
     FontSize,
-    Dimension
+    Dimension,
+    COLOR_DICT,
+    FONT_DICT
 )
 from view.widgets import (
     SettingForm,
@@ -22,6 +25,7 @@ from view.widgets import (
     Button
 )
 from view.components.SaveLogDialog import SaveLogFile
+from view.Signals import GlobalStyleSignal
 from config_frontend.ConfigPath import WorkSpaceConfigPath, SettingDataPath
 from view.config.Setting import SystemSetting, DefaultSetting
 from view.config import StyleSource, StyleTable
@@ -57,6 +61,7 @@ class SystemSettingPage(QWidget):
         self.data = Form
         self.signal = Signal()
         self.logger = makeLogger("F")
+        self.formButtons: List[Button.BorderBtn] = []
         self._initWidget()
         self._initLayout()
         self._connectSignal()
@@ -64,16 +69,14 @@ class SystemSettingPage(QWidget):
 
     def _initWidget(self):
         """ initializes widgets to be shown """
-        self.SysSetForm = SettingForm.SettingForm(
-            Text.header, self.data, Text.caption)
-        self.saveBtn = Button.ColoredBtn(
-            Text.saveBtn, Color.PRIMARY_BUTTON)
+        self.SysSetForm = SettingForm.SettingForm(Text.header, self.data, Text.caption)
+        self.saveBtn = Button.ColoredBtn(Text.saveBtn, Color.PRIMARY_BUTTON)
         
-
     def _connectSignal(self):
         """ connect the signal to slots """
         self.saveBtn.clicked.connect(self._confirmChangeSetting)
-
+        GlobalStyleSignal.changeColor.connect(self.colorChange)
+        
     def _initLayout(self):
         """ initialize the form section """
         self.formLayout = QVBoxLayout()
@@ -86,6 +89,12 @@ class SystemSettingPage(QWidget):
         self._addFormButton(Text.SaveLogLabel, Text.SaveLogBtn, self._saveLog)
         self._addFormButton(Text.ClearCacheLabel, Text.ClearCacheBtn, self._clearCache)
 
+    def colorChange(self, colormode):
+        self.saveBtn.colorChange(COLOR_DICT[colormode].PRIMARY_BUTTON)
+        for button in self.formButtons:
+            button.setStyleSheet(button.styleSheet() + 
+                                 f"background-color: {COLOR_DICT[colormode].INPUT_BACKGROUND};")
+    
     def setValue(self, values:dict):
         """ public function to set the system setting form value
 
@@ -108,6 +117,9 @@ class SystemSettingPage(QWidget):
         """ rewrite the current setting file based on the user's choice"""
         setting = self.SysSetForm.getValue()
         try:
+            GlobalStyleSignal.changeColor.emit(setting["Color Mode"])
+            GlobalStyleSignal.changeFont.emit(setting["Font Size"])
+            
             colorSource = StyleTable[setting["Color Mode"]]
             colorDes    = StyleSource.CURRENT_COLOR
             fontSource  = StyleTable[setting["Font Size"]]
@@ -125,7 +137,7 @@ class SystemSettingPage(QWidget):
             self.logger.error(e, exc_info=e)
             WarnBox(ERR.ERR_WHEN_DUETO.format("changing system setting", str(e)))
        
-        self.signal.restart.emit()
+        # self.signal.restart.emit()
 
     def _copyTomlFile(self, source, des, base):
         """ private helper function for copying the toml file """
@@ -168,7 +180,7 @@ class SystemSettingPage(QWidget):
         button = Button.BorderBtn(
             btnText,
             Color.INPUT_TEXT,
-            other= f"background-color: {Color.INPUT_BACKGROUND}"
+            other = f"background-color: {Color.INPUT_BACKGROUND}"
         )
         button.setFixedHeight(Dimension.INPUTHEIGHT)
         button.setFixedWidth(130)
@@ -178,3 +190,4 @@ class SystemSettingPage(QWidget):
         layout.addWidget(button)
         button.clicked.connect(fun)
         self.SysSetForm.addWidget(container)
+        self.formButtons.append(button)

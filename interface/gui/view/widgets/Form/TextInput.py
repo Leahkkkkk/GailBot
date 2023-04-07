@@ -11,8 +11,8 @@ Modified By:  Siara Small  & Vivian Li
 
 from .FormWidget import FormWidget
 from ..Label import Label
-from view.style.WidgetStyleSheet import INPUT_TEXT as INPUT_STYLE
-from view.config.Style import FontSize, Dimension
+from view.config.Style import FontSize, Dimension, StyleSheet, STYLE_DICT
+from view.Signals import GlobalStyleSignal
 from copy import deepcopy
 
 from PyQt6.QtWidgets import QLineEdit, QHBoxLayout, QVBoxLayout, QWidget
@@ -21,10 +21,12 @@ from PyQt6.QtCore import QSize
 class InputField(QLineEdit, FormWidget):
     def __init__(self, width=Dimension.INPUTWIDTH, height = Dimension.INPUTHEIGHT, *args, **kwargs):
         super(InputField, self).__init__(*args, **kwargs)
-        self.setFixedSize(
-            QSize(width, height)
-        )
-        self.setStyleSheet(INPUT_STYLE)
+        self.setFixedSize(QSize(width, height))
+        self.setStyleSheet(StyleSheet.INPUT_TEXT)
+        GlobalStyleSignal.changeColor.connect(self.colorchange)
+    
+    def colorchange(self, colormode):
+        self.setStyleSheet(STYLE_DICT[colormode].INPUT_TEXT)
         
     def mouseDoubleClickEvent(self, a0) -> None:
         super().mouseDoubleClickEvent(a0)

@@ -1,0 +1,8 @@
+INPUT_TEXT = " color: #000000; border: 1px solid #000000; background-color: #FFFFFF"
+COMBO_BOX = "QComboBox {background-color: #FFFFFF; text-align:center; color:#000000; border:1px solid #000000; margin: 5px; padding: 3px 12px 3px 12px; border-radius: 7px; margin: 5px;}"
+FILE_TABLE = "{background-color: #E9EAE7; color:#000000; border: 0.5px solid #484847;}"
+TABLE_HEADER = "background-color:#729A9F; font-size:11px; font-family:Raleway; color:#293241"
+SCROLL_BAR = "background-color:#729A9F; border: 1px solid #E9EAE7"
+MESSAGE_BOX = "color: #000000"
+MESSAGE_BOX_BTN = "color: #000;"
+PROGRESS_BAR = "QSlider::groove:horizontal { border: 1px solid #bbb; background: #212F3E; height: 10px; border-radius: 4px;} QSlider::add-page:horizontal { background: #F0F6F9; border: 1px solid #777; height: 10px; border-radius: 4px;} QSlider::handle:horizontal { background: qlineargradient(x1:0, y1:0, x2:1, y2:1,stop:0 #eee, stop:1 #ccc); border: 1px solid #777;width: 13px; margin-top: -2px; margin-bottom: -2px; border-radius: 4px;}"

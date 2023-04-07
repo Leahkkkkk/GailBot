@@ -12,9 +12,9 @@ Description: a side bar widget
 
 from .Background import initSideBarBackground
 from .Label import Label
-from ..config.Style import Dimension, Color, FontSize
+from ..config.Style import Dimension, Color, FontSize, COLOR_DICT
 from ..config.Text import About, Links
-
+from view.Signals import GlobalStyleSignal
 from PyQt6.QtWidgets import (
     QWidget, 
     QVBoxLayout,
@@ -53,7 +53,6 @@ class SideBar(QWidget):
         self.btmContainer.setLayout(self.btmlayout)
         self.gridLayout.addWidget(self.btmContainer,2,0)
 
-        
         # initialize the middle container
         self.midContainer = QWidget()
         self.midlayout = QVBoxLayout()
@@ -65,8 +64,21 @@ class SideBar(QWidget):
         self.setLayout(self.gridLayout )
         self.setFixedWidth(Dimension.SIDEBAR)
         self.gridLayout.setContentsMargins(0,0,0,0)
+        self.gridLayout.setSpacing(0)
         self.addFooter()
+        self.midContainer.setStyleSheet( f"border-right:0.5px solid {Color.OUTLINE};" )
+        self.topContainer.setStyleSheet( f"border-right:0.5px solid {Color.OUTLINE};" )
+        self.btmContainer.setStyleSheet( f"border-right:0.5px solid {Color.OUTLINE};" )
+        GlobalStyleSignal.changeColor.connect(self.colorChange)
         initSideBarBackground(self)
+        
+    def colorChange(self, colormode):
+        self.setObjectName("sidebar")
+        self.midContainer.setStyleSheet(f"border-right:0.5px solid {COLOR_DICT[colormode].OUTLINE};")
+        self.topContainer.setStyleSheet(f"border-right:0.5px solid {COLOR_DICT[colormode].OUTLINE};")
+        self.btmContainer.setStyleSheet(f"border-right:0.5px solid {COLOR_DICT[colormode].OUTLINE};")
+        initSideBarBackground(self)
+        
         
     def addTopWidget(self, widget) -> None:
         self.toplayout.addWidget(widget)
