@@ -15,26 +15,19 @@ import hooks
 import ssl
 import os 
 import logging
+from controller import Controller 
+from PyQt6.QtWidgets import QApplication
+import sys
 
+def run():
+    """ main driver function to run the app  """
+    app = QApplication(sys.argv)
+    controller = Controller()
+    controller.run()
+    app.exec()
+    
+    
 if __name__ == '__main__':
-    # add project path to program environment path
-    # this is added for the packaged app to be able to tun binary file ffmpeg 
-    os.environ["PATH"] += os.pathsep + os.path.dirname(__file__)    
-    logging.info(os.path.dirname(__file__))
-    ssl._create_default_https_context = ssl._create_unverified_context
+    run()
     
-    import multiprocessing
-    multiprocessing.freeze_support()
-    from multiprocessing import Process, Queue
-    from controller.Driver import run 
-    
-    EXIT_CODE_REBOOT = -20000
-    exitCodeQueue = Queue()
-    exitCode = EXIT_CODE_REBOOT   
-    while exitCode == EXIT_CODE_REBOOT:
-        process = Process(target = run, args = (exitCodeQueue,))
-        process.start()
-        exitCode = exitCodeQueue.get()
-        process.join()
-        del process
     
