@@ -1,31 +1,13 @@
 from typing import Dict, List, Tuple
 from collections import deque
 import math
-from view.config.Style import Color, StyleSheet, STYLE_DICT, COLOR_DICT
-from view.Signals import GlobalStyleSignal
+from view.config.Style import  STYLE_DATA
 from PyQt6.QtGui import QPainter, QFont
 from PyQt6.QtCore import Qt, QSize
-from PyQt6.QtWidgets import QApplication, QGraphicsView, QGraphicsScene, QGraphicsItem, QGraphicsLineItem, QGraphicsTextItem
+from PyQt6.QtWidgets import  QGraphicsView, QGraphicsScene, QGraphicsItem, QGraphicsLineItem, QGraphicsTextItem
 from PyQt6.QtGui import QPen, QBrush,  QFont, QColor
 from PyQt6.QtCore import QRectF, QLineF, Qt
 
-
-NODE_COLOR = Color.HIGHLIGHT
-LINE_COLOR = Color.MAIN_TEXT
-TEXT_COLOR = Color.MAIN_TEXT
-STYLESHEET = StyleSheet
-
-def colorchange(colormode):
-    global NODE_COLOR 
-    global LINE_COLOR
-    global TEXT_COLOR 
-    global STYLESHEET 
-    NODE_COLOR = COLOR_DICT[colormode].HIGHLIGHT
-    LINE_COLOR = COLOR_DICT[colormode].MAIN_TEXT
-    TEXT_COLOR = COLOR_DICT[colormode].MAIN_TEXT
-    STYLESHEET = STYLE_DICT[colormode]
-
-GlobalStyleSignal.changeColor.connect(colorchange)
 
 class GraphDisplay(QGraphicsView):
     def __init__(self, dependencyGraph: Dict[str, List[str]]):
@@ -41,16 +23,16 @@ class GraphDisplay(QGraphicsView):
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
         self.setMinimumSize(QSize(self.width,self.height)) 
-        self.verticalScrollBar().setStyleSheet(STYLESHEET.SCROLL_BAR)
-        self.setStyleSheet(STYLESHEET.basic)
+        self.verticalScrollBar().setStyleSheet(STYLE_DATA.StyleSheet.SCROLL_BAR)
+        self.setStyleSheet(STYLE_DATA.StyleSheet.basic)
         self.setScene(self.scene)
         self.draw_graph()
         
     def draw_graph(self):
         # add title
-                # Create a QGraphicsTextItem and set its font and text
+        # Create a QGraphicsTextItem and set its font and text
         title = QGraphicsTextItem("Plugin Map")
-        title.setDefaultTextColor(QColor(TEXT_COLOR))
+        title.setDefaultTextColor(QColor(STYLE_DATA.Color.MAIN_TEXT))
         titlefont = QFont("Arial", 22)
         titlefont.setWeight(600)
         title.setFont(titlefont)
@@ -82,7 +64,7 @@ class GraphDisplay(QGraphicsView):
                     self.nodes[neighbor] = neighbor_item
                 pen = QPen(Qt.PenStyle.SolidLine)
                 pen.setWidth(2)
-                pen.setColor(QColor(LINE_COLOR))
+                pen.setColor(QColor(STYLE_DATA.Color.MAIN_TEXT))
                 line = QGraphicsLineItem(node_item.x, node_item.y, neighbor_item.x, neighbor_item.y)
                 line.setPen(pen)
                 line.setZValue(-1) 
@@ -104,14 +86,14 @@ class NodeItem(QGraphicsItem):
     def paint(self, painter, option, widget):
         brush = QBrush()
         brush.setStyle(Qt.BrushStyle.SolidPattern)
-        brush.setColor(QColor(NODE_COLOR))
+        brush.setColor(QColor(STYLE_DATA.Color.HIGHLIGHT))
         painter.setBrush(brush)
         painter.drawEllipse(self.x - 45, self.y - 25, 90, 45)
         rect = QRectF(self.x - 35, self.y - 15, 90, 35)
         # painter.drawRect(rect)
         pen = QPen()
-        pen.setColor(QColor(TEXT_COLOR)) 
-        brush.setColor(QColor(TEXT_COLOR))
+        pen.setColor(QColor(STYLE_DATA.Color.MAIN_TEXT)) 
+        brush.setColor(QColor(STYLE_DATA.Color.MAIN_TEXT))
         painter.setBrush(brush)
         text = getShortHand(self.name)
         font = QFont("Arial", 12)

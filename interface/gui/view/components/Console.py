@@ -11,7 +11,7 @@ Description: implementation of a console that display logging message
 '''
 import logging
 
-from view.config.Style import Dimension
+from view.config.Style import STYLE_DATA
 from view.config.Text import WindowTitle
 
 from PyQt6.QtWidgets import (
@@ -30,7 +30,8 @@ class Console(QWidget):
         logging.getLogger().setLevel(logging.DEBUG)
         self.LogBox = QPlainTextEdit()
         self.LogBox.setReadOnly(True)
-        self.resize(QSize(Dimension.CONSOLEWIDTH, Dimension.CONSOLEHEIGHT))
+        self.resize(QSize(STYLE_DATA.Dimension.CONSOLEWIDTH, 
+                          STYLE_DATA.Dimension.CONSOLEHEIGHT))
         self.label = QLabel(WindowTitle.consoleWindow)
         layout = QVBoxLayout()
         layout.addWidget(self.label)

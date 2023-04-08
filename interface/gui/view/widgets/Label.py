@@ -13,20 +13,12 @@ import os
 import logging
 
 
-from ..config.Style import Color,  FontFamily, FontSource, COLOR_DICT
-from view.Signals import GlobalStyleSignal
+from ..config.Style import STYLE_DATA, FontSource
 
 from PyQt6.QtWidgets import QLabel
 from PyQt6.QtGui import QFont, QFontDatabase
 from config_frontend import PROJECT_ROOT
 
-LABEL_DEFAULT = Color.MAIN_TEXT
-
-def changeLabel(colormode):
-    global LABEL_DEFAULT 
-    LABEL_DEFAULT = COLOR_DICT[colormode].MAIN_TEXT
-
-GlobalStyleSignal.changeColor.connect(changeLabel)
 class Label(QLabel):
     """ Label widget used to display text 
     
@@ -41,7 +33,7 @@ class Label(QLabel):
         self, 
         text:str, 
         size:str, 
-        font   = FontFamily.OTHER, 
+        font   = STYLE_DATA.FontFamily.OTHER, 
         color  = None, 
         others = None, 
         link   = False,
@@ -52,15 +44,15 @@ class Label(QLabel):
         super().__init__(*args, **kwargs)
         text = text.replace("_", " ")
         self.setText(text)
-        if font == FontFamily.MAIN:
+        if font == STYLE_DATA.FontFamily.MAIN:
             self.loadHeaderFont()
-        elif font == FontFamily.CLOCK:
+        elif font == STYLE_DATA.FontFamily.CLOCK:
             self.loadClockFont()
         if link:
             self.setOpenExternalLinks(True)
         if not color:
-            color = LABEL_DEFAULT
-            GlobalStyleSignal.changeColor.connect(self.changeDefault)
+            color = STYLE_DATA.Color.MAIN_TEXT
+            STYLE_DATA.signal.changeColor.connect(self.changeDefault)
             
         self.setStyleSheet(f"font-size: {size};" 
                            f"padding:0;" 
@@ -68,15 +60,15 @@ class Label(QLabel):
                            f"background-color:none;"
                            f"{others};")
     
-    def changeDefault(self, colormode):
-        self.setStyleSheet(self.styleSheet() + f"color: {LABEL_DEFAULT};")
+    def changeDefault(self):
+        self.setStyleSheet(self.styleSheet() + f"color: {STYLE_DATA.Color.MAIN_TEXT};")
        
     def colorChange(self, color):
         self.setStyleSheet(self.styleSheet() + f"color: {color};")
 
     def fontChange(self, fontsize):
         # set the updated palette to the label
-        self.setStyleSheet(f"font-size: {fontsize};")
+        self.setStyleSheet(self.styleSheet() + f";font-size: {fontsize};")
     
      
     def loadHeaderFont(self):

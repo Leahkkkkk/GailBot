@@ -8,8 +8,7 @@ Last Modified: Sunday, 30th October 2022 12:18:56 pm
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
-from view.Signals import GlobalStyleSignal
-from ..config.Style import Dimension, STYLE_DICT, StyleSheet
+from ..config.Style import STYLE_DATA
 from PyQt6.QtWidgets import QComboBox 
 
 class ComboBox(QComboBox):
@@ -17,10 +16,10 @@ class ComboBox(QComboBox):
     def __init__(self, *args, **kwargs) -> None:
         """ initializes widget """
         super().__init__(*args, **kwargs)
-        self.setStyleSheet(StyleSheet.COMBO_BOX)
-        self.setFixedHeight(Dimension.COMBOBOX_HEIGHT)
-        GlobalStyleSignal.changeColor.connect(self.colorChange)
+        self.setStyleSheet(STYLE_DATA.StyleSheet.COMBO_BOX)
+        self.setFixedHeight(STYLE_DATA.Dimension.COMBOBOX_HEIGHT)
+        STYLE_DATA.signal.changeColor.connect(self.colorChange)
          
-    def colorChange(self, colormode):
-        self.setStyleSheet(STYLE_DICT[colormode].COMBO_BOX)
+    def colorChange(self):
+        self.setStyleSheet(STYLE_DATA.StyleSheet.COMBO_BOX)
         

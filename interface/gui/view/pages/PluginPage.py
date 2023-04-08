@@ -9,8 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 Description: implementation of the plugin page
 '''
-from typing import Dict, List, Any
-from view.config.Style import FontSize, Dimension, FontFamily, Color, COLOR_DICT
+from view.config.Style import STYLE_DATA,  FontFamily
 from view.config.Text import ProfilePageText as Text
 from view.config.Text import ProfileSettingForm as Form
 from view.Signals import PluginSignals, GlobalStyleSignal
@@ -46,12 +45,12 @@ class PluginPage(QWidget):
         """ initializes widgets """
         self.logger.info("")
         self.header = Label(
-            Text.pluginHeader, FontSize.HEADER2, FontFamily.MAIN, 
+            Text.pluginHeader, STYLE_DATA.FontSize.HEADER2, FontFamily.MAIN, 
             alignment= center)
         self.caption = Label(
-            Text.pluginCaption, FontSize.DESCRIPTION, FontFamily.MAIN)
+            Text.pluginCaption, STYLE_DATA.FontSize.DESCRIPTION, FontFamily.MAIN)
         self.pluginTable = PluginTable(self.signal)
-        self.addBtn = ColoredBtn(Text.newPluginBtn, Color.PRIMARY_BUTTON)
+        self.addBtn = ColoredBtn(Text.newPluginBtn, STYLE_DATA.Color.PRIMARY_BUTTON)
      
     def _initlayout(self):
         """" initializes layout """
@@ -59,9 +58,9 @@ class PluginPage(QWidget):
         self.verticalLayout = QVBoxLayout()
         self.setLayout(self.verticalLayout)
         self.verticalLayout.addWidget(self.header)
-        self.verticalLayout.setSpacing(Dimension.SMALL_SPACING)
+        self.verticalLayout.setSpacing(STYLE_DATA.Dimension.SMALL_SPACING)
         self.verticalLayout.addWidget(self.caption, alignment=center)
-        self.verticalLayout.addSpacing(Dimension.SMALL_SPACING)
+        self.verticalLayout.addSpacing(STYLE_DATA.Dimension.SMALL_SPACING)
         self.verticalLayout.addWidget(self.pluginTable, alignment=center)
         self.verticalLayout.addStretch()
         self.verticalLayout.addWidget(self.addBtn, alignment=center)
@@ -85,5 +84,5 @@ class PluginPage(QWidget):
         self.signal.pluginAdded.emit(name)
     
     def changeColor(self, colormode):
-        self.addBtn.colorChange(COLOR_DICT[colormode].PRIMARY_BUTTON)
+        self.addBtn.colorChange(STYLE_DATA.Color.PRIMARY_BUTTON)
         

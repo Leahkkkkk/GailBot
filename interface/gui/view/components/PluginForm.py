@@ -1,7 +1,7 @@
 from typing import List
 from view.widgets import MultipleSelect, ToggleView
 from PyQt6.QtWidgets import QWidget , QHBoxLayout
-from view.config.Style import Dimension
+from view.config.Style import STYLE_DATA
 from view.config.Text import PLUGIN_SUITE_TEXT
 
 class PluginForm(QWidget):
@@ -28,7 +28,7 @@ class PluginForm(QWidget):
         # TODO: add to text.py
         self.toggleView = ToggleView(
             "Plugin Suite Settings", self.pluginSuitesList, header=True)
-        self.toggleView.setScrollHeight(Dimension.OUTPUT_FORM_HEIGHT)
+        self.toggleView.setScrollHeight(STYLE_DATA.Dimension.OUTPUT_FORM_HEIGHT)
         self.setLayout(self._layout)
         self._layout.addWidget(self.toggleView)
     

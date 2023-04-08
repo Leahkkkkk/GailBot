@@ -38,38 +38,8 @@ from PyQt6.QtCore import QSize, Qt
 from PyQt6.QtGui import QDragEnterEvent 
 
 #### controlling style changes 
-from view.config.Style import (
-    FontSize, 
-    Dimension, 
-    Color, 
-    StyleSheet, 
-    FontFamily,
-    Asset, 
-    ASSET_DICT, 
-    STYLE_DICT,  
-    FONT_DICT,
-    COLOR_DICT)  
-from view.Signals import GlobalStyleSignal
+from view.config.Style import Dimension, STYLE_DATA, FontFamily
 
-FONT_SIZE = FontSize
-COLOR = Color
-STYLESHEET = StyleSheet
-ASSET = Asset
-
-def colorchange(colormode):
-    global COLOR 
-    global STYLESHEET
-    global ASSET
-    COLOR = COLOR_DICT[colormode]
-    STYLESHEET = STYLE_DICT[colormode]
-    ASSET = ASSET_DICT[colormode]
-
-def fontchange(fontsize):
-    global FONT_SIZE
-    FONT_SIZE = FONT_DICT[fontsize]
-
-GlobalStyleSignal.changeColor.connect(colorchange)
-GlobalStyleSignal.changeFont.connect(fontchange)
 ######################
 center = Qt.AlignmentFlag.AlignHCenter
 
@@ -117,15 +87,15 @@ class OpenFile(TabPage):
     def _initWidget(self):
         """ initializes the widgets """
         self.logger.info("")
-        self.header = Label(Text.uploadInstruction, FONT_SIZE.BTN, FontFamily.MAIN)
+        self.header = Label(Text.uploadInstruction, STYLE_DATA.FontSize.BTN, FontFamily.MAIN)
         self.fileDisplayList = QTableWidget()
         self.filePaths = dict()
         self.uploadFileBtn = ColoredBtn(
             Text.tabAddfile, 
-            COLOR.PRIMARY_BUTTON)
+            STYLE_DATA.Color.PRIMARY_BUTTON)
         self.uploadFolderBtn = ColoredBtn(
             Text.tabAddFolder,
-            COLOR.PRIMARY_BUTTON)
+            STYLE_DATA.Color.PRIMARY_BUTTON)
        
     def _initLayout(self):
         """ initializes the layout  """
@@ -158,8 +128,8 @@ class OpenFile(TabPage):
             QAbstractItemView.EditTrigger.NoEditTriggers)
         self.fileDisplayList.horizontalHeader().hide()
         self.fileDisplayList.verticalHeader().hide()
-        self.fileDisplayList.setStyleSheet(f"background-color:{COLOR.MAIN_BACKGROUND};"
-                                           f"color:{COLOR.MAIN_TEXT}")
+        self.fileDisplayList.setStyleSheet(f"background-color:{STYLE_DATA.Color.MAIN_BACKGROUND};"
+                                           f"color:{STYLE_DATA.Color.MAIN_TEXT}")
         self.fileDisplayList.setColumnWidth(0,Dimension.SMALL_TABLE_WIDTH) 
     
     def _initDimension(self):
@@ -293,7 +263,7 @@ class ChooseSet(TabPage):
     def _initWidget(self):
         """ initializes the widgets """
         self.logger.info("")
-        self.label = Label("Select Setting Profile", FONT_SIZE.HEADER3, FontFamily.MAIN)
+        self.label = Label("Select Setting Profile", STYLE_DATA.FontSize.HEADER3, FontFamily.MAIN)
         self.selectSettings = ComboBox(self)
         self.selectSettings.addItem(Text.selectSetText)
         self.selectSettings.addItems(self.settings)
@@ -362,7 +332,7 @@ class ChooseOutPut(TabPage):
     def _iniWidget(self):
         """ initializes the widgets """
         self.logger.info("")
-        self.chooseDirBtn = ColoredBtn("···", COLOR.PRIMARY_BUTTON, FONT_SIZE.HEADER2)
+        self.chooseDirBtn = ColoredBtn("···", STYLE_DATA.Color.PRIMARY_BUTTON, STYLE_DATA.FontSize.HEADER2)
         self.chooseDirBtn.setFixedWidth(70)
         self.dirPathText = QLineEdit(self)
         self.dirPathText.setPlaceholderText(Text.chooseOutPutText)

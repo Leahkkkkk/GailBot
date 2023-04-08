@@ -9,7 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 from typing import Dict, List, Tuple
-from view.config.Style import FontSize,FontFamily, Color, Dimension, COLOR_DICT, FONT_DICT
+from view.config.Style import STYLE_DATA
 from view.Signals import ProfileSignals, GlobalStyleSignal
 from view.Request import Request
 from view.config.Text import ProfilePageText as Text
@@ -68,33 +68,33 @@ class TranscriptionSetPage(QWidget):
         """ initializes the widgets on the page """
         # top page text 
         self.label = Label(
-            Text.engineSettingHeader, FontSize.HEADER2, FontFamily.MAIN )
+            Text.engineSettingHeader, STYLE_DATA.FontSize.HEADER2,  STYLE_DATA.FontFamily.MAIN )
         self.description = Label(
-            Text.engineSettingCaption,FontSize.DESCRIPTION, FontFamily.MAIN )
+            Text.engineSettingCaption, STYLE_DATA.FontSize.DESCRIPTION,  STYLE_DATA.FontFamily.MAIN )
      
         self.selectSettings = ComboBox()
-        self.selectSettings.setFixedSize(QSize(Dimension.BTNWIDTH, Dimension.BTNHEIGHT))
+        self.selectSettings.setFixedSize(QSize(STYLE_DATA.Dimension.BTNWIDTH,  STYLE_DATA.Dimension.BTNHEIGHT))
         
         # main form area
         self.engineForm = EngineSettingForm.EngineSettingForm()
         self.pluginForm = PluginForm.PluginForm()
         
         # buttom button
-        self.createBtn = ColoredBtn (Text.newProfileBtn, Color.PRIMARY_BUTTON)
-        self.deleteBtn = ColoredBtn (Text.deleteBtn, Color.CANCEL_QUIT)
-        self.editBtn = ColoredBtn (Text.saveBtn, Color.PRIMARY_BUTTON)
+        self.createBtn = ColoredBtn (Text.newProfileBtn,  STYLE_DATA.Color.PRIMARY_BUTTON)
+        self.deleteBtn = ColoredBtn (Text.deleteBtn,  STYLE_DATA.Color.CANCEL_QUIT)
+        self.editBtn = ColoredBtn (Text.saveBtn,  STYLE_DATA.Color.PRIMARY_BUTTON)
     
     def _initLayout(self):
         """ initializes the layout of the page """
         self.layout = QVBoxLayout()
         self.buttonContainer = QWidget()
         self.buttonLayout = QHBoxLayout()
-        self.buttonLayout.setSpacing(Dimension.MEDIUM_SPACING)
+        self.buttonLayout.setSpacing( STYLE_DATA.Dimension.MEDIUM_SPACING)
         self.buttonContainer.setLayout(self.buttonLayout)
         self.buttonLayout.addWidget(self.createBtn)
         self.buttonLayout.addWidget(self.editBtn)
         self.buttonLayout.addWidget(self.deleteBtn)
-        self.selectSettings.setFixedWidth(Dimension.FORMWIDTH // 2)
+        self.selectSettings.setFixedWidth( STYLE_DATA.Dimension.FORMWIDTH // 2)
         self.setLayout(self.layout)
         self.layout.addWidget(self.label, alignment=center)
         self.layout.addWidget(self.description, alignment=center)
@@ -114,12 +114,17 @@ class TranscriptionSetPage(QWidget):
         # for toggling between different toggle view 
         self.engineForm.toggleView.signal.showview.connect(self.pluginForm.toggleView.hideView)
         self.pluginForm.toggleView.signal.showview.connect(self.engineForm.toggleView.hideView)
-        GlobalStyleSignal.changeColor.connect(self.colorChange)
+        STYLE_DATA.signal.changeColor.connect(self.colorChange)
+        STYLE_DATA.signal.changeFont.connect(self.fontChange)
     
-    def colorChange(self, colormode):
-        self.createBtn.colorChange(COLOR_DICT[colormode].PRIMARY_BUTTON)
-        self.editBtn.colorChange(COLOR_DICT[colormode].PRIMARY_BUTTON)
-        self.deleteBtn.colorChange(COLOR_DICT[colormode].CANCEL_QUIT)
+    def colorChange(self, colormode = None):
+        self.createBtn.colorChange(STYLE_DATA.Color.PRIMARY_BUTTON)
+        self.editBtn.colorChange(STYLE_DATA.Color.PRIMARY_BUTTON)
+        self.deleteBtn.colorChange(STYLE_DATA.Color.CANCEL_QUIT)
+    
+    def fontChange(self, fontmode = None):
+        self.label.fontChange(STYLE_DATA.FontSize.HEADER2)
+        self.description.fontChange(STYLE_DATA.FontSize.DESCRIPTION)
     
     def addAvailableSetting(self, profileKeys: List[str]):
         """ add a list of profile keys """

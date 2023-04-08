@@ -28,31 +28,9 @@ from PyQt6.QtCore import QObject, pyqtSignal, QSize, Qt
 """ default tab size """
 
 #### controlling style changes 
-from view.config.Style import (
-    FontSize, 
-    Dimension, 
-    Color, 
-    FontFamily,
-    buttonStyle, 
-    FONT_DICT,
-    COLOR_DICT)  
-from view.Signals import GlobalStyleSignal
-
-FONT_SIZE = FontSize
-COLOR = Color
-
-def colorchange(colormode):
-    global COLOR 
-    COLOR = COLOR_DICT[colormode]
-
-def fontchange(fontsize):
-    global FONT_SIZE
-    FONT_SIZE = FONT_DICT[fontsize]
-
-GlobalStyleSignal.changeColor.connect(colorchange)
-GlobalStyleSignal.changeFont.connect(fontchange)
+from view.config.Style import STYLE_DATA, buttonStyle
 ######################
-TabSize = QSize(Dimension.DEFAULTTABWIDTH, Dimension.DEFAULTTABHEIGHT)
+TabSize = QSize(STYLE_DATA.Dimension.DEFAULTTABWIDTH, STYLE_DATA.Dimension.DEFAULTTABHEIGHT)
 class Signals(QObject):
     """ a close tab signal """
     closeTab = pyqtSignal()
@@ -86,6 +64,8 @@ class Tab(QWidget):
         self._initLayout()
         initPrimaryColorBackground(self)
     
+    def setSize (self, size: QSize):
+        self.setSize(size)
         
     def _initWidget(self):
         """ initialize the widget """
@@ -173,14 +153,14 @@ class _ChangePageBtn(QWidget):
         self.subContainer = QWidget()
         self.subContainer.setLayout(self.horizontaLayout)
         self.setLayout(self.verticalLayout)
-        self.nextBtn = BorderBtn(Text.leftArr, COLOR.GREYDARK)
-        self.prevBtn = BorderBtn(Text.rightArr, COLOR.GREYDARK)
+        self.nextBtn = BorderBtn(Text.leftArr, STYLE_DATA.Color.GREYDARK)
+        self.prevBtn = BorderBtn(Text.rightArr, STYLE_DATA.Color.GREYDARK)
         self.nextBtn.setFixedSize(
-            QSize(Dimension.SMALLICONBTN,Dimension.SMALLICONBTN))
+            QSize(STYLE_DATA.Dimension.SMALLICONBTN,STYLE_DATA.Dimension.SMALLICONBTN))
         self.prevBtn.setFixedSize(
-            QSize(Dimension.SMALLICONBTN,Dimension.SMALLICONBTN))
-        self.finishBtn = ColoredBtn(Text.finish, COLOR.PRIMARY_BUTTON)
-        self.finishBtn.setFixedWidth(Dimension.SBTNWIDTH)
+            QSize(STYLE_DATA.Dimension.SMALLICONBTN,STYLE_DATA.Dimension.SMALLICONBTN))
+        self.finishBtn = ColoredBtn(Text.finish, STYLE_DATA.Color.PRIMARY_BUTTON)
+        self.finishBtn.setFixedWidth(STYLE_DATA.Dimension.SBTNWIDTH)
         self.deactivateNextButton()
         self.deactivatePrevButton()
         self.horizontaLayout.addWidget(self.prevBtn)

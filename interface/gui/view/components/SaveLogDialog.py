@@ -14,7 +14,7 @@ import os
 import datetime
 from view.widgets import Label, ColoredBtn
 from view.util.io import zip_file
-from view.config.Style import Color, FontFamily, FontSize, Dimension
+from view.config.Style import STYLE_DATA
 from view.config.Text import WelcomePageText as TEXT 
 from gbLogger import makeLogger
 from view.config import getWorkBasePath
@@ -41,16 +41,16 @@ class SaveLogFile(QDialog):
         self.userRoot = userpaths.get_desktop()
         self.workDir = getWorkBasePath()
         self.header = Label(
-           TEXT.saveLogPrompt, FontSize.HEADER3, FontFamily.MAIN)
+           TEXT.saveLogPrompt, STYLE_DATA.FontSize.HEADER3, STYLE_DATA.FontFamily.MAIN)
         linkFormat = "<a style='color:{0};' href='mailto: {1}'> {2} \n {1}</a>"
         self.label = Label(
-            linkFormat.format(Color.MAIN_TEXT, TEXT.email, TEXT.sendZipMsg), FontSize.BODY, link=True)
+            linkFormat.format(STYLE_DATA.Color.MAIN_TEXT, TEXT.email, TEXT.sendZipMsg), STYLE_DATA.FontSize.BODY, link=True)
         self.displayPath = Label(
             f"{TEXT.saveLogPath}: {self.userRoot}", 
-            FontSize.BODY, FontFamily.MAIN, 
-            others=f"border: 1px solid {Color.MAIN_TEXT}; text-align:center;")
-        self.confirm = ColoredBtn(TEXT.confirmBtn, Color.SECONDARY_BUTTON)
-        self.choose  = ColoredBtn(TEXT.changeDirBtn, Color.PRIMARY_BUTTON)
+            STYLE_DATA.FontSize.BODY, STYLE_DATA.FontFamily.MAIN, 
+            others=f"border: 1px solid {STYLE_DATA.Color.MAIN_TEXT}; text-align:center;")
+        self.confirm = ColoredBtn(TEXT.confirmBtn, STYLE_DATA.Color.SECONDARY_BUTTON)
+        self.choose  = ColoredBtn(TEXT.changeDirBtn, STYLE_DATA.Color.PRIMARY_BUTTON)
    
     def _initLayout(self):
         """ initialize the layout """
@@ -59,13 +59,13 @@ class SaveLogFile(QDialog):
         self.verticalLayout.addWidget(self.header, alignment=center)
         self.verticalLayout.addWidget(self.label, alignment=center)
         self.verticalLayout.addWidget(self.displayPath)
-        self.verticalLayout.addSpacing(Dimension.MEDIUM_SPACING)
+        self.verticalLayout.addSpacing(STYLE_DATA.Dimension.MEDIUM_SPACING)
         self.verticalLayout.addWidget(self.choose, alignment=center)
         self.verticalLayout.addWidget(self.confirm, alignment=center)
     
     def _initStyle(self):
         """ initialize the style """
-        self.setStyleSheet(f"background-color:{Color.MAIN_BACKGROUND}")
+        self.setStyleSheet(f"background-color:{STYLE_DATA.Color.MAIN_BACKGROUND}")
         self.setFixedSize(QSize(500,350))
     
     def _openDialog(self):

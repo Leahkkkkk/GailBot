@@ -1,24 +1,17 @@
 from typing import Dict, List
 import validators
 import os
-from view.config.Style import Color, FontSize, Dimension, FontFamily
+from view.config.Style import STYLE_DATA
 from view.config.Text import FileUploadPageText as Text
 from gbLogger import makeLogger
 from PyQt6.QtWidgets import (
-    QWidget,
-    QFileDialog, 
-    QLineEdit,
-    QHBoxLayout,
-    QVBoxLayout,
     QAbstractItemView,
     QTableWidget,
     QTableWidgetItem,
     QPushButton)
 from view.widgets.MsgBox import WarnBox
-from PyQt6.QtCore import QSize, Qt
+from PyQt6.QtCore import QSize
 from view.util.ErrorMsg import WARN, ERR
-from PyQt6.QtGui import QDragEnterEvent 
-
 class UploadTable(QTableWidget):
     """ a table widget to display a list of data 
     """
@@ -40,11 +33,11 @@ class UploadTable(QTableWidget):
             QAbstractItemView.EditTrigger.NoEditTriggers)
         self.horizontalHeader().hide()
         self.verticalHeader().hide()
-        self.setStyleSheet(f"background-color:{Color.MAIN_BACKGROUND};"
-                                           f"color:{Color.MAIN_TEXT}")
-        self.setColumnWidth(0,Dimension.SMALL_TABLE_WIDTH) 
-        self.setFixedSize(QSize(Dimension.SMALL_TABLE_WIDTH,
-                                                Dimension.SMALL_TABLE_HEIGHT)) 
+        self.setStyleSheet(f"background-color:{STYLE_DATA.Color.MAIN_BACKGROUND};"
+                                           f"color:{STYLE_DATA.Color.MAIN_TEXT}")
+        self.setColumnWidth(0,STYLE_DATA.Dimension.SMALL_TABLE_WIDTH) 
+        self.setFixedSize(QSize(STYLE_DATA.Dimension.SMALL_TABLE_WIDTH,
+                                                STYLE_DATA.Dimension.SMALL_TABLE_HEIGHT)) 
         self.setColumnWidth(0, 325)
         self.setColumnWidth(1, 25)
     

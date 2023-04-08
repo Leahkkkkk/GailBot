@@ -9,17 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 from typing import List
-from view.config.Style import  (
-    Color,  
-    Dimension,  
-    FontFamily,  
-    Asset,
-    StyleSheet, 
-    COLOR_DICT,
-    ASSET_DICT,
-    FONT_DICT    
-)
-from view.config.Style import FontSize as FS
+from view.config.Style import STYLE_DATA
 from view.config.Text import WelcomePageText as Text
 from view.config.Text import Links
 from view.widgets import (
@@ -46,7 +36,8 @@ class WelcomePage(QWidget):
         self._initWidget()
         self._initLayout()
         self._initStyle()
-        GlobalStyleSignal.changeColor.connect(self.changeColor)
+        STYLE_DATA.signal.changeColor.connect(self.changeColor)
+        # STYLE_DATA.signal.changeFont.connect(self.changeFont)
         
     def _initWidget(self):
         """ initialize widgets """
@@ -87,34 +78,34 @@ class WelcomePage(QWidget):
 
     def _initStyle(self):
         """ initializes the style  of the page """
-        self.StartBtn.setMinimumSize(QtCore.QSize(Dimension.BTNWIDTH, Dimension.BTNHEIGHT))
+        self.StartBtn.setMinimumSize(QtCore.QSize(STYLE_DATA.Dimension.BTNWIDTH, STYLE_DATA.Dimension.BTNHEIGHT))
  
     def _initInstructionText(self):
         """ add widgets for the instructions text and icons """
 
         """ instruction text """
         self.AudioInstruction = Label(Text.audioInstructionText, 
-                                            FS.INSTRUCTION_CAPTION, 
-                                            FontFamily.OTHER, Color.LOW_CONTRAST2)
+                                            STYLE_DATA.FontSize.INSTRUCTION_CAPTION, 
+                                            STYLE_DATA.FontFamily.OTHER, STYLE_DATA.Color.LOW_CONTRAST2)
         
         self.SettingsInstruction = Label(Text.settingsInstructionText,
-                                               FS.INSTRUCTION_CAPTION, 
-                                               FontFamily.OTHER, Color.LOW_CONTRAST2)
+                                               STYLE_DATA.FontSize.INSTRUCTION_CAPTION, 
+                                               STYLE_DATA.FontFamily.OTHER, STYLE_DATA.Color.LOW_CONTRAST2)
         
         self.TranscribeInstruction = Label(Text.transcribeInstructionText, 
-                                                 FS.INSTRUCTION_CAPTION, 
-                                                 FontFamily.OTHER,
-                                                 Color.LOW_CONTRAST2)
+                                                 STYLE_DATA.FontSize.INSTRUCTION_CAPTION, 
+                                                 STYLE_DATA.FontFamily.OTHER,
+                                                 STYLE_DATA.Color.LOW_CONTRAST2)
         
         self.FileInstruction = Label(Text.fileInstructionText, 
-                                           FS.INSTRUCTION_CAPTION, 
-                                           FontFamily.OTHER,
-                                           Color.LOW_CONTRAST2)
+                                           STYLE_DATA.FontSize.INSTRUCTION_CAPTION, 
+                                           STYLE_DATA.FontFamily.OTHER,
+                                           STYLE_DATA.Color.LOW_CONTRAST2)
         
         self.EditInstruction = Label(Text.editInstructionText,
-                                           FS.INSTRUCTION_CAPTION, 
-                                           FontFamily.OTHER,
-                                           Color.LOW_CONTRAST2)
+                                           STYLE_DATA.FontSize.INSTRUCTION_CAPTION, 
+                                           STYLE_DATA.FontFamily.OTHER,
+                                           STYLE_DATA.Color.LOW_CONTRAST2)
         self.insLabels : List[Label]= [
             self.AudioInstruction, 
             self.SettingsInstruction, 
@@ -123,11 +114,11 @@ class WelcomePage(QWidget):
             self.EditInstruction]
 
         """ instruction icons """
-        self.AudioIcon = Image(Asset.instructionSound)
-        self.SettingsIcon = Image(Asset.instructionSetting)
-        self.TranscribeIcon = Image(Asset.instructionTranscribe)
-        self.FileIcon = Image(Asset.instructionFile)
-        self.EditIcon = Image(Asset.instructionEdit)
+        self.AudioIcon = Image(STYLE_DATA.Asset.instructionSound)
+        self.SettingsIcon = Image(STYLE_DATA.Asset.instructionSetting)
+        self.TranscribeIcon = Image(STYLE_DATA.Asset.instructionTranscribe)
+        self.FileIcon = Image(STYLE_DATA.Asset.instructionFile)
+        self.EditIcon = Image(STYLE_DATA.Asset.instructionEdit)
         
       
     def _initInstructionGrid(self):
@@ -167,53 +158,63 @@ class WelcomePage(QWidget):
     def _initMainText(self):
         """ initialize the main text on home page  """
         self.WelcomeText = Label(Text.welcomeText, 
-                                        FS.HEADER1, 
-                                        FontFamily.MAIN)
+                                        STYLE_DATA.FontSize.HEADER1, 
+                                        STYLE_DATA.FontFamily.MAIN)
         self.WelcomeText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
         
         self.CaptionText = Label(Text.captionText,
-                                       FS.BODY, 
-                                       FontFamily.OTHER,
-                                       Color.GREYDARK)
+                                       STYLE_DATA.FontSize.BODY, 
+                                       STYLE_DATA.FontFamily.OTHER,
+                                       STYLE_DATA.Color.GREYDARK)
         
         self.CaptionText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
-        self.StartBtn = ColoredBtn(Text.startBtnText, Color.SECONDARY_BUTTON)
+        self.StartBtn = ColoredBtn(Text.startBtnText, STYLE_DATA.Color.SECONDARY_BUTTON)
         
-        self.InstructionText = Label(Text.instructionText, FS.HEADER2, 
-                                           FontFamily.MAIN)
+        self.InstructionText = Label(Text.instructionText, STYLE_DATA.FontSize.HEADER2, 
+                                           STYLE_DATA.FontFamily.MAIN)
         self.InstructionText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
     
         
     def _initLinkText(self):
         """ initializes the link text and functionality """
-        self.ResourcesText = Label(Text.resourcesText, 
-                                         FS.HEADER2, 
-                                         FontFamily.OTHER)
+        self.ResourcesText = Label(Text.resourcesText, STYLE_DATA.FontSize.HEADER2, 
+                                         STYLE_DATA.FontFamily.OTHER)
         self.ResourcesText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
         
-        self.TutorialText = Label(Links.tutorialLink, FS.LINK,
-                                        FontFamily.OTHER, Color.PRIMARY_BUTTON,
-                                        StyleSheet.linkStyle, link=True)
+        self.TutorialText = Label(Links.tutorialLink, STYLE_DATA.FontSize.LINK,
+                                        STYLE_DATA.FontFamily.OTHER, STYLE_DATA.Color.PRIMARY_BUTTON,
+                                        STYLE_DATA.StyleSheet.linkStyle, link=True)
 
-        self.GuideText = Label(Links.guideLink, FS.LINK, 
-                                        FontFamily.OTHER, Color.PRIMARY_BUTTON,
-                                         StyleSheet.linkStyle, link=True)
-        self.GBLinkText = Label(Links.gbWebLink, FS.BODY, 
-                                      FontFamily.OTHER, Color.PRIMARY_BUTTON, link=True)
+        self.GuideText = Label(Links.guideLink, STYLE_DATA.FontSize.LINK, 
+                                        STYLE_DATA.FontFamily.OTHER, STYLE_DATA.Color.PRIMARY_BUTTON,
+                                         STYLE_DATA.StyleSheet.linkStyle, link=True)
+        self.GBLinkText = Label(Links.gbWebLink, STYLE_DATA.FontSize.BODY, 
+                                      STYLE_DATA.FontFamily.OTHER, STYLE_DATA.Color.PRIMARY_BUTTON, link=True)
         
         self.GBLinkText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
 
         self.MoreInfoText = Label(Text.moreInfoText, 
-                                        FS.SMALL, FontFamily.OTHER)
+                                        STYLE_DATA.FontSize.SMALL, STYLE_DATA.FontFamily.OTHER)
         
         self.MoreInfoText.setAlignment(Qt.AlignmentFlag.AlignHCenter) 
         self.buttomText : List[Label] = [self.GuideText, self.TutorialText, self.GBLinkText]
     
     
-    def changeColor(self, colormode):
+    def changeColor(self, colormode = None):
         for label in self.insLabels:
-            label.colorChange(COLOR_DICT[colormode].LOW_CONTRAST2)
+            label.colorChange(STYLE_DATA.Color.LOW_CONTRAST2)
         for label in self.buttomText:
-            label.colorChange(COLOR_DICT[colormode].PRIMARY_BUTTON)
-        self.CaptionText.colorChange(COLOR_DICT[colormode].GREYDARK)
-        self.StartBtn.colorChange(COLOR_DICT[colormode].SECONDARY_BUTTON)
+            label.colorChange(STYLE_DATA.Color.PRIMARY_BUTTON)
+        self.CaptionText.colorChange(STYLE_DATA.Color.GREYDARK)
+        self.StartBtn.colorChange(STYLE_DATA.Color.PRIMARY_BUTTON)
+        self.changeFont()
+
+    def changeFont(self, fontmode = None):
+        for label in self.insLabels:
+            label.fontChange(STYLE_DATA.FontSize.INSTRUCTION_CAPTION)
+        self.WelcomeText.fontChange(STYLE_DATA.FontSize.HEADER1)
+        self.ResourcesText.fontChange(STYLE_DATA.FontSize.HEADER2)
+        self.TutorialText.fontChange(STYLE_DATA.FontSize.LINK)
+        self.GuideText.fontChange(STYLE_DATA.FontSize.LINK)
+        self.GBLinkText.fontChange(STYLE_DATA.FontSize.BODY)
+        self.MoreInfoText.fontChange(STYLE_DATA.FontSize.SMALL)

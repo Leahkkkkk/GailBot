@@ -12,25 +12,13 @@ Description: implementation of file upload page
 
 from typing import List
 
-from view.config.Style import (
-    FileTableDimension, 
-    Asset, 
-    StyleSheet,
-    Color, 
-    FontSize,
-    Dimension,
-    FontFamily,
-    STYLE_DICT,
-    COLOR_DICT
-)
+from view.config.Style import STYLE_DATA, FileTableDimension
 from view.config.Text import FileTableHeader
 from view.config.Text import FileUploadPageText as Text 
-from view.config.Style import FontSize as FS
 from view.config.Style import buttonStyle
 from view.Signals import GlobalStyleSignal
 from gbLogger import makeLogger
 from view.Signals import FileSignals
-from view.Request import Request
 from view.widgets import (
     Label, 
     ColoredBtn, 
@@ -95,19 +83,19 @@ class FileUploadPage(QWidget):
     def _initWidget(self):
         """ initializes widgets """
         self.logger.info("")
-        self.label = Label(Text.header, FS.HEADER2, FontFamily.MAIN)
+        self.label = Label(Text.header, STYLE_DATA.FontSize.HEADER2, STYLE_DATA.FontFamily.MAIN)
         self.gotoMainBtn = IconBtn(
-            Asset.arrowImg, Text.returnMainText) 
+            STYLE_DATA.Asset.arrowImg, Text.returnMainText) 
         self.uploadFileBtn = ColoredBtn(
-            Text.uploadBtnText, Color.PRIMARY_BUTTON, FontSize.BTN)
+            Text.uploadBtnText, STYLE_DATA.Color.PRIMARY_BUTTON, STYLE_DATA.FontSize.BTN)
         self.transcribeBtn = ColoredBtn(
-            Text.transcribeBtnText, Color.SECONDARY_BUTTON, FontSize.BTN)
+            Text.transcribeBtnText, STYLE_DATA.Color.SECONDARY_BUTTON, STYLE_DATA.FontSize.BTN)
         self.settingBtn = ColoredBtn(
-            Text.settingBtnText, Color.PRIMARY_BUTTON, FS.SETTINGICON)
+            Text.settingBtnText, STYLE_DATA.Color.PRIMARY_BUTTON, STYLE_DATA.FontSize.SETTINGICON)
         self.settingBtn.setFixedSize(
-            QSize(Dimension.ICONBTN,Dimension.ICONBTN))
+            QSize(STYLE_DATA.Dimension.ICONBTN, STYLE_DATA.Dimension.ICONBTN))
         self.removeAll = ColoredBtn(
-            Text.removeBtnText, Color.PRIMARY_BUTTON, FontSize.BTN)
+            Text.removeBtnText, STYLE_DATA.Color.PRIMARY_BUTTON, STYLE_DATA.FontSize.BTN)
         # self.recordBtn = ColoredBtn(
         #     Text.recordBtnText, Color.PRIMARY_BUTTON, FontSize.BTN)
         
@@ -118,7 +106,7 @@ class FileUploadPage(QWidget):
              TableWidget.PROFILE_DETAIL, 
              TableWidget.CHANGE_PROFILE, 
              TableWidget.REMOVE},
-            transferListColor=Color.HIGHLIGHT)
+            showSelectHighlight=True)
         self.fileTable.resizeCol(FileTableDimension.fileUploadPage)
         
     def _initLayout(self):
@@ -133,7 +121,7 @@ class FileUploadPage(QWidget):
         
         self.middleLayout = QVBoxLayout()
         self.fileTableContainer = QWidget(self)
-        self.fileTableContainer.setFixedWidth(Dimension.TABLECONTAINERWIDTH)
+        self.fileTableContainer.setFixedWidth(STYLE_DATA.Dimension.TABLECONTAINERWIDTH)
         self.fileTableContainer.setLayout(self.middleLayout)
         
         self.middleLayout.addWidget(self.settingBtn, alignment = right|top)
@@ -142,7 +130,7 @@ class FileUploadPage(QWidget):
         
         self.addFileBtnContainer = QWidget(self)
         self.containerLayout = QHBoxLayout()
-        self.containerLayout.setSpacing(Dimension.LARGE_SPACING)
+        self.containerLayout.setSpacing(STYLE_DATA.Dimension.LARGE_SPACING)
         self.addFileBtnContainer.setLayout(self.containerLayout)
         
         self.containerLayout.addWidget(self.uploadFileBtn, alignment = center)
@@ -158,13 +146,13 @@ class FileUploadPage(QWidget):
         """ initializes the style """
         self.logger.info("")
         self.gotoMainBtn.setFixedSize(
-            QSize(Dimension.LBTNWIDTH,Dimension.BTNHEIGHT))
-        self.gotoMainBtn.setStyleSheet(StyleSheet.goToMain)
+            QSize(STYLE_DATA.Dimension.LBTNWIDTH, STYLE_DATA.Dimension.BTNHEIGHT))
+        self.gotoMainBtn.setStyleSheet(STYLE_DATA.StyleSheet.goToMain)
 
     def colorChange(self, colormode):
-        self.gotoMainBtn.setStyleSheet(STYLE_DICT[colormode].goToMain)
-        self.settingBtn.colorChange(COLOR_DICT[colormode].PRIMARY_BUTTON)
-        self.removeAll.colorChange(COLOR_DICT[colormode].PRIMARY_BUTTON)
+        self.gotoMainBtn.setStyleSheet(STYLE_DATA.StyleSheet.goToMain)
+        self.settingBtn.colorChange(STYLE_DATA.Color.PRIMARY_BUTTON)
+        self.removeAll.colorChange(STYLE_DATA.Color.PRIMARY_BUTTON)
     
     def _allowTranscribe(self):
         """ activates the transcribe button """

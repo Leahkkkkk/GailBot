@@ -17,6 +17,11 @@ import toml
 from config_frontend.ConfigPath import StyleDataPath, FRONTEND_CONFIG_ROOT
 from .interface import StyleParser
 from view.Signals import GlobalStyleSignal
+from PyQt6.QtCore import QObject, pyqtSignal
+
+class StyleSignals(QObject):
+    changeColor = pyqtSignal()
+    changeFont  = pyqtSignal()
 
 # reading data from toml files
 color      = toml.load(os.path.join (FRONTEND_CONFIG_ROOT, StyleDataPath.currentColor))
@@ -64,17 +69,6 @@ STYLE_DICT : Dict[str, StyleParser.StyleSheet] = \
      "Dark Mode"  : StyleParser.StyleSheet.from_dict(darkcolor["styleSheet"]),
      "Default": StyleSheet}
 
-###### style control
-def colorchange(colormode):
-    global StyleSheet
-    global Color
-    global Asset
-    
-    StyleSheet = STYLE_DICT[colormode]
-    Color = COLOR_DICT[colormode]
-    Asset = ASSET_DICT[colormode]
-
-GlobalStyleSignal.changeColor.connect(colorchange)
 @dataclass
 class buttonStyle:
     '''class holding style values for buttons, allowing for buttons to toggle 
@@ -85,16 +79,12 @@ class buttonStyle:
     ButtonActive = f"background-color:{Color.SECONDARY_BUTTON};\
                     color:white;\
                     border-radius:5;\
-                    font-size:{FontSize.BTN}"
+                    font-size:{FontSize.BTN};"
                     
     ButtonInactive = f"background-color:{Color.LOW_CONTRAST2};\
                     color:white;\
                     border-radius:5;\
-                    font-size:{FontSize.BTN}"
-                    
-
-
-
+                    font-size:{FontSize.BTN};"
 @dataclass
 class StyleSource:
     """ stores file paths to different style theme"""
@@ -111,3 +101,31 @@ StyleTable = {
     "Medium"        :   StyleDataPath.mediumFontSize 
 }
 
+class StyleController():
+    def __init__(self) -> None:
+        self.StyleSheet: StyleParser.StyleSheet = STYLE_DICT["Default"]
+        self.Color: StyleParser.ColorData  = COLOR_DICT["Default"]
+        self.Asset: StyleParser.Asset = ASSET_DICT["Default"]
+        self.FontSize : StyleParser.FontSizeData = FONT_DICT["Default"]
+        self.Dimension = Dimension
+        self.FontFamily = FontFamily 
+        GlobalStyleSignal.changeColor.connect(self.colorchange)
+        GlobalStyleSignal.changeFont.connect(self.fontsizeChange)
+        self.signal = StyleSignals()
+
+    ###### style control
+    def colorchange(self, colormode):
+        global StyleSheet
+        global Color
+        global Asset
+        self.StyleSheet = STYLE_DICT[colormode]
+        self.Color = COLOR_DICT[colormode]
+        self.Asset = ASSET_DICT[colormode]
+        self.signal.changeColor.emit()
+    
+    def fontsizeChange(self, fontmode):
+        self.FontSize = FONT_DICT[fontmode]
+        self.signal.changeFont.emit()
+
+#### top level style controller that is responsible to change the color
+STYLE_DATA = StyleController()

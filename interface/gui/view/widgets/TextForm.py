@@ -25,12 +25,7 @@ from .Form.FileUpload import UploadFile
 from .Form.FormWidget import FormWidget
 from .Form.OnOffButton import onOffButton
 from .Form.MultiSelect import MultipleSelect 
-from ..config.Style import (
-    FontFamily, 
-    FontSize, 
-    Dimension,
-    COLOR_DICT 
-)
+from ..config.Style import STYLE_DATA 
 from view.widgets.Background import initSecondaryColorBackground, _initBackground
 from PyQt6.QtWidgets import (
     QWidget, 
@@ -72,8 +67,8 @@ class TextForm(QWidget):
         self.inputDict : Dict[str, FormWidget] = dict()
         self.toggle = toggle 
         if not self.toggle:
-            self.setMinimumHeight(Dimension.WIN_MIN_HEIGHT // 3 * 2)
-            self.setMinimumWidth(Dimension.WIN_MIN_WIDTH // 2)
+            self.setMinimumHeight(STYLE_DATA.Dimension.WIN_MIN_HEIGHT // 3 * 2)
+            self.setMinimumWidth(STYLE_DATA.Dimension.WIN_MIN_WIDTH // 2)
         self._initWidget()
         self._initLayout()
         self._connectSignal()
@@ -85,9 +80,7 @@ class TextForm(QWidget):
 
     
     def changeColor(self, colormode):
-        print("calllled")
-        # initSecondaryColorBackground(self)
-        _initBackground(self, COLOR_DICT[colormode].SUB_BACKGROUND)
+        initSecondaryColorBackground(self)
         
     
     def enableForm(self) -> None:
@@ -135,7 +128,7 @@ class TextForm(QWidget):
           
             """ adding spacing """
             if count != 0 and (not self.toggle):
-                self.mainVertical.addSpacing(Dimension.MEDIUM_SPACING)
+                self.mainVertical.addSpacing(STYLE_DATA.Dimension.MEDIUM_SPACING)
                 count += 1
             
             """ create additional layout if the form elements are 
@@ -150,7 +143,7 @@ class TextForm(QWidget):
             """ create the label  """
             tittleKey = tittleKey.split(". ")[-1]
             if not self.toggle:
-                newLabel = Label(tittleKey, FontSize.BTN, FontFamily.MAIN)
+                newLabel = Label(tittleKey, STYLE_DATA.FontSize.BTN, STYLE_DATA.FontFamily.MAIN)
                 self.mainVertical.addWidget(newLabel)
             
             """ create the form component element """
@@ -195,7 +188,7 @@ class TextForm(QWidget):
                 toggleView.setContentsMargins(0,0,0,0)
         self.mainVertical.setAlignment(Qt.AlignmentFlag.AlignLeft)
         self.mainVertical.addStretch()
-        self.mainVertical.addSpacing(Dimension.LARGE_SPACING)
+        self.mainVertical.addSpacing(STYLE_DATA.Dimension.LARGE_SPACING)
                 
     def _initLayout(self):
         """ initialize the layout """

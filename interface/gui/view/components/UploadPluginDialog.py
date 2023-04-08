@@ -11,10 +11,8 @@ Description: implementation of the plugin dialog for user to upload new plugin
 '''
 
 
-import os 
-import validators
 from view.config.Text import PLUGIN_SUITE_TEXT as TEXT
-from view.config.Style import FontSize, FontFamily
+from view.config.Style import STYLE_DATA
 from view.Signals import PluginSignals
 from view.widgets import ColoredBtn, WarnBox, UploadTable, Label, TextInput, initPrimaryColorBackground
 from view.widgets import TextInput
@@ -129,10 +127,10 @@ class UploadURL(QDialog):
         self._layout.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         self.input = TextInput(TEXT.URL, vertical=True, width=400)
         
-        self.caption = Label(TEXT.URL_INSTRUCTION, FontSize.BTN, FontFamily.MAIN)
+        self.caption = Label(TEXT.URL_INSTRUCTION, STYLE_DATA.FontSize.BTN, STYLE_DATA.FontFamily.MAIN)
         self._layout.addWidget(self.caption, alignment=Qt.AlignmentFlag.AlignHCenter)
         for source in TEXT.SOURCES:
-            sourceText = Label(source, FontSize.BTN, FontFamily.MAIN)
+            sourceText = Label(source, STYLE_DATA.FontSize.BTN, STYLE_DATA.FontFamily.MAIN)
             self._layout.addWidget(sourceText)
         self._layout.addWidget(self.input, alignment=Qt.AlignmentFlag.AlignHCenter)
         self._layout.addWidget(self.confirm, alignment=Qt.AlignmentFlag.AlignHCenter)

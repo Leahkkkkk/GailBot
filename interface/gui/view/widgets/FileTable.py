@@ -22,10 +22,9 @@ from view.components.UploadFileTab import UploadFileTab
 from view.pages.FileUploadTabPages import ChooseSet
 from view.Signals import FileSignals, GlobalStyleSignal
 from gbLogger import makeLogger
-from ..config.Style import Dimension, Color, FontSize, FontFamily, COLOR_DICT, FONT_DICT, STYLE_DICT, StyleSheet
+from ..config.Style import STYLE_DATA
 from ..config.Text import FileTableText as Text
-from view.util.ErrorMsg import ERR, WARN
-from view.util.io import get_name
+from view.util.ErrorMsg import ERR
 from PyQt6.QtWidgets import (
     QTableWidget, 
     QTableWidgetItem, 
@@ -83,7 +82,7 @@ class FileTable(QTableWidget):
                  headers: List[str], 
                  fileSignal: FileSignals,
                  tableWidgetsSet: Set[TableWidget] = None, 
-                 transferListColor = Color.MAIN_BACKGROUND,
+                 showSelectHighlight = False,
                  *args, 
                  **kwargs):
         """ a file table that display the files uploaded by the user, 
@@ -116,7 +115,7 @@ class FileTable(QTableWidget):
         self.allSelected = False        # True if all files are selected 
         self.tableWidgetsSet = tableWidgetsSet
         self.logger =  makeLogger("F")
-        self.transferlistBackground = transferListColor
+        self.showSelectHighlight = showSelectHighlight
         self.viewSignal = Signals()
         self.fileSignal = fileSignal
         self._setFileHeader()           # set file header 
@@ -147,29 +146,34 @@ class FileTable(QTableWidget):
         self.viewSignal.select.connect(self.addToNextState)
         self.viewSignal.unselect.connect(self.removeFromNextState)
         self.viewSignal.requestChangeProfile.connect(self.changeProfileRequest)  
-        GlobalStyleSignal.changeColor.connect(self.colorChange)
+        STYLE_DATA.signal.changeColor.connect(self.colorChange)
+        STYLE_DATA.signal.changeFont.connect(self.fontChange)
          
     def _initStyle(self) -> None:
         """ Initialize the table style """
         self.horizontalHeader().setFixedHeight(45)
         self.setObjectName("FileTable")
-        self.setStyleSheet(f"#FileTable{StyleSheet.FILE_TABLE}")
+        self.setStyleSheet(f"#FileTable{STYLE_DATA.StyleSheet.FILE_TABLE}")
         for i in range(self.columnCount()):
             self.horizontalHeader().setSectionResizeMode(
                 i, QHeaderView.ResizeMode.Fixed)
-        self.setFixedWidth(Dimension.TABLEWIDTH)
-        self.setMinimumHeight(Dimension.TABLEMINHEIGHT)
-        self.verticalScrollBar().setStyleSheet(StyleSheet.SCROLL_BAR) 
-        self.horizontalScrollBar().setStyleSheet(StyleSheet.SCROLL_BAR)
-        font = QFont(FontFamily.OTHER, FontSize.TABLE_ROW)
+        self.setFixedWidth(STYLE_DATA.Dimension.TABLEWIDTH)
+        self.setMinimumHeight(STYLE_DATA.Dimension.TABLEMINHEIGHT)
+        self.verticalScrollBar().setStyleSheet(STYLE_DATA.StyleSheet.SCROLL_BAR) 
+        self.horizontalScrollBar().setStyleSheet(STYLE_DATA.StyleSheet.SCROLL_BAR)
+        font = QFont(STYLE_DATA.FontFamily.OTHER, STYLE_DATA.FontSize.TABLE_ROW)
         self.setFont(font)
         self.setTextElideMode(Qt.TextElideMode.ElideMiddle)
     
-    def colorChange(self, colormode):
-        self.setStyleSheet(f"#FileTable{STYLE_DICT[colormode].FILE_TABLE}")
-        self.verticalScrollBar().setStyleSheet(STYLE_DICT[colormode].SCROLL_BAR) 
-        self.horizontalScrollBar().setStyleSheet(STYLE_DICT[colormode].SCROLL_BAR)
-        self.horizontalHeader().setStyleSheet(STYLE_DICT[colormode].TABLE_HEADER)
+    def colorChange(self, colormode = None):
+        self.setStyleSheet(f"#FileTable{STYLE_DATA.StyleSheet.FILE_TABLE}")
+        self.verticalScrollBar().setStyleSheet(STYLE_DATA.StyleSheet.SCROLL_BAR) 
+        self.horizontalScrollBar().setStyleSheet(STYLE_DATA.StyleSheet.SCROLL_BAR)
+        self.horizontalHeader().setStyleSheet(STYLE_DATA.StyleSheet.SCROLL_BAR)
+    
+    def fontChange(self, font = None):
+        font = QFont(STYLE_DATA.FontFamily.OTHER, STYLE_DATA.FontSize.TABLE_ROW)
+        self.setFont(font)
 
     def _setFileHeader(self) -> None:
         """ initialize file headers
@@ -187,7 +191,7 @@ class FileTable(QTableWidget):
         except Exception as e:
             self.logger.info(e, exc_info=e)
             WarnBox(ERR.ERR_WHEN_DUETO.format("initialize file header", str(e)))
-        self.horizontalHeader().setStyleSheet(StyleSheet.TABLE_HEADER)
+        self.horizontalHeader().setStyleSheet(STYLE_DATA.StyleSheet.TABLE_HEADER)
       
     def _headerClickedHandler(self, idx):
         """ handle header clicked signal  """
@@ -408,7 +412,8 @@ class FileTable(QTableWidget):
                 newitem = QTableWidgetItem(profilekey)
                 self.setItem(row, 3, newitem)
                 if key in self.transferList: 
-                    newitem.setBackground(QColor(self.transferlistBackground))
+                    if self.showSelectHighlight:
+                        newitem.setBackground(QColor(STYLE_DATA.Color.HIGHLIGHT))
             else:
                 self.viewSignal.error.emit(KEYERROR)
         except Exception as e:
@@ -453,7 +458,8 @@ class FileTable(QTableWidget):
                 newitem = QTableWidgetItem(value)
                 self.setItem(row, col, newitem)
                 if key in self.transferList:
-                    newitem.setBackground(QColor(self.transferlistBackground))
+                    if self.showSelectHighlight:
+                        newitem.setBackground(STYLE_DATA.Color.HIGHLIGHT)
         else:
             self.logger.error("File is not found")
     
@@ -470,7 +476,8 @@ class FileTable(QTableWidget):
             if key in self.nameToTablePins:
                 self.transferList.add(key)
                 rowIdx = self.indexFromItem(self.nameToTablePins[key]).row()
-                self._setColorRow(rowIdx,self.transferlistBackground)
+                if self.showSelectHighlight:
+                    self._setColorRow(rowIdx, STYLE_DATA.Color.HIGHLIGHT)
                 self.viewSignal.nonZeroFile.emit()
             else: 
                 raise Exception("File is not found in the data")
@@ -491,7 +498,7 @@ class FileTable(QTableWidget):
             if key in self.transferList:
                 self.transferList.remove(key)
                 rowIdx = self.indexFromItem(self.nameToTablePins[key]).row()
-                self._setColorRow(rowIdx, Color.MAIN_BACKGROUND)
+                self._setColorRow(rowIdx, STYLE_DATA.Color.MAIN_BACKGROUND)
                 self.clearSelection()
                 if len(self.transferList) == 0:
                     self.viewSignal.ZeroFile.emit()

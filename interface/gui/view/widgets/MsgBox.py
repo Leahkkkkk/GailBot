@@ -12,20 +12,10 @@ Description implement pop up message dialogue to display message for user
 from ..config.Style import Color
 from gbLogger import makeLogger
 from .Background import initSecondaryColorBackground
-from view.Signals import GlobalStyleSignal 
-from view.config.Style import STYLE_DICT, StyleSheet
+from view.config.Style import STYLE_DATA
 from PyQt6.QtWidgets import QMessageBox
 
-MESSAGE_BOX = StyleSheet.MESSAGE_BOX
-MESSAGE_BOX_BTN = StyleSheet.MESSAGE_BOX_BTN
 
-def colorchange(colormode):
-    global MESSAGE_BOX_BTN
-    global MESSAGE_BOX
-    MESSAGE_BOX = STYLE_DICT[colormode].MESSAGE_BOX
-    MESSAGE_BOX_BTN = STYLE_DICT[colormode].MESSAGE_BOX_BTN
-
-GlobalStyleSignal.changeColor.connect(colorchange)
 class ConfirmBox:
     """ create and display a Confirm box """
     def __init__(
@@ -42,14 +32,14 @@ class ConfirmBox:
         """
         self.logger = makeLogger("Frontend")
         self.msgBox = QMessageBox(text=msg)
-        self.msgBox.setStyleSheet(MESSAGE_BOX)
+        self.msgBox.setStyleSheet(STYLE_DATA.StyleSheet.MESSAGE_BOX)
         self.msgBox.setIcon(QMessageBox.Icon.Warning)
         
        
         self.msgBox.setStandardButtons(
             confirmButton| QMessageBox.StandardButton.Cancel)
         for button in self.msgBox.buttons():
-            button.setStyleSheet(MESSAGE_BOX_BTN)
+            button.setStyleSheet(STYLE_DATA.StyleSheet.MESSAGE_BOX_BTN)
         self.msgBox.buttonClicked.connect(self._confirm)
         self.confirm = confirm 
         initSecondaryColorBackground(self.msgBox)

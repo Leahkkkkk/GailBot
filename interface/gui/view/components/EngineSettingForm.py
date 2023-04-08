@@ -11,13 +11,11 @@ Description: implementation of the required setting form
 '''
 
 from typing import Dict, TypedDict
-
 from view.widgets import ToggleView, DependentCombo
 from view.config.Text import EngineForm
 from view.config.Text import ProfilePageText as Text 
-from view.config.Style import Dimension
+from view.config.Style import STYLE_DATA
 from gbLogger import makeLogger
-
 
 from PyQt6.QtWidgets import (
     QWidget, 
@@ -48,7 +46,7 @@ class EngineSettingForm(QWidget):
             EngineForm.Engine, Text.selectengine, Text.formPivotKey)
         self.toggleView = ToggleView(
             Text.engineSettingHeader, self.engineForm, header = True)
-        self.toggleView.setScrollHeight(Dimension.OUTPUT_FORM_HEIGHT)
+        self.toggleView.setScrollHeight(STYLE_DATA.Dimension.OUTPUT_FORM_HEIGHT)
     
     def _initLayout(self):
         """initialize layout"""

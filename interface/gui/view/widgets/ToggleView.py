@@ -12,7 +12,6 @@ Description: a toggle widget with the functionalities to hide and show
 '''
 from .Button import ToggleBtn
 from .ScrollArea import ScrollArea
-from view.Signals import GlobalStyleSignal
 from .Background import initPrimaryColorBackground, initSecondaryColorBackground
 from PyQt6.QtWidgets import (
     QWidget, 
@@ -21,38 +20,9 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt, pyqtSignal, QObject
 
 #### controlling style changes 
-from view.config.Style import (
-    FontSize, 
-    Color, 
-    Dimension,
-    StyleSheet, 
-    FontFamily,
-    Asset, 
-    ASSET_DICT, 
-    STYLE_DICT,  
-    FONT_DICT,
-    COLOR_DICT)  
+from view.config.Style import STYLE_DATA 
 from view.Signals import GlobalStyleSignal
 
-FONT_SIZE = FontSize
-COLOR = Color
-STYLESHEET = StyleSheet
-ASSET = Asset
-
-def colorchange(colormode):
-    global COLOR 
-    global STYLESHEET
-    global ASSET
-    COLOR = COLOR_DICT[colormode]
-    STYLESHEET = STYLE_DICT[colormode]
-    ASSET = ASSET_DICT[colormode]
-
-def fontchange(fontsize):
-    global FONT_SIZE
-    FONT_SIZE = FONT_DICT[fontsize]
-
-GlobalStyleSignal.changeColor.connect(colorchange)
-GlobalStyleSignal.changeFont.connect(fontchange)
 ######################
 class Signal(QObject):
     showview = pyqtSignal()
@@ -83,11 +53,11 @@ class ToggleView(QWidget):
         self.header = header
         self.secondaryStyle = secondaryStyle
         if secondaryStyle:
-            self.headercolor = COLOR.SUB_BACKGROUND
-            self.viewcolor = COLOR.SUB_BACKGROUND
+            self.headercolor = STYLE_DATA.Color.SUB_BACKGROUND
+            self.viewcolor = STYLE_DATA.Color.SUB_BACKGROUND
         else:
-            self.headercolor = COLOR.MAIN_BACKGROUND
-            self.viewcolor = COLOR.MAIN_BACKGROUND
+            self.headercolor = STYLE_DATA.Color.MAIN_BACKGROUND
+            self.viewcolor = STYLE_DATA.Color.MAIN_BACKGROUND
             
         self.signal = Signal() 
         self.setContentsMargins(0,0,0,0)
@@ -111,31 +81,27 @@ class ToggleView(QWidget):
         self.hide = True
         self.Btn.resetBtn()
     
-    def colorChange(self, colormode):
-        global COLOR 
-        global STYLESHEET
-        COLOR = COLOR_DICT[colormode]
-        STYLESHEET = STYLE_DICT[colormode]
+    def colorChange(self):
         if self.secondaryStyle:
-            self.headercolor = COLOR_DICT[colormode].SUB_BACKGROUND
-            self.viewcolor = COLOR_DICT[colormode].SUB_BACKGROUND
+            self.headercolor = STYLE_DATA.Color.SUB_BACKGROUND
+            self.viewcolor = STYLE_DATA.Color.SUB_BACKGROUND
         else:
-            self.headercolor = COLOR_DICT[colormode].MAIN_BACKGROUND
-            self.viewcolor = COLOR_DICT[colormode].MAIN_BACKGROUND
+            self.headercolor = STYLE_DATA.Color.MAIN_BACKGROUND
+            self.viewcolor = STYLE_DATA.Color.MAIN_BACKGROUND
         self._initStyle()
          
     def _configHeader(self):
         """ configures the toggle header """
         self.Btn = ToggleBtn(text=self.labelStr)
         if self.header:
-            self.Btn.setMinimumWidth(Dimension.TOGGLEBARMAXWIDTH)
+            self.Btn.setMinimumWidth(STYLE_DATA.Dimension.TOGGLEBARMAXWIDTH)
         else:
-            self.Btn.setMinimumWidth(Dimension.TOGGLEBARMINWIDTH)
+            self.Btn.setMinimumWidth(STYLE_DATA.Dimension.TOGGLEBARMINWIDTH)
        
     def _configViewField(self):
         """ configures the toggle view """
         self._scroll = ScrollArea()
-        self._scroll.setMinimumWidth(self.Btn.width() - Dimension.TOGGLEVIEWOFFSET)
+        self._scroll.setMinimumWidth(self.Btn.width() - STYLE_DATA.Dimension.TOGGLEVIEWOFFSET)
         self._scroll.setMaximumWidth(self.Btn.width())
         self._scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
         self._scroll.setWidgetResizable(True)
@@ -146,10 +112,10 @@ class ToggleView(QWidget):
         self.hide = True
         
     def _initStyle(self):
-        self.Btn.setStyleSheet(STYLESHEET.toggleBtnBasic + \
+        self.Btn.setStyleSheet(STYLE_DATA.StyleSheet.toggleBtnBasic + \
                                 f"background-color:{self.headercolor};" + \
-                                f"color: {COLOR.MAIN_TEXT}")
-        self._scroll.verticalScrollBar().setStyleSheet(STYLESHEET.SCROLL_BAR)
+                                f"color: {STYLE_DATA.Color.MAIN_TEXT}")
+        self._scroll.verticalScrollBar().setStyleSheet(STYLE_DATA.StyleSheet.SCROLL_BAR)
         if self.secondaryStyle:
             initSecondaryColorBackground(self._scroll)
             initSecondaryColorBackground(self.view)
@@ -170,7 +136,7 @@ class ToggleView(QWidget):
     def _connectSignal(self):
         """ connects signals upon button clicks """
         self.Btn.clicked.connect(self._toggleView)
-        GlobalStyleSignal.changeColor.connect(self.colorChange)
+        STYLE_DATA.signal.changeColor.connect(self.colorChange)
         
     def _toggleView(self):
         """ sets view for toggle class """

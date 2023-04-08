@@ -10,16 +10,14 @@ Modified By:  Siara Small  & Vivian Li
 Description: implementation of Confirm Transcription Page
 '''
 from view.config.Style import (
-    Color, 
-    FontSize, 
     FileTableDimension,
     FontFamily,
-    Dimension)
+    STYLE_DATA)
 
 from view.config.Text import ConfirmTranscribeText as Text
 from view.config.Text import FileTableHeader 
 from gbLogger import makeLogger
-from view.Signals import FileSignals
+from view.Signals import FileSignals, GlobalStyleSignal
 from view.widgets.Background import addLogo
 from view.widgets import ( 
     Label, 
@@ -52,13 +50,14 @@ class ConfirmTranscribePage(QWidget):
     def _connectSignal(self):
         """ connects signals upon button clicks """
         self.confirmBtn.clicked.connect(self._sendTranscribeSignal)
-        self.logger.info("")
-
+        GlobalStyleSignal.changeColor.connect(self.colorChange) 
+        GlobalStyleSignal.changeFont.connect(self.fontSizeChange)
+         
     def _initWidget(self):
         """ initializes widgets """
         self.logger.info("")
         self.label = Label(Text.confirmLabel, 
-                                 FontSize.HEADER2, 
+                                 STYLE_DATA.FontSize.HEADER2, 
                                  FontFamily.MAIN)
         self.label.setAlignment(center)
         
@@ -69,9 +68,9 @@ class ConfirmTranscribePage(QWidget):
         
         self.fileTable.resizeCol(FileTableDimension.confirmPage)
         self.bottomButton = QWidget()
-        self.confirmBtn = ColoredBtn(Text.confirm, Color.SECONDARY_BUTTON)
-        self.cancelBtn = ColoredBtn(Text.cancel, Color.CANCEL_QUIT)
-        
+        self.confirmBtn = ColoredBtn(Text.confirm, STYLE_DATA.Color.SECONDARY_BUTTON)
+        self.cancelBtn = ColoredBtn(Text.cancel, STYLE_DATA.Color.CANCEL_QUIT)
+    
     def _initLayout(self):
         """ initializes layout"""
         self.logger.info("")
@@ -90,7 +89,7 @@ class ConfirmTranscribePage(QWidget):
             self.cancelBtn, alignment = center)
         self.bottomButton.setContentsMargins(0,0,0,0)
         self.verticalLayout.addWidget(self.bottomButton, alignment=center)
-        self.horizontalLayout.setSpacing(Dimension.LARGE_SPACING)
+        self.horizontalLayout.setSpacing(STYLE_DATA.Dimension.LARGE_SPACING)
         
     def _sendTranscribeSignal(self):
         """sends a signal with a set of file keys that will be transcribed """
@@ -98,4 +97,15 @@ class ConfirmTranscribePage(QWidget):
         self.fileTable.transferAll()
         self.signal.transcribe.emit(list(self.fileTable.transferList))
         self.fileTable.transferState()
+    
+    
 
+    def colorChange(self, colormode = None ):
+        """ called when color is changed """
+        self.confirmBtn.colorChange(STYLE_DATA.Color.SECONDARY_BUTTON)
+        self.cancelBtn.colorChange(STYLE_DATA.Color.CANCEL_QUIT)
+
+    ## controlling font
+    def fontSizeChange(self, fontmode = None ):
+        """ called when font size is changed """
+        self.label.fontChange(STYLE_DATA.FontSize.HEADER2)

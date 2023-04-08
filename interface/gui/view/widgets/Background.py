@@ -11,7 +11,7 @@ Description: implement function for initialize background for different pages
 '''
 import os
 
-from view.config.Style import Color, Asset, Dimension, ASSET_DICT, COLOR_DICT
+from view.config.Style import STYLE_DATA 
 from view.Signals import GlobalStyleSignal
 from view.widgets.Image import Image
 from config_frontend import PROJECT_ROOT
@@ -26,16 +26,6 @@ from PyQt6.QtGui import (
 )
 from PyQt6.QtWidgets import QWidget, QVBoxLayout
 
-COLOR = Color
-ASSET = Asset
-
-def changeColor(colormode):
-    global COLOR 
-    global ASSET 
-    COLOR = COLOR_DICT[colormode]
-    ASSET = ASSET_DICT[colormode]
-    
-GlobalStyleSignal.changeColor.connect(changeColor)
 
 class Background(QBrush):
     """ a QBrush object that creates a white background """
@@ -46,31 +36,31 @@ class Background(QBrush):
 
 def initHomePageBackground(widget:QWidget):
     """initialize the home page background with image"""
-    _initImgBackground(widget, ASSET.homeBackground)
+    _initImgBackground(widget, STYLE_DATA.Asset.homeBackground)
 
 
 def initSubPageBackground(widget:QWidget):
     """ initialize the sub pages background with image"""
-    _initImgBackground(widget, ASSET.subPageBackground)
+    _initImgBackground(widget, STYLE_DATA.Asset.subPageBackground)
 
 
 def initSideBarBackground(widget:QWidget):
     """ initialize the side bar background with image"""
-    _initImgBackground(widget, ASSET.sideBarBackground)
+    _initImgBackground(widget, STYLE_DATA.Asset.sideBarBackground)
 
     
 def initPrimaryColorBackground(widget:QWidget):
     """ fill the widget with primary color background"""
-    _initBackground(widget, COLOR.MAIN_BACKGROUND)
+    _initBackground(widget, STYLE_DATA.Color.MAIN_BACKGROUND)
 
 def initSecondaryColorBackground(widget:QWidget):
     """ fill the widget with secondary color background"""
-    _initBackground(widget, COLOR.SUB_BACKGROUND)
+    _initBackground(widget, STYLE_DATA.Color.SUB_BACKGROUND)
 
 def addLogo(layout: QVBoxLayout):
     """ add the logo to the top left corner on the layout """
     logo = Image(
-        ASSET.hilLabLogo, (Dimension.LOGO_WIDTH, Dimension.LOGO_HEIGHT))
+        STYLE_DATA.Asset.hilLabLogo, (STYLE_DATA.Dimension.LOGO_WIDTH, STYLE_DATA.Dimension.LOGO_HEIGHT))
     layout.addWidget(
         logo, alignment=Qt.AlignmentFlag.AlignTop|Qt.AlignmentFlag.AlignRight)
     logo.setContentsMargins(0,0,0,0)
@@ -88,7 +78,7 @@ def _resizeEvent(widget: QWidget, event: QResizeEvent, img: str):
     palette.setBrush(QPalette.ColorRole.Window, brush)
     widget.setPalette(palette)
     
-def _initBackground(widget:QWidget, color=COLOR.MAIN_BACKGROUND):
+def _initBackground(widget:QWidget, color = STYLE_DATA.Color.MAIN_BACKGROUND):
     """ make the widget background as white """
     widget.setAutoFillBackground(True)
     bg = Background(color)
@@ -96,7 +86,7 @@ def _initBackground(widget:QWidget, color=COLOR.MAIN_BACKGROUND):
     palette.setBrush(QPalette.ColorRole.Window, bg)
     widget.setPalette(palette)
 
-def _initImgBackground(widget:QWidget, background: str = Asset.homeBackground):
+def _initImgBackground(widget:QWidget, background: str = STYLE_DATA.Asset.homeBackground):
     """  initialize the image background for a widget
     Args:
     widget (QWidget): a QWidget object 

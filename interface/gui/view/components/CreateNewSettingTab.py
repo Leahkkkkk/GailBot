@@ -15,7 +15,7 @@ from typing import List
 
 from gbLogger import makeLogger
 from view.config.Text import CreateNewProfileTabText as Text
-from view.config.Style import Dimension
+from view.config.Style import STYLE_DATA
 from view.pages.CreateNewProfilePages import (
     ProfileName,
     EngineSetting, 
@@ -63,7 +63,8 @@ class CreateNewSetting(QDialog):
                 Text.TabHeader2: self.engineSetting,
                 Text.TabHeader3: self.pluginSetting
             },
-            QSize(Dimension.LARGEDIALOGWIDTH, Dimension.LARGEDIALOGHEIGHT)
+            QSize(STYLE_DATA.Dimension.LARGEDIALOGWIDTH, 
+                  STYLE_DATA.Dimension.LARGEDIALOGHEIGHT)
         )
         
         mainTab.changePageBtn.finishBtn.clicked.connect(self._postSetting)

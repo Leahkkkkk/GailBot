@@ -10,12 +10,9 @@ Modified By:  Siara Small  & Vivian Li
 '''
 
 from view.config.Style import (
-    Color, 
-    Dimension, 
+    STYLE_DATA,
     FileTableDimension
 )
-from view.config.Style import FontSize as FS
-from view.config.Style import FontFamily
 from view.config.Text import TranscribeSuccessText as Text
 from view.config.Text import FileTableHeader
 from view.widgets import (
@@ -50,14 +47,12 @@ class TranscribeSuccessPage(QWidget):
     def _initWidget(self):
         """ initializes widgets on the page """
         self.label = Label(
-            Text.mainLabelText,
-            FS.HEADER2,
-            FontFamily.MAIN)
+            Text.mainLabelText, STYLE_DATA.FontSize.HEADER2, STYLE_DATA.FontFamily.MAIN)
         self.label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         self.moreBtn = ColoredBtn(
-            Text.moreBtnText, Color.SECONDARY_BUTTON)
+            Text.moreBtnText, STYLE_DATA.Color.SECONDARY_BUTTON)
         self.returnBtn = ColoredBtn(
-            Text.returnBtnText, Color.PRIMARY_BUTTON)
+            Text.returnBtnText, STYLE_DATA.Color.PRIMARY_BUTTON)
         self._initHorizontalLayout()
         self.fileTable = FileTable(
             FileTableHeader.successPage, self.signal)
@@ -68,7 +63,7 @@ class TranscribeSuccessPage(QWidget):
         self.verticalLayout = QVBoxLayout()
         self.container = QWidget()
         self.containerLayout = QVBoxLayout()
-        self.container.setFixedWidth(Dimension.TABLECONTAINERWIDTH)
+        self.container.setFixedWidth(STYLE_DATA.Dimension.TABLECONTAINERWIDTH)
         self.container.setLayout(self.containerLayout)
         self.containerLayout.addWidget(self.fileTable)
         self.setLayout(self.verticalLayout)
@@ -78,8 +73,7 @@ class TranscribeSuccessPage(QWidget):
         self.verticalLayout.addWidget(
             self.container,alignment = Qt.AlignmentFlag.AlignHCenter)
         self.verticalLayout.addWidget(self.horizontal)
-        self.verticalLayout.setSpacing(Dimension.LARGE_SPACING)
-
+        self.verticalLayout.setSpacing( STYLE_DATA.Dimension.LARGE_SPACING)
 
     def _initHorizontalLayout(self):
         """ initializes the horizontal layout of buttons to 
@@ -89,12 +83,15 @@ class TranscribeSuccessPage(QWidget):
         self.horizontal.setLayout(self.horizontalLayout)
         self.horizontalLayout.addWidget(self.moreBtn, alignment = right)
         self.horizontalLayout.addWidget(self.returnBtn, alignment = left)
-        self.horizontalLayout.setSpacing(Dimension.LARGE_SPACING)
+        self.horizontalLayout.setSpacing( STYLE_DATA.Dimension.LARGE_SPACING)
 
     def _initStyle(self):
         """ initializes the style of the buttons on the page """
         self.moreBtn.setMinimumSize(
-            QtCore.QSize(Dimension.BTNWIDTH, Dimension.BTNHEIGHT))
+            QtCore.QSize(STYLE_DATA.Dimension.BTNWIDTH,  STYLE_DATA.Dimension.BTNHEIGHT))
         self.returnBtn.setMinimumSize(
-            QtCore.QSize(Dimension.BTNWIDTH, Dimension.BTNHEIGHT))
+            QtCore.QSize(STYLE_DATA.Dimension.BTNWIDTH, STYLE_DATA.Dimension.BTNHEIGHT))
+        STYLE_DATA.signal.changeFont.connect(self.fontchange)
 
+    def fontchange(self):
+        self.label.fontChange(STYLE_DATA.FontSize.HEADER2)

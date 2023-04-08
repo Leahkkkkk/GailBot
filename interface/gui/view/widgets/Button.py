@@ -11,7 +11,6 @@ Description: implement reusable button widgets
 '''
 import os
 from typing import List
-from view.Signals import GlobalStyleSignal
 from view.config.Text import BtnText as Text
 from config_frontend import PROJECT_ROOT
 from view.util.ColorGenerator import colorScale
@@ -26,34 +25,8 @@ from PyQt6.QtCore import  Qt
 from PyQt6.QtGui import QIcon, QCursor
 
 #### controlling style changes 
-from view.config.Style import (
-    FontSize, 
-    Dimension, 
-    Color, 
-    StyleSheet, 
-    Asset, 
-    ASSET_DICT, 
-    STYLE_DICT,  
-    FONT_DICT,
-    COLOR_DICT)  
-
-FONT_SIZE = FontSize
-COLOR = Color
-STYLESHEET = StyleSheet
-ASSET = Asset
-
-def colorchange(colormode):
-    global COLOR 
-    global STYLESHEET
-    global ASSET
-    COLOR = COLOR_DICT[colormode]
-    STYLESHEET = STYLE_DICT[colormode]
-    ASSET = ASSET_DICT[colormode]
-
-def fontchange(fontsize):
-    global FONT_SIZE
-    FONT_SIZE = FONT_DICT[fontsize]
-
+from view.config.Style import STYLE_DATA
+      
 class ColoredBtn(QPushButton):
     """ a button widget with colored background and white button text
 
@@ -61,13 +34,13 @@ class ColoredBtn(QPushButton):
         label (str): button text
         color (str): hex color in string 
         fontSIze (str, optional): represented in string, unit is pixel 
-                                  Defaults to FontSize.BTN.
+                                  Defaults to STYLE_DATA.FontSize.BTN.
     """
     def __init__(
         self,
         label:str, 
         color:str, 
-        fontSIze:str = FontSize.BTN , 
+        fontSIze:str = STYLE_DATA.FontSize.BTN , 
         other:str = None,
         borderRadius:int =5,
         *args, 
@@ -82,7 +55,7 @@ class ColoredBtn(QPushButton):
         self.fontSIze = fontSIze
         self.other = other
         self.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
-        self.setFixedSize(Dimension.BTNWIDTH, Dimension.BTNHEIGHT)
+        self.setFixedSize(STYLE_DATA.Dimension.BTNWIDTH, STYLE_DATA.Dimension.BTNHEIGHT)
         self.defaultStyle = f"border-radius:{self.borderRadius};"\
                             f"padding:1;"\
                             f"color:#fff;"\
@@ -95,7 +68,7 @@ class ColoredBtn(QPushButton):
     def _pressStyle(self):
         """ sets the button color to be darker  """
         self.setStyleSheet(self.defaultStyle + 
-                           f"background-color:{self.pressColor}")
+                           f"background-color:{self.pressColor};")
     def _releaseStyle(self):
         """ sets the button color to original color """
         self.setStyleSheet(self.defaultStyle + 
@@ -110,6 +83,10 @@ class ColoredBtn(QPushButton):
                             f"font-size:{self.fontSIze};"\
                             f"{self.other};"
         self._releaseStyle()
+    
+    def fontChange(self, fontsize):
+        # set the updated palette to the label
+        self.setStyleSheet(self.styleSheet() + f";font-size: {fontsize};")
 
 class BorderBtn(QPushButton):
     """ a button widget with colored border and text 
@@ -119,7 +96,7 @@ class BorderBtn(QPushButton):
         label (str): button text
         color (str): hex color in string 
         fontSIze (str, optional): represented in string, unit is pixel 
-                                  Defaults to FontSize.BTN 
+                                  Defaults to STYLE_DATA.FontSize.BTN 
         borderRadius (int): button border
         other (str): other additional style
     """
@@ -127,11 +104,11 @@ class BorderBtn(QPushButton):
         self, 
         label:str, 
         color:str,
-        fontSize:str = FontSize.BTN, 
+        fontSize:str = STYLE_DATA.FontSize.BTN, 
         borderRadius:int = 5,
         other:str = None,
-        width:int = Dimension.BTNWIDTH,
-        height:int = Dimension.BTNHEIGHT,
+        width:int = STYLE_DATA.Dimension.BTNWIDTH,
+        height:int = STYLE_DATA.Dimension.BTNHEIGHT,
         *args, 
         **kwargs
     ):
@@ -177,6 +154,17 @@ class BorderBtn(QPushButton):
     def applyOtherStyle(self):
         self.setDefaultStyle()
 
+    def fontChange(self, fontsize):
+        # set the updated palette to the label
+        self.fontSize = fontsize
+        self.defaultStyle =f"border: 1px solid {self.color};"\
+                           f"color:{self.color};"\
+                           f"border-radius:{self.borderRadius};"\
+                           f"padding:1;"\
+                           f"font-size:{self.fontSize};"\
+                           f"{self.other};" 
+        self.setDefaultStyle()
+
 class ToggleBtn(QPushButton):
     """ A toggle button that display different label when being toggled 
     
@@ -187,7 +175,7 @@ class ToggleBtn(QPushButton):
     """
     def __init__(
         self, 
-        label: tuple = (Asset.rightImg, Asset.downImg), 
+        label: tuple = (STYLE_DATA.Asset.rightImg, STYLE_DATA.Asset.downImg), 
         text: str = "", 
         state: bool = False, 
         *args, 
@@ -195,8 +183,8 @@ class ToggleBtn(QPushButton):
         super().__init__(*args, **kwargs)
         self.text = text
         self.setText(self.text)
-        self.rightIcon = QIcon(os.path.join(PROJECT_ROOT, Asset.rightImg))
-        self.downIcon = QIcon(os.path.join(PROJECT_ROOT, Asset.downImg))
+        self.rightIcon = QIcon(os.path.join(PROJECT_ROOT, STYLE_DATA.Asset.rightImg))
+        self.downIcon = QIcon(os.path.join(PROJECT_ROOT, STYLE_DATA.Asset.downImg))
         self.setCheckable(True)
         self.clicked.connect(self._changeSymbol)
         self.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
@@ -204,8 +192,9 @@ class ToggleBtn(QPushButton):
         self._changeSymbol()
         self.update()
         self.show()
-        self.setStyleSheet(f"font-size:{FontSize.HEADER4}")
-        # GlobalStyleSignal.changeColor.connect(self.changeColor)
+        self.setStyleSheet(f";font-size:{STYLE_DATA.FontSize.HEADER4};")
+        STYLE_DATA.signal.changeColor.connect(self.changeColor)
+        STYLE_DATA.signal.changeFont.connect(self.fontChange)
 
     def _changeSymbol(self):
         """ changes the button symbol """
@@ -220,13 +209,17 @@ class ToggleBtn(QPushButton):
         self.setIcon(self.rightIcon)
         self.state = True
 
-    def changeColor(self, colormode):
+    def changeColor(self, colormode = None):
         """ change color  """
-        self.rightIcon = QIcon(os.path.join(PROJECT_ROOT, ASSET_DICT[colormode].rightImg))
-        self.downIcon = QIcon(os.path.join(PROJECT_ROOT, ASSET_DICT[colormode].downImg))
+        self.rightIcon = QIcon(os.path.join(PROJECT_ROOT, STYLE_DATA.Asset.rightImg))
+        self.downIcon = QIcon(os.path.join(PROJECT_ROOT, STYLE_DATA.Asset.downImg))
         self.state = not self.state
         self._changeSymbol()
     
+    def fontChange(self, fontmode = None):
+        print(self.styleSheet())
+        self.setStyleSheet(self.styleSheet() + f";font-size: {STYLE_DATA.FontSize.HEADER4};")
+        
 class IconBtn(QPushButton):
     """ A button with icon
     icon (str): a string that indicate the icon file name
@@ -244,6 +237,8 @@ class IconBtn(QPushButton):
     def changeIcon(self, icon):
         icon = QIcon(os.path.join(PROJECT_ROOT, icon))
         self.setIcon(icon)
+        
+        
 """ NOTE: currently unused in the interface  """  
 class dropDownButton(QWidget):
     """ a dropdown button widget, when the button is clicked,
@@ -259,9 +254,9 @@ class dropDownButton(QWidget):
         super().__init__(*args, **kwargs)
         self.buttonList = buttonList(buttons,btnFuns) 
         self.btn = ColoredBtn(f"\u25B6 {label}", 
-                              Color.PRIMARY_BUTTON,
-                              FontSize.SMALL, 
-                              StyleSheet.dropDownBtn)
+                              STYLE_DATA.Color.PRIMARY_BUTTON,
+                              STYLE_DATA.FontSize.SMALL, 
+                              STYLE_DATA.StyleSheet.dropDownBtn)
         self.label = label
         self.hideView = True 
         self.setFixedWidth(130)
@@ -308,9 +303,9 @@ class buttonList(QWidget):
         for i in range(len(labels)):
             newButton = ColoredBtn(
                 labels[i],
-                Color.PRIMARY_BUTTON, 
-                FontSize.SMALL,
-                StyleSheet.buttonList)
+                STYLE_DATA.Color.PRIMARY_BUTTON, 
+                STYLE_DATA.FontSize.SMALL,
+                STYLE_DATA.StyleSheet.buttonList)
             self.btnList.append(newButton)
             if btnFuns:
                 self.btnList[i].clicked.connect(btnFuns[i])

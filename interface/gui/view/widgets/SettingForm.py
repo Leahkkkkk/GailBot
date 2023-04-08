@@ -16,12 +16,7 @@ from .Label import Label
 from .TextForm import TextForm
 from .ScrollArea import ScrollArea
 from .Background import initSecondaryColorBackground, _initBackground
-from ..config.Style import (
-    FontFamily, 
-    FontSize, 
-    Dimension,
-    COLOR_DICT
-)
+from ..config.Style import STYLE_DATA 
 from PyQt6.QtWidgets import (
     QWidget, 
     QVBoxLayout,
@@ -59,12 +54,9 @@ class SettingForm(QWidget):
         self._connectSignal()
     
     def _connectSignal(self):
-        GlobalStyleSignal.changeColor.connect(self.colorChange)
+        STYLE_DATA.signal.changeColor.connect(self.colorChange)
+        STYLE_DATA.signal.changeFont.connect(self.fontChange)
 
-    def colorChange(self, colormode):
-        print(colormode)
-        print(COLOR_DICT[colormode].SUB_BACKGROUND)
-        _initBackground(self._scroll, COLOR_DICT[colormode].SUB_BACKGROUND)
         
     def setValue(self, values:dict) -> None:
         """ public function to set the values in the form  """
@@ -77,18 +69,18 @@ class SettingForm(QWidget):
     def _initWidget(self):
         """ initializes the widgets """
         self.header = Label(
-            self.headerText, FontSize.HEADER2,FontFamily.MAIN)
+            self.headerText, STYLE_DATA.FontSize.HEADER2,STYLE_DATA.FontFamily.MAIN)
         if self.captionText:
             self.caption = Label(
-                self.captionText, FontSize.DESCRIPTION, FontFamily.MAIN)
+                self.captionText, STYLE_DATA.FontSize.DESCRIPTION, STYLE_DATA.FontFamily.MAIN)
         self.setForm = TextForm(self.formData)
         self._scroll = ScrollArea()
         self._scroll.setWidgetResizable(True)
         self._scroll.setVerticalScrollBarPolicy(
             Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
         self._scroll.setWidget(self.setForm)
-        self._scroll.setFixedWidth(Dimension.FORMWIDTH)
-        self._scroll.setFixedHeight(Dimension.FORMMINHEIGHT)
+        self._scroll.setFixedWidth(STYLE_DATA.Dimension.FORMWIDTH)
+        self._scroll.setFixedHeight(STYLE_DATA.Dimension.FORMMINHEIGHT)
         initSecondaryColorBackground(self._scroll)
     
     def _initLayout(self):
@@ -105,6 +97,13 @@ class SettingForm(QWidget):
     def addWidget(self, widget: QWidget):
         self.setForm.addWidget(widget)
 
+    def colorChange(self):
+        _initBackground(self._scroll, STYLE_DATA.Color.SUB_BACKGROUND)
+    
+    def fontChange(self):
+        self.header.fontChange(STYLE_DATA.FontSize.HEADER2)
+        self.caption.fontChange(STYLE_DATA.FontSize.DESCRIPTION)
+        
 
     
         

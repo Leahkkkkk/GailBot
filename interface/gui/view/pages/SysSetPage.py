@@ -13,11 +13,7 @@ import os
 from typing import List
 import toml
 from view.config.Style import (
-    Color,
-    FontSize,
-    Dimension,
-    COLOR_DICT,
-    FONT_DICT
+    STYLE_DATA,
 )
 from view.widgets import (
     SettingForm,
@@ -40,7 +36,6 @@ from view.widgets import ConfirmBox, WarnBox
 from PyQt6.QtWidgets import (
     QWidget,
     QHBoxLayout,
-    QStackedWidget,
     QMessageBox,
     QVBoxLayout
     )
@@ -62,6 +57,7 @@ class SystemSettingPage(QWidget):
         self.signal = Signal()
         self.logger = makeLogger("F")
         self.formButtons: List[Button.BorderBtn] = []
+        self.labels: List[Label] = []
         self._initWidget()
         self._initLayout()
         self._connectSignal()
@@ -70,12 +66,13 @@ class SystemSettingPage(QWidget):
     def _initWidget(self):
         """ initializes widgets to be shown """
         self.SysSetForm = SettingForm.SettingForm(Text.header, self.data, Text.caption)
-        self.saveBtn = Button.ColoredBtn(Text.saveBtn, Color.PRIMARY_BUTTON)
+        self.saveBtn = Button.ColoredBtn(Text.saveBtn, STYLE_DATA.Color.PRIMARY_BUTTON)
         
     def _connectSignal(self):
         """ connect the signal to slots """
         self.saveBtn.clicked.connect(self._confirmChangeSetting)
-        GlobalStyleSignal.changeColor.connect(self.colorChange)
+        STYLE_DATA.signal.changeColor.connect(self.colorChange)
+        STYLE_DATA.signal.changeFont.connect(self.fontChange)
         
     def _initLayout(self):
         """ initialize the form section """
@@ -89,12 +86,16 @@ class SystemSettingPage(QWidget):
         self._addFormButton(Text.SaveLogLabel, Text.SaveLogBtn, self._saveLog)
         self._addFormButton(Text.ClearCacheLabel, Text.ClearCacheBtn, self._clearCache)
 
-    def colorChange(self, colormode):
-        self.saveBtn.colorChange(COLOR_DICT[colormode].PRIMARY_BUTTON)
+    def colorChange(self, colormode = None):
+        self.saveBtn.colorChange(STYLE_DATA.Color.PRIMARY_BUTTON)
         for button in self.formButtons:
-            button.setStyleSheet(button.styleSheet() + 
-                                 f"background-color: {COLOR_DICT[colormode].INPUT_BACKGROUND};")
+            button.addOtherStyle("background-color: {STYLE_DATA.Color.INPUT_BACKGROUND}")
+            button.colorChange(STYLE_DATA.Color.INPUT_TEXT)
     
+    def fontChange(self, fontmode = None):
+        for label in self.labels:
+            label.fontChange(STYLE_DATA.FontSize.BODY)
+            
     def setValue(self, values:dict):
         """ public function to set the system setting form value
 
@@ -118,7 +119,9 @@ class SystemSettingPage(QWidget):
         setting = self.SysSetForm.getValue()
         try:
             GlobalStyleSignal.changeColor.emit(setting["Color Mode"])
+            WarnBox("Changing Color")
             GlobalStyleSignal.changeFont.emit(setting["Font Size"])
+            WarnBox("Changing Font")
             
             colorSource = StyleTable[setting["Color Mode"]]
             colorDes    = StyleSource.CURRENT_COLOR
@@ -175,14 +178,14 @@ class SystemSettingPage(QWidget):
     def _addFormButton(self, label, btnText, fun: callable):
         container = QWidget()
         layout = QHBoxLayout()
-        label = Label(label, FontSize.BODY)
-        label.setFixedWidth(Dimension.INPUTWIDTH)
+        label = Label(label, STYLE_DATA.FontSize.BODY)
+        label.setFixedWidth(STYLE_DATA.Dimension.INPUTWIDTH)
         button = Button.BorderBtn(
             btnText,
-            Color.INPUT_TEXT,
-            other = f"background-color: {Color.INPUT_BACKGROUND}"
+            STYLE_DATA.Color.INPUT_TEXT,
+            other = f"background-color: {STYLE_DATA.Color.INPUT_BACKGROUND}"
         )
-        button.setFixedHeight(Dimension.INPUTHEIGHT)
+        button.setFixedHeight(STYLE_DATA.Dimension.INPUTHEIGHT)
         button.setFixedWidth(130)
         container.setLayout(layout)
         layout.addWidget(label)
@@ -191,3 +194,4 @@ class SystemSettingPage(QWidget):
         button.clicked.connect(fun)
         self.SysSetForm.addWidget(container)
         self.formButtons.append(button)
+        self.labels.append(label)

@@ -17,7 +17,7 @@ from view.Signals import (
     PluginSignals, 
     ViewSignals, 
     GlobalStyleSignal)
-from view.config.Style import Dimension
+from view.config.Style import STYLE_DATA
 from view.config.Text import MainStackText
 from view.widgets.MsgBox import WarnBox, ConfirmBox
 from view.pages import (
@@ -70,7 +70,8 @@ class MainStack(QStackedWidget):
         self.pluginSignals = pluginSignals
         self.logger= makeLogger("F")
         self.setMaximumSize(
-            QSize(Dimension.WINMAXWIDTH, Dimension.WINMAXHEIGHT))
+            QSize(STYLE_DATA.Dimension.WINMAXWIDTH, 
+                  STYLE_DATA.Dimension.WINMAXHEIGHT))
         self._initPage()
         self._pageRedirect()
         self._connectSignal()
