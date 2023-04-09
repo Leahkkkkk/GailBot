@@ -12,7 +12,6 @@ Description: implement function for initialize background for different pages
 import os
 
 from view.config.Style import STYLE_DATA 
-from view.Signals import GlobalStyleSignal
 from view.widgets.Image import Image
 from config_frontend import PROJECT_ROOT
 

@@ -57,12 +57,12 @@ def colorchange(colormode):
     STYLESHEET = STYLE_DICT[colormode]
     ASSET = ASSET_DICT[colormode]
 
-def fontchange(fontsize):
+def changeFont(fontsize):
     global FONT_SIZE
     FONT_SIZE = FONT_DICT[fontsize]
 
 GlobalStyleSignal.changeColor.connect(colorchange)
-GlobalStyleSignal.changeFont.connect(fontchange)
+GlobalStyleSignal.changeFont.connect(changeFont)
 ######################
 
 hCenter = Qt.AlignmentFlag.AlignHCenter

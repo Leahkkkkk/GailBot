@@ -11,7 +11,7 @@ Modified By:  Siara Small  & Vivian Li
 
 from .FormWidget import FormWidget
 from ..Label import Label
-from view.config.Style import FontSize, Dimension, StyleSheet, STYLE_DICT
+from view.config.Style import STYLE_DATA
 from view.Signals import GlobalStyleSignal
 from copy import deepcopy
 
@@ -19,15 +19,20 @@ from PyQt6.QtWidgets import QLineEdit, QHBoxLayout, QVBoxLayout, QWidget
 from PyQt6.QtCore import QSize
 
 class InputField(QLineEdit, FormWidget):
-    def __init__(self, width=Dimension.INPUTWIDTH, height = Dimension.INPUTHEIGHT, *args, **kwargs):
+    def __init__(self, 
+                 width = STYLE_DATA.Dimension.INPUTWIDTH, 
+                 height = STYLE_DATA.Dimension.INPUTHEIGHT, *args, **kwargs):
         super(InputField, self).__init__(*args, **kwargs)
         self.setFixedSize(QSize(width, height))
-        self.setStyleSheet(StyleSheet.INPUT_TEXT)
-        GlobalStyleSignal.changeColor.connect(self.colorchange)
-    
-    def colorchange(self, colormode):
-        self.setStyleSheet(STYLE_DICT[colormode].INPUT_TEXT)
+        self.setStyleSheet(STYLE_DATA.StyleSheet.INPUT_TEXT)
         
+        STYLE_DATA.signal.changeColor.connect(self.colorchange)
+        STYLE_DATA.signal.changeFont.connect(self.colorchange)
+    
+    def colorchange(self):
+        self.setStyleSheet(STYLE_DATA.StyleSheet.INPUT_TEXT)
+        
+    
     def mouseDoubleClickEvent(self, a0) -> None:
         super().mouseDoubleClickEvent(a0)
         self.clear()
@@ -35,11 +40,11 @@ class InputField(QLineEdit, FormWidget):
 class TextInput(QWidget, FormWidget):
     def __init__(self,
                  label: str, 
-                 labelSize = FontSize.BODY, 
+                 labelSize = STYLE_DATA.FontSize.BODY, 
                  inputText = None,
                  vertical = False,
-                 width = Dimension.INPUTWIDTH,
-                 height = Dimension.INPUTHEIGHT,
+                 width = STYLE_DATA.Dimension.INPUTWIDTH,
+                 height = STYLE_DATA.Dimension.INPUTHEIGHT,
                  *args, **kwargs) -> None:
         super(TextInput, self).__init__(*args, **kwargs)
         self.label = deepcopy(label)
@@ -57,7 +62,6 @@ class TextInput(QWidget, FormWidget):
         self.inputField = InputField(self._width, self._height)
         if self.value:
             self.inputField.setText(str(self.value))
-        
         self._layout = QVBoxLayout() 
         self.setLayout(self._layout)
         self._layout.addWidget(self.inputLabel)
@@ -65,6 +69,7 @@ class TextInput(QWidget, FormWidget):
         
     def connectSignal(self):
         self.inputField.textChanged.connect(self.updateValue)
+        STYLE_DATA.signal.changeFont.connect(self.fontchange)
 
     def setValue(self, value):
         self.value = value 
@@ -72,4 +77,7 @@ class TextInput(QWidget, FormWidget):
     
     def getValue(self):
         return self.inputField.text()
+    
+    def fontchange(self):
+        self.inputLabel.fontChange(STYLE_DATA.FontSize.BODY)
     

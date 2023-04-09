@@ -17,7 +17,7 @@ from gailbot.core.utils.general import (
     write_yaml,
 )
 from gailbot.core.utils.download import is_internet_connected
-from gailbot.configs import  whisper_config_loader
+from gailbot.configs import whisper_config_loader
 from gailbot.core.utils.logger import makelogger
 from gailbot.core.utils.general import is_file
 

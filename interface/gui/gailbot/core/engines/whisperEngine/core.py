@@ -5,8 +5,8 @@
 # @Last Modified time: 2023-03-15 11:43:23
 
 
-import sys
 import os
+from threading import Lock
 import json
 from typing import List, Dict, Any
 from dataclasses import asdict
@@ -36,6 +36,9 @@ logger = makelogger("whisper")
 
 WHISPER_CONFIG = whisper_config_loader()
 
+LOADED = False 
+LOADED_LOCK = Lock()
+
 class WhisperCore:
     """
     We are using this class as an adapter for the engine so that we can use
@@ -54,6 +57,10 @@ class WhisperCore:
         logger.info(f"Whisper workspace path: {self.workspace_dir}")
         self.cache_dir = os.path.join(self.workspace_dir,"cache")
         self.models_dir = os.path.join(self.cache_dir,"models")
+        self.model = None
+        self.loadeded = False
+        self.loadModelLock = Lock()
+        self.diarization_pipeline = None
         make_dir(self.workspace_dir,overwrite=False)
         make_dir(self.cache_dir,overwrite=False)
         make_dir(self.models_dir,overwrite=False)
@@ -75,6 +82,7 @@ class WhisperCore:
             f"Transcribe configs:\n{configs}"
         )
 
+
     def transcribe(
         self,
         audio_path : str,
@@ -82,7 +90,30 @@ class WhisperCore:
         detect_speaker : bool = False
     ) -> List[Dict]:
         assert is_file(audio_path), f"ERROR: Invalid file path: {audio_path}"
+        
+        # Load the model
+        # Load / loadeded the actual whisper model.
+        logger.info(f"start to load whisper model")
+        
+        global LOADED
+        global LOADED_LOCK
+        
+        with LOADED_LOCK:
+            if not LOADED:
+                self.model = whisper.load_model(
+                    name=WHISPER_CONFIG.model_name,
+                    device=self.device,
+                    download_root=self.models_dir
+                )
+                LOADED = True
+        logger.info(f"Whisper core using whisper model: {WHISPER_CONFIG.model_name}")
+
+        # Load the diarization pipeline
+        # TODO: Add this speaker diarization pipeline after further testing
+        self.diarization_pipeline = PyannoteDiarizer(self.models_dir)
+        logger.info("get the diarazation pipleine")
         logger.info(f"received setting language: {language}, detect speaker {detect_speaker} audio_path {audio_path}")
+         
         if language != None and not language in self.get_supported_languages():
             raise Exception(
                 f"Unsupported language, must be one of: {self.get_supported_languages()}"
@@ -91,20 +122,11 @@ class WhisperCore:
         if language == None:
             logger.info("No language specified - auto detecting language")
 
-        # Load the model
-        # Load / download the actual whisper model.
         self.model = whisper.load_model(
-            name=WHISPER_CONFIG.model_name,
-            device=self.device,
-            download_root=self.models_dir
-        )
-        logger.info(f"Whisper core using whisper model: {WHISPER_CONFIG.model_name}")
-
-        # Load the diarization pipeline
-        # TODO: Add this speaker diarization pipeline after further testing
-        self.diarization_pipeline = PyannoteDiarizer(self.models_dir)
-        logger.info("get the diarazation pipleine")
-
+                name=WHISPER_CONFIG.model_name,
+                device=self.device,
+                download_root=self.models_dir
+            )
 
         # Load the audio and models, transcribe, and return the parsed result
         logger.info("prepare to load audio")

@@ -68,7 +68,8 @@ class PluginPage(QWidget):
     def _connectSignal(self):
         self.addBtn.clicked.connect(self.addPluginSuite)
         self.signal.addPlugin.connect(self.addRequestWrapper)
-        GlobalStyleSignal.changeColor.connect(self.changeColor)
+        STYLE_DATA.signal.changeColor.connect(self.changeColor)
+        STYLE_DATA.signal.changeFont.connect(self.changeFont)
         
     def addRequestWrapper(self, suiteData):
         self.signal.addRequest.emit(
@@ -83,6 +84,10 @@ class PluginPage(QWidget):
         self.pluginTable.addPluginSuite(pluginSuite)
         self.signal.pluginAdded.emit(name)
     
-    def changeColor(self, colormode):
+    def changeColor(self):
         self.addBtn.colorChange(STYLE_DATA.Color.PRIMARY_BUTTON)
+    
+    def changeFont(self):
+        self.header.fontChange(STYLE_DATA.FontSize.HEADER2)
+        self.caption.fontChange(STYLE_DATA.FontSize.DESCRIPTION)
         

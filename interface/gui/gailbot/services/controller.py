@@ -332,8 +332,9 @@ class ServiceController:
                 logger.info(f"the invalid files are {invalid}")
             
             # remove source from organizer
-            for source in sources:
-                self.organizer.remove_source(source)
+            if sources:
+                for source in sources:
+                    self.organizer.remove_source(source)
            
             return invalid, fails
         except Exception as e:

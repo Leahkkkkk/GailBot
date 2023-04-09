@@ -119,9 +119,7 @@ class SystemSettingPage(QWidget):
         setting = self.SysSetForm.getValue()
         try:
             GlobalStyleSignal.changeColor.emit(setting["Color Mode"])
-            WarnBox("Changing Color")
             GlobalStyleSignal.changeFont.emit(setting["Font Size"])
-            WarnBox("Changing Font")
             
             colorSource = StyleTable[setting["Color Mode"]]
             colorDes    = StyleSource.CURRENT_COLOR

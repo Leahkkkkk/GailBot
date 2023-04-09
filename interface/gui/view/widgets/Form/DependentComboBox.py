@@ -1,6 +1,6 @@
 from typing import Dict, Tuple 
 from copy import deepcopy
-from view.config.Style import Color, Dimension, FontSize, FontFamily
+from view.config.Style import STYLE_DATA
 from ..Label import Label 
 from ..ComboBox import ComboBox 
 from ..TextForm import TextForm
@@ -96,9 +96,9 @@ class DependentCombo(QWidget, FormWidget):
         return value 
 
     def _initUI(self): 
-        self.mainLabel = Label(self.label, FontSize.HEADER4)
+        self.mainLabel = Label(self.label, STYLE_DATA.FontSize.HEADER4)
         self.mainCombo = ComboBox(self)
-        self.mainCombo.setMaximumWidth(Dimension.TOGGLEBARMINWIDTH)
+        self.mainCombo.setMaximumWidth(STYLE_DATA.Dimension.TOGGLEBARMINWIDTH)
         self.toggleList = None 
         for key, value in self.form.items():
             self.mainCombo.addItem(key, value)
@@ -129,4 +129,7 @@ class DependentCombo(QWidget, FormWidget):
         private function called to connect signal
         """
         self.mainCombo.currentIndexChanged.connect(self._updateComboBox)
-    
+        STYLE_DATA.signal.changeFont.connect(self.changeFont)
+   
+    def changeFont(self):
+        self.mainLabel.fontChange(STYLE_DATA.FontSize.HEADER4) 

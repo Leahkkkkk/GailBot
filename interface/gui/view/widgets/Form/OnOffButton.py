@@ -1,5 +1,5 @@
 from ..Label import Label
-from view.config.Style import  Dimension, FontSize
+from view.config.Style import STYLE_DATA, Dimension
 from view.config.Text import BtnText as Text 
 from copy import deepcopy
 from PyQt6.QtWidgets import QWidget, QPushButton, QHBoxLayout
@@ -17,7 +17,7 @@ class onOffButton(QWidget, FormWidget):
         self.connectSignal()
     
     def initUI(self):
-        self.label = Label(self.label, FontSize.BTN)
+        self.label = Label(self.label, STYLE_DATA.FontSize.BTN)
         if self.value:
             self.onOffBtn = QPushButton(Text.on)
         else:
@@ -50,3 +50,7 @@ class onOffButton(QWidget, FormWidget):
     
     def connectSignal(self):
         self.onOffBtn.clicked.connect(self.buttonClickHandler)
+        STYLE_DATA.signal.changeFont.connect(self.changeFont)
+
+    def changeFont(self):
+        self.label.fontChange(STYLE_DATA.FontSize.BTN)

@@ -18,7 +18,6 @@ from view.widgets import (
     Image,
     addLogo 
 )
-from view.Signals import GlobalStyleSignal
 
 from PyQt6.QtWidgets import (
     QWidget, 
@@ -37,7 +36,7 @@ class WelcomePage(QWidget):
         self._initLayout()
         self._initStyle()
         STYLE_DATA.signal.changeColor.connect(self.changeColor)
-        # STYLE_DATA.signal.changeFont.connect(self.changeFont)
+        STYLE_DATA.signal.changeFont.connect(self.changeFont)
         
     def _initWidget(self):
         """ initialize widgets """

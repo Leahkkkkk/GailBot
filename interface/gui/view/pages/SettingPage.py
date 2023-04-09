@@ -14,7 +14,6 @@ from typing import List, Dict, List, Tuple
 from view.config.Style import STYLE_DATA
 from view.config.Text import ProfilePageText as Text
 from view.config.Style import StyleSheet as STYLE 
-from view.Signals import GlobalStyleSignal
 from gbLogger import makeLogger
 
 from view.Signals import ProfileSignals, PluginSignals

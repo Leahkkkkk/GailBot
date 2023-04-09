@@ -51,7 +51,7 @@ class ConfirmTranscribePage(QWidget):
         """ connects signals upon button clicks """
         self.confirmBtn.clicked.connect(self._sendTranscribeSignal)
         GlobalStyleSignal.changeColor.connect(self.colorChange) 
-        GlobalStyleSignal.changeFont.connect(self.fontSizeChange)
+        GlobalStyleSignal.changeFont.connect(self.changeFont)
          
     def _initWidget(self):
         """ initializes widgets """
@@ -106,6 +106,6 @@ class ConfirmTranscribePage(QWidget):
         self.cancelBtn.colorChange(STYLE_DATA.Color.CANCEL_QUIT)
 
     ## controlling font
-    def fontSizeChange(self, fontmode = None ):
+    def changeFont(self, fontmode = None ):
         """ called when font size is changed """
         self.label.fontChange(STYLE_DATA.FontSize.HEADER2)

@@ -78,7 +78,8 @@ class FileUploadPage(QWidget):
         self.fileTable.viewSignal.nonZeroFile.connect(self._allowTranscribe)
         self.fileTable.viewSignal.ZeroFile.connect(self._disallowTranscribe)
         self._disallowTranscribe()
-        GlobalStyleSignal.changeColor.connect(self.colorChange)
+        STYLE_DATA.signal.changeColor.connect(self.colorChange)
+        STYLE_DATA.signal.changeFont.connect(self.fontChange)
         
     def _initWidget(self):
         """ initializes widgets """
@@ -149,10 +150,16 @@ class FileUploadPage(QWidget):
             QSize(STYLE_DATA.Dimension.LBTNWIDTH, STYLE_DATA.Dimension.BTNHEIGHT))
         self.gotoMainBtn.setStyleSheet(STYLE_DATA.StyleSheet.goToMain)
 
-    def colorChange(self, colormode):
+    def colorChange(self):
         self.gotoMainBtn.setStyleSheet(STYLE_DATA.StyleSheet.goToMain)
         self.settingBtn.colorChange(STYLE_DATA.Color.PRIMARY_BUTTON)
         self.removeAll.colorChange(STYLE_DATA.Color.PRIMARY_BUTTON)
+    
+    def fontChange(self):
+        self.label.fontChange(STYLE_DATA.FontSize.HEADER2)
+        self.transcribeBtn.fontChange(STYLE_DATA.FontSize.BTN)
+        self.uploadFileBtn.fontChange(STYLE_DATA.FontSize.BTN)
+        self.removeAll.fontChange(STYLE_DATA.FontSize.BTN)
     
     def _allowTranscribe(self):
         """ activates the transcribe button """

@@ -217,7 +217,6 @@ class ToggleBtn(QPushButton):
         self._changeSymbol()
     
     def fontChange(self, fontmode = None):
-        print(self.styleSheet())
         self.setStyleSheet(self.styleSheet() + f";font-size: {STYLE_DATA.FontSize.HEADER4};")
         
 class IconBtn(QPushButton):

@@ -11,7 +11,7 @@ Modified By:  Siara Small  & Vivian Li
 
 from .FormWidget import FormWidget
 from ..Label import Label
-from view.config.Style import FontSize, FontFamily
+from view.config.Style import STYLE_DATA
 from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QCheckBox
 
 
@@ -36,7 +36,7 @@ class CheckBox(QWidget, FormWidget):
     def initUI(self):
         self._layout = QHBoxLayout()
         self.checkBox = QCheckBox()
-        self.label = Label(self.label, FontSize.INSTRUCTION_CAPTION, FontFamily.MAIN)
+        self.label = Label(self.label, STYLE_DATA.FontSize.INSTRUCTION_CAPTION, STYLE_DATA.FontFamily.MAIN)
         self.checkBox.setStyleSheet(CHECKBOX_STYLESHEET)
         self.setLayout(self._layout)
         self._layout.addWidget(self.checkBox)
@@ -61,3 +61,6 @@ class CheckBox(QWidget, FormWidget):
     
     def disable(self):
         self.checkBox.setCheckable(False)
+    
+    def fontChange(self):
+        self.label.fontChange(STYLE_DATA.FontSize.INSTRUCTION_CAPTION)

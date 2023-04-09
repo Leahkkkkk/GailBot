@@ -4,7 +4,7 @@ from .TextInput import InputField
 from ..Label import Label
 from ..Button import BorderBtn
 from ..MsgBox import WarnBox
-from view.config.Style import Color, FontSize, Dimension
+from view.config.Style import STYLE_DATA
 from view.util.ErrorMsg import ERR, WARN
 from copy import deepcopy
 from PyQt6.QtWidgets import (
@@ -20,19 +20,30 @@ class UploadFile(QWidget, FormWidget):
         self.logger = makeLogger("FileUpload")
         self.initUI()
         self.selectFileBtn.clicked.connect(self.uploadFile)
+        STYLE_DATA.signal.changeFont.connect(self.changefont)
+        STYLE_DATA.signal.changeColor.connect(self.changeColor)
     
     def initUI(self):
         self._layout = QGridLayout()
         self.label = "Upload file for " + self.label.replace("_", " ")
-        self.labelWidget = Label(self.label, FontSize.BODY)
+        self.labelWidget = Label(self.label, STYLE_DATA.FontSize.BODY)
         self.pathDisplay = InputField()
-        self.selectFileBtn = BorderBtn("···", Color.PRIMARY_BUTTON, FontSize.HEADER1)
+        self.selectFileBtn = BorderBtn("···", 
+                                       STYLE_DATA.Color.PRIMARY_BUTTON, 
+                                       STYLE_DATA.FontSize.HEADER1)
         self.selectFileBtn.setFixedWidth(70)
-        self.selectFileBtn.setFixedHeight(Dimension.INPUTHEIGHT)
+        self.selectFileBtn.setFixedHeight(STYLE_DATA.Dimension.INPUTHEIGHT)
         self.setLayout(self._layout)
         self._layout.addWidget(self.labelWidget, 0, 0)
         self._layout.addWidget(self.pathDisplay, 1, 0)
         self._layout.addWidget(self.selectFileBtn, 1, 1)
+
+    def changefont(self):
+        self.labelWidget.fontChange(STYLE_DATA.FontSize.BODY)
+        self.selectFileBtn.fontChange(STYLE_DATA.FontSize.BODY)
+    
+    def changeColor(self):
+        self.selectFileBtn.colorChange(STYLE_DATA.Color.PRIMARY_BUTTON)
         
     def uploadFile(self):
         try: 

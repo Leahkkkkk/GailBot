@@ -355,9 +355,9 @@ class ChooseOutPut(TabPage):
     
     def _addDir(self):
         """ adds existing directory as output directory """
-        self.logger.info("")
+        self.logger.info("add the existing directory")
         fileDialog = QFileDialog()
-        outPath = fileDialog.getExistingDirectory(None, Text.selectFolderText)
+        outPath = fileDialog.getExistingDirectory()
         if outPath:
             self.outPath = outPath
             self.signals.close.emit()

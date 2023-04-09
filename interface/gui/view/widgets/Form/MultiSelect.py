@@ -1,7 +1,7 @@
 from typing import List, Dict
 from .FormWidget import FormWidget
 from ..Label import Label
-from view.config.Style import FontSize, FontFamily
+from view.config.Style import STYLE_DATA
 from gbLogger import makeLogger
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QStyle
 from .CheckBox import CheckBox
@@ -23,7 +23,7 @@ class MultipleSelect(QWidget, FormWidget):
     def initUI(self):
         self._layout = QVBoxLayout()
         self._layout.setAlignment(Qt.AlignmentFlag.AlignTop)
-        self.labelwidget = Label(self.labeltxt, FontSize.HEADER4)
+        self.labelwidget = Label(self.labeltxt, STYLE_DATA.FontSize.HEADER4)
         self.setLayout(self._layout)
         self._layout.addWidget(self.labelwidget, alignment=Qt.AlignmentFlag.AlignTop)
         
@@ -55,3 +55,6 @@ class MultipleSelect(QWidget, FormWidget):
                 self.choicesDict[choice].hide()
             except Exception as e:
                 self.logger.error(e, exc_info=e)
+            
+    def changeFont(self):
+        self.labelwidget.fontChange(STYLE_DATA.FontSize.HEADER4)

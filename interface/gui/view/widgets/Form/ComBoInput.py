@@ -13,7 +13,7 @@ from typing import List
 from .FormWidget import FormWidget
 from ..Label import Label 
 from ..ComboBox import ComboBox
-from view.config.Style import Color, FontSize
+from view.config.Style import STYLE_DATA
 from PyQt6.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget
 
 class InputCombo(QWidget, FormWidget):
@@ -21,7 +21,7 @@ class InputCombo(QWidget, FormWidget):
                  selections: List[str], 
                  label: str, 
                  vertical: bool = False,
-                 labelSize = FontSize.BODY,
+                 labelSize = STYLE_DATA.FontSize.BODY,
                  inputText = None, 
                  *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
@@ -56,6 +56,10 @@ class InputCombo(QWidget, FormWidget):
         connect file signal
         """
         self.inputField.currentTextChanged.connect(self.updateValue)
+        STYLE_DATA.signal.changeFont.connect(self.fontChange)
+    
+    def fontChange(self):
+        self.inputLabel.fontChange(STYLE_DATA.FontSize.BODY)
         
     def setValue(self, value: str):
         """ 
