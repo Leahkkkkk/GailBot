@@ -45,7 +45,7 @@ def test_whisper_wav_suite():
     fails, invalid = transcribe(PATH.WAV_SUITE, "speaker", SETTING_DATA.WHISPER_SPEAKER_PROFILE)
 
 def test_whisper_hello():
-    fails, invalid = transcribe([PATH.HELLO_1, PATH.HELLO_2, PATH.HELLO_3, PATH.HELLO_4], "speaker", SETTING_DATA.WHISPER_PROFILE)
+    fails, invalid = transcribe([PATH.HELLO_1, PATH.HELLO_2], "whisler", SETTING_DATA.WHISPER_PROFILE)
 
 def test_whisper_wav_dir():
     fails, invalid = transcribe([PATH.WAV_DIR], "whisper", SETTING_DATA.WHISPER_PROFILE)

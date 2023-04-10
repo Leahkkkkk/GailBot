@@ -118,6 +118,19 @@ class XML:
     TEST = "test"
     CONV = "Conversation"
     HIL = "HiLab"
+    LENGTH = "length"
+    DELIM = "ca-delimiter"
+    VERSION_NUM = "ca-delimiter"
+
+@dataclass
+class TAGS:
+    PARTS = "Participants"
+    CHAT = "CHAT"
+    VSN = "Version"
+    Lang = "Lang"
+    CORP = "Corpus"
+    DATE = "Date"
+    W = "w"
 
 @dataclass 
 class PARTICIPANTS_ATT:

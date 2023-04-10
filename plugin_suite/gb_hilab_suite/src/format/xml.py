@@ -10,7 +10,7 @@ import io
 # Local imports
 from gailbot import Plugin, GBPluginMethods
 from gb_hilab_suite.src.core.conversation_model import ConversationModel
-from gb_hilab_suite.src.config import MARKER, THRESHOLD, LABEL, PLUGIN_NAME, XML
+from gb_hilab_suite.src.config import MARKER, THRESHOLD, LABEL, PLUGIN_NAME, XML, TAGS
 
 from lxml import etree
 
@@ -94,8 +94,9 @@ class XMLPlugin(Plugin):
         files = methods.filenames
         filenames = ""
         
-        for name in files:
-            filenames = filenames + name + " "
+        # for name in files:
+        #     filenames = filenames + name + " "
+        filenames = " ".join(methods.filenames)
         metadata9.set(XML.CONTENT, filenames.rstrip())
 
         for _, (_, nodeList) in enumerate(utterances.items()):
@@ -158,16 +159,16 @@ class XMLPlugin(Plugin):
 
 
         #Root element is the CHAT tag
-        root = etree.Element("CHAT")
+        root = etree.Element(TAGS.CHAT)
         root.set('xmlns', XML.TALKBANK_LINK)
-        root.set('Corpus', 'timmy')
-        root.set('Version', '2.16.0')
-        root.set('Lang', 'eng')
-        root.set('Date', '1996-02-29')
+        root.set(TAGS.CORP, 'timmy')
+        root.set(TAGS.VSN, '2.16.0')
+        root.set(TAGS.LANG, 'eng')
+        root.set(TAGS.DATE, '1996-02-29')
 
         # populate Participants tag
         speakerMap = cm.getSpeakerMap(True)
-        Participants = etree.SubElement(root, "Participants")
+        Participants = etree.SubElement(root, TAGS.PARTS)
         comment = etree.SubElement(root, "comment")
         comment.set('type', 'Location')
         comment.text = "HI_LAB"
@@ -212,7 +213,6 @@ class XMLPlugin(Plugin):
                 # if the word is a marker, use their own tag
                 if currText in varDict.values():
                     for key, value in varDict.items():
-
                         if currText == value:
                             # if the start of an overlap is detected, create g-tag to nest other tags
                             if key == MARKER.MARKER1 or key == MARKER.MARKER3:
@@ -259,18 +259,18 @@ class XMLPlugin(Plugin):
                                 # print("pauses")
                                 tempArr = word.text.split(MARKER.KEYVALUE_SEP)
                                 pause = etree.Element("pause")
-                                pause.set('length', tempArr[1])
+                                pause.set(XML.LENGTH, tempArr[1])
                                 pause.set('symbolic-length', 'simple')
                                 utterance.append(pause)
                             elif key == MARKER.SLOWSPEECH_START or key == MARKER.FASTSPEECH_START:
-                                currWord = etree.SubElement(utterance, "w")
-                                speech = etree.SubElement(currWord, "ca-delimiter")
+                                currWord = etree.SubElement(utterance, TAGS.W)
+                                speech = etree.SubElement(currWord, XML.DELIM)
                                 speech.set('type', "begin")
                                 if key == MARKER.SLOWSPEECH_START:
-                                    speech.set('label', "slower")
+                                    speech.set(XML.LABEL, "slower")
                                     i += 1
                                 else:
-                                    speech.set('label', "faster")
+                                    speech.set(XML.LABEL, "faster")
                                     i += 1
 
                                 # trying to fix empty syllRate surrounding tags
@@ -287,17 +287,17 @@ class XMLPlugin(Plugin):
                                                 if key == MARKER.SLOWSPEECH_END:
                                                     #put text here
                                                     speech.tail = cumCurrText
-                                                    speechEnd = etree.SubElement(currWord, "ca-delimiter")
+                                                    speechEnd = etree.SubElement(currWord, XML.DELIM)
                                                     speechEnd.set('type', "end")
-                                                    speechEnd.set('label', "slower")
+                                                    speechEnd.set(XML.LABEL, "slower")
                                                     exit = True
                                                     break
                                                 elif key == MARKER.FASTSPEECH_END:
                                                     #put text here
                                                     speech.tail = cumCurrText
-                                                    speechEnd = etree.SubElement(currWord, "ca-delimiter")
+                                                    speechEnd = etree.SubElement(currWord, XML.DELIM)
                                                     speechEnd.set('type', "end")
-                                                    speechEnd.set('label', "faster")
+                                                    speechEnd.set(XML.LABEL, "faster")
                                                     exit = True
                                                     break
                                     elif exit == False:

@@ -102,6 +102,7 @@ class WhisperCore:
                     download_root=self.models_dir
                 )
                 MODEL_LOADED = True
+                
         logger.info(f"Whisper core using whisper model: {WHISPER_CONFIG.model_name}")
 
         # Load the diarization pipeline

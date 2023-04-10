@@ -6,6 +6,7 @@
 
 from typing import Dict, Any, List
 import torch
+import multiprocessing
 from ..engine import Engine
 from .core import WhisperCore
 from gailbot.core.utils.general import (
