@@ -19,7 +19,7 @@ from view.config.Text import TranscribeProgressText as Text
 from view.config.Text import FileTableHeader
 from config_frontend import PROJECT_ROOT
 from gbLogger import makeLogger
-from view.widgets import addLogo
+from view.pages.BasicPage import BasicPage
 from view.Signals import FileSignals
 from view.widgets import (
     Label,   
@@ -37,7 +37,7 @@ top = Qt.AlignmentFlag.AlignTop
 center = Qt.AlignmentFlag.AlignHCenter
 
 
-class TranscribeProgressPage(QWidget):
+class TranscribeProgressPage(BasicPage):
     """ class for transcription in progress page """
     def __init__(
         self, 
@@ -84,6 +84,9 @@ class TranscribeProgressPage(QWidget):
             QtCore.QSize(STYLE_DATA.Dimension.LARGE_ICON, STYLE_DATA.Dimension.LARGE_ICON))
         self.loadIcon.setScaledContents(True)
     
+    def changeColor(self):
+        super().changeColor()
+    
     def changefont(self, fontmode = None):
         self.label.fontChange(STYLE_DATA.FontSize.HEADER2)
         self.loadingText.fontChange(STYLE_DATA.FontSize.SMALL)
@@ -92,6 +95,8 @@ class TranscribeProgressPage(QWidget):
     def _initLayout(self):
         """ initialize layout """
         self.verticalLayout = QVBoxLayout()
+        self.verticalLayout.addWidget(self.logoContainer, alignment=
+                                      self.logopos)
         self.container = QWidget()
         self.containerLayout = QVBoxLayout()
         self.container.setFixedWidth(STYLE_DATA.Dimension.TABLECONTAINERWIDTH)
@@ -99,7 +104,6 @@ class TranscribeProgressPage(QWidget):
         self.containerLayout.addWidget(self.fileTable)
         self.setLayout(self.verticalLayout)
         """ add widget to layout """
-        addLogo(self.verticalLayout)
         self.verticalLayout.addWidget(self.label)
         self.label.setContentsMargins(0, STYLE_DATA.Dimension.MEDIUM_SPACING, 0, 0)
         self.verticalLayout.addWidget(self.loadIcon, 
@@ -108,12 +112,14 @@ class TranscribeProgressPage(QWidget):
         self.verticalLayout.addWidget(self.container, alignment = top|center)
         self.verticalLayout.addStretch()
         
+         
     def _connectSignal(self):
         """ connects signal. change enableCancel to true when backend functionality allows for it. """
         # self.cancelBtn.setDisabled(True)
         self.signals.progressChanged.connect(self.editFileProgess)
         STYLE_DATA.signal.changeFont.connect(self.changefont)
-    
+        STYLE_DATA.signal.changeColor.connect(self.changeColor)
+        
     def setLoadingText(self, text):
         """ functionality to be able to dynamically change the text under the loading icon 
         
@@ -134,3 +140,5 @@ class TranscribeProgressPage(QWidget):
         """
         self.logger.info("change file progress status")
         self.fileTable.showOneFileProgress(progress)
+    
+    

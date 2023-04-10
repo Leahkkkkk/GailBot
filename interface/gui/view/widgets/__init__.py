@@ -1,4 +1,4 @@
-from .Background import initHomePageBackground, initSubPageBackground, initSecondaryColorBackground, addLogo, initPrimaryColorBackground
+from .Background import initHomePageBackground, initSubPageBackground, initSecondaryColorBackground, addLogo, initPrimaryColorBackground, getLogo
 from .Button import ColoredBtn, BorderBtn, ToggleBtn, IconBtn, dropDownButton, buttonList
 from .ComboBox import ComboBox 
 from .FileTable import FileTable, TableWidget

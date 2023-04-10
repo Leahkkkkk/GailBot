@@ -176,8 +176,10 @@ class TranscribeComponent(Component):
         except Exception as e:
             self.emit_progress(payload, ProgressMessage.Error)
             logger.error(f"Failed to transcribed {len(data_files)} file in parallel due to the error {e}", exc_info=e)
+            threadpool.shutdown(cancel_futures=True)
             return False
         else: 
+            threadpool.shutdown(cancel_futures=True)
             return True
 
     def transcribe_single_file(self, engine_name, init_kwargs, transcribe_kwargs)  -> List[Dict[str, str]]:

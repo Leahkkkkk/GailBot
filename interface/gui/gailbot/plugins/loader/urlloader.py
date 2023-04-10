@@ -248,9 +248,7 @@ class S3BucketLoader(UrlLoader):
         Args:
             url (str): the url string
         """
-        r3 = boto3.resource('s3',
-                aws_access_key_id=PLUGIN_CONFIG.AWS_ACCESS_ID,
-                aws_secret_access_key=PLUGIN_CONFIG.AWS_ACCESS_KEY)
+        r3 = boto3.resource('s3')
         try:
             r3.meta.client.head_bucket(Bucket=bucket)
             return True
@@ -275,8 +273,7 @@ class S3BucketLoader(UrlLoader):
         if not self.is_supported_url(bucket):
             return False
         
-        s3 = boto3.client("s3", aws_access_key_id=PLUGIN_CONFIG.AWS_ACCESS_ID,
-                                aws_secret_access_key=PLUGIN_CONFIG.AWS_ACCESS_KEY)
+        s3 = boto3.client("s3")
         
         pluginsuites = []
         # get all object from teh bucket 

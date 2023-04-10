@@ -13,6 +13,7 @@ from view.config.Style import (
     STYLE_DATA,
     FileTableDimension
 )
+from view.pages.BasicPage import BasicPage
 from view.config.Text import TranscribeSuccessText as Text
 from view.config.Text import FileTableHeader
 from view.widgets import (
@@ -20,7 +21,7 @@ from view.widgets import (
     Label,
     FileTable
 )
-from view.widgets.Background import addLogo
+from view.widgets.Background import getLogo
 from view.Signals import FileSignals
 from PyQt6.QtWidgets import (
     QVBoxLayout,
@@ -35,7 +36,7 @@ from PyQt6.QtCore import Qt
 right = Qt.AlignmentFlag.AlignRight
 left = Qt.AlignmentFlag.AlignLeft
 
-class TranscribeSuccessPage(QWidget):
+class TranscribeSuccessPage(BasicPage):
     """ class for transcription success page """
     def __init__(self, signal:FileSignals, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
@@ -63,17 +64,18 @@ class TranscribeSuccessPage(QWidget):
         self.verticalLayout = QVBoxLayout()
         self.container = QWidget()
         self.containerLayout = QVBoxLayout()
+        self.verticalLayout.addWidget(self.logoContainer, alignment=self.logopos)
         self.container.setFixedWidth(STYLE_DATA.Dimension.TABLECONTAINERWIDTH)
         self.container.setLayout(self.containerLayout)
         self.containerLayout.addWidget(self.fileTable)
         self.setLayout(self.verticalLayout)
-        addLogo(self.verticalLayout)
         """ adds widgets to the vertical layout """
         self.verticalLayout.addWidget(self.label)
         self.verticalLayout.addWidget(
             self.container,alignment = Qt.AlignmentFlag.AlignHCenter)
         self.verticalLayout.addWidget(self.horizontal)
         self.verticalLayout.setSpacing( STYLE_DATA.Dimension.LARGE_SPACING)
+        
 
     def _initHorizontalLayout(self):
         """ initializes the horizontal layout of buttons to 
@@ -92,6 +94,13 @@ class TranscribeSuccessPage(QWidget):
         self.returnBtn.setMinimumSize(
             QtCore.QSize(STYLE_DATA.Dimension.BTNWIDTH, STYLE_DATA.Dimension.BTNHEIGHT))
         STYLE_DATA.signal.changeFont.connect(self.fontchange)
+        STYLE_DATA.signal.changeColor.connect(self.changeColor)
 
     def fontchange(self):
         self.label.fontChange(STYLE_DATA.FontSize.HEADER2)
+
+    def changeColor(self):
+        super().changeColor()
+        self.returnBtn.colorChange(STYLE_DATA.Color.PRIMARY_BUTTON)
+        self.moreBtn.colorChange(STYLE_DATA.Color.SECONDARY_BUTTON)
+        

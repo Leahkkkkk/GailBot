@@ -17,8 +17,8 @@ from view.config.Style import (
 from view.config.Text import ConfirmTranscribeText as Text
 from view.config.Text import FileTableHeader 
 from gbLogger import makeLogger
-from view.Signals import FileSignals, GlobalStyleSignal
-from view.widgets.Background import addLogo
+from view.Signals import FileSignals
+from view.pages.BasicPage import BasicPage
 from view.widgets import ( 
     Label, 
     ColoredBtn,
@@ -36,7 +36,7 @@ center = Qt.AlignmentFlag.AlignHCenter
 top = Qt.AlignmentFlag.AlignTop
 right = Qt.AlignmentFlag.AlignRight
 
-class ConfirmTranscribePage(QWidget):
+class ConfirmTranscribePage(BasicPage):
     """ Confirm transcription page """
     def __init__(self, signal:FileSignals, *args, **kwargs) -> None:
         """ initializes page """
@@ -50,8 +50,6 @@ class ConfirmTranscribePage(QWidget):
     def _connectSignal(self):
         """ connects signals upon button clicks """
         self.confirmBtn.clicked.connect(self._sendTranscribeSignal)
-        GlobalStyleSignal.changeColor.connect(self.colorChange) 
-        GlobalStyleSignal.changeFont.connect(self.changeFont)
          
     def _initWidget(self):
         """ initializes widgets """
@@ -74,12 +72,13 @@ class ConfirmTranscribePage(QWidget):
     def _initLayout(self):
         """ initializes layout"""
         self.logger.info("")
+        
         self.verticalLayout = QVBoxLayout()
         self.horizontalLayout = QHBoxLayout()
         self.bottomButton.setLayout(self.horizontalLayout)
         self.setLayout(self.verticalLayout)
         """ adds widgets to layout """
-        addLogo(self.verticalLayout)
+        self.verticalLayout.addWidget(self.logoContainer, alignment=right|top)
         self.verticalLayout.addWidget(self.label)
         self.verticalLayout.addWidget(
             self.fileTable, alignment = center|top)
@@ -98,14 +97,16 @@ class ConfirmTranscribePage(QWidget):
         self.signal.transcribe.emit(list(self.fileTable.transferList))
         self.fileTable.transferState()
     
-    
-
-    def colorChange(self, colormode = None ):
+    def changeColor(self, colormode = None ):
         """ called when color is changed """
+        super().changeColor()
         self.confirmBtn.colorChange(STYLE_DATA.Color.SECONDARY_BUTTON)
         self.cancelBtn.colorChange(STYLE_DATA.Color.CANCEL_QUIT)
+      
 
     ## controlling font
     def changeFont(self, fontmode = None ):
         """ called when font size is changed """
         self.label.fontChange(STYLE_DATA.FontSize.HEADER2)
+    
+   

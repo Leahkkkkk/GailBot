@@ -10,7 +10,7 @@ Modified By:  Siara Small  & Vivian Li
 Description: implement function for initialize background for different pages
 '''
 import os
-
+from typing import Tuple
 from view.config.Style import STYLE_DATA 
 from view.widgets.Image import Image
 from config_frontend import PROJECT_ROOT
@@ -63,6 +63,12 @@ def addLogo(layout: QVBoxLayout):
     layout.addWidget(
         logo, alignment=Qt.AlignmentFlag.AlignTop|Qt.AlignmentFlag.AlignRight)
     logo.setContentsMargins(0,0,0,0)
+
+def getLogo() -> Tuple[QWidget, Qt.AlignmentFlag]:
+    logo = Image(
+        STYLE_DATA.Asset.hilLabLogo, (STYLE_DATA.Dimension.LOGO_WIDTH, STYLE_DATA.Dimension.LOGO_HEIGHT))
+    logo.setContentsMargins(0,0,0,0)
+    return (logo,  Qt.AlignmentFlag.AlignTop|Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignAbsolute)
  
 def _resizeEvent(widget: QWidget, event: QResizeEvent, img: str):
     """ scale the background image when the window is resized"""

@@ -64,6 +64,8 @@ class AnalysisComponent(Component):
                 if not payload.failed:
                     threads.add_task(self.analyze_payload, [payload])
             threads.wait_for_all_completion()
+            threads.shutdown()
+            
             return ComponentResult(
                 state  = ComponentState.SUCCESS,
                 result = payloads,

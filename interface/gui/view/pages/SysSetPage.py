@@ -89,12 +89,14 @@ class SystemSettingPage(QWidget):
     def colorChange(self, colormode = None):
         self.saveBtn.colorChange(STYLE_DATA.Color.PRIMARY_BUTTON)
         for button in self.formButtons:
-            button.addOtherStyle("background-color: {STYLE_DATA.Color.INPUT_BACKGROUND}")
+            button.addOtherStyle( f"background-color: {STYLE_DATA.Color.INPUT_BACKGROUND};")
             button.colorChange(STYLE_DATA.Color.INPUT_TEXT)
     
     def fontChange(self, fontmode = None):
         for label in self.labels:
             label.fontChange(STYLE_DATA.FontSize.BODY)
+        for btn in self.formButtons:
+            btn.fontChange(STYLE_DATA.FontSize.BTN)
             
     def setValue(self, values:dict):
         """ public function to set the system setting form value

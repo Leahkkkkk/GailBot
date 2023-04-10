@@ -16,7 +16,7 @@ from view.config.Style import STYLE_DATA, FileTableDimension
 from view.config.Text import FileTableHeader
 from view.config.Text import FileUploadPageText as Text 
 from view.config.Style import buttonStyle
-from view.Signals import GlobalStyleSignal
+from view.pages.BasicPage import BasicPage
 from gbLogger import makeLogger
 from view.Signals import FileSignals
 from view.widgets import (
@@ -25,8 +25,7 @@ from view.widgets import (
     IconBtn, 
     FileTable, 
     TableWidget, 
-    ConfirmBox, 
-    addLogo)
+    ConfirmBox) 
 
 from PyQt6.QtWidgets import (
     QWidget, 
@@ -41,7 +40,7 @@ left   = Qt.AlignmentFlag.AlignLeft
 right  = Qt.AlignmentFlag.AlignRight
 top    =  Qt.AlignmentFlag.AlignTop
 
-class FileUploadPage(QWidget):
+class FileUploadPage(BasicPage):
     """ implement the file upload table
     
     Constructor Args:
@@ -78,7 +77,7 @@ class FileUploadPage(QWidget):
         self.fileTable.viewSignal.nonZeroFile.connect(self._allowTranscribe)
         self.fileTable.viewSignal.ZeroFile.connect(self._disallowTranscribe)
         self._disallowTranscribe()
-        STYLE_DATA.signal.changeColor.connect(self.colorChange)
+        STYLE_DATA.signal.changeColor.connect(self.changeColor)
         STYLE_DATA.signal.changeFont.connect(self.fontChange)
         
     def _initWidget(self):
@@ -114,9 +113,10 @@ class FileUploadPage(QWidget):
         """ initializes layout """
         self.logger.info("")
         self.verticalLayout = QVBoxLayout()
+        
         self.setLayout(self.verticalLayout)
         """ adds widget to layout """
-        addLogo(self.verticalLayout)
+        self.verticalLayout.addWidget(self.logoContainer, alignment=self.logopos)
         self.verticalLayout.addWidget(self.gotoMainBtn, alignment = left)
         self.verticalLayout.addWidget(self.label, alignment = center)
         
@@ -142,7 +142,7 @@ class FileUploadPage(QWidget):
         self.verticalLayout.addWidget(self.transcribeBtn, alignment = center)
         # self.containerLayout.addWidget(self.recordBtn,
         #                                alignment = center)
-        
+    
     def _initStyle(self):
         """ initializes the style """
         self.logger.info("")
@@ -150,11 +150,12 @@ class FileUploadPage(QWidget):
             QSize(STYLE_DATA.Dimension.LBTNWIDTH, STYLE_DATA.Dimension.BTNHEIGHT))
         self.gotoMainBtn.setStyleSheet(STYLE_DATA.StyleSheet.goToMain)
 
-    def colorChange(self):
+    def changeColor(self):
+        super().changeColor()
         self.gotoMainBtn.setStyleSheet(STYLE_DATA.StyleSheet.goToMain)
         self.settingBtn.colorChange(STYLE_DATA.Color.PRIMARY_BUTTON)
         self.removeAll.colorChange(STYLE_DATA.Color.PRIMARY_BUTTON)
-    
+         
     def fontChange(self):
         self.label.fontChange(STYLE_DATA.FontSize.HEADER2)
         self.transcribeBtn.fontChange(STYLE_DATA.FontSize.BTN)
@@ -177,5 +178,4 @@ class FileUploadPage(QWidget):
         """ open pop up message to confirm removal of all files """
         self.logger.info("")
         ConfirmBox(Text.removeWarnText, self.fileTable.removeAll)
-    
     

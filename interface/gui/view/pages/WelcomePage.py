@@ -15,9 +15,8 @@ from view.config.Text import Links
 from view.widgets import (
     ColoredBtn, 
     Label, 
-    Image,
-    addLogo 
-)
+    Image)
+from view.pages.BasicPage import BasicPage
 
 from PyQt6.QtWidgets import (
     QWidget, 
@@ -28,7 +27,7 @@ from PyQt6.QtWidgets import (
 from PyQt6 import QtCore
 from PyQt6.QtCore import Qt
 
-class WelcomePage(QWidget):
+class WelcomePage(BasicPage):
     """ class representing the welcome page """
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
@@ -56,9 +55,10 @@ class WelcomePage(QWidget):
         self.horizontalLayout.addWidget(self.GuideText)
         
         """ vertical layout """
+    
         self.verticalLayout = QVBoxLayout()
         self.setLayout(self.verticalLayout)
-        addLogo(self.verticalLayout)
+        self.verticalLayout.addWidget(self.logoContainer, alignment=self.logopos)
         self.verticalLayout.addStretch()
         self.verticalLayout.addWidget(self.WelcomeText)
         self.verticalLayout.addWidget(self.CaptionText, 
@@ -200,14 +200,14 @@ class WelcomePage(QWidget):
     
     
     def changeColor(self, colormode = None):
+        super().changeColor()
         for label in self.insLabels:
             label.colorChange(STYLE_DATA.Color.LOW_CONTRAST2)
         for label in self.buttomText:
             label.colorChange(STYLE_DATA.Color.PRIMARY_BUTTON)
         self.CaptionText.colorChange(STYLE_DATA.Color.GREYDARK)
         self.StartBtn.colorChange(STYLE_DATA.Color.PRIMARY_BUTTON)
-        self.changeFont()
-
+        
     def changeFont(self, fontmode = None):
         for label in self.insLabels:
             label.fontChange(STYLE_DATA.FontSize.INSTRUCTION_CAPTION)
@@ -217,3 +217,4 @@ class WelcomePage(QWidget):
         self.GuideText.fontChange(STYLE_DATA.FontSize.LINK)
         self.GBLinkText.fontChange(STYLE_DATA.FontSize.BODY)
         self.MoreInfoText.fontChange(STYLE_DATA.FontSize.SMALL)
+    

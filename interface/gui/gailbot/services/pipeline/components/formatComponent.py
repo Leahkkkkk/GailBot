@@ -2,7 +2,6 @@ from typing import Any, List, Dict
 
 from gailbot.core.pipeline import Component, ComponentState, ComponentResult
 from gailbot.core.utils.logger import makelogger
-from ..components.progress import ProgressMessage
 from ...converter.payload import PayLoadObject
 logger = makelogger("transcribeComponent")
 

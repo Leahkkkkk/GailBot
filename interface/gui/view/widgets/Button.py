@@ -154,7 +154,7 @@ class BorderBtn(QPushButton):
     def applyOtherStyle(self):
         self.setDefaultStyle()
 
-    def fontChange(self, fontsize):
+    def fontChange(self, fontsize = STYLE_DATA.FontSize.BTN):
         # set the updated palette to the label
         self.fontSize = fontsize
         self.defaultStyle =f"border: 1px solid {self.color};"\

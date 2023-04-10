@@ -223,11 +223,9 @@ class ThreadPool(ThreadPoolExecutor):
         Return: 
             Calls wait_for_task() for all tasks in the thread pool. 
         """
-        keys = self.task_pool.keys()
-        for key in keys:
-            logger.info(f"tries to wait for the task {key}")
-            self.wait_for_task(key, error_fun)
-            
+        futures = self.task_pool.values()
+        wait(futures) 
+        
 
     def wait_for_task(self, key: Union[str, int], error_fun: Callable = None ):
         """ 
