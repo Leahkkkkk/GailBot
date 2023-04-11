@@ -152,7 +152,7 @@ class SystemSetPageText:
     caption         = "Control various aspects of the graphical interface"
     cancelBtn       = "Exit"
     saveBtn         = "Save"
-    confirmChange   = """The changes applied require GailBot to relaunch. All uploaded files will be removed. Do you wish to proceed?"""
+    confirmChange   = "Confirm changing GailBot system setting?"
     changeError     = "System settings change failed"
     clearLog        = "Clear all log files"
     confirmClear    = "All log files will be removed. Proceed?"

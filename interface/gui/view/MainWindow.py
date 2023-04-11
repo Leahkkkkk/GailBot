@@ -172,7 +172,18 @@ class MainWindow(QMainWindow):
         except Exception as e:
             self.logger.error(e, exc_info=e)
             self.showError(ERR.FAIL_TO.format("change the file status"))
+           
             
+    def removeFile(self, key:str):
+        """ change the file status to be transcribed 
+            currently delete the file from the table
+        """
+        try:
+            self.MainStack.removeFile(key)
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            self.showError(ERR.FAIL_TO.format("change the file status"))
+    
     def closeEvent(self, a0) -> None:
         """  called when application closes """
         try:

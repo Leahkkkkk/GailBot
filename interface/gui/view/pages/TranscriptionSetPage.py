@@ -10,7 +10,7 @@ Modified By:  Siara Small  & Vivian Li
 '''
 from typing import Dict, List, Tuple
 from view.config.Style import STYLE_DATA
-from view.Signals import ProfileSignals, GlobalStyleSignal
+from view.Signals import ProfileSignals
 from view.Request import Request
 from view.config.Text import ProfilePageText as Text
 from gbLogger import makeLogger
@@ -24,7 +24,7 @@ from PyQt6.QtWidgets import (
     QVBoxLayout, 
     QHBoxLayout
 )
-from PyQt6.QtCore import Qt, QSize, pyqtSignal, QObject
+from PyQt6.QtCore import Qt, QSize
 
 center = Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignHCenter
 
@@ -187,6 +187,7 @@ class TranscriptionSetPage(QWidget):
             WarnBox(ERR.ERR_WHEN_DUETO.format("adding profile", str(e)))
     
     def editSucceed(self, profilename:str):
+    
         self.logger.info("updating profile succeed")
     
     def getSucceed(self, profile: Tuple[str,Dict[str, Dict]]):

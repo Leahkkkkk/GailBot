@@ -117,6 +117,9 @@ class MainStack(QStackedWidget):
         self.FileUploadPage.fileTable.removeSucceed(key)
         self.ConfirmTranscribePage.fileTable.transferList.clear()
     
+    def removeFile(self, key:str):
+        self.FileUploadPage.fileTable.removeSucceed(key)
+    
     def _initPage(self):
         """ initialize all pages on stack widget, using current widget to 
             mimic the functionality of swapping pages """
