@@ -85,7 +85,7 @@ class TranscribeController(QObject):
         # view handler for change file display when transcription succeed
         self.signal.fileTranscribed.connect(view.changeFileToTranscribed)
         
-        
+        # view handler to remove file
         self.signal.remove.connect(view.removeFile)
         
         # handle view request to cancel gailbot
