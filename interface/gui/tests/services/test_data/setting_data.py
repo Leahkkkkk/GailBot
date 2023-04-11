@@ -6,7 +6,6 @@ WATSON_LANG_CUSTOM_ID  = "41e54a38-2175-45f4-ac6a-1c11e42a2d54"
 WATSON_REGION          = "dallas"
 WATSON_BASE_LANG_MODEL = "en-US_NarrowbandModel"
 
-
 """ 
 test data 
 setting: 
