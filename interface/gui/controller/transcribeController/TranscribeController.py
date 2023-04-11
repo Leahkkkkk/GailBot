@@ -40,6 +40,7 @@ class Signal(QObject):
     busy = pyqtSignal()
     progress = pyqtSignal(tuple)
     killed = pyqtSignal()
+    remove = pyqtSignal(str)
 
 class TranscribeController(QObject):
     def __init__(self, ThreadPool: QThreadPool, view: ViewController, gb: GailBot):
@@ -83,6 +84,9 @@ class TranscribeController(QObject):
         
         # view handler for change file display when transcription succeed
         self.signal.fileTranscribed.connect(view.changeFileToTranscribed)
+        
+        # view handler to remove file
+        self.signal.remove.connect(view.removeFile)
         
         # handle view request to cancel gailbot
         view.getFileSignal().cancel.connect(self.cancelGailBot)
@@ -160,6 +164,8 @@ class GBWorker(QRunnable):
                 for filename in self.files:
                     if not filename in untranscribed:
                         self.signal.fileTranscribed.emit(filename)
+                    else:
+                        self.signal.remove.emit(filename)
             time.sleep(0.2) 
             self.signal.finish.emit()
         finally:

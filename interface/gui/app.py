@@ -28,6 +28,12 @@ def run():
     
     
 if __name__ == '__main__':
+    from multiprocessing import freeze_support
+    freeze_support()
+    os.environ["PATH"] += os.pathsep + os.path.dirname(__file__)    
+    logging.info(os.path.dirname(__file__))
+    ssl._create_default_https_context = ssl._create_unverified_context
+
     run()
     
     

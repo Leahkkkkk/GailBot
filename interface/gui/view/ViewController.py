@@ -131,7 +131,14 @@ class ViewController():
             filekey (str): the key that identifies the file
         """         
         self.window.changeFiletoTranscribed(filekey)
-        
+     
+    def removeFile(self, filekey:str):
+        """remove file from the file table
+
+        Args:
+            filekey (str): the key that identifies the file
+        """         
+        self.window.removeFile(filekey)   
         
     # function that involves in editing, deleting and adding profile
     def deleteProfile(self, profileName: str):

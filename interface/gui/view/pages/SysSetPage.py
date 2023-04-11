@@ -114,7 +114,7 @@ class SystemSettingPage(QWidget):
         ConfirmBox(
             Text.confirmChange,
             self._changeSetting,
-            QMessageBox.StandardButton.Reset)
+            QMessageBox.StandardButton.Ok)
 
     def _changeSetting(self)->None:
         """ rewrite the current setting file based on the user's choice"""

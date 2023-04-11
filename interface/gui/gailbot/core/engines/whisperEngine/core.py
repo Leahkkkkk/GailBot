@@ -35,8 +35,6 @@ from gailbot.core.utils.logger import makelogger
 logger = makelogger("whisper")
 
 WHISPER_CONFIG = whisper_config_loader()
-
-MODEL_LOADED = False 
 LOAD_MODEL_LOCK = Lock()
 
 class WhisperCore:
@@ -91,18 +89,14 @@ class WhisperCore:
         # Load the model
         logger.info(f"start to load whisper model")
         
-        global MODEL_LOADED
+        # TODO: try to remove the global
         global LOAD_MODEL_LOCK
-        
         with LOAD_MODEL_LOCK:
-            if not MODEL_LOADED:
-                whisper.load_model(
-                    name=WHISPER_CONFIG.model_name,
-                    device=self.device,
-                    download_root=self.models_dir
-                )
-                MODEL_LOADED = True
-                
+            whisper_model = whisper.load_model(
+                name=WHISPER_CONFIG.model_name,
+                device=self.device,
+                download_root=self.models_dir
+            )
         logger.info(f"Whisper core using whisper model: {WHISPER_CONFIG.model_name}")
 
         # Load the diarization pipeline
@@ -118,12 +112,6 @@ class WhisperCore:
 
         if language == None:
             logger.info("No language specified - auto detecting language")
-
-        whisper_model = whisper.load_model(
-                name=WHISPER_CONFIG.model_name,
-                device=self.device,
-                download_root=self.models_dir
-            )
 
         # Load the audio and models, transcribe, and return the parsed result
         logger.info("prepare to load audio")
