@@ -57,5 +57,13 @@ class PATH:
     SineWaveMinus16         = os.path.join(AUDIOROOT, "wav/SineWaveMinus16.wav")
     assassination1          = os.path.join(AUDIOROOT, "wav/07assassination1.wav")
     WAV_DIR                 = os.path.join(AUDIOROOT, "wav")
+    ICC_DIR                 = os.path.join(AUDIOROOT, "ICC")
+    DIR_4157                = os.path.join(AUDIOROOT, "4157")
+    DIR_4156                = os.path.join(AUDIOROOT, "4156")
+    DIR_4145                = os.path.join(AUDIOROOT, "4145")
+    DIR_4112                = os.path.join(AUDIOROOT, "4112")
+    DIR_4104                = os.path.join(AUDIOROOT, "4104")
+    DIR_4093                = os.path.join(AUDIOROOT, "4093")
+    DIR_4092                = os.path.join(AUDIOROOT, "4092")
     WAV_SUITE = [TEST_OUTPUT_AUDIO, TEST__,TEST_2a, TEST_2b,  assassination1, SineWaveMinus16]
 

@@ -114,8 +114,7 @@ class PluginSuite:
         self.dict_conf = dict_conf
         # metadata and document_path will be loaded in _load_from_config
         self.metadata : MetaData = None
-        self.document_path : str = None
-        
+        self.document_path : str = None 
         self.dependency_map, self.plugins = self._load_from_config(dict_conf, abs_path)
         
         # Wrap the plugins in PluginComponent
@@ -130,6 +129,9 @@ class PluginSuite:
         # Add vars here from conf.
         self._name = dict_conf["suite_name"]
         self._is_ready = True
+        
+        self.is_official = False
+    
 
     @property
     def name(self) -> str:
@@ -139,7 +141,11 @@ class PluginSuite:
     def is_ready(self):
         return self._is_ready
 
-
+    def set_to_official_suite(self):
+        """ set the plugin to official plugin
+        """
+        self.is_official = True
+    
     def __repr__(self):
         return (
             f"Plugin Suite: {self.name}\n"

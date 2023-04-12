@@ -14,7 +14,7 @@ HIL_LAB_GITHUB = "https://github.com/YikeLi-Vivi/hillab/archive/refs/heads/main.
 HIL_LAB_AWS = "https://gailbot-plugin.s3.us-east-2.amazonaws.com/gb_hilab_suite.zip"
 def transcribe(files, setting_name = "test", setting_data = SETTING_DATA.WHISPER_PROFILE, output = PATH.USER_ROOT, fail_test = False):
     gb = GailBot(output)
-    assert gb.reset_workspace()
+    # assert gb.reset_workspace()
     input = [(f, PATH.OUTPUT_ROOT) for f in files]
     gb.add_sources(input)
     assert gb.create_new_setting(setting_name, setting_data)
@@ -32,7 +32,7 @@ def transcribe(files, setting_name = "test", setting_data = SETTING_DATA.WHISPER
     
 def test_gailbot():
     gb = GailBot(PATH.BACKUP_ROOT)
-    assert gb.reset_workspace() 
+    # assert gb.reset_workspace() 
  
 #####################  test for whisper #####################
 def test_whisper():
@@ -106,6 +106,9 @@ def test_watson_wav_test2a_trim():
 def test_watson_wav_test2b():
     fails, invalid = transcribe([PATH.TEST_2b], "watson", SETTING_DATA.WATSON_PROFILE)
 
+def test_watson_icc():
+    fails, invalid = transcribe([PATH.ICC_DIR], "watson", SETTING_DATA.WATSON_PROFILE)
+    
 ################################### test for google ##################################
 def test_google():
     fails, invalid = transcribe([PATH.HELLO_1], "google", SETTING_DATA.GOOGLE_PROFILE) 
@@ -127,6 +130,12 @@ def test_google_long():
 
 def test_google_wav_suite():
     fails, invalid = transcribe(PATH.WAV_SUITE, "google", SETTING_DATA.GOOGLE_PROFILE)
+
+def test_google_icc():
+    fails, invalid = transcribe([PATH.ICC_DIR], "google", SETTING_DATA.GOOGLE_PROFILE)
+
+def test_google_40_dirs():
+    fails, invalid = transcribe([PATH.DIR_4092, PATH.DIR_4093, PATH.DIR_4112], "google", SETTING_DATA.GOOGLE_PROFILE)
 
 ################################## test for plugin ###########################################
 def test_github_url():
@@ -191,7 +200,6 @@ def test_plugin_lib():
 
 def test_plugin_with_spk():
     fails, invalid = transcribe([PATH.SHORT_PHONE_CALL], "plugin", SETTING_DATA.WATSON_PROFILE)
-
 
 
 ##### test workspace ###

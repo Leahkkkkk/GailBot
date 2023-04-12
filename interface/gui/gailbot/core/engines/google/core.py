@@ -44,21 +44,21 @@ class GoogleCore:
         "amr": speech.RecognitionConfig.AudioEncoding.AMR
     }
     
-    def __init__(self, google_api_key) -> None:  
+    def __init__(self, google_api_key_config) -> None:  
         self._init_status()
-        client = GoogleCore.is_valid_google_api(google_api_key)
+        client = GoogleCore.is_valid_google_api(google_api_key_config)
         self.workspace = workspace_config_loader().engine_ws.google
         assert client 
         self.connected = True
         
     
     @staticmethod
-    def is_valid_google_api(google_api_key: str):
+    def is_valid_google_api(google_api_key_config: str):
         """ Given a path to a json file that stores the google api key
             return the google client if the api is valid, else return false     
 
         Args:
-            google_api_key (str): a path to a file that stores the google api 
+            google_api_key_config (str): a path to a file that stores the google api 
                                  key 
 
         Returns:
@@ -66,7 +66,7 @@ class GoogleCore:
                                       speech client, else return false 
         """
         try:
-            os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = google_api_key
+            os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = google_api_key_config
             client = speech.SpeechClient() 
             return client  
         except Exception as e:
@@ -109,7 +109,7 @@ class GoogleCore:
         Return:
             A list of dictionary that contains the utterance data of the 
             audio file, each part of the audio file is stored in the format 
-            {speaker: , start_time: , end_time: , text: }
+            {speaker: , start_time: , end: , text: }
         """
         
         # get the info of audio source and preprocess the audio if needed 
@@ -200,7 +200,7 @@ class GoogleCore:
         """
         output the response data from google STT, convert the raw data to 
         utterance data which is a list of dictionary in the format 
-        {speaker: , start_time: , end_time: , text: }
+        {speaker: , start_time: , end: , text: }
         
         Args: 
             output_directory(str) : output path 
@@ -209,7 +209,7 @@ class GoogleCore:
         Return:
             A list of dictionary that contains the utterance data of the 
             audio file, each part of the audio file is stored in the format 
-            {speaker: , start_time: , end_time: , text: }
+            {speaker: , start_time: , end: , text: }
         """
         results = response.results
         
@@ -270,14 +270,13 @@ class GoogleCore:
             logger.info(response)
             new_utt = self._prepare_utterance(response, start_time)
             if len(new_utt):
-                start_time = new_utt[-1]["end_time"]
+                start_time = new_utt[-1]["end"]
                 logger.info(new_utt)
                 utterances.extend(new_utt)
         return utterances
     
     @staticmethod
     def _get_chunk_duration(file_path: str, file_duration: int):
-
         duration = GOOGLE_CONFIG.maximum_duration
         filesize = os.path.getsize(file_path)
         num_chunks = file_duration // GOOGLE_CONFIG.maximum_duration

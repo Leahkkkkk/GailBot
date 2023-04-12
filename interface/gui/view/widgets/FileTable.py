@@ -245,7 +245,7 @@ class FileTable(QTableWidget):
                                  file names
         """
         self.setRowCount(0)
-        self.nameToData = dict()
+        self.nameToData: Dict[str, fileObject] = dict()
         self.nameToTablePins = dict()
         self.nameToWidgets = dict()
         self.addFiles(files)
@@ -411,6 +411,7 @@ class FileTable(QTableWidget):
                 row = self.indexFromItem(self.nameToTablePins[key]).row()
                 newitem = QTableWidgetItem(profilekey)
                 self.setItem(row, 3, newitem)
+                self.nameToData[key]["Profile"] = profilekey
                 if key in self.transferList: 
                     if self.showSelectHighlight:
                         newitem.setBackground(QColor(STYLE_DATA.Color.HIGHLIGHT))

@@ -208,6 +208,10 @@ class MainStack(QStackedWidget):
             lambda filename : self.fileSignal.requestprofile.emit(
                 Request(data=filename, succeed = self.showProfile)))
 
+        self.ConfirmTranscribePage.fileTable.viewSignal.requestProfile.connect(
+            lambda filename : self.fileSignal.requestprofile.emit(
+                Request(data=filename, succeed = self.showProfile)))
+        
         ### signal to change view color 
         GlobalStyleSignal.changeColor.connect(self._changeBkg)
         

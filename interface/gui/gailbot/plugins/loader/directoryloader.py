@@ -1,6 +1,7 @@
 
 import os 
 import pip 
+from cryptography.fernet import Fernet
 from typing import Dict, List, Union, TypedDict, Tuple
 from dataclasses import dataclass
 from .pluginLoader import PluginLoader
@@ -23,8 +24,6 @@ from pydantic import BaseModel, ValidationError
 
 logger = makelogger("plugin directory loader")
 
-     
-
 class PluginDict(BaseModel):
     """ dictionary type for individual plugin """
     plugin_name: str
@@ -41,7 +40,6 @@ class ConfModel(BaseModel):
     """ dictionary type for plugin suite configuration dictionary"""
     suite_name: str 
     plugins: List[PluginDict]
-    
     
 class PluginDirectoryLoader(PluginLoader):
     """ load the plugin suite from a directory that contains all source 
@@ -86,15 +84,25 @@ class PluginDirectoryLoader(PluginLoader):
         
         config = None 
         requirement = None
+        official = None
+        document = None
         # search for the requirements and config file 
         for root, dirs, files in os.walk(suite_dir_path):
             if PLUGIN_CONFIG.REQUIREMENT in files:
                 requirement = os.path.join(root, PLUGIN_CONFIG.REQUIREMENT)
             if PLUGIN_CONFIG.CONFIG in files:
                 config = os.path.join(root, PLUGIN_CONFIG.CONFIG)
-            if config and requirement:
+            if PLUGIN_CONFIG.DOCUMENT in files:
+                document = os.path.join(root, PLUGIN_CONFIG.DOCUMENT)
+            if PLUGIN_CONFIG.OFFICIAL in files:
+                official = os.path.join(root, PLUGIN_CONFIG.OFFICIAL)
+            if config and requirement and document and official:
                 break 
         
+        
+        if not config or not document:
+            return False
+            
         # download required package 
         try:
             if requirement:
@@ -103,9 +111,6 @@ class PluginDirectoryLoader(PluginLoader):
             logger.error(f"failed to download package", exc_info=e)
             return False
         
-        if not config:
-            return False
-            
         # make a copy of the original plugin suite
         if not is_directory(tgt_path):
             copy(suite_dir_path, tgt_path)
@@ -117,6 +122,9 @@ class PluginDirectoryLoader(PluginLoader):
         suite = self.toml_loader.load(config, suite_dir_name, self.suites_dir)
        
         if suite:
+            # validate 
+            if self.validate_official(official):
+                suite.set_to_official_suite()
             return suite
         else:
             delete(tgt_path)
@@ -132,8 +140,22 @@ class PluginDirectoryLoader(PluginLoader):
         if hasattr(pip, 'main'):
             pip.main(['install', "-t", str(dest),'-r', req_file])
 
-
-
+    def validate_official(self, file):
+        if not file: 
+            return False
+        try:
+            with open(file, "r") as f:
+                key = f.read()
+            fernet = Fernet(PLUGIN_CONFIG.OFFICIAL_ENKEY)
+            decrypt = fernet.decrypt(key)
+            if decrypt == PLUGIN_CONFIG.OFFICIAL_KEY:
+                return True
+            else:
+                return False
+        except Exception as e:
+            logger.error(e, exc_info=e)
+            return False
+            
 
 class PluginTOMLLoader(PluginLoader):
     """  import all modules in the plugin, all plugin sources and dependencies 
@@ -200,9 +222,7 @@ class PluginTOMLLoader(PluginLoader):
         else:
             logger.error(f"suite name is {suite_name}")
             return (False, "suite name must be the same as the folder name")
- 
- 
- 
+  
                
 class PluginDictLoader(PluginLoader):
     """ load a plugin suite from a dictionary that contains the configuration 

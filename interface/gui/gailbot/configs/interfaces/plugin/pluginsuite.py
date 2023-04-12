@@ -2,14 +2,19 @@ from dataclasses import dataclass
 
 @dataclass
 class PLUGIN_CONFIG:
-    HILAB_BUCKET = "gailbot-plugin"
-    # ENCRYPTED_API_ID = b"gAAAAABkNd8AP7Q472BV75v2rKpdcJ4Zzw5mdRZixIFD3l5q9UsDQKr0agJZub8q0Q0HNLO9am2pll-b_DacyuUmEMiSBjkHAQ=="
-    ENCRYPTED_API_ID = b"gAAAAABkNd7pnDm4xp6E8GhbBoXGNzU5SFN5SSdGhDpzr0i61Fi2EyVxIBe6L5D1YtWmQY0Y4oeokSeLASWNUO4njEfLtUT5SKFx7g4Dyd2HCOV0SZiZywQ="
-    ENCRYPTED_API_KEY =b"gAAAAABkNr-Od9fWNwWxlZGmsH5AvnTuqCFowq0OqnOlQtN2S6EyW-QZQIghFOZzdwXDp2EyYwJqqIuIMMklOnB6d1f1J3yOvMtWO7keDg7fs2-3esZ7MQ74Bmtbh_YE5TZTayY50MFS"
+    HILAB_BUCKET = "gailbot-official-plugin-suite"
+    
     EN_KEY = b"25T_bNAjTALUgva1C-au0IKwESptsLAztLRVVEyCtZs="
+    ENCRYPTED_API_ID  = b"gAAAAABkNxRs6N6pIHgiECpQdsOWoBYWkAFzQWu8WIRVGSpoR9WMFu1C5emPrQgtMa0SNEwlun4ERwkmTAW7DPmkyQFD1Bor21_kvuei1q4KiAOKtATbMzk="
+    ENCRYPTED_API_KEY = b"gAAAAABkNxRs_5cq3Z6RElmhJ38kUnkXUDtSm6N8oRt9z6XEpCft667sph8zGIzbGKQsbACItYR9kdlTfHV0pJauuYhCB0pMda9xncwE8k8rSolKRW1K5QeBEuNNYpFznJT7QPaeAK4l"
+    
+    
     THREAD_NUM = 1
     DOCUMENT = "DOCUMENT.md"
     REQUIREMENT = "requirement.txt"
+    OFFICIAL = ".gb_official"
     CONFIG = "config.toml"
-    HILAB_SUITE_ZIP = "https://gailbot-plugin.s3.us-east-2.amazonaws.com/gb_hilab_suite.zip" 
-
+    HILAB_SUITE_ZIP = "https://gailbot-official-plugin-suite.s3.us-east-2.amazonaws.com/gb_hilab_suite.zip" 
+    OFFICIAL_KEY = b'KM1V0_HijdrehPVsFueXISED2Jxs0S_rR9zKAJzcW3A='
+    OFFICIAL_ENKEY = b'q6LGp_5jjEQyZu3ydl88H2adl_RRZCyw4IMXqYXnga8='
+    

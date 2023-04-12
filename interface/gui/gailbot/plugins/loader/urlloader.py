@@ -243,10 +243,8 @@ class S3BucketLoader(UrlLoader):
         self.download_dir = download_dir
         self.suites_dir = suites_dir
         self.fernet = Fernet(PLUGIN_CONFIG.EN_KEY)
-        # self.aws_api_key = str(self.fernet.decrypt(PLUGIN_CONFIG.ENCRYPTED_API_KEY))
-        # self.aws_id = str(self.fernet.decrypt(PLUGIN_CONFIG.ENCRYPTED_API_ID))
-        self.aws_api_key = "g9qdOGFXtBBuMHAWgSfXsNyhkKCZ9dniNZK8Hzkd"
-        self.aws_id = "AKIAZHDW7GNSR7D6BFOF"
+        self.aws_api_key = self.fernet.decrypt(PLUGIN_CONFIG.ENCRYPTED_API_KEY).decode()
+        self.aws_id = self.fernet.decrypt(PLUGIN_CONFIG.ENCRYPTED_API_ID).decode()
         
     def is_supported_url(self, bucket: str) -> bool:
         """  given a url, returns true if the url is supported by the 

@@ -46,6 +46,7 @@ class SETTING_DATA:
 
     PLUGIN_SETTING = ["hilab"]
     NEW_PLUGIN = ["testmodule"]
+    
     # dummy profile for testing the organizer  & setting manager only 
     DUMMY_PROFILE = {
         "engine_setting": WHISPER_SETTING, 
@@ -78,7 +79,7 @@ class SETTING_DATA:
     
     GOOGLE_PROFILE = {
         "engine_setting": GOOGLE_SETTING,
-        "plugin_setting": []
+        "plugin_setting": ["gb_hilab_suite"]
     }
 
     WHISPER_SPEAKER_PROFILE = {
