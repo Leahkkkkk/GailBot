@@ -137,6 +137,9 @@ class TranscriptionSetPage(QWidget):
             Request(data = profileName, succeed = self.getSucceed))
     
     def editProfile(self):
+        ConfirmBox(Text.confirmEdit, confirm=self.editProfileConfirmed)
+    
+    def editProfileConfirmed(self):
         """ updates the new profile setting """
         try:
             newSetting = self.getValue()
@@ -187,7 +190,6 @@ class TranscriptionSetPage(QWidget):
             WarnBox(ERR.ERR_WHEN_DUETO.format("adding profile", str(e)))
     
     def editSucceed(self, profilename:str):
-    
         self.logger.info("updating profile succeed")
     
     def getSucceed(self, profile: Tuple[str,Dict[str, Dict]]):

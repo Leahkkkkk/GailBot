@@ -2,6 +2,7 @@ import os
 import re
 import boto3
 from botocore.exceptions import ParamValidationError
+from cryptography.fernet import Fernet
 from typing import Dict, List, Union, TypedDict, Tuple
 from abc import ABC
 from .directoryloader import PluginDirectoryLoader
@@ -16,6 +17,7 @@ from gailbot.core.utils.general import (
 from gailbot.configs import PLUGIN_CONFIG
 from gailbot.core.utils.download import download_from_urls
 from urllib.parse import urlparse
+
 
 logger = makelogger("url_loader")
 
@@ -240,6 +242,11 @@ class S3BucketLoader(UrlLoader):
         """
         self.download_dir = download_dir
         self.suites_dir = suites_dir
+        self.fernet = Fernet(PLUGIN_CONFIG.EN_KEY)
+        # self.aws_api_key = str(self.fernet.decrypt(PLUGIN_CONFIG.ENCRYPTED_API_KEY))
+        # self.aws_id = str(self.fernet.decrypt(PLUGIN_CONFIG.ENCRYPTED_API_ID))
+        self.aws_api_key = "g9qdOGFXtBBuMHAWgSfXsNyhkKCZ9dniNZK8Hzkd"
+        self.aws_id = "AKIAZHDW7GNSR7D6BFOF"
         
     def is_supported_url(self, bucket: str) -> bool:
         """  given a url, returns true if the url is supported by the 
@@ -248,7 +255,8 @@ class S3BucketLoader(UrlLoader):
         Args:
             url (str): the url string
         """
-        r3 = boto3.resource('s3')
+        r3 = boto3.resource('s3',aws_access_key_id=self.aws_id,
+                                aws_secret_access_key=self.aws_api_key)
         try:
             r3.meta.client.head_bucket(Bucket=bucket)
             return True
@@ -273,7 +281,8 @@ class S3BucketLoader(UrlLoader):
         if not self.is_supported_url(bucket):
             return False
         
-        s3 = boto3.client("s3")
+        s3 = boto3.client("s3", aws_access_key_id=self.aws_id,
+                                aws_secret_access_key=self.aws_api_key)
         
         pluginsuites = []
         # get all object from teh bucket 

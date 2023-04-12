@@ -147,7 +147,6 @@ class Pipeline:
                     # add the failed result on failure
                     name_to_results[name] = Failure
         
-        self.threadpool.shutdown()  
                  
         # Regenerate graph
         self._generate_dependency_graph(

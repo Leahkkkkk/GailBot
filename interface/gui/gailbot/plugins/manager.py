@@ -74,7 +74,7 @@ class PluginManager:
                 if not self.register_suite(plugin_source):
                     logger.error(f"{get_name(plugin_source)} cannot be registered")
         try:
-            self.register_suite(PLUGIN_CONFIG.HILAB_SUITE_ZIP)
+            self.register_suite(PLUGIN_CONFIG.HILAB_BUCKET)
         except Exception as e:
             logger.error(e, exc_info=e)
         

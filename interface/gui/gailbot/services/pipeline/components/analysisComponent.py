@@ -82,23 +82,23 @@ class AnalysisComponent(Component):
         logger.info("start analyzing payload")
         self.emit_progress(payload, ProgressMessage.Analyzing)
         start_time = time.time()
-        plugins = payload.setting.get_plugin_setting()
-        logger.info(f"the following plugins are applied: {plugins}")
-        if not plugins:
+        suites = payload.setting.get_plugin_setting()
+        logger.info(f"the following suites are applied: {suites}")
+        if not suites:
             return True
         # try applying plugin
         try:
-            for plugin in plugins:
-                plugin_suite: PluginSuite = self.plugin_manager.get_suite(plugin)
+            for suite_name in suites:
+                plugin_suite: PluginSuite = self.plugin_manager.get_suite(suite_name)
                 # check plugin suit is valid
                 if not plugin_suite:
-                    self.emit_progress(payload, f"{plugin} is not a valid plugin")
-                    raise PluginError(f"{plugin} is not a valid plugin")
+                    self.emit_progress(payload, f"{suite_name} is not a valid plugin")
+                    raise PluginError(f"{suite_name} is not a valid plugin")
                 
                 logger.info(f"retrieved plugin suite {plugin_suite}")
                 
                 # create a method that get passed to plugin suite, and apply plugin suite
-                method = GBPluginMethods(payload)
+                method = GBPluginMethods(payload, suite_name)
                 res : Dict[str, ComponentState] = plugin_suite(base_input = None, methods = method)
                 
                 logger.info(f"get the plugin result {res}")
@@ -113,7 +113,7 @@ class AnalysisComponent(Component):
             payload.set_analysis_process_stats(stats)   
             self.emit_progress(payload, ProgressMessage.Analyzed)
         except Exception as e:
-            logger.error(f"fail to apply the plugin suite {plugin}, error {e}", exc_info=e)
+            logger.error(f"fail to apply the plugin suite {suite_name}, error {e}", exc_info=e)
             self.emit_progress(payload, ProgressMessage.Error)
             payload.set_failure()
             return False 

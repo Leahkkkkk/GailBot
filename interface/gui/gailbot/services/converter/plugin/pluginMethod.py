@@ -36,14 +36,15 @@ class GBPluginMethods(Methods):
         "txt": write_txt
     }
     
-    def __init__(self, payload: PayLoadObject):
+    def __init__(self, payload: PayLoadObject, plugin_suite:str):
         self.payload: PayLoadObject = payload
+        self.plugin_suite = plugin_suite
         
-        self.work_path = self.payload.workspace.analysis_ws
+        self.work_path = os.path.join(self.payload.workspace.analysis_ws, self.plugin_suite)
         if not is_directory(self.work_path):
             make_dir(self.work_path)
         
-        self.out_path = self.payload.out_dir.analysis_result
+        self.out_path = os.path.join(self.payload.out_dir.analysis_result, self.plugin_suite)
         if not is_directory(self.out_path):
             make_dir(self.out_path)
               

@@ -36,7 +36,7 @@ class Workspace:
 @dataclass
 class About :
     """class holding data about GailBot; e.g. version, title, etc."""
-    version              = "Version 0.0.1"
+    version              = "Version 0.0.1.a"
     APP_TITTLE           = "GailBot"
     copyRight            = copyRightText
     
@@ -145,6 +145,7 @@ class ProfilePageText:
     confirmDelete      = "Confirm deleting the profile: "
     selectengine       = "Select Speech to Text Engine"
     formPivotKey       = "engine"
+    confirmEdit        = "Confirm saving new edit to the profile?"
 @dataclass 
 class SystemSetPageText:
     """class holding the text for the system settings page"""
@@ -165,7 +166,7 @@ class SystemSetPageText:
     SaveLogBtn      = "Save"
     ClearCacheLabel   = "Clear All Cache"
     ClearCacheBtn   = "Clear" 
-    ConfirmClearCache = "Confirm clearing cache? This will restart the application and remove all data."
+    ConfirmClearCache = "Confirm clearing cache?" 
 
 class ConfirmTranscribeText:
     """class holding the text for the confirm transcription popup"""
