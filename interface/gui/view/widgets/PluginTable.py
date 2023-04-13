@@ -7,7 +7,8 @@ from view.Signals import PluginSignals, GlobalStyleSignal
 from view.Request import Request
 from view.util.ErrorMsg import ERR  
 from view.components.PluginSuiteDetails import PluginSuiteDetails
-
+import subprocess
+import sys
 from .MsgBox import WarnBox, ConfirmBox
 from gbLogger import makeLogger
 from PyQt6.QtWidgets import (
@@ -152,7 +153,7 @@ class PluginTable(QTableWidget):
         layout.addWidget(sourceBtn)
         deleteBtn.clicked.connect(lambda: self.deleteSuite(suiteName, tableItem))
         detailBtn.clicked.connect(lambda: self.seeSuiteDetail(suiteName))
-        deleteBtn.clicked.connect(lambda: self.signal.viewSource.emit(
+        sourceBtn.clicked.connect(lambda: self.signal.viewSource.emit(
             Request(data=suiteName, succeed=self.displaySource)
         ))
         self.setCellWidget(row, len(self.headers) - 1, cellWidget)
@@ -169,6 +170,5 @@ class PluginTable(QTableWidget):
             WarnBox(ERR.FAIL_TO.format("display plugin suite detail"))
     
     def displaySource(self, path:str): 
-        displayer = QFileDialog()
-        displayer.getExistingDirectory(directory=path)
-    
+        pid = subprocess.check_call(["open", path])
+        

@@ -53,6 +53,7 @@ class PluginOrganizer:
         signals.addRequest.connect(self.addSuite)
         signals.detailRequest.connect(self.getPluginSuiteDetail)
         signals.deleteRequest.connect(self.deleteSuite)
+        signals.viewSource.connect(self.viewPluginSuiteSourceCode)
         
     def addSuite(self, addRequest: Request) -> None: 
         """ add a new plugin to the data base
