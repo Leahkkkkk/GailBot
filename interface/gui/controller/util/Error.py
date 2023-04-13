@@ -43,3 +43,4 @@ class ERR:
     ## error for plugin organizer
     PLUGIN_IN_USE    = "ERROR: plugin {0} is in use"
     PLUGIN_OFFICIAL  = "ERRPR: official plugin {0} cannot be deleted"
+    PLUGIN_SRC_COED  = "ERROR: failed to open source code for plugin suite {0} due to error {1}"

@@ -240,6 +240,7 @@ class FileTableText:
     changeSet  = "Change Profile"
     profileDet = "Profile Details"
     complete   = "\u2705 Completed"
+    viewOutput = "View Output"
     
 @dataclass
 class WindowTitle:

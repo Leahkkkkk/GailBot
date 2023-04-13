@@ -8,7 +8,7 @@ import sys
 import os
 from typing import  List, Union, Dict
 import validators
-from .suite import PluginSuite, MetaData
+from .suite import PluginSuite
 from .loader import (
     PluginURLLoader,  
     PluginDirectoryLoader,
@@ -73,10 +73,10 @@ class PluginManager:
             for plugin_source in subdirs:
                 if not self.register_suite(plugin_source):
                     logger.error(f"{get_name(plugin_source)} cannot be registered")
-        # try:
-        #     self.register_suite(PLUGIN_CONFIG.HILAB_BUCKET)
-        # except Exception as e:
-        #     logger.error(e, exc_info=e)
+        try:
+            self.register_suite(PLUGIN_CONFIG.HILAB_BUCKET)
+        except Exception as e:
+            logger.error(e, exc_info=e)
         
     def get_all_suites_name(self) -> List[str]:
         """ return a list of available plugin suite names  """

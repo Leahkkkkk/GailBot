@@ -18,7 +18,8 @@ from PyQt6.QtWidgets import (
     QPushButton,
     QHeaderView, 
     QVBoxLayout,
-    QAbstractItemView
+    QAbstractItemView,
+    QFileDialog
 )
 
 from PyQt6.QtCore import (
@@ -144,11 +145,16 @@ class PluginTable(QTableWidget):
         layout = QVBoxLayout()
         detailBtn = QPushButton("Details")
         deleteBtn = QPushButton("Delete")
+        sourceBtn = QPushButton("View Source")
         cellWidget.setLayout(layout)
         layout.addWidget(detailBtn)
         layout.addWidget(deleteBtn)
+        layout.addWidget(sourceBtn)
         deleteBtn.clicked.connect(lambda: self.deleteSuite(suiteName, tableItem))
         detailBtn.clicked.connect(lambda: self.seeSuiteDetail(suiteName))
+        deleteBtn.clicked.connect(lambda: self.signal.viewSource.emit(
+            Request(data=suiteName, succeed=self.displaySource)
+        ))
         self.setCellWidget(row, len(self.headers) - 1, cellWidget)
 
     def displayPluginSuiteDetail(self, suiteInfo) -> None :
@@ -161,4 +167,8 @@ class PluginTable(QTableWidget):
         except Exception as e:
             self.logger.error(e, exc_info=e)
             WarnBox(ERR.FAIL_TO.format("display plugin suite detail"))
+    
+    def displaySource(self, path:str): 
+        displayer = QFileDialog()
+        displayer.getExistingDirectory(directory=path)
     

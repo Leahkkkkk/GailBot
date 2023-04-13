@@ -462,3 +462,13 @@ class ServiceController:
             bool: true if the suite is official false otherwise
         """
         return self.plugin_manager.is_official_suite(suite_name)
+    
+    
+    def get_suite_path(self, suite_name):
+        """ 
+
+        Return:
+            (str): the path to the source code of the plugin suite
+                              identified by suite name
+        """ 
+        return self.plugin_manager.get_suite_path(suite_name)

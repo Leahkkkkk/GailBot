@@ -110,3 +110,19 @@ class PluginOrganizer:
         details["documentation"] = self.gb.get_plugin_suite_documentation_path(pluginName)
         detailRequest.succeed(details)
         return details
+    
+    
+    def viewPluginSuiteSourceCode(self, sourceRequest: Request):
+        """ handle the request to view suite source code
+
+        Args:
+            sourceRequest (Request): the request object that stores the request 
+                                      information and the succeed and failure 
+                                      continuation 
+        """
+        try:
+            path = self.gb.get_suite_source_path(sourceRequest.data)
+            sourceRequest.succeed(path)
+        except Exception as e:
+            sourceRequest.fail(
+                ERR.PLUGIN_SRC_COED.format(sourceRequest.data, str(e)))

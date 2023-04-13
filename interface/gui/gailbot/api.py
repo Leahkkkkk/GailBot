@@ -518,3 +518,10 @@ class GailBot:
         """ reset the gailbot workspace
         """
         return self.ws_manager.reset_workspace()
+
+    def get_suite_source_path(self, suite_name: str) -> str:
+       """
+       given the name of the  suite , return the path to the source 
+       code of the suite
+       """ 
+       return self.gb.get_suite_path(suite_name)

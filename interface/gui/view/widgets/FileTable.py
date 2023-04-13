@@ -49,6 +49,7 @@ class TableWidget(Enum):
     CHANGE_PROFILE = 2 
     PROFILE_DETAIL = 3
     CHECK = 4
+    VIEW_OUTPUT = 5
 
 class fileObject(TypedDict):
     """ interface for file dictionary """
@@ -70,6 +71,7 @@ class Signals(QObject):
     nonZeroFile = pyqtSignal()
     ZeroFile = pyqtSignal()
     delete = pyqtSignal(str)
+    viewOutput = pyqtSignal(str)
     select = pyqtSignal(str)
     unselect = pyqtSignal(str)
     transferState = pyqtSignal(list)
@@ -575,6 +577,9 @@ class _TableCellWidgets(QObject):
                 
             if TableWidget.PROFILE_DETAIL in self.widgets:
                 self._addProfileDetailWidget()
+            
+            if TableWidget.VIEW_OUTPUT in self.widgets:
+                self._addViewOutputWidget()
                 
             self.ActionLayout.setSpacing(1)
             self.ActionLayout.addStretch()
@@ -619,6 +624,14 @@ class _TableCellWidgets(QObject):
         self.detailBtn.clicked.connect(
             lambda: self.signals.requestProfile.emit(self.key)
         )
+    
+    def _addViewOutputWidget(self):
+        self.viewOutPutBtn = QPushButton(Text.viewOutput)
+        self.ActionLayout.addWidget(self.viewOutPutBtn)
+        self.viewOutPutBtn.clicked.connect(
+            lambda: self.signals.viewOutput.emit(self.key)
+        )
+        
         
     def _checkStateChanged(self, state:bool):
         """ emit signal to store the checked file to the transfer list """
