@@ -141,7 +141,7 @@ class Asset(DataclassFromDict):
     hilLabLogo            : str = field_from_dict()
     transcribing          : str = field_from_dict()
     endRecording          : str = field_from_dict()
-
+    pluginBadge           : str = field_from_dict()
 
 @dataclass 
 class FileTableDimension(DataclassFromDict): 

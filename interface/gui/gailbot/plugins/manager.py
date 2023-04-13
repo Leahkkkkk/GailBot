@@ -73,10 +73,10 @@ class PluginManager:
             for plugin_source in subdirs:
                 if not self.register_suite(plugin_source):
                     logger.error(f"{get_name(plugin_source)} cannot be registered")
-        try:
-            self.register_suite(PLUGIN_CONFIG.HILAB_BUCKET)
-        except Exception as e:
-            logger.error(e, exc_info=e)
+        # try:
+        #     self.register_suite(PLUGIN_CONFIG.HILAB_BUCKET)
+        # except Exception as e:
+        #     logger.error(e, exc_info=e)
         
     def get_all_suites_name(self) -> List[str]:
         """ return a list of available plugin suite names  """
@@ -150,7 +150,13 @@ class PluginManager:
             logger.error(f"Suite does not exist {suite_name}")
             return None
         return self.suites[suite_name].document_path
-     
+   
+    def is_official_suite(self, suite_name) -> bool:
+        if not self.is_suite(suite_name):
+            logger.error(f"Suite does not exist {suite_name}")
+            return None
+        return self.suites[suite_name].is_official
+      
     def _init_workspace(self):
         """
         Init workspace and load plugins from the specified sources.

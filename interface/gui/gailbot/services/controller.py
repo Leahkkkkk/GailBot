@@ -450,3 +450,15 @@ class ServiceController:
                   false otherwise
         """
         return self.organizer.is_suite_in_use(suite_name)
+    
+    def is_official_suite(self, suite_name:str) -> bool:
+        """given a suite_name, check if the suite identified by the suite_name
+           is official
+
+        Args:
+            suite_name (str): the name of the suite
+
+        Returns:
+            bool: true if the suite is official false otherwise
+        """
+        return self.plugin_manager.is_official_suite(suite_name)

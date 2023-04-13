@@ -80,7 +80,7 @@ class PluginPage(QWidget):
         pluginDialog.exec()
     
     def addPluginSuiteConfirmed(self, pluginSuite):
-        name, data = pluginSuite
+        name, data, isOfficial = pluginSuite
         self.pluginTable.addPluginSuite(pluginSuite)
         self.signal.pluginAdded.emit(name)
     

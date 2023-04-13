@@ -64,7 +64,8 @@ class PluginOrganizer:
         if isinstance(suites, list):
             for suite in suites:
                 metaInfo = self.gb.get_plugin_suite_metadata(suite)
-                addRequest.succeed((suite, metaInfo))
+                isOfficial = self.gb.is_official_suite(suite)
+                addRequest.succeed((suite, metaInfo, isOfficial))
         elif isinstance(suites, str):
             addRequest.fail(suites)
         else:
@@ -79,6 +80,10 @@ class PluginOrganizer:
         """
         if self.gb.is_suite_in_use(deleteRequest.data):
             deleteRequest.fail(ERR.PLUGIN_IN_USE.format(deleteRequest.data))
+            return
+        
+        if self.gb.is_official_suite(deleteRequest.data):
+            deleteRequest.fail(ERR.PLUGIN_OFFICIAL.format(deleteRequest.data))
             return
         
         deleted = self.gb.delete_plugin_suite(deleteRequest.data)

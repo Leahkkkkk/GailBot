@@ -125,7 +125,7 @@ class PluginDirectoryLoader(PluginLoader):
             # validate 
             if self.validate_official(official):
                 suite.set_to_official_suite()
-            return suite
+            return [suite]
         else:
             delete(tgt_path)
             return False
@@ -233,6 +233,6 @@ class PluginDictLoader(PluginLoader):
             return ""
         suite = PluginSuite(dict_conf, suites_directory)
         if suite.is_ready:
-            return [suite]
+            return suite
         else:
             return False

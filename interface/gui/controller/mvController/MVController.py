@@ -48,7 +48,10 @@ class MVController:
         # add available plugin suite to the frontend interface
         pluginSuites = self.gb.get_all_plugin_suites()
         self.logger.info(f"get plugin suites {pluginSuites}")
-        pluginInfo =[(suite, self.gb.get_plugin_suite_metadata(suite)) for suite in pluginSuites]
+        pluginInfo =[(suite, 
+                      self.gb.get_plugin_suite_metadata(suite),
+                      self.gb.is_official_suite(suite))
+                     for suite in pluginSuites]
         self.logger.info(f"get plugin suite info {pluginInfo}")
         self.view.addAvailablePluginSuites(pluginInfo)
 

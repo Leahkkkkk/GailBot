@@ -182,7 +182,5 @@ class SettingPage(QWidget):
         """
         self.TranscriptionSetPage.createSucceed(profileName) 
         
-    def addPluginHandler(self, pluginSuite: Tuple[str, Dict[str, str]]):
-        name , info = pluginSuite
-        # self.TranscriptionSetPage.addPluginSuite(name)
+    def addPluginHandler(self, pluginSuite: Tuple[str, Dict[str, str], str]):
         self.PluginPage.addPluginSuiteConfirmed(pluginSuite)

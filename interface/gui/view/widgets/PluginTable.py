@@ -1,5 +1,7 @@
+import os
 from typing import List, Dict, Tuple 
 from view.config.Style import STYLE_DATA
+from config_frontend import PROJECT_ROOT
 from view.config.Text import PLUGIN_SUITE_TEXT
 from view.Signals import PluginSignals, GlobalStyleSignal
 from view.Request import Request
@@ -20,8 +22,9 @@ from PyQt6.QtWidgets import (
 )
 
 from PyQt6.QtCore import (
-    Qt,
+    Qt
 )
+from PyQt6.QtGui import QIcon
 
 class PluginTable(QTableWidget):
     def __init__(self, signal: PluginSignals):
@@ -90,14 +93,19 @@ class PluginTable(QTableWidget):
         for plugin in plugins:
             self.addPluginSuite(plugin)
     
-    def addPluginSuite(self, suiteInfo: Tuple[str, Dict[str, str]]):
+    def addPluginSuite(self, suiteInfo: Tuple[str, Dict[str, str], str]):
         self.logger.info(suiteInfo)
-        suiteName, metadata = suiteInfo
+        suiteName, metadata, isOfficial = suiteInfo
         try:
             newRowIdx = self.rowCount()
             self.insertRow(newRowIdx)
             suiteNameItem = QTableWidgetItem(str(suiteName))
+            
+            if isOfficial:
+                suiteNameItem.setIcon(QIcon(os.path.join(PROJECT_ROOT, STYLE_DATA.Asset.pluginBadge)))
+            
             self.setItem(newRowIdx, 0, suiteNameItem)
+            
             for col in range(len(self.headers)):
                 if self.headers[col].lower() in metadata.keys():
                     newItem = QTableWidgetItem(str(metadata[self.headers[col].lower()]))

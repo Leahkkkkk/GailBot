@@ -42,3 +42,4 @@ class ERR:
  
     ## error for plugin organizer
     PLUGIN_IN_USE    = "ERROR: plugin {0} is in use"
+    PLUGIN_OFFICIAL  = "ERRPR: official plugin {0} cannot be deleted"
