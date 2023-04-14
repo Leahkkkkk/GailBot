@@ -12,7 +12,9 @@ class SourceManager():
     """
     def __init__(self) -> None:
         self.sources : Dict[str, SourceObject] = dict()
-    
+        self.recycled_names = set() 
+        
+        
     def add_source(self, source_path: str, output: str) -> Union [str, bool]:
         """
         Adds a source to the source manager object
@@ -51,6 +53,23 @@ class SourceManager():
         self.sources.pop(source_name)
         return True
     
+    def recycle_source_name(self, source: str) -> bool:
+        """ recycle the source name to be able for reuse 
+
+        Args:
+            source (str): the name or path to the source
+
+        Returns:
+            bool: return true if the name is recycled
+        """
+        try:
+            source_name = get_name(source) if is_path(source) else source
+            self.recycled_names.add(source_name) 
+            return True     
+        except Exception as e:
+            logger.error(e, exc_info=e)
+            return False
+        
     def is_source(self, source:str) -> bool:
         """
         Determines if a given source is currently in the source manager's sources
@@ -91,6 +110,25 @@ class SourceManager():
         if self.is_source(source_name):
             return self.sources[source_name]
         else:
+            return False
+        
+    def get_source_outdir(self, source:str) -> Union[bool, str]:
+        """
+        Gets the source output directory associated with a given source name
+
+        Args:
+            source_name: str: string of name to search for
+        
+        Returns:
+            Source object associated with the given name
+            Returns false if object with given name is not found
+        """
+        source_name = get_name(source) if is_path(source) else source
+        if self.is_source(source_name):
+            logger.info("is source")
+            return self.sources[source_name].output
+        else:
+            logger.error(source_name)
             return False
 
     def get_source_setting(self, source:str) -> SettingObject:

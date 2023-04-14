@@ -124,6 +124,14 @@ class WatsonCore:
                 ID of the custom language model.
         """
         # compress the audio if it is too bog
+        path_copy = audio_path
+        try:
+            new_path = os.path.join(payload_workspace, os.path.basename(audio_path))
+            audio_path = MediaHandler.convert_to_16bit_wav(audio_path, new_path)
+            logger.warn(audio_path)
+        except Exception as e:
+            logger.error(e, exc_info=e)
+            audio_path = path_copy
         try:
             if get_size(audio_path) >= WATSON_CONFIG.max_file_size_bytes:
                 audio_path = self._convert_to_opus(audio_path, payload_workspace)
@@ -199,6 +207,7 @@ class WatsonCore:
                        headers and customized weight does not work  """
             kwargs = deepcopy(self.defaults)
             kwargs.update({
+                "inactivity_timeout": -1,
                 "audio": source,
                 "content_type" : content_type,
                 "recognize_callback": recognize_callbacks,

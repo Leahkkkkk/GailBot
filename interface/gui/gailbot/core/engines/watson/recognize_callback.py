@@ -70,7 +70,8 @@ class CustomWatsonCallbacks(RecognizeCallback):
         """
         Called when there is an error in the Websocket connection.
         """
-        logger.error(f"get error {error}")
+        logger.error(f"get error {error}", exc_info=error)
+
         closure = self.closure
         closure["callback_status"]["on_error"] = True
         closure["results"]["error"] = error

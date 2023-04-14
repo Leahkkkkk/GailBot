@@ -52,6 +52,7 @@ class PATH:
     TEST_2b                 = os.path.join(AUDIOROOT, "wav/test2b.wav")
     TEST_2a                 = os.path.join(AUDIOROOT, "wav/test2a.wav")
     TEST_2a_trim            = os.path.join(AUDIOROOT, "wav/test2a_trim.wav")
+    TEST_2aa                = os.path.join(AUDIOROOT, "wav/test2aa.wav")
     TEST__                  = os.path.join(AUDIOROOT, "wav/test.wav")
     TEST_OUTPUT_AUDIO       = os.path.join(AUDIOROOT, "wav/test_output.wav")
     SineWaveMinus16         = os.path.join(AUDIOROOT, "wav/SineWaveMinus16.wav")

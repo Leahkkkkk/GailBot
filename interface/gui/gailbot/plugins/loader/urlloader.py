@@ -246,6 +246,7 @@ class S3BucketLoader(UrlLoader):
         self.aws_api_key = self.fernet.decrypt(PLUGIN_CONFIG.ENCRYPTED_API_KEY).decode()
         self.aws_id = self.fernet.decrypt(PLUGIN_CONFIG.ENCRYPTED_API_ID).decode()
         
+         
     def is_supported_url(self, bucket: str) -> bool:
         """  given a url, returns true if the url is supported by the 
              github loader

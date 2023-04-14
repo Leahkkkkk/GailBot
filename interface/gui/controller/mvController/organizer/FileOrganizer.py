@@ -103,6 +103,7 @@ class FileOrganizer:
         signal.postFileRequest.connect(self.post)
         signal.changeProfileRequest.connect(self.editFileProfile)
         signal.deleteRequest.connect(self.delete)
+        signal.viewOutput.connect(self.viewOutput)
     
     ##########################  request handler ###########################
     def post(self, request : Request) -> None:
@@ -179,8 +180,16 @@ class FileOrganizer:
         try:
             profile = self.gb.get_src_setting_name(request.data)
             request.succeed(profile)
-        except:
+        except Exception as e:
             request.fail(ERR.GET_FILE_ERROR)
-            self.logger.error(ERR.GET_FILE_ERROR)
-            
+            self.logger.error(ERR.GET_FILE_ERROR, exc_info=e)
+    
+    
+    def viewOutput(self, request: Request) -> None:
+        try:
+            path = self.gb.get_source_outdir(request.data)
+            request.succeed(path)
+        except Exception as e:
+            request.fail(ERR.GET_FILE_OUTPUT_ERROR)   
+            self.logger.error(e, exc_info=e)     
  

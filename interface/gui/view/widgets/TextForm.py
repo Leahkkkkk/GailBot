@@ -38,8 +38,8 @@ class InputFormat:
     BOOL = " bool"
     COMBO = " combo"
     DEPENDENT_COMBO = " dependent combo"
-    FILE = "file upload"
-    MULTI_CHOICE = "multiple choice"
+    FILE = " file upload"
+    MULTI_CHOICE = " multiple choice"
     
     
 class TextForm(QWidget):

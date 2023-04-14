@@ -97,10 +97,10 @@ def test_watson_wav_suite():
 def test_watson_wav_dir():
     fails, invalid = transcribe([PATH.WAV_DIR], "watson", SETTING_DATA.WATSON_PROFILE)
     
-def test_watson_wav_test2a():
+def test_watson_wav_test2a_fail():
     fails, invalid = transcribe([PATH.TEST_2a], "watson", SETTING_DATA.WATSON_PROFILE)
     
-def test_watson_wav_test2a_trim():
+def test_watson_wav_test2a_succ():
     fails, invalid = transcribe([PATH.TEST_2a_trim], "watson", SETTING_DATA.WATSON_PROFILE)
 
 def test_watson_wav_test2b():
@@ -206,3 +206,9 @@ def test_plugin_with_spk():
 def test_reset_ws():
     gb = GailBot(PATH.USER_ROOT)
     assert gb.reset_workspace()
+
+
+from gailbot.core.utils.media import MediaHandler
+
+def test_trim_speaker():
+    MediaHandler.remove_prelude_no_speech(PATH.TEST_2a, PATH.OUTPUT_ROOT)

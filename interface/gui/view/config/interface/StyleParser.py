@@ -142,6 +142,11 @@ class Asset(DataclassFromDict):
     transcribing          : str = field_from_dict()
     endRecording          : str = field_from_dict()
     pluginBadge           : str = field_from_dict()
+    pluginBadge           : str = field_from_dict()
+    pluginBadge           : str = field_from_dict()
+    checked               : str = field_from_dict()
+    unchecked             : str = field_from_dict()
+    hover                 : str = field_from_dict()
 
 @dataclass 
 class FileTableDimension(DataclassFromDict): 

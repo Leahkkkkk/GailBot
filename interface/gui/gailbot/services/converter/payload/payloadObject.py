@@ -2,7 +2,8 @@ from abc import ABC
 from typing import List, Dict 
 import os 
 from enum import Enum 
-
+import datetime
+from gailbot.core.utils.general import write_json
 from gailbot.configs import  OutputFolder, TemporaryFolder
 from gailbot.core.utils.logger import makelogger
 from ...organizer.source import SourceObject
@@ -356,15 +357,21 @@ class PayLoadObject(ABC):
             logger.error(e, exc_info=e)
             return False
         
-    def output_format_result(self) -> bool:
+    def output_meta_result(self) -> bool:
         """
         Outputs the current formatting result to the output directory
 
         Returns:
             bool: true if successfully outputted, false if not
         """
+        metadata = {
+            "Profile Setting": self.setting.get_setting_dict(),
+            "Date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
+            "File": self.original_source,
+            "Audio Sources": self.data_files,
+        }
         try:
-            assert self.format_result.output(self.out_dir.format_result)
+            write_json(self.out_dir.metadata, metadata)
             return True 
         except Exception as e:
             logger.error(e, exc_info=e)
@@ -391,7 +398,7 @@ class PayLoadObject(ABC):
         logger.info("saving the file")
         logger.info(self.out_dir.root)
         assert self.output_analysis_result()
-        assert self.output_format_result()
+        assert self.output_meta_result()
         assert self.output_transcription_result()
         with open(os.path.join(self.out_dir.root, OUTPUT_MARKER), "w+") as f:
             f.write(f"{self.name}")

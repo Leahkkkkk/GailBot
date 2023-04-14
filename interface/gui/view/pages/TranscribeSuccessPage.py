@@ -19,7 +19,8 @@ from view.config.Text import FileTableHeader
 from view.widgets import (
     ColoredBtn,
     Label,
-    FileTable
+    FileTable,
+    TableWidget
 )
 from view.widgets.Background import getLogo
 from view.Signals import FileSignals
@@ -56,7 +57,9 @@ class TranscribeSuccessPage(BasicPage):
             Text.returnBtnText, STYLE_DATA.Color.PRIMARY_BUTTON)
         self._initHorizontalLayout()
         self.fileTable = FileTable(
-            FileTableHeader.successPage, self.signal)
+            FileTableHeader.successPage, 
+            self.signal, 
+            tableWidgetsSet={TableWidget.VIEW_OUTPUT})
         self.fileTable.resizeCol(FileTableDimension.successPage)
         
     def _initLayout(self):

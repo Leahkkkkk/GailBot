@@ -1,5 +1,5 @@
 [colors]
-SECONDARY_BUTTON = "#729A9F"
+SECONDARY_BUTTON = "#212F3E"
 CANCEL_QUIT      = "#721000"
 HIGHLIGHT        = "#BED8D7"
 TABLE_HEADER     = "#729A9F"
@@ -79,3 +79,6 @@ hilLabLogo            = "asset/light/hillogo.png"
 transcribing          = "asset/light/gbloading.gif"
 endRecording          = "asset/light/endRecording.png"
 pluginBadge =  "asset/light/badge.png"
+hover =  "asset/light/hover.png"
+unchecked =  "asset/light/unchecked.png"
+checked =  "asset/light/checked.png"

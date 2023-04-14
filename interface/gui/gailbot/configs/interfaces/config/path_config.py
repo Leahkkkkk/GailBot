@@ -9,7 +9,7 @@ class OutputFolder(DataclassFromDict):
     root: str = field_from_dict()
     transcribe_result: str = field_from_dict()
     analysis_result: str = field_from_dict()
-    format_result: str = field_from_dict()
+    metadata: str = field_from_dict()
     media_file: str = field_from_dict()
 
 @dataclass
@@ -42,7 +42,6 @@ class GailBotData():
         self.setting_src: str = os.path.join(ws_root, self.root, path_dict["setting_src"])
         self.plugin_src:  str = os.path.join(ws_root, self.root, path_dict["plugin_src"])
         self.root:        str = os.path.join(ws_root, self.root)
-
 
 @dataclass
 class WorkSpaceConfig:

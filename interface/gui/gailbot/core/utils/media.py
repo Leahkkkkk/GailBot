@@ -20,6 +20,9 @@ from .general import (
 )
 from gailbot.core.utils.logger import makelogger 
 from pydub import AudioSegment
+from pydub.silence import detect_leading_silence
+from pyAudioAnalysis import audioBasicIO
+from pyAudioAnalysis import audioSegmentation
 
 logger = makelogger("media")
 @dataclass
@@ -844,3 +847,31 @@ class MediaHandler:
                                     chunked audios in order 
         """
         return AudioHandler.chunk_audio_to_outpath(input_path, output_path, duration)
+    
+    
+    @staticmethod 
+    def remove_prelude_silence(input_path:str, outdir:str) -> str:
+        ouput_path = os.path.join(outdir, f"{get_name(input_path)}.{get_extension(input_path)}")
+        sound = AudioSegment.from_file(input_path)
+        leading_silence = detect_leading_silence(sound)
+        trim_ed: AudioSegment = sound[leading_silence :]
+        trim_ed.export(ouput_path, "wav")
+        return ouput_path
+
+    @staticmethod 
+    def remove_prelude_no_speech(input_path:str, outdir:str):
+        out_path_temp = os.path.join(outdir, f"{get_name(input_path)}_temp.{get_extension(input_path)}") 
+        out_path = os.path.join(outdir, f"{get_name(input_path)}.{get_extension(input_path)}")
+        # load audio file 
+        [Fs, x] = audioBasicIO.read_audio_file(input_path)
+        # detect audio silence
+        segments = audioSegmentation.silence_removal(x, Fs, 0.05, 0.05, smooth_window=1.0, weight=0.3, plot=False)
+        start_time = segments[0][0]
+        # Trim the audio from the start time
+        logger.error(start_time / Fs)
+        logger.error(segments)
+        trimmed_audio = AudioSegment.from_file(input_path, format="wav")[start_time * 1000:]
+        trimmed_audio.export(out_path_temp, "wav")
+        MediaHandler.convert_to_16bit_wav(out_path_temp, out_path)
+        return out_path
+       

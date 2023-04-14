@@ -2,11 +2,11 @@ from dataclasses import dataclass
 
 @dataclass
 class PLUGIN_CONFIG:
-    HILAB_BUCKET = "gailbot-official-plugin-suite"
+    HILAB_BUCKET = "gailbot-app-plugin-suite"
     
     EN_KEY = b"25T_bNAjTALUgva1C-au0IKwESptsLAztLRVVEyCtZs="
-    ENCRYPTED_API_ID  = b"gAAAAABkNxRs6N6pIHgiECpQdsOWoBYWkAFzQWu8WIRVGSpoR9WMFu1C5emPrQgtMa0SNEwlun4ERwkmTAW7DPmkyQFD1Bor21_kvuei1q4KiAOKtATbMzk="
-    ENCRYPTED_API_KEY = b"gAAAAABkNxRs_5cq3Z6RElmhJ38kUnkXUDtSm6N8oRt9z6XEpCft667sph8zGIzbGKQsbACItYR9kdlTfHV0pJauuYhCB0pMda9xncwE8k8rSolKRW1K5QeBEuNNYpFznJT7QPaeAK4l"
+    ENCRYPTED_API_ID  = b'gAAAAABkOK76XwCFd3KSsWv5MGJA3FVEqkGMSt4i1brNrO7MvLHr0pH3kgX08H2I-diS5KnuabjTWKpOPHvqmbJN-CUy_T6J-UsBnWBaiFmJTE7c3atfxFo='
+    ENCRYPTED_API_KEY = b'gAAAAABkOK76VCFhqiXdho-Nr7Jb7465jzX-TbVIxQ2UTC_5aWrxfcCFYSAk9edmWsThYmjT_DIOnqldqUcP_WAE4gqydjzu-sUX8_HJIbe1fiAqAp016n5VsKbTf0mm827VVjp8hvym'
     
     
     THREAD_NUM = 1

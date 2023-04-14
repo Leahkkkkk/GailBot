@@ -73,6 +73,19 @@ class Organizer:
         """
         return self.source_manager.get_source(source_name)
     
+    def get_source_outdir(self, source_name: str) -> Union [bool, str]:
+        """
+        Accesses source output directory with a given name
+
+        Args:
+            source_name: str: source name to access
+
+        Returns:    
+            a string stores the output of the source
+        """
+
+        return self.source_manager.get_source_outdir(source_name)
+    
     def get_source_setting(self, source_name: str) -> SettingObject:
         """
         Accesses the settings of a source with a given name

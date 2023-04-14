@@ -97,7 +97,7 @@ class WorkspaceManager:
             outdir, name + self.file_extension.output)
         try:
             for path in folder.__dict__.values():
-                if not is_directory(path):
+                if not is_directory(path) and path[-1] == "/":
                     make_dir(path, True)
             return folder
         except Exception as e:

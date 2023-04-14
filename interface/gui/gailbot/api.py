@@ -132,6 +132,21 @@ class GailBot:
                   false if not
         """
         return self.gb.is_source(name)
+
+    def get_source_outdir(
+        self, 
+        name: str
+    ) -> str:
+        """
+        Accesses source output directory with a given name
+
+        Args:
+            source_name: str: source name to access
+
+        Returns:    
+            a string stores the output path of the source
+        """
+        return self.gb.get_source_out_dir(name)
     
     def create_new_setting(
             self, 

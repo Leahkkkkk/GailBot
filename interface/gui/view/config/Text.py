@@ -280,7 +280,7 @@ class FileTableHeader:
                         "Status", "Date", "Size", "Actions"]
     confirmPage    = ["Type", "Name", "Profile", "Action"]
     transcribePage = ["Type", "Name", "Progress"]
-    successPage    = ["Type",  "Name", "Status", "Output"]
+    successPage    = ["Type",  "Name", "Status", "Output", "Action"]
 @dataclass 
 class TranscribeSuccessText: 
     mainLabelText        = "Transcription complete"

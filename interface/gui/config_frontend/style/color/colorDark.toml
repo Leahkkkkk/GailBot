@@ -2,7 +2,7 @@
 [colors] 
 ##dark mode button colors
 ##secondary button color, used in save, continue, and get started buttons
-SECONDARY_BUTTON = "#95adad"
+SECONDARY_BUTTON = "#729A9F"
 ##cancel and quit button color
 CANCEL_QUIT      = "#A25952"
 ##highlight background color, primarily used in the background of the file table
@@ -105,3 +105,6 @@ hilLabLogo            = "asset/dark/hillogo.png"
 transcribing          = "asset/dark/gbloading.gif"
 endRecording          = "asset/dark/endRecording.png"
 pluginBadge =  "asset/dark/badge.png"
+hover =  "asset/light/hover.png"
+unchecked =  "asset/light/unchecked.png"
+checked =  "asset/light/checked.png"

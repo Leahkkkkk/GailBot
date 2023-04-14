@@ -11,7 +11,7 @@ Description: implementation of file table
 '''
 
 KEYERROR = "File key not found"
-
+import subprocess
 from typing import Dict, List, Set, Tuple, TypedDict
 from enum import Enum 
 from view.Request import Request
@@ -77,7 +77,6 @@ class Signals(QObject):
     transferState = pyqtSignal(list)
     error = pyqtSignal(str)
     
-## TODO: show the transfer list color background
 class FileTable(QTableWidget):
     """ class for the file tables """
     def __init__(self, 
@@ -147,6 +146,10 @@ class FileTable(QTableWidget):
         self.viewSignal.delete.connect(self._confirmRemoveFile)
         self.viewSignal.select.connect(self.addToNextState)
         self.viewSignal.unselect.connect(self.removeFromNextState)
+        self.viewSignal.viewOutput.connect(
+            lambda file: self.fileSignal.viewOutput.emit(
+            Request(file, self.displayOutput)
+        ))
         self.viewSignal.requestChangeProfile.connect(self.changeProfileRequest)  
         STYLE_DATA.signal.changeColor.connect(self.colorChange)
         STYLE_DATA.signal.changeFont.connect(self.fontChange)
@@ -521,6 +524,18 @@ class FileTable(QTableWidget):
             data.append((file, self.nameToData[file]))
         self.viewSignal.transferState.emit(data)
         
+    def displayOutput(self, path:str): 
+        """ display output of the file
+
+        Args:
+            path (str): the path to the output
+        """
+        try:
+            pid = subprocess.check_call(["open", path])
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            WarnBox(ERR.ERR_WHEN_DUETO.format("Displaying output", str(e)))
+        
     def _setColorRow(self, rowIdx, color):
         """ change the color of the row at rowIdx """
         self.logger.info(self.rowAt(rowIdx))
@@ -631,7 +646,6 @@ class _TableCellWidgets(QObject):
         self.viewOutPutBtn.clicked.connect(
             lambda: self.signals.viewOutput.emit(self.key)
         )
-        
         
     def _checkStateChanged(self, state:bool):
         """ emit signal to store the checked file to the transfer list """

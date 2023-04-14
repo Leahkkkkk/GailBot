@@ -26,7 +26,7 @@ class ERR:
     GET_FILE_ERROR      = "ERROR: Fail to get data."
     EDIT_FILE_ERROR     = "ERROR: Fail to edit the data."
     DELETE_FILE_ERROR   = "ERROR: Unable to delete data."
-    
+    GET_FILE_OUTPUT_ERROR = "ERROR: Unable to get the path to file output" 
     
     ## error for profile organizer
     INVALID_FILE      = "ERROR: {0} is an invalid file."

@@ -79,6 +79,18 @@ class ServiceController:
         """
         return self.organizer.is_source(name)
     
+    def get_source_out_dir(self, name:str) -> str:
+        """
+        Accesses source output directory with a given name
+
+        Args:
+            source_name: str: source name to access
+
+        Returns:    
+            a string stores the output of the source
+        """
+        return self.organizer.get_source_outdir(name)
+        
     def create_new_setting(self, name: str, setting: SettingDict) -> bool:
         """ create a new setting
 
@@ -334,7 +346,7 @@ class ServiceController:
             # remove source from organizer
             if sources:
                 for source in sources:
-                    self.organizer.remove_source(source)
+                    self.organizer.source_manager.recycle_source_name(source)
            
             return invalid, fails
         except Exception as e:
