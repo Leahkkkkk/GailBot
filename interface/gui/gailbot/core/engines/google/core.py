@@ -228,19 +228,10 @@ class GoogleCore:
         utterances = list()
         for result in results:
             for word in result.alternatives[0].words:
-                try:
-                    start = word.start_time.seconds + word.start_time.nanos  / (10**-9)  + start_time
-                except:
-                    start = word.start_time + start_time
-                    
-                try:
-                     end = word.end_time.seconds + word.end_time.nanos  / (10**-9)  + start_time
-                except:
-                    end = word.end_time + start_time
                
                 utt = {
-                    "start":start, 
-                    "end": end,
+                    "start":float(word.start_time.total_seconds()), 
+                    "end":float(word.end_time.total_seconds()),
                     "text": word.word,
                     "speaker": str(word.speaker_tag)
                 }

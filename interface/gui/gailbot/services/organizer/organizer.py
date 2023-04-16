@@ -205,6 +205,7 @@ class Organizer:
             return True
         except:
             return False
+        
    
     def remove_setting(self, setting_name: str) -> bool:
         """remove a setting 
@@ -226,6 +227,7 @@ class Organizer:
         except Exception as e:
             logger.error(e, exc_info=e)
             return False
+        
     
     def update_setting(self, setting_name:str, new_setting: Dict[str,str]) -> bool:
         """updating the setting with new setting content
@@ -249,6 +251,7 @@ class Organizer:
             SettingObject: a setting object that stores the setting data
         """
         return self.setting_manager.get_setting(setting_name)    
+    
 
     def get_setting_dict(self, setting_name:str) -> Union[bool, SettingDict]:
         """ given a source name, return the setting content of the source 
@@ -262,6 +265,7 @@ class Organizer:
             content stored in a dictionary, else returns false  
         """
         return self.setting_manager.get_setting_dict(setting_name)
+    
 
     def is_setting(self, setting_name: str) -> bool: 
         """check if a setting exists or not
@@ -273,6 +277,7 @@ class Organizer:
             bool: return true if the setting exists, false otherwise
         """
         return self.setting_manager.is_setting(setting_name)
+    
     
     def is_setting_in_use(self, setting_name: str) -> bool:
         """check if a setting is being used by any source
@@ -288,6 +293,7 @@ class Organizer:
             return False 
         else:
             return True
+    
     
     def remove_setting_from_source(self, source_name: str) -> bool:
         """ given a source name, remove the current setting from the source, 
@@ -401,3 +407,6 @@ class Organizer:
                   false otherwise
         """
         return self.setting_manager.is_suite_in_use(suite_name)
+    
+    
+    

@@ -26,7 +26,10 @@ class SettingManager():
     Manages all available settings 
     """
     settings : Dict[str , SettingObject] = dict()
+    engines = dict()
+    plugins = dict()
     
+
     def __init__(self, workspace:str, load_exist: bool = True) -> None:
         """ consturcting the setting manager
 
@@ -44,6 +47,15 @@ class SettingManager():
             setting_files = filepaths_in_dir(self.workspace, ["toml"])
             for file in setting_files:
                 self.load_setting_from_file(file)
+    
+    def add_new_engine(self, name, engine:Dict[str, str]):
+        pass 
+    
+    def remove_engine_setting(self, name):
+        pass 
+    
+    def create_new_setting(self, name, engine_name:str, plugins: List[str]):
+        pass 
     
     def get_setting_names(self) -> List[str]:
         """ return a list of available setting names 
@@ -267,7 +279,6 @@ class SettingManager():
             logger.error(e, exc_info=e)
             return False
         
-    
     def get_all_settings_data(self) -> Dict[str, SettingDict]:
         """ 
         return a dictionary that stores all available setting data 

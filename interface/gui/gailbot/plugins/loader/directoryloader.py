@@ -141,13 +141,23 @@ class PluginDirectoryLoader(PluginLoader):
             pip.main(['install', "-t", str(dest),'-r', req_file])
 
     def validate_official(self, file):
+        """given a file that stores the key, verify the key 
+
+        Args:
+            file (str): path to the file 
+
+        Returns:
+            bool: return true if the key matches with the official gailbot plugin
+        """
         if not file: 
             return False
         try:
             with open(file, "r") as f:
                 key = f.read()
             fernet = Fernet(PLUGIN_CONFIG.OFFICIAL_ENKEY)
+            
             decrypt = fernet.decrypt(key)
+            
             if decrypt == PLUGIN_CONFIG.OFFICIAL_KEY:
                 return True
             else:
