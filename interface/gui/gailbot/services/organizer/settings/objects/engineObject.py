@@ -1,6 +1,6 @@
 from typing import Dict, List, Union, TypedDict
 
-from .interface import (
+from ..interface import (
     load_watson_setting, 
     load_whisper_setting, 
     load_google_setting, 
@@ -10,37 +10,44 @@ from .interface import (
 from gailbot.core.utils.logger import makelogger
 from gailbot.core.utils.general import write_toml
 from gailbot.configs import default_setting_loader
-logger = makelogger("setting_object")
+logger = makelogger("engineObject")
 
-DEFAULT_ENGINE_SETTING = default_setting_loader().default_engine
-class SettingDict(TypedDict):
-    engine_setting: Dict[str, str]
-    plugin_setting: List[str]
-
-class SettingObject():
+class EngineSetObj():
     """
-    Store a single setting item 
+    store a single Engine setting
+     
     """
     engine_setting: EngineSettingInterface   = None
-    plugin_setting: PluginSettingsInterface  = None 
     name: str     = None                   
     valid_interfaces = [load_whisper_setting, load_google_setting, load_watson_setting] 
      
-    def __init__(self, setting: SettingDict, name: str) -> None:
+    def __init__(self, setting: Dict[str, str], name: str) -> None:
+        """ initializing an engine 
+
+        Args:
+            setting (Dict[str, str]): engine setting data stored in a dictionary
+            name (str): the name of the engine setting 
+        """ 
+        self.applied_in_profiles = set() # a set of profiles that applied this engine setting
         self.name = name
-        assert"engine_setting" in setting and "plugin_setting" in setting
         logger.info("initialize the setting object")
-        assert self._load_engine_setting(setting["engine_setting"])
-        assert self._load_plugin_setting(setting["plugin_setting"])
+        assert self._load_engine_setting(setting)
         self.data = setting
-        
+        self.engine = self.engine_setting.engine 
+    
+    def get_init_kwargs(self):
+        return self.engine_setting.get_init_kwargs()
+    
+    def get_transcribe_kwargs(self):
+        return self.engine_setting.get_transcribe_kwargs()
+    
     def get_name(self):
         """
         Accesses and returns the object's name
         """
         return self.name
     
-    def change_profile_name(self, name):
+    def change_name(self, name):
         """
         Changes the profile name to a given new name
 
@@ -49,17 +56,30 @@ class SettingObject():
         """
         self.name = name 
         
-    def get_plugin_setting(self) -> List[str]:
-        """
-        Accesses and returns the object's plugin settings
-        """
-        return self.plugin_setting.get_data()
-    
-    def get_setting_dict(self) -> SettingDict:
+    def get_setting_dict(self) -> Dict[str, str]:
         """
         Accesses and returns the object's setting dict
         """
         return self.data
+    
+    def update_setting(self, setting: Dict[str, str]) -> bool:
+        """
+        Updates the settings to a given dictionary
+
+        Args: 
+            setting: Dict[str, str]: new setting
+
+        Returns:
+            bool: True if successfully updated, false if not
+        """
+        logger.info(setting)
+        self._load_engine_setting(setting)
+       
+        if self.engine_setting:
+            self.data = setting
+            return True
+        else:
+            return False
     
     def save_setting(self, output: str) -> bool: 
         """
@@ -79,50 +99,17 @@ class SettingObject():
             return False
         else:
             return True
-    
-    def update_setting(self, setting: Dict[str, str]) -> bool:
-        """
-        Updates the settings to a given dictionary
-
-        Args: 
-            setting: Dict[str, str]: new setting
-
-        Returns:
-            bool: True if successfully updated, false if not
-        """
-        logger.info(setting)
-        self._load_engine_setting(setting["engine_setting"])
-       
-        if "plugin_setting" in setting.keys():
-            self._load_plugin_setting(setting["plugin_setting"])
-        else:
-            self._load_plugin_setting([])
-            
-        if self.engine_setting:
-            self.data = setting
-            return True
-        else:
-            return False
-    
-    def _load_plugin_setting(self, setting : List[str]) -> bool:
-        """
-        Loads the plugin settings
-
-        Args:
-            setting : List[str]: settings to load
-
-        Returns:
-            bool: true if successfully loaded, false if not
-        """
-        logger.info("initialize plugin setting ")
-        try:
-            self.plugin_setting = PluginSettingsInterface(setting)
-            return True
-        except Exception as e:
-            logger.error(f"failed to load plugin setting: {e}", exc_info=e)
-            return False
         
-        
+    def is_in_use(self):
+        return len(self.applied_in_profiles) != 0 
+    
+    def remove_applied_profile(self, profile_name):
+        if profile_name in self.applied_in_profiles:
+            self.applied_in_profiles.remove(profile_name)
+    
+    def add_applied_profile(self, profile_name):
+        self.applied_in_profiles.add(profile_name)
+     
     def _load_engine_setting(self, setting : Dict[str, str]) -> bool:
         """
         Loads the engine settings
@@ -140,5 +127,7 @@ class SettingObject():
             if isinstance(set_obj, EngineSettingInterface):
                 self.engine_setting = set_obj
                 return True
-        logger.error(f"setting {setting} cannot be loaded, use default setting instead")
+        logger.info(f"setting {setting} cannot be loaded")
         return False
+    
+    

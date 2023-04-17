@@ -12,9 +12,8 @@ Description: implementation of the main page Stack
 from typing import Tuple, List
 from gbLogger import makeLogger
 from view.Signals import (
-    ProfileSignals, 
     FileSignals, 
-    PluginSignals, 
+    DataSignal, 
     ViewSignals, 
     GlobalStyleSignal)
 from view.config.Style import STYLE_DATA
@@ -44,30 +43,15 @@ class MainStack(QStackedWidget):
         
         It also implements the functionalities to handle database signal, 
         when the signal need to be handled by multiple pages. 
-    
-        Constructor Args:
-        1. profileKeys : a list of initial profile keys, this is  passed 
-                         down to the profile setting page for the interface  
-                         to load initial profiles 
-        2. fileTableSignal: a signal object to support communication between 
-                            file database and view, this is  passed down to 
-                            pages with file table 
-        3. profileSignals: a signal object to support communication between 
-                            profile database and view, this is passed down to 
-                            profile page
         
     """
     def __init__(
         self, 
         fileTableSignal: FileSignals,   
-        profileSignals: ProfileSignals,    
-        pluginSignals: PluginSignals,
         *args, 
         **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.fileSignal = fileTableSignal
-        self.profileSignals = profileSignals
-        self.pluginSignals = pluginSignals
         self.logger= makeLogger("F")
         self.setMaximumSize(
             QSize(STYLE_DATA.Dimension.WINMAXWIDTH, 
@@ -102,7 +86,7 @@ class MainStack(QStackedWidget):
         """ go to setting page with the setting data """
         self.setCurrentWidget(self.SettingPage)
         self.SettingPage.settingStack.setCurrentWidget(
-            self.SettingPage.TranscriptionSetPage)
+            self.SettingPage.ProfilePage)
       
     def updateFile(self, data:Tuple[str,str,str]):
         """ public function that update the files to all the file tables  """
@@ -130,7 +114,7 @@ class MainStack(QStackedWidget):
         self.ConfirmTranscribePage = ConfirmTranscribePage.ConfirmTranscribePage(
             self.fileSignal)
         initSubPageBackground(self.ConfirmTranscribePage)
-        self.SettingPage = SettingPage.SettingPage(self.profileSignals, self.pluginSignals)
+        self.SettingPage = SettingPage.SettingPage()
         initPrimaryColorBackground(self.SettingPage)
         self.TranscribeProgressPage = TranscribeProgressPage.TranscribeProgressPage(
             self.fileSignal)
@@ -196,11 +180,11 @@ class MainStack(QStackedWidget):
       
         ##### when profile is added, the file table stores new profile name
         ####  for selection
-        self.SettingPage.TranscriptionSetPage.signal.profileAdded.connect(
+        self.SettingPage.ProfilePage.signal.addSucceed.connect(
             self.FileUploadPage.fileTable.addProfile)
         ##### when profile is deleted, the file table  delete profile name
         ####  from selection 
-        self.SettingPage.TranscriptionSetPage.signal.profileDeleted.connect(
+        self.SettingPage.ProfilePage.signal.deleteSucceed.connect(
             self.FileUploadPage.fileTable.deleteProfile)
         
         ### when file upload page is requesting to show a profile
@@ -216,13 +200,12 @@ class MainStack(QStackedWidget):
         GlobalStyleSignal.changeColor.connect(self._changeBkg)
         
     def loadProfile(self, name):
-        self.SettingPage.TranscriptionSetPage.getProfile(name)
+        self.SettingPage.ProfilePage.getProfile(name)
     
     # show a specific profile identified by profile name
     def showProfile(self, profilename):
         self.setCurrentWidget(self.SettingPage)
-        self.SettingPage.settingStack.setCurrentWidget(self.SettingPage.TranscriptionSetPage) 
-        self.SettingPage.TranscriptionSetPage.selectSettings.setCurrentText(profilename)
+        self.SettingPage.settingStack.setCurrentWidget(self.SettingPage.ProfilePage) 
 
 class Request:
     def __init__(self, data, succeed: callable = None) -> None:

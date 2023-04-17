@@ -12,10 +12,10 @@ from .core.engines.google import load_google_config
 from .core.engines.whisper import load_whisper_config
 from .core.setting.defaults import load_default_config
 from .core.util.logger import load_log_config
-from .config.path_config import load_workspace_config
+from .config.ws_config import load_workspace_config
 from .plugin import PLUGIN_CONFIG
 from .services import load_service_config, load_default_setting
-from .config.path_config import TemporaryFolder, OutputFolder
+from .config.ws_config import TemporaryFolder, OutputFolder
 
 def watson_config_loader(): return load_watson_config(
     os.path.join(CONFIG_ROOT, PATH.watson))

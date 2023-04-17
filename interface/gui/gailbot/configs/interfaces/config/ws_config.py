@@ -25,7 +25,6 @@ class FileExtensions(DataclassFromDict):
     temp: str = field_from_dict()
     output: str = field_from_dict()
 
-
 @dataclass
 class EngineWS():
     def __init__(self, ws_root:str, path_dict: Dict[str, str]) -> None:
@@ -33,7 +32,6 @@ class EngineWS():
         self.google = os.path.join(ws_root, path_dict["google"])
         self.watson = os.path.join(ws_root, path_dict["watson"])
         self.google_api = os.path.join(ws_root, path_dict["google_api"])
-
 
 @dataclass
 class GailBotData():

@@ -22,32 +22,22 @@ class FileSignals(QObject):
     progressChanged      = pyqtSignal(tuple)
     cancel               = pyqtSignal()
 
-    # signal for controlling view only
-class ProfileSignals(QObject):
-    """ profile signals for front end to communicate with profile database"""
+class ViewSignals(QObject):
+    restart    = pyqtSignal()
+    clearcache = pyqtSignal()
+class StyleSignals(QObject):
+    changeColor = pyqtSignal(str)
+    changeFont  = pyqtSignal(str)
+
+class DataSignal(QObject):
     editRequest    = pyqtSignal(object)
     getRequest     = pyqtSignal(object)
     deleteRequest  = pyqtSignal(object)
     postRequest    = pyqtSignal(object)
-    profileAdded   = pyqtSignal(str)
-    profileDeleted = pyqtSignal(str)
-
-class PluginSignals(QObject):
-    addRequest    = pyqtSignal(object)
+    viewSourceRequest = pyqtSignal(object)
     detailRequest = pyqtSignal(object)
-    deleteRequest = pyqtSignal(object)
-    viewSource    = pyqtSignal(object)
-    addPlugin     = pyqtSignal(str)
-    pluginAdded   = pyqtSignal(str)
-    pluginDeleted = pyqtSignal(str)
-    updatePlugin  = pyqtSignal(str)
-
-class ViewSignals(QObject):
-    restart    = pyqtSignal()
-    clearcache = pyqtSignal()
-
-class StyleSignals(QObject):
-    changeColor = pyqtSignal(str)
-    changeFont  = pyqtSignal(str)
+    deleteSucceed  = pyqtSignal(str)
+    addSucceed     = pyqtSignal(str)
+    editSucceed    = pyqtSignal(str)
 
 GlobalStyleSignal = StyleSignals()

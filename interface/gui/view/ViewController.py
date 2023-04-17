@@ -1,6 +1,6 @@
 from typing import Dict, TypedDict, Tuple, Any, List
 from view.MainWindow import MainWindow
-from view.Signals import FileSignals, ProfileSignals, ViewSignals, PluginSignals
+from view.Signals import FileSignals, DataSignal, ViewSignals, DataSignal
 
 class SettingDict(TypedDict):
     engine_setting: Dict
@@ -140,16 +140,6 @@ class ViewController():
         """         
         self.window.removeFile(filekey)   
         
-    # function that involves in editing, deleting and adding profile
-    def deleteProfile(self, profileName: str):
-        """ delete any frontend element relating to the profile 
-            identified by  profileName
-
-        Args:
-            profileName (str): the name of the profile to be deleted
-        """
-        self.window.deleteProfile(profileName)
-    
     
     def addProfile(self, profileName:str):
         """ add profile identified by profileName to the frontend interface 
@@ -168,17 +158,6 @@ class ViewController():
         """
         self.window.loadProfile(name)
         
-   
-    def addPlugin(self, pluginSuite: Tuple[str, Dict[str, str]]):
-        """ add plugin identified by plugin name to the view
-
-        Args:
-            pluginSuite: Tuple[str, Dict[str, str]]: 
-            a tuple that stores the plugin suite information 
-            the tuple contains the name of the plugin suite and a 
-            dictionary of the plugin suite information
-        """
-        self.window.addPlugin(pluginSuite)
    
     # function that involves the entire view object
     def closeEvent(self, id: int ) -> None:
@@ -204,11 +183,11 @@ class ViewController():
         """
         return self.window.fileTableSignals
     
-    def getProfileSignal(self) -> ProfileSignals:
+    def getProfileSignal(self) -> DataSignal:
         """ 
         returns the profile signals 
         """
-        return self.window.MainStack.SettingPage.TranscriptionSetPage.signal
+        return self.window.MainStack.SettingPage.ProfilePage.signal
     
     def getViewSignal(self) -> ViewSignals:
         """ 
@@ -216,7 +195,7 @@ class ViewController():
         """
         return self.window.viewSignal
    
-    def getPluginSignal(self) -> PluginSignals:
+    def getPluginSignal(self) -> DataSignal:
         """ 
         returns the plugin signal
         """

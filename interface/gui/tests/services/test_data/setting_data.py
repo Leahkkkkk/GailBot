@@ -17,24 +17,27 @@ setting:
 """
 @dataclass 
 class SETTING_DATA: 
-    
+    WHISPER_SP_NAME = "whisper speaker"
     WHISPER_SPEAKER = {
         "engine": "whisper", 
         "language": "English",
         "detect_speakers": True
     }
     
+    WHISPER_NAME = "whisper"
     WHISPER_SETTING = {
         "engine": "whisper", 
         "language": "English",
         "detect_speakers": False
     }
 
+    GOOGLE_NAME = "google"
     GOOGLE_SETTING = {
         "engine": "google",
         "google_api_key": "/Users/yike/Desktop/input/googleApi/gailbot_key.json"
     }
 
+    WATSON_NAME = "watson"
     WATSON_SETTING = {
         "engine": "watson", 
         "apikey" : WATSON_API_KEY, 
@@ -47,47 +50,62 @@ class SETTING_DATA:
     PLUGIN_SETTING = ["hilab"]
     NEW_PLUGIN = ["testmodule"]
     
-    # dummy profile for testing the organizer  & setting manager only 
-    DUMMY_PROFILE = {
-        "engine_setting": WHISPER_SETTING, 
+    DUMMPY_ENGINE_NAME = ["engine1", "engine2", "engine3"]
+    DUMMY_PROFILE_NAME = ["profile1","profile2", "profile3"]
+    # dummy profile for testing the organizer  & setting manager only
+    
+    DUMMY_PROFILE1 = {
+        "engine_setting_name": DUMMPY_ENGINE_NAME[0], 
+        "plugin_setting": PLUGIN_SETTING
+    }
+    
+    DUMMY_PROFILE2 = {
+        "engine_setting_name": DUMMPY_ENGINE_NAME[1], 
+        "plugin_setting": PLUGIN_SETTING
+    }
+    
+    DUMMY_PROFILE3 = {
+        "engine_setting_name": DUMMPY_ENGINE_NAME[2], 
         "plugin_setting": PLUGIN_SETTING
     }
     PROFILE = {
-        "engine_setting": WHISPER_SETTING, 
+        "engine_setting_name": WHISPER_SP_NAME, 
         "plugin_setting": PLUGIN_SETTING
     }
 
     NEW_PROFILE = {
-        "engine_setting": GOOGLE_SETTING, 
+        "engine_setting_name": WHISPER_SP_NAME, 
         "plugin_setting": NEW_PLUGIN
     }
     
     PROFILE_WITH_PLUGIN = {
-        "engine_setting": WHISPER_SETTING, 
+        "engine_setting_name": WHISPER_SP_NAME, 
         "plugin_setting": ["gb_hilab_suite"]
     }
     
     PROFILE_NO_PLUGIN = {
-        "engine_setting": WHISPER_SETTING, 
+        "engine_setting_name": WHISPER_SP_NAME, 
         "plugin_setting": []
     }
 
     WATSON_PROFILE = {
-        "engine_setting": WATSON_SETTING,
+        "engine_setting_name": WATSON_NAME,
         "plugin_setting": ["gb_hilab_suite"]
     }
     
     GOOGLE_PROFILE = {
-        "engine_setting": GOOGLE_SETTING,
+        "engine_setting_name": GOOGLE_NAME,
         "plugin_setting": ["gb_hilab_suite"]
     }
 
     WHISPER_SPEAKER_PROFILE = {
-        "engine_setting": WHISPER_SPEAKER,
+        "engine_setting_name": WHISPER_SP_NAME,
         "plugin_setting": ["gb_hilab_suite"]
     }
     
     WHISPER_PROFILE = {
-        "engine_setting": WHISPER_SETTING,
+        "engine_setting_name": WHISPER_NAME,
         "plugin_setting": []
     }
+
+    

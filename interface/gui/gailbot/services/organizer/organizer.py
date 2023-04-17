@@ -7,15 +7,23 @@ from gailbot.configs import default_setting_loader
 
 logger = makelogger("organizer")
 CONFIG = default_setting_loader() 
-DEFAULT_SETTING_NAME = CONFIG.setting_name 
-DEFAULT_SETTING = CONFIG.setting_data 
+DEFAULT_SETTING_NAME = CONFIG.profile_name 
+DEFAULT_SETTING = CONFIG.profile_data 
+DEFAULT_ENGINE_NAME = CONFIG.engine_name
+DEFAULT_ENGINE_SETTING = CONFIG.engine_data
 class Organizer:
     def __init__(self, setting_workspace: str, load_exist_setting: bool = False) -> None:
         self.setting_manager = SettingManager(setting_workspace, load_exist_setting)
         self.source_manager  = SourceManager()
+        
+        if not self.setting_manager.is_engine_setting(DEFAULT_ENGINE_NAME):
+            self.setting_manager.add_new_engine(DEFAULT_ENGINE_NAME, DEFAULT_ENGINE_SETTING)
+        
         if not self.setting_manager.is_setting(DEFAULT_SETTING_NAME):
             self.setting_manager.add_new_setting(DEFAULT_SETTING_NAME, DEFAULT_SETTING)
+            
         self.setting_manager.set_to_default_setting(DEFAULT_SETTING_NAME)
+        self.setting_manager.set_to_default_engine_setting(DEFAULT_ENGINE_NAME)
         
     def add_source(self, source_path: str, output: str) -> bool:
         """
@@ -294,7 +302,6 @@ class Organizer:
         else:
             return True
     
-    
     def remove_setting_from_source(self, source_name: str) -> bool:
         """ given a source name, remove the current setting from the source, 
             set the setting of the source to default
@@ -336,8 +343,83 @@ class Organizer:
             List[SourceObject]: a list of source object that stores the source data 
         """
         return self.source_manager.get_configured_sources(sources)
-    
+   
+    def get_engine_setting_names(self) -> List[str]: 
+        """ get a list of available engine setting name
 
+        Returns:
+            List[str]: the list of engine setting name
+        """
+        return self.setting_manager.get_engine_setting_names()
+    
+    def add_new_engine(self, name, setting, overwrite = False) -> bool:
+        """ add a new engine setting 
+
+        Args:
+            name (str): the name of the engine setting
+            setting (Dict[str, str]): the setting data stored in a dictionary
+            overwrite (bool, optional): if True, overwrite the existing 
+                                        engine setting with the same name. Defaults to False.
+
+        Returns:
+            bool: return True if the engine setting is successfully created
+        """
+        return self.setting_manager.add_new_engine(name, setting, overwrite)
+
+    def remove_engine_setting(self, name) -> bool:
+        """remove the engine setting identified by nanme
+
+        Args:
+            name (str): the name of the engine setting to be removed
+
+        Returns:
+            bool:  return True if the engine setting is successfully removed
+        """
+        return self.setting_manager.remove_engine_setting(name)
+    
+    def update_engine_setting(self, name, setting_data: Dict[str, str]) -> bool:
+        """update the engine setting identified by name 
+
+        Args:
+            name (str): the name of the engine setting to be updated
+            setting_data (Dict[str, str]): the content of the new setting
+
+        Returns:
+            bool:  return True if the engine setting is successfully updated 
+        """
+        return self.setting_manager.update_engine_setting(name, setting_data)
+    
+    def is_engine_setting(self, name: str):
+        """check if the given engine name is engine setting
+
+        Args:
+            name (str): the name of the engine setting
+        """
+        return self.setting_manager.is_engine_setting(name)
+     
+    def get_engine_setting_data(self, name:str) -> Union[bool, Dict[str, str]]:
+        """ get the enigine setting data 
+
+        Args:
+            name (str): the name of the engine setting
+
+        Returns:
+            Union[bool, Dict[str, str]]: if the engine setting name is available 
+            return the engine setting data as stored in a dictionary, else return False
+        """
+        return self.setting_manager.get_engine_setting_data()
+    
+    def is_engine_setting_in_use(self, name:str) -> bool:
+        """ check if the engine setting identified by name is in use
+
+        Args:
+            name (str): the name of the engine setting
+
+        Returns:
+            bool: return true if the engine setting is in use, false other wise
+        """
+        return self.setting_manager.is_engine_setting_in_use(name)
+     
     def remove_all_settings(self) -> bool:
         """ remove all settings except for the default setting
 
@@ -376,13 +458,23 @@ class Organizer:
         """
         return self.setting_manager.get_setting_names()
     
-    def get_default_setting_name(self) -> str:
+    def get_default_engine_setting_name(self) -> str:
         """ get the default setting name
 
         Returns:
             str: a string that represent the default setting
         """
-        return self.setting_manager.get_default_setting_name()
+        return self.setting_manager.get_default_engine_setting_name()
+   
+   
+    def get_default_profile_setting_name(self) -> str:
+        """ get the default setting name
+
+        Returns:
+            str: a string that represent the default setting
+        """
+        return self.setting_manager.get_default_profile_setting_name()
+    
     
     def set_default_setting(self, setting_name:str) -> bool:
         """ set the default setting to setting_name

@@ -13,7 +13,7 @@ Description: implementation of a the plugin database
 from typing import TypedDict, Tuple, Dict
 
 from gailbot.api import GailBot
-from view.Signals import PluginSignals 
+from view.Signals import DataSignal 
 from controller.Request import Request
 from PyQt6.QtCore import QObject, pyqtSignal
 from controller.util.io import get_name
@@ -43,17 +43,17 @@ class PluginOrganizer:
         functions that delete or add file to the database
     1. post(self, plugin: Tuple[str, str]) -> None
     """
-    def __init__(self, gbController: GailBot, pluginSignals: PluginSignals) -> None:
+    def __init__(self, gbController: GailBot, pluginSignals: DataSignal) -> None:
         self.data = dict()
         self.signals = Signals()
         self.gb = gbController
         self.registerSignals(pluginSignals)
         
-    def registerSignals(self, signals: PluginSignals):
-        signals.addRequest.connect(self.addSuite)
+    def registerSignals(self, signals: DataSignal):
+        signals.postRequest.connect(self.addSuite)
         signals.detailRequest.connect(self.getPluginSuiteDetail)
         signals.deleteRequest.connect(self.deleteSuite)
-        signals.viewSource.connect(self.viewPluginSuiteSourceCode)
+        signals.viewSourceRequest.connect(self.viewPluginSuiteSourceCode)
         
     def addSuite(self, addRequest: Request) -> None: 
         """ add a new plugin to the data base

@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 @dataclass 
 class PATH:
+    SETTING_ROOT            = "/Users/yike/GailBot/Backend/gailbot_workspace/gailbot_data/setting_source" 
     USER_ROOT               = "/Users/yike/Desktop/GailBot/Backend"
     BACKUP_ROOT             = "/Users/yike/Desktop/GailBotTestDir2/Backend"
     OUTPUT_ROOT             = "/Users/yike/Desktop/gbout"

@@ -365,7 +365,7 @@ class PayLoadObject(ABC):
             bool: true if successfully outputted, false if not
         """
         metadata = {
-            "Profile Setting": self.setting.get_setting_dict(),
+            "Profile Setting": self.setting.get_data(),
             "Date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
             "File": self.original_source,
             "Audio Sources": self.data_files,

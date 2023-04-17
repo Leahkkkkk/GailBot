@@ -13,10 +13,18 @@ HIL_LAB = "/Users/yike/Documents/GitHub/GailBot/plugin_suite/gb_hilab_suite"
 HIL_LAB_GITHUB = "https://github.com/YikeLi-Vivi/hillab/archive/refs/heads/main.zip"
 HIL_LAB_AWS = "https://gailbot-plugin.s3.us-east-2.amazonaws.com/gb_hilab_suite.zip"
 def transcribe(files, setting_name = "test", setting_data = SETTING_DATA.WHISPER_PROFILE, output = PATH.USER_ROOT, fail_test = False):
+    
     gb = GailBot(output)
     # assert gb.reset_workspace()
     input = [(f, PATH.OUTPUT_ROOT) for f in files]
+
     gb.add_sources(input)
+    
+    assert gb.add_new_engine(SETTING_DATA.WHISPER_NAME, SETTING_DATA.WHISPER_SETTING, overwrite= True)
+    assert gb.add_new_engine(SETTING_DATA.GOOGLE_NAME, SETTING_DATA.GOOGLE_SETTING, overwrite= True)
+    assert gb.add_new_engine(SETTING_DATA.WATSON_NAME, SETTING_DATA.WATSON_SETTING, overwrite= True)
+    assert gb.add_new_engine(SETTING_DATA.WHISPER_SP_NAME, SETTING_DATA.WHISPER_SPEAKER, overwrite= True)
+    
     assert gb.create_new_setting(setting_name, setting_data)
     assert gb.is_setting(setting_name)
     assert gb.apply_setting_to_sources(files, setting_name)
@@ -45,7 +53,7 @@ def test_whisper_wav_suite():
     fails, invalid = transcribe(PATH.WAV_SUITE, "speaker", SETTING_DATA.WHISPER_SPEAKER_PROFILE)
 
 def test_whisper_hello():
-    fails, invalid = transcribe([PATH.HELLO_1, PATH.HELLO_2], "whisler", SETTING_DATA.WHISPER_PROFILE)
+    fails, invalid = transcribe([PATH.HELLO_1, PATH.HELLO_2], "whisper", SETTING_DATA.WHISPER_PROFILE)
 
 def test_whisper_wav_dir():
     fails, invalid = transcribe([PATH.WAV_DIR], "whisper", SETTING_DATA.WHISPER_PROFILE)

@@ -10,52 +10,20 @@ Modified By:  Siara Small  & Vivian Li
 Description:
 Implementation of a database that stores the profile data
 '''
-from view.Signals import ProfileSignals
+from view.Signals import DataSignal
 from controller.Request import Request
 from gailbot.api import GailBot
 from gbLogger import makeLogger
 from controller.util.Error import ERR
 
-from PyQt6.QtCore import QObject, pyqtSignal 
-
-class Signals(QObject):
-    """ signals sent by profile model """
-    error   = pyqtSignal(str)
-    success = pyqtSignal(str)
-    profileAdded = pyqtSignal(str)
-    
 class ProfileOrganizer:
-    """ implementation of the Profile database
-    
-    Field:
-    1. data : a dictionary that stores the profile data 
-    2. profilekeys: a list of profile names that are currently available 
-                    in the database
-    3. signals: a signal object for communication between the database 
-                and the caller, the caller should support function from
-                view object to handle signal emitted by the profile database
-    
-    
-    Public function:
-    Database modifier: 
-    1. post(self, profile: Tuple[str, dict]) -> None 
-    2. delete(self, name:str) -> None
-    
-    Profile modifier:
-    3. edit(self, profile: Tuple[str, dict]) -> None 
-    
-    Database access: 
-    4. get(self, name:str) -> None 
-    """
-    def __init__(self, gb: GailBot, profileSignal: ProfileSignals) -> None:
+    def __init__(self, gb: GailBot, profileSignal: DataSignal) -> None:
         self.logger = makeLogger("B")
-        self.logger.info("the setting data {self.data}")         
-        self.signals = Signals()
         self.gb = gb
-        self.logger.info(f"front end profile organizer initialized, the default setting is {self.gb.get_default_setting_name()}") 
+        self.logger.info(f"front end profile organizer initialized, the default setting is {self.gb.get_default_profile_setting_name()}") 
         self.registerSignal(profileSignal)
     
-    def registerSignal(self, signal: ProfileSignals):
+    def registerSignal(self, signal: DataSignal):
        signal.postRequest.connect(self.postHandler)
        signal.deleteRequest.connect(self.deleteHandler)
        signal.getRequest.connect(self.getHandler)
@@ -78,9 +46,6 @@ class ProfileOrganizer:
             elif not self.gb.create_new_setting(name, data):
                 postRequest.fail(ERR.INVALID_PROFILE.format(name)) 
                 self.logger.error(ERR.INVALID_PROFILE.format(name))
-            elif not self.gb.save_setting(name):
-                postRequest.fail(ERR.SAVE_PROFILE.format(name))
-                self.logger.error(ERR.SAVE_PROFILE.format(name))
             else:
                 self.logger.info(f"New profile created {name}, {data}")
                 postRequest.succeed(name)
@@ -97,11 +62,11 @@ class ProfileOrganizer:
         """
         name = deleteRequest.data
         self.logger.info(f"deleting profile {name}")
-        self.logger.info(f"the default setting is {self.gb.get_default_setting_name()}")
+        self.logger.info(f"the default setting is {self.gb.get_default_profile_setting_name()}")
         if not self.gb.is_setting(name):
             deleteRequest.fail(ERR.PROFILE_NOT_FOUND.format(name))
             self.logger.error(ERR.PROFILE_NOT_FOUND.format(name))
-        elif name == self.gb.get_default_setting_name():
+        elif name == self.gb.get_default_profile_setting_name():
             deleteRequest.fail(ERR.DELETE_DEFAULT)
             self.logger.error(ERR.DELETE_DEFAULT)
         elif self.gb.is_setting_in_use(name):

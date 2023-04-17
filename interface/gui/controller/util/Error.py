@@ -38,9 +38,16 @@ class ERR:
     GET_PROFILE       = "ERROR: Fail to get profile data {0}."
     PROFILE_NOT_FOUND = "ERROR: Profile {0} not found."
     PROFILE_EDIT      = "ERROR: Fail to update profile {0}."
-    PROFILE_IN_USE    = "ERROR: profile {0} is in use"
- 
+    PROFILE_IN_USE    = "ERROR: Profile {0} is in use"
+    
+    POST_ENGINE      = "ERROR: Fail to create engine setting {0}."
+    ENGINE_IN_USE     = "ERROR: Engine setting {0} is in use"
+    ENGINE_EDIT       = "ERROR: Fail to up the engine {0}"
+    ENGINE_NOT_FOUND  = "ERROR: Engine setting {0} not found."
+    INVALID_ENGINE   = "ERROR: {0} is an invalid engine setting."
+    DELETE_ENGINE    = "ERROR: Fail to delete engine setting {0}."
+    GET_ENGINE       = "ERROR: Fail to get engine setting data {0}."
     ## error for plugin organizer
-    PLUGIN_IN_USE    = "ERROR: plugin {0} is in use"
-    PLUGIN_OFFICIAL  = "ERRPR: official plugin {0} cannot be deleted"
-    PLUGIN_SRC_COED  = "ERROR: failed to open source code for plugin suite {0} due to error {1}"
+    PLUGIN_IN_USE    = "ERROR: Plugin {0} is in use"
+    PLUGIN_OFFICIAL  = "ERROR: Official plugin {0} cannot be deleted"
+    PLUGIN_SRC_COED  = "ERROR: Fail to open source code for plugin suite {0} due to error {1}"

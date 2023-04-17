@@ -9,6 +9,10 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
+""" TODO:
+modularize the code on this page
+
+"""
 from enum import Enum
 from typing import List, Dict, List, Tuple
 from view.config.Style import STYLE_DATA
@@ -16,11 +20,12 @@ from view.config.Text import ProfilePageText as Text
 from view.config.Style import StyleSheet as STYLE 
 from gbLogger import makeLogger
 
-from view.Signals import ProfileSignals, PluginSignals
 from view.pages import (
-    TranscriptionSetPage, 
+    ProfilePage, 
+    ProfilePage,
     PluginPage,
-    SysSetPage
+    SysSetPage, 
+    EnginePage
 )
 from view.util.ErrorMsg import  ERR
 from view.widgets import (
@@ -52,14 +57,10 @@ class SettingPage(QWidget):
     """ class for settings page """
     def __init__(
         self, 
-        profileSignal: ProfileSignals,
-        pluginSignal: PluginSignals,
         *args, 
         **kwargs) -> None:
         """ initializes class """
         super().__init__(*args, **kwargs)
-        self.profileSignal = profileSignal 
-        self.pluginSignal = pluginSignal
         self.logger = makeLogger("F")
         self._initWidget()
         self._initLayout()
@@ -67,16 +68,21 @@ class SettingPage(QWidget):
     
     def addAvailableSetting(self, profileKeys: List[str]):
         """ add a list of profile keys """
-        self.TranscriptionSetPage.addAvailableSetting(profileKeys)
+        self.ProfilePage.addAvailableSetting(profileKeys)
      
     def _initWidget(self):
         self.HIGH_LIGHT = STYLE_DATA.Color.HIGHLIGHT
         """ initializes widgets"""
         self.sideBar = SideBar()
+        
         # button on the sidebar
         self.transcibeSetBtn = BorderBtn(
             Text.reuquiredSetBtn, STYLE_DATA.Color.GREYDARK, STYLE_DATA.FontSize.BTN, 0, 
             STYLE.onlyBottomBorder, width=STYLE_DATA.Dimension.LBTNWIDTH)
+
+        self.engineSetBtn = BorderBtn(
+            Text.engineSetBtn, STYLE_DATA.Color.GREYDARK, STYLE_DATA.FontSize.BTN, 0, 
+            STYLE.onlyBottomBorder, width=STYLE_DATA.Dimension.LBTNWIDTH )
        
         self.pluginSetBtn = BorderBtn(
             Text.pluginSetBtn, STYLE_DATA.Color.GREYDARK, STYLE_DATA.FontSize.BTN, 0, 
@@ -88,13 +94,15 @@ class SettingPage(QWidget):
         
         self.cancelBtn = ColoredBtn(Text.cancelBtn, STYLE_DATA.Color.CANCEL_QUIT)
         self.settingStack = QStackedWidget(self)
-        self.TranscriptionSetPage = TranscriptionSetPage.TranscriptionSetPage(self.profileSignal)
-        self.PluginPage = PluginPage.PluginPage(self.pluginSignal)
+        self.ProfilePage = ProfilePage.ProfilePage()
+        self.PluginPage = PluginPage.PluginPage()
         self.SysPage = SysSetPage.SystemSettingPage()
-        self.settingStack.addWidget(self.TranscriptionSetPage)
+        self.EngineSetPage = EnginePage.EnginePage()
+        self.settingStack.addWidget(self.ProfilePage)
         self.settingStack.addWidget(self.PluginPage)
         self.settingStack.addWidget(self.SysPage)
-        self.settingStack.setCurrentWidget(self.TranscriptionSetPage)
+        self.settingStack.addWidget(self.EngineSetPage)
+        self.settingStack.setCurrentWidget(self.ProfilePage)
          
     def _initLayout(self):
         """initializes layout"""
@@ -109,6 +117,7 @@ class SettingPage(QWidget):
         self.topSelectionContainer.setLayout(self.sidebarTopLayout)
         """ adds widgets to layout """
         self.sidebarTopLayout.addWidget(self.transcibeSetBtn)
+        self.sidebarTopLayout.addWidget(self.engineSetBtn)
         self.sidebarTopLayout.addWidget(self.pluginSetBtn)
         self.sidebarTopLayout.addWidget(self.systemSetBtn)
         self.sidebarTopLayout.setSpacing(0)
@@ -121,10 +130,11 @@ class SettingPage(QWidget):
     def _connectSignal(self):
         """ connects profileSignal upon button clicks """
         self.transcibeSetBtn.clicked.connect(self._activeRequiredSet)
+        self.engineSetBtn.clicked.connect(self._activateEngineSet)
         self.pluginSetBtn.clicked.connect(self._activatePlugin)
         self.systemSetBtn.clicked.connect(self._activateSystemSet)
-        self.PluginPage.signal.pluginAdded.connect(self.TranscriptionSetPage.addPluginSuite)
-        self.PluginPage.signal.pluginDeleted.connect(self.TranscriptionSetPage.deletePlugin)
+        self.PluginPage.signal.addSucceed.connect(self.ProfilePage.addPluginSuite)
+        self.PluginPage.signal.deleteSucceed.connect(self.ProfilePage.deletePlugin)
         STYLE_DATA.signal.changeColor.connect(self.colorchange)
         STYLE_DATA.signal.changeFont.connect(self.fontchange)
         
@@ -132,7 +142,12 @@ class SettingPage(QWidget):
         """ switches current page from post transcription settings page to required settings page """
         self._setBtnDefault()
         self.transcibeSetBtn.setActiveStyle(self.HIGH_LIGHT)
-        self.settingStack.setCurrentWidget(self.TranscriptionSetPage)
+        self.settingStack.setCurrentWidget(self.ProfilePage)
+    
+    def _activateEngineSet(self):
+        self._setBtnDefault()
+        self.engineSetBtn.setActiveStyle(self.HIGH_LIGHT)
+        self.settingStack.setCurrentWidget(self.EngineSetPage)
     
     def _activatePlugin(self):
         """ switches current page to plugin page """
@@ -150,37 +165,31 @@ class SettingPage(QWidget):
         self.transcibeSetBtn.setDefaultStyle()
         self.pluginSetBtn.setDefaultStyle()
         self.systemSetBtn.setDefaultStyle()
+        self.engineSetBtn.setDefaultStyle()
     
     def colorchange(self, colormode = None):
         self.transcibeSetBtn.addOtherStyle(STYLE_DATA.StyleSheet.onlyBottomBorder)
+        self.engineSetBtn.addOtherStyle(STYLE_DATA.StyleSheet.onlyBottomBorder)
         self.systemSetBtn.addOtherStyle(STYLE_DATA.StyleSheet.onlyBottomBorder)
         self.pluginSetBtn.addOtherStyle(STYLE_DATA.StyleSheet.onlyBottomBorder)
         self.transcibeSetBtn.colorChange(STYLE_DATA.Color.GREYDARK)
+        self.engineSetBtn.colorChange(STYLE_DATA.Color.GREYDARK)
         self.systemSetBtn.colorChange(STYLE_DATA.Color.GREYDARK)
         self.pluginSetBtn.colorChange(STYLE_DATA.Color.GREYDARK)
         self.HIGH_LIGHT = STYLE_DATA.Color.HIGHLIGHT
   
     def fontchange(self, fontchange = None):
         self.transcibeSetBtn.fontChange(STYLE_DATA.FontSize.BTN)
+        self.engineSetBtn.fontChange(STYLE_DATA.FontSize.BTN)
         self.systemSetBtn.fontChange(STYLE_DATA.FontSize.BTN)
         self.pluginSetBtn.fontChange(STYLE_DATA.FontSize.BTN)
     
-    def deleteProfileConfirmed(self, deleted: bool):
-        """ if deleted, remove the current setting name from available setting"""
-        # self.TranscriptionSetPage.deleteProfileConfirmed(deleted) 
-        pass
-        
-    def loadProfile(self, profile:tuple):
-        """ loads the profile data to be presented onto the table """
-        # self.TranscriptionSetPage.loadProfile(profile)
-        pass
-         
     def addProfile (self, profileName:str):
         """ adding a new profile option to the settings page 
         Arg:
             profileName(str): name to be added as profile name to the new profile entry
         """
-        self.TranscriptionSetPage.createSucceed(profileName) 
+        self.ProfilePage.createSucceed(profileName) 
         
     def addPluginHandler(self, pluginSuite: Tuple[str, Dict[str, str], str]):
-        self.PluginPage.addPluginSuiteConfirmed(pluginSuite)
+        self.PluginPage.addSucceed(pluginSuite)

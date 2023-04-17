@@ -112,6 +112,7 @@ class AnalysisComponent(Component):
             ) 
             payload.set_analysis_process_stats(stats)   
             self.emit_progress(payload, ProgressMessage.Analyzed)
+        
         except Exception as e:
             logger.error(f"fail to apply the plugin suite {suite_name}, error {e}", exc_info=e)
             self.emit_progress(payload, ProgressMessage.Error)

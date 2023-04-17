@@ -232,15 +232,23 @@ class ServiceController:
             bool: return true if the setting exists, false otherwise
         """
         return self.organizer.is_setting(name)
+    
+    def get_default_engine_setting_name(self) -> str:
+        """ get the default setting name
+
+        Returns:
+            str: a string that represent the default setting
+        """
+        return self.organizer.get_default_engine_setting_name()
         
-    def get_default_setting_name(self) -> str:
+    def get_default_profile_setting_name(self) -> str:
         """
         Accesses an object's default setting name
 
         Returns:
             string containing the default name
         """
-        return self.organizer.get_default_setting_name()
+        return self.organizer.get_default_profile_setting_name()
     
     def set_default_setting(self, setting_name:str) -> bool:
         """
@@ -484,3 +492,80 @@ class ServiceController:
                               identified by suite name
         """ 
         return self.plugin_manager.get_suite_path(suite_name)
+    
+    def get_engine_setting_names(self) -> List[str]: 
+        """ get a list of available engine setting name
+
+        Returns:
+            List[str]: the list of engine setting name
+        """
+        return self.organizer.get_engine_setting_names()
+    
+    def add_new_engine(self, name, setting, overwrite = False) -> bool:
+        """ add a new engine setting 
+
+        Args:
+            name (str): the name of the engine setting
+            setting (Dict[str, str]): the setting data stored in a dictionary
+            overwrite (bool, optional): if True, overwrite the existing 
+                                        engine setting with the same name. Defaults to False.
+
+        Returns:
+            bool: return True if the engine setting is successfully created
+        """
+        return self.organizer.add_new_engine(name, setting, overwrite)
+
+    def remove_engine_setting(self, name) -> bool:
+        """remove the engine setting identified by nanme
+
+        Args:
+            name (str): the name of the engine setting to be removed
+
+        Returns:
+            bool:  return True if the engine setting is successfully removed
+        """
+        return self.organizer.remove_engine_setting(name)
+    
+    def update_engine_setting(self, name, setting_data: Dict[str, str]) -> bool:
+        """update the engine setting identified by name 
+
+        Args:
+            name (str): the name of the engine setting to be updated
+            setting_data (Dict[str, str]): the content of the new setting
+
+        Returns:
+            bool:  return True if the engine setting is successfully updated 
+        """
+        return self.organizer.update_engine_setting(name, setting_data)
+     
+    def get_engine_setting_data(self, name:str) -> Union[bool, Dict[str, str]]:
+        """ get the enigine setting data 
+
+        Args:
+            name (str): the name of the engine setting
+
+        Returns:
+            Union[bool, Dict[str, str]]: if the engine setting name is available 
+            return the engine setting data as stored in a dictionary, else return False
+        """
+        return self.organizer.get_engine_setting_data()
+    
+    def is_engine_setting_in_use(self, name:str) -> bool:
+        """ check if the engine setting identified by name is in use
+
+        Args:
+            name (str): the name of the engine setting
+
+        Returns:
+            bool: return true if the engine setting is in use, false other wise
+        """
+        return self.organizer.is_engine_setting_in_use(name)
+
+    
+    def is_engine_setting(self, name: str):
+        """check if the given engine name is engine setting
+
+        Args:
+            name (str): the name of the engine setting
+        """
+        return self.organizer.is_engine_setting(name)

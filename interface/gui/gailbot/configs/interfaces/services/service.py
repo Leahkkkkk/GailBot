@@ -33,9 +33,11 @@ class ServiceConfig(DataclassFromDict):
 
 @dataclass 
 class DefaultSetting(DataclassFromDict): 
-    setting_name                     : str = field_from_dict()
-    setting_data                     : dict = field_from_dict()
-    default_engine                   : dict = field_from_dict()
+    profile_name                     : str = field_from_dict()
+    profile_data                     : dict = field_from_dict()
+    engine_name                      : str = field_from_dict() 
+    engine_data                      : dict = field_from_dict()
+
 
 def load_service_config(path: str) -> ServiceConfig:
     d = toml.load(path)

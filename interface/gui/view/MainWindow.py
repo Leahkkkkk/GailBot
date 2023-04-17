@@ -20,7 +20,7 @@ from view.components import (
 )
 from view.components.PluginSuiteDetails import PluginSuiteDetails
 from view.util.ErrorMsg import WARN, ERR
-from view.Signals import FileSignals, ViewSignals, ProfileSignals, PluginSignals
+from view.Signals import FileSignals, ViewSignals
 from view.widgets import WarnBox
 from view.config.Style import Dimension
 from view.config.Text import About
@@ -42,11 +42,10 @@ class MainWindow(QMainWindow):
         # initialize the main view controller 
         self.logger = Logger.makeLogger("F")
         self.logger.info(f"the frontend configuration file is stored at {FRONTEND_CONFIG_ROOT}")
+        
         # initialize the signal
         self.fileTableSignals = FileSignals()
-        self.profileSignals = ProfileSignals()
         self.viewSignal = ViewSignals()
-        self.pluginSignal = PluginSignals()
         self.logger.info(f"signals initialized")
         
         # initialzie the menu bar and the footer
@@ -59,10 +58,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle(About.APP_TITTLE)
         self.setMinimumSize(QSize(Dimension.WIN_MIN_WIDTH, Dimension.WIN_MIN_HEIGHT))
         self.setMaximumSize(QSize(Dimension.WINMAXWIDTH, Dimension.WINMAXHEIGHT))
-        self.MainStack = MainStack.MainStack(
-            self.fileTableSignals, 
-            self.profileSignals, 
-            self.pluginSignal)
+        self.MainStack = MainStack.MainStack(self.fileTableSignals)
         self.logger.info("main stack initialized")
         self.setCentralWidget(self.MainStack)
         self.setContentsMargins(0,0,0,0)
@@ -203,16 +199,6 @@ class MainWindow(QMainWindow):
             self.logger.error(e, exc_info=e)
             self.showError(ERR.FAIL_TO.format("add profile,"))
             
-    def deleteProfile(self, profileName:str) -> None: 
-        """ delete profile with name being profileName from the profile 
-            setting page and file table file profile options
-        """
-        try:
-            self.MainStack.FileUploadPage.fileTable.deleteProfile(profileName)
-            self.MainStack.SettingPage.deleteProfileConfirmed(True)
-        except Exception as e:
-            self.logger.error(e, exc_info=e)
-            self.showError(ERR.FAIL_TO.format("delete profile"))
         
     def loadProfile(self, name):
         try:

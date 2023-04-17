@@ -134,10 +134,14 @@ class ProfilePageText:
     newProfileBtn      = "Create New Profile"
     reuquiredSetBtn    = "Profiles"  
     sysSetBtn          = "Settings" 
+    engineSetBtn       = "Engines"
     postSetBtn         = "Post-Transcription Settings"
     newPluginBtn       = "Add New Plugin"
     pluginSetBtn       = "Plugins"  
     engineSettingHeader  = "Profiles" 
+
+    engineSetting      = "Speech to Text Engine Setting"
+    pluginSuiteSetting      = "Plugin Suite Setting"
     engineSettingCaption = "These settings are applied to the selected settings profile and are required for transcription"
     pluginHeader       = "Available Plugin Suites"
     pluginCaption      = "These plugins are available in GailBot"
@@ -146,6 +150,11 @@ class ProfilePageText:
     selectengine       = "Select Speech to Text Engine"
     formPivotKey       = "engine"
     confirmEdit        = "Confirm saving new edit to the profile?"
+    
+    tableHeader        = ["Profile Name", "Applied Engine", "Applied Plugin Suite", "Actions"]
+    tableDimension     = [0.24, 0.24, 0.24, 0.28]
+    Header  = "Profile Settings"
+    Caption = "Available profile settings for GailBot" 
 @dataclass 
 class SystemSetPageText:
     """class holding the text for the system settings page"""
@@ -278,9 +287,9 @@ class FileTableHeader:
     """class holding the text for the file table headers"""
     fileUploadPage = ["Select All", "Type", "Name", "Profile",
                         "Status", "Date", "Size", "Actions"]
-    confirmPage    = ["Type", "Name", "Profile", "Action"]
+    confirmPage    = ["Type", "Name", "Profile", "Actions"]
     transcribePage = ["Type", "Name", "Progress"]
-    successPage    = ["Type",  "Name", "Status", "Output", "Action"]
+    successPage    = ["Type",  "Name", "Status", "Output", "Actions"]
 @dataclass 
 class TranscribeSuccessText: 
     mainLabelText        = "Transcription complete"
@@ -341,9 +350,18 @@ class PLUGIN_SUITE_TEXT:
                "2. Amazon S3 Public Bucket Name",
                "3. Github url storing plugin suite as zip file"]
     TABLE_HEADER = ["Plugin Suite Name", "Author", "Version", "Actions"]
-    TABLE_DIMENSION = [0.3,0.3,0.2,0.2]
+    TABLE_DIMENSION = [0.3,0.2,0.15,0.35]
     CONFIRM_DELETE = "Confirm deleting plugin suite {0}"
     
+    
+@dataclass
+class ENGINE_SETTING_TEXT:
+    TABLE_HEADER = ["Engine Setting Name", "Actions"]
+    ADD_BUTTON = "Create New"
+    CONFIRM_DELETE = "Confirm deleting engine setting {0}"
+    ENGINE_HEADER = "Engine Setting"
+    CAPTION = "Available Speech to Text Engine Setting"
+    TABLE_DIMENSION = [0.65, 0.35]
     
     
 

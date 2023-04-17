@@ -9,85 +9,40 @@ Modified By:  Siara Small  & Vivian Li
 -----
 Description: implementation of the plugin page
 '''
-from view.config.Style import STYLE_DATA,  FontFamily
 from view.config.Text import ProfilePageText as Text
-from view.config.Text import ProfileSettingForm as Form
-from view.Signals import PluginSignals, GlobalStyleSignal
+from view.Signals import DataSignal
 from view.Request import Request
 from gbLogger import makeLogger
-from view.widgets import Label, ColoredBtn
 from view.widgets.PluginTable import PluginTable
 from view.components.UploadPluginDialog import UploadPlugin
-from PyQt6.QtWidgets import (
-    QWidget, 
-    QVBoxLayout,
-    QHBoxLayout)
+from .BaseSettingPage import BaseSettingPage
 from PyQt6.QtCore import Qt
 
 center  = Qt.AlignmentFlag.AlignHCenter
 
-class PluginPage(QWidget):
+class PluginPage(BaseSettingPage):
     """" class for the plugins page """
     def __init__(
         self,
-        signal: PluginSignals,
         *args, 
         **kwargs) -> None:
-        super().__init__( *args, **kwargs)
-        """ initializes class """
-        self.signal = PluginSignals()
-        self.logger = makeLogger("F")
-        self._initWidget()
-        self._initlayout()
-        self._connectSignal()
+        self.headerText = Text.pluginHeader
+        self.captionText = Text.pluginCaption
+        self.signal = DataSignal()
+        self.mainTable = PluginTable(self.signal)
+        super().__init__(*args, **kwargs)
        
-    def _initWidget(self):
-        """ initializes widgets """
-        self.logger.info("")
-        self.header = Label(
-            Text.pluginHeader, STYLE_DATA.FontSize.HEADER2, FontFamily.MAIN, 
-            alignment= center)
-        self.caption = Label(
-            Text.pluginCaption, STYLE_DATA.FontSize.DESCRIPTION, FontFamily.MAIN)
-        self.pluginTable = PluginTable(self.signal)
-        self.addBtn = ColoredBtn(Text.newPluginBtn, STYLE_DATA.Color.PRIMARY_BUTTON)
-     
-    def _initlayout(self):
-        """" initializes layout """
-        self.logger.info("")
-        self.verticalLayout = QVBoxLayout()
-        self.setLayout(self.verticalLayout)
-        self.verticalLayout.addWidget(self.header)
-        self.verticalLayout.setSpacing(STYLE_DATA.Dimension.SMALL_SPACING)
-        self.verticalLayout.addWidget(self.caption, alignment=center)
-        self.verticalLayout.addSpacing(STYLE_DATA.Dimension.SMALL_SPACING)
-        self.verticalLayout.addWidget(self.pluginTable, alignment=center)
-        self.verticalLayout.addStretch()
-        self.verticalLayout.addWidget(self.addBtn, alignment=center)
-
-    def _connectSignal(self):
-        self.addBtn.clicked.connect(self.addPluginSuite)
-        self.signal.addPlugin.connect(self.addRequestWrapper)
-        STYLE_DATA.signal.changeColor.connect(self.changeColor)
-        STYLE_DATA.signal.changeFont.connect(self.changeFont)
-        
-    def addRequestWrapper(self, suiteData):
-        self.signal.addRequest.emit(
-            Request(data = suiteData, succeed=self.addPluginSuiteConfirmed))
-    
-    def addPluginSuite(self):
-        pluginDialog = UploadPlugin(self.signal)
+    def addItem(self):
+        pluginDialog = UploadPlugin()
+        pluginDialog.signal.addPlugin.connect(self.sendAddRequest)
         pluginDialog.exec()
-    
-    def addPluginSuiteConfirmed(self, pluginSuite):
-        name, data, isOfficial = pluginSuite
-        self.pluginTable.addPluginSuite(pluginSuite)
-        self.signal.pluginAdded.emit(name)
-    
-    def changeColor(self):
-        self.addBtn.colorChange(STYLE_DATA.Color.PRIMARY_BUTTON)
-    
-    def changeFont(self):
-        self.header.fontChange(STYLE_DATA.FontSize.HEADER2)
-        self.caption.fontChange(STYLE_DATA.FontSize.DESCRIPTION)
         
+    def sendAddRequest(self, suiteData):
+        self.signal.postRequest.emit(
+            Request(data = suiteData, succeed=self.addSucceed))
+        
+    def addSucceed(self, pluginSuite):
+        name, data, isOfficial = pluginSuite
+        self.mainTable.addItem(pluginSuite)
+        self.signal.addSucceed.emit(name)
+  

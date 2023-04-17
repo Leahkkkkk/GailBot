@@ -25,12 +25,8 @@ class PluginForm(QWidget):
     
     def _initLayout(self):
         self._layout = QHBoxLayout()
-        # TODO: add to text.py
-        self.toggleView = ToggleView(
-            "Plugin Suite Settings", self.pluginSuitesList, header=True)
-        self.toggleView.setScrollHeight(STYLE_DATA.Dimension.OUTPUT_FORM_HEIGHT)
         self.setLayout(self._layout)
-        self._layout.addWidget(self.toggleView)
+        self._layout.addWidget(self.pluginSuitesList)
     
     def addPluginSuite(self, pluginSuite:str):
         """add a single plugin suite as available option

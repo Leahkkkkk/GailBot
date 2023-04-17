@@ -10,7 +10,7 @@ Modified By:  Siara Small  & Vivian Li
 '''
 from typing import Dict, List, Tuple
 from view.config.Style import STYLE_DATA
-from view.Signals import ProfileSignals
+from view.Signals import DataSignal
 from view.Request import Request
 from view.config.Text import ProfilePageText as Text
 from gbLogger import makeLogger
@@ -30,11 +30,11 @@ center = Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignHCenter
 
 class TranscriptionSetPage(QWidget):
     """ class for the required settings page """
-    def __init__(self, signal: ProfileSignals, *args, **kwargs) -> None:
+    def __init__(self, *args, **kwargs) -> None:
         """ initializes the page """
         super().__init__(*args, **kwargs)
         self.logger = makeLogger("F")
-        self.signal = ProfileSignals()
+        self.signal = DataSignal()
         self.plugins = []
         self._initWidget()
         self._initLayout()
@@ -45,7 +45,7 @@ class TranscriptionSetPage(QWidget):
         Args: data:dict: dictionary that is passed in to be updated
         """
         try:
-            self.engineForm.setValue(data["engine_setting"])
+            self.engineForm.setCurrentText(data["engine_setting"])
             self.pluginForm.setValue(data["plugin_setting"])
         except Exception as e:
             self.logger.error(e, exc_info=e)
@@ -57,7 +57,7 @@ class TranscriptionSetPage(QWidget):
         """ gets the value of data """
         try:
             setting = dict()
-            setting["engine_setting"] = self.engineForm.getValue()
+            setting["engine_setting"] = self.engineForm.currentText()
             setting["plugin_setting"] = self.pluginForm.getValue()
             return setting 
         except Exception as e:
@@ -76,7 +76,10 @@ class TranscriptionSetPage(QWidget):
         self.selectSettings.setFixedSize(QSize(STYLE_DATA.Dimension.BTNWIDTH,  STYLE_DATA.Dimension.BTNHEIGHT))
         
         # main form area
-        self.engineForm = EngineSettingForm.EngineSettingForm()
+        self.engineLabel = Label(Text.engineSetting, STYLE_DATA.FontSize.HEADER3)
+        self.engineForm = ComboBox()
+        
+        self.pluginLabel= Label(Text.pluginSuiteSetting, STYLE_DATA.FontSize.HEADER3)
         self.pluginForm = PluginForm.PluginForm()
         
         # buttom button
@@ -100,8 +103,10 @@ class TranscriptionSetPage(QWidget):
         self.layout.addWidget(self.description, alignment=center)
         self.layout.addWidget(self.selectSettings, alignment=center)
         self.layout.addWidget(self.buttonContainer, alignment=center)
-        self.layout.addWidget(self.engineForm, alignment=center)
-        self.layout.addWidget(self.pluginForm, alignment=center)
+        self.layout.addWidget(self.engineLabel)
+        self.layout.addWidget(self.engineForm)
+        self.layout.addWidget(self.pluginLabel)
+        self.layout.addWidget(self.pluginForm)
         self.layout.addStretch()
         self.layout.addWidget(self.buttonContainer, alignment=center)
 
@@ -111,9 +116,6 @@ class TranscriptionSetPage(QWidget):
         self.editBtn.clicked.connect(self.editProfile)
         self.deleteBtn.clicked.connect(self.deleteProfile)
         self.createBtn.clicked.connect(self.createProfile) 
-        # for toggling between different toggle view 
-        self.engineForm.toggleView.signal.showview.connect(self.pluginForm.toggleView.hideView)
-        self.pluginForm.toggleView.signal.showview.connect(self.engineForm.toggleView.hideView)
         STYLE_DATA.signal.changeColor.connect(self.colorChange)
         STYLE_DATA.signal.changeFont.connect(self.fontChange)
     
@@ -125,6 +127,8 @@ class TranscriptionSetPage(QWidget):
     def fontChange(self, fontmode = None):
         self.label.fontChange(STYLE_DATA.FontSize.HEADER2)
         self.description.fontChange(STYLE_DATA.FontSize.DESCRIPTION)
+        self.pluginLabel.fontChange(STYLE_DATA.FontSize.HEADER3)
+        self.engineLabel.fontChange(STYLE_DATA.FontSize.HEADER3)
     
     def addAvailableSetting(self, profileKeys: List[str]):
         """ add a list of profile keys """
@@ -170,7 +174,7 @@ class TranscriptionSetPage(QWidget):
         """ if deleted, remove the current setting name from available setting"""
         self.logger.info(f"delete profile {profielName} succeeds")
         try:
-            self.signal.profileDeleted.emit(profielName)
+            self.signal.deleteSucceed.emit(profielName)
             self.selectSettings.removeItem(self.selectSettings.currentIndex())
         except Exception as e:
             self.logger.error(e, exc_info=e)
@@ -184,7 +188,7 @@ class TranscriptionSetPage(QWidget):
         self.logger.info(f"create profile {profileName} succeeds")
         try:
             self.selectSettings.addItem(profileName)
-            self.signal.profileAdded.emit(profileName)
+            self.signal.addSucceed.emit(profileName)
         except Exception as e:
             self.logger.error(e, exc_info=e)
             WarnBox(ERR.ERR_WHEN_DUETO.format("adding profile", str(e)))

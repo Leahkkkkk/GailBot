@@ -13,7 +13,7 @@ Description: implementation of the plugin dialog for user to upload new plugin
 
 from view.config.Text import PLUGIN_SUITE_TEXT as TEXT
 from view.config.Style import STYLE_DATA
-from view.Signals import PluginSignals
+from view.Signals import DataSignal
 from view.widgets import ColoredBtn, WarnBox, UploadTable, Label, TextInput, initPrimaryColorBackground
 from view.widgets import TextInput
 from view.config.Style import Color, Dimension
@@ -28,8 +28,10 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import Qt, QSize, pyqtSignal, QObject
 
+class Signal(QObject):
+    addPlugin = pyqtSignal(str)
 class UploadPlugin(QDialog):
-    def __init__(self, signal:PluginSignals, *arg, **kwarg) -> None:
+    def __init__(self, *arg, **kwarg) -> None:
         """ a pop up dialog that allow  user to load new plugin
             once the user confirms adding the plugin, the widget will 
             send a signal to post the newly added plugin to the database
@@ -41,7 +43,7 @@ class UploadPlugin(QDialog):
         super().__init__(*arg, **kwarg)
         self.setMinimumSize(
             QSize(Dimension.DEFAULTTABHEIGHT, Dimension.DEFAULTTABHEIGHT))
-        self.signal = signal
+        self.signal = Signal()
         self.logger = makeLogger("F")
         self._initWidget()
         self._initLayout()
