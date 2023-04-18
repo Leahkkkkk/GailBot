@@ -17,10 +17,12 @@ from view.config.Text import CreateNewProfilePageText as Text
 from view.config.Text import EngineForm as Form 
 from gbLogger import makeLogger
 
+
 from view.util.ErrorMsg import ERR, WARN
 from view.widgets.Button import ColoredBtn
 from view.widgets.Label import Label
 from view.widgets.TabPage import TabPage
+from view.widgets.Table import BaseTable
 from view.widgets.Form.TextInput import TextInput
 from view.widgets.MsgBox import WarnBox
 from view.widgets.ComboBox import ComboBox
@@ -28,18 +30,18 @@ from view.config.Text import EngineForm
 from view.widgets import DependentCombo
 from view.components import EngineSettingForm
 from view.components import PluginForm
-from PyQt6.QtWidgets import  QVBoxLayout
+from PyQt6.QtWidgets import  QVBoxLayout, QWidget, QTableWidget, QTableWidgetItem
 from PyQt6.QtCore import (
     Qt, 
     pyqtSignal, 
-    QObject
+    QObject, 
+    QSize
 )
 
 #### controlling style changes 
 from view.config.Style import (
     FontFamily,
     STYLE_DATA)
-from view.Signals import GlobalStyleSignal
 
 
 
@@ -198,16 +200,18 @@ class ChooseEngine(TabPage):
         )     
         self.engineSignal = engineSignal 
         self.selectEngines = ComboBox()
-        self.engineDisplay = DependentCombo(EngineForm.Engine, "Speech to Text Engine", pivotKey="engine")
+        self.selectEngines.setFixedWidth(STYLE_DATA.Dimension.WIN_MIN_WIDTH//2)
+        self.engineDisplay = SettingDisplay()
         self.selectEngines.addItems(engineSettings)
         self.verticallayout.addWidget(self.header, alignment=Qt.AlignmentFlag.AlignHCenter)
-        self.verticallayout.addWidget(self.selectEngines)
+        self.verticallayout.addWidget(self.selectEngines, alignment=Qt.AlignmentFlag.AlignHCenter)
         self.verticallayout.addWidget(self.engineDisplay)
         self.verticallayout.addStretch()
         self.confirmBtn = ColoredBtn(Text.cofirmBtn, STYLE_DATA.Color.SECONDARY_BUTTON)
         self.confirmBtn.clicked.connect(self._confirmHandler)
         self.verticallayout.addWidget(self.confirmBtn, alignment=bottomRight)
         self.selectEngines.currentTextChanged.connect(self.requestSetting)
+        self.requestSetting(self.selectEngines.currentText())
     
     def _confirmHandler(self):
         self.signals.nextPage.emit()
@@ -229,8 +233,7 @@ class ChooseEngine(TabPage):
     def displayData(self, data):
         try:
             name, setting = data 
-            self.logger.error(setting)
-            self.engineDisplay.setValue(setting)
+            self.engineDisplay.setData(setting)
         except Exception as e:
             self.logger.error(e, exc_info=e)
     
@@ -238,3 +241,32 @@ class ChooseEngine(TabPage):
         self.engineSignal.getRequest.emit(
             Request(data=name, succeed=self.displayData)
         ) 
+    
+    
+    
+class SettingDisplay(QWidget):
+    def __init__(self) -> None:
+        super().__init__()
+        self._layout = QVBoxLayout()
+        self.currentTableWidget = None 
+        self.setLayout(self._layout)
+        self.mainLabel = Label("Engine Setting Details", STYLE_DATA.FontSize.HEADER3, FontFamily.MAIN)
+        self._layout.addSpacing(20)
+        self._layout.setSpacing(STYLE_DATA.Dimension.MEDIUM_SPACING)
+        self._layout.addWidget(self.mainLabel, alignment=Qt.AlignmentFlag.AlignCenter)
+    
+    def setData(self, data: Dict[str, str]):
+        if self.currentTableWidget:
+            self._layout.removeWidget(self.currentTableWidget)
+        newTable = BaseTable(["Setting Options", "Value"])
+        newTable.setFixedSize(QSize(STYLE_DATA.Dimension.WIN_MIN_WIDTH//2, 
+                                    STYLE_DATA.Dimension.SMALL_TABLE_HEIGHT))
+        newTable.resizeCol([0.5, 0.5])
+        for row, (key, value) in enumerate(data.items()):
+            newTable.insertRow(row)
+            key = key.replace("_", " ").upper()
+            newTable.setItem(row, 0, QTableWidgetItem(key))
+            newTable.setItem(row, 1, QTableWidgetItem(str(value)))
+        self._layout.addWidget(newTable,alignment=Qt.AlignmentFlag.AlignHCenter)
+        self.currentTableWidget = newTable
+       

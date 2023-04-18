@@ -36,7 +36,7 @@ class Workspace:
 @dataclass
 class About :
     """class holding data about GailBot; e.g. version, title, etc."""
-    version              = "Version 0.0.1.a"
+    version              = "Version 0.0.1a"
     APP_TITTLE           = "GailBot"
     copyRight            = copyRightText
     
@@ -359,7 +359,7 @@ class ENGINE_SETTING_TEXT:
     TABLE_HEADER = ["Engine Setting Name", "Speech to Text Engine", "Actions"]
     ADD_BUTTON = "Create New"
     CONFIRM_DELETE = "Confirm deleting engine setting {0}"
-    ENGINE_HEADER = "Engine Setting"
+    ENGINE_HEADER = "Engine Settings"
     CAPTION = "Available Speech to Text Engine Setting"
     TABLE_DIMENSION = [0.36, 0.36, 0.28]
     
