@@ -30,6 +30,8 @@ from PyQt6.QtWidgets import (
 
 from PyQt6.QtCore import QObject, pyqtSignal, QSize
 
+
+""" NOTE: currently replaced by Profile Config Tab """
 class Signals(QObject):
     """ a signal object to send new setting data values """
     newSetting = pyqtSignal(tuple)

@@ -12,13 +12,15 @@ center  = Qt.AlignmentFlag.AlignHCenter
 class ProfilePage(BaseSettingPage):
     def __init__(
         self,
+        engineSignal: DataSignal, 
         *args, 
         **kwargs) -> None:
         """ initializes class """
         self.headerText = Text.Header
         self.captionText = Text.Caption
         self.signal = DataSignal()
-        self.mainTable = ProfileTable(self.signal, parent=self)
+        self.engineSignal = engineSignal
+        self.mainTable = ProfileTable(self.signal, engineSignal=self.engineSignal, parent=self)
         self.availableEngineSettings : List[str] = []
         self.availablePluginSettings : List[str] = []
         super().__init__( *args, **kwargs)
@@ -26,7 +28,8 @@ class ProfilePage(BaseSettingPage):
     def addItem(self):
         newProfile = CreateNewProfile(
             self.availableEngineSettings, 
-            self.availablePluginSettings)
+            self.availablePluginSettings,
+            self.engineSignal)
         newProfile.signals.addProfile.connect(self.sendAddRequest)
         newProfile.exec()
     

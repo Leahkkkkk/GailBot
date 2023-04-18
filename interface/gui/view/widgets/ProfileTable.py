@@ -10,9 +10,10 @@ from .Table import BaseTable
 from PyQt6.QtWidgets import QWidget
 
 class ProfileTable(BaseTable):
-    def __init__(self, signal: DataSignal, parent: QWidget):
+    def __init__(self, signal: DataSignal, engineSignal, parent: QWidget):
         super().__init__(Text.tableHeader)
         self.signal = signal
+        self.engineSignal = engineSignal
         self.parent = parent
         self.resizeCol(Text.tableDimension)
         self.dataKeyToCol = {"engine_setting_name": 1,
@@ -21,7 +22,8 @@ class ProfileTable(BaseTable):
     def openEditDialog(self, data):
         editDialog = EditProfile(data, 
                                  self.parent.availableEngineSettings, 
-                                 self.parent.availablePluginSettings)
+                                 self.parent.availablePluginSettings,
+                                 self.engineSignal)
         editDialog.signals.editProfile.connect(self.sendEditRequest)
         editDialog.exec()
     

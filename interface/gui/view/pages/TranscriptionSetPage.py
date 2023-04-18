@@ -8,6 +8,8 @@ Last Modified: Thursday, 6th October 2022 11:08:43 am
 Modified By:  Siara Small  & Vivian Li
 -----
 '''
+
+""" NOTE: currently replaced by Profile Setting Page """
 from typing import Dict, List, Tuple
 from view.config.Style import STYLE_DATA
 from view.Signals import DataSignal

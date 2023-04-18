@@ -11,7 +11,8 @@ Description: implementation of pages for user to create new profile
 '''
 
 from typing import Dict
-
+from view.Signals import DataSignal
+from view.Request import Request
 from view.config.Text import CreateNewProfilePageText as Text 
 from view.config.Text import EngineForm as Form 
 from gbLogger import makeLogger
@@ -23,6 +24,8 @@ from view.widgets.TabPage import TabPage
 from view.widgets.Form.TextInput import TextInput
 from view.widgets.MsgBox import WarnBox
 from view.widgets.ComboBox import ComboBox
+from view.config.Text import EngineForm
+from view.widgets import DependentCombo
 from view.components import EngineSettingForm
 from view.components import PluginForm
 from PyQt6.QtWidgets import  QVBoxLayout
@@ -145,7 +148,6 @@ class EngineSetting(TabPage):
         except Exception as e:
             self.logger.error(e, exc_info=e)
             WarnBox(ERR.ERR_WHEN_DUETO.format("displaying setting data", str(e)))
-
 class PluginSetting(TabPage):
     """ class for the plugin settings tab """
     def __init__(self, plugins, *args, **kwargs) -> None:
@@ -184,7 +186,7 @@ class PluginSetting(TabPage):
             self.logger.error(e, exc_info=e)
             WarnBox(ERR.ERR_WHEN_DUETO.format("displaying plugin data", str(e)))
 class ChooseEngine(TabPage):
-    def __init__(self, engine_settings, *args, **kwargs) -> None:
+    def __init__(self, engineSettings, engineSignal: DataSignal, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.logger = makeLogger("F")
         self.verticallayout = QVBoxLayout()
@@ -193,15 +195,19 @@ class ChooseEngine(TabPage):
             Text.engineSettingHeader,
             STYLE_DATA.FontSize.HEADER2,
             FontFamily.MAIN
-        )      
+        )     
+        self.engineSignal = engineSignal 
         self.selectEngines = ComboBox()
-        self.selectEngines.addItems(engine_settings)
-        self.verticallayout.addWidget(self.header)
+        self.engineDisplay = DependentCombo(EngineForm.Engine, "Speech to Text Engine", pivotKey="engine")
+        self.selectEngines.addItems(engineSettings)
+        self.verticallayout.addWidget(self.header, alignment=Qt.AlignmentFlag.AlignHCenter)
         self.verticallayout.addWidget(self.selectEngines)
+        self.verticallayout.addWidget(self.engineDisplay)
         self.verticallayout.addStretch()
         self.confirmBtn = ColoredBtn(Text.cofirmBtn, STYLE_DATA.Color.SECONDARY_BUTTON)
         self.confirmBtn.clicked.connect(self._confirmHandler)
         self.verticallayout.addWidget(self.confirmBtn, alignment=bottomRight)
+        self.selectEngines.currentTextChanged.connect(self.requestSetting)
     
     def _confirmHandler(self):
         self.signals.nextPage.emit()
@@ -219,3 +225,16 @@ class ChooseEngine(TabPage):
         except Exception as e:
             self.logger.error(e, exc_info=e)
             WarnBox(ERR.ERR_WHEN_DUETO.format("displaying engine setting", str(e)))
+
+    def displayData(self, data):
+        try:
+            name, setting = data 
+            self.logger.error(setting)
+            self.engineDisplay.setValue(setting)
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+    
+    def requestSetting(self, name:str):
+        self.engineSignal.getRequest.emit(
+            Request(data=name, succeed=self.displayData)
+        ) 

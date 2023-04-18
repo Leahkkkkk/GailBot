@@ -70,7 +70,6 @@ class BaseSettingPage(QWidget):
    
     def addSucceed(self, data):
         name, setting = data
-        self.logger.warn(f"get engine data {data}")
         self.mainTable.addItem(data)
         self.signal.addSucceed.emit(name)
     

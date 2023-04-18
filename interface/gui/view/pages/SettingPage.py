@@ -22,7 +22,6 @@ from gbLogger import makeLogger
 
 from view.pages import (
     ProfilePage, 
-    ProfilePage,
     PluginPage,
     SysSetPage, 
     EnginePage
@@ -35,8 +34,6 @@ from view.widgets import (
     SideBar,
 )
 
-from view.components.CreateNewSettingTab import CreateNewSetting
-from view.components.UploadPluginDialog import UploadPlugin
 from PyQt6.QtWidgets import (
     QWidget, 
     QStackedWidget, 
@@ -103,10 +100,10 @@ class SettingPage(QWidget):
         
         self.cancelBtn = ColoredBtn(Text.cancelBtn, STYLE_DATA.Color.CANCEL_QUIT)
         self.settingStack = QStackedWidget(self)
-        self.ProfilePage = ProfilePage.ProfilePage()
         self.PluginPage = PluginPage.PluginPage()
         self.SysPage = SysSetPage.SystemSettingPage()
         self.EngineSetPage = EnginePage.EnginePage()
+        self.ProfilePage = ProfilePage.ProfilePage(engineSignal=self.EngineSetPage.signal)
         self.settingStack.addWidget(self.ProfilePage)
         self.settingStack.addWidget(self.PluginPage)
         self.settingStack.addWidget(self.SysPage)

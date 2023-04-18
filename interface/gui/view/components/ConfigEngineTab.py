@@ -1,16 +1,15 @@
 '''
-File: CreateNewSettingTab.py
+File: ConfigEngineTab.py
 Project: GailBot GUI
-File Created: Sunday, 23rd October 2022 10:28:24 am
+File Created: 2022/10/
 Author: Siara Small  & Vivian Li
 -----
-Last Modified: Monday, 24th October 2022 6:39:15 am
+Last Modified:2023/04/18
 Modified By:  Siara Small  & Vivian Li
 -----
-Description: implementation of a pop up dialog that allow user to 
-             create new transcription setting profile
+Description: implement tab widget for creating Engine setting and 
+              edit existing engine setting 
 '''
-
 from typing import List 
 
 from gbLogger import makeLogger
@@ -41,12 +40,6 @@ class CreateNewEngine(QDialog):
             the tab implement below processes for creating a new profile:
             1. input for profile name
             2. a form to create speech engine setting 
-            3. a form to select plugin setting 
-             
-        Constructor Args:
-            plugins (List [str]): a list of string that stores the available 
-                                  plugin
-        
         """
         super().__init__(*agrs, **kwargs)
         self.logger = makeLogger("F")

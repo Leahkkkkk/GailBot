@@ -1,3 +1,15 @@
+'''
+File: ConfigProfileTab.py
+Project: GailBot GUI
+File Created: 2022/10/
+Author: Siara Small  & Vivian Li
+-----
+Last Modified:2023/04/18
+Modified By:  Siara Small  & Vivian Li
+-----
+Description: implement tab widget for creating profile setting and 
+              edit existing engine setting 
+'''
 
 from typing import List 
 
@@ -24,12 +36,12 @@ class Signals(QObject):
     editProfile = pyqtSignal(tuple)
 
 class CreateNewProfile(QDialog):
-    def __init__(self, engines: List[str], plugins: List[str]) -> None:
+    def __init__(self, engines: List[str], plugins: List[str], engineSettingSignal) -> None:
         super().__init__()
         self.signals = Signals()
         self.logger = makeLogger("F")
         self.profileName   = SettingName()
-        self.engineSetting = ChooseEngine(engines)
+        self.engineSetting = ChooseEngine(engines, engineSettingSignal)
         self.pluginSetting = PluginSetting(plugins)
         self.newSettingData = dict()
         mainTab = Tab(
@@ -38,7 +50,9 @@ class CreateNewProfile(QDialog):
                 Text.TabHeader1: self.profileName,
                 Text.TabHeader2: self.engineSetting,
                 Text.TabHeader3: self.pluginSetting
-            }
+            }, 
+            QSize(STYLE_DATA.Dimension.LARGEDIALOGWIDTH, 
+                  STYLE_DATA.Dimension.LARGEDIALOGHEIGHT)
         )
         mainTab.changePageBtn.finishBtn.clicked.connect(self._postSetting)
         self.layout = QVBoxLayout()
@@ -61,21 +75,22 @@ class CreateNewProfile(QDialog):
             
             
 class EditProfile(QDialog):
-    def __init__(self, setting, engines, plugins, *args, **kwargs) -> None:
+    def __init__(self, setting, engines, plugins, engineSettingSignal, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         name, data = setting 
         self.profileName  = name 
         self.signals = Signals()
         self.logger = makeLogger("F")
-        self.engineSetting = ChooseEngine(engines)
+        self.engineSetting = ChooseEngine(engines, engineSettingSignal)
         self.pluginSetting = PluginSetting(plugins)
         self.newSettingData = dict()
         mainTab = Tab(
             self.profileName,
-            {
-                Text.TabHeader2: self.engineSetting,
-                Text.TabHeader3: self.pluginSetting
-            }
+            { Text.TabHeader2: self.engineSetting,
+              Text.TabHeader3: self.pluginSetting
+            },
+            QSize(STYLE_DATA.Dimension.LARGEDIALOGWIDTH, 
+                  STYLE_DATA.Dimension.LARGEDIALOGHEIGHT)
         )
         mainTab.changePageBtn.finishBtn.clicked.connect(self._postSetting)
         self.engineSetting.setData(data["engine_setting_name"])
