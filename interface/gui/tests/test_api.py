@@ -25,8 +25,8 @@ def transcribe(files, setting_name = "test", setting_data = SETTING_DATA.WHISPER
     assert gb.add_new_engine(SETTING_DATA.WATSON_NAME, SETTING_DATA.WATSON_SETTING, overwrite= True)
     assert gb.add_new_engine(SETTING_DATA.WHISPER_SP_NAME, SETTING_DATA.WHISPER_SPEAKER, overwrite= True)
     
-    assert gb.create_new_setting(setting_name, setting_data)
-    assert gb.is_setting(setting_name)
+    if not gb.is_setting(setting_name):
+        assert gb.create_new_setting(setting_name, setting_data)
     assert gb.apply_setting_to_sources(files, setting_name)
     for file in files:
         assert gb.get_src_setting_name(file) == setting_name

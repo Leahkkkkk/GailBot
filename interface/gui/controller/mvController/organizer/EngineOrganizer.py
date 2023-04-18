@@ -16,6 +16,7 @@ class EngineOrganizer:
        signal.deleteRequest.connect(self.deleteHandler)
        signal.getRequest.connect(self.getHandler)
        signal.editRequest.connect(self.editHandler)
+       signal.viewSourceRequest.connect(self.viewSourceHandler)
         
     def postHandler(self, postRequest: Request) -> None :
         self.logger.info(f"received post request")
@@ -30,7 +31,7 @@ class EngineOrganizer:
                 self.logger.error(ERR.INVALID_ENGINE.format(name))
             else:
                 self.logger.info(f"New engine created {name}, {data}")
-                postRequest.succeed(name)
+                postRequest.succeed(postRequest.data)
         except Exception as e:
             postRequest.fail(ERR.POST_ENGINE.format(name))
             self.logger.error(f"Creating new engine error {e}", exc_info=e)
@@ -74,7 +75,7 @@ class EngineOrganizer:
             editRequest.fail(ERR.ENGINE_EDIT.format(name))
             self.logger.error(e, exc_info=e)
         else:
-            editRequest.succeed(name)
+            editRequest.succeed(editRequest.data)
      
     def getHandler(self, getRequest: Request) -> None:
         """ 
@@ -93,3 +94,12 @@ class EngineOrganizer:
             getRequest.fail(ERR.GET_ENGINE.format(name))
             self.logger.error(e, exc_info=e)
             
+
+    def viewSourceHandler(self, viewRequest: Request) -> None:
+        name = viewRequest.data 
+        try:
+            path = self.gb.get_engine_src_path(name)
+            viewRequest.succeed(path)
+        except Exception as e:
+            viewRequest.fail(
+                ERR.PROFILE_SRC_CODE.format(viewRequest.data, str(e)))

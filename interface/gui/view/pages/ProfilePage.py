@@ -1,8 +1,9 @@
-
+from typing import List
 from view.config.Text import ProfilePageText as Text
 from view.Signals import DataSignal
 from view.Request import Request
 from view.widgets.ProfileTable import ProfileTable 
+from view.components.ConfigProfileTab import CreateNewProfile
 from PyQt6.QtCore import Qt
 from .BaseSettingPage import BaseSettingPage
 
@@ -17,29 +18,29 @@ class ProfilePage(BaseSettingPage):
         self.headerText = Text.Header
         self.captionText = Text.Caption
         self.signal = DataSignal()
-        self.mainTable = ProfileTable(self.signal)
-        self.plugins = []
+        self.mainTable = ProfileTable(self.signal, parent=self)
+        self.availableEngineSettings : List[str] = []
+        self.availablePluginSettings : List[str] = []
         super().__init__( *args, **kwargs)
     
     def addItem(self):
-        pass 
+        newProfile = CreateNewProfile(
+            self.availableEngineSettings, 
+            self.availablePluginSettings)
+        newProfile.signals.addProfile.connect(self.sendAddRequest)
+        newProfile.exec()
     
-    def sendAddRequest(self, engineData):
-        self.signal.postRequest.emit(
-            Request(data=engineData, succeed=self.addSucceed)
-        )
+    def addPluginSuite(self, name:str):
+        self.availablePluginSettings.append(name)
     
-    def addSucceed(self, data):
-        self.mainTable.addItem(data)
-        self.signal.addSucceed.emit(data)
+    def deletePlugin(self, name:str):
+        if name in self.availablePluginSettings:
+            self.availablePluginSettings.remove(name)
+   
+    def addEngineSetting(self, name:str):
+        self.availableEngineSettings.append(name)
+
+    def deleteEngine(self, name:str):
+        if name in self.availableEngineSettings:
+            self.availableEngineSettings.remove(name)
         
-    def addAvailableSetting(self, profileKeys):
-        pass 
-    
-    def addPluginSuite(self, suite:str):
-        self.plugins.append(suite)
-    
-    def deletePlugin(self, suite:str):
-        if suite in self.plugins:
-            self.plugins.remove(suite)
-    

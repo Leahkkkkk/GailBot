@@ -189,7 +189,7 @@ class CreateNewProfilePageText:
     profileName           = "Profile Name"
     confirmProfileNameBtn = "Start"
     emptyNameMsg          = "A profile name must be specified"
-    engineSettingHeader   = "Speech to Text Settings"
+    engineSettingHeader   = "Choose Engine Setting"
     pluginSettingHeader   = "Plugin Setting"
     cofirmBtn             = "Confirm"
 
@@ -350,18 +350,18 @@ class PLUGIN_SUITE_TEXT:
                "2. Amazon S3 Public Bucket Name",
                "3. Github url storing plugin suite as zip file"]
     TABLE_HEADER = ["Plugin Suite Name", "Author", "Version", "Actions"]
-    TABLE_DIMENSION = [0.3,0.2,0.15,0.35]
+    TABLE_DIMENSION = [0.3,0.22,0.20,0.28]
     CONFIRM_DELETE = "Confirm deleting plugin suite {0}"
     
     
 @dataclass
 class ENGINE_SETTING_TEXT:
-    TABLE_HEADER = ["Engine Setting Name", "Actions"]
+    TABLE_HEADER = ["Engine Setting Name", "Speech to Text Engine", "Actions"]
     ADD_BUTTON = "Create New"
     CONFIRM_DELETE = "Confirm deleting engine setting {0}"
     ENGINE_HEADER = "Engine Setting"
     CAPTION = "Available Speech to Text Engine Setting"
-    TABLE_DIMENSION = [0.65, 0.35]
+    TABLE_DIMENSION = [0.36, 0.36, 0.28]
     
     
 

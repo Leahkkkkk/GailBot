@@ -1,33 +1,33 @@
-from typing import TypedDict,  Dict
+from typing import TypedDict,  Dict, List 
 
 from .resultInterface import ResultInterface
 from gailbot.core.utils.logger import makelogger
 logger = makelogger("analysis-result")
 
 class AnalysisResultDict(TypedDict):
-    name: str
     plugin_suite: str
-    result: Dict[str, str]
+    success: List[str]
+    failure: List[str]
 
 class AnalysisResult(ResultInterface):
     """
     Defines a class for the analysis result
     """
-    def __init__(self, data: Dict[str, AnalysisResultDict] = None):
-        self.data = data 
+    def __init__(self):
+        self.data : Dict[str, AnalysisResultDict]= dict() 
     
-    def save_data(self, data: Dict[str, AnalysisResultDict]) -> bool:
+    def save_data(self, data) -> bool:
         """
-        Saves the inputted data
+        Saves the result data 
 
         Args:
-            data: Dict[str, AnalysisResultDict]: data to save, in the form 
+            data: [AnalysisResultDict]: data to save, in the form 
             of a dictionary mapping strings to analysis results
 
         Returns:
             Bool: True if successfully saved, false if not
         """
-        self.data = data 
+        self.data = data
         return True
 
     def output(self, path) -> bool:

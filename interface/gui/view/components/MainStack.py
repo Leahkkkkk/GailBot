@@ -9,7 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 Description: implementation of the main page Stack
 '''
-from typing import Tuple, List
+from typing import Tuple, List, Dict
 from gbLogger import makeLogger
 from view.Signals import (
     FileSignals, 
@@ -60,15 +60,20 @@ class MainStack(QStackedWidget):
         self._pageRedirect()
         self._connectSignal()
     
-    def addAvailableSetting(self, profileNames: List[str]):    
+    def addAvailableSettings(self, profiles: List[Tuple[str, Dict]]):    
         """ add the available setting to the profile setting interface
 
         Args:
             profileNames (List[str]): a list of profile names
         """
-        self.SettingPage.addAvailableSetting(profileNames)
-        self.FileUploadPage.initAvailableProfiles(profileNames)
+        self.SettingPage.addAvailableSettings(profiles)
         
+    def addAvailableEngines(self, engines: List[Tuple[str, Dict]]):
+        self.SettingPage.addAvailableEngines(engines)
+   
+    def addAvailablePluginSuites(self, pluginSuites: List[Tuple[str, Dict, str]]):
+        self.SettingPage.addAvailablePluginSuites(pluginSuites)
+
     def gotoTranscribeInProgress(self):
         """ redirect to transcribe in progress page """
         self.TranscribeProgressPage.IconImg.start()
@@ -199,8 +204,6 @@ class MainStack(QStackedWidget):
         ### signal to change view color 
         GlobalStyleSignal.changeColor.connect(self._changeBkg)
         
-    def loadProfile(self, name):
-        self.SettingPage.ProfilePage.getProfile(name)
     
     # show a specific profile identified by profile name
     def showProfile(self, profilename):

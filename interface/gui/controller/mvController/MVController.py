@@ -12,7 +12,7 @@ Model view controller than connect ths database to a front end view object
 '''
 from gbLogger import makeLogger 
 from view import ViewController
-from .organizer import FileOrganizer, PluginOrganizer, ProfileOrganizer
+from .organizer import FileOrganizer, PluginOrganizer, ProfileOrganizer, EngineOrganizer
 from gailbot.api import GailBot
 
 class MVController:
@@ -39,6 +39,7 @@ class MVController:
         self.fileOrganizer = FileOrganizer(gb, view.getFileSignal())
         self.profileOrganizer = ProfileOrganizer(gb, view.getProfileSignal())
         self.pluginOrganizer = PluginOrganizer(gb, view.getPluginSignal())
+        self.engineOrganizer = EngineOrganizer(gb, view.getEngineSignal())
         self.logger = makeLogger("F")
         self.view  = view 
         self.gb = gb 
@@ -57,10 +58,15 @@ class MVController:
 
         # add available setting to the frontend interface
         settingNames = self.gb.get_all_settings_name()
-        self.logger.info(f"get profile {settingNames}")
-        self.view.addAvailableSettings(settingNames)
+        settingInfo = [(name, self.gb.get_setting_dict(name)) for name in settingNames]
+        self.logger.info(f"get profile {settingInfo}")
+        self.view.addAvailableSettings(settingInfo)
         
-
+        # add available engines 
+        engines = self.gb.get_engine_setting_names()
+        engineInfo = [(name, self.gb.get_engine_setting_data(name)) for name in engines]
+        self.logger.info(f"get engines{engineInfo}")
+        self.view.addAvailableEngineSetting(engineInfo)
      
      
     

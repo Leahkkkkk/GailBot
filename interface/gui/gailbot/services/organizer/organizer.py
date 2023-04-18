@@ -407,7 +407,7 @@ class Organizer:
             Union[bool, Dict[str, str]]: if the engine setting name is available 
             return the engine setting data as stored in a dictionary, else return False
         """
-        return self.setting_manager.get_engine_setting_data()
+        return self.setting_manager.get_engine_setting_data(name)
     
     def is_engine_setting_in_use(self, name:str) -> bool:
         """ check if the engine setting identified by name is in use
@@ -501,4 +501,19 @@ class Organizer:
         return self.setting_manager.is_suite_in_use(suite_name)
     
     
-    
+    def get_profile_src_path(self, name: str):
+        """get the  path to the profile setting source
+
+        Args:
+            name (str): the name of the profile 
+        """
+        return self.setting_manager.get_profile_src_path(name)
+
+
+    def get_engine_src_path(self, name: str):
+        """get the  path to the engine setting source
+
+        Args:
+            name (str): the name of the engine 
+        """
+        return self.setting_manager.get_engine_src_path(name)

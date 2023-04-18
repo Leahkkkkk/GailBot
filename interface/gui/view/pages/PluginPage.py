@@ -9,6 +9,8 @@ Modified By:  Siara Small  & Vivian Li
 -----
 Description: implementation of the plugin page
 '''
+from typing import List
+
 from view.config.Text import ProfilePageText as Text
 from view.Signals import DataSignal
 from view.Request import Request

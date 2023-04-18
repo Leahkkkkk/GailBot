@@ -17,8 +17,8 @@ center  = Qt.AlignmentFlag.AlignHCenter
 class BaseSettingPage(QWidget):
     headerText = None 
     captionText = None 
-    mainTable = None 
-    signal = None 
+    mainTable:BaseTable = None 
+    signal: DataSignal = None 
     
     def __init__(
         self,
@@ -67,6 +67,13 @@ class BaseSettingPage(QWidget):
         
     def addItem(self):
         pass 
-    
+   
     def addSucceed(self, data):
-        pass 
+        name, setting = data
+        self.logger.warn(f"get engine data {data}")
+        self.mainTable.addItem(data)
+        self.signal.addSucceed.emit(name)
+    
+    def sendAddRequest(self, data):
+        self.signal.postRequest.emit(
+            Request(data=data, succeed=self.addSucceed))

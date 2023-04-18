@@ -211,6 +211,7 @@ class PluginManager:
             tomls = filepaths_in_dir(suite, ["toml"])
             if len(tomls) == 0 or not tomls:
                 return ERROR.MISSING_CONFIG
+                
             mds = filepaths_in_dir(suite, ["md"])
             if len(mds) == 0 or not mds:
                 return ERROR.MISSING_DOC
@@ -218,4 +219,5 @@ class PluginManager:
             return ERROR.MODULE_ERROR 
         else:
             return ERROR.INVALID_INPUT
-            
+        
+         

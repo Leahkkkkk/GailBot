@@ -28,7 +28,8 @@ class ProfileOrganizer:
        signal.deleteRequest.connect(self.deleteHandler)
        signal.getRequest.connect(self.getHandler)
        signal.editRequest.connect(self.editHandler)
-        
+       signal.viewSourceRequest.connect(self.viewSourceHandler)
+       
     def postHandler(self,postRequest: Request) -> None :
         """ post a new profile to profile database
 
@@ -48,7 +49,7 @@ class ProfileOrganizer:
                 self.logger.error(ERR.INVALID_PROFILE.format(name))
             else:
                 self.logger.info(f"New profile created {name}, {data}")
-                postRequest.succeed(name)
+                postRequest.succeed(postRequest.data)
         except Exception as e:
             postRequest.fail(ERR.SAVE_PROFILE.format(name))
             self.logger.error(f"Creating new profile error {e}", exc_info=e)
@@ -96,7 +97,7 @@ class ProfileOrganizer:
             editRequest.fail(ERR.PROFILE_EDIT.format(name))
             self.logger.error(e, exc_info=e)
         else:
-            editRequest.succeed(name)
+            editRequest.succeed(editRequest.data)
      
     def getHandler(self, getRequest: Request) -> None:
         """ 
@@ -115,3 +116,11 @@ class ProfileOrganizer:
             getRequest.fail(ERR.GET_PROFILE.format(name))
             self.logger.error(e, exc_info=e)
             
+    def viewSourceHandler(self, viewRequest: Request) -> None:
+        name = viewRequest.data 
+        try:
+            path = self.gb.get_profile_src_path(name)
+            viewRequest.succeed(path)
+        except Exception as e:
+            viewRequest.fail(
+                ERR.PROFILE_SRC_CODE.format(viewRequest.data, str(e)))

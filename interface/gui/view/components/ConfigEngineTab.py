@@ -32,10 +32,11 @@ from PyQt6.QtCore import QObject, pyqtSignal, QSize
 
 class Signals(QObject):
     """ a signal object to send new setting data values """
-    newSetting = pyqtSignal(tuple)
+    addEngine = pyqtSignal(tuple)
+    editEngine = pyqtSignal(tuple)
     
-class CreateNewSetting(QDialog):
-    def __init__(self, plugins : List[str], *agrs, **kwargs) -> None:
+class CreateNewEngine(QDialog):
+    def __init__(self, *agrs, **kwargs) -> None:
         """ a pop up dialog for user to create a new profile
             the tab implement below processes for creating a new profile:
             1. input for profile name
@@ -50,18 +51,15 @@ class CreateNewSetting(QDialog):
         super().__init__(*agrs, **kwargs)
         self.logger = makeLogger("F")
         self.signals = Signals()
-        self.addProfileName = SettingName()
+        self.EngineName = SettingName(title="Engine Setting Name")
         self.engineSetting = EngineSetting()
-        self.pluginSetting = PluginSetting(plugins)
-        self.newSettingData = dict()
         self.setWindowTitle(Text.WindowTitle)
         
         mainTab = Tab(
             Text.WindowTitle,
             {
-                Text.TabHeader1: self.addProfileName,
+                Text.TabHeader1: self.EngineName,
                 Text.TabHeader2: self.engineSetting,
-                Text.TabHeader3: self.pluginSetting
             },
             QSize(STYLE_DATA.Dimension.LARGEDIALOGWIDTH, 
                   STYLE_DATA.Dimension.LARGEDIALOGHEIGHT)
@@ -75,18 +73,45 @@ class CreateNewSetting(QDialog):
         
     def _postSetting(self):
         """ a function that send the new setting data through signal""" 
-        setting = dict()
-        profileName = self.addProfileName.getData()
-        setting["engine_setting"] = self.engineSetting.getData()
-        setting["plugin_setting"] = self.pluginSetting.getData()
+        profileName = self.EngineName.getData()
+        setting = self.engineSetting.getData()
         try:
             self.logger.info(setting)
-            self.signals.newSetting.emit((profileName, setting))
+            self.signals.addEngine.emit((profileName, setting))
             self.close()
         except Exception as e:
             self.logger.error(e, exc_info=e)
-            WarnBox(ERR.ERR_WHEN_DUETO.format("creating new profile", str(e)))
+            WarnBox(ERR.ERR_WHEN_DUETO.format("creating new engine setting", str(e)))
             
-        
-        
-        
+class EditEngine(QDialog):
+    def __init__(self, setting, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        name, data = setting 
+        self.logger = makeLogger("F")
+        self.signals = Signals()
+        self.engineSetting = EngineSetting()
+        self.header = name 
+        self.engineName = name
+        mainTab = Tab(
+            self.header,
+            {self.header: self.engineSetting},
+            QSize(STYLE_DATA.Dimension.LARGEDIALOGWIDTH, 
+                  STYLE_DATA.Dimension.LARGEDIALOGHEIGHT)
+        )
+        ## set the data for the profile 
+        self.engineSetting.setData(data)
+        mainTab.changePageBtn.finishBtn.clicked.connect(self._postSetting)
+        self.layout = QVBoxLayout()
+        self.setLayout(self.layout)
+        self.layout.addWidget(mainTab)
+        self.logger.info("")
+    
+    def _postSetting(self):
+        data = self.engineSetting.getData()
+        try:
+            self.logger.info(data)
+            self.signals.editEngine.emit((self.engineName, data))
+            self.close()
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            WarnBox(ERR.ERR_WHEN_DUETO.format("creating new engine setting", str(e)))

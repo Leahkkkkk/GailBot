@@ -4,6 +4,7 @@ from view.Signals import DataSignal
 from view.Request import Request
 from gbLogger import makeLogger
 from view.widgets.EngineTable import EngineTable 
+from view.components.ConfigEngineTab import CreateNewEngine
 from PyQt6.QtCore import Qt
 from .BaseSettingPage import BaseSettingPage
 
@@ -22,12 +23,11 @@ class EnginePage(BaseSettingPage):
         super().__init__( *args, **kwargs)
     
     def addItem(self):
-        pass 
+        engineDialog = CreateNewEngine()
+        engineDialog.signals.addEngine.connect(self.sendAddRequest)
+        engineDialog.exec()
+
+    def addAvailableEngine(self, engines):
+        self.mainTable.addItems(engines)
     
-    def sendAddRequest(self, engineData):
-        self.signal.postRequest.emit(
-            Request(data=engineData, succeed=self.addSucceed))
     
-    def addSucceed(self, data):
-        self.mainTable.addItem(data)
-        self.signal.addSucceed.emit(data)

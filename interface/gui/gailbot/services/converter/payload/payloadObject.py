@@ -80,8 +80,8 @@ class PayLoadObject(ABC):
             workspace.get_output_space(source.output, self.name)
         self.progress_display = source.progress_display
         self.transcription_result: UttResult = UttResult(self.workspace.transcribe_ws)
+        self.analysis_result: AnalysisResult = AnalysisResult()
         self.format_result: FormatResult = FormatResult(self.workspace.format_ws)
-        self.analysis_result: AnalysisResult = AnalysisResult(self.workspace.analysis_ws)
         logger.info(f"ouputspace {self.out_dir.transcribe_result}")
         self._set_initial_status()
         self._copy_file() 
@@ -367,8 +367,9 @@ class PayLoadObject(ABC):
         metadata = {
             "Profile Setting": self.setting.get_data(),
             "Date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
-            "File": self.original_source,
-            "Audio Sources": self.data_files,
+            "Source": self.original_source,
+            "Raw Audio": self.data_files,
+            "Plugin Results": self.analysis_result.get_data(), 
         }
         try:
             write_json(self.out_dir.metadata, metadata)

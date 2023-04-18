@@ -65,10 +65,18 @@ class MainWindow(QMainWindow):
         self._connectSignal()
         self._initLogger()
 
-    def addAvailableSetting(self, profileNames: List[str]):
+    def addAvailableSetting(self, profiles: List[Tuple[str, Dict]]):
         """ initialize available setting to interface"""
         try:
-            self.MainStack.addAvailableSetting(profileNames)
+            self.MainStack.addAvailableSettings(profiles)
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            self.showError(ERR.FAIL_TO.format("load setting"))
+    
+    def addAvailableEngineSettings(self, settings: List[Tuple[str, Dict]]):
+        """ initialize available setting to interface"""
+        try:
+            self.MainStack.addAvailableEngines(settings)
         except Exception as e:
             self.logger.error(e, exc_info=e)
             self.showError(ERR.FAIL_TO.format("load setting"))
@@ -76,12 +84,11 @@ class MainWindow(QMainWindow):
     def addAvailablePluginSuites(self, pluginSuites: List[Tuple[str, Dict[str, str]]]):
         """ initialize available plugin to interface """
         try:
-            for suite in pluginSuites:
-                self.addPlugin(suite)
+            self.MainStack.addAvailablePluginSuites(pluginSuites)
         except Exception as e:
             self.logger.error(e, exc_info=e)
             self.showError(ERR.FAIL_TO.format("load plugin"))
-            
+  
     """ Functions provided to controller """
     def showTranscribeInProgress(self):
         """goes to transcribe in progress page"""
@@ -135,12 +142,6 @@ class MainWindow(QMainWindow):
             self.logger.error(e, exc_info=e)
             self.showError(ERR.FAIL_TO.format("clear the thread"))
     
-    def TranscribeFailed(self, err:str):
-        """shows transcription failed message"""
-        self.msgBox = WarnBox(
-            f"Transcription Failed, error: {err}", self.showFileUploadPage)
-        self.MainStack.TranscribeProgressPage.IconImg.stop()
-            
         
     def confirmCancel(self):
         """ handle event when user tries to cancel the thread """
@@ -151,13 +152,7 @@ class MainWindow(QMainWindow):
             self.logger.error(e, exc_info=e)
             self.showError(ERR.FAIL_TO.format("cancel transcription"))
 
-    def updateFile(self, data:tuple):
-        """ update file information on file upload file """
-        try:
-            self.MainStack.updateFile(data)
-        except Exception as e:
-            self.logger.error(e, exc_info=e)
-            self.showError(ERR.FAIL_TO.format("update file information"))
+   
             
     def changeFiletoTranscribed(self, key:str):
         """ change the file status to be transcribed 
@@ -188,45 +183,10 @@ class MainWindow(QMainWindow):
             self.logger.error(e, exc_info=e)
             self.showError(ERR.FAIL_TO.format("relaunch gailbot, please restart application"))
         
-    def addProfile(self, profileName:str) -> None:
-        """ add a new profile with name being profileName to the profile 
-            setting page and file table file profile options
-        """
-        try:
-            self.MainStack.SettingPage.addProfile(profileName)
-            self.MainStack.FileUploadPage.fileTable.addProfile(profileName)
-        except Exception as e:
-            self.logger.error(e, exc_info=e)
-            self.showError(ERR.FAIL_TO.format("add profile,"))
-            
-        
-    def loadProfile(self, name):
-        try:
-            self.MainStack.loadProfile(name)
-        except Exception as e:
-            self.logger.error(e, exc_info=e)
-            self.showError(ERR.FAIL_TO.format("load profile"))
             
     def showError(self, errorMsg:str):
         WarnBox(errorMsg) 
-    
-    def addPlugin(self, pluginSuite: Tuple[str, Dict[str, str]]): 
-        """ 
-        add a plugin identified by pluginName
-        """
-        self.MainStack.SettingPage.addPluginHandler(pluginSuite)
-     
-    # TODO:   
-    def displayPluginSuiteDetail(self, suiteInfo) -> None :
-        """ 
-        open a frontend dialog to display suiteInfo 
-        """
-        try:
-            display = PluginSuiteDetails(suiteInfo)
-            display.exec()
-        except Exception as e:
-            self.logger.error(e, exc_info=e)
-            self.showError(ERR.FAIL_TO.format("display plugin suite detail"))
+      
     
     """ private function """
     def _connectSignal(self):

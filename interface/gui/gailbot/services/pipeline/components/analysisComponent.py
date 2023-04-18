@@ -84,11 +84,21 @@ class AnalysisComponent(Component):
         start_time = time.time()
         suites = payload.setting.get_plugin_setting()
         logger.info(f"the following suites are applied: {suites}")
+      
+        # the dictionary that stores the result of all analysis 
+        analysis_result = dict()
+      
         if not suites:
             return True
+        
         # try applying plugin
         try:
             for suite_name in suites:
+                suite_result = dict()
+                suite_result["plugin_suite"] = suite_name
+                suite_result["success"] = list()
+                suite_result["failure"] = list()
+                
                 plugin_suite: PluginSuite = self.plugin_manager.get_suite(suite_name)
                 # check plugin suit is valid
                 if not plugin_suite:
@@ -99,11 +109,18 @@ class AnalysisComponent(Component):
                 
                 # create a method that get passed to plugin suite, and apply plugin suite
                 method = GBPluginMethods(payload, suite_name)
+                # calls the plugin suite 
                 res : Dict[str, ComponentState] = plugin_suite(base_input = None, methods = method)
                 
+                # collect plugin suite result
                 logger.info(f"get the plugin result {res}")
-                for state in res.values():
-                    assert state == ComponentState.SUCCESS
+                for name, state in res.items():
+                    if state == ComponentState.SUCCESS:
+                        suite_result["success"].append(name)
+                    else:
+                        suite_result["failure"].append(name)
+                analysis_result[suite_name] = suite_result
+                        
             end_time = time.time()
             stats = ProcessingStats(
                 start_time=start_time,
@@ -111,6 +128,12 @@ class AnalysisComponent(Component):
                 elapsed_time_sec=end_time - start_time
             ) 
             payload.set_analysis_process_stats(stats)   
+            payload.set_analysis_result(analysis_result)
+            
+            # only set the return result to be True if none of the plugin 
+            # in plugin suite fails
+            for suite_result in analysis_result.values():
+                assert len(suite_result["failure"]) == 0
             self.emit_progress(payload, ProgressMessage.Analyzed)
         
         except Exception as e:

@@ -604,7 +604,7 @@ class GailBot:
             Union[bool, Dict[str, str]]: if the engine setting name is available 
             return the engine setting data as stored in a dictionary, else return False
         """
-        return self.gb.get_engine_setting_data()
+        return self.gb.get_engine_setting_data(name)
     
     def is_engine_setting_in_use(self, name:str) -> bool:
         """ check if the engine setting identified by name is in use
@@ -625,3 +625,20 @@ class GailBot:
             name (str): the name of the engine setting
         """
         return self.gb.is_engine_setting(name)
+    
+    
+    def get_profile_src_path(self, name: str):
+        """get the  path to the profile setting source
+
+        Args:
+            name (str): the name of the profile 
+        """
+        return self.gb.get_profile_src_path(name)
+
+    def get_engine_src_path(self, name: str):
+        """get the  path to the engine setting source
+
+        Args:
+            name (str): the name of the engine 
+        """
+        return self.gb.get_engine_src_path(name)

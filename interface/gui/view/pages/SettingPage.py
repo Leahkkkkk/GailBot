@@ -66,10 +66,19 @@ class SettingPage(QWidget):
         self._initLayout()
         self._connectSignal()
     
-    def addAvailableSetting(self, profileKeys: List[str]):
+    def addAvailableSettings(self, profiles: List[Tuple[str, Dict]]):
         """ add a list of profile keys """
-        self.ProfilePage.addAvailableSetting(profileKeys)
+        for profile in profiles:
+            self.ProfilePage.addSucceed(profile)
+    
+    def addAvailableEngines(self, engines:List[Tuple[str, Dict]]):
+        for engine in engines:
+            self.EngineSetPage.addSucceed(engine)
      
+    def addAvailablePluginSuites(self, pluginSuites: List[Tuple[str, Dict[str, str], str]]):
+        for suite in pluginSuites:
+            self.PluginPage.addSucceed(suite)
+    
     def _initWidget(self):
         self.HIGH_LIGHT = STYLE_DATA.Color.HIGHLIGHT
         """ initializes widgets"""
@@ -133,8 +142,12 @@ class SettingPage(QWidget):
         self.engineSetBtn.clicked.connect(self._activateEngineSet)
         self.pluginSetBtn.clicked.connect(self._activatePlugin)
         self.systemSetBtn.clicked.connect(self._activateSystemSet)
+
         self.PluginPage.signal.addSucceed.connect(self.ProfilePage.addPluginSuite)
         self.PluginPage.signal.deleteSucceed.connect(self.ProfilePage.deletePlugin)
+        self.EngineSetPage.signal.addSucceed.connect(self.ProfilePage.addEngineSetting)
+        self.EngineSetPage.signal.deleteSucceed.connect(self.ProfilePage.deleteEngine)
+        
         STYLE_DATA.signal.changeColor.connect(self.colorchange)
         STYLE_DATA.signal.changeFont.connect(self.fontchange)
         
@@ -182,14 +195,3 @@ class SettingPage(QWidget):
         self.transcibeSetBtn.fontChange(STYLE_DATA.FontSize.BTN)
         self.engineSetBtn.fontChange(STYLE_DATA.FontSize.BTN)
         self.systemSetBtn.fontChange(STYLE_DATA.FontSize.BTN)
-        self.pluginSetBtn.fontChange(STYLE_DATA.FontSize.BTN)
-    
-    def addProfile (self, profileName:str):
-        """ adding a new profile option to the settings page 
-        Arg:
-            profileName(str): name to be added as profile name to the new profile entry
-        """
-        self.ProfilePage.createSucceed(profileName) 
-        
-    def addPluginHandler(self, pluginSuite: Tuple[str, Dict[str, str], str]):
-        self.PluginPage.addSucceed(pluginSuite)

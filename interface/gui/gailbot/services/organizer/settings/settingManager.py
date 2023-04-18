@@ -132,8 +132,8 @@ class SettingManager():
             assert self.is_engine_setting(name)
             assert not self.engine_settings[name].is_in_use()
             del self.engine_settings[name]
-            if is_file(self.get_engine_setting_path(name)):
-                delete(self.get_engine_setting_path(name))
+            if is_file(self.get_engine_src_path(name)):
+                delete(self.get_engine_src_path(name))
             return True 
         except Exception as e:
             logger.error(e, exc_info=e) 
@@ -169,7 +169,7 @@ class SettingManager():
                               saved successfully, return false otherwise
         """
         try:
-            out_path = self.get_engine_setting_path(name)
+            out_path = self.get_engine_src_path(name)
             if is_file(out_path):
                 delete(out_path)
             self.engine_settings[name].save_setting(out_path)
@@ -202,7 +202,7 @@ class SettingManager():
                 logger.error(e, exc_info=e)
                 return False
                 
-    def get_engine_setting_path(self, name:str) -> str:
+    def get_engine_src_path(self, name:str) -> str:
         """given a engine setting name, return its path
 
         Args:
@@ -276,8 +276,8 @@ class SettingManager():
         if self.is_setting(name):
             settingObj = self.profiles.pop(name)
             self.engine_settings[settingObj.engine_setting_name].remove_applied_profile(name)
-            if is_file(self.get_setting_path(name)):
-                delete(self.get_setting_path(name))
+            if is_file(self.get_profile_src_path(name)):
+                delete(self.get_profile_src_path(name))
             return True
         else:
             return False
@@ -402,8 +402,8 @@ class SettingManager():
             self.profiles[new_name] = temp
             self.save_setting(new_name)
             
-            if is_file(self.get_setting_path(name)): 
-                delete(self.get_setting_path(name))
+            if is_file(self.get_profile_src_path(name)): 
+                delete(self.get_profile_src_path(name))
             logger.info("update_setting")
             return self.profiles[new_name] != None
         else:
@@ -422,7 +422,7 @@ class SettingManager():
             
         """ 
         try: 
-            out_path = self.get_setting_path(name)
+            out_path = self.get_profile_src_path(name)
             if is_file(out_path):
                 delete(out_path)
             self.profiles[name].save_setting(out_path) 
@@ -446,7 +446,7 @@ class SettingManager():
         else:
             return False
     
-    def get_setting_path(self, name:str) -> str:
+    def get_profile_src_path(self, name:str) -> str:
         """given a setting name, return its path
 
         Args:

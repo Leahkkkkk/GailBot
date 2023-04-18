@@ -22,6 +22,7 @@ from view.widgets.Label import Label
 from view.widgets.TabPage import TabPage
 from view.widgets.Form.TextInput import TextInput
 from view.widgets.MsgBox import WarnBox
+from view.widgets.ComboBox import ComboBox
 from view.components import EngineSettingForm
 from view.components import PluginForm
 from PyQt6.QtWidgets import  QVBoxLayout
@@ -33,36 +34,12 @@ from PyQt6.QtCore import (
 
 #### controlling style changes 
 from view.config.Style import (
-    FontSize, 
-    Color, 
-    StyleSheet, 
     FontFamily,
-    Asset, 
-    ASSET_DICT, 
-    STYLE_DICT,  
-    FONT_DICT,
-    COLOR_DICT)  
+    STYLE_DATA)
 from view.Signals import GlobalStyleSignal
 
-FONT_SIZE = FontSize
-COLOR = Color
-STYLESHEET = StyleSheet
-ASSET = Asset
 
-def colorchange(colormode):
-    global COLOR 
-    global STYLESHEET
-    global ASSET
-    COLOR = COLOR_DICT[colormode]
-    STYLESHEET = STYLE_DICT[colormode]
-    ASSET = ASSET_DICT[colormode]
 
-def changeFont(fontsize):
-    global FONT_SIZE
-    FONT_SIZE = FONT_DICT[fontsize]
-
-GlobalStyleSignal.changeColor.connect(colorchange)
-GlobalStyleSignal.changeFont.connect(changeFont)
 ######################
 
 hCenter = Qt.AlignmentFlag.AlignHCenter
@@ -74,11 +51,12 @@ top = Qt.AlignmentFlag.AlignTop
 class settingSignals(QObject):
     engineSet = pyqtSignal()
     
-class ProfileName (TabPage):
+class SettingName (TabPage):
     """ page with an input field to allow user add the profile name """
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, title = Text.profileName, *args, **kwargs) -> None:
         """" initializes page """
         super().__init__(*args, **kwargs)
+        self.title = title
         self.logger = makeLogger("F")
         self._initWidget()
         self._initLayout()
@@ -94,16 +72,16 @@ class ProfileName (TabPage):
         
     def _initWidget(self):
         """ initializes the widgets """
-        self.header = Label(Text.profileName, 
-            FONT_SIZE.HEADER2, 
+        self.header = Label(self.title, 
+            STYLE_DATA.FontSize.HEADER2, 
             FontFamily.MAIN)
         self.profileName = TextInput(
             "", 
-            labelSize = FONT_SIZE.HEADER3,
+            labelSize = STYLE_DATA.FontSize.HEADER3,
             vertical=False)
         self.confirmBtn = ColoredBtn(
             "Start", 
-            COLOR.SECONDARY_BUTTON)
+            STYLE_DATA.Color.SECONDARY_BUTTON)
         self.confirmBtn.clicked.connect(self._confirmHandler)
 
     def _initLayout(self):
@@ -124,7 +102,8 @@ class ProfileName (TabPage):
     
     def _confirmHandler(self):
         """ event handler for confirm button  """
-        if self.profileName.value == "":
+        name = self.profileName.value
+        if not name or len(name.replace(" ", "")) == 0 :
             WarnBox(WARN.EMPTY_PROFILE_NAME)
         else:
             self.signals.nextPage.emit()
@@ -140,7 +119,7 @@ class EngineSetting(TabPage):
         self.setLayout(self.verticallayout)
         self.header = Label(
             Text.engineSettingHeader, 
-            FONT_SIZE.HEADER2, 
+            STYLE_DATA.FontSize.HEADER2, 
             FontFamily.MAIN)
         self.verticallayout.addWidget(
             self.header, 
@@ -148,16 +127,11 @@ class EngineSetting(TabPage):
         self.mainForm = EngineSettingForm.EngineSettingForm()
         self.verticallayout.addWidget(self.mainForm)
         self.verticallayout.addStretch()
-        self.confirmBtn = ColoredBtn(Text.cofirmBtn, COLOR.SECONDARY_BUTTON)
-        self.confirmBtn.clicked.connect(self._confirmHandler)
+        self.confirmBtn = ColoredBtn(Text.cofirmBtn, STYLE_DATA.Color.SECONDARY_BUTTON)
+        self.confirmBtn.clicked.connect(lambda: self.signals.close.emit())
         self.verticallayout.addWidget(self.confirmBtn, alignment=bottomRight)
-        # self.confirmBtn.clicked.connect(lambda: self.signals.close.emit())
     
-    def _confirmHandler(self):
-        """" handles if user should be able to go to the next page in popup """
-        self.signals.nextPage.emit()
-    
-    def getData(self) -> Dict[str, dict]:
+    def getData(self) -> Dict[str, str]:
         """ gets current value of key in dictionary """
         try:
             return self.mainForm.getValue()
@@ -165,6 +139,12 @@ class EngineSetting(TabPage):
             self.logger.error(e, exc_info=e)
             WarnBox(ERR.ERR_WHEN_DUETO.format("getting setting data", str(e)))
 
+    def setData(self, data: Dict[str, str]):
+        try:
+            return self.mainForm.setValue(data)
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            WarnBox(ERR.ERR_WHEN_DUETO.format("displaying setting data", str(e)))
 
 class PluginSetting(TabPage):
     """ class for the plugin settings tab """
@@ -173,11 +153,11 @@ class PluginSetting(TabPage):
         super().__init__(*args, **kwargs)
         self.header = Label(
             Text.pluginSettingHeader, 
-            FONT_SIZE.HEADER2, 
+            STYLE_DATA.FontSize.HEADER2, 
             FontFamily.MAIN)
         self.mainForm = PluginForm.PluginForm()
         self.mainForm.addPluginSuites(plugins)
-        self.confirmBtn = ColoredBtn(Text.cofirmBtn, COLOR.SECONDARY_BUTTON)
+        self.confirmBtn = ColoredBtn(Text.cofirmBtn, STYLE_DATA.Color.SECONDARY_BUTTON)
         self.confirmBtn.clicked.connect(lambda: self.signals.close.emit())
         self.verticalLayout = QVBoxLayout()
         self.setLayout(self.verticalLayout)
@@ -196,9 +176,46 @@ class PluginSetting(TabPage):
         except Exception as e:
             self.logger.error(e, exc_info=e)
             WarnBox(ERR.ERR_WHEN_DUETO.format("getting plugin data", str(e)))
-            
-            
-            
+    
+    def setData(self, data):
+        try:
+            self.mainForm.setValue(data)
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            WarnBox(ERR.ERR_WHEN_DUETO.format("displaying plugin data", str(e)))
+class ChooseEngine(TabPage):
+    def __init__(self, engine_settings, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.logger = makeLogger("F")
+        self.verticallayout = QVBoxLayout()
+        self.setLayout(self.verticallayout)
+        self.header = Label(
+            Text.engineSettingHeader,
+            STYLE_DATA.FontSize.HEADER2,
+            FontFamily.MAIN
+        )      
+        self.selectEngines = ComboBox()
+        self.selectEngines.addItems(engine_settings)
+        self.verticallayout.addWidget(self.header)
+        self.verticallayout.addWidget(self.selectEngines)
+        self.verticallayout.addStretch()
+        self.confirmBtn = ColoredBtn(Text.cofirmBtn, STYLE_DATA.Color.SECONDARY_BUTTON)
+        self.confirmBtn.clicked.connect(self._confirmHandler)
+        self.verticallayout.addWidget(self.confirmBtn, alignment=bottomRight)
+    
+    def _confirmHandler(self):
+        self.signals.nextPage.emit()
 
-        
-        
+    def getData(self) -> str:
+        try:
+            return self.selectEngines.currentText()
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            WarnBox(ERR.ERR_WHEN_DUETO.format("reading engine setting name", str(e)))
+    
+    def setData(self, data):
+        try:
+            self.selectEngines.setCurrentText(data)
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            WarnBox(ERR.ERR_WHEN_DUETO.format("displaying engine setting", str(e)))
