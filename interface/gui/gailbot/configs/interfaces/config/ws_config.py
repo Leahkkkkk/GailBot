@@ -98,6 +98,9 @@ class WorkSpaceConfig:
         new_output_dir["root"] = os.path.join(root, name)
         return OutputFolder.from_dict(new_output_dir)
 
+    def get_output_structure(self) -> OutputFolder:
+        return OutputFolder.from_dict(self._output_d)
+
 def load_workspace_config(config_path, ws_root) -> WorkSpaceConfig:
     """ public function that load the workspace data and return it """
     return WorkSpaceConfig(config_path, ws_root)

@@ -6,9 +6,10 @@ from ...organizer.source import SourceObject
 from gailbot.core.utils.general import is_directory, is_file, copy
 from gailbot.core.utils.logger import makelogger
 from gailbot.workspace.manager import WorkspaceManager
-from gailbot.configs import service_config_loader
+from gailbot.configs import service_config_loader, workspace_config_loader
 
 HIDDEN_FILE = service_config_loader().directory_name.hidden_file
+OUTPUT_RESULT = workspace_config_loader().get_output_structure().transcribe_result
 logger = makelogger("transcribed_dir_payload")
 
 def load_transcribed_dir_payload(
@@ -41,9 +42,10 @@ class TranscribedDirPayload(PayLoadObject):
     """
     def __init__(self, source, ws_manager: WorkspaceManager) -> None:
         super().__init__(source, ws_manager) 
-        # find a better way to load result & get the result path
+        # TODO: find a better way to load result & get the result path
         if not self.transcription_result.load_result(
-            os.path.join(self.data_files[0], "result/transcription")):
+            os.path.join(self.data_files[0], OUTPUT_RESULT)):
+            logger.error("result cannot be loaded")
             self.status = PayLoadStatus.INITIALIZED
     
     @staticmethod

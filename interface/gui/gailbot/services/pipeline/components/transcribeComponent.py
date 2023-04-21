@@ -57,7 +57,7 @@ class TranscribeComponent(Component):
             # get the list of payloads from dependency_output
             payloads : List[PayLoadObject] = dep.result
             process_start_time = time.time()
-            
+            logger.info(f"received payloads {payloads}") 
             for payload in payloads:
                 self.emit_progress(payload, ProgressMessage.Waiting)
                 if not payload.transcribed:
@@ -213,7 +213,6 @@ class TranscribeComponent(Component):
         bar_length = 20
         # Calculate the number of filled and empty blocks in the progress bar
         filled_blocks = int(finished / total * bar_length)
-        empty_blocks = bar_length - filled_blocks
         percent = "..." if finished == 0 else '{:.2f}%'.format(finished / total * 100)
         
         # Construct the progress bar string using Unicode block characters

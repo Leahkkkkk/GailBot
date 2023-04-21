@@ -87,7 +87,7 @@ class BaseTable(QTableWidget):
         
         layout.addWidget(editBtn)
         layout.addWidget(deleteBtn)
-        layout.addWidget(sourceBtn)
+        # layout.addWidget(sourceBtn) #NOTE: removed for engine and profile setting
         layout.addWidget(detailBtn)
         deleteBtn.clicked.connect(lambda: self.delete(name, tableItem))
         editBtn.clicked.connect(lambda: self.editSetting(name))
@@ -145,6 +145,7 @@ class BaseTable(QTableWidget):
             self.insertRow(newRowIdx)
             # set the setting name
             nameItem = QTableWidgetItem(str(name))
+            nameItem.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             self.nameToTablePins[name] = nameItem 
             self.setItem(newRowIdx, 0, nameItem)
             
@@ -154,6 +155,7 @@ class BaseTable(QTableWidget):
                     self.setCellWidget(newRowIdx, col, newItem)
                 else:
                     newItem = QTableWidgetItem(str(data[key]))
+                    newItem.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                     self.setItem(newRowIdx, col, newItem)
             
             self.addCellWidgets(name, nameItem, newRowIdx, **kwargs)

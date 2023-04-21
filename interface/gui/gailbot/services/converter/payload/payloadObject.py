@@ -3,7 +3,7 @@ from typing import List, Dict
 import os 
 from enum import Enum 
 import datetime
-from gailbot.core.utils.general import write_json
+from gailbot.core.utils.general import write_json, copy, is_file
 from gailbot.configs import  OutputFolder, TemporaryFolder
 from gailbot.core.utils.logger import makelogger
 from ...organizer.source import SourceObject
@@ -23,6 +23,7 @@ from gailbot.configs import service_config_loader
 
 SERVICE_CONFIG = service_config_loader()
 logger = makelogger("payload object")
+
 
 OUTPUT_MARKER = SERVICE_CONFIG.directory_name.hidden_file
 class PayLoadStatus(Enum):
@@ -403,6 +404,9 @@ class PayLoadObject(ABC):
         assert self.output_transcription_result()
         with open(os.path.join(self.out_dir.root, OUTPUT_MARKER), "w+") as f:
             f.write(f"{self.name}")
+        for file in self.data_files:
+            if is_file(file):
+                copy(file, os.path.join(self.out_dir.media_file, os.path.basename(file)))
     
     def clear_temporary_workspace(self):
         delete(self.workspace.root)

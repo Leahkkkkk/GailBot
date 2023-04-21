@@ -291,6 +291,7 @@ class FileTable(QTableWidget):
             for col in range(len(self.headers)):
                 if self.headers[col] in data.keys():
                     newItem = QTableWidgetItem(str(data[self.headers[col]]))
+                    newItem.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                     if col == 1: 
                         filePin = newItem
                         self.nameToTablePins[key] = filePin

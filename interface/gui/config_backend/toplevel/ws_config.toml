@@ -7,6 +7,7 @@ output      = "_gb_output"
 
 # contains relative paths for the output of gailbot
 [output]
+root              = "/"
 transcribe_result = "Raw/Transcript/"
 media_file        = "Raw/Media/"
 analysis_result   = "Analysis/"
