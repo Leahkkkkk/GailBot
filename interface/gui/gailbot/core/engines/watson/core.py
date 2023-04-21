@@ -128,7 +128,6 @@ class WatsonCore:
         try:
             new_path = os.path.join(payload_workspace, os.path.basename(audio_path))
             audio_path = MediaHandler.convert_to_16bit_wav(audio_path, new_path)
-            logger.warn(audio_path)
         except Exception as e:
             logger.error(e, exc_info=e)
             audio_path = path_copy

@@ -22,7 +22,7 @@ from gailbot.core.utils.general import (
     get_name, 
     is_directory,
     filepaths_in_dir,
-    paths_in_dir
+    copy
 )
 
 logger = makelogger("plugin_manager")
@@ -110,6 +110,8 @@ class PluginManager:
                         if isinstance(suite, PluginSuite):
                             self.suites[suite.name] = suite
                             registered.append(suite.name)
+                            copy(os.path.join(self.suites_dir, suite.name),
+                                 os.path.join(self.copy_dir, suite.name))
                     return registered
             return self.report_registration_err(plugin_source)
         except Exception as e:
@@ -161,8 +163,9 @@ class PluginManager:
         """
         Init workspace and load plugins from the specified sources.
         """         
-        self.suites_dir = f"{self.workspace}/suites"
-        self.download_dir = f"{self.workspace}/downloads"
+        self.suites_dir = os.path.join(self.workspace, "suites") 
+        self.download_dir = os.path.join(self.workspace, "download")
+        self.copy_dir = os.path.join(self.workspace, "copy")
         sys.path.append(self.suites_dir)
         self.suites: Dict [str, PluginSuite] = dict()
         
@@ -170,6 +173,7 @@ class PluginManager:
         make_dir(self.workspace, overwrite=False)
         make_dir(self.suites_dir,overwrite=False)
         make_dir(self.download_dir,overwrite=True)
+        make_dir(self.copy_dir,overwrite=False)
     
     def delete_suite(self, name:str):
         """ 
@@ -191,7 +195,7 @@ class PluginManager:
             managed by the suite manager
         """
         if self.is_suite(name):
-            path = os.path.join(self.suites_dir, name)
+            path = os.path.join(self.copy_dir, name)
             if is_directory(path):
                 return path
             else:

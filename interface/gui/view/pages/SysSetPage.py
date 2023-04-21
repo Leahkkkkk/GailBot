@@ -20,7 +20,7 @@ from view.widgets import (
     Label,
     Button
 )
-from view.components.SaveLogDialog import SaveLogFile
+from view.components.SelectPathDialog import SaveLogFile
 from view.Signals import GlobalStyleSignal
 from config_frontend.ConfigPath import WorkSpaceConfigPath, SettingDataPath
 from view.config.Setting import SystemSetting, DefaultSetting

@@ -16,11 +16,12 @@ from typing import Dict, List, Set, Tuple, TypedDict
 from enum import Enum 
 from view.Request import Request
 from view.widgets.MsgBox import WarnBox, ConfirmBox
+from view.components.SettingDetail import ProfileDetail
 from .Background import initSecondaryColorBackground
 
 from view.components.UploadFileTab import UploadFileTab
 from view.pages.FileUploadTabPages import ChooseSet
-from view.Signals import FileSignals, GlobalStyleSignal
+from view.Signals import FileSignals
 from gbLogger import makeLogger
 from ..config.Style import STYLE_DATA
 from ..config.Text import FileTableText as Text
@@ -150,10 +151,15 @@ class FileTable(QTableWidget):
             lambda file: self.fileSignal.viewOutput.emit(
             Request(file, self.displayOutput)
         ))
-        self.viewSignal.requestChangeProfile.connect(self.changeProfileRequest)  
+        self.viewSignal.requestChangeProfile.connect(self.changeProfileRequest)
+        self.viewSignal.requestProfile.connect(self.requestProfile)  
         STYLE_DATA.signal.changeColor.connect(self.colorChange)
         STYLE_DATA.signal.changeFont.connect(self.fontChange)
-         
+    
+    def requestProfile(self, profileName):
+        self.fileSignal.requestprofile.emit(
+            Request(data=profileName, succeed=self.displayProfileDetails))   
+        
     def _initStyle(self) -> None:
         """ Initialize the table style """
         self.horizontalHeader().setFixedHeight(45)
@@ -446,8 +452,13 @@ class FileTable(QTableWidget):
             self.profiles.remove(profileName)
         except Exception as e:
             self.logger.error(e, exc_info=e)
-            
-            
+    
+    def displayProfileDetails(self, data):
+        name, setting = data 
+        try:
+            ProfileDetail(name, setting) 
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
     ###################### edit file handler ###############################        
     def updateFileContent(self, file: Tuple[str, str, str]):
         """ update the file content on the table

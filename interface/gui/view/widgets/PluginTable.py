@@ -6,7 +6,7 @@ from view.config.Text import PLUGIN_SUITE_TEXT
 from view.Signals import DataSignal, GlobalStyleSignal
 from view.Request import Request
 from view.util.ErrorMsg import ERR  
-from view.components.PluginSuiteDetails import PluginSuiteDetails
+from view.components.SettingDetail import PluginSuiteDetails
 from .MsgBox import WarnBox, ConfirmBox
 from .Table import BaseTable
 from PyQt6.QtWidgets import (
@@ -31,7 +31,7 @@ class PluginTable(BaseTable):
     def addItem(self, suiteInfo: Tuple[str, Dict[str, str], str]):
         self.logger.info(suiteInfo)
         suiteName, metadata, isOfficial = suiteInfo
-        super().addItem((suiteName, metadata))
+        super().addItem((suiteName, metadata), isOfficial = isOfficial)
         try:
             if isOfficial:
                 self.nameToTablePins[suiteName].setIcon(QIcon(os.path.join(PROJECT_ROOT, STYLE_DATA.Asset.pluginBadge)))
@@ -39,27 +39,27 @@ class PluginTable(BaseTable):
             self.logger.error(e, exc_info=e)
             WarnBox(ERR.ERR_WHEN_DUETO.format("uploading plugin suite", str(e)))
         
-    def addCellWidgets(self, suiteName: str, tableItem: QTableWidgetItem, row:int):
+    def addCellWidgets(self, suiteName: str, tableItem: QTableWidgetItem, row:int, isOfficial: bool = False):
         cellWidget = QWidget()
         layout = QVBoxLayout()
         detailBtn = QPushButton("Details")
-        deleteBtn = QPushButton("Delete")
         sourceBtn = QPushButton("View Source")
         cellWidget.setLayout(layout)
         layout.addWidget(detailBtn)
-        layout.addWidget(deleteBtn)
         layout.addWidget(sourceBtn)
-        deleteBtn.clicked.connect(lambda: self.delete(suiteName, tableItem))
         detailBtn.clicked.connect(lambda: self.viewDetail(suiteName))
         sourceBtn.clicked.connect(lambda: self.signal.viewSourceRequest.emit(
             Request(data=suiteName, succeed=self.displaySource)
         ))
+        if not isOfficial:
+            deleteBtn = QPushButton("Delete")
+            layout.addWidget(deleteBtn)
+            deleteBtn.clicked.connect(lambda: self.delete(suiteName, tableItem))
         self.setCellWidget(row, len(self.headers) - 1, cellWidget)
 
     def viewDetail(self, suiteName:str):
         self.signal.detailRequest.emit(
             Request(data = suiteName, succeed=self.displayPluginSuiteDetail))
-
 
     def displayPluginSuiteDetail(self, suiteInfo) -> None :
         """ 

@@ -52,17 +52,21 @@ class UploadPlugin(QDialog):
         
     def _initWidget(self):
         """ initializes the widget """
+        self.header = Label(
+            TEXT.HEADER,
+            STYLE_DATA.FontSize.HEADER2, 
+            STYLE_DATA.FontFamily.MAIN)
         self.uploadDir = ColoredBtn(
             TEXT.LOAD_DIR,
-            Color.PRIMARY_BUTTON)
+            STYLE_DATA.Color.PRIMARY_BUTTON)
         self.uploadUrl = ColoredBtn(
             TEXT.LOAD_URL, 
-            Color.PRIMARY_BUTTON
+            STYLE_DATA.Color.PRIMARY_BUTTON
         )
         self.displayPlugins = UploadTable()
         self.addBtn = ColoredBtn(
             TEXT.REGISTER,
-            Color.SECONDARY_BUTTON
+            STYLE_DATA.Color.SECONDARY_BUTTON
         )
         
     def _initLayout(self):
@@ -75,6 +79,8 @@ class UploadPlugin(QDialog):
         
         self.verticalLayout = QVBoxLayout()
         self.setLayout(self.verticalLayout)
+        self.verticalLayout.addWidget(self.header, 
+                                      alignment=Qt.AlignmentFlag.AlignHCenter)
         self.verticalLayout.addWidget(self.displayPlugins,
                                       alignment=Qt.AlignmentFlag.AlignHCenter)
         self.verticalLayout.addWidget(hContainer, 

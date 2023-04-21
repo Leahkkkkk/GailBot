@@ -15,7 +15,6 @@ from typing import List
 from view.config.Style import STYLE_DATA, FileTableDimension
 from view.config.Text import FileTableHeader
 from view.config.Text import FileUploadPageText as Text 
-from view.config.Style import buttonStyle
 from view.pages.BasicPage import BasicPage
 from gbLogger import makeLogger
 from view.Signals import FileSignals
@@ -154,6 +153,7 @@ class FileUploadPage(BasicPage):
         super().changeColor()
         self.gotoMainBtn.setStyleSheet(STYLE_DATA.StyleSheet.goToMain)
         self.settingBtn.colorChange(STYLE_DATA.Color.PRIMARY_BUTTON)
+        self.uploadFileBtn.colorChange(STYLE_DATA.Color.PRIMARY_BUTTON)
         self.removeAll.colorChange(STYLE_DATA.Color.PRIMARY_BUTTON)
          
     def fontChange(self):
@@ -166,13 +166,13 @@ class FileUploadPage(BasicPage):
         """ activates the transcribe button """
         self.logger.info("")
         self.transcribeBtn.setEnabled(True)
-        self.transcribeBtn.setStyleSheet(buttonStyle.ButtonActive)
+        self.transcribeBtn.setStyleSheet(STYLE_DATA.buttonStyle.ButtonActive)
         
     def _disallowTranscribe(self):
         """ deactivates the transcribe button """
         self.logger.info("")
         self.transcribeBtn.setDisabled(True)
-        self.transcribeBtn.setStyleSheet(buttonStyle.ButtonInactive)
+        self.transcribeBtn.setStyleSheet(STYLE_DATA.buttonStyle.ButtonInactive)
         
     def _confirmRemove(self):
         """ open pop up message to confirm removal of all files """

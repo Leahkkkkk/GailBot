@@ -7,7 +7,7 @@ output      = "_gb_output"
 
 # contains relative paths for the output of gailbot
 [output]
-transcribe_result = "Raw/Trainsript/"
+transcribe_result = "Raw/Transcript/"
 media_file        = "Raw/Media/"
 analysis_result   = "Analysis/"
 metadata          = "meta.json"

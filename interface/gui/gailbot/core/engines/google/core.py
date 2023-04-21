@@ -50,6 +50,7 @@ class GoogleCore:
         self.workspace = workspace_config_loader().engine_ws.google
         assert client 
         self.connected = True
+        self.current_chunk_duration = 55
         
     
     @staticmethod
@@ -140,6 +141,7 @@ class GoogleCore:
             logger.info(f"audio length exceeds maximum limit")
             # get the duration each chunk 
             chunk_duration = GoogleCore._get_chunk_duration(audio_path, audio_duration)
+            self.current_chunk_duration = chunk_duration
             # chunk the file 
             audio_list = MediaHandler.chunk_audio_to_outpath(audio_path, payload_workspace, chunk_duration)
         else:
@@ -193,10 +195,9 @@ class GoogleCore:
         else:
             self.transcribing = False
             self.transcribe_success = True
-            logger.info(response.results)
         return response
       
-    def _prepare_utterance(self, response: cloud_speech.RecognizeResponse, start_time = 0) -> List[Dict[str, str]]:
+    def _prepare_utterance(self, response: cloud_speech.RecognizeResponse, offset = 0) -> List[Dict[str, str]]:
         """
         output the response data from google STT, convert the raw data to 
         utterance data which is a list of dictionary in the format 
@@ -211,8 +212,8 @@ class GoogleCore:
             audio file, each part of the audio file is stored in the format 
             {speaker: , start_time: , end: , text: }
         """
+
         results = response.results
-        
         status_result = {
             "connected": self.connected,
             "read_audio": self.read_audio, 
@@ -226,18 +227,18 @@ class GoogleCore:
         logger.info(status_result)
         """ Prepare Utterance """
         utterances = list()
+        # logger.info(f"transcription - {results}, {len(results)}")
         for result in results:
-            for word in result.alternatives[0].words:
-               
-                utt = {
-                    "start":float(word.start_time.total_seconds()), 
-                    "end":float(word.end_time.total_seconds()),
-                    "text": word.word,
-                    "speaker": str(word.speaker_tag)
-                }
-                utterances.append(utt)
-        
-        logger.info(utterances)
+            alternative = result.alternatives[0]
+            if alternative.transcript:
+                for word in alternative.words:
+                    utt = {
+                        "start":word.start_time.total_seconds() + float(offset), 
+                        "end":word.end_time.total_seconds() + float(offset),
+                        "text": word.word,
+                        "speaker": str(word.speaker_tag)
+                    }
+                    utterances.append(utt)
         return utterances
     
     def _init_status(self):
@@ -262,18 +263,16 @@ class GoogleCore:
             List[Dict[str, str]]: a list that represent the utterance result
         """
         utterances = []
-        start_time = 0 
+        offset = 0.0
+        logger.info(audios)
         for audio in audios:
             logger.info(f"transcribe {audio} in progress")
             response = self._run_engine(audio, workspace)
             assert response
             logger.info("geting the response in chunk")
-            logger.info(response)
-            new_utt = self._prepare_utterance(response, start_time)
-            if len(new_utt):
-                start_time = new_utt[-1]["end"]
-                logger.info(new_utt)
-                utterances.extend(new_utt)
+            new_utt = self._prepare_utterance(response, offset)
+            utterances.extend(new_utt)
+            offset += self.current_chunk_duration 
         return utterances
     
     @staticmethod

@@ -112,6 +112,7 @@ class PluginSuite:
 
         """ a dictionary of the dependency map  -> pipeline argument  """
         self.dict_conf = dict_conf
+        self.source_path = abs_path
         # metadata and document_path will be loaded in _load_from_config
         self.metadata : MetaData = None
         self.document_path : str = None 
@@ -129,7 +130,6 @@ class PluginSuite:
         # Add vars here from conf.
         self._name = dict_conf["suite_name"]
         self._is_ready = True
-        
         self.is_official = False
     
 

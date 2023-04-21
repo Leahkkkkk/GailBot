@@ -166,7 +166,7 @@ class TextForm(QWidget):
              
                 else:
                     key = key.split(". ")[-1]
-                    newInput = TextInput(key, inputText=value)
+                    newInput = TextInput(key, inputText=value, vertical=False)
                 
                 """ add element to the layout """
                 if self.toggle : 

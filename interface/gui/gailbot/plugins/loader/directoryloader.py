@@ -86,6 +86,7 @@ class PluginDirectoryLoader(PluginLoader):
         requirement = None
         official = None
         document = None
+
         # search for the requirements and config file 
         for root, dirs, files in os.walk(suite_dir_path):
             if PLUGIN_CONFIG.REQUIREMENT in files:
@@ -98,7 +99,6 @@ class PluginDirectoryLoader(PluginLoader):
                 official = os.path.join(root, PLUGIN_CONFIG.OFFICIAL)
             if config and requirement and document and official:
                 break 
-        
         
         if not config or not document:
             return False

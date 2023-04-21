@@ -11,10 +11,9 @@ Description: implementation of the plugin page
 '''
 from typing import List
 
-from view.config.Text import ProfilePageText as Text
+from view.config.Text import PluginPageText as Text
 from view.Signals import DataSignal
 from view.Request import Request
-from gbLogger import makeLogger
 from view.widgets.PluginTable import PluginTable
 from view.components.UploadPluginDialog import UploadPlugin
 from .BaseSettingPage import BaseSettingPage
@@ -28,8 +27,9 @@ class PluginPage(BaseSettingPage):
         self,
         *args, 
         **kwargs) -> None:
-        self.headerText = Text.pluginHeader
-        self.captionText = Text.pluginCaption
+        self.headerText = Text.HEADER
+        self.captionText = Text.CAPTION
+        self.addNewButtonText = Text.CREATE_NEW
         self.signal = DataSignal()
         self.mainTable = PluginTable(self.signal)
         super().__init__(*args, **kwargs)

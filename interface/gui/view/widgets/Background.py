@@ -75,7 +75,7 @@ def _resizeEvent(widget: QWidget, event: QResizeEvent, img: str):
     size = event.size()
     temp = QPixmap(os.path.join(PROJECT_ROOT, img))
     pixmap = temp.scaled(
-        size, Qt.AspectRatioMode.IgnoreAspectRatio, Qt.TransformationMode.FastTransformation)
+        size, Qt.AspectRatioMode.IgnoreAspectRatio, Qt.TransformationMode.SmoothTransformation)
     # Set the scaled image to the QLabel
     palette = widget.palette()
     brush = QBrush()
@@ -103,7 +103,7 @@ def _initImgBackground(widget:QWidget, background: str = STYLE_DATA.Asset.homeBa
     temp = QPixmap(os.path.join(PROJECT_ROOT, background))
 
     pixmap = temp.scaled(
-        size, Qt.AspectRatioMode.IgnoreAspectRatio, Qt.TransformationMode.FastTransformation)
+        size, Qt.AspectRatioMode.IgnoreAspectRatio, Qt.TransformationMode.SmoothTransformation)
     brush = QBrush()
     brush.setTexture(pixmap)
     palette.setBrush(QPalette.ColorRole.Window, brush) 

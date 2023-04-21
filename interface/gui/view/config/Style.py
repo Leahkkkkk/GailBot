@@ -73,18 +73,19 @@ STYLE_DICT : Dict[str, StyleParser.StyleSheet] = \
 class buttonStyle:
     '''class holding style values for buttons, allowing for buttons to toggle 
     between active style and functionality and inactive style and functionality'''
-    BASE = "background-color:#fff;\
-            border:none;"
-    
-    ButtonActive = f"background-color:{Color.SECONDARY_BUTTON};\
-                    color:white;\
-                    border-radius:5;\
-                    font-size:{FontSize.BTN};"
-                    
-    ButtonInactive = f"background-color:{Color.LOW_CONTRAST2};\
-                    color:white;\
-                    border-radius:5;\
-                    font-size:{FontSize.BTN};"
+    def __init__(self, color: StyleParser.ColorData):
+        self.BASE = "background-color:#fff;\
+                border:none;"
+        
+        self.ButtonActive = f"background-color:{color.SECONDARY_BUTTON};\
+                        color:white;\
+                        border-radius:5;\
+                        font-size:{FontSize.BTN};"
+                        
+        self.ButtonInactive = f"background-color:{color.LOW_CONTRAST2};\
+                        color:white;\
+                        border-radius:5;\
+                        font-size:{FontSize.BTN};"
 @dataclass
 class StyleSource:
     """ stores file paths to different style theme"""
@@ -109,8 +110,10 @@ class StyleController():
         self.FontSize : StyleParser.FontSizeData = FONT_DICT["Default"]
         self.Dimension = Dimension
         self.FontFamily = FontFamily 
+        self.buttonStyle = buttonStyle(self.Color)
         GlobalStyleSignal.changeColor.connect(self.colorchange)
         GlobalStyleSignal.changeFont.connect(self.fontsizeChange)
+        
         self.signal = StyleSignals()
 
     ###### style control
@@ -122,6 +125,7 @@ class StyleController():
         self.Color = COLOR_DICT[colormode]
         self.Asset = ASSET_DICT[colormode]
         self.signal.changeColor.emit()
+        self.buttonStyle = buttonStyle(self.Color)
     
     def fontsizeChange(self, fontmode):
         self.FontSize = FONT_DICT[fontmode]

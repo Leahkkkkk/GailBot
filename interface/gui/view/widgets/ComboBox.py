@@ -18,6 +18,7 @@ class ComboBox(QComboBox):
         super().__init__(*args, **kwargs)
         self.setStyleSheet(STYLE_DATA.StyleSheet.COMBO_BOX)
         self.setFixedHeight(STYLE_DATA.Dimension.COMBOBOX_HEIGHT)
+        self.setFixedWidth(STYLE_DATA.Dimension.INPUTWIDTH)
         STYLE_DATA.signal.changeColor.connect(self.colorChange)
          
     def colorChange(self):

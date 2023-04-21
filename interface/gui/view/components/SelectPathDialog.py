@@ -12,8 +12,9 @@ Description: a pop up dialogue that opens during the first launch of the
 '''
 import os 
 import datetime
-from view.widgets import Label, ColoredBtn
-from view.util.io import zip_file
+from view.widgets.Label import Label
+from view.widgets.Button import ColoredBtn
+from view.util.io import zip_file, get_name, copy
 from view.config.Style import STYLE_DATA
 from view.config.Text import WelcomePageText as TEXT 
 from gbLogger import makeLogger
@@ -24,10 +25,10 @@ from PyQt6.QtCore import QSize, Qt
 import userpaths
 center = Qt.AlignmentFlag.AlignHCenter
 
-class SaveLogFile(QDialog):
-    """ 
-    open a dialog that ask user to select a space to store zipped log files 
-    """
+class SelectPathDialog(QDialog):
+    header : str 
+    caption : str 
+    pathLabel : str
     def __init__(self, *arg, **kwargs) -> None:
         super().__init__(*arg, **kwargs)
         self.userRoot = userpaths.get_desktop()
@@ -40,13 +41,9 @@ class SaveLogFile(QDialog):
     def _initWidget(self):
         self.userRoot = userpaths.get_desktop()
         self.workDir = getWorkBasePath()
-        self.header = Label(
-           TEXT.saveLogPrompt, STYLE_DATA.FontSize.HEADER3, STYLE_DATA.FontFamily.MAIN)
-        linkFormat = "<a style='color:{0};' href='mailto: {1}'> {2} \n {1}</a>"
-        self.label = Label(
-            linkFormat.format(STYLE_DATA.Color.MAIN_TEXT, TEXT.email, TEXT.sendZipMsg), STYLE_DATA.FontSize.BODY, link=True)
-        self.displayPath = Label(
-            f"{TEXT.saveLogPath}: {self.userRoot}", 
+        self.header = Label(self.header, STYLE_DATA.FontSize.HEADER3, STYLE_DATA.FontFamily.MAIN)
+        self.label = Label(self.caption, STYLE_DATA.FontSize.BODY, link=True)
+        self.displayPath = Label(f"{self.pathLabel}: {self.userRoot}", 
             STYLE_DATA.FontSize.BODY, STYLE_DATA.FontFamily.MAIN, 
             others=f"border: 1px solid {STYLE_DATA.Color.MAIN_TEXT}; text-align:center;")
         self.confirm = ColoredBtn(TEXT.confirmBtn, STYLE_DATA.Color.SECONDARY_BUTTON)
@@ -75,7 +72,43 @@ class SaveLogFile(QDialog):
         if selectedFolder:
             self.userRoot = selectedFolder
             self.displayPath.setText(
-                f"{TEXT.saveLogPath}: {self.userRoot}")
+                f"{self.pathLabel}: {self.userRoot}")
+        
+    def _onConfirm(self):
+        pass
+          
+    def _connectSignal(self):
+        self.choose.clicked.connect(self._openDialog)
+        self.confirm.clicked.connect(self._onConfirm)
+    
+
+class SaveSetting(SelectPathDialog):
+    def __init__(self, origPath, *args, **kwargs) -> None:
+        self.header = "Select path to save the source"
+        self.caption = "A copy of the source will be saved to the selected path for access"
+        self.pathLabel = "Selected Path: "
+        self.origPath = origPath
+        self.copiedPath = None 
+        super().__init__()
+    
+    def _onConfirm(self):
+        try:
+            self.copiedPath = copy(self.origPath, os.path.join(self.userRoot, os.path.basename(self.origPath)))
+            self.close()
+        except Exception as e: 
+            self.logger.error(e, exc_info=e)
+
+            
+class SaveLogFile(SelectPathDialog):
+    """ 
+    open a dialog that ask user to select a space to store zipped log files 
+    """
+    def __init__(self, *arg, **kwargs) -> None:
+        self.header = TEXT.saveLogPrompt
+        linkFormat = "<a style='color:{0};' href='mailto: {1}'> {2} \n {1}</a>"
+        self.caption =  linkFormat.format(STYLE_DATA.Color.MAIN_TEXT, TEXT.email, TEXT.sendZipMsg)
+        self.pathLabel = TEXT.saveLogPath
+        super().__init__(*arg, **kwargs)
         
     def _onConfirm(self):
         """ 
@@ -89,6 +122,4 @@ class SaveLogFile(QDialog):
         except Exception as e:
             self.logger.error(e, exc_info=e)
           
-    def _connectSignal(self):
-        self.choose.clicked.connect(self._openDialog)
-        self.confirm.clicked.connect(self._onConfirm)
+  

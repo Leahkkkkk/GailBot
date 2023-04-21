@@ -14,18 +14,15 @@ from typing import List
 
 from gbLogger import makeLogger
 from view.config.Text import ChooseFileTabText
-from view.widgets.PopUpTab import Tab
+from view.config.Style import STYLE_DATA
+from view.widgets.TabPage import TabDialog
 from view.pages.FileUploadTabPages import (
     OpenFile, 
     ChooseOutPut, 
     ChooseSet
 )
 
-from PyQt6.QtWidgets import (
-    QVBoxLayout, 
-    QDialog,
-)
-from PyQt6.QtCore import QObject, pyqtSignal
+from PyQt6.QtCore import QObject, pyqtSignal, QSize
 
 
 class Signals(QObject):
@@ -33,7 +30,7 @@ class Signals(QObject):
     postFile = pyqtSignal(dict)
     sendStatus = pyqtSignal(int)
    
-class UploadFileTab(QDialog):
+class UploadFileTab():
     def __init__(self, settings:List[str], *args, **kwargs) -> None:
         """ A tab with multiple pages for user to upload a new file.
             when uploading the file, the user will go through the process of:
@@ -53,16 +50,16 @@ class UploadFileTab(QDialog):
         self.uploadFileTab = OpenFile()
         self.chooseSetTab = ChooseSet(settings)
         self.chooseOutPutTab = ChooseOutPut()
-        self.setWindowTitle("Upload File")
-        mainTab = Tab(ChooseFileTabText.WindowTitle, 
+        self.mainTab = TabDialog(ChooseFileTabText.WindowTitle, 
                       {ChooseFileTabText.TabHeader1: self.uploadFileTab,
                        ChooseFileTabText.TabHeader2: self.chooseSetTab,
-                       ChooseFileTabText.TabHeader3: self.chooseOutPutTab})
-        mainTab.signals.closeTab.connect(self._addFile)
-        self.layout = QVBoxLayout()
-        self.setLayout(self.layout)
-        self.layout.addWidget(mainTab) 
-        self.logger.info("")
+                       ChooseFileTabText.TabHeader3: self.chooseOutPutTab},
+                      QSize(550,600))
+        
+        self.mainTab.finishedBtn.clicked.connect(self._addFile)
+
+    def exec(self):
+        self.mainTab.exec()
     
     def _addFile(self) -> None: 
         """ emit a signal that contains the file data """
@@ -81,5 +78,4 @@ class UploadFileTab(QDialog):
                 self.logger.info(fileData)
         except Exception as e: 
             self.logger.error(e, exc_info=e)
-        self.close()
 

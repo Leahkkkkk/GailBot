@@ -1,4 +1,14 @@
-
+'''
+File: BaseSettingPage.py
+Project: GailBot GUI
+File Created: 2022/10/
+Author: Siara Small  & Vivian Li
+-----
+Last Modified:2023/04/18
+Modified By:  Siara Small  & Vivian Li
+-----
+Description: 
+'''
 from view.config.Style import STYLE_DATA,  FontFamily
 from view.config.Text import ENGINE_SETTING_TEXT as Text
 from view.Signals import DataSignal
@@ -17,6 +27,7 @@ center  = Qt.AlignmentFlag.AlignHCenter
 class BaseSettingPage(QWidget):
     headerText = None 
     captionText = None 
+    addNewButtonText = None
     mainTable:BaseTable = None 
     signal: DataSignal = None 
     
@@ -38,7 +49,7 @@ class BaseSettingPage(QWidget):
         self.caption = Label(
             self.captionText, STYLE_DATA.FontSize.DESCRIPTION, FontFamily.MAIN
         )
-        self.addBtn = ColoredBtn(Text.ADD_BUTTON, STYLE_DATA.Color.PRIMARY_BUTTON)
+        self.addBtn = ColoredBtn(self.addNewButtonText, STYLE_DATA.Color.PRIMARY_BUTTON)
     
     def _initlayout(self):
         """" initializes layout """

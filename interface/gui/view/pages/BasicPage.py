@@ -1,3 +1,15 @@
+'''
+File: BasicPage.py
+Project: GailBot GUI
+File Created: 2022/10/
+Author: Siara Small  & Vivian Li
+-----
+Last Modified:2023/04/18
+Modified By:  Siara Small  & Vivian Li
+-----
+Description: 
+'''
+
 from PyQt6.QtWidgets import QWidget, QHBoxLayout
 from PyQt6.QtCore import QSize
 from view.widgets import getLogo

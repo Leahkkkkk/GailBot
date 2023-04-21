@@ -3,18 +3,11 @@ from view.config.Style import STYLE_DATA
 from config_frontend import PROJECT_ROOT
 from view.config.Text import ENGINE_SETTING_TEXT as TEXT
 from view.Signals import DataSignal
-from view.Request import Request
-from view.util.ErrorMsg import ERR  
-from .MsgBox import WarnBox, ConfirmBox
+from view.widgets import initPrimaryColorBackground, Label
 from view.components.ConfigEngineTab import EditEngine
 from gbLogger import makeLogger
 from .Table import BaseTable
-from PyQt6.QtWidgets import (
-    QTableWidgetItem, 
-    QWidget, 
-    QPushButton,
-    QVBoxLayout,
-)
+from view.components.SettingDetail import EngineDetail
 class EngineTable(BaseTable):
     def __init__(self, signal: DataSignal ):
         super().__init__(TEXT.TABLE_HEADER)
@@ -26,4 +19,8 @@ class EngineTable(BaseTable):
         editDialog = EditEngine(data)
         editDialog.signals.editEngine.connect(self.sendEditRequest)
         editDialog.exec()
- 
+    
+    def displayDetail(self, data):
+        name, setting = data 
+        EngineDetail(name, setting)
+        

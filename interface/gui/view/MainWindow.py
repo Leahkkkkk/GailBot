@@ -18,7 +18,6 @@ from view.components import (
     MenuBar, 
     Console, 
 )
-from view.components.PluginSuiteDetails import PluginSuiteDetails
 from view.util.ErrorMsg import WARN, ERR
 from view.Signals import FileSignals, ViewSignals
 from view.widgets import WarnBox

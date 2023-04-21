@@ -95,9 +95,15 @@ class SettingObject():
         Returns:
             bool: True if successfully updated, false if not
         """
-        logger.info(engine_setting)
-        logger.info(plugin_setting)
-        self.engine_setting = engine_setting
-        self.plugin_setting = plugin_setting
-        assert self.get_data()
-    
+        try:
+            logger.info(engine_setting)
+            logger.info(plugin_setting)
+            self.engine_setting.remove_applied_profile(self.name)
+            self.engine_setting = engine_setting
+            self.engine_setting.add_applied_profile(self.name)
+            self.plugin_setting = plugin_setting
+            assert self.get_data()
+            return True
+        except Exception as e:
+            logger.error(e, exc_info=e)
+            return False 

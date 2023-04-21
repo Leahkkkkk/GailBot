@@ -60,7 +60,8 @@ class OpenFile(TabPage):
     """
     def __init__(self, *args, **kwargs) -> None:
         """ initializes class """
-        super().__init__()
+        self.blockNext = True
+        super().__init__(blockNext=True)
         self.setAcceptDrops(True)
         self.logger = makeLogger("F")
         self._initWidget()
@@ -68,6 +69,12 @@ class OpenFile(TabPage):
         self._connectSignal()
         self._initStyle()
         self._initDimension()
+    
+    def initState(self):
+        if self.filePaths:
+            self.signals.nextPage.emit()
+        else:
+            self.signals.blockNextPage.emit()
     
     def getFile(self) -> List[fileDict]:
         """ returns a list of files object that user has selected """
@@ -87,7 +94,7 @@ class OpenFile(TabPage):
     def _initWidget(self):
         """ initializes the widgets """
         self.logger.info("")
-        self.header = Label(Text.uploadInstruction, STYLE_DATA.FontSize.BTN, FontFamily.MAIN)
+        self.header = Label(Text.uploadInstruction, STYLE_DATA.FontSize.HEADER4, FontFamily.MAIN)
         self.fileDisplayList = QTableWidget()
         self.filePaths = dict()
         self.uploadFileBtn = ColoredBtn(
@@ -130,14 +137,13 @@ class OpenFile(TabPage):
         self.fileDisplayList.verticalHeader().hide()
         self.fileDisplayList.setStyleSheet(f"background-color:{STYLE_DATA.Color.MAIN_BACKGROUND};"
                                            f"color:{STYLE_DATA.Color.MAIN_TEXT}")
-        self.fileDisplayList.setColumnWidth(0,Dimension.SMALL_TABLE_WIDTH) 
     
     def _initDimension(self):
         """ initializes the dimensions """
         self.logger.info("")
         self.fileDisplayList.setFixedSize(QSize(Dimension.SMALL_TABLE_WIDTH,
                                                 Dimension.SMALL_TABLE_HEIGHT)) 
-        self.fileDisplayList.setColumnWidth(0, 325)
+        self.fileDisplayList.setColumnWidth(0, Dimension.SMALL_TABLE_WIDTH - 30)
         self.fileDisplayList.setColumnWidth(1, 25)
     
     def _pathToFileObj(self, path:str):  
@@ -244,7 +250,7 @@ class ChooseSet(TabPage):
         return the profile chosen by the user 
     """
     def __init__(self, settings: List[str], *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
+        super().__init__( *args, **kwargs)
         self.profile = settings[0]
         self.settings = settings
         self.logger = makeLogger("F")
@@ -256,20 +262,16 @@ class ChooseSet(TabPage):
         """ return the selected setting """
         self.logger.info("")
         if self.profile:
-            return {"Profile": self.profile}
+            return {"Profile": self.selectSettings.currentText()}
         else:
             logging.warn("the profile is not chosen")
         
     def _initWidget(self):
         """ initializes the widgets """
         self.logger.info("")
-        self.label = Label("Select Setting Profile", STYLE_DATA.FontSize.HEADER3, FontFamily.MAIN)
+        self.label = Label("Select Setting Profile", STYLE_DATA.FontSize.HEADER4, FontFamily.MAIN)
         self.selectSettings = ComboBox(self)
-        self.selectSettings.addItem(Text.selectSetText)
         self.selectSettings.addItems(self.settings)
-        self.selectSettings.setCurrentText("None")
-        self.selectSettings.currentTextChanged.connect(self._updateSettings)
-        self.selectSettings.currentIndexChanged.connect(self._toNextPage)
    
     def _initLayout(self):
         """ initializes the layouts """
@@ -281,26 +283,6 @@ class ChooseSet(TabPage):
         self.layout.addWidget(self.selectSettings)
         self.layout.addStretch()
         
-    def _updateSettings(self, setting):
-        """ updates the settings
-        Args: setting: new settings value with which to update
-        """
-        self.logger.info("")
-        if setting:
-            self.profile = setting
-            
-    def _toNextPage(self, idx):
-        """ takes user to the next page in the tab popup """
-        self.logger.info("")
-        if self.selectSettings.currentText != Text.selectSetText:
-            self.signals.nextPage.emit()
-            if self.selectSettings.itemText(0) == Text.selectSetText:
-                self.selectSettings.removeItem(0)
-        else:
-            logging.warn("The profile has not been chosen")
-            
-
-        
 class ChooseOutPut(TabPage):
     """ implement a page for user to choose output directory  
     
@@ -310,13 +292,12 @@ class ChooseOutPut(TabPage):
     """
     def __init__(self, *args, **kwargs) -> None:
         """ initializes the class """
-        super().__init__(*args, **kwargs)
+        super().__init__(blockNext=True, *args, **kwargs)
         self.logger = makeLogger("F")
         self.outPath = None
-        self._iniWidget()
+        self._initWidget()
         self._initLayout()
-    
-          
+              
     def getOutputPath(self) -> OutputPath:
         """ returns the selected output path """
         try: 
@@ -329,10 +310,17 @@ class ChooseOutPut(TabPage):
             self.logger.error(e, exc_info=e)
             WarnBox(ERR.ERR_WHEN_DUETO.format("getting output directory", str(e)))
         
-    def _iniWidget(self):
+    def initState(self):
+        if self.outPath:
+            self.signals.nextPage.emit()
+        else:
+            self.signals.blockNextPage.emit()
+
+    def _initWidget(self):
         """ initializes the widgets """
         self.logger.info("")
-        self.chooseDirBtn = ColoredBtn("···", STYLE_DATA.Color.PRIMARY_BUTTON, STYLE_DATA.FontSize.HEADER2)
+        self.chooseOuputLabel = Label(Text.selectOutput,  STYLE_DATA.FontSize.HEADER4, STYLE_DATA.FontFamily.MAIN)
+        self.chooseDirBtn = ColoredBtn("···", STYLE_DATA.Color.PRIMARY_BUTTON, STYLE_DATA.FontSize.HEADER4)
         self.chooseDirBtn.setFixedWidth(70)
         self.dirPathText = QLineEdit(self)
         self.dirPathText.setPlaceholderText(Text.chooseOutPutText)
@@ -348,10 +336,17 @@ class ChooseOutPut(TabPage):
     def _initLayout(self):
         """ initializes the layout """
         self.logger.info("")
-        self.layout = QHBoxLayout()
-        self.setLayout(self.layout)
-        self.layout.addWidget(self.dirPathText)
-        self.layout.addWidget(self.chooseDirBtn)
+        self.vlayout = QVBoxLayout()
+        self.setLayout(self.vlayout)
+        self.selectContainer = QWidget()
+        self.hlayout = QHBoxLayout()
+        self.selectContainer.setLayout(self.hlayout)
+        self.hlayout.addWidget(self.dirPathText)
+        self.hlayout.addWidget(self.chooseDirBtn)
+        self.vlayout.addStretch()
+        self.vlayout.addWidget(self.chooseOuputLabel)
+        self.vlayout.addWidget(self.selectContainer)
+        self.vlayout.addStretch()
     
     def _addDir(self):
         """ adds existing directory as output directory """
@@ -360,7 +355,7 @@ class ChooseOutPut(TabPage):
         outPath = fileDialog.getExistingDirectory()
         if outPath:
             self.outPath = outPath
-            self.signals.close.emit()
+            self.signals.nextPage.emit()
             self.dirPathText.setText(outPath)
         else: 
             logging.warn("No output directory is chosen")

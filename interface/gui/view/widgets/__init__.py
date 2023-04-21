@@ -9,7 +9,6 @@ from .ScrollArea import ScrollArea
 from .ToggleView import ToggleView
 from .SideBar import SideBar
 from .Image import Image
-from .PopUpTab import Tab
 from .Form.DependentComboBox import DependentCombo
 from .Form.FormWidget import FormWidget
 from .Form.MultiSelect import MultipleSelect

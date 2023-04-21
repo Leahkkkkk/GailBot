@@ -1,4 +1,5 @@
 import subprocess
+import os
 from typing import List, Dict, Tuple 
 from view.config.Style import STYLE_DATA
 from view.util.ErrorMsg import ERR  
@@ -6,6 +7,7 @@ from .Label import Label
 from .MsgBox import WarnBox, ConfirmBox
 from view.Request import Request
 from view.Signals import DataSignal
+from view.components.SelectPathDialog import SaveSetting
 from gbLogger import makeLogger
 from PyQt6.QtWidgets import (
     QTableWidget, 
@@ -40,8 +42,8 @@ class BaseTable(QTableWidget):
         for i in range(self.columnCount()):
             self.horizontalHeader().setSectionResizeMode(
                 i, QHeaderView.ResizeMode.Fixed)
-        self.setFixedWidth(STYLE_DATA.Dimension.FORMWIDTH)
-        self.setMinimumHeight(STYLE_DATA.Dimension.FORMMINHEIGHT)
+        self.setFixedWidth(STYLE_DATA.Dimension.DEFAULTTABWIDTH)
+        self.setMinimumHeight(STYLE_DATA.Dimension.DEFAULTTABHEIGHT)
         self.verticalScrollBar().setStyleSheet(STYLE_DATA.StyleSheet.SCROLL_BAR) 
         self.horizontalScrollBar().setStyleSheet(STYLE_DATA.StyleSheet.SCROLL_BAR)
         self.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)  
@@ -80,22 +82,22 @@ class BaseTable(QTableWidget):
         editBtn    = QPushButton("Edit")
         deleteBtn  = QPushButton("Delete")
         sourceBtn  = QPushButton("View Source")
+        detailBtn  = QPushButton("View Detail")
         cellWidget.setLayout(layout)
         
         layout.addWidget(editBtn)
         layout.addWidget(deleteBtn)
         layout.addWidget(sourceBtn)
-        
+        layout.addWidget(detailBtn)
         deleteBtn.clicked.connect(lambda: self.delete(name, tableItem))
         editBtn.clicked.connect(lambda: self.editSetting(name))
-        sourceBtn.clicked.connect(lambda: self.signal.viewSourceRequest.emit(
-            Request(data=name, succeed=self.displaySource)
-        ))
+        sourceBtn.clicked.connect(lambda: self.viewSourceRequest(name))
+        detailBtn.clicked.connect(lambda: self.viewDetailRequest(name))
         self.setCellWidget(row, len(self.headers) - 1, cellWidget)
 
-    def addItems(self, items):
+    def addItems(self, items, **kwargs):
         for item in items:
-            self.addItem(item)
+            self.addItem(item, **kwargs)
     
     def delete(self, name, tableItem):
         try:
@@ -113,11 +115,29 @@ class BaseTable(QTableWidget):
         rowidx = self.indexFromItem(tableItem).row()
         self.removeRow(rowidx)
         self.signal.deleteSucceed.emit(name)
+        
+    def displayDetail(self, data):
+        pass 
+    
+    def viewDetailRequest(self, name):
+        self.signal.getRequest.emit(
+            Request(data=name, succeed=self.displayDetail))
     
     def displaySource(self, path:str): 
-        pid = subprocess.check_call(["open", path]) 
+        """ TODO: open dialog """
+        try:
+            dialog = SaveSetting(origPath=path)
+            dialog.exec()
+            if dialog.copiedPath:
+                pid = subprocess.check_call(["open", dialog.copiedPath]) 
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
     
-    def addItem(self, setting: Tuple[str, Dict[str, str], str]):
+    def viewSourceRequest(self, name: str):
+        self.signal.viewSourceRequest.emit(
+            Request(data=name, succeed=self.displaySource))
+    
+    def addItem(self, setting: Tuple[str, Dict[str, str], str], **kwargs):
         self.logger.info(setting)
         name, data = setting
         try:
@@ -136,7 +156,7 @@ class BaseTable(QTableWidget):
                     newItem = QTableWidgetItem(str(data[key]))
                     self.setItem(newRowIdx, col, newItem)
             
-            self.addCellWidgets(name, nameItem, newRowIdx)
+            self.addCellWidgets(name, nameItem, newRowIdx, **kwargs)
             self.resizeRowsToContents()  
         except Exception as e:
             self.logger.error(e, exc_info=e)
@@ -147,8 +167,13 @@ class BaseTable(QTableWidget):
         rowIdx = self.indexFromItem(self.nameToTablePins[name]).row()
         try:
             for key, col in self.dataKeyToCol.items():
-                newItem = QTableWidgetItem(str(data[key]))
-                self.setItem(rowIdx, col, newItem)
+                self.removeCellWidget(rowIdx, col)
+                if isinstance(data[key], list):
+                    newItem = self.createListDisplay(data[key])
+                    self.setCellWidget(rowIdx, col, newItem)
+                else:
+                    newItem = QTableWidgetItem(str(data[key]))
+                    self.setItem(rowIdx, col, newItem)
         except Exception as e:
             self.logger.error(e, exc_info=e)
             WarnBox(ERR.ERR_WHEN_DUETO.format("updating setting changes on table", str(e)))
@@ -170,7 +195,6 @@ class BaseTable(QTableWidget):
         listLayout = QVBoxLayout()
         listDisplay.setLayout(listLayout)
         for item in items:
-            newLabel = Label(item, STYLE_DATA.FontSize.SMALL)
+            newLabel = Label(item, STYLE_DATA.FontSize.BODY)
             listLayout.addWidget(newLabel)
-        
         return listDisplay

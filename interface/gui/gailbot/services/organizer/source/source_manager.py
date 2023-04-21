@@ -1,10 +1,12 @@
 from typing import List, Dict, Union
-
+import os
 from .source_object import SourceObject
 from ..settings import SettingObject
 from gailbot.core.utils.general import get_name, is_file, is_directory, is_path
 from gailbot.core.utils.logger import makelogger
+from gailbot.configs import workspace_config_loader
 
+OUTPUT_EXTENSION = workspace_config_loader().file_extension.output
 logger = makelogger("source_manager")
 class SourceManager():
     """
@@ -126,7 +128,7 @@ class SourceManager():
         source_name = get_name(source) if is_path(source) else source
         if self.is_source(source_name):
             logger.info("is source")
-            return self.sources[source_name].output
+            return os.path.join(self.sources[source_name].output, f"{source_name}{OUTPUT_EXTENSION}")
         else:
             logger.error(source_name)
             return False

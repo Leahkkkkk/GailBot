@@ -107,7 +107,7 @@ class SettingManager():
         Returns:
             bool: return true if the setting is successfully added, false otherwise 
         """ 
-        if self.is_setting(name) and (not overwrite): 
+        if self.is_engine_setting(name) and (not overwrite): 
             raise ExistingSettingName(name)
         try:
             setting: EngineSetObj = EngineSetObj(engine, name)
@@ -368,7 +368,12 @@ class SettingManager():
         """
         if self.is_setting(name):
             try:
-                self.add_new_setting(name, setting_data, overwrite=True)
+                profile_setting = self.profiles[name]
+                orig_engine = profile_setting.engine_setting.name
+                engine_set_name = setting_data["engine_setting_name"]
+                engine_obj = self.engine_settings[engine_set_name]
+                plugin_obj = PluginSuiteSetObj(setting_data["plugin_setting"])
+                assert profile_setting.update_setting(engine_setting=engine_obj, plugin_setting=plugin_obj)
                 assert self.save_setting(name)
                 return True
             except Exception as e:

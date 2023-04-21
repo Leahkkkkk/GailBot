@@ -118,7 +118,6 @@ class Tab(QWidget):
         self.layout.addWidget(self.MainTab)
         self.layout.addWidget(self.changePageBtn)
     
-    
     def _enableBtn(self):
         """ enabled the button """
         self.tabsState[self.MainTab.currentIndex()] = True

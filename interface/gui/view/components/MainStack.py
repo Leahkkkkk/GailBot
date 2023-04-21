@@ -11,14 +11,9 @@ Description: implementation of the main page Stack
 '''
 from typing import Tuple, List, Dict
 from gbLogger import makeLogger
-from view.Signals import (
-    FileSignals, 
-    DataSignal, 
-    ViewSignals, 
-    GlobalStyleSignal)
+from view.Signals import FileSignals 
 from view.config.Style import STYLE_DATA
-from view.config.Text import MainStackText
-from view.widgets.MsgBox import WarnBox, ConfirmBox
+from view.widgets.MsgBox import WarnBox
 from view.pages import (
         WelcomePage, 
         ConfirmTranscribePage,
@@ -26,14 +21,13 @@ from view.pages import (
         SettingPage,
         TranscribeProgressPage,
         TranscribeSuccessPage,
-        RecordPage, 
 )
 from view.widgets.Background import (
     initHomePageBackground, 
     initSubPageBackground,
     initPrimaryColorBackground
 )
-from PyQt6.QtWidgets import QStackedWidget, QTabWidget
+from PyQt6.QtWidgets import QStackedWidget
 from PyQt6.QtCore import QSize
 
 class MainStack(QStackedWidget):
@@ -141,7 +135,7 @@ class MainStack(QStackedWidget):
         self.setCurrentWidget(self.WelcomePage)
         # self.addWidget(self.RecordPage)
     
-    def _changeBkg(self, colormode):
+    def _changeBkg(self):
         initHomePageBackground(self.WelcomePage)
         initSubPageBackground(self.FileUploadPage)
         initSubPageBackground(self.ConfirmTranscribePage)
@@ -192,23 +186,11 @@ class MainStack(QStackedWidget):
         self.SettingPage.ProfilePage.signal.deleteSucceed.connect(
             self.FileUploadPage.fileTable.deleteProfile)
         
-        ### when file upload page is requesting to show a profile
-        self.FileUploadPage.fileTable.viewSignal.requestProfile.connect(
-            lambda filename : self.fileSignal.requestprofile.emit(
-                Request(data=filename, succeed = self.showProfile)))
-
-        self.ConfirmTranscribePage.fileTable.viewSignal.requestProfile.connect(
-            lambda filename : self.fileSignal.requestprofile.emit(
-                Request(data=filename, succeed = self.showProfile)))
-        
         ### signal to change view color 
-        GlobalStyleSignal.changeColor.connect(self._changeBkg)
+        STYLE_DATA.signal.changeColor.connect(self._changeBkg)
         
     
     # show a specific profile identified by profile name
-    def showProfile(self, profilename):
-        self.setCurrentWidget(self.SettingPage)
-        self.SettingPage.settingStack.setCurrentWidget(self.SettingPage.ProfilePage) 
 
 class Request:
     def __init__(self, data, succeed: callable = None) -> None:

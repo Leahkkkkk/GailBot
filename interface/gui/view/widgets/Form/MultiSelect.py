@@ -7,8 +7,6 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QStyle
 from .CheckBox import CheckBox
 from PyQt6.QtCore import Qt
 
-
-
 class MultipleSelect(QWidget, FormWidget):
     def __init__(self, label: str,  choices: List[str]) -> None:
         super().__init__()
@@ -23,7 +21,7 @@ class MultipleSelect(QWidget, FormWidget):
     def initUI(self):
         self._layout = QVBoxLayout()
         self._layout.setAlignment(Qt.AlignmentFlag.AlignTop)
-        self.labelwidget = Label(self.labeltxt, STYLE_DATA.FontSize.HEADER4)
+        self.labelwidget = Label(self.labeltxt, STYLE_DATA.FontSize.HEADER4, STYLE_DATA.FontFamily.MAIN)
         self.setLayout(self._layout)
         self._layout.addWidget(self.labelwidget, alignment=Qt.AlignmentFlag.AlignTop)
         

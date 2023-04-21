@@ -1,3 +1,14 @@
+'''
+File: ProfilePage.py
+Project: GailBot GUI
+File Created: 2022/10/
+Author: Siara Small  & Vivian Li
+-----
+Last Modified:2023/04/18
+Modified By:  Siara Small  & Vivian Li
+-----
+Description: 
+'''
 from typing import List
 from view.config.Text import ProfilePageText as Text
 from view.Signals import DataSignal
@@ -16,8 +27,9 @@ class ProfilePage(BaseSettingPage):
         *args, 
         **kwargs) -> None:
         """ initializes class """
-        self.headerText = Text.Header
-        self.captionText = Text.Caption
+        self.headerText = Text.HEADER
+        self.captionText = Text.CAPTION
+        self.addNewButtonText = Text.CREATE_NEW
         self.signal = DataSignal()
         self.engineSignal = engineSignal
         self.mainTable = ProfileTable(self.signal, engineSignal=self.engineSignal, parent=self)

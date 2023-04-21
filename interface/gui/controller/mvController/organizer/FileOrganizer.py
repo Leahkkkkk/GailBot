@@ -179,7 +179,8 @@ class FileOrganizer:
         self.logger.info("request file profile setting from database")  
         try:
             profile = self.gb.get_src_setting_name(request.data)
-            request.succeed(profile)
+            profileData = self.gb.get_setting_dict(profile)
+            request.succeed((profile, profileData))
         except Exception as e:
             request.fail(ERR.GET_FILE_ERROR)
             self.logger.error(ERR.GET_FILE_ERROR, exc_info=e)

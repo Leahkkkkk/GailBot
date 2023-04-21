@@ -3,11 +3,14 @@ from dataclasses import dataclass
 
 @dataclass 
 class PATH:
-    SETTING_ROOT            = "/Users/yike/GailBot/Backend/gailbot_workspace/gailbot_data/setting_source" 
-    USER_ROOT               = "/Users/yike/Desktop/GailBot/Backend"
-    BACKUP_ROOT             = "/Users/yike/Desktop/GailBotTestDir2/Backend"
-    OUTPUT_ROOT             = "/Users/yike/Desktop/gbout"
-    AUDIOROOT               = "/Users/yike/Desktop/input"
+    SETTING_ROOT = "/Users/yike/GailBot/Backend/gailbot_workspace/gailbot_data/setting_source"
+    USER_ROOT    = "/Users/yike/Desktop/GailBot/Backend"
+    BACKUP_ROOT  = "/Users/yike/Desktop/GailBotTestDir2/Backend"
+    OUTPUT_ROOT  = "/Users/yike/Desktop/gbout"
+    GOOLE_OUT    = os.path.join(OUTPUT_ROOT, "google")
+    WATSON_OUT   = os.path.join(OUTPUT_ROOT, "watson")
+    WHISPER_OUT  = os.path.join(OUTPUT_ROOT, "whisper")
+    AUDIOROOT    = "/Users/yike/Desktop/input"
     
     #invalid dirtocy 
     INVALID_DATA_DIR        = os.path.join(AUDIOROOT, "invalidFile")

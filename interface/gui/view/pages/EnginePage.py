@@ -16,8 +16,9 @@ class EnginePage(BaseSettingPage):
         *args, 
         **kwargs) -> None:
         """ initializes class """
-        self.headerText = Text.ENGINE_HEADER
+        self.headerText = Text.HEADER
         self.captionText = Text.CAPTION
+        self.addNewButtonText = Text.CREATE_NEW
         self.signal = DataSignal()
         self.mainTable = EngineTable(self.signal)
         super().__init__( *args, **kwargs)

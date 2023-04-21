@@ -72,6 +72,7 @@ class WelcomePageText :
 class FileUploadPageText:
     """class holding the text for the file upload pop-up"""
     header                = "Files to Transcribe"
+    selectOutput          = "Select output directory"
     returnMainText        = "Return to Main Menu"
     recordBtnText         = "Record Live"
     uploadBtnText         = "Add From Device"
@@ -123,7 +124,11 @@ class RecordPageProgressText:
     cancel = "Cancel"
     end    = "End Recording"
 
-
+@dataclass
+class PluginPageText:
+    HEADER       = "Available Plugin Suites"
+    CAPTION      = "These plugins are available in GailBot"
+    CREATE_NEW   = "Upload Plugin Suite"
 @dataclass 
 class ProfilePageText:
     """class holding the text for the profile page"""
@@ -143,8 +148,6 @@ class ProfilePageText:
     engineSetting      = "Speech to Text Engine Setting"
     pluginSuiteSetting      = "Plugin Suite Setting"
     engineSettingCaption = "These settings are applied to the selected settings profile and are required for transcription"
-    pluginHeader       = "Available Plugin Suites"
-    pluginCaption      = "These plugins are available in GailBot"
     tempMessage        = "This page has been temporarily disabled to allow for further updates and developments. Please check back later."
     confirmDelete      = "Confirm deleting the profile: "
     selectengine       = "Select Speech to Text Engine"
@@ -153,8 +156,9 @@ class ProfilePageText:
     
     tableHeader        = ["Profile Name", "Applied Engine", "Applied Plugin Suite", "Actions"]
     tableDimension     = [0.24, 0.24, 0.24, 0.28]
-    Header  = "Profile Settings"
-    Caption = "Available profile settings for GailBot" 
+    HEADER  = "Profile Settings"
+    CAPTION = "Available profile settings for GailBot" 
+    CREATE_NEW = "Create New Profile"
 @dataclass 
 class SystemSetPageText:
     """class holding the text for the system settings page"""
@@ -212,6 +216,12 @@ class CreateNewProfileTabText:
     TabHeader3   = "Plugin Settings"
     pluginFilter = "json file (*.json) zip file (*.zip)"
 
+@dataclass
+class ENGINE_TAB_TEXT:
+    CREATE_TITTLE = "Create New Engine Setting"
+    NAME_TAB = "Engine Setting Name"
+    SELECT_ENGINE = "Select Speech to Text Engine"
+    ENGINE_SETTING = "Speech to Text Engine Setting"
 @dataclass 
 class MainStackText:
     """class holding the text for the main stack"""
@@ -264,6 +274,10 @@ class PopUpText:
     rightArr = "\u25C0"
     finish   = "Finish"
     window   = "File Info"
+    START    = "Start"
+    PREVIOUS = "Previous"
+    NEXT     = "Next"
+    FINISH   = "Finish"
 
 @dataclass
 class TableText:
@@ -328,7 +342,7 @@ class EngineSetting(DataclassFromDict):
 class Links: 
     HILAB            = "https://sites.tufts.edu/hilab/gailbot-an-automatic-transcription-system-for-conversation-analysis"
     USER_MANUAL      = "https://drive.google.com/file/d/1NnirL5-26j3xnI4yEV7cJVUEqxrFfTm5/view?usp=sharing"
-    GUIDE            = "https://drive.google.com/file/d/1t_-NAM0PCFHhjZ4Kpry2LuhLcXZTDG07/view?usp=sharing"
+    GUIDE            = "https://docs.google.com/document/d/1B-EfS9Ypc4loz9FaN99gdqN4q-amrjobWi81Zx-SS4c/edit?usp=sharing"
     _linkTemplate    = "<a style='color:{0}; font-weight: 500;' href={1}>{2}</a>"
     tutorialLink     = _linkTemplate.format(Color.LINK, USER_MANUAL, WelcomePageText.tutorialText)
     guideLink        = _linkTemplate.format(Color.LINK, GUIDE, WelcomePageText.guideText)
@@ -338,6 +352,7 @@ class Links:
 
 @dataclass
 class PLUGIN_SUITE_TEXT:
+    HEADER = "Upload Plugin Suite"
     SELECT_PLUGIN = "Select Plugin Suites"
     LOAD_DIR = "Load from Directory"
     LOAD_URL = "Load from Cloud"
@@ -357,17 +372,22 @@ class PLUGIN_SUITE_TEXT:
 @dataclass
 class ENGINE_SETTING_TEXT:
     TABLE_HEADER = ["Engine Setting Name", "Speech to Text Engine", "Actions"]
-    ADD_BUTTON = "Create New"
     CONFIRM_DELETE = "Confirm deleting engine setting {0}"
-    ENGINE_HEADER = "Engine Settings"
+    HEADER = "Engine Settings"
     CAPTION = "Available Speech to Text Engine Setting"
     TABLE_DIMENSION = [0.36, 0.36, 0.28]
-    
-    
+    CREATE_NEW = "Create New Engine"
 
+@dataclass 
+class ENGINE_SETTING_FORM(DataclassFromDict):
+    google : dict = field_from_dict()
+    whisper : dict = field_from_dict()
+    watson : dict = field_from_dict()
+     
+ENGINE_FORM = ENGINE_SETTING_FORM.from_dict(forms["EngineForm"])
 
 ProfileSettingForm = ProfileSetting.from_dict(forms["profile form"])
-EngineForm  = EngineSetting.from_dict(forms["profile form"]["RequiredSetting"])
+EngineForm         = EngineSetting.from_dict(forms["profile form"]["RequiredSetting"])
 SystemSettingForm  = forms["system setting form"]
 LogDeleteTimeDict  = forms["log deletion"]
 RecordForm         = forms["record form"]

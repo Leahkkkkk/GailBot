@@ -50,6 +50,7 @@ class InputCombo(QWidget, FormWidget):
         self._layout.addWidget(self.inputLabel)
         self._layout.addWidget(self.inputField)
         self.setMinimumHeight(80)
+        self.setMinimumWidth(STYLE_DATA.Dimension.INPUTWIDTH)
     
     def connectSignal(self):
         """ 

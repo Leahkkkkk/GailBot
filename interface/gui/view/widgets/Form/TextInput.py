@@ -62,7 +62,7 @@ class TextInput(QWidget, FormWidget):
         self.inputField = InputField(self._width, self._height)
         if self.value:
             self.inputField.setText(str(self.value))
-        self._layout = QVBoxLayout() 
+        self._layout = QHBoxLayout() 
         self.setLayout(self._layout)
         self._layout.addWidget(self.inputLabel)
         self._layout.addWidget(self.inputField)

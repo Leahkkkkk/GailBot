@@ -18,7 +18,8 @@ class GraphDisplay(QGraphicsView):
         self.width = 600
         self.height = 300
         self.scene = QGraphicsScene()
-        self.setRenderHint(QPainter.RenderHint.SmoothPixmapTransform)
+        self.setRenderHint(QPainter.RenderHint.SmoothPixmapTransform | QPainter.RenderHint.Antialiasing)
+
         self.setViewportUpdateMode(QGraphicsView.ViewportUpdateMode.SmartViewportUpdate)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
