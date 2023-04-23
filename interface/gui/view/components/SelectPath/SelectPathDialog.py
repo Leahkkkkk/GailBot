@@ -81,7 +81,6 @@ class SelectPathDialog(QDialog):
         self.choose.clicked.connect(self._openDialog)
         self.confirm.clicked.connect(self._onConfirm)
     
-
 class SaveSetting(SelectPathDialog):
     def __init__(self, origPath, *args, **kwargs) -> None:
         self.header = "Select path to save the source"

@@ -17,14 +17,13 @@ from enum import Enum
 from view.Request import Request
 from view.widgets.MsgBox import WarnBox, ConfirmBox
 from view.components.SettingDetail import ProfileDetail
-from .Background import initSecondaryColorBackground
+from ...widgets.Background import initSecondaryColorBackground
 
-from view.components.UploadFileTab import UploadFileTab
-from view.pages.FileUploadTabPages import ChooseSet
+from ..FileUpload import UploadFileTab, ChooseSet
 from view.Signals import FileSignals
 from gbLogger import makeLogger
-from ..config.Style import STYLE_DATA
-from ..config.Text import FileTableText as Text
+from ...config.Style import STYLE_DATA
+from ...config.Text import FileTableText as Text
 from view.util.ErrorMsg import ERR
 from PyQt6.QtWidgets import (
     QTableWidget, 

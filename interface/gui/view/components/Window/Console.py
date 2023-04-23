@@ -22,7 +22,6 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import QSize
 
-
 class Console(QWidget):
     """ A console window that display all log messages """
     def __init__(self):

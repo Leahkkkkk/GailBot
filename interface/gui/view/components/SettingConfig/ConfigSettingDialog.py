@@ -28,7 +28,9 @@ class Signals(QObject):
     editProfile = pyqtSignal(tuple)
 
 class SettingConfigDialog(ABC):
+    
     mainTab: TabDialog
+   
     def __init__(self) -> None:
        self.logger = makeLogger("F") 
        self.mainTab.finishedBtn.clicked.connect(self._postSetting)

@@ -1,5 +1,5 @@
 from typing import List
-from view.widgets import MultipleSelect, ToggleView
+from view.widgets import MultipleSelect
 from PyQt6.QtWidgets import QWidget , QHBoxLayout
 from view.config.Style import STYLE_DATA
 from view.config.Text import PLUGIN_SUITE_TEXT

@@ -16,7 +16,7 @@ from gbLogger import makeLogger
 from view.config.Text import CreateNewProfileTabText as Text
 from view.widgets.TabPage import TabDialog
 from view.config.Style import STYLE_DATA
-from view.pages.CreateNewProfilePages import (
+from .CreateNewProfilePages import (
     SettingName,
     ChooseEngine, 
     PluginSetting

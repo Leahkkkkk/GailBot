@@ -1,5 +1,4 @@
 import subprocess
-import os
 from typing import List, Dict, Tuple 
 from view.config.Style import STYLE_DATA
 from view.util.ErrorMsg import ERR  
@@ -7,7 +6,7 @@ from .Label import Label
 from .MsgBox import WarnBox, ConfirmBox
 from view.Request import Request
 from view.Signals import DataSignal
-from view.components.SelectPathDialog import SaveSetting
+from view.components.SelectPath import SaveSetting
 from gbLogger import makeLogger
 from PyQt6.QtWidgets import (
     QTableWidget, 

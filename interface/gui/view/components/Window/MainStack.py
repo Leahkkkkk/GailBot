@@ -11,7 +11,6 @@ Description: implementation of the main page Stack
 '''
 from typing import Tuple, List, Dict
 from gbLogger import makeLogger
-from view.Signals import FileSignals 
 from view.config.Style import STYLE_DATA
 from view.widgets.MsgBox import WarnBox
 from view.pages import (
@@ -41,11 +40,9 @@ class MainStack(QStackedWidget):
     """
     def __init__(
         self, 
-        fileTableSignal: FileSignals,   
         *args, 
         **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.fileSignal = fileTableSignal
         self.logger= makeLogger("F")
         self.setMaximumSize(
             QSize(STYLE_DATA.Dimension.WINMAXWIDTH, 
@@ -108,18 +105,15 @@ class MainStack(QStackedWidget):
             mimic the functionality of swapping pages """
         self.WelcomePage = WelcomePage.WelcomePage(self)
         initHomePageBackground(self.WelcomePage)
-        self.FileUploadPage = FileUploadPage.FileUploadPage(self.fileSignal) 
+        self.FileUploadPage = FileUploadPage.FileUploadPage() 
         initSubPageBackground(self.FileUploadPage)
-        self.ConfirmTranscribePage = ConfirmTranscribePage.ConfirmTranscribePage(
-            self.fileSignal)
+        self.ConfirmTranscribePage = ConfirmTranscribePage.ConfirmTranscribePage()
         initSubPageBackground(self.ConfirmTranscribePage)
         self.SettingPage = SettingPage.SettingPage()
         initPrimaryColorBackground(self.SettingPage)
-        self.TranscribeProgressPage = TranscribeProgressPage.TranscribeProgressPage(
-            self.fileSignal)
+        self.TranscribeProgressPage = TranscribeProgressPage.TranscribeProgressPage()
         initSubPageBackground(self.TranscribeProgressPage)
-        self.TranscribeSuccessPage = TranscribeSuccessPage.TranscribeSuccessPage(
-            self.fileSignal)
+        self.TranscribeSuccessPage = TranscribeSuccessPage.TranscribeSuccessPage()
         initSubPageBackground(self.TranscribeSuccessPage)
        
         # NOTE: the current record page is not used

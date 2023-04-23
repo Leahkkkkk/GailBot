@@ -27,9 +27,8 @@ from view.widgets.TextForm import TextForm
 from view.widgets.MsgBox import WarnBox
 from view.widgets.ComboBox import ComboBox
 
-
-from view.components import PluginForm
-from view.components.SettingDetail import SettingDisplay
+from .PluginForm import PluginForm
+from ..SettingDetail import SettingDisplay
 from PyQt6.QtWidgets import  QVBoxLayout, QStackedWidget
 from PyQt6.QtCore import (
     Qt, 
@@ -190,7 +189,7 @@ class PluginSetting(TabPage):
             Text.pluginSettingHeader, 
             STYLE_DATA.FontSize.HEADER2, 
             FontFamily.MAIN)
-        self.mainForm = PluginForm.PluginForm()
+        self.mainForm = PluginForm()
         self.mainForm.addPluginSuites(plugins)
         self.verticalLayout = QVBoxLayout()
         self.setLayout(self.verticalLayout)

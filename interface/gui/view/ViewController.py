@@ -1,7 +1,7 @@
 from typing import Dict, TypedDict, Tuple, Any, List
 from view.MainWindow import MainWindow
 from view.Signals import FileSignals, DataSignal, ViewSignals, DataSignal
-
+from view.signal import PluginSignal, ProfileSignal, FileSignal, EngineSignal, GuiSignal
 class SettingDict(TypedDict):
     engine_setting: Dict
     plugin_setting: List[str] 

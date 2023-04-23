@@ -17,7 +17,7 @@ from PyQt6.QtCore import QUrl
 from view.widgets.MsgBox import WarnBox
 import logging
 
-class ManuBar(QMenuBar):
+class MenuBar(QMenuBar):
     """ implementation of Gui menu bar, include open and close 
         console option """
     def __init__(self, *args, **kwargs) -> None:

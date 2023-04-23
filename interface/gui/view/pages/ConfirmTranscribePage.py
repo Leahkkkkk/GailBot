@@ -17,14 +17,12 @@ from view.config.Style import (
 from view.config.Text import ConfirmTranscribeText as Text
 from view.config.Text import FileTableHeader 
 from gbLogger import makeLogger
-from view.Signals import FileSignals
+from view.signal import FileSignal
 from view.pages.BasicPage import BasicPage
 from view.widgets import ( 
     Label, 
-    ColoredBtn,
-    FileTable,
-    TableWidget) 
-
+    ColoredBtn)
+from view.components.FileTable import FileTable, TableWidget
 from PyQt6.QtWidgets import (
     QWidget, 
     QVBoxLayout,
@@ -38,10 +36,10 @@ right = Qt.AlignmentFlag.AlignRight
 
 class ConfirmTranscribePage(BasicPage):
     """ Confirm transcription page """
-    def __init__(self, signal:FileSignals, *args, **kwargs) -> None:
+    def __init__(self, *args, **kwargs) -> None:
         """ initializes page """
         super().__init__(*args, **kwargs)
-        self.signal = signal
+        self.signal = FileSignal
         self.logger = makeLogger("F")
         self._initWidget()
         self._initLayout()

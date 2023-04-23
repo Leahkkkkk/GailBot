@@ -30,7 +30,6 @@ from view.util.ErrorMsg import  ERR
 from view.widgets import (
     ColoredBtn,
     BorderBtn,
-    ComboBox, 
     SideBar,
 )
 
@@ -103,7 +102,7 @@ class SettingPage(QWidget):
         self.PluginPage = PluginPage.PluginPage()
         self.SysPage = SysSetPage.SystemSettingPage()
         self.EngineSetPage = EnginePage.EnginePage()
-        self.ProfilePage = ProfilePage.ProfilePage(engineSignal=self.EngineSetPage.signal)
+        self.ProfilePage = ProfilePage.ProfilePage()
         self.settingStack.addWidget(self.ProfilePage)
         self.settingStack.addWidget(self.PluginPage)
         self.settingStack.addWidget(self.SysPage)

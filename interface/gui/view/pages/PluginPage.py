@@ -13,9 +13,10 @@ from typing import List
 
 from view.config.Text import PluginPageText as Text
 from view.Signals import DataSignal
+from view.signal import PluginSignal
 from view.Request import Request
-from view.widgets.PluginTable import PluginTable
-from view.components.UploadPluginDialog import UploadPlugin
+from view.components.SettingTables import PluginTable
+from view.components.SettingConfig import UploadPlugin
 from .BaseSettingPage import BaseSettingPage
 from PyQt6.QtCore import Qt
 
@@ -30,7 +31,7 @@ class PluginPage(BaseSettingPage):
         self.headerText = Text.HEADER
         self.captionText = Text.CAPTION
         self.addNewButtonText = Text.CREATE_NEW
-        self.signal = DataSignal()
+        self.signal = PluginSignal
         self.mainTable = PluginTable(self.signal)
         super().__init__(*args, **kwargs)
        

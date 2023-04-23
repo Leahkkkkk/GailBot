@@ -7,11 +7,11 @@ Author: Siara Small  & Vivian Li
 Last Modified:2023/04/18
 Modified By:  Siara Small  & Vivian Li
 -----
-Description: 
+Description: The Base class for basic page, the hilab log is added to 
+the top right of the page 
 '''
 
 from PyQt6.QtWidgets import QWidget, QHBoxLayout
-from PyQt6.QtCore import QSize
 from view.widgets import getLogo
 from view.config.Style import STYLE_DATA
 

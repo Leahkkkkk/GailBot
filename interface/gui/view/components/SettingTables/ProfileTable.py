@@ -1,9 +1,10 @@
 from view.config.Text import ProfilePageText as Text
 from view.Signals import DataSignal
 from view.util.ErrorMsg import ERR  
-from view.components.ConfigProfileTab import EditProfile
-from .Table import BaseTable
-from view.components.SettingDetail import ProfileDetail
+from ..SettingConfig import EditProfile
+from ..SettingDetail import ProfileDetail
+from view.widgets.Table import BaseTable
+
 class ProfileTable(BaseTable):
     def __init__(self, signal: DataSignal, engineSignal, parent):
         super().__init__(Text.tableHeader)

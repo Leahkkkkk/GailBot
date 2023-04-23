@@ -16,7 +16,7 @@ from gbLogger import makeLogger
 from view.config.Text import ChooseFileTabText
 from view.config.Style import STYLE_DATA
 from view.widgets.TabPage import TabDialog
-from view.pages.FileUploadTabPages import (
+from .FileUploadTabPages import (
     OpenFile, 
     ChooseOutPut, 
     ChooseSet

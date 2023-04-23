@@ -11,7 +11,6 @@ Description: a form page widget that display a page with a form  that accept
             user input 
 '''
 from typing import Dict 
-from view.Signals import GlobalStyleSignal
 from .Label import Label 
 from .TextForm import TextForm
 from .ScrollArea import ScrollArea

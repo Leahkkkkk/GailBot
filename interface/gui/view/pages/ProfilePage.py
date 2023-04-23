@@ -11,10 +11,10 @@ Description:
 '''
 from typing import List
 from view.config.Text import ProfilePageText as Text
-from view.Signals import DataSignal
+from view.signal import EngineSignal, ProfileSignal
 from view.Request import Request
-from view.widgets.ProfileTable import ProfileTable 
-from view.components.ConfigProfileTab import CreateNewProfile
+from view.components.SettingTables import ProfileTable
+from view.components.SettingConfig import CreateNewProfile
 from PyQt6.QtCore import Qt
 from .BaseSettingPage import BaseSettingPage
 
@@ -23,15 +23,14 @@ center  = Qt.AlignmentFlag.AlignHCenter
 class ProfilePage(BaseSettingPage):
     def __init__(
         self,
-        engineSignal: DataSignal, 
         *args, 
         **kwargs) -> None:
         """ initializes class """
         self.headerText = Text.HEADER
         self.captionText = Text.CAPTION
         self.addNewButtonText = Text.CREATE_NEW
-        self.signal = DataSignal()
-        self.engineSignal = engineSignal
+        self.signal = ProfileSignal
+        self.engineSignal = EngineSignal
         self.mainTable = ProfileTable(self.signal, engineSignal=self.engineSignal, parent=self)
         self.availableEngineSettings : List[str] = []
         self.availablePluginSettings : List[str] = []

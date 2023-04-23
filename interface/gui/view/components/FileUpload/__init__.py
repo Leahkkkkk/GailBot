@@ -7,7 +7,7 @@ Author: Siara Small  & Vivian Li
 Last Modified:2023/04/22
 Modified By:  Siara Small  & Vivian Li
 -----
-Description: control the configuration of gailbot logger 
+Description: Implement tab for uploading file
 '''
-
-from .Logger import makeLogger
+from .UploadFileTab import UploadFileTab
+from .FileUploadTabPages import ChooseSet

@@ -21,7 +21,6 @@ from PyQt6.QtCore import Qt, pyqtSignal, QObject
 
 #### controlling style changes 
 from view.config.Style import STYLE_DATA 
-from view.Signals import GlobalStyleSignal
 
 ######################
 class Signal(QObject):

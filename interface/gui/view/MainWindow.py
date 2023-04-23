@@ -12,7 +12,7 @@ Description: implement the main window for the GUI interface
 from typing import List, Dict, Tuple
 import logging 
 from gbLogger import Logger
-from view.components import (
+from view.components.Window import (
     MainStack, 
     StatusBar, 
     MenuBar, 
@@ -20,6 +20,7 @@ from view.components import (
 )
 from view.util.ErrorMsg import WARN, ERR
 from view.Signals import FileSignals, ViewSignals
+from view.signal import FileSignal
 from view.widgets import WarnBox
 from view.config.Style import Dimension
 from view.config.Text import About
@@ -43,21 +44,21 @@ class MainWindow(QMainWindow):
         self.logger.info(f"the frontend configuration file is stored at {FRONTEND_CONFIG_ROOT}")
         
         # initialize the signal
-        self.fileTableSignals = FileSignals()
+        self.fileTableSignals = FileSignal
         self.viewSignal = ViewSignals()
         self.logger.info(f"signals initialized")
         
         # initialzie the menu bar and the footer
-        self.StatusBar = StatusBar.StatusBar()
+        self.StatusBar = StatusBar()
         self.setStatusBar(self.StatusBar)
-        self.MenuBar = MenuBar.ManuBar()
+        self.MenuBar = MenuBar()
         self.setMenuBar(self.MenuBar)
-        self.Console = Console.Console()
+        self.Console = Console()
         self.logger.info("console initialized")
         self.setWindowTitle(About.APP_TITTLE)
         self.setMinimumSize(QSize(Dimension.WIN_MIN_WIDTH, Dimension.WIN_MIN_HEIGHT))
         self.setMaximumSize(QSize(Dimension.WINMAXWIDTH, Dimension.WINMAXHEIGHT))
-        self.MainStack = MainStack.MainStack(self.fileTableSignals)
+        self.MainStack = MainStack() 
         self.logger.info("main stack initialized")
         self.setCentralWidget(self.MainStack)
         self.setContentsMargins(0,0,0,0)

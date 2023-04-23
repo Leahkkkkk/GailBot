@@ -7,7 +7,7 @@ Author: Siara Small  & Vivian Li
 Last Modified:2023/04/18
 Modified By:  Siara Small  & Vivian Li
 -----
-Description: 
+Description: The base class of setting page  
 '''
 from view.config.Style import STYLE_DATA,  FontFamily
 from view.config.Text import ENGINE_SETTING_TEXT as Text
@@ -16,10 +16,7 @@ from view.Request import Request
 from gbLogger import makeLogger
 from view.widgets import Label, ColoredBtn
 from view.widgets.Table import BaseTable 
-from PyQt6.QtWidgets import (
-    QWidget, 
-    QVBoxLayout,
-    QHBoxLayout)
+from PyQt6.QtWidgets import QWidget, QVBoxLayout
 from PyQt6.QtCore import Qt
 
 center  = Qt.AlignmentFlag.AlignHCenter
@@ -76,9 +73,6 @@ class BaseSettingPage(QWidget):
         self.header.fontChange(STYLE_DATA.FontSize.HEADER2)
         self.caption.fontChange(STYLE_DATA.FontSize.DESCRIPTION)
         
-    def addItem(self):
-        pass 
-   
     def addSucceed(self, data):
         name, setting = data
         self.mainTable.addItem(data)
@@ -87,3 +81,7 @@ class BaseSettingPage(QWidget):
     def sendAddRequest(self, data):
         self.signal.postRequest.emit(
             Request(data=data, succeed=self.addSucceed))
+    
+    def addItem(self):
+        pass 
+   

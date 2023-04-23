@@ -3,21 +3,18 @@ from typing import List, Dict, Tuple
 from view.config.Style import STYLE_DATA
 from config_frontend import PROJECT_ROOT
 from view.config.Text import PLUGIN_SUITE_TEXT
-from view.Signals import DataSignal, GlobalStyleSignal
+from view.Signals import DataSignal
 from view.Request import Request
 from view.util.ErrorMsg import ERR  
-from view.components.SettingDetail import PluginSuiteDetails
-from .MsgBox import WarnBox, ConfirmBox
-from .Table import BaseTable
+from ..SettingDetail import PluginSuiteDetails
+from view.widgets.MsgBox import WarnBox
+from view.widgets.Table import BaseTable
+
 from PyQt6.QtWidgets import (
     QTableWidgetItem, 
     QWidget, 
     QPushButton,
     QVBoxLayout,
-)
-
-from PyQt6.QtCore import (
-    Qt
 )
 from PyQt6.QtGui import QIcon
 

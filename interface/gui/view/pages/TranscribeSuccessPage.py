@@ -16,14 +16,9 @@ from view.config.Style import (
 from view.pages.BasicPage import BasicPage
 from view.config.Text import TranscribeSuccessText as Text
 from view.config.Text import FileTableHeader
-from view.widgets import (
-    ColoredBtn,
-    Label,
-    FileTable,
-    TableWidget
-)
-from view.widgets.Background import getLogo
-from view.Signals import FileSignals
+from view.components.FileTable import FileTable, TableWidget
+from view.widgets import ColoredBtn, Label
+from view.signal import FileSignal
 from PyQt6.QtWidgets import (
     QVBoxLayout,
     QHBoxLayout,
@@ -39,9 +34,9 @@ left = Qt.AlignmentFlag.AlignLeft
 
 class TranscribeSuccessPage(BasicPage):
     """ class for transcription success page """
-    def __init__(self, signal:FileSignals, *args, **kwargs) -> None:
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.signal = signal
+        self.signal = FileSignal
         self._initWidget()
         self._initStyle()
         self._initLayout()

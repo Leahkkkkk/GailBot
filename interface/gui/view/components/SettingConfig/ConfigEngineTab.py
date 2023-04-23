@@ -14,7 +14,7 @@ from typing import Dict, Tuple
 from gbLogger import makeLogger
 from view.config.Text import ENGINE_TAB_TEXT as Text
 from view.config.Style import STYLE_DATA
-from view.pages.CreateNewProfilePages import (
+from .CreateNewProfilePages import (
     SettingName,
     SelectEngine, 
     EngineForm)

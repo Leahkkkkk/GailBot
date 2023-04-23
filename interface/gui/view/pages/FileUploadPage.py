@@ -17,13 +17,12 @@ from view.config.Text import FileTableHeader
 from view.config.Text import FileUploadPageText as Text 
 from view.pages.BasicPage import BasicPage
 from gbLogger import makeLogger
-from view.Signals import FileSignals
+from view.signal import FileSignal
+from view.components.FileTable import FileTable, TableWidget
 from view.widgets import (
     Label, 
     ColoredBtn, 
     IconBtn, 
-    FileTable, 
-    TableWidget, 
     ConfirmBox) 
 
 from PyQt6.QtWidgets import (
@@ -51,12 +50,11 @@ class FileUploadPage(BasicPage):
     """
     def __init__(
         self, 
-        signal: FileSignals, 
         *args, 
         **kwargs) -> None:
         """ initializes file upload page """
         super().__init__(*args, **kwargs)
-        self.signal = signal
+        self.signal = FileSignal
         self.logger = makeLogger("F")
         self._initWidget()
         self._initLayout()

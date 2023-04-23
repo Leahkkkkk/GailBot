@@ -20,16 +20,13 @@ from view.config.Text import FileTableHeader
 from config_frontend import PROJECT_ROOT
 from gbLogger import makeLogger
 from view.pages.BasicPage import BasicPage
-from view.Signals import FileSignals
-from view.widgets import (
-    Label,   
-    ColoredBtn,
-    FileTable
-)
+from view.signal import FileSignal
+from view.widgets import Label 
+from view.components.FileTable import FileTable
 
 
 from PyQt6.QtWidgets import QLabel, QVBoxLayout, QWidget
-from PyQt6.QtGui import QMovie, QFont
+from PyQt6.QtGui import QMovie
 from PyQt6 import QtCore
 from PyQt6.QtCore import Qt
 
@@ -39,14 +36,10 @@ center = Qt.AlignmentFlag.AlignHCenter
 
 class TranscribeProgressPage(BasicPage):
     """ class for transcription in progress page """
-    def __init__(
-        self, 
-        signals: FileSignals, 
-        * args, 
-        **kwargs) -> None:
+    def __init__(self, *args,  **kwargs) -> None:
         """ initializes class """
         super().__init__(*args, **kwargs)
-        self.signals = signals
+        self.signals = FileSignal
         self.logger = makeLogger("F")
         self._initWidget()
         self._initstyle()

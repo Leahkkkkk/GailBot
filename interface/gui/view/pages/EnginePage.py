@@ -1,10 +1,10 @@
 
 from view.config.Text import ENGINE_SETTING_TEXT as Text
-from view.Signals import DataSignal
+from view.signal import EngineSignal
 from view.Request import Request
 from gbLogger import makeLogger
-from view.widgets.EngineTable import EngineTable 
-from view.components.ConfigEngineTab import CreateNewEngine
+from view.components.SettingTables import EngineTable
+from view.components.SettingConfig import CreateNewEngine
 from PyQt6.QtCore import Qt
 from .BaseSettingPage import BaseSettingPage
 
@@ -19,7 +19,7 @@ class EnginePage(BaseSettingPage):
         self.headerText = Text.HEADER
         self.captionText = Text.CAPTION
         self.addNewButtonText = Text.CREATE_NEW
-        self.signal = DataSignal()
+        self.signal = EngineSignal 
         self.mainTable = EngineTable(self.signal)
         super().__init__( *args, **kwargs)
     
