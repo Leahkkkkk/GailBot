@@ -1,3 +1,3 @@
-from .directoryloader import PluginDirectoryLoader
+from .directoryloader import PluginDirectoryLoader, PluginTOMLLoader
 from .urlloader import PluginURLLoader
 from .pluginLoader import PluginLoader

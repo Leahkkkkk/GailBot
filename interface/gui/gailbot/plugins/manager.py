@@ -4,15 +4,17 @@
 # @Last Modified by:   Muhammad Umair
 # @Last Modified time: 2023-01-16 13:10:15
 from dataclasses import dataclass
+import toml
 import sys
 import os
 from typing import  List, Union, Dict
 import validators
-from .suite import PluginSuite
+from .suite import PluginSuite, MetaData
 from .loader import (
     PluginURLLoader,  
     PluginDirectoryLoader,
-    PluginLoader)
+    PluginLoader,
+    PluginTOMLLoader)
 from gailbot.core.utils.logger import makelogger
 from gailbot.configs import PLUGIN_CONFIG
 from gailbot.core.utils.general import (
@@ -22,18 +24,21 @@ from gailbot.core.utils.general import (
     get_name, 
     is_directory,
     filepaths_in_dir,
-    copy
 )
+from gailbot.configs.interfaces import get_plugin_structure_config
 
+EXPECTED_STRUCTURE = get_plugin_structure_config()
 logger = makelogger("plugin_manager")
 
 @dataclass 
 class ERROR: 
-    INVALID_URL    = "The given url is not supported by gailbot"
-    MISSING_CONFIG = "The plugin suite is missing config.toml that specifies the plugins dependency"
-    MISSING_DOC    = "The plugin suite is missing a DOCUMENT.md file"
-    MODULE_ERROR   = "Fail to load import plugin module"
-    INVALID_INPUT  = "The plugin suite source can only be URL, a valid Amazon S3 Bucket name, or path to directory"
+    INVALID_URL         = "The given url is not supported by gailbot"
+    MISSING_CONFIG      = "The plugin suite is missing a config.toml file that specifies the plugins dependencies"
+    MISSING_DOC         = "The plugin suite is missing a DOCUMENT.md file"
+    MODULE_ERROR        = "Fail to load import plugin module"
+    INVALID_INPUT       = "The plugin suite source can only be URL, a valid Amazon S3 Bucket name, or path to directory"
+    EXCEEDS_TOML        = "The plugin suite has exceeded the maximum number of .toml files. It should only contain a config.toml file that specifies the plugins dependencies."
+    INCORRECT_STRUCTURE = "The inputted plugin suite does not match the expected structure."
     
 class DuplicatePlugin(Exception):
     def __str__(self) -> str:
@@ -110,8 +115,6 @@ class PluginManager:
                         if isinstance(suite, PluginSuite):
                             self.suites[suite.name] = suite
                             registered.append(suite.name)
-                            copy(os.path.join(self.suites_dir, suite.name),
-                                 os.path.join(self.copy_dir, suite.name))
                     return registered
             return self.report_registration_err(plugin_source)
         except Exception as e:
@@ -135,6 +138,12 @@ class PluginManager:
             return None
         return self.suites[suite_name]
 
+    def is_official_suite(self, suite_name) -> bool:
+        if not self.is_suite(suite_name):
+            logger.error(f"Suite does not exist {suite_name}")
+            return None
+        return self.suites[suite_name].is_official
+
     def get_suite_metadata(self, suite_name:str) -> Dict[str, str]:
         if not self.is_suite(suite_name):
             logger.error(f"Suite does not exist {suite_name}")
@@ -152,20 +161,13 @@ class PluginManager:
             logger.error(f"Suite does not exist {suite_name}")
             return None
         return self.suites[suite_name].document_path
-   
-    def is_official_suite(self, suite_name) -> bool:
-        if not self.is_suite(suite_name):
-            logger.error(f"Suite does not exist {suite_name}")
-            return None
-        return self.suites[suite_name].is_official
-      
+     
     def _init_workspace(self):
         """
         Init workspace and load plugins from the specified sources.
         """         
-        self.suites_dir = os.path.join(self.workspace, "suites") 
-        self.download_dir = os.path.join(self.workspace, "download")
-        self.copy_dir = os.path.join(self.workspace, "copy")
+        self.suites_dir = f"{self.workspace}/suites"
+        self.download_dir = f"{self.workspace}/downloads"
         sys.path.append(self.suites_dir)
         self.suites: Dict [str, PluginSuite] = dict()
         
@@ -173,7 +175,6 @@ class PluginManager:
         make_dir(self.workspace, overwrite=False)
         make_dir(self.suites_dir,overwrite=False)
         make_dir(self.download_dir,overwrite=True)
-        make_dir(self.copy_dir,overwrite=False)
     
     def delete_suite(self, name:str):
         """ 
@@ -195,7 +196,7 @@ class PluginManager:
             managed by the suite manager
         """
         if self.is_suite(name):
-            path = os.path.join(self.copy_dir, name)
+            path = os.path.join(self.suites_dir, name)
             if is_directory(path):
                 return path
             else:
@@ -204,24 +205,69 @@ class PluginManager:
         else:
             return None
     
-    # TODO: improve this function to generate more specific error message
     def report_registration_err(self, suite:str) -> str:
-        if validators.url(suite):
-            if not PluginURLLoader.is_valid_url(suite):
-                return ERROR.INVALID_URL
-            else:
+        try:
+            if validators.url(suite):
+                if not PluginURLLoader.is_valid_url(suite):
+                    return ERROR.INVALID_URL
+                else:
+                    return ERROR.MODULE_ERROR 
+            elif is_directory(suite):
+                tomls = filepaths_in_dir(suite, ["toml"])
+                if len(tomls) == 0 or not tomls:
+                    return ERROR.MISSING_CONFIG
+                elif len(tomls) > 1:
+                    return ERROR.EXCEEDS_TOML
+                elif get_name(tomls[0]) != "config":
+                    return ERROR.MISSING_CONFIG
+                else:
+                    valid = self.validate_plugin_structure(tomls[0], EXPECTED_STRUCTURE)
+                    if valid != True:
+                        return self.validate_plugin_structure(tomls[0], EXPECTED_STRUCTURE)
+                mds = filepaths_in_dir(suite, ["md"])
+                if len(mds) == 0 or not mds:
+                    return ERROR.MISSING_DOC
+                    
                 return ERROR.MODULE_ERROR 
-        elif is_directory(suite):
-            tomls = filepaths_in_dir(suite, ["toml"])
-            if len(tomls) == 0 or not tomls:
-                return ERROR.MISSING_CONFIG
-                
-            mds = filepaths_in_dir(suite, ["md"])
-            if len(mds) == 0 or not mds:
-                return ERROR.MISSING_DOC
-                
-            return ERROR.MODULE_ERROR 
+            else:
+                return ERROR.INVALID_INPUT
+        except Exception as e:
+            logger.error(e, exc_info=e)
+
+    def validate_plugin_structure(
+        self, 
+        user_suite : str, 
+        expected : Dict
+    ):
+        """
+        Validates the structure of the inputted plugin suite configuration
+
+        Args:
+            user_suite : str = path to the configuration file for the inputted plugin suite
+            expected : dictionary that stores the expected structure of the configuration file 
+
+        Returns:
+            Error message if the plugin suite does not meet the expected format, true if it does 
+        """
+        expected = toml.load(expected)
+        actual_config = toml.load(user_suite)
+        loader = PluginTOMLLoader()
+        if "suite_name" in actual_config:
+            validated, conf = loader.validate_config(user_suite, actual_config["suite_name"])
+            if not validated:
+                return conf[0]
         else:
-            return ERROR.INVALID_INPUT
-        
-         
+            return "Configuration is missing key 'suite_name'"
+        for section, keys in expected.items():
+            if section not in actual_config:
+                return f"{ERROR.INCORRECT_STRUCTURE} Missing section: {section}"
+            if type(keys) != str:
+                for key in keys:
+                    if key not in actual_config[section]: 
+                        return f"{ERROR.INCORRECT_STRUCTURE} Missing key: {section}"
+                    if type(keys[key]) != type(actual_config[section].get(key)):
+                        logger.debug("hello")
+                        return f"{ERROR.INCORRECT_STRUCTURE} Type mismatch: {section}.{key}"
+        return True
+
+            

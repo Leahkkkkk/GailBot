@@ -685,7 +685,6 @@ class MediaHandler:
         return self._get_handler(stream).change_volume(stream, change_db)
 
     ### Audio Methods
-
     def mono_to_stereo(
         self,
         left_stream : AudioStream,

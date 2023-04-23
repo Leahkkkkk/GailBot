@@ -13,7 +13,7 @@ from .core.engines.whisper import load_whisper_config
 from .core.setting.defaults import load_default_config
 from .core.util.logger import load_log_config
 from .config.ws_config import load_workspace_config
-from .plugin import PLUGIN_CONFIG
+from .plugin import PLUGIN_CONFIG, load_valid_structure
 from .services import load_service_config, load_default_setting
 from .config.ws_config import TemporaryFolder, OutputFolder
 
@@ -47,3 +47,7 @@ def default_setting_loader(): return load_default_setting(
 def get_ws_root(): return os.path.join(
     userpaths.get_profile(), "GailBot/Backend"
 )
+
+def get_plugin_structure_config():
+    return load_valid_structure(os.path.join(CONFIG_ROOT, PATH.valid_plugin))
+    
