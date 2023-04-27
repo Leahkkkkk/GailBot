@@ -288,4 +288,6 @@ dependencies:
       - zipp
       - zope-event
       - zope-interface
+      - lightning-fabric==2.0.2 
+      - 
 
