@@ -11,8 +11,9 @@ from dataclasses import dataclass
 # Local imports
 from gailbot import Plugin, GBPluginMethods, UttObj
 from gb_hilab_suite.src.core.conversation_model import ConversationModel
-from gb_hilab_suite.src.config import MARKER, THRESHOLD, PLUGIN_NAME
-
+from gb_hilab_suite.src.configs import load_marker, load_threshold, PLUGIN_NAME
+MARKER = load_marker() 
+THRESHOLD = load_threshold()
 
 class PausePlugin(Plugin):
     def __init__(self) -> None:

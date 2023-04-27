@@ -10,8 +10,9 @@ import csv
 # Local imports
 from gailbot import Plugin, UttObj, GBPluginMethods
 from gb_hilab_suite.src.core.conversation_model import ConversationModel
-from gb_hilab_suite.src.config import MARKER, THRESHOLD, LABEL, PLUGIN_NAME
-
+from gb_hilab_suite.src.configs import  load_marker, load_label, PLUGIN_NAME
+MARKER = load_marker()
+LABEL = load_label().CSV
 class CSVPlugin(Plugin):
 
     def __init__(self) -> None:
@@ -34,13 +35,13 @@ class CSVPlugin(Plugin):
         """
         cm: ConversationModel = dependency_outputs[PLUGIN_NAME.ConvModel]
         varDict = {
-            MARKER.GAPS: LABEL.CSV_GAPMARKER,
-            MARKER.OVERLAPS: LABEL.CSV_OVERLAPMARKER,
-            MARKER.MARKER1: LABEL.CSV_OVERLAPMARKER,
-            MARKER.MARKER2: LABEL.CSV_OVERLAPMARKER,
-            MARKER.MARKER3: LABEL.CSV_OVERLAPMARKER,
-            MARKER.MARKER4: LABEL.CSV_OVERLAPMARKER,
-            MARKER.PAUSES: LABEL.CSV_PAUSE,
+            MARKER.GAPS: LABEL.GAPMARKER,
+            MARKER.OVERLAPS: LABEL.OVERLAPMARKER,
+            MARKER.OVERLAP_FIRST_START: LABEL.OVERLAPMARKER,
+            MARKER.OVERLAP_FIRST_END: LABEL.OVERLAPMARKER,
+            MARKER.OVERLAP_SECOND_START: LABEL.OVERLAPMARKER,
+            MARKER.OVERLAP_SECOND_END: LABEL.OVERLAPMARKER,
+            MARKER.PAUSES: LABEL.PAUSE,
         }
 
         root = cm.getTree(False)
@@ -68,7 +69,7 @@ class CSVPlugin(Plugin):
                 sLabel = ""
                 if (curr_utt[0].sLabel != "*GAP" and
                     curr_utt[0].sLabel != "pauses"):
-                    sLabel = LABEL.CSV_SPEAKERLABEL + str(curr_utt[0].sLabel)
+                    sLabel = LABEL.SPEAKERLABEL + str(curr_utt[0].sLabel)
                     writer.writerow([sLabel, txt, curr_utt[0].startTime,
                                         curr_utt[-1].endTime])
                 else:
@@ -82,13 +83,13 @@ class CSVPlugin(Plugin):
     ):
         cm: ConversationModel = dependency_outputs[PLUGIN_NAME.ConvModel]
         varDict = {
-            MARKER.GAPS: LABEL.CSV_GAPMARKER,
-            MARKER.OVERLAPS: LABEL.CSV_OVERLAPMARKER,
-            MARKER.MARKER1: LABEL.CSV_OVERLAPMARKER,
-            MARKER.MARKER2: LABEL.CSV_OVERLAPMARKER,
-            MARKER.MARKER3: LABEL.CSV_OVERLAPMARKER,
-            MARKER.MARKER4: LABEL.CSV_OVERLAPMARKER,
-            MARKER.PAUSES: LABEL.CSV_PAUSE
+            MARKER.GAPS: LABEL.GAPMARKER,
+            MARKER.OVERLAPS: LABEL.OVERLAPMARKER,
+            MARKER.OVERLAP_FIRST_START: LABEL.OVERLAPMARKER,
+            MARKER.OVERLAP_FIRST_END: LABEL.OVERLAPMARKER,
+            MARKER.OVERLAP_SECOND_START: LABEL.OVERLAPMARKER,
+            MARKER.OVERLAP_SECOND_END: LABEL.OVERLAPMARKER,
+            MARKER.PAUSES: LABEL.PAUSE
         }
 
         root = cm.getTree(False)
@@ -110,7 +111,7 @@ class CSVPlugin(Plugin):
                 for word in curr_utt:
                     sLabel = curr_utt[0].sLabel
                     if curr_utt[0].sLabel not in MARKER.INTERNAL_MARKER_SET:
-                        sLabel = LABEL.CSV_SPEAKERLABEL + str(curr_utt[0].sLabel)
+                        sLabel = LABEL.SPEAKERLABEL + str(curr_utt[0].sLabel)
                         writer.writerow([word.sLabel, word.text,
                                             word.startTime, word.endTime])
                     else:

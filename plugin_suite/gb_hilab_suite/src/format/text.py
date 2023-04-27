@@ -11,8 +11,10 @@ import io
 # Local imports
 from gailbot import Plugin,  UttObj, GBPluginMethods
 from gb_hilab_suite.src.core.conversation_model import ConversationModel
-from gb_hilab_suite.src.config import MARKER, LABEL, PLUGIN_NAME
 
+from gb_hilab_suite.src.configs import  load_marker, load_label, PLUGIN_NAME
+MARKER = load_marker()
+LABEL = load_label().TXT
 
 class TextPlugin(Plugin):
     def __init__(self) -> None:
@@ -26,13 +28,13 @@ class TextPlugin(Plugin):
         cm: ConversationModel = dependency_outputs[PLUGIN_NAME.ConvModel]
 
         varDict = {
-            MARKER.GAPS: LABEL.TXT_GAPMARKER,
-            MARKER.OVERLAPS: LABEL.TXT_OVERLAPMARKER,
-            MARKER.MARKER1: LABEL.TXT_OVERLAPMARKER,
-            MARKER.MARKER2: LABEL.TXT_OVERLAPMARKER,
-            MARKER.MARKER3: LABEL.TXT_OVERLAPMARKER,
-            MARKER.MARKER4: LABEL.TXT_OVERLAPMARKER,
-            MARKER.PAUSES: LABEL.TXT_PAUSE,
+            MARKER.GAPS: LABEL.GAPMARKER,
+            MARKER.OVERLAPS: LABEL.OVERLAPMARKER,
+            MARKER.OVERLAP_FIRST_START: LABEL.OVERLAPMARKER,
+            MARKER.OVERLAP_FIRST_END: LABEL.OVERLAPMARKER,
+            MARKER.OVERLAP_SECOND_START: LABEL.OVERLAPMARKER,
+            MARKER.OVERLAP_SECOND_END: LABEL.OVERLAPMARKER,
+            MARKER.PAUSES: LABEL.PAUSE,
         }
 
         root = cm.getTree(False)
@@ -52,7 +54,7 @@ class TextPlugin(Plugin):
                     l.append(word.text)
                 txt = ' '.join(l)
 
-                sLabel = LABEL.TXT_SPEAKERLABEL + str(curr_utt[0].sLabel)
+                sLabel = LABEL.SPEAKERLABEL + str(curr_utt[0].sLabel)
                 turn = '{0}\t{1} {2}{4}_{3}{4}\n'.format(
                     sLabel, txt, curr_utt[0].startTime, curr_utt[-1].endTime,
                     0x15)

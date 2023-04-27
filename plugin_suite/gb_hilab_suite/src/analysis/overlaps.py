@@ -5,13 +5,14 @@
 # @Last Modified time: 2022-08-24 12:11:42
 # Standard imports
 from typing import Dict, Any, List
+import logging
 # Local imports
 from gailbot import Plugin, UttObj, GBPluginMethods
 from gb_hilab_suite.src.core.nodes import Word
 from gb_hilab_suite.src.core.conversation_model import ConversationModel
-from gb_hilab_suite.src.config import MARKER, THRESHOLD, PLUGIN_NAME
-import logging
-
+from gb_hilab_suite.src.configs import load_marker, load_threshold, PLUGIN_NAME
+MARKER = load_marker() 
+THRESHOLD = load_threshold()
 class OverlapPlugin(Plugin):
 
     def __init__(self) -> None:

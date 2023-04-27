@@ -25,7 +25,7 @@ class Organizer:
         self.setting_manager.set_to_default_setting(DEFAULT_SETTING_NAME)
         self.setting_manager.set_to_default_engine_setting(DEFAULT_ENGINE_NAME)
         
-    def add_source(self, source_path: str, output: str) -> bool:
+    def add_source(self, source_path: str, output: str) -> Union[str, bool]:
         """
         Adds given source to the output directory
 
@@ -34,13 +34,13 @@ class Organizer:
             output: str: path to the output directory
 
         Returns: 
-            bool: True if successfully added, false if not
+            Union[str, bool]: return the name if successfully added, false if not
         """
         try:
             name = self.source_manager.add_source(source_path, output)
             assert name
             assert self.apply_setting_to_source(name, DEFAULT_SETTING_NAME)
-            return True
+            return name
         except Exception as e:
             logger.error(e, exc_info=e)
             return False

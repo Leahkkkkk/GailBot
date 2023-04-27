@@ -74,7 +74,14 @@ inserted into the tree.
 
 
 Algorithm:
- If the start time of the next utterance is smaller than the end time of the current utterance, four overlap nodes will be inserted to the tree. The four labels marks 1. starts of the fist overlap, 2. end of the first overlap 3. start of the second overlap 4. end of the second overlap
+ If the start time of the next utterance is smaller than the end time of the 
+ current utterance, four overlap nodes will be inserted to the tree. The four 
+ labels marks:
+  1. starts of the fist overlap, 
+  2. end of the first overlap 
+  3. start of the second overlap 
+  4. end of the second overlap
+   
 ## Layer01 : pauses
 Inserts new nodes into the binary search tree, which represents pauses.
 The new node insertion is determined by a certain floor transfer offset (FTO)
@@ -83,7 +90,9 @@ must be by the same speaker. If the threshold is met, insert the gap node
 into the tree.
 
 Algorithm:
-Insert new node to tree when the start time of next utterance and end time of the previous utterance is larger than the pause threshold, insert a gap node to the tree
+Insert new node to tree when the start time of next utterance and end time of 
+the previous utterance is larger than the pause threshold, insert a gap node 
+to the tree
 
 
 ## Layer01 : syllRate

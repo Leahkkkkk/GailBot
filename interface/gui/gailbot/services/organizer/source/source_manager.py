@@ -30,8 +30,17 @@ class SourceManager():
                 successfully added
         """
         try:
-            source  = SourceObject(source_path, get_name(source_path), output)
-            name = source.name
+            name = get_name(source_path)
+            i = 0
+            while name in self.sources.keys():
+                print(name)
+                if i:
+                    i += 1
+                    name = name.replace("---" + str(i-1), "---"+str(i))
+                else:
+                    i += 1
+                    name = f"{name}---{i}"
+            source  = SourceObject(source_path, name, output)
             self.sources[name] = source  
         except Exception as e:
             logger.error(e, exc_info=e)
@@ -88,6 +97,7 @@ class SourceManager():
         else:
             return False
 
+    
     def source_names(self) -> List[str]:
         """
         Obtains all source names as a list

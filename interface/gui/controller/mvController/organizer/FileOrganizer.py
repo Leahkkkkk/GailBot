@@ -94,7 +94,6 @@ class FileOrganizer:
         """
         self.gb: GailBot = gbController
         self.signals = Signals()
-        self.currentKey = 1
         self.logger = makeLogger("F")
         self.registerSignal(fileSignal)
     
@@ -114,16 +113,14 @@ class FileOrganizer:
         self.logger.info("post file to database")
         self.logger.info(request.data)
         file = FileObj.from_dict(request.data)
+        
         try:
-            if self.gb.is_source(file.Name):
-                request.fail(ERR.DUPLICATE_FILE_NAME)
-            elif self.gb.add_source(file.FullPath, file.Output):
-                request.succeed((file.Name, request.data))
-                self.currentKey += 1
-                assert self.gb.apply_setting_to_source(file.Name, file.Profile)
-            else:
-                request.fail(ERR.DUPLICATE_FILE_KEY)
-                self.logger.error(ERR.DUPLICATE_FILE_KEY)
+            name = self.gb.add_source(file.FullPath, file.Output)
+            assert name 
+            request.data["Name"] = name
+            request.succeed((name, request.data))
+            
+            assert self.gb.apply_setting_to_source(name, file.Profile)
         except Exception as e:
             request.fail(ERR.ERROR_WHEN_DUETO.format("posting new file", str(e)))
             self.logger.error(f"Error in posting file: {e}", exc_info=e)

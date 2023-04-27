@@ -9,7 +9,9 @@ from typing import Dict, Any, List
 # Local imports
 from gailbot import Plugin, GBPluginMethods
 from gb_hilab_suite.src.core.conversation_model import ConversationModel
-from gb_hilab_suite.src.config import MARKER, THRESHOLD, PLUGIN_NAME
+from gb_hilab_suite.src.configs import load_marker, load_threshold, PLUGIN_NAME
+MARKER = load_marker() 
+THRESHOLD = load_threshold()
 class GapPlugin(Plugin):
     def __init__(self) -> None:
         super().__init__()

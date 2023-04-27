@@ -2,8 +2,6 @@
 
 from dataclasses import dataclass
 from typing import List 
-import datetime
-from os.path import exists
 from dict_to_dataclass import DataclassFromDict, field_from_dict
 
 """accesses style configuration values from given dictionaries"""

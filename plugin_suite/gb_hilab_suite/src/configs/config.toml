@@ -1,0 +1,101 @@
+[ANLYSIS_MARKER]
+GAPS       = "gaps"
+OVERLAPS   = "overlaps"
+PAUSES     = "pauses"
+FTO        = "fto"
+LATCH      = "latch"
+MICROPAUSE = "micropause"
+
+# marker text
+MARKERTYPE    = "markerType"
+MARKERINFO    = "markerInfo"
+MARKERSPEAKER = "markerSpeaker"
+MARKER_SEP    = ":"
+KEYVALUE_SEP  = "="
+
+# Speaker label for underlying overlap markers
+OVERLAP_FIRST_START  = "overlap-firstStart"
+OVERLAP_FIRST_END    = "overlap-firstEnd"
+OVERLAP_SECOND_START = "overlap-secondStart"
+OVERLAP_SECOND_END   = "overlap-secondEnd"
+
+SLOWSPEECH_DELIM = "\u2207"
+FASTSPEECH_DELIM = "\u2206"
+LATCH_DELIM      = "\u2248"
+SLOWSPEECH_START = "slowspeech_start"
+SLOWSPEECH_END   = "slowspeech_end"
+FASTSPEECH_START = "fastspeech_start"
+FASTSPEECH_END   = "fastspeech_end"
+DELIM_MARKER1    = "."
+DELIM_MARKER2    = "%"
+
+
+[THRESHOLD]
+GAPS_LB = 0.3
+OVERLAP_MARKERLIMIT = 4
+LB_LATCH = 0.01
+UB_LATCH = 0.09
+LB_PAUSE = 0.2
+UB_PAUSE = 1.0
+LB_MICROPAUSE = 0.1
+UB_MICROPAUSE = 0.2
+LB_LARGE_PAUSE = 1.0
+TURN_END_THRESHOLD_SECS = 0.1
+
+[LABEL.DEFUALT]
+SPEAKERLABEL     = "SP_"
+GAPMARKER     = "(gap)"
+OVERLAPMARKER = "(my_overlap)"
+PAUSE         = "(my_pause)"
+OVERLAPMARKER_CURR_START = " < "
+OVERLAPMARKER_CURR_END   = " > [<]"
+OVERLAPMARKER_NEXT_START = " < "
+OVERLAPMARKER_NEXT_END   = " > [>]"
+
+[LABEL.CSV]
+SPEAKERLABEL = "SP_"
+GAPMARKER     = "(gap csv)"
+OVERLAPMARKER = "(my_overlap csv)"
+PAUSE         = "(my_pause csv)"
+OVERLAPMARKER_CURR_START = " < "
+OVERLAPMARKER_CURR_END   = " > [<]"
+OVERLAPMARKER_NEXT_START = " < "
+OVERLAPMARKER_NEXT_END   = " > [>]"
+
+[LABEL.CHAT]
+SPEAKERLABEL     = "SP_"
+GAPMARKER     = "(gap chat)"
+OVERLAPMARKER = "(my_overlap chat)"
+PAUSE         = "(my_pause chat)"
+OVERLAPMARKER_CURR_START = " < "
+OVERLAPMARKER_CURR_END   = " > [<]"
+OVERLAPMARKER_NEXT_START = " < "
+OVERLAPMARKER_NEXT_END   = " > [>]"
+
+[LABEL.TXT]
+SPEAKERLABEL = "SP_"
+GAPMARKER     = "(gap txt)"
+OVERLAPMARKER = "(my_overlap txt)"
+PAUSE         = "(my_pause txt)"
+OVERLAPMARKER_CURR_START = " < "
+OVERLAPMARKER_CURR_END   = " > [<]"
+OVERLAPMARKER_NEXT_START = " < "
+OVERLAPMARKER_NEXT_END   = " > [>]"
+
+[LABEL.XML]
+SPEAKERLABEL = "SP"
+GAPMARKER     = "(gap xml)"
+OVERLAPMARKER = "(my_overlap xml)"
+PAUSE         = "(my_pause xml)"
+OVERLAPMARKER_CURR_START = " < "
+OVERLAPMARKER_CURR_END   = " > [<]"
+OVERLAPMARKER_NEXT_START = " < "
+OVERLAPMARKER_NEXT_END   = " > [>]"
+
+
+
+
+
+
+
+

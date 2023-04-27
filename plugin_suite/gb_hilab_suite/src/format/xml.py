@@ -3,17 +3,46 @@
 # @Date:   2022-08-24 11:03:39
 # @Last Modified by:   Muhammad Umair
 # @Last Modified time: 2022-08-24 12:30:28
-
+from dataclasses import dataclass
 from typing import Dict, Any, List, Tuple
 import re
 import io
 # Local imports
 from gailbot import Plugin, GBPluginMethods
 from gb_hilab_suite.src.core.conversation_model import ConversationModel
-from gb_hilab_suite.src.config import MARKER, THRESHOLD, LABEL, PLUGIN_NAME, XML, TAGS
 
+from gb_hilab_suite.src.configs import  load_marker, load_label, PLUGIN_NAME
+MARKER = load_marker()
+LABEL = load_label().TXT
 from lxml import etree
 
+
+@dataclass 
+class XML:
+    LABEL = "label"
+    S_LABEL = "speakerlabel"
+    UTT = "Utterance"
+    START = "startTime"
+    END = "endTime"
+    NAME = "name"
+    CONTENT = "content"
+    META = "meta"
+    GB_VERSION = 'Gailbot 0.3.0'
+    TEST = "test"
+    CONV = "Conversation"
+    HIL = "HiLab"
+    LENGTH = "length"
+    DELIM = "ca-delimiter"
+    VERSION_NUM = "ca-delimiter"
+@dataclass
+class TAGS:
+    PARTS = "Participants"
+    CHAT = "CHAT"
+    VSN = "Version"
+    Lang = "Lang"
+    CORP = "Corpus"
+    DATE = "Date"
+    W = "w"
 class XMLPlugin(Plugin):
 
     def __init__(self) -> None:
@@ -35,12 +64,12 @@ class XMLPlugin(Plugin):
     ):
         cm: ConversationModel = dependency_outputs[PLUGIN_NAME.ConvModel]
         varDict = {
-            MARKER.GAPS: LABEL.XML_GAPMARKER,
-            MARKER.OVERLAPS: LABEL.XML_OVERLAPMARKER,
-            MARKER.MARKER1: LABEL.XML_OVERLAPMARKER,
-            MARKER.MARKER2: LABEL.XML_OVERLAPMARKER,
-            MARKER.MARKER3: LABEL.XML_OVERLAPMARKER,
-            MARKER.MARKER4: LABEL.XML_OVERLAPMARKER
+            MARKER.GAPS: LABEL.GAPMARKER,
+            MARKER.OVERLAPS: LABEL.OVERLAPMARKER,
+            MARKER.OVERLAP_FIRST_START: LABEL.OVERLAPMARKER,
+            MARKER.OVERLAP_FIRST_END: LABEL.OVERLAPMARKER,
+            MARKER.OVERLAP_SECOND_START: LABEL.OVERLAPMARKER,
+            MARKER.OVERLAP_SECOND_END: LABEL.OVERLAPMARKER
         }
         root = cm.getTree(False)
         newUttMap = dict()
@@ -112,7 +141,7 @@ class XMLPlugin(Plugin):
             # TODO: check sLabel
             if (curr_utt[0].sLabel != MARKER.GAPS and
                 curr_utt[0].sLabel != MARKER.PAUSES):
-                sLabel = LABEL.XML_SPEAKERLABEL + str(curr_utt[0].sLabel)
+                sLabel = LABEL.SPEAKERLABEL + str(curr_utt[0].sLabel)
             else:
                 sLabel = curr_utt[0].sLabel
             
@@ -141,12 +170,12 @@ class XMLPlugin(Plugin):
         cm: ConversationModel = dependency_outputs[PLUGIN_NAME.ConvModel]
         varDict = {
             MARKER.PAUSES: MARKER.PAUSES,
-            MARKER.GAPS: LABEL.XML_GAPMARKER,
-            MARKER.OVERLAPS: LABEL.XML_OVERLAPMARKER,
-            MARKER.MARKER1: LABEL.OVERLAPMARKER_CURR_START,
-            MARKER.MARKER2: LABEL.OVERLAPMARKER_CURR_END,
-            MARKER.MARKER3: LABEL.OVERLAPMARKER_NEXT_START,
-            MARKER.MARKER4: LABEL.OVERLAPMARKER_NEXT_END,
+            MARKER.GAPS: LABEL.GAPMARKER,
+            MARKER.OVERLAPS: LABEL.OVERLAPMARKER,
+            MARKER.OVERLAP_FIRST_START: LABEL.OVERLAPMARKER_CURR_START,
+            MARKER.OVERLAP_FIRST_END: LABEL.OVERLAPMARKER_CURR_END,
+            MARKER.OVERLAP_SECOND_START: LABEL.OVERLAPMARKER_NEXT_START,
+            MARKER.OVERLAP_SECOND_END: LABEL.OVERLAPMARKER_NEXT_END,
             MARKER.FASTSPEECH_START: MARKER.FASTSPEECH_START,
             MARKER.FASTSPEECH_END: MARKER.FASTSPEECH_END,
             MARKER.SLOWSPEECH_START: MARKER.SLOWSPEECH_START,
@@ -161,6 +190,7 @@ class XMLPlugin(Plugin):
         #Root element is the CHAT tag
         root = etree.Element(TAGS.CHAT)
         root.set('xmlns', XML.TALKBANK_LINK)
+        
         root.set(TAGS.CORP, 'timmy')
         root.set(TAGS.VSN, '2.16.0')
         root.set(TAGS.LANG, 'eng')
@@ -173,7 +203,7 @@ class XMLPlugin(Plugin):
         comment.set('type', 'Location')
         comment.text = "HI_LAB"
         for speaker in speakerMap.keys():
-            Participants.append(etree.Element("participant", id=str(LABEL.XML_SPEAKERLABEL + speaker), role="Unidentified"))
+            Participants.append(etree.Element("participant", id=str(LABEL.SPEAKERLABEL + speaker), role="Unidentified"))
             
         # populate the u tag
         count = 0
@@ -191,7 +221,7 @@ class XMLPlugin(Plugin):
             
             # outer level utterance 
             utterance = etree.SubElement(root, "u")
-            utterance.set('who', str(LABEL.XML_SPEAKERLABEL + str(curr_utt[0].sLabel)))
+            utterance.set('who', str(LABEL.SPEAKERLABEL + str(curr_utt[0].sLabel)))
             utterance.set('uID', "u" + str(count))
 
             # traverse utt using index i
@@ -215,7 +245,7 @@ class XMLPlugin(Plugin):
                     for key, value in varDict.items():
                         if currText == value:
                             # if the start of an overlap is detected, create g-tag to nest other tags
-                            if key == MARKER.MARKER1 or key == MARKER.MARKER3:
+                            if key == MARKER.OVERLAP_FIRST_START or key == MARKER.OVERLAP_SECOND_START:
                                 # add overlap tag
                                 overlap = etree.SubElement(utterance, "g")
                                 exit = False # used to break out of the outter loop
@@ -228,11 +258,11 @@ class XMLPlugin(Plugin):
                                     if currText in varDict.values():
                                         for key, value in varDict.items():
                                             if currText == value:
-                                                if  key == MARKER.MARKER2:
+                                                if  key == MARKER.OVERLAP_FIRST_END:
                                                     overlap.append(etree.Element("overlap", type="overlap precedes"))
                                                     exit = True
                                                     break
-                                                elif key == MARKER.MARKER4:
+                                                elif key == MARKER.OVERLAP_SECOND_END:
                                                     overlap.append(etree.Element("overlap", type="overlap follows"))
                                                     exit = True
                                                     break

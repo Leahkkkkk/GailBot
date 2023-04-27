@@ -50,7 +50,7 @@ class ServiceController:
             out_path (str): path to where the output will be stored
 
         Returns:
-            bool: true if the source can be added 
+            Union[str, bool]: return the name if successfully added, false if not
         """
         logger.info(f"add source {src_path}")
         return self.organizer.add_source(src_path, out_path)

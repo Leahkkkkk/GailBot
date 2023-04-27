@@ -98,7 +98,7 @@ class GailBot:
             output_dir : str: Path to the output directory of the given source
         
         Returns: 
-            Bool: True if the given source was successfully added, false if not
+            Union[str, bool]: return the name if successfully added, false if not
         """
         return self.gb.add_source(source_path,output_dir)
 

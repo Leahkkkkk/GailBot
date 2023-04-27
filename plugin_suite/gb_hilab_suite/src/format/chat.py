@@ -8,9 +8,10 @@ from typing import Dict, Any
 # Local imports
 from gailbot import Plugin, GBPluginMethods, UttObj
 from gb_hilab_suite.src.core.conversation_model import ConversationModel
-from gb_hilab_suite.src.config import MARKER, THRESHOLD, LABEL, PLUGIN_NAME
+from gb_hilab_suite.src.configs import  load_marker, load_label, PLUGIN_NAME
 
-
+MARKER = load_marker()
+LABEL = load_label().CHAT
 class ChatPlugin(Plugin):
 
     def __init__(self) -> None:
@@ -23,12 +24,12 @@ class ChatPlugin(Plugin):
         """
         cm: ConversationModel = dependency_outputs[PLUGIN_NAME.ConvModel]
         varDict = {
-                MARKER.GAPS: LABEL.CHAT_GAPMARKER,
-                MARKER.MARKER1: LABEL.OVERLAPMARKER_CURR_START,
-                MARKER.MARKER2: LABEL.OVERLAPMARKER_CURR_END,
-                MARKER.MARKER3: LABEL.OVERLAPMARKER_NEXT_START,
-                MARKER.MARKER4: LABEL.OVERLAPMARKER_NEXT_END,
-                MARKER.PAUSES: LABEL.CHAT_PAUSE,
+                MARKER.GAPS: LABEL.GAPMARKER,
+                MARKER.OVERLAP_FIRST_START: LABEL.OVERLAPMARKER_CURR_START,
+                MARKER.OVERLAP_FIRST_END: LABEL.OVERLAPMARKER_CURR_END,
+                MARKER.OVERLAP_SECOND_START: LABEL.OVERLAPMARKER_NEXT_START,
+                MARKER.OVERLAP_SECOND_END: LABEL.OVERLAPMARKER_NEXT_END,
+                MARKER.PAUSES: LABEL.PAUSE,
                 MARKER.FASTSPEECH_START: MARKER.FASTSPEECH_START,
                 MARKER.FASTSPEECH_END: MARKER.FASTSPEECH_END,
                 MARKER.SLOWSPEECH_START: MARKER.SLOWSPEECH_START,
