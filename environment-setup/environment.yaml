@@ -1,9 +1,10 @@
-name: gb-dev
+name: gb-dev-test
 channels:
   - conda-forge
   - defaults
 dependencies:
   - brotlipy=0.7.0=py310h8e9501a_1005
+  - pip=23.0.1
   - bzip2=1.0.8=h620ffc9_4
   - ca-certificates=2022.12.7=h4653dfc_0
   - cryptography=40.0.2=py310hfc83b78_0
@@ -289,5 +290,3 @@ dependencies:
       - zope-event
       - zope-interface
       - lightning-fabric==2.0.2 
-      - 
-
