@@ -81,6 +81,7 @@ class SourceObject():
         logger.info(f"the setting object that is about to be applied is {setting}")
         if overwrite or not self.setting:
             self.setting = setting
+            self.configured = True
     
     def add_progress_display(self, displayer: Callable):
         """ 

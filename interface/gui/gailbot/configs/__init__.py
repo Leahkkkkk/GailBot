@@ -15,5 +15,6 @@ from .interfaces import (
     PROJECT_ROOT,
     TemporaryFolder, 
     OutputFolder,
-    PLUGIN_CONFIG
+    PLUGIN_CONFIG,
+    get_format_md_path
 )

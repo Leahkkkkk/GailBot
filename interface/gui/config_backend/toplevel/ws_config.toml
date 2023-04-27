@@ -12,6 +12,7 @@ transcribe_result = "Raw/Transcript/"
 media_file        = "Raw/Media/"
 analysis_result   = "Analysis/"
 metadata          = "meta.json"
+format_result     = "format.md"
 
 # contains relative paths for the directory storing the gailbot data
 [workspace.gailbot_data]

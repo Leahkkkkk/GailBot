@@ -213,6 +213,9 @@ class RecognitionResult:
                 'confidence'.
         """
         labels = list()
+        if not self.items or not self.items["speaker_labels"]:
+            return labels
+        
         for label in self.items["speaker_labels"]:
             labels.append({
                 "start_time": label.get("from"),

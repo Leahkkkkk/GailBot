@@ -1,7 +1,10 @@
 from typing import TypedDict,  Dict
 from .resultInterface import ResultInterface, ProcessingStats
+from gailbot.configs import get_format_md_path
+from gailbot.core.utils.general import copy
+from gailbot.core.utils.logger import makelogger
 
-
+logger = makelogger("formate_result")
 class FormatResultDict(TypedDict):
    process_stats: Dict[str, str]
 
@@ -40,4 +43,10 @@ class FormatResult(ResultInterface):
     
     def output(self, path: str) -> bool:
         """ TODO: currently no data will be written as format result """
-        return True 
+        try:
+            FORMAT_MD = get_format_md_path()
+            copy(FORMAT_MD, path)
+            return True
+        except Exception as e:
+            logger.error(e, exc_info=e)
+            return False 

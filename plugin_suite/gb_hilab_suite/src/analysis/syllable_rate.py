@@ -19,7 +19,6 @@ from gb_hilab_suite.src.config import MARKER, THRESHOLD, PLUGIN_NAME
 LimitDeviations = 2
 
 class SyllableRatePlugin(Plugin):
-
     def __init__(self) -> None:
         """
         Note: marker_limit value set to 4 for testing purpose

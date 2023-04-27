@@ -1,0 +1,30 @@
+[ANLYSIS_MARKER]
+GAPS       = "gaps"
+OVERLAPS   = "overlaps"
+PAUSES     = "pauses"
+FTO        = "fto"
+LATCH      = "latch"
+MICROPAUSE = "micropause"
+
+# marker text
+MARKER_TYPE    = "markerType"
+MARKER_INFO    = "markerInfo"
+MARKER_SPEAKER = "markerSpeaker"
+MARKER_SEP    = ":"
+KEYVALUE_SEP  = "="
+
+# Speaker label for underlying overlap markers
+OVERLAP_FIRST_START  = "overlap-firstStart"
+OVERLAP_FIRSR_END    = "overlap-firstEnd"
+OVERLAP_SECOND_START = "overlap-secondStart"
+OVERLAP_SECOND_END   = "overlap-secondEnd"
+
+SLOWSPEECH_DELIM     = "\u2207"
+FASTSPEECH_DELIM     = "\u2206"
+LATCH_DELIM          = "\u2248"
+SLOWSPEECH_START     = "slowspeech_start"
+SLOWSPEECH_END       = "slowspeech_end"
+FASTSPEECH_START     = "fastspeech_start"
+FASTSPEECH_END       = "fastspeech_end"
+
+

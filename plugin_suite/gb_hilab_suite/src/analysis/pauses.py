@@ -48,14 +48,13 @@ class PausePlugin(Plugin):
             nxt_utt = cm.getWordFromNode(pair[1])
 
             if curr_utt[0].sLabel == nxt_utt[0].sLabel:
-                fto = round(nxt_utt[0].startTime -
-                            curr_utt[-1].endTime, 2)
+                fto = round(nxt_utt[0].startTime - curr_utt[-1].endTime, 2)
                 markerText = ""
                 if  (THRESHOLD.LB_LATCH <= fto) and (fto <= THRESHOLD.UB_LATCH):
                     logging.debug("pauses")
                     markerText = "({1}{0}{2}{0}{3})".format(MARKER.MARKER_SEP,
-                                                            str(MARKER.MARKERTYPE)
-                                                            + str(MARKER.KEYVALUE_SEP) +
+                                                            str(MARKER.MARKERTYPE) +
+                                                            str(MARKER.KEYVALUE_SEP) +
                                                             str(MARKER.PAUSES),
                                                             str(MARKER.MARKERINFO) +
                                                             str(MARKER.KEYVALUE_SEP) +

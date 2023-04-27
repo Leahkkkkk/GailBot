@@ -323,7 +323,6 @@ class PayLoadObject(ABC):
         """
         return self.transcription_result.get_data()
     
-   
     def get_format_result(self) -> FormatResultDict:
         """
         Accesses the result of the current formatting
@@ -392,7 +391,18 @@ class PayLoadObject(ABC):
         except Exception as e:
             logger.error(e, exc_info=e)
             return False
-    
+        
+    def output_format_result(self) -> bool:
+        """ 
+        Outputs the current format result to the output directory
+        """
+        try:
+            assert self.format_result.output(self.out_dir.format_result)
+            return True 
+        except Exception as e:
+            logger.error(e, exc_info=e)
+            return False
+        
     def save(self):
         """
         Saves the file and outputs all results to output directory
@@ -402,6 +412,7 @@ class PayLoadObject(ABC):
         assert self.output_analysis_result()
         assert self.output_meta_result()
         assert self.output_transcription_result()
+        assert self.output_format_result()
         with open(os.path.join(self.out_dir.root, OUTPUT_MARKER), "w+") as f:
             f.write(f"{self.name}")
         for file in self.data_files:

@@ -11,6 +11,7 @@ class OutputFolder(DataclassFromDict):
     analysis_result: str = field_from_dict()
     metadata: str = field_from_dict()
     media_file: str = field_from_dict()
+    format_result: str = field_from_dict()
 
 @dataclass
 class TemporaryFolder(DataclassFromDict):

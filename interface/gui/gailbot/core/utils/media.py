@@ -21,8 +21,6 @@ from .general import (
 from gailbot.core.utils.logger import makelogger 
 from pydub import AudioSegment
 from pydub.silence import detect_leading_silence
-from pyAudioAnalysis import audioBasicIO
-from pyAudioAnalysis import audioSegmentation
 
 logger = makelogger("media")
 @dataclass
@@ -67,7 +65,6 @@ class VideoStream(Stream):
 
     def __repr__(self):
         return f"video stream {self.name}\n"
-
 
 class AudioHandler:
     """ Implement a class that contains functions to handle audio file 
@@ -379,14 +376,17 @@ class AudioHandler:
         while True:
             match get_cmd_status(pid):
                 case CMD_STATUS.STOPPED:
-                    raise ChildProcessError("ERROR: child process error")
+                    logger.error("process was stopped when converting the audio file to 16bit_wav format")
+                    break
                 case CMD_STATUS.FINISHED:
-                    break 
+                    return output_path
                 case CMD_STATUS.ERROR:
-                    raise ChildProcessError("ERROR: child process error")
+                    logger.error("error in converting the audio file to 16bit_wav format")
+                    break
                 case CMD_STATUS.NOTFOUND:
-                    raise ProcessLookupError(f"ERROR: process lookup error {get_cmd_status(pid)}") 
-        return output_path
+                    break
+        logger.warn("cannot convert the file to 16bit_wav file format, use original file instead")
+        return input_path
     
     @staticmethod 
     def compress_to_opus(audio_path:str, output_dir:str):
@@ -465,10 +465,6 @@ class AudioHandler:
         else:
             
             return audio_chunks
-
-
-
-
 
 
 
@@ -856,21 +852,3 @@ class MediaHandler:
         trim_ed: AudioSegment = sound[leading_silence :]
         trim_ed.export(ouput_path, "wav")
         return ouput_path
-
-    @staticmethod 
-    def remove_prelude_no_speech(input_path:str, outdir:str):
-        out_path_temp = os.path.join(outdir, f"{get_name(input_path)}_temp.{get_extension(input_path)}") 
-        out_path = os.path.join(outdir, f"{get_name(input_path)}.{get_extension(input_path)}")
-        # load audio file 
-        [Fs, x] = audioBasicIO.read_audio_file(input_path)
-        # detect audio silence
-        segments = audioSegmentation.silence_removal(x, Fs, 0.05, 0.05, smooth_window=1.0, weight=0.3, plot=False)
-        start_time = segments[0][0]
-        # Trim the audio from the start time
-        logger.error(start_time / Fs)
-        logger.error(segments)
-        trimmed_audio = AudioSegment.from_file(input_path, format="wav")[start_time * 1000:]
-        trimmed_audio.export(out_path_temp, "wav")
-        MediaHandler.convert_to_16bit_wav(out_path_temp, out_path)
-        return out_path
-       

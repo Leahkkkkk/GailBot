@@ -119,6 +119,9 @@ def test_watson_icc():
     
 def test_watson_long():
     fails, invalid = transcribe([PATH.LONG_PHONE_CALL], "watson", SETTING_DATA.WATSON_PROFILE)
+
+def test_watson_empty():
+    fails, invalid = transcribe([PATH.SineWaveMinus16], "watson", SETTING_DATA.WATSON_PROFILE)
 ################################### test for google ##################################
 def test_google():
     fails, invalid = transcribe([PATH.HELLO_1], "google", SETTING_DATA.GOOGLE_PROFILE) 

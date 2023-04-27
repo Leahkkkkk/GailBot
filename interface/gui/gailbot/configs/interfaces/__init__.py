@@ -50,4 +50,6 @@ def get_ws_root(): return os.path.join(
 
 def get_plugin_structure_config():
     return load_valid_structure(os.path.join(CONFIG_ROOT, PATH.valid_plugin))
-    
+
+def get_format_md_path():
+    return os.path.join(CONFIG_ROOT, PATH.format_md) 

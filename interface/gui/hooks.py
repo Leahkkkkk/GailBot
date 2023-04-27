@@ -1,8 +1,8 @@
 import logging.config 
 import hmmlearn
 import certifi
-import pytorch_lightning
-import pytorch_metric_learning
+# import pytorch_lightning
+# import pytorch_metric_learning
 import whisper 
 import huggingface_hub
 import ffmpeg
@@ -18,7 +18,7 @@ import torchaudio
 import librosa.util
 import urllib
 import sklearn.metrics._pairwise_distances_reduction  
-import  pyannote.audio.pipelines
+# import  pyannote.audio
 import hmmlearn.hmm 
 import pytorch_metric_learning.losses
 import os 

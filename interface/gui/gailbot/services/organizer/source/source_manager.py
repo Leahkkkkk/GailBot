@@ -171,6 +171,7 @@ class SourceManager():
         if self.is_source(source_name):
             self.sources[source_name].apply_setting(setting, overwrite)
             return self.sources[source_name].configured
+        logger.error(f"not a valid source")
         return False
    
     def add_progress_display(self, source: str, displayer: callable) -> bool:
