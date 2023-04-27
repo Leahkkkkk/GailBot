@@ -1,16 +1,19 @@
-step 1
-step 0 
-install anaconda 
+**step 0**
+# install anaconda 
 https://www.anaconda.com/
 https://docs.anaconda.com/free/anaconda/install/mac-os/
 
 
-step 1
-run command 
+**step 1**
+# run the following command 
+# for creating gb-dev environment
 conda env create -f environment.yaml
 
-step 2
-install pyannote.audio
+# for activating gb-dev environment
+conda activate gb-dev
+
+**step 2**
+# install pyannote.audio
 pip install -qq https://github.com/pyannote/pyannote-audio/archive/refs/heads/develop.zip 
 
 

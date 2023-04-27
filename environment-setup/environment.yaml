@@ -1,4 +1,4 @@
-name: gb-dev-test
+name: gb-dev
 channels:
   - conda-forge
   - defaults
