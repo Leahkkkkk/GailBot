@@ -19,8 +19,8 @@ from view.components.Window import (
     Console, 
 )
 from view.util.ErrorMsg import WARN, ERR
-from view.Signals import FileSignals, ViewSignals
-from view.signal import FileSignal
+from view.signal.signalObject import FileSignal, GBTranscribeSignal, GuiSignal
+
 from view.widgets import WarnBox
 from view.config.Style import Dimension
 from view.config.Text import About
@@ -45,7 +45,8 @@ class MainWindow(QMainWindow):
         
         # initialize the signal
         self.fileTableSignals = FileSignal
-        self.viewSignal = ViewSignals()
+        self.transcribeSignal = GBTranscribeSignal
+        self.viewSignal = GuiSignal
         self.logger.info(f"signals initialized")
         
         # initialzie the menu bar and the footer
@@ -114,11 +115,6 @@ class MainWindow(QMainWindow):
             self.logger.error(e, exc_info=e)
             self.showError(ERR.FAIL_TO.format("load file upload page"))
     
-    def busyThreadPool(self):
-        """shows busy thread pool message"""
-        self.showError(WARN.BUSY_THREAD)
-    
-        
     def showStatusMsg(self, msg, time=None):
         """shows status message"""
         try:
@@ -129,7 +125,7 @@ class MainWindow(QMainWindow):
     def showFileProgress(self, progress: Tuple[str, str]):
         """show file progress in transcribe in progress page"""
         try:
-            self.fileTableSignals.progressChanged.emit(progress)
+            self.transcribeSignal.updateProgress.emit(progress)
         except Exception as e:
             self.logger.error(e, exc_info=e)
             self.showError(ERR.FAIL_TO.format("show file progress"))
@@ -143,17 +139,6 @@ class MainWindow(QMainWindow):
             self.showError(ERR.FAIL_TO.format("clear the thread"))
     
         
-    def confirmCancel(self):
-        """ handle event when user tries to cancel the thread """
-        try:
-            self.logger.info("")
-            self.MainStack.gotoFileUploadPage()
-        except Exception as e:
-            self.logger.error(e, exc_info=e)
-            self.showError(ERR.FAIL_TO.format("cancel transcription"))
-
-   
-            
     def changeFiletoTranscribed(self, key:str):
         """ change the file status to be transcribed 
             currently delete the file from the table
@@ -183,10 +168,8 @@ class MainWindow(QMainWindow):
             self.logger.error(e, exc_info=e)
             self.showError(ERR.FAIL_TO.format("relaunch gailbot, please restart application"))
         
-            
     def showError(self, errorMsg:str):
         WarnBox(errorMsg) 
-      
     
     """ private function """
     def _connectSignal(self):
@@ -196,7 +179,6 @@ class MainWindow(QMainWindow):
             lambda: self.viewSignal.clearcache.emit())
         self.MenuBar.OpenConsole.triggered.connect(lambda: self.Console.show())
         self.MenuBar.CloseConsole.triggered.connect(lambda: self.Console.hide())
-        self.fileTableSignals.cancel.connect(self.confirmCancel)
     
     def _restart(self):
         """ restarting the app """

@@ -1,7 +1,7 @@
 from typing import Dict, TypedDict, Tuple, Any, List
 from view.MainWindow import MainWindow
-from view.Signals import FileSignals, DataSignal, ViewSignals, DataSignal
-from view.signal import PluginSignal, ProfileSignal, FileSignal, EngineSignal, GuiSignal
+from view.signal.interface import TranscribeSignal, DataSignal, ViewSignals, DataSignal
+from view.signal.signalObject import PluginSignal, ProfileSignal, FileSignal, EngineSignal, GuiSignal, GBTranscribeSignal
 class SettingDict(TypedDict):
     engine_setting: Dict
     plugin_setting: List[str] 
@@ -67,12 +67,6 @@ class ViewController():
         """
         self.window.showFileUploadPage()
         
-    def busyThreadWarning(self):
-        """ 
-        when called, show a warning message box indicating the thread is 
-        busy
-        """
-        self.window.busyThreadPool()
     
     def showStatusMsg(self, msg, time = 2000):
         """ show msg on the gui's status bar
@@ -99,13 +93,6 @@ class ViewController():
         """
         self.window.freeThread()
   
-    def afterTranscribeCancelled(self):
-        """
-            return back to the file upload page when user decide to stop 
-             transcribe
-        """
-        self.window.confirmCancel()
-        
     def changeFileToTranscribed(self, filekey: str):
         """change the file status to be transcribed
 
@@ -131,32 +118,38 @@ class ViewController():
         self.window.showError(err)
        
     # return the signal interface    
-    def getFileSignal(self) -> FileSignals:
+    def getFileSignal(self) -> DataSignal:
         """ 
         returns the file table signals
         """
-        return self.window.fileTableSignals
+        return FileSignal 
     
     def getProfileSignal(self) -> DataSignal:
         """ 
         returns the profile signals 
         """
-        return self.window.MainStack.SettingPage.ProfilePage.signal
+        return ProfileSignal 
     
     def getViewSignal(self) -> ViewSignals:
         """ 
         returns the view signal
         """
-        return self.window.viewSignal
+        return GuiSignal
    
     def getPluginSignal(self) -> DataSignal:
         """ 
         returns the plugin signal
         """
-        return self.window.MainStack.SettingPage.PluginPage.signal
+        return PluginSignal 
     
     def getEngineSignal(self) -> DataSignal:
         """
         return the engine signal
         """ 
-        return self.window.MainStack.SettingPage.EngineSetPage.signal
+        return EngineSignal
+
+    def getTranscriptionSignal(self) -> TranscribeSignal:
+        """ 
+        return the transcribeSignal
+        """
+        return GBTranscribeSignal

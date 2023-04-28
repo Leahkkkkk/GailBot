@@ -1,5 +1,5 @@
 from view.config.Text import ProfilePageText as Text
-from view.Signals import DataSignal
+from view.signal.interface import DataSignal
 from view.util.ErrorMsg import ERR  
 from ..SettingConfig import EditProfile
 from ..SettingDetail import ProfileDetail

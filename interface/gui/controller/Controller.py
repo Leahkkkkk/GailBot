@@ -21,6 +21,7 @@ import os
 from typing import Set
 import time
 from controller.util.io import is_directory, delete
+from controller.Request import Request
 from controller.transcribeController import TranscribeController
 from controller.mvController import MVController
 from gbLogger import makeLogger
@@ -143,9 +144,9 @@ class Controller(QObject):
     ###################   gailbot  handler #############################
     def _handleTranscribeSignal(self):
         """ handle signal from View that requests to transcribe the file"""
-        self.ViewObj.getFileSignal().transcribe.connect(self._runGailBot)
+        self.ViewObj.getTranscriptionSignal().transcribe.connect(self._runGailBot)
     
-    def _runGailBot(self, files):
+    def _runGailBot(self, transcribeRequest: Request):
         """run gailbot on a separate thread
 
         Args:
@@ -153,7 +154,7 @@ class Controller(QObject):
                           be transcribed
         """
         try:
-            self.transcribeController.runGailBot(files)
+            self.transcribeController.runGailBot(transcribeRequest)
         except Exception as e:
             self.logger.error(f"error in running gailbot transcription:{e}", exc_info=e)
 

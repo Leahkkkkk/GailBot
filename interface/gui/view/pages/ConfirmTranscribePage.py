@@ -17,12 +17,13 @@ from view.config.Style import (
 from view.config.Text import ConfirmTranscribeText as Text
 from view.config.Text import FileTableHeader 
 from gbLogger import makeLogger
-from view.signal import FileSignal
+from view.signal.signalObject import FileSignal, GBTranscribeSignal
+from view.signal.Request import Request
 from view.pages.BasicPage import BasicPage
 from view.widgets import ( 
     Label, 
     ColoredBtn)
-from view.components.FileTable import FileTable, TableWidget
+from view.components.FileTable import SourceTable, TableWidget, DATA_FIELD
 from PyQt6.QtWidgets import (
     QWidget, 
     QVBoxLayout,
@@ -48,7 +49,8 @@ class ConfirmTranscribePage(BasicPage):
     def _connectSignal(self):
         """ connects signals upon button clicks """
         self.confirmBtn.clicked.connect(self._sendTranscribeSignal)
-         
+        GBTranscribeSignal.sendToConfirm.connect(self.fileTable.resetFileDisplay) 
+        
     def _initWidget(self):
         """ initializes widgets """
         self.logger.info("")
@@ -57,15 +59,20 @@ class ConfirmTranscribePage(BasicPage):
                                  FontFamily.MAIN)
         self.label.setAlignment(center)
         
-        self.fileTable = FileTable(
+        self.fileTable = SourceTable(
             FileTableHeader.confirmPage,
             self.signal,
-            tableWidgetsSet={TableWidget.PROFILE_DETAIL})
+            dataKeyToCol= {DATA_FIELD.TYPE: 0,
+                           DATA_FIELD.NAME: 1,
+                           DATA_FIELD.PROFILE:2}, 
+            appliedCellWidget={TableWidget.PROFILE_DETAIL})
         
         self.fileTable.resizeCol(FileTableDimension.confirmPage)
         self.bottomButton = QWidget()
-        self.confirmBtn = ColoredBtn(Text.confirm, STYLE_DATA.Color.SECONDARY_BUTTON)
-        self.cancelBtn = ColoredBtn(Text.cancel, STYLE_DATA.Color.CANCEL_QUIT)
+        self.confirmBtn = ColoredBtn(
+            Text.confirm, STYLE_DATA.Color.SECONDARY_BUTTON)
+        self.cancelBtn = ColoredBtn(
+            Text.cancel, STYLE_DATA.Color.CANCEL_QUIT)
     
     def _initLayout(self):
         """ initializes layout"""
@@ -90,21 +97,13 @@ class ConfirmTranscribePage(BasicPage):
         
     def _sendTranscribeSignal(self):
         """sends a signal with a set of file keys that will be transcribed """
-        self.logger.info(self.fileTable.transferList)
-        self.fileTable.transferAll()
-        self.signal.transcribe.emit(list(self.fileTable.transferList))
-        self.fileTable.transferState()
+        files = self.fileTable.getAllFile()
+        self.logger.info(files)
+        GBTranscribeSignal.transcribe.emit(
+            Request(
+                data=files, 
+                succeed=self.transcribeComplete))
+        GBTranscribeSignal.sendToTranscribe.emit(files)
     
-    def changeColor(self, colormode = None ):
-        """ called when color is changed """
-        super().changeColor()
-        self.confirmBtn.colorChange(STYLE_DATA.Color.SECONDARY_BUTTON)
-        self.cancelBtn.colorChange(STYLE_DATA.Color.CANCEL_QUIT)
-      
-
-    ## controlling font
-    def changeFont(self, fontmode = None ):
-        """ called when font size is changed """
-        self.label.fontChange(STYLE_DATA.FontSize.HEADER2)
-    
-   
+    def transcribeComplete(self, completeData):
+        GBTranscribeSignal.sendToComplete.emit(completeData) 

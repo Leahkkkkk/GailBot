@@ -18,10 +18,17 @@ class FileSignals(QObject):
     deleteRequest        = pyqtSignal(object)
     changeProfileRequest = pyqtSignal(object)
     requestprofile       = pyqtSignal(object)
-    viewOutput           = pyqtSignal(object)
+    viewOutputRequest    = pyqtSignal(object)
     transcribe           = pyqtSignal(list)
     progressChanged      = pyqtSignal(tuple)
     cancel               = pyqtSignal()
+
+class TranscribeSignal(QObject):
+    transcribe = pyqtSignal(object)
+    updateProgress = pyqtSignal(tuple)
+    sendToConfirm = pyqtSignal(list)
+    sendToTranscribe = pyqtSignal(list)
+    sendToComplete = pyqtSignal(list)
 
 class ViewSignals(QObject):
     restart    = pyqtSignal()
@@ -36,8 +43,15 @@ class DataSignal(QObject):
     getRequest     = pyqtSignal(object)
     deleteRequest  = pyqtSignal(object)
     postRequest    = pyqtSignal(object)
+    
     viewSourceRequest = pyqtSignal(object)
+    viewOutputRequest = pyqtSignal(object)
+    
+    
     detailRequest = pyqtSignal(object)
+    fileProfileRequest = pyqtSignal(object)
+    changeFileProfileRequest = pyqtSignal(object)
+    
     deleteSucceed  = pyqtSignal(str)
     addSucceed     = pyqtSignal(str)
     editSucceed    = pyqtSignal(str)

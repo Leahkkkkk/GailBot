@@ -10,15 +10,14 @@ Modified By:  Siara Small  & Vivian Li
 Description: implementation of file upload page 
 '''
 
-from typing import List
-
+from typing import List, Tuple, Dict
 from view.config.Style import STYLE_DATA, FileTableDimension
 from view.config.Text import FileTableHeader
 from view.config.Text import FileUploadPageText as Text 
 from view.pages.BasicPage import BasicPage
 from gbLogger import makeLogger
-from view.signal import FileSignal
-from view.components.FileTable import FileTable, TableWidget
+from view.signal.signalObject import FileSignal, GBTranscribeSignal
+from view.components.FileTable import TableWidget, SourceTable, DATA_FIELD
 from view.widgets import (
     Label, 
     ColoredBtn, 
@@ -69,7 +68,7 @@ class FileUploadPage(BasicPage):
         """ connects signals to different functions upon button clicks """
         self.logger.info("")
         self.uploadFileBtn.clicked.connect(self.fileTable.uploadFile)
-        self.transcribeBtn.clicked.connect(self.fileTable.transferState) 
+        self.transcribeBtn.clicked.connect(self.sendToConfirm) 
         self.removeAll.clicked.connect(self._confirmRemove)
         self.fileTable.viewSignal.nonZeroFile.connect(self._allowTranscribe)
         self.fileTable.viewSignal.ZeroFile.connect(self._disallowTranscribe)
@@ -77,6 +76,9 @@ class FileUploadPage(BasicPage):
         STYLE_DATA.signal.changeColor.connect(self.changeColor)
         STYLE_DATA.signal.changeFont.connect(self.fontChange)
         
+        # GBTranscribeSignal.sendToTranscribe.connect(self.removeFromTable)
+
+
     def _initWidget(self):
         """ initializes widgets """
         self.logger.info("")
@@ -93,17 +95,20 @@ class FileUploadPage(BasicPage):
             QSize(STYLE_DATA.Dimension.ICONBTN, STYLE_DATA.Dimension.ICONBTN))
         self.removeAll = ColoredBtn(
             Text.removeBtnText, STYLE_DATA.Color.PRIMARY_BUTTON, STYLE_DATA.FontSize.BTN)
-        # self.recordBtn = ColoredBtn(
-        #     Text.recordBtnText, Color.PRIMARY_BUTTON, FontSize.BTN)
         
-        self.fileTable = FileTable(
-            FileTableHeader.fileUploadPage, 
-            self.signal,
-            {TableWidget.CHECK, 
+        self.fileTable = SourceTable(
+           headers=FileTableHeader.fileUploadPage, 
+           signal =self.signal,
+           dataKeyToCol={DATA_FIELD.TYPE: 1,
+                         DATA_FIELD.NAME: 2, 
+                         DATA_FIELD.PROFILE: 3,
+                         DATA_FIELD.STATUS: 4, 
+                         DATA_FIELD.DATE: 5},
+            appliedCellWidget={
+             TableWidget.CHECK, 
              TableWidget.PROFILE_DETAIL, 
              TableWidget.CHANGE_PROFILE, 
-             TableWidget.REMOVE},
-            showSelectHighlight=True)
+             TableWidget.REMOVE})
         self.fileTable.resizeCol(FileTableDimension.fileUploadPage)
         
     def _initLayout(self):
@@ -137,8 +142,6 @@ class FileUploadPage(BasicPage):
         self.verticalLayout.addWidget (self.addFileBtnContainer, alignment = center)
         
         self.verticalLayout.addWidget(self.transcribeBtn, alignment = center)
-        # self.containerLayout.addWidget(self.recordBtn,
-        #                                alignment = center)
     
     def _initStyle(self):
         """ initializes the style """
@@ -160,6 +163,15 @@ class FileUploadPage(BasicPage):
         self.uploadFileBtn.fontChange(STYLE_DATA.FontSize.BTN)
         self.removeAll.fontChange(STYLE_DATA.FontSize.BTN)
     
+    def sendToConfirm(self):
+        GBTranscribeSignal.sendToConfirm.emit(self.fileTable.getSelectedFile())
+        
+    
+    def removeFromTable(self, files: List[Tuple[str, Dict]]):
+        for file in files:
+            name, data = file 
+            self.fileTable.deleteSucceed(name)
+    
     def _allowTranscribe(self):
         """ activates the transcribe button """
         self.logger.info("")
@@ -175,5 +187,5 @@ class FileUploadPage(BasicPage):
     def _confirmRemove(self):
         """ open pop up message to confirm removal of all files """
         self.logger.info("")
-        ConfirmBox(Text.removeWarnText, self.fileTable.removeAll)
+        ConfirmBox(Text.removeWarnText, self.fileTable.deleteAll)
     

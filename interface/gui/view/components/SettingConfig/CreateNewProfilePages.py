@@ -11,7 +11,7 @@ Description: implementation of pages for user to create new profile
 '''
 
 from typing import Dict
-from view.Signals import DataSignal
+from view.signal.interface import DataSignal
 from view.Request import Request
 from view.config.Text import CreateNewProfilePageText as Text 
 from view.config.Text import ENGINE_FORM as Form 

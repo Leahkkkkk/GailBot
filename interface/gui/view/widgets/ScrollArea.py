@@ -9,9 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
-from view.Signals import GlobalStyleSignal
 from view.config.Style import STYLE_DATA 
-from view.Signals import GlobalStyleSignal
 from PyQt6.QtWidgets import QScrollArea 
 from PyQt6.QtCore import QSize, Qt
 

@@ -12,7 +12,6 @@ Modified By:  Siara Small  & Vivian Li
 from .FormWidget import FormWidget
 from ..Label import Label
 from view.config.Style import STYLE_DATA
-from view.Signals import GlobalStyleSignal
 from copy import deepcopy
 
 from PyQt6.QtWidgets import QLineEdit, QHBoxLayout, QVBoxLayout, QWidget

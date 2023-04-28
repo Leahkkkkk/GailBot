@@ -11,7 +11,7 @@ Description: The base class of setting page
 '''
 from view.config.Style import STYLE_DATA,  FontFamily
 from view.config.Text import ENGINE_SETTING_TEXT as Text
-from view.Signals import DataSignal
+from view.signal.interface import DataSignal
 from view.Request import Request
 from gbLogger import makeLogger
 from view.widgets import Label, ColoredBtn

@@ -12,7 +12,7 @@ Description: implementation of the plugin page
 from typing import List
 
 from view.config.Text import PluginPageText as Text
-from view.Signals import DataSignal
+from view.signal.interface import DataSignal
 from view.signal import PluginSignal
 from view.Request import Request
 from view.components.SettingTables import PluginTable

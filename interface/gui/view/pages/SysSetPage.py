@@ -21,7 +21,7 @@ from view.widgets import (
     Button
 )
 from view.components.SelectPath import SaveLogFile
-from view.Signals import GlobalStyleSignal
+from view.signal.signalObject import GlobalStyleSignal
 from config_frontend.ConfigPath import WorkSpaceConfigPath, SettingDataPath
 from view.config.Setting import SystemSetting, DefaultSetting
 from view.config import StyleSource, StyleTable

@@ -16,9 +16,9 @@ from view.config.Style import (
 from view.pages.BasicPage import BasicPage
 from view.config.Text import TranscribeSuccessText as Text
 from view.config.Text import FileTableHeader
-from view.components.FileTable import FileTable, TableWidget
+from view.components.FileTable import TableWidget, SourceTable, DATA_FIELD
 from view.widgets import ColoredBtn, Label
-from view.signal import FileSignal
+from view.signal.signalObject import FileSignal, GBTranscribeSignal
 from PyQt6.QtWidgets import (
     QVBoxLayout,
     QHBoxLayout,
@@ -40,6 +40,11 @@ class TranscribeSuccessPage(BasicPage):
         self._initWidget()
         self._initStyle()
         self._initLayout()
+        self._connectSignal()
+        
+    def _connectSignal(self):
+        GBTranscribeSignal.sendToComplete.connect(
+            self.fileTable.resetFileDisplay)
         
     def _initWidget(self):
         """ initializes widgets on the page """
@@ -51,9 +56,13 @@ class TranscribeSuccessPage(BasicPage):
         self.returnBtn = ColoredBtn(
             Text.returnBtnText, STYLE_DATA.Color.PRIMARY_BUTTON)
         self._initHorizontalLayout()
-        self.fileTable = FileTable(
+        self.fileTable = SourceTable(
             FileTableHeader.successPage, 
             self.signal, 
+            {DATA_FIELD.TYPE:0,
+             DATA_FIELD.NAME:1,
+             DATA_FIELD.STATUS:2,
+             DATA_FIELD.OUTPUT:3},
             tableWidgetsSet={TableWidget.VIEW_OUTPUT})
         self.fileTable.resizeCol(FileTableDimension.successPage)
         

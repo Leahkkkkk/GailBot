@@ -94,11 +94,10 @@ class MainStack(QStackedWidget):
     def changeToTranscribed(self, key: str):
         """ public function that change the file status on all file tables """
         self.TranscribeSuccessPage.fileTable.changeFileToTranscribed(key)
-        self.FileUploadPage.fileTable.removeSucceed(key)
-        self.ConfirmTranscribePage.fileTable.transferList.clear()
     
     def removeFile(self, key:str):
-        self.FileUploadPage.fileTable.removeSucceed(key)
+        pass 
+    
     
     def _initPage(self):
         """ initialize all pages on stack widget, using current widget to 
@@ -156,22 +155,6 @@ class MainStack(QStackedWidget):
         
     def _connectSignal(self):
         """ connecting the signal  """
-        self.FileUploadPage.fileTable.viewSignal.goSetting.connect(
-            self.gotoSettingPage)
-        self.ConfirmTranscribePage.fileTable.viewSignal.goSetting.connect(
-            self.gotoSettingPage)
-        
-        """ signals to control the list of files to be presented on each 
-            file table
-        """
-        self.FileUploadPage.fileTable.viewSignal.transferState.connect(
-            self.ConfirmTranscribePage.fileTable.resetFileDisplay)
-        self.ConfirmTranscribePage.fileTable.viewSignal.transferState.connect(
-            self.TranscribeProgressPage.fileTable.resetFileDisplay)
-        self.ConfirmTranscribePage.fileTable.viewSignal.transferState.connect(
-            self.TranscribeSuccessPage.fileTable.resetFileDisplay)
-      
-        ##### when profile is added, the file table stores new profile name
         ####  for selection
         self.SettingPage.ProfilePage.signal.addSucceed.connect(
             self.FileUploadPage.fileTable.addProfile)

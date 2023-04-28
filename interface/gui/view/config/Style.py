@@ -16,7 +16,7 @@ import toml
 
 from config_frontend.ConfigPath import StyleDataPath, FRONTEND_CONFIG_ROOT
 from .interface import StyleParser
-from view.Signals import GlobalStyleSignal
+from view.signal.signalObject import GlobalStyleSignal
 from PyQt6.QtCore import QObject, pyqtSignal
 
 class StyleSignals(QObject):

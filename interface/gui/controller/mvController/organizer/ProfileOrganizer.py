@@ -10,7 +10,7 @@ Modified By:  Siara Small  & Vivian Li
 Description:
 Implementation of a database that stores the profile data
 '''
-from view.Signals import DataSignal
+from view.signal.interface import DataSignal
 from controller.Request import Request
 from gailbot.api import GailBot
 from gbLogger import makeLogger

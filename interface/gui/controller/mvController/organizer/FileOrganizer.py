@@ -11,9 +11,9 @@ Description: Implementation of a database that stores all the file data
 '''
 
 from dataclasses import dataclass
-from typing import TypedDict, Tuple, Dict, Set
+from typing import TypedDict
 from gailbot.api import GailBot
-from view.Signals import FileSignals
+from view.signal.interface import DataSignal
 from controller.Request import Request
 from gbLogger import makeLogger
 from controller.util.Error import  ERR
@@ -22,18 +22,6 @@ from dict_to_dataclass import DataclassFromDict, field_from_dict
 
 
 
-@dataclass 
-class FileObj(DataclassFromDict):
-    """ implement the interface of a file object  """
-    Name    : str = field_from_dict()
-    Type    : str = field_from_dict()
-    Output  : str = field_from_dict()
-    FullPath: str = field_from_dict()
-    Profile : str = field_from_dict()
-    Status  : str = field_from_dict()
-    Date    : str = field_from_dict()
-    Size    : str = field_from_dict()
-    Progress: str = field_from_dict()
     
 class fileDict(TypedDict):
     """ the scheme of file data, 
@@ -58,7 +46,7 @@ class Signals(QObject):
     error          = pyqtSignal(str)
     
 class FileOrganizer:
-    def __init__(self, gbController: GailBot, fileSignal: FileSignals) -> None:
+    def __init__(self, gbController: GailBot, fileSignal: DataSignal) -> None:
         """ implementation of File database
         
         Field:
@@ -97,12 +85,12 @@ class FileOrganizer:
         self.logger = makeLogger("F")
         self.registerSignal(fileSignal)
     
-    def registerSignal(self, signal:FileSignals):
-        signal.requestprofile.connect(self.requestProfile)
-        signal.postFileRequest.connect(self.post)
-        signal.changeProfileRequest.connect(self.editFileProfile)
+    def registerSignal(self, signal:DataSignal):
+        signal.fileProfileRequest.connect(self.requestProfile)
+        signal.postRequest.connect(self.post)
+        signal.changeFileProfileRequest.connect(self.editFileProfile)
         signal.deleteRequest.connect(self.delete)
-        signal.viewOutput.connect(self.viewOutput)
+        signal.viewOutputRequest.connect(self.viewOutput)
     
     ##########################  request handler ###########################
     def post(self, request : Request) -> None:
@@ -112,15 +100,15 @@ class FileOrganizer:
         """
         self.logger.info("post file to database")
         self.logger.info(request.data)
-        file = FileObj.from_dict(request.data)
+        file : fileDict = request.data
         
         try:
-            name = self.gb.add_source(file.FullPath, file.Output)
+            name = self.gb.add_source(file["FullPath"], file["Output"])
             assert name 
             request.data["Name"] = name
             request.succeed((name, request.data))
             
-            assert self.gb.apply_setting_to_source(name, file.Profile)
+            assert self.gb.apply_setting_to_source(name, file["Profile"])
         except Exception as e:
             request.fail(ERR.ERROR_WHEN_DUETO.format("posting new file", str(e)))
             self.logger.error(f"Error in posting file: {e}", exc_info=e)

@@ -13,7 +13,7 @@ Description: implementation of a the plugin database
 from typing import TypedDict, Tuple, Dict
 
 from gailbot.api import GailBot
-from view.Signals import DataSignal 
+from view.signal.interface import DataSignal 
 from controller.Request import Request
 from PyQt6.QtCore import QObject, pyqtSignal
 from controller.util.io import get_name

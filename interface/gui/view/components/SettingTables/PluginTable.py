@@ -3,7 +3,7 @@ from typing import List, Dict, Tuple
 from view.config.Style import STYLE_DATA
 from config_frontend import PROJECT_ROOT
 from view.config.Text import PLUGIN_SUITE_TEXT
-from view.Signals import DataSignal
+from view.signal.interface import DataSignal
 from view.Request import Request
 from view.util.ErrorMsg import ERR  
 from ..SettingDetail import PluginSuiteDetails
@@ -36,7 +36,7 @@ class PluginTable(BaseTable):
             self.logger.error(e, exc_info=e)
             WarnBox(ERR.ERR_WHEN_DUETO.format("uploading plugin suite", str(e)))
         
-    def addCellWidgets(self, suiteName: str, tableItem: QTableWidgetItem, row:int, isOfficial: bool = False):
+    def addCellWidgets(self, suiteName: str, row:int, isOfficial: bool = False):
         cellWidget = QWidget()
         layout = QVBoxLayout()
         detailBtn = QPushButton("Details")
@@ -51,7 +51,7 @@ class PluginTable(BaseTable):
         if not isOfficial:
             deleteBtn = QPushButton("Delete")
             layout.addWidget(deleteBtn)
-            deleteBtn.clicked.connect(lambda: self.delete(suiteName, tableItem))
+            deleteBtn.clicked.connect(lambda: self.delete(suiteName))
         self.setCellWidget(row, len(self.headers) - 1, cellWidget)
 
     def viewDetail(self, suiteName:str):

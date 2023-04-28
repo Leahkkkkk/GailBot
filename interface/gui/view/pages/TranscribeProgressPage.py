@@ -20,9 +20,9 @@ from view.config.Text import FileTableHeader
 from config_frontend import PROJECT_ROOT
 from gbLogger import makeLogger
 from view.pages.BasicPage import BasicPage
-from view.signal import FileSignal
+from view.signal.signalObject import FileSignal, GBTranscribeSignal
 from view.widgets import Label 
-from view.components.FileTable import FileTable
+from view.components.FileTable import SourceTable, DATA_FIELD
 
 
 from PyQt6.QtWidgets import QLabel, QVBoxLayout, QWidget
@@ -39,7 +39,8 @@ class TranscribeProgressPage(BasicPage):
     def __init__(self, *args,  **kwargs) -> None:
         """ initializes class """
         super().__init__(*args, **kwargs)
-        self.signals = FileSignal
+        self.sourceSignal = FileSignal
+        self.transcribeSignal = GBTranscribeSignal
         self.logger = makeLogger("F")
         self._initWidget()
         self._initstyle()
@@ -66,8 +67,13 @@ class TranscribeProgressPage(BasicPage):
         self.loadingText = Label(Text.loadingText, STYLE_DATA.FontSize.SMALL, STYLE_DATA.FontFamily.OTHER)
         self.loadingText.setAlignment(center)
         # self.cancelBtn = ColoredBtn(Text.cancelText, STYLE_DATA.Color.GREYDARK, STYLE_DATA.FontSize.BTN)
-        self.fileTable = FileTable(
-            FileTableHeader.transcribePage, self.signals)
+        self.fileTable = SourceTable(
+            FileTableHeader.transcribePage,
+            self.sourceSignal, 
+            dataKeyToCol={
+                DATA_FIELD.TYPE: 0, 
+                DATA_FIELD.NAME: 1, 
+                DATA_FIELD.PROGRESS: 2})
         self.fileTable.resizeCol(FileTableDimension.transcribePage)
     
     def _initstyle(self):
@@ -80,10 +86,9 @@ class TranscribeProgressPage(BasicPage):
     def changeColor(self):
         super().changeColor()
     
-    def changefont(self, fontmode = None):
+    def changefont(self):
         self.label.fontChange(STYLE_DATA.FontSize.HEADER2)
         self.loadingText.fontChange(STYLE_DATA.FontSize.SMALL)
-        # self.cancelBtn.fontChange(STYLE_DATA.FontSize.BTN)
    
     def _initLayout(self):
         """ initialize layout """
@@ -108,8 +113,8 @@ class TranscribeProgressPage(BasicPage):
          
     def _connectSignal(self):
         """ connects signal. change enableCancel to true when backend functionality allows for it. """
-        # self.cancelBtn.setDisabled(True)
-        self.signals.progressChanged.connect(self.editFileProgess)
+        GBTranscribeSignal.sendToTranscribe.connect(self.fileTable.resetFileDisplay)
+        GBTranscribeSignal.updateProgress.connect(self.editFileProgess)
         STYLE_DATA.signal.changeFont.connect(self.changefont)
         STYLE_DATA.signal.changeColor.connect(self.changeColor)
         
@@ -121,10 +126,6 @@ class TranscribeProgressPage(BasicPage):
         """
         self.loadingText = Label(text, STYLE_DATA.FontSize.SMALL, STYLE_DATA.FontFamily.OTHER)
 
-    def cancelGailBot(self):
-        """ simulates the cancellation of gailbot- will rely on backend functionality when complete """
-        self.signals.cancel.emit()
-        
     def editFileProgess(self, progress: Tuple[str, str]):
         """ change the display of file progress on the table
 

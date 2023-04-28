@@ -11,11 +11,14 @@ Description:
 connect the backend transcription process with the front end view object, 
 so that the front end is able to reflect the transcription progress
 '''
+
 from dataclasses import dataclass
 import time
-from typing import List, Dict
+from typing import List, Dict, Tuple
 from controller.util.Error import  ERR
+from controller.Request import Request
 from view.MainWindow import MainWindow
+
 from view import ViewController
 from gbLogger import makeLogger
 from PyQt6.QtCore import pyqtSignal, QObject, QThreadPool, QRunnable, pyqtSlot
@@ -35,12 +38,10 @@ class Signal(QObject):
     """
     start = pyqtSignal()
     finish = pyqtSignal()
-    fileTranscribed = pyqtSignal(str)
     error = pyqtSignal(str)
     busy = pyqtSignal()
     progress = pyqtSignal(tuple)
     killed = pyqtSignal()
-    remove = pyqtSignal(str)
 
 class TranscribeController(QObject):
     def __init__(self, ThreadPool: QThreadPool, view: ViewController, gb: GailBot):
@@ -68,13 +69,11 @@ class TranscribeController(QObject):
         self.signal = Signal()
         self.gb = gb
         # connect to view handler for over-loaded threadpool
-        self.signal.busy.connect(view.busyThreadWarning)
         
         # view handler to redirect to different pages based on the 
         # transcribe result 
         self.signal.start.connect(view.showTranscribeInProgress)
         self.signal.finish.connect(view.showTranscribeSuccess)
-        self.signal.killed.connect(view.showFileUploadPage)
         
         # view handler to show transcription status
         self.signal.progress.connect(view.showFilesTranscriptionProgress)
@@ -82,16 +81,9 @@ class TranscribeController(QObject):
         # view handler for transcription field 
         self.signal.error.connect(view.showErr)
         
-        # view handler for change file display when transcription succeed
-        self.signal.fileTranscribed.connect(view.changeFileToTranscribed)
         
-        # view handler to remove file
-        self.signal.remove.connect(view.removeFile)
-        
-        # handle view request to cancel gailbot
-        view.getFileSignal().cancel.connect(self.cancelGailBot)
 
-    def runGailBot(self, files: Dict[str, str]):
+    def runGailBot(self, transcribeRequest:Request):
         # pass 
         """ function to run gailbot on a separate thread """
         self.logger.info(f"active thread numbers : {self.ThreadPool.activeThreadCount()}")
@@ -101,42 +93,49 @@ class TranscribeController(QObject):
         else:
             try:
                 self.ThreadPool.clear()
-                self.logger.info(f"the files to be transcribeda are :{files}")
-                self.worker = GBWorker(files, self.signal, self.gb)
+                self.logger.info(f"the files to be transcribeda are :{transcribeRequest.data}")
+                self.worker = GBWorker(
+                    transcribeRequest.data,  
+                    transcribeRequest.succeed,
+                    transcribeRequest.fail,
+                    self.signal, self.gb)
                 self.signal.start.emit()
                 assert self.ThreadPool.tryStart(self.worker)
             except Exception as e:
                 self.signal.error.emit(ERR.ERROR_WHEN_DUETO("transcribing file", str(e)))
                 self.logger.error(f"failed to start transcribe due to error {e}", exc_info=e)
 
-    def cancelGailBot(self):
-        """ handler for user's request to cancel the gailbot """
-        self.logger.info("receive request to cancel gailbot")
-        try:
-          if self.worker:
-             self.worker.kill()
-              
-        except:
-          self.signal.error.emit(ERR.ERROR_WHEN_DUETO("canceling transcription", str))
-          self.logger.error("failed to cancel transcription")
 
 class GBWorker(QRunnable):
-    def __init__(self, files: List[str], signal: Signal, gb: GailBot) -> None:
+    def __init__(self, 
+                 files: List[Tuple[str, Dict[str, str]]], 
+                 continuation: callable,
+                 failure:callable,
+                 signal: Signal, 
+                 gb: GailBot) -> None:
         super().__init__()
         self.signal = signal
         self.killed = False
-        self.files: List[str] = files 
+        
+        self.filedata = dict() ## stores the file data 
+        self.continueFun = continuation 
+        self.failureFun = failure
+        
+        for file in files :
+            name, data = file 
+            self.filedata[name] = data 
+            
         self.gb = gb
         self.logger = makeLogger("F")
         
     @pyqtSlot()
     def run(self):
-        self.logger.info(f"start to transcribe the files {self.files}")
+        self.logger.info(f"start to transcribe the files {self.filedata}")
         # add the progress displayer to every file to be able to 
         # display progress message sent by gailbot
         try: 
-            for file in self.files:
-                self.gb.add_progress_display(file, self.getProgressDisplayer(file))
+            for name in self.filedata.keys():
+                self.gb.add_progress_display(name, self.getProgressDisplayer(name))
         except Exception as e:
             self.logger.error(f"Failed to add progress displayer, get error {e}")
       
@@ -144,31 +143,28 @@ class GBWorker(QRunnable):
             self.signal.start.emit()
             self.logger.info("Transcribing")
             # get the transcription result
-            invalid, fails = self.gb.transcribe(list(self.files))
+            invalid, fails = self.gb.transcribe(list(self.filedata.keys()))
+            
+            for filename, data in self.filedata.items():
+                if filename in invalid or filename in fails:
+                    self.filedata[filename]["Status"] = "Not Transcribed" ## add to variable
+                else:
+                    self.filedata[filename]["Status"] = "Transcribed"
             self.logger.info(f"the failure files are {fails}, the invalid files are {invalid}")
             if invalid and fails:
-                self.signal.error.emit(ERR.INVALID_FILE.format(str(invalid)) + "\n" + ERR.FAIL_TRANSCRIBE.format(str(fails)))
+                self.failureFun(ERR.INVALID_FILE.format(str(invalid)) +
+                                "\n" + ERR.FAIL_TRANSCRIBE.format(str(fails)))
             elif fails:
-                self.signal.error.emit(ERR.FAIL_TRANSCRIBE.format(str(fails)))
+                self.failureFun(ERR.FAIL_TRANSCRIBE.format(str(fails)))
             elif invalid: 
-                self.signal.error.emit(ERR.INVALID_FILE.format(str(invalid)))
+                self.failureFun(ERR.INVALID_FILE.format(str(invalid)))
+            self.continueFun([(name, data) for name, data in self.filedata.items()])
         except Exception as e:
-            self.signal.error.emit(ERR.ERROR_WHEN_DUETO.format("transcription", str(e)))
+            self.failureFun(ERR.ERROR_WHEN_DUETO.format("transcription", str(e)))
             self.logger.error(f"Error during transcription: {e}", exc_info=e)
-            self.signal.finish.emit()
-        else:
-            if not self.killed:
-                untranscribed = set(fails + invalid)
-                if len(untranscribed):
-                    self.logger.warn(f" following files are not transcribed {untranscribed}")
-                for filename in self.files:
-                    if not filename in untranscribed:
-                        self.signal.fileTranscribed.emit(filename)
-                    else:
-                        self.signal.remove.emit(filename)
-            time.sleep(0.2) 
-            self.signal.finish.emit()
+            self.continueFun([(name, data) for name, data in self.filedata.items()])
         finally:
+            self.signal.finish.emit()
             self.setAutoDelete(True)
     
     def kill(self):
@@ -183,10 +179,10 @@ class GBWorker(QRunnable):
             self.logger.error(f"Error while killing  the thread {e}", exc_info=e)
             self.signal.error(ERR.ERROR_WHEN_DUETO.format("cancelling thread", str(e)))
 
-    def getProgressDisplayer(self, file):
+    def getProgressDisplayer(self, name):
         """private function to emit file progress
         Args:
-            file (_type_): _description_
-            msg (_type_): _description_
+            name (str): _description_
+            msg (str): _description_
         """
-        return lambda msg : self.signal.progress.emit((file, msg))
+        return lambda msg : self.signal.progress.emit((name, msg))

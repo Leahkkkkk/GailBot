@@ -20,7 +20,7 @@ from view.components.SettingDetail import ProfileDetail
 from ...widgets.Background import initSecondaryColorBackground
 
 from ..FileUpload import UploadFileTab, ChooseSet
-from view.Signals import FileSignals
+from view.signal.interface import DataSignal
 from gbLogger import makeLogger
 from ...config.Style import STYLE_DATA
 from ...config.Text import FileTableText as Text
@@ -71,7 +71,7 @@ class Signals(QObject):
     nonZeroFile = pyqtSignal()
     ZeroFile = pyqtSignal()
     delete = pyqtSignal(str)
-    viewOutput = pyqtSignal(str)
+    viewOutputRequest = pyqtSignal(str)
     select = pyqtSignal(str)
     unselect = pyqtSignal(str)
     transferState = pyqtSignal(list)
@@ -81,7 +81,7 @@ class FileTable(QTableWidget):
     """ class for the file tables """
     def __init__(self, 
                  headers: List[str], 
-                 fileSignal: FileSignals,
+                 fileSignal: DataSignal,
                  tableWidgetsSet: Set[TableWidget] = None, 
                  showSelectHighlight = False,
                  *args, 
@@ -146,8 +146,8 @@ class FileTable(QTableWidget):
         self.viewSignal.delete.connect(self._confirmRemoveFile)
         self.viewSignal.select.connect(self.addToNextState)
         self.viewSignal.unselect.connect(self.removeFromNextState)
-        self.viewSignal.viewOutput.connect(
-            lambda file: self.fileSignal.viewOutput.emit(
+        self.viewSignal.viewOutputRequest.connect(
+            lambda file: self.fileSignal.viewOutputRequest.emit(
             Request(file, self.displayOutput)
         ))
         self.viewSignal.requestChangeProfile.connect(self.changeProfileRequest)
@@ -156,7 +156,7 @@ class FileTable(QTableWidget):
         STYLE_DATA.signal.changeFont.connect(self.fontChange)
     
     def requestProfile(self, profileName):
-        self.fileSignal.requestprofile.emit(
+        self.fileSignal.fileProfileRequest.emit(
             Request(data=profileName, succeed=self.displayProfileDetails))   
         
     def _initStyle(self) -> None:
@@ -605,7 +605,7 @@ class _TableCellWidgets(QObject):
                 self._addProfileDetailWidget()
             
             if TableWidget.VIEW_OUTPUT in self.widgets:
-                self._addViewOutputWidget()
+                self._addviewOutputRequestWidget()
                 
             self.ActionLayout.setSpacing(1)
             self.ActionLayout.addStretch()
@@ -651,11 +651,11 @@ class _TableCellWidgets(QObject):
             lambda: self.signals.requestProfile.emit(self.key)
         )
     
-    def _addViewOutputWidget(self):
-        self.viewOutPutBtn = QPushButton(Text.viewOutput)
-        self.ActionLayout.addWidget(self.viewOutPutBtn)
-        self.viewOutPutBtn.clicked.connect(
-            lambda: self.signals.viewOutput.emit(self.key)
+    def _addviewOutputRequestWidget(self):
+        self.viewOutputRequestBtn = QPushButton(Text.viewOutputRequest)
+        self.ActionLayout.addWidget(self.viewOutputRequestBtn)
+        self.viewOutputRequestBtn.clicked.connect(
+            lambda: self.signals.viewOutputRequest.emit(self.key)
         )
         
     def _checkStateChanged(self, state:bool):

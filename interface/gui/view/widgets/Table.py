@@ -5,7 +5,7 @@ from view.util.ErrorMsg import ERR
 from .Label import Label
 from .MsgBox import WarnBox, ConfirmBox
 from view.Request import Request
-from view.Signals import DataSignal
+from view.signal.interface import DataSignal
 from view.components.SelectPath import SaveSetting
 from gbLogger import makeLogger
 from PyQt6.QtWidgets import (
@@ -18,21 +18,28 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
 )
 from PyQt6.QtCore import (
-    Qt
+    Qt, QModelIndex
 )
-
+from PyQt6.QtGui import QFont
 class BaseTable(QTableWidget):
     signal : DataSignal 
     dataKeyToCol : Dict[str, int] 
+    tableWidth : int = STYLE_DATA.Dimension.DEFAULTTABWIDTH
+    tableHeight :  int = STYLE_DATA.Dimension.DEFAULTTABHEIGHT
+    nameAtFstColumn: bool = True
     def __init__(self, headers, *args, **kwargs):
-        super().__init__(0, len(headers))
+        print("init table")
+        super(BaseTable, self).__init__(0, len(headers))
         self.logger = makeLogger("F")
         self.headers = headers 
         self._initWidget()
         self._initStyle()
         self.nameToTablePins: Dict[str, QTableWidgetItem] = dict()
-        STYLE_DATA.signal.changeColor.connect(self.colorchange)
-
+        self.actionWidgetCol = len(self.headers) - 1
+        STYLE_DATA.signal.changeColor.connect(self.colorChange)
+        STYLE_DATA.signal.changeFont.connect(self.fontChange)
+        
+    ###################### for configuring table style ######################
     def _initStyle(self) -> None:
         """ Initialize the table style """
         self.horizontalHeader().setFixedHeight(45)
@@ -41,20 +48,27 @@ class BaseTable(QTableWidget):
         for i in range(self.columnCount()):
             self.horizontalHeader().setSectionResizeMode(
                 i, QHeaderView.ResizeMode.Fixed)
-        self.setFixedWidth(STYLE_DATA.Dimension.DEFAULTTABWIDTH)
-        self.setMinimumHeight(STYLE_DATA.Dimension.DEFAULTTABHEIGHT)
+        self.setFixedWidth(self.tableWidth)
+        self.setMinimumHeight(self.tableHeight)
         self.verticalScrollBar().setStyleSheet(STYLE_DATA.StyleSheet.SCROLL_BAR) 
         self.horizontalScrollBar().setStyleSheet(STYLE_DATA.StyleSheet.SCROLL_BAR)
         self.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)  
         self.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         self.setTextElideMode(Qt.TextElideMode.ElideMiddle)
+        font = QFont(STYLE_DATA.FontFamily.OTHER, STYLE_DATA.FontSize.TABLE_ROW)
+        self.setFont(font)
+        self.setTextElideMode(Qt.TextElideMode.ElideMiddle)
     
-    def colorchange(self):
+    def colorChange(self):
         self.setStyleSheet(f"#FileTable{STYLE_DATA.StyleSheet.FILE_TABLE}")
         self.verticalScrollBar().setStyleSheet(STYLE_DATA.StyleSheet.SCROLL_BAR) 
         self.horizontalScrollBar().setStyleSheet(STYLE_DATA.StyleSheet.SCROLL_BAR)
         self.horizontalHeader().setStyleSheet(STYLE_DATA.StyleSheet.TABLE_HEADER)
         
+    def fontChange(self, font = None):
+        font = QFont(STYLE_DATA.FontFamily.OTHER, STYLE_DATA.FontSize.TABLE_ROW)
+        self.setFont(font)
+
     def resizeCol(self, widths:List[float]) -> None:
         """ takes in a list of width and resize the width of the each 
             column to the width
@@ -75,33 +89,61 @@ class BaseTable(QTableWidget):
         self.horizontalHeader().setStyleSheet(STYLE_DATA.StyleSheet.TABLE_HEADER)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
 
-    def addCellWidgets(self, name: str, tableItem: QTableWidgetItem, row:int):
+    ################# for configuring table widget and  ################
+    def addCellWidgets(self, name: str, row:int):
         cellWidget = QWidget()
         layout     = QVBoxLayout()
-        editBtn    = QPushButton("Edit")
-        deleteBtn  = QPushButton("Delete")
-        sourceBtn  = QPushButton("View Source")
-        detailBtn  = QPushButton("View Detail")
         cellWidget.setLayout(layout)
-        
-        layout.addWidget(editBtn)
-        layout.addWidget(deleteBtn)
-        # layout.addWidget(sourceBtn) #NOTE: removed for engine and profile setting
-        layout.addWidget(detailBtn)
-        deleteBtn.clicked.connect(lambda: self.delete(name, tableItem))
-        editBtn.clicked.connect(lambda: self.editSetting(name))
-        sourceBtn.clicked.connect(lambda: self.viewSourceRequest(name))
-        detailBtn.clicked.connect(lambda: self.viewDetailRequest(name))
-        self.setCellWidget(row, len(self.headers) - 1, cellWidget)
+        self.setCellWidget(row, self.actionWidgetCol, cellWidget)
+        layout.addWidget(self.getEditBtn(name))
+        layout.addWidget(self.getRemoveBtn(name))
+        layout.addWidget(self.getViewDetailBtn(name))
 
+    def getRemoveBtn(self, name) -> QWidget:
+        btn = QPushButton("Remove")
+        btn.clicked.connect(
+            lambda:self.delete(name)
+        )
+        return btn
+        
+    def getEditBtn(self, name) -> QWidget:
+        btn = QPushButton("Edit")
+        btn.clicked.connect(
+            lambda:self.editSetting(name)
+        )
+        return btn
+        
+    def getViewDetailBtn(self, name) -> QWidget:
+        btn = QPushButton("View Detail")
+        btn.clicked.connect(
+            lambda:self.viewDetailRequest(name)
+        )
+        return btn
+
+    def getViewSourceBtn(self, name) -> QWidget:
+        btn = QPushButton("View Source")
+        btn.clicked.connect(
+            lambda:self.viewSourceRequest(name)
+        )
+        return btn
+    
+    def getViewOutputBtn(self, name) -> QWidget:
+        btn = QPushButton("View Output")
+        btn.clicked.connect(
+            lambda:self.viewOutputRequest(name)
+        )
+        return btn
+    
+        
+    ########################### for configuring table action ###############
     def addItems(self, items, **kwargs):
         for item in items:
             self.addItem(item, **kwargs)
-    
-    def delete(self, name, tableItem):
+
+    def delete(self, name):
         try:
             self.logger.info(f"trying to delete the plugin suite {name}")
-            succeed = lambda data: self.deleteSucceed(name, tableItem)
+            succeed = lambda data: self.deleteSucceed(name)
             requestDelete = lambda : self.signal.deleteRequest.emit(
                 Request(data=name, succeed= succeed)
             )
@@ -110,13 +152,13 @@ class BaseTable(QTableWidget):
             self.logger.error(e, exc_info=e)
             WarnBox(ERR.ERR_WHEN_DUETO.format("deleting plugin suite", str(e)))
     
-    def deleteSucceed(self, name: str, tableItem: QTableWidgetItem):
-        rowidx = self.indexFromItem(tableItem).row()
+    def deleteSucceed(self, name: str):
+        rowidx = self.indexFromItem(self.nameToTablePins[name]).row()
         self.removeRow(rowidx)
         self.signal.deleteSucceed.emit(name)
         
     def displayDetail(self, data):
-        pass 
+        raise NotImplementedError
     
     def viewDetailRequest(self, name):
         self.signal.getRequest.emit(
@@ -136,6 +178,16 @@ class BaseTable(QTableWidget):
         self.signal.viewSourceRequest.emit(
             Request(data=name, succeed=self.displaySource))
     
+    def viewOutputRequest(self, name:str) :
+        self.signal.viewOutputRequest.emit(
+            Request(data=name, succeed=self.viewPathFile))
+    
+    def viewPathFile(self, path:str):
+        try:
+            pid = subprocess.check_call(["open", path]) 
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            
     def addItem(self, setting: Tuple[str, Dict[str, str], str], **kwargs):
         self.logger.info(setting)
         name, data = setting
@@ -143,9 +195,10 @@ class BaseTable(QTableWidget):
             newRowIdx = self.rowCount()
             self.insertRow(newRowIdx)
             # set the setting name
-            nameItem = QTableWidgetItem(str(name))
+            nameItem = QTableWidgetItem(str(name)) \
+                       if self.nameAtFstColumn else QTableWidgetItem()
             nameItem.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-            self.nameToTablePins[name] = nameItem 
+        
             self.setItem(newRowIdx, 0, nameItem)
             
             for key, col in self.dataKeyToCol.items():
@@ -156,8 +209,9 @@ class BaseTable(QTableWidget):
                     newItem = QTableWidgetItem(str(data[key]))
                     newItem.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                     self.setItem(newRowIdx, col, newItem)
-            
-            self.addCellWidgets(name, nameItem, newRowIdx, **kwargs)
+            tablePin = self.item(newRowIdx, 0)
+            self.nameToTablePins[name] = tablePin 
+            self.addCellWidgets(name,  newRowIdx, **kwargs)
             self.resizeRowsToContents()  
         except Exception as e:
             self.logger.error(e, exc_info=e)

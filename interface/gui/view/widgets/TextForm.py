@@ -12,7 +12,6 @@ Description: a form widget that implement a form that takes in user input
 from dataclasses import dataclass
 from typing import Dict 
 
-from view.Signals import GlobalStyleSignal
 from view.widgets import (
     Label,
     ToggleView
@@ -76,13 +75,11 @@ class TextForm(QWidget):
             self._initStyle()
     
     def _connectSignal(self):
-        GlobalStyleSignal.changeColor.connect(self.changeColor)
-
+        STYLE_DATA.signal.changeColor.connect(self.changeColor)
     
-    def changeColor(self, colormode):
+    def changeColor(self):
         initSecondaryColorBackground(self)
         
-    
     def enableForm(self) -> None:
         """ public function that enable the form edit """
         for key, input in self.inputDict.items():

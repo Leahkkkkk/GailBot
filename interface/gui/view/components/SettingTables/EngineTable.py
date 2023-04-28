@@ -1,5 +1,5 @@
 from view.config.Text import ENGINE_SETTING_TEXT as TEXT
-from view.Signals import DataSignal
+from view.signal.interface import DataSignal
 from ..SettingConfig import EditEngine
 from ...widgets.Table import BaseTable
 from view.components.SettingDetail import EngineDetail
