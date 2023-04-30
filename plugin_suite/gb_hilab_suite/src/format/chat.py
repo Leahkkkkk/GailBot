@@ -3,15 +3,17 @@
 # @Date:   2022-08-24 10:54:53
 # @Last Modified by:   Muhammad Umair
 # @Last Modified time: 2022-08-24 12:16:03
-
+import os 
+import logging
 from typing import Dict, Any
 # Local imports
 from gailbot import Plugin, GBPluginMethods, UttObj
 from gb_hilab_suite.src.core.conversation_model import ConversationModel
-from gb_hilab_suite.src.configs import  load_internal_marker, load_label, PLUGIN_NAME
+from gb_hilab_suite.src.configs import  load_internal_marker, load_label, OUTPUT_FILE, PLUGIN_NAME, CHAT_FORMATTER
 
 MARKER = load_internal_marker()
 LABEL = load_label().CHAT
+
 class ChatPlugin(Plugin):
 
     def __init__(self) -> None:
@@ -24,16 +26,16 @@ class ChatPlugin(Plugin):
         """
         cm: ConversationModel = dependency_outputs[PLUGIN_NAME.ConvModel]
         varDict = {
-                MARKER.GAPS: LABEL.GAPMARKER,
-                MARKER.OVERLAP_FIRST_START: LABEL.OVERLAPMARKER_CURR_START,
-                MARKER.OVERLAP_FIRST_END: LABEL.OVERLAPMARKER_CURR_END,
+                MARKER.GAPS:                 LABEL.GAPMARKER,
+                MARKER.OVERLAP_FIRST_START:  LABEL.OVERLAPMARKER_CURR_START,
+                MARKER.OVERLAP_FIRST_END:    LABEL.OVERLAPMARKER_CURR_END,
                 MARKER.OVERLAP_SECOND_START: LABEL.OVERLAPMARKER_NEXT_START,
-                MARKER.OVERLAP_SECOND_END: LABEL.OVERLAPMARKER_NEXT_END,
-                MARKER.PAUSES: LABEL.PAUSE,
-                MARKER.FASTSPEECH_START: MARKER.FASTSPEECH_START,
-                MARKER.FASTSPEECH_END: MARKER.FASTSPEECH_END,
-                MARKER.SLOWSPEECH_START: MARKER.SLOWSPEECH_START,
-                MARKER.SLOWSPEECH_END: MARKER.SLOWSPEECH_END
+                MARKER.OVERLAP_SECOND_END:   LABEL.OVERLAPMARKER_NEXT_END,
+                MARKER.PAUSES:               LABEL.PAUSE,
+                MARKER.FASTSPEECH_START:     MARKER.FASTSPEECH_START,
+                MARKER.FASTSPEECH_END:       MARKER.FASTSPEECH_END,
+                MARKER.SLOWSPEECH_START:     MARKER.SLOWSPEECH_START,
+                MARKER.SLOWSPEECH_END:       MARKER.SLOWSPEECH_END
         }
         # Gets tree and utterance map from conversation model generated from dependency map
 
@@ -44,12 +46,12 @@ class ChatPlugin(Plugin):
 
         # start printing to file
         # header of the file 
+        # TODO: eng? 
         data = [
-            "@Begin\n@Languages:\t{0}\n".format("eng")
+            CHAT_FORMATTER.HEADER_LANGUAGE.format("eng")
         ]
         
-        path = "{}/conversation.cha".format(methods.output_path)
-
+        path = os.path.join(methods.output_path, OUTPUT_FILE.CHAT)
         utterances = newUttMap
         with open(path, "w", encoding='utf-8') as outfile:
             for item in data:
@@ -60,12 +62,12 @@ class ChatPlugin(Plugin):
                 l = []
                 for word in curr_utt:
                     l.append(word.text)
-                txt = ' '.join(l)
+                txt = CHAT_FORMATTER.TXT_SEP.join(l)
 
                 sLabel = LABEL.SPEAKERLABEL + str(curr_utt[0].sLabel)
                 
                 # actual text content 
-                turn = '{0}\t{1} {2}{4}_{3}{4}\n'.format(
+                turn = CHAT_FORMATTER.TURN.format(
                     sLabel, txt, curr_utt[0].startTime, curr_utt[-1].endTime,
                     0x15)
 

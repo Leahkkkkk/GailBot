@@ -19,6 +19,7 @@ class ServiceController:
         self.plugin_manager = PluginManager(ws_manager.plugin_src)
         self.pipeline_service = PipelineService(
             self.plugin_manager, num_threads = CONFIG.thread.transcriber_num_threads) 
+        self.transcribed = set() ## stores the file name of transcribed file
     
     def add_sources(self, src_output_pairs: List [Tuple [str, str]]):
         """add a list of sources
@@ -354,13 +355,26 @@ class ServiceController:
             # remove source from organizer
             if sources:
                 for source in sources:
-                    self.organizer.source_manager.recycle_source_name(source)
+                    self.transcribed.add(source)
            
             return invalid, fails
         except Exception as e:
             logger.error(e, exc_info=e)
             return invalid, sources
+    
+    def clear_source_memory(self) -> bool:
+        """clear the memory related with transcribed files,
         
+        """
+        logger.info("clear source memory")
+        try:
+            for src in self.transcribed:
+                self.organizer.remove_source(src)
+            return True
+        except Exception as e:
+            logger.error(e, exc_info=e) 
+            
+            
     def register_plugin_suite(self, plugin_source: str) -> Union[List[str], str]:
         """
         Registers a plugin suite to the object's plugin manager

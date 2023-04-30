@@ -132,7 +132,6 @@ class OverlapPlugin(Plugin):
                     curr_overlap_end_pos += 1
                 else:
                     curr_overlap_end_pos += 1
-
             else:
                 if curr_overlap_end_pos == 0:
                     curr_overlap_start_pos += 1

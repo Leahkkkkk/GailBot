@@ -29,6 +29,7 @@ class TranscribeSignal(QObject):
     sendToConfirm = pyqtSignal(list)
     sendToTranscribe = pyqtSignal(list)
     sendToComplete = pyqtSignal(list)
+    clearSourceMemory = pyqtSignal()
 
 class ViewSignals(QObject):
     restart    = pyqtSignal()

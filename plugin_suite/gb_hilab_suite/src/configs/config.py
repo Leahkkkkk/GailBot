@@ -84,6 +84,14 @@ class PLUGIN_NAME:
     CSV          = "CSVPlugin"
     XML          = "XMLPlugin"
 
+
+@dataclass 
+class OUTPUT_FILE:
+    CHAT = "conversation.cha"
+    NATIVE_XML = "native.xml"
+    TB_XML = "talkbank.xml"
+
+
 def load_label():
     d = toml.load(os.path.join(os.path.dirname(__file__), "configData.toml"))
     return  ALL_LABELS.from_dict(d["LABEL"])

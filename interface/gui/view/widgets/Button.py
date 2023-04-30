@@ -11,10 +11,13 @@ Description: implement reusable button widgets
 '''
 import os
 from typing import List
+
+from PyQt6 import QtCore, QtGui
 from view.config.Text import BtnText as Text
 from config_frontend import PROJECT_ROOT
 from view.util.ColorGenerator import colorScale
-
+from .InstructionPop import Instruction
+from .Label import Label
 from PyQt6.QtWidgets import (
     QPushButton, 
     QWidget, 
@@ -237,6 +240,28 @@ class IconBtn(QPushButton):
         icon = QIcon(os.path.join(PROJECT_ROOT, icon))
         self.setIcon(icon)
         
+        
+class TableBtn(QPushButton):
+    def __init__(self, label = None, icon = None, instructions = None):
+        super().__init__()
+        self.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        if label:
+            self.setText(label)
+        if icon:
+            icon = QIcon(os.path.join(PROJECT_ROOT, icon))
+            self.setIcon(icon)
+
+        self.instruction = Instruction(instructions)
+        self.instruction.setContentsMargins(0,0,0,0)
+        
+    def enterEvent(self, event) -> None:
+        pos = QCursor.pos()
+        self.instruction.move(pos.x(), pos.y())
+        self.instruction.show()
+
+
+    def leaveEvent(self, event) -> None:
+        self.instruction.hide()
         
 """ NOTE: currently unused in the interface  """  
 class dropDownButton(QWidget):

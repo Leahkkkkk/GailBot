@@ -6,6 +6,7 @@ from .Label import Label
 from .MsgBox import WarnBox, ConfirmBox
 from view.Request import Request
 from view.signal.interface import DataSignal
+from view.widgets.Button import TableBtn
 from view.components.SelectPath import SaveSetting
 from gbLogger import makeLogger
 from PyQt6.QtWidgets import (
@@ -94,41 +95,42 @@ class BaseTable(QTableWidget):
         cellWidget = QWidget()
         layout     = QVBoxLayout()
         cellWidget.setLayout(layout)
-        self.setCellWidget(row, self.actionWidgetCol, cellWidget)
         layout.addWidget(self.getEditBtn(name))
         layout.addWidget(self.getRemoveBtn(name))
         layout.addWidget(self.getViewDetailBtn(name))
+        self.setCellWidget(row, self.actionWidgetCol, cellWidget)
+        
 
     def getRemoveBtn(self, name) -> QWidget:
-        btn = QPushButton("Remove")
+        btn = TableBtn("Remove", instructions=" remove the source from the table")
         btn.clicked.connect(
             lambda:self.delete(name)
         )
         return btn
         
     def getEditBtn(self, name) -> QWidget:
-        btn = QPushButton("Edit")
+        btn = TableBtn("Edit", instructions=" edit setting")
         btn.clicked.connect(
             lambda:self.editSetting(name)
         )
         return btn
         
     def getViewDetailBtn(self, name) -> QWidget:
-        btn = QPushButton("View Detail")
+        btn = TableBtn("View Detail", instructions="view source detail")
         btn.clicked.connect(
             lambda:self.viewDetailRequest(name)
         )
         return btn
 
     def getViewSourceBtn(self, name) -> QWidget:
-        btn = QPushButton("View Source")
+        btn = TableBtn("View Source", instructions="view source raw file")
         btn.clicked.connect(
             lambda:self.viewSourceRequest(name)
         )
         return btn
     
     def getViewOutputBtn(self, name) -> QWidget:
-        btn = QPushButton("View Output")
+        btn = TableBtn("View Output", instructions="view source output")
         btn.clicked.connect(
             lambda:self.viewOutputRequest(name)
         )
@@ -140,14 +142,17 @@ class BaseTable(QTableWidget):
         for item in items:
             self.addItem(item, **kwargs)
 
-    def delete(self, name):
+    def delete(self, name, withConfirm = True):
         try:
             self.logger.info(f"trying to delete the plugin suite {name}")
             succeed = lambda data: self.deleteSucceed(name)
             requestDelete = lambda : self.signal.deleteRequest.emit(
                 Request(data=name, succeed= succeed)
             )
-            ConfirmBox(f"Confirming to delete {name}?", requestDelete)
+            if withConfirm:
+                ConfirmBox(f"Confirming to delete {name}?", requestDelete)
+            else:
+                requestDelete()
         except Exception as e:
             self.logger.error(e, exc_info=e)
             WarnBox(ERR.ERR_WHEN_DUETO.format("deleting plugin suite", str(e)))

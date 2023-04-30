@@ -144,7 +144,9 @@ class Controller(QObject):
     ###################   gailbot  handler #############################
     def _handleTranscribeSignal(self):
         """ handle signal from View that requests to transcribe the file"""
+        
         self.ViewObj.getTranscriptionSignal().transcribe.connect(self._runGailBot)
+        
     
     def _runGailBot(self, transcribeRequest: Request):
         """run gailbot on a separate thread

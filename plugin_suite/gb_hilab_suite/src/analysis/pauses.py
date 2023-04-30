@@ -56,7 +56,8 @@ class PausePlugin(Plugin):
                 
                 if  (THRESHOLD.LB_LATCH <= fto) and (fto <= THRESHOLD.UB_LATCH):
                     logging.debug(f"latch detected with fto {fto}")
-                    markerText = MARKER_FORMATTER.TYPE_INFO_SP.format(MARKER.PAUSES, MARKER.LATCH_DELIM, str(curr_utt[-1].sLabel))
+                    markerText = MARKER_FORMATTER.TYPE_INFO_SP.format(
+                        MARKER.PAUSES, MARKER.LATCH_DELIM, str(curr_utt[-1].sLabel))
                     cm.insertToTree(curr_utt[-1].endTime,
                                     nxt_utt[0].startTime,
                                     MARKER.PAUSES,
@@ -65,7 +66,8 @@ class PausePlugin(Plugin):
                     
                 elif THRESHOLD.LB_PAUSE <= fto <= THRESHOLD.UB_PAUSE:
                     logging.debug(f" pauses detected with fto {fto}")
-                    markerText =  MARKER_FORMATTER.TYPE_INFO_SP.format(MARKER.PAUSES, str(round(fto, 1)), str(curr_utt[-1].sLabel))
+                    markerText =  MARKER_FORMATTER.TYPE_INFO_SP.format(
+                        MARKER.PAUSES, str(round(fto, 1)), str(curr_utt[-1].sLabel))
                     cm.insertToTree(curr_utt[-1].endTime,
                                     nxt_utt[0].startTime,
                                     MARKER.PAUSES,
@@ -74,7 +76,8 @@ class PausePlugin(Plugin):
                     
                 elif THRESHOLD.LB_MICROPAUSE <= fto <= THRESHOLD.UB_MICROPAUSE:
                     logging.debug(f"micro pauses detected with fto {fto}")
-                    markerText =  MARKER_FORMATTER.TYPE_INFO_SP.format(MARKER.MICROPAUSE, str(round(fto, 1)), str(curr_utt[-1].sLabel))
+                    markerText =  MARKER_FORMATTER.TYPE_INFO_SP.format(
+                        MARKER.MICROPAUSE, str(round(fto, 1)), str(curr_utt[-1].sLabel))
                     cm.insertToTree(curr_utt[-1].endTime,
                                     nxt_utt[0].startTime,
                                     MARKER.PAUSES,
@@ -83,7 +86,8 @@ class PausePlugin(Plugin):
              
                 elif fto >= THRESHOLD.LB_LARGE_PAUSE:
                     logging.debug(f"large pauses detected with fto {fto}")
-                    markerText =  MARKER_FORMATTER.TYPE_INFO_SP.format(MARKER.PAUSES, str(round(fto, 1)), str(curr_utt[-1].sLabel))
+                    markerText =  MARKER_FORMATTER.TYPE_INFO_SP.format(
+                        MARKER.PAUSES, str(round(fto, 1)), str(curr_utt[-1].sLabel))
                     cm.insertToTree(curr_utt[-1].endTime,
                                     nxt_utt[0].startTime,
                                     MARKER.PAUSES,

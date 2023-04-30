@@ -75,8 +75,7 @@ class FileUploadPage(BasicPage):
         self._disallowTranscribe()
         STYLE_DATA.signal.changeColor.connect(self.changeColor)
         STYLE_DATA.signal.changeFont.connect(self.fontChange)
-        
-        # GBTranscribeSignal.sendToTranscribe.connect(self.removeFromTable)
+        GBTranscribeSignal.sendToTranscribe.connect(self.removeFromTable)
 
 
     def _initWidget(self):

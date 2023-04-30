@@ -45,6 +45,10 @@ class TranscribeSuccessPage(BasicPage):
     def _connectSignal(self):
         GBTranscribeSignal.sendToComplete.connect(
             self.fileTable.resetFileDisplay)
+        self.returnBtn.clicked.connect(
+            lambda: GBTranscribeSignal.clearSourceMemory.emit())
+        self.moreBtn.clicked.connect(
+            lambda: GBTranscribeSignal.clearSourceMemory.emit())
         
     def _initWidget(self):
         """ initializes widgets on the page """

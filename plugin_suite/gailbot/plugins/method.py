@@ -1,5 +1,6 @@
 from typing import Dict, Union, Any, List, TypedDict
 from pydantic import BaseModel 
+import os
 OUT_PATH = "/Users/yike/Desktop/plugin_output"
 
 class UttObj(BaseModel):
@@ -17,13 +18,22 @@ class Methods():
         raise NotImplementedError
 
 class GBPluginMethods(Methods):
-    def __init__(self):
+    def __init__(self, utt_data = None, output_path = None):
         pause_utt = [{"start":  i, "end": i + 0.91, "speaker": 1, "text": f"word{i}"} for i in range(0, 20, 1)]
         gap_utt =   [{"start":  i, "end": i + 0.5, "speaker": (0 + i) % 4, "text": f"word{i}"} for i in range(20, 60, 1)]
         overlap_utt = [{"start": i, "end": i + 4, "speaker": (0 + i) % 2, "text": f"word{i}"} for i in range(60, 80, 1)]
         data = dict()
         data["test"] = pause_utt + gap_utt + overlap_utt
-        self.data = data 
+        if utt_data:
+            self.data = utt_data
+        else:
+            self.data = data 
+        
+        if output_path:
+            self.output = output_path
+            os.makedirs(output_path, exist_ok=True)
+        else:
+            self.output = OUT_PATH
     
     @property
     def filenames(self) -> List[str]:
@@ -65,7 +75,7 @@ class GBPluginMethods(Methods):
         Returns:
             String containing the output path
         """
-        return OUT_PATH
+        return self.output
     
     def get_utterance_objects(self) -> Dict[str, List[UttObj]]: 
         """ 

@@ -67,7 +67,13 @@ class GailBot:
             
         """
         return self.gb.transcribe(sources)
-   
+  
+  
+  
+    def clear_source_memory(self)->bool:
+        return self.gb.clear_source_memory()
+    
+    
     def add_sources(
         self, 
         src_output_pairs : List [Tuple [str, str]]

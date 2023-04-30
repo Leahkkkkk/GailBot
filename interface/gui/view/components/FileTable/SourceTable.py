@@ -7,6 +7,7 @@ from view.signal.Request import Request
 from view.widgets.MsgBox import WarnBox, ConfirmBox
 from view.components.SettingDetail import ProfileDetail
 from view.widgets.Table import BaseTable
+from view.widgets.Button import ColoredBtn
 from ...widgets.Background import initSecondaryColorBackground
 
 from ..FileUpload import UploadFileTab, ChooseSet
@@ -273,13 +274,17 @@ class SourceTable(BaseTable):
     def getChangeProfileBtn(self, name) -> QWidget:
         btn = QPushButton("Change Profile")
         btn.clicked.connect(
-            lambda: self.fileProfileRequest(name)
+            lambda: self.changeProfileRequest(name)
         )
         return btn
 
 ####################### function for button click action ####################
     def changeProfileRequest(self, name):
-        dialog = _ChangeProfileDialog(self.profiles, name, self.signal, parent=self)
+        dialog = _ChangeProfileDialog(
+            self.profiles, 
+            name, 
+            self.signal, 
+            succeed=self.changeProfileSucceed, parent=self)
         dialog.exec()
    
     def changeProfileSucceed(self, result: Tuple[str, str]):
@@ -288,6 +293,7 @@ class SourceTable(BaseTable):
             if name in self.nameToTablePins:
                 row = self.indexFromItem(self.nameToTablePins[name]).row()
                 newitem = QTableWidgetItem(profilekey)
+                newitem.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                 self.setItem(row, self.dataKeyToCol["Profile"], newitem)
                 if name in self.selected: 
                     newitem.setBackground(QColor(STYLE_DATA.Color.HIGHLIGHT))
@@ -320,8 +326,8 @@ class SourceTable(BaseTable):
         """
         Delete all the files on the table 
         """
-        for name, tablePin in self.nameToTablePins.keys():
-            self.delete(name, tablePin)
+        for name in self.nameToTablePins.keys():
+            self.delete(name, withConfirm=False)
 
 ############################## for editing source data #######################
     def changeFileToTranscribed(self, name:str):
@@ -398,8 +404,10 @@ class _ChangeProfileDialog(QDialog):
         self.selectSetting = ChooseSet(profiles)
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
+        self.confirmBtn = ColoredBtn("Confirm", STYLE_DATA.Color.PRIMARY_BUTTON)
         self.layout.addWidget(self.selectSetting)
-        self.selectSetting.selectSettings.currentTextChanged.connect(
+        self.layout.addWidget(self.confirmBtn, alignment=Qt.AlignmentFlag.AlignHCenter)
+        self.confirmBtn.clicked.connect(
             self.updateProfile)
         initSecondaryColorBackground(self)
         self.setFixedSize(QSize(450, 300))

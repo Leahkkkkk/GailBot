@@ -10,6 +10,7 @@ from typing import Any, Dict
 from copy import deepcopy
 # Local imports
 from gailbot import Plugin, GBPluginMethods
+import logging
 
 class ConversationMapPlugin(Plugin):
     def __init__(self) -> None:
@@ -27,6 +28,8 @@ class ConversationMapPlugin(Plugin):
         Returns:
             Dict[str, Dict[str, Dict]]: for conversational-level analysis
         """
+
+        logging.info("Creating the conversation dictionary")
         conversationDict = dict()
         conversationDict["wordLevel"] = dict()
         conversationDict["uttLevel"] = dict()

@@ -23,6 +23,7 @@ from view.widgets.TabPage import TabPage
 from view.widgets.MsgBox import WarnBox
 from view.widgets.Button import ColoredBtn
 from view.widgets.ComboBox import ComboBox
+from view.widgets.Background import initSecondaryColorBackground
 from view.util.ErrorMsg import WARN, ERR
 from PyQt6.QtWidgets import (
     QWidget,
@@ -257,6 +258,7 @@ class ChooseSet(TabPage):
         self._initWidget()
         self._initLayout()
         self.setAutoFillBackground(True)
+        initSecondaryColorBackground(self)
     
     def getProfile(self) -> Profile:
         """ return the selected setting """
@@ -279,8 +281,8 @@ class ChooseSet(TabPage):
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
         self.layout.addStretch()
-        self.layout.addWidget(self.label)
-        self.layout.addWidget(self.selectSettings)
+        self.layout.addWidget(self.label, alignment=center)
+        self.layout.addWidget(self.selectSettings, alignment=center)
         self.layout.addStretch()
         
 class ChooseOutPut(TabPage):

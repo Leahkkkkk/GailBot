@@ -14,7 +14,6 @@ class SourceManager():
     """
     def __init__(self) -> None:
         self.sources : Dict[str, SourceObject] = dict()
-        self.recycled_names = set() 
         
         
     def add_source(self, source_path: str, output: str) -> Union [str, bool]:
@@ -59,27 +58,12 @@ class SourceManager():
             True if given source was successfully removed, false if given 
             source was not found
         """
+        logger.info(f"source {source_name} is removed")
         if not self.is_source(source_name):
             return False
         self.sources.pop(source_name)
         return True
     
-    def recycle_source_name(self, source: str) -> bool:
-        """ recycle the source name to be able for reuse 
-
-        Args:
-            source (str): the name or path to the source
-
-        Returns:
-            bool: return true if the name is recycled
-        """
-        try:
-            source_name = get_name(source) if is_path(source) else source
-            self.recycled_names.add(source_name) 
-            return True     
-        except Exception as e:
-            logger.error(e, exc_info=e)
-            return False
         
     def is_source(self, source:str) -> bool:
         """

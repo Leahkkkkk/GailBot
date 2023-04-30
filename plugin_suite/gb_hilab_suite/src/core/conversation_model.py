@@ -7,6 +7,7 @@
 
 from copy import deepcopy
 from typing import Dict, Any, List
+import logging
 
 # Local imports
 from gb_hilab_suite.src.core.nodes import Word, Node

@@ -67,9 +67,11 @@ class TranscribeController(QObject):
         self.logger.info("initialize the transcribe controller")
         self.ThreadPool = ThreadPool
         self.signal = Signal()
+        self.transcribeSignal = view.getTranscriptionSignal()
         self.gb = gb
         # connect to view handler for over-loaded threadpool
         
+        self.transcribeSignal.clearSourceMemory.connect(self.gb.clear_source_memory)
         # view handler to redirect to different pages based on the 
         # transcribe result 
         self.signal.start.connect(view.showTranscribeInProgress)
