@@ -1,11 +1,11 @@
-[ANLYSIS_MARKER]
+[INTERNAL_MARKER]
 GAPS       = "gaps"
 OVERLAPS   = "overlaps"
 PAUSES     = "pauses"
 FTO        = "fto"
 LATCH      = "latch"
 MICROPAUSE = "micropause"
-
+NO_SPEAKER = "NONE"
 # marker text
 MARKERTYPE    = "markerType"
 MARKERINFO    = "markerInfo"
@@ -29,10 +29,12 @@ FASTSPEECH_END   = "fastspeech_end"
 DELIM_MARKER1    = "."
 DELIM_MARKER2    = "%"
 
+UTT_PAUSE_MARKERS = ["%HESITATION"]
+
 
 [THRESHOLD]
 GAPS_LB = 0.3
-OVERLAP_MARKERLIMIT = 4
+OVERLAP_MARKERLIMIT = 4.0
 LB_LATCH = 0.01
 UB_LATCH = 0.09
 LB_PAUSE = 0.2
@@ -42,7 +44,7 @@ UB_MICROPAUSE = 0.2
 LB_LARGE_PAUSE = 1.0
 TURN_END_THRESHOLD_SECS = 0.1
 
-[LABEL.DEFUALT]
+[LABEL.DEFAULT]
 SPEAKERLABEL     = "SP_"
 GAPMARKER     = "(gap)"
 OVERLAPMARKER = "(my_overlap)"
@@ -63,7 +65,7 @@ OVERLAPMARKER_NEXT_START = " < "
 OVERLAPMARKER_NEXT_END   = " > [>]"
 
 [LABEL.CHAT]
-SPEAKERLABEL     = "SP_"
+SPEAKERLABEL  = "SP_"
 GAPMARKER     = "(gap chat)"
 OVERLAPMARKER = "(my_overlap chat)"
 PAUSE         = "(my_pause chat)"

@@ -10,15 +10,13 @@ import logging
 from gailbot import Plugin, UttObj, GBPluginMethods
 from gb_hilab_suite.src.core.nodes import Word
 from gb_hilab_suite.src.core.conversation_model import ConversationModel
-from gb_hilab_suite.src.configs import load_marker, load_threshold, PLUGIN_NAME
-MARKER = load_marker() 
+from gb_hilab_suite.src.configs import load_internal_marker, load_threshold, PLUGIN_NAME, MARKER_FORMATTER
+MARKER = load_internal_marker() 
 THRESHOLD = load_threshold()
 class OverlapPlugin(Plugin):
-
     def __init__(self) -> None:
         super().__init__()
         self.marker_limit = THRESHOLD.OVERLAP_MARKERLIMIT
-
 
     def apply(self, 
                      dependency_outputs: Dict[str, Any],
@@ -46,6 +44,7 @@ class OverlapPlugin(Plugin):
 
         mapIter = cm.map_iterator(utterances) # iterator
         i = mapIter.iter() # i is the iterable object
+        logging.debug(f"start analyze overlap")
         while i.hasNextPair():
             pair = i.nextPair()
             curr_utt = cm.getWordFromNode(pair[0])
@@ -53,10 +52,11 @@ class OverlapPlugin(Plugin):
 
             # In the case of an overlap, get its 4 marker positions
             if nxt_utt[0].startTime < curr_utt[-1].endTime:
-                logging.debug("overlap detected")
-                curr_x, curr_y, nxt_x, nxt_y = self._get_overlap_positions(
-                    curr_utt, nxt_utt)
+                logging.debug(f"overlap detected between {nxt_utt[0].startTime} and {curr_utt[-1].endTime}")
+                curr_x, curr_y, nxt_x, nxt_y = self._get_overlap_positions(curr_utt, nxt_utt)
+                logging.debug(f"get overlap position {curr_x}, {curr_y}, {nxt_x}, {nxt_y}")
                 if (curr_x, curr_y, nxt_x, nxt_y) == (-1, -1, -1, -1):
+                    logging.warn(f"detect overlap between the same speaker")
                     continue
 
                 if curr_x >= len(curr_utt):
@@ -68,68 +68,35 @@ class OverlapPlugin(Plugin):
                 if nxt_y >= len(nxt_utt):
                     nxt_y = -1
 
-                markerText1 = "({1}{0}{2}{0}{3})".format(MARKER.MARKER_SEP,
-                                                    str(MARKER.MARKERTYPE) +
-                                                    str(MARKER.KEYVALUE_SEP) +
-                                                    str(MARKER.MARKER1),
-                                                    str(MARKER.MARKERINFO) +
-                                                    str(MARKER.KEYVALUE_SEP) +
-                                                    str(unique_id),
-                                                    str(MARKER.MARKERSPEAKER) +
-                                                    str(MARKER.KEYVALUE_SEP) +
-                                                    curr_utt[0].sLabel)
+                fst_start = MARKER_FORMATTER.TYPE_INFO_SP.format(
+                    MARKER.OVERLAP_FIRST_START, str(unique_id), curr_utt[0].sLabel)
+                fst_end = MARKER_FORMATTER.TYPE_INFO_SP.format(
+                    MARKER.OVERLAP_FIRST_END, str(unique_id), curr_utt[0].sLabel)
+                snd_start = MARKER_FORMATTER.TYPE_INFO_SP.format(
+                    MARKER.OVERLAP_SECOND_START, str(unique_id), nxt_utt[0].sLabel)
+                snd_end = MARKER_FORMATTER.TYPE_INFO_SP.format(
+                    MARKER.OVERLAP_SECOND_END, str(unique_id), nxt_utt[0].sLabel)
 
-                markerText2 = "({1}{0}{2}{0}{3})".format(MARKER.MARKER_SEP,
-                                                    str(MARKER.MARKERTYPE) +
-                                                    str(MARKER.KEYVALUE_SEP) +
-                                                    str(MARKER.MARKER2),
-                                                    str(MARKER.MARKERINFO) +
-                                                    str(MARKER.KEYVALUE_SEP) +
-                                                    str(unique_id),
-                                                    str(MARKER.MARKERSPEAKER) +
-                                                    str(MARKER.KEYVALUE_SEP) +
-                                                    curr_utt[0].sLabel)
-
-                markerText3 = "({1}{0}{2}{0}{3})".format(MARKER.MARKER_SEP,
-                                                    str(MARKER.MARKERTYPE) +
-                                                    str(MARKER.KEYVALUE_SEP) +
-                                                    str(MARKER.MARKER3),
-                                                    str(MARKER.MARKERINFO) +
-                                                    str(MARKER.KEYVALUE_SEP) +
-                                                    str(unique_id),
-                                                    str(MARKER.MARKERSPEAKER) +
-                                                    str(MARKER.KEYVALUE_SEP) +
-                                                    nxt_utt[0].sLabel)
-
-                markerText4 = "({1}{0}{2}{0}{3})".format(MARKER.MARKER_SEP,
-                                                    str(MARKER.MARKERTYPE) +
-                                                    str(MARKER.KEYVALUE_SEP) +
-                                                    str(MARKER.MARKER4),
-                                                    str(MARKER.MARKERINFO) +
-                                                    str(MARKER.KEYVALUE_SEP) +
-                                                    str(unique_id),
-                                                    str(MARKER.MARKERSPEAKER) +
-                                                    str(MARKER.KEYVALUE_SEP) +
-                                                    nxt_utt[0].sLabel)
-                logging.debug("insert overlap to the tree")
+                logging.debug(f"insert overlap markers to the tree: first start:\
+                        {fst_start}, first end: {fst_end}, snd_start: {snd_start}, snd_end: {snd_end} \
+                        current speaker {curr_utt[0].sLabel} , next speaker: {nxt_utt[0].sLabel}")
                 # insert the overlap markers into the tree
                 cm.insertToTree(curr_utt[curr_x].startTime,
                                 curr_utt[curr_x].startTime,
                                 MARKER.OVERLAPS,
-                                markerText1)
+                                fst_start)
                 cm.insertToTree(curr_utt[curr_y].endTime,
                                 curr_utt[curr_y].endTime,
                                 MARKER.OVERLAPS,
-                                markerText2)
+                                fst_end)
                 cm.insertToTree(nxt_utt[nxt_x].startTime,
                                 nxt_utt[nxt_x].startTime,
                                 MARKER.OVERLAPS,
-                                markerText3)
+                                snd_start)
                 cm.insertToTree(nxt_utt[nxt_y].endTime,
                                 nxt_utt[nxt_y].endTime,
                                 MARKER.OVERLAPS,
-                                markerText4)
-
+                                snd_end)
                 unique_id += 1
 
         cm.buildUttMap()

@@ -23,7 +23,6 @@ class GBPluginMethods(Methods):
         overlap_utt = [{"start": i, "end": i + 4, "speaker": (0 + i) % 2, "text": f"word{i}"} for i in range(60, 80, 1)]
         data = dict()
         data["test"] = pause_utt + gap_utt + overlap_utt
-        
         self.data = data 
     
     @property

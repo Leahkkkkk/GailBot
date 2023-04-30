@@ -11,8 +11,8 @@ from dataclasses import dataclass
 # Local imports
 from gailbot import Plugin, GBPluginMethods, UttObj
 from gb_hilab_suite.src.core.conversation_model import ConversationModel
-from gb_hilab_suite.src.configs import load_marker, load_threshold, PLUGIN_NAME
-MARKER = load_marker() 
+from gb_hilab_suite.src.configs import load_internal_marker, load_threshold, PLUGIN_NAME, MARKER_FORMATTER
+MARKER = load_internal_marker() 
 THRESHOLD = load_threshold()
 
 class PausePlugin(Plugin):
@@ -43,6 +43,7 @@ class PausePlugin(Plugin):
 
         mapIter = cm.map_iterator(utterances)  # iterator
         i = mapIter.iter()  # i is the iterable object
+        logging.info("start to pauses analysis")
         while i.hasNextPair():
             pair = i.nextPair()
             curr_utt = cm.getWordFromNode(pair[0])
@@ -51,75 +52,43 @@ class PausePlugin(Plugin):
             if curr_utt[0].sLabel == nxt_utt[0].sLabel:
                 fto = round(nxt_utt[0].startTime - curr_utt[-1].endTime, 2)
                 markerText = ""
+                logging.info(f"get fto {fto}")
+                
                 if  (THRESHOLD.LB_LATCH <= fto) and (fto <= THRESHOLD.UB_LATCH):
-                    logging.debug("pauses")
-                    markerText = "({1}{0}{2}{0}{3})".format(MARKER.MARKER_SEP,
-                                                            str(MARKER.MARKERTYPE) +
-                                                            str(MARKER.KEYVALUE_SEP) +
-                                                            str(MARKER.PAUSES),
-                                                            str(MARKER.MARKERINFO) +
-                                                            str(MARKER.KEYVALUE_SEP) +
-                                                            str(MARKER.LATCH_DELIM),
-                                                            str(MARKER.MARKERSPEAKER) +
-                                                            str(MARKER.KEYVALUE_SEP) +
-                                                            str(curr_utt[-1].sLabel))
+                    logging.debug(f"latch detected with fto {fto}")
+                    markerText = MARKER_FORMATTER.TYPE_INFO_SP.format(MARKER.PAUSES, MARKER.LATCH_DELIM, str(curr_utt[-1].sLabel))
                     cm.insertToTree(curr_utt[-1].endTime,
                                     nxt_utt[0].startTime,
                                     MARKER.PAUSES,
                                     markerText)
+                    logging.debug(f"insert the latch marker {markerText}")
+                    
                 elif THRESHOLD.LB_PAUSE <= fto <= THRESHOLD.UB_PAUSE:
-                    logging.debug("pauses")
-                    # TODO: 0.8 vs -0.8
-                    markerText = "({1}{0}{2}{0}{3})".format(MARKER.MARKER_SEP,
-                                                            str(MARKER.MARKERTYPE) +
-                                                            str(MARKER.KEYVALUE_SEP) +
-                                                            str(MARKER.PAUSES),
-                                                            str(MARKER.MARKERINFO) +
-                                                            str(MARKER.KEYVALUE_SEP) +
-                                                            str(round(
-                                                                fto, 1)),
-                                                            str(MARKER.MARKERSPEAKER) +
-                                                            str(MARKER.KEYVALUE_SEP) +
-                                                            str(curr_utt[-1].sLabel))
+                    logging.debug(f" pauses detected with fto {fto}")
+                    markerText =  MARKER_FORMATTER.TYPE_INFO_SP.format(MARKER.PAUSES, str(round(fto, 1)), str(curr_utt[-1].sLabel))
                     cm.insertToTree(curr_utt[-1].endTime,
                                     nxt_utt[0].startTime,
                                     MARKER.PAUSES,
                                     markerText)
-                elif THRESHOLD.LB_MICROPAUSE == fto \
-                        <= THRESHOLD.UB_MICROPAUSE:
-                    logging.debug("pauses")
-                    markerText = "({1}{0}{2}{0}{3})".format(MARKER.MARKER_SEP,
-                                                            str(MARKER.MARKERTYPE) +
-                                                            str(MARKER.KEYVALUE_SEP) +
-                                                            str(MARKER.PAUSES),
-                                                            str(MARKER.MARKERINFO) +
-                                                            str(MARKER.KEYVALUE_SEP) +
-                                                            str(round(
-                                                                fto, 1)),
-                                                            str(MARKER.MARKERSPEAKER) +
-                                                            str(MARKER.KEYVALUE_SEP) +
-                                                            str(curr_utt[-1].sLabel))
+                    logging.debug(f"insert the pause marker {markerText}")
+                    
+                elif THRESHOLD.LB_MICROPAUSE <= fto <= THRESHOLD.UB_MICROPAUSE:
+                    logging.debug(f"micro pauses detected with fto {fto}")
+                    markerText =  MARKER_FORMATTER.TYPE_INFO_SP.format(MARKER.MICROPAUSE, str(round(fto, 1)), str(curr_utt[-1].sLabel))
                     cm.insertToTree(curr_utt[-1].endTime,
                                     nxt_utt[0].startTime,
                                     MARKER.PAUSES,
                                     markerText)
+                    logging.debug(f"insert the micro pause marker {markerText}")
+             
                 elif fto >= THRESHOLD.LB_LARGE_PAUSE:
-                    logging.debug("pauses")
-                    markerText = "({1}{0}{2}{0}{3})".format(MARKER.MARKER_SEP,
-                                                            str(MARKER.MARKERTYPE) +
-                                                            str(MARKER.KEYVALUE_SEP) +
-                                                            str(MARKER.PAUSES),
-                                                            str(MARKER.MARKERINFO) +
-                                                            str(MARKER.KEYVALUE_SEP) +
-                                                            str(round(
-                                                                fto, 1)),
-                                                            str(MARKER.MARKERSPEAKER) +
-                                                            str(MARKER.KEYVALUE_SEP) +
-                                                            str(curr_utt[-1].sLabel))
+                    logging.debug(f"large pauses detected with fto {fto}")
+                    markerText =  MARKER_FORMATTER.TYPE_INFO_SP.format(MARKER.PAUSES, str(round(fto, 1)), str(curr_utt[-1].sLabel))
                     cm.insertToTree(curr_utt[-1].endTime,
                                     nxt_utt[0].startTime,
                                     MARKER.PAUSES,
                                     markerText)
+                    logging.debug(f"insert the larger pause marker {markerText}")
 
         cm.buildUttMap()
         self.successful = True

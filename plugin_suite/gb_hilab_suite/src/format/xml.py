@@ -11,8 +11,8 @@ import io
 from gailbot import Plugin, GBPluginMethods
 from gb_hilab_suite.src.core.conversation_model import ConversationModel
 
-from gb_hilab_suite.src.configs import  load_marker, load_label, PLUGIN_NAME
-MARKER = load_marker()
+from gb_hilab_suite.src.configs import  load_internal_marker, load_label, PLUGIN_NAME
+MARKER = load_internal_marker()
 LABEL = load_label().TXT
 from lxml import etree
 
@@ -34,12 +34,13 @@ class XML:
     LENGTH = "length"
     DELIM = "ca-delimiter"
     VERSION_NUM = "ca-delimiter"
+    TALK_BANK_LINK = "http://www.talkbank.org/ns/talkbank"
 @dataclass
 class TAGS:
     PARTS = "Participants"
     CHAT = "CHAT"
     VSN = "Version"
-    Lang = "Lang"
+    LANG = "Lang"
     CORP = "Corpus"
     DATE = "Date"
     W = "w"
@@ -189,7 +190,7 @@ class XMLPlugin(Plugin):
 
         #Root element is the CHAT tag
         root = etree.Element(TAGS.CHAT)
-        root.set('xmlns', XML.TALKBANK_LINK)
+        root.set('xmlns', XML.TALK_BANK_LINK)
         
         root.set(TAGS.CORP, 'timmy')
         root.set(TAGS.VSN, '2.16.0')

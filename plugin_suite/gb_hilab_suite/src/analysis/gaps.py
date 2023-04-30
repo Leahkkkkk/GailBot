@@ -9,8 +9,8 @@ from typing import Dict, Any, List
 # Local imports
 from gailbot import Plugin, GBPluginMethods
 from gb_hilab_suite.src.core.conversation_model import ConversationModel
-from gb_hilab_suite.src.configs import load_marker, load_threshold, PLUGIN_NAME
-MARKER = load_marker() 
+from gb_hilab_suite.src.configs import load_internal_marker, load_threshold, PLUGIN_NAME, MARKER_FORMATTER
+MARKER = load_internal_marker() 
 THRESHOLD = load_threshold()
 class GapPlugin(Plugin):
     def __init__(self) -> None:
@@ -34,6 +34,7 @@ class GapPlugin(Plugin):
         Returns:
             convModelPlugin: the current conv model wrapper object
         """
+        logging.info("apply gaps plugin")
         # Get the output of the previous plugin
         cm: ConversationModel = dependency_outputs[PLUGIN_NAME.ConvModel]
 
@@ -47,27 +48,24 @@ class GapPlugin(Plugin):
             pair = i.nextPair()
             curr_utt = cm.getWordFromNode(pair[0])
             nxt_utt = cm.getWordFromNode(pair[1])
+            logging.debug(f"get current utterance {curr_utt}, next utterance {nxt_utt}")
 
             # calculate the floor transfer offset
-            fto = round(nxt_utt[0].startTime -
-                        curr_utt[-1].endTime, 2)
+            fto = round(nxt_utt[0].startTime - curr_utt[-1].endTime, 2)
+            logging.debug(f"get fto : {fto}")
             
             # only add a gap marker if speakers are different
             if fto >= self.lb_gap and \
                     curr_utt[0].sLabel != nxt_utt[0].sLabel:
-                logging.debug("gaps detected")
-                markerText = "({1}{0}{2}{0}{3})".format(
-                    MARKER.MARKER_SEP,
-                    str(MARKER.MARKERTYPE) +
-                    str(MARKER.KEYVALUE_SEP) +
-                    str(MARKER.GAPS),
-                    str(MARKER.MARKERINFO) +
-                    str(MARKER.KEYVALUE_SEP) +
-                    str(round(fto, 1)),
-                    str(MARKER.MARKERSPEAKER) +
-                    str(MARKER.KEYVALUE_SEP) +
-                    "NONE")
-                
+                logging.debug(f"gaps detected between speaker {curr_utt[0].sLabel} \
+                                and speaker {nxt_utt[0].sLabel}")
+               
+                markerText = MARKER_FORMATTER.TYPE_INFO_SP.format(
+                                MARKER.GAPS, str(round(fto,1)), MARKER.NO_SPEAKER)
+                logging.debug(
+                    f"insert gap marker {markerText} between \
+                    {curr_utt[-1].endTime} and {nxt_utt[0].startTime}")
+        
                 # insert marker into the tree
                 cm.insertToTree(curr_utt[-1].endTime,
                                 nxt_utt[0].startTime,

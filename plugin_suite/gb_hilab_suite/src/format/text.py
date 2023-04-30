@@ -12,8 +12,8 @@ import io
 from gailbot import Plugin,  UttObj, GBPluginMethods
 from gb_hilab_suite.src.core.conversation_model import ConversationModel
 
-from gb_hilab_suite.src.configs import  load_marker, load_label, PLUGIN_NAME
-MARKER = load_marker()
+from gb_hilab_suite.src.configs import  load_internal_marker, load_label, PLUGIN_NAME
+MARKER = load_internal_marker()
 LABEL = load_label().TXT
 
 class TextPlugin(Plugin):
