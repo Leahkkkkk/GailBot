@@ -4,7 +4,7 @@
 # @Last Modified by:   Muhammad Umair
 # @Last Modified time: 2022-08-24 12:30:15
 
-
+from dataclasses import dataclass
 from copy import deepcopy
 from typing import Dict, Any, List
 import logging
@@ -13,7 +13,16 @@ import logging
 from gb_hilab_suite.src.core.nodes import Word, Node
 from gb_hilab_suite.src.core.utterance_map import UtteranceMapPlugin
 from gailbot import Plugin, UttObj, GBPluginMethods
-from gb_hilab_suite.src.config import MARKER, THRESHOLD, CONVERSATION, PLUGIN_NAME
+from gb_hilab_suite.src.configs import INTERNAL_MARKER, load_threshold, PLUGIN_NAME
+
+MARKER = INTERNAL_MARKER
+THRESHOLD = load_threshold()
+
+@dataclass
+class CONVERSATION:
+    map1 = "map1"
+    map2 = "map2"
+    map3 = "map3"
 
 class ConversationModel:
     """
@@ -197,12 +206,14 @@ class ConversationModel:
         """
         Searches for a node based on its start time in the tree.
         """
+        logging.info(f"search for node with start time {startTime}")
         return self.Tree.search(self.Tree, startTime)
 
     def deleteFromTree(self, startTime) -> None:
         """
         Deletes a node, which is found based on its start time, from the tree.
         """
+        logging.info(f"delete node {startTime} from tree ")
         self.Tree.deleteNode(self.Tree, startTime)
 
     ################## BELOW ARE UTTMAP FUNCTIONS ########################
@@ -213,6 +224,7 @@ class ConversationModel:
 
         (Note: reuse the outer_create_dict of utteranceDict plugin)
         """
+        logging.info("build utterance map")
         root = self.Tree
         uttDict = dict()
         ud = UtteranceMapPlugin()
@@ -229,7 +241,7 @@ class ConversationModel:
 
         currSL = inputNode.val.sLabel
 
-        if inputNode.val.sLabel in MARKER.INTERNAL_MARKER_SET:
+        if currSL in MARKER.INTERNAL_MARKER_SET:
             arr = inputNode.val.text[1 : len(inputNode.val.text)-1].split(MARKER.MARKER_SEP)
             currSL = (arr[-1].split(MARKER.KEYVALUE_SEP))[-1]
             temp = arr[0].split(MARKER.KEYVALUE_SEP)[-1]
@@ -237,6 +249,8 @@ class ConversationModel:
 
             if inputNode.val.sLabel in varDict:
                 surfaceFormat = varDict[temp]
+                logging.info(f"replace node marker in the tree with node {inputNode},\
+                             replace {temp} with {surfaceFormat}")
 
                 # specific to XMLSCHEMA plugin for PAUSES marker HACK
                 if surfaceFormat == MARKER.PAUSES:
@@ -254,6 +268,8 @@ class ConversationModel:
 
             for _, (underlyFormat, val) in enumerate(varDict.items()):
                 if inputNode.val.text.find(underlyFormat) != -1:
+                    logging.info(f"replace node marker in the tree with node {inputNode},\
+                                   replace {underlyFormat} with {val}")
                     newNode = Node(inputNode.val.startTime,
                                    inputNode.val.endTime,
                                    currSL,
@@ -265,6 +281,10 @@ class ConversationModel:
                            currSL,
                            inputNode.val.text)
             return newNode
+        else:
+            if currSL[0] != "0":
+                logging.warn(f"{currSL} is not in the internal marker set")
+            
         return inputNode
 
     def outer_buildUttMapWithChange(self, id_arg):

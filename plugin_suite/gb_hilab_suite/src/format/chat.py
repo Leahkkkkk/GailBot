@@ -9,9 +9,9 @@ from typing import Dict, Any
 # Local imports
 from gailbot import Plugin, GBPluginMethods, UttObj
 from gb_hilab_suite.src.core.conversation_model import ConversationModel
-from gb_hilab_suite.src.configs import  load_internal_marker, load_label, OUTPUT_FILE, PLUGIN_NAME, CHAT_FORMATTER
+from gb_hilab_suite.src.configs import INTERNAL_MARKER, load_label, OUTPUT_FILE, PLUGIN_NAME, CHAT_FORMATTER
 
-MARKER = load_internal_marker()
+MARKER = INTERNAL_MARKER
 LABEL = load_label().CHAT
 
 class ChatPlugin(Plugin):

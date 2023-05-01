@@ -7,7 +7,7 @@ from view.signal.Request import Request
 from view.widgets.MsgBox import WarnBox, ConfirmBox
 from view.components.SettingDetail import ProfileDetail
 from view.widgets.Table import BaseTable
-from view.widgets.Button import ColoredBtn
+from view.widgets.Button import ColoredBtn, TableBtn
 from ...widgets.Background import initSecondaryColorBackground
 
 from ..FileUpload import UploadFileTab, ChooseSet
@@ -20,8 +20,8 @@ from PyQt6.QtWidgets import (
     QTableWidgetItem, 
     QWidget, 
     QCheckBox,
-    QPushButton,
     QVBoxLayout, 
+    QHBoxLayout,
     QDialog
 )
 
@@ -66,7 +66,7 @@ class SourceTable(BaseTable):
                  headers, 
                  signal, 
                  dataKeyToCol: Dict[str, int],
-                 appliedCellWidget: Set[TableWidget] = {}, *args, **kwargs):
+                 appliedCellWidget: Set[TableWidget], *args, **kwargs):
         self.signal = signal 
         self.dataKeyToCol = dataKeyToCol
         self.tableWidth = STYLE_DATA.Dimension.TABLEWIDTH
@@ -234,13 +234,14 @@ class SourceTable(BaseTable):
             checkBox = self.getCheckBox(name)
             self.setCellWidget(row, 0, checkBox)
         cellWidget = QWidget()
-        layout     = QVBoxLayout()
+        layout     = QHBoxLayout()
         cellWidget.setLayout(layout)
         
         if TableWidget.REMOVE in self.appliedCellWidget:
             layout.addWidget(self.getRemoveBtn(name))
             
         if TableWidget.VIEW_OUTPUT in self.appliedCellWidget:
+            self.logger.info("view output widget added")
             layout.addWidget(self.getViewOutputBtn(name))
             
         if TableWidget.PROFILE_DETAIL in self.appliedCellWidget:
@@ -265,14 +266,14 @@ class SourceTable(BaseTable):
         return container
     
     def getViewProfileBtn(self, name) -> QWidget:
-        btn = QPushButton("View Profile")
+        btn = TableBtn(icon=STYLE_DATA.Asset.tableDetail, instructions="View source profile")
         btn.clicked.connect(
             lambda:self.fileProfileRequest(name)
         )
         return btn
         
     def getChangeProfileBtn(self, name) -> QWidget:
-        btn = QPushButton("Change Profile")
+        btn = TableBtn(icon=STYLE_DATA.Asset.tableEdit, instructions="Edit Source Profile") 
         btn.clicked.connect(
             lambda: self.changeProfileRequest(name)
         )

@@ -4,6 +4,7 @@ import os
 from enum import Enum 
 import datetime
 from gailbot.core.utils.general import write_json, copy, is_file
+from gailbot.core.utils.media import AudioHandler
 from gailbot.configs import  OutputFolder, TemporaryFolder
 from gailbot.core.utils.logger import makelogger
 from ...organizer.source import SourceObject
@@ -418,7 +419,10 @@ class PayLoadObject(ABC):
         for file in self.data_files:
             if is_file(file):
                 copy(file, os.path.join(self.out_dir.media_file, os.path.basename(file)))
-    
+        if len(self.data_files) > 1:
+            handler = AudioHandler()
+            handler.overlay_audios(self.data_files, self.out_dir.media_file)
+        
     def clear_temporary_workspace(self):
         delete(self.workspace.root)
     

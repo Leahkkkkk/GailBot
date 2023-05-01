@@ -5,7 +5,7 @@
 # @Last Modified time: 2023-03-15 12:22:53
 import copy
 import time
-
+import threading
 from gailbot.core.engines.engineManager import EngineManager
 from typing import Any, List, Dict
 from gailbot.core.pipeline import Component, ComponentState, ComponentResult
@@ -36,6 +36,7 @@ class TranscribeComponent(Component):
         self.engine_manager = EngineManager() # a wrapper class for managing
                                               # and transcribing payload using engine
         self.num_thread = num_thread
+        self.is_transcribing = False
 
     def __call__(self, dependency_output: Dict[str, ComponentResult]) -> Any:
         """
@@ -51,6 +52,9 @@ class TranscribeComponent(Component):
             and payloads data
         """
         try:
+            self.is_transcribing = True
+            timer = threading.Timer(5, self._log_progress)
+            timer.start()
             threadpool = ThreadPool(self.num_thread)
             logger.info(dependency_output)
             dep: ComponentResult = dependency_output["base"]
@@ -59,7 +63,7 @@ class TranscribeComponent(Component):
             process_start_time = time.time()
             logger.info(f"received payloads {payloads}") 
             for payload in payloads:
-                self.emit_progress(payload, ProgressMessage.Waiting)
+                self._display_progress(payload, ProgressMessage.Waiting)
                 if not payload.transcribed:
                     # add the payload to the threadpool
                     key = threadpool.add_task(
@@ -69,7 +73,7 @@ class TranscribeComponent(Component):
                     assert key == payload.name
                     logger.info(f"payload {payload.name} is added to the threadpool, the key is {key}")
                 else:
-                    self.emit_progress(payload, ProgressMessage.Finished)
+                    self._display_progress(payload, ProgressMessage.Finished)
            
             # get the result from the thread pool
             for payload in payloads:
@@ -78,10 +82,12 @@ class TranscribeComponent(Component):
                         payload.set_failure()
                     else:
                         payload.set_transcribed()
-        
+            self.is_transcribing = False
         except Exception as e:
             logger.error(f"Transcription failure {e}", exc_info=e)
             threadpool.shutdown(wait=True)
+            self.is_transcribing = False
+            timer.cancel()
             return ComponentResult(
                 state=ComponentState.FAILED,
                 result=payloads,
@@ -89,11 +95,14 @@ class TranscribeComponent(Component):
             )
         else:
             threadpool.shutdown(cancel_futures=True)
+            self.is_transcribing = False
+            timer.cancel()
             return ComponentResult(
                 state=ComponentState.SUCCESS,
                 result=payloads,
                 runtime=time.time() - process_start_time
             )
+      
 
     def _transcribe_one_payload(self, payload : PayLoadObject) -> bool:
         """ private function that transcribe each individual payload
@@ -111,7 +120,7 @@ class TranscribeComponent(Component):
         """
         try:
             logger.info(f"Payload {payload} being transcribed")
-            self.emit_progress(payload, "Start transcribing")
+            self._display_progress(payload, "Start transcribing")
             
             # Parse the payload
             start_time = time.time()
@@ -136,12 +145,12 @@ class TranscribeComponent(Component):
             threadpool = ThreadPool(DEFULT_NUM_THREAD)
             
             # adding the task to transcribe individual file to the thread
-            self.emit_progress(payload, "Adding Task")
+            self._display_progress(payload, "Adding Task")
             for idx, file in enumerate(data_files):
                 transcribe_kwargs = copy.deepcopy(transcribe_kwargs)
                 transcribe_kwargs.update({"audio_path": file, "payload_workspace": transcribe_ws})
                 filename = threadpool.add_task(
-                    self.transcribe_single_file,
+                    self._transcribe_single_file,
                     kwargs= {"engine_name" : engine_name,
                             "init_kwargs" : init_kwargs,
                             "transcribe_kwargs": transcribe_kwargs},
@@ -151,10 +160,10 @@ class TranscribeComponent(Component):
                 # add callback function to update the progress bar whenever
                 # each task is finished
                 threadpool.add_callback(
-                    filename, lambda fun: self.display_progress_bar(payload, threadpool))
+                    filename, lambda fun: self._get_progress_bar(payload, threadpool))
             
             # display the initial progress
-            self.display_progress_bar(payload, threadpool)
+            self._get_progress_bar(payload, threadpool)
 
             # get the task result
             for file in data_files:
@@ -171,10 +180,10 @@ class TranscribeComponent(Component):
             
             assert payload.set_transcription_result(utt_map)
             assert payload.set_transcription_process_stats(stats)      
-            self.emit_progress(payload, ProgressMessage.Transcribed)
+            self._display_progress(payload, ProgressMessage.Transcribed)
              
         except Exception as e:
-            self.emit_progress(payload, ProgressMessage.Error)
+            self._display_progress(payload, ProgressMessage.Error)
             logger.error(f"Failed to transcribed {len(data_files)} file in parallel due to the error {e}", exc_info=e)
             threadpool.shutdown(cancel_futures=True)
             return False
@@ -182,7 +191,15 @@ class TranscribeComponent(Component):
             threadpool.shutdown(cancel_futures=True)
             return True
 
-    def transcribe_single_file(self, engine_name, init_kwargs, transcribe_kwargs)  -> List[Dict[str, str]]:
+    def _log_progress(self):
+        """display log messages
+        """
+        if self.is_transcribing:
+           logger.info("transcribing") 
+           timer = threading.Timer(5, self._log_progress)
+           timer.start()
+
+    def _transcribe_single_file(self, engine_name, init_kwargs, transcribe_kwargs)  -> List[Dict[str, str]]:
         """
         Transcribes a file with the given engine
 
@@ -201,12 +218,11 @@ class TranscribeComponent(Component):
     def __repr__(self):
         return "Transcription Component"
 
-    def emit_progress(self, payload: PayLoadObject, msg: str):
+    def _display_progress(self, payload: PayLoadObject, msg: str):
         if payload.progress_display:
             payload.progress_display(msg)
 
-
-    def get_progress_string(self, finished: int, total: int) -> str:
+    def _get_progress_string(self, finished: int, total: int) -> str:
         BAR_FILL = "█"  # Full block
         BAR_EMPTY = "  "  # Light shade
         # Determine the length of the progress bar (50 characters)
@@ -220,11 +236,10 @@ class TranscribeComponent(Component):
         # Print the progress bar string
         return f"{bar} {percent}"
     
-    
-    def display_progress_bar(self, payload: PayLoadObject, threadpool: ThreadPool):
+    def _get_progress_bar(self, payload: PayLoadObject, threadpool: ThreadPool):
         if payload.progress_display:
-            progress_str = self.get_progress_string(
+            progress_str = self._get_progress_string(
                 threadpool.count_completed_tasks(), 
                 threadpool.count_total_tasks())
-            self.emit_progress(payload, progress_str)
+            self._display_progress(payload, progress_str)
         

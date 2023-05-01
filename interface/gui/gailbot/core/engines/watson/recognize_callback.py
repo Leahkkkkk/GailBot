@@ -37,6 +37,7 @@ class CustomWatsonCallbacks(RecognizeCallback):
         self.closure = self._init_closure()
 
     def reset(self) -> None:
+        logger.info("reset recognize callback")
         self.closure = self._init_closure()
 
     def get_results(self) -> Dict:
@@ -59,7 +60,7 @@ class CustomWatsonCallbacks(RecognizeCallback):
         """
         Called when a Websocket connection was made
         """
-        logger.info("connected")
+        logger.info("connected to watson")
         try:
             closure = self.closure
             closure["callback_status"]["on_connected"] = True
@@ -93,7 +94,7 @@ class CustomWatsonCallbacks(RecognizeCallback):
         """
         Called when the service is listening for audio.
         """   
-        logger.info("listening")   
+        logger.info("watson is listening")   
         try:
             closure = self.closure
             closure["callback_status"]["on_listening"] = True
@@ -115,7 +116,7 @@ class CustomWatsonCallbacks(RecognizeCallback):
         """
         Called when the service returns results. The data is returned unparsed.
         """
-        logger.info(f"on data")
+        logger.info(f"watson returned the results")
         try:
             closure = self.closure
             closure["callback_status"]["on_data"] = True

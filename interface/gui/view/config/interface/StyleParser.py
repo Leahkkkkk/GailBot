@@ -145,6 +145,12 @@ class Asset(DataclassFromDict):
     checked               : str = field_from_dict()
     unchecked             : str = field_from_dict()
     hover                 : str = field_from_dict()
+    tableDetail           : str = field_from_dict()
+    tableRemove           : str = field_from_dict()
+    tableSource           : str = field_from_dict()
+    tableOutput           : str = field_from_dict()
+    tableEdit             : str = field_from_dict()
+    info                  : str = field_from_dict()
 
 @dataclass 
 class FileTableDimension(DataclassFromDict): 

@@ -112,6 +112,7 @@ class GoogleCore:
             audio file, each part of the audio file is stored in the format 
             {speaker: , start_time: , end: , text: }
         """
+        logger.info("start transcribing audio using google cloud STT")
         
         # get the info of audio source and preprocess the audio if needed 
         mediaHandler = MediaHandler()
@@ -125,11 +126,13 @@ class GoogleCore:
        
         #  convert stereo to mono 
         if audio_channels > 1:
+            logger.info("detect stereo audio file, converting to mono file")
             l_stream, _ = mediaHandler.stereo_to_mono(stream)
             audio_path = mediaHandler.write_stream(l_stream, out_dir=payload_workspace, name=get_name(audio_path), format=info["format"])
             
         # convert the wav file to all bit 16 bit
         if audio_format.lower() == "wav":
+            logger.info("detect wav file, converting to wav 16 bit header file")
             wav_copy_ws = os.path.join(payload_workspace, f"{get_name(audio_path)}_wav_16bit")
             if not is_directory(wav_copy_ws):
                 make_dir(wav_copy_ws)
@@ -164,6 +167,7 @@ class GoogleCore:
         Return (cloud_speech.RecognizeResponse):
             return the response data from google STT 
         """
+        logger.info(f"rung google engine on file {audio_path}")
         try:
             # initialize client
             client = speech.SpeechClient() 
@@ -193,6 +197,7 @@ class GoogleCore:
             self.transcribe_error = True
             raise Err.TranscriptionError("Google STT Transcription failed")
         else:
+            logger.info("get google response ")
             self.transcribing = False
             self.transcribe_success = True
         return response
@@ -214,6 +219,7 @@ class GoogleCore:
         """
 
         results = response.results
+        logger.info("get the google response")
         status_result = {
             "connected": self.connected,
             "read_audio": self.read_audio, 

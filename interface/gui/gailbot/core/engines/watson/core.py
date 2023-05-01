@@ -70,7 +70,7 @@ class WatsonCore:
         Returns:
             List[str] : list of supported formats
         """
-        return self.media_h.supported_formats
+        return ["wav"]
 
     @property
     def regions(self) -> Dict:
@@ -125,6 +125,7 @@ class WatsonCore:
         """
         # compress the audio if it is too bog
         path_copy = audio_path
+        logger.info("transcribe the audio file with watson STT")
         try:
             new_path = os.path.join(payload_workspace, os.path.basename(audio_path))
             audio_path = MediaHandler.convert_to_16bit_wav(audio_path, new_path)
@@ -187,6 +188,7 @@ class WatsonCore:
                 ID of the custom language model.
         """
         # reset the callbacks
+        logger.info("sending audio file to watson")
         recognize_callbacks.reset()
         assert is_file(audio_path), f"Not a file {audio_path}"
     

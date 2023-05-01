@@ -15,6 +15,7 @@ from PyQt6.QtWidgets import (
     QWidget, 
     QPushButton,
     QVBoxLayout,
+    QHBoxLayout
 )
 from PyQt6.QtGui import QIcon
 
@@ -38,25 +39,18 @@ class PluginTable(BaseTable):
         
     def addCellWidgets(self, suiteName: str, row:int, isOfficial: bool = False):
         cellWidget = QWidget()
-        layout = QVBoxLayout()
-        detailBtn = QPushButton("Details")
-        sourceBtn = QPushButton("View Source")
+        layout = QHBoxLayout()
+        
         cellWidget.setLayout(layout)
-        layout.addWidget(detailBtn)
-        layout.addWidget(sourceBtn)
-        detailBtn.clicked.connect(lambda: self.viewDetail(suiteName))
-        sourceBtn.clicked.connect(lambda: self.signal.viewSourceRequest.emit(
-            Request(data=suiteName, succeed=self.displaySource)
-        ))
+        layout.addWidget(self.getViewSourceBtn(suiteName))
+        layout.addWidget(self.getViewDetailBtn(suiteName))
         if not isOfficial:
-            deleteBtn = QPushButton("Delete")
-            layout.addWidget(deleteBtn)
-            deleteBtn.clicked.connect(lambda: self.delete(suiteName))
-        self.setCellWidget(row, len(self.headers) - 1, cellWidget)
+            layout.addWidget(self.getRemoveBtn(suiteName))
+        self.setCellWidget(row, self.actionWidgetCol, cellWidget)
 
-    def viewDetail(self, suiteName:str):
+    def viewDetailRequest(self, suiteName:str):
         self.signal.detailRequest.emit(
-            Request(data = suiteName, succeed=self.displayPluginSuiteDetail))
+            Request(data=suiteName, succeed=self.displayPluginSuiteDetail))
 
     def displayPluginSuiteDetail(self, suiteInfo) -> None :
         """ 

@@ -9,10 +9,11 @@ from typing import List, Any, Dict
 #import re
 from copy import deepcopy
 # Local imports
-from gb_hilab_suite.src.config import MARKER, THRESHOLD
+from gb_hilab_suite.src.configs import INTERNAL_MARKER, load_threshold
 from gailbot import Plugin, GBPluginMethods
 from gb_hilab_suite.src.core.nodes import Node
-
+MARKER = INTERNAL_MARKER 
+THRESHOLD = load_threshold()
 class UtteranceMapPlugin(Plugin):
     def __init__(self) -> None:
         super().__init__()

@@ -35,3 +35,4 @@ class Instruction(QWidget):
         self.setWindowFlags(
             Qt.WindowType.FramelessWindowHint |
             Qt.WindowType.WindowStaysOnTopHint)
+        self.setStyleSheet("{border-radius: 40px; border: 2px solid black}")

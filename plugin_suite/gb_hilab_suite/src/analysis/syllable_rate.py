@@ -5,17 +5,30 @@
 # @Last Modified time: 2022-08-24 12:12:15
 
 
-from typing import Dict, Any, List
+from typing import Dict, Any, List, TypedDict
 import logging
 from scipy.stats import median_abs_deviation
 import syllables
 import numpy
 from gailbot import Plugin, GBPluginMethods, UttObj
 from gb_hilab_suite.src.core.conversation_model import ConversationModel
-from gb_hilab_suite.src.configs import load_internal_marker, load_threshold, PLUGIN_NAME, MARKER_FORMATTER
-MARKER = load_internal_marker() 
+from gb_hilab_suite.src.core.nodes import Node
+from gb_hilab_suite.src.configs import INTERNAL_MARKER, load_threshold, PLUGIN_NAME
+MARKER = INTERNAL_MARKER 
 THRESHOLD = load_threshold()
+class SYLL_DICT(TypedDict):
+    utt: List[Node]
+    syllableNum: int 
+    syllRate: float
+        
 
+class STAT_DICT(TypedDict):
+    median: float
+    medianAbsDev: float
+    upperLimit: float
+    lowerLimit: float
+    fastturncount: int 
+    slowturncount: int 
 
 # The number of deviations above or below the absolute median deviation.
 LimitDeviations = 2
@@ -56,7 +69,7 @@ class SyllableRatePlugin(Plugin):
         return cm
 
 
-    def syll_rate(self, cm: ConversationModel, utterances: List[UttObj]):
+    def syll_rate(self, cm: ConversationModel, utterances: List[UttObj]) -> List[SYLL_DICT]:
         """
         Calculates the syllable rates for each utterance
         """
@@ -74,15 +87,21 @@ class SyllableRatePlugin(Plugin):
             syll_num = sum([syllables.estimate(word.text) for word in curr_utt])
             logging.debug(f"estimated syllable num {syll_num}")
             time_diff = abs(curr_utt[0].startTime - curr_utt[-1].endTime)
-            if time_diff != 0:
-                syll_rate = round(syll_num / time_diff, 2)
-                new_syll_dict ={"utt": utt, "syllableNum": syll_num, "syllRate": syll_rate} 
-                logging.debug(f"get new syllable dictionary {new_syll_dict}")
-                utt_syll_dict.append(new_syll_dict)
+            logging.warn(f"get time {curr_utt[0].startTime} and {curr_utt[-1].endTime}")
+        
+            if time_diff == 0:
+                logging.warn(f"get no 0 time difference between the words {curr_utt[0].text} and {curr_utt[-1].text}")
+                time_diff = 0.001
+                
+            syll_rate = round(syll_num / time_diff, 2)
+            new_syll_dict: SYLL_DICT = {"utt": utt, "syllableNum": syll_num, "syllRate": syll_rate} 
+            logging.debug(f"get new syllable dictionary {new_syll_dict}")
+            utt_syll_dict.append(new_syll_dict)
+            
         return utt_syll_dict
 
 
-    def stats(self, utt_syll_dict):
+    def stats(self, utt_syll_dict) -> STAT_DICT:
         """
         Creates a dictionary containing the statistics
         """
@@ -96,14 +115,16 @@ class SyllableRatePlugin(Plugin):
         median_absolute_deviation = round(median_abs_deviation(allRates), 2)
         lowerLimit = (median-(LimitDeviations*median_absolute_deviation))
         upperLimit = (median+(LimitDeviations*median_absolute_deviation))
-        stats = {"median": median, 
-                "medianAbsDev": median_absolute_deviation,
-                "upperLimit": upperLimit, 
-                "lowerLimit": lowerLimit}
+        stats: STAT_DICT = {"median": median, 
+                            "medianAbsDev": median_absolute_deviation,
+                            "upperLimit": upperLimit, 
+                            "lowerLimit": lowerLimit}
         logging.debug(f"computed syllable rate stats {stats}")
         return stats
 
-    def addDelims(self, cm: ConversationModel, dictionaryList, statsDic):
+    def addDelims(self, cm: ConversationModel,
+                  dictionaryList: List[SYLL_DICT], 
+                  statsDic: STAT_DICT):
         """
         Adds fast and slow speech delimiter markers into the tree.
         """
@@ -123,9 +144,9 @@ class SyllableRatePlugin(Plugin):
                                                 utt_dict['syllRate'],
                                                 statsDic['median'])
                     else:
-                        markerText1 = MARKER_FORMATTER.TYPE_INFO_SP.format(
+                        markerText1 = MARKER.TYPE_INFO_SP.format(
                             MARKER.SLOWSPEECH_START, MARKER.SLOWSPEECH_DELIM, utt_words[0].sLabel)
-                        markerText2 = MARKER_FORMATTER.TYPE_INFO_SP.format(
+                        markerText2 = MARKER.TYPE_INFO_SP.format(
                             MARKER.SLOWSPEECH_END, MARKER.SLOWSPEECH_DELIM, utt_words[0].sLabel)
 
                         cm.insertToTree(utt_words[0].startTime,
@@ -140,9 +161,9 @@ class SyllableRatePlugin(Plugin):
                                         and slow speech end {markerText2}")
                         slowCount += 1
                 elif utt_dict['syllRate'] >= statsDic['upperLimit']:
-                    markerText1 = MARKER_FORMATTER.TYPE_INFO_SP.format(
+                    markerText1 = MARKER.TYPE_INFO_SP.format(
                         MARKER.FASTSPEECH_END, MARKER.FASTSPEECH_DELIM, utt_words[0].sLabel)
-                    markerText2 = MARKER_FORMATTER.TYPE_INFO_SP.format(
+                    markerText2 = MARKER.TYPE_INFO_SP.format(
                         MARKER.FASTSPEECH_END, MARKER.FASTSPEECH_DELIM, utt_words[0].sLabel)
                    
                     cm.insertToTree(utt_words[0].startTime,

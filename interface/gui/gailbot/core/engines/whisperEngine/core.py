@@ -100,7 +100,6 @@ class WhisperCore:
         logger.info(f"Whisper core using whisper model: {WHISPER_CONFIG.model_name}")
 
         # Load the diarization pipeline
-        # TODO: Add this speaker diarization pipeline after further testing
         diarization_pipeline = PyannoteDiarizer(self.models_dir)
         logger.info("get the diarazation pipleine")
         logger.info(f"received setting language: {language}, detect speaker {detect_speaker} audio_path {audio_path}")

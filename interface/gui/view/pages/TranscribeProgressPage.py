@@ -73,7 +73,8 @@ class TranscribeProgressPage(BasicPage):
             dataKeyToCol={
                 DATA_FIELD.TYPE: 0, 
                 DATA_FIELD.NAME: 1, 
-                DATA_FIELD.PROGRESS: 2})
+                DATA_FIELD.PROGRESS: 2},
+            appliedCellWidget={})
         self.fileTable.resizeCol(FileTableDimension.transcribePage)
     
     def _initstyle(self):

@@ -7,6 +7,8 @@ from .MsgBox import WarnBox, ConfirmBox
 from view.Request import Request
 from view.signal.interface import DataSignal
 from view.widgets.Button import TableBtn
+from view.widgets.ScrollArea import ScrollArea
+from view.widgets.Background import initPrimaryColorBackground
 from view.components.SelectPath import SaveSetting
 from gbLogger import makeLogger
 from PyQt6.QtWidgets import (
@@ -15,8 +17,9 @@ from PyQt6.QtWidgets import (
     QAbstractItemView,
     QTableWidgetItem, 
     QWidget, 
-    QPushButton,
+    QScrollArea,
     QVBoxLayout,
+    QHBoxLayout
 )
 from PyQt6.QtCore import (
     Qt, QModelIndex
@@ -93,7 +96,7 @@ class BaseTable(QTableWidget):
     ################# for configuring table widget and  ################
     def addCellWidgets(self, name: str, row:int):
         cellWidget = QWidget()
-        layout     = QVBoxLayout()
+        layout     = QHBoxLayout()
         cellWidget.setLayout(layout)
         layout.addWidget(self.getEditBtn(name))
         layout.addWidget(self.getRemoveBtn(name))
@@ -102,35 +105,36 @@ class BaseTable(QTableWidget):
         
 
     def getRemoveBtn(self, name) -> QWidget:
-        btn = TableBtn("Remove", instructions=" remove the source from the table")
+        btn = TableBtn(icon=STYLE_DATA.Asset.tableRemove, instructions=" remove the source from the table")
         btn.clicked.connect(
             lambda:self.delete(name)
         )
         return btn
         
     def getEditBtn(self, name) -> QWidget:
-        btn = TableBtn("Edit", instructions=" edit setting")
+        btn = TableBtn(icon=STYLE_DATA.Asset.tableEdit, instructions=" edit setting")
         btn.clicked.connect(
             lambda:self.editSetting(name)
         )
         return btn
         
     def getViewDetailBtn(self, name) -> QWidget:
-        btn = TableBtn("View Detail", instructions="view source detail")
+        btn = TableBtn(icon=STYLE_DATA.Asset.tableDetail, instructions="view source detail")
         btn.clicked.connect(
             lambda:self.viewDetailRequest(name)
         )
         return btn
 
     def getViewSourceBtn(self, name) -> QWidget:
-        btn = TableBtn("View Source", instructions="view source raw file")
+        btn = TableBtn(icon=STYLE_DATA.Asset.tableSource, instructions="view source raw file")
         btn.clicked.connect(
             lambda:self.viewSourceRequest(name)
         )
         return btn
     
     def getViewOutputBtn(self, name) -> QWidget:
-        btn = TableBtn("View Output", instructions="view source output")
+        self.logger.info("ask for view output button")
+        btn = TableBtn(icon=STYLE_DATA.Asset.tableOutput, instructions="view source output")
         btn.clicked.connect(
             lambda:self.viewOutputRequest(name)
         )
@@ -208,7 +212,7 @@ class BaseTable(QTableWidget):
             
             for key, col in self.dataKeyToCol.items():
                 if isinstance(data[key], list):
-                    newItem = self.createListDisplay(data[key])
+                    newItem = self.createListDisplay(data[key], self.rowHeight(newRowIdx))
                     self.setCellWidget(newRowIdx, col, newItem)
                 else:
                     newItem = QTableWidgetItem(str(data[key]))
@@ -250,11 +254,19 @@ class BaseTable(QTableWidget):
     def openEditDialog(self, data):
         pass
     
-    def createListDisplay(self, items):
+    def createListDisplay(self, items, height):
         listDisplay = QWidget()
         listLayout = QVBoxLayout()
         listDisplay.setLayout(listLayout)
         for item in items:
             newLabel = Label(item, STYLE_DATA.FontSize.BODY)
-            listLayout.addWidget(newLabel)
-        return listDisplay
+            listLayout.addWidget(newLabel, alignment=Qt.AlignmentFlag.AlignTop)
+        listScroll = ScrollArea()
+        listScroll.setWidget(listDisplay)
+        listScroll.setWidgetResizable(True)
+        listScroll.setFixedHeight(50)
+        initPrimaryColorBackground(listDisplay)
+        listScroll.setAutoFillBackground(True)
+        listScroll.setStyleSheet(f"background-color: {STYLE_DATA.Color.MAIN_BACKGROUND}")
+    
+        return listScroll

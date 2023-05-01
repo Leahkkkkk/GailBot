@@ -274,6 +274,7 @@ class ChooseSet(TabPage):
         self.label = Label("Select Setting Profile", STYLE_DATA.FontSize.HEADER4, FontFamily.MAIN)
         self.selectSettings = ComboBox(self)
         self.selectSettings.addItems(self.settings)
+        self.selectSettings.setFixedWidth(350)
    
     def _initLayout(self):
         """ initializes the layouts """
@@ -327,6 +328,7 @@ class ChooseOutPut(TabPage):
         self.dirPathText = QLineEdit(self)
         self.dirPathText.setPlaceholderText(Text.chooseOutPutText)
         self.dirPathText.setMinimumHeight(40)
+        self.dirPathText.setFixedWidth(350)
         self.dirPathText.setReadOnly(True)
         self.dirPathText.setStyleSheet( "QLineEdit {"
                                         "    padding: 5px;"
@@ -346,8 +348,8 @@ class ChooseOutPut(TabPage):
         self.hlayout.addWidget(self.dirPathText)
         self.hlayout.addWidget(self.chooseDirBtn)
         self.vlayout.addStretch()
-        self.vlayout.addWidget(self.chooseOuputLabel)
-        self.vlayout.addWidget(self.selectContainer)
+        self.vlayout.addWidget(self.chooseOuputLabel, alignment=center)
+        self.vlayout.addWidget(self.selectContainer, alignment=center)
         self.vlayout.addStretch()
     
     def _addDir(self):

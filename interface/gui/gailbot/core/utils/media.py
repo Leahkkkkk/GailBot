@@ -324,6 +324,8 @@ class AudioHandler:
             overlaid_segment
         )
 
+    
+    
     def reverse(self, stream : AudioStream) -> AudioStream:
         """
         Reverse the given audio stream 
@@ -466,6 +468,15 @@ class AudioHandler:
             
             return audio_chunks
 
+
+    def overlay_audios(self, audios: List[str], output_path: str):
+        res = self.read_file(audios[0])
+        name = "_".join([get_name(file) for file in audios])
+        for i in range(1, len(audios)):
+            if AudioHandler.is_supported(audios[i]):
+                nxt = self.read_file(audios[i])
+                res = self.overlay(res, nxt)
+        self.write_stream(res, output_path, name=name, format=get_extension(audios[0]))
 
 
 class VideoHandler:

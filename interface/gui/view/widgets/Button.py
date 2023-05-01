@@ -11,8 +11,7 @@ Description: implement reusable button widgets
 '''
 import os
 from typing import List
-
-from PyQt6 import QtCore, QtGui
+from PyQt6.QtCore import QTimer
 from view.config.Text import BtnText as Text
 from config_frontend import PROJECT_ROOT
 from view.util.ColorGenerator import colorScale
@@ -250,17 +249,31 @@ class TableBtn(QPushButton):
         if icon:
             icon = QIcon(os.path.join(PROJECT_ROOT, icon))
             self.setIcon(icon)
-
-        self.instruction = Instruction(instructions)
-        self.instruction.setContentsMargins(0,0,0,0)
+        self.insText = instructions
+        self.instruction = Instruction(self.insText)
+        self.hoverTimer = QTimer()
+        self.hoverTimer.timeout.connect(self.showInstruction)
+        self.hoverThreshold = 1500 # in milliseconds
+        self.hideTimer = QTimer()
+        self.hideTimer.timeout.connect(self.hideInstruction)
+        self.hideThreshold = 5000
         
     def enterEvent(self, event) -> None:
+        self.hoverTimer.start(self.hoverThreshold)
+    
+    def showInstruction(self):
+        self.hoverTimer.stop()
+        self.hideTimer.start(self.hideThreshold)
         pos = QCursor.pos()
         self.instruction.move(pos.x(), pos.y())
         self.instruction.show()
 
-
     def leaveEvent(self, event) -> None:
+        self.hideInstruction()
+        
+    def hideInstruction(self) -> None:
+        self.hoverTimer.stop()
+        self.hideTimer.stop()
         self.instruction.hide()
         
 """ NOTE: currently unused in the interface  """  

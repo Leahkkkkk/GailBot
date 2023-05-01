@@ -9,8 +9,8 @@ from typing import Dict, Any, List
 # Local imports
 from gailbot import Plugin, GBPluginMethods
 from gb_hilab_suite.src.core.conversation_model import ConversationModel
-from gb_hilab_suite.src.configs import load_internal_marker, load_threshold, PLUGIN_NAME, MARKER_FORMATTER
-MARKER = load_internal_marker() 
+from gb_hilab_suite.src.configs import INTERNAL_MARKER, load_threshold, PLUGIN_NAME
+MARKER = INTERNAL_MARKER
 THRESHOLD = load_threshold()
 class GapPlugin(Plugin):
     def __init__(self) -> None:
@@ -60,7 +60,7 @@ class GapPlugin(Plugin):
                 logging.debug(f"gaps detected between speaker {curr_utt[0].sLabel} \
                                 and speaker {nxt_utt[0].sLabel}")
                
-                markerText = MARKER_FORMATTER.TYPE_INFO_SP.format(
+                markerText = MARKER.TYPE_INFO_SP.format(
                                 MARKER.GAPS, str(round(fto,1)), MARKER.NO_SPEAKER)
                 logging.debug(
                     f"insert gap marker {markerText} between \

@@ -67,7 +67,7 @@ class TranscribeSuccessPage(BasicPage):
              DATA_FIELD.NAME:1,
              DATA_FIELD.STATUS:2,
              DATA_FIELD.OUTPUT:3},
-            tableWidgetsSet={TableWidget.VIEW_OUTPUT})
+            appliedCellWidget={TableWidget.VIEW_OUTPUT})
         self.fileTable.resizeCol(FileTableDimension.successPage)
         
     def _initLayout(self):

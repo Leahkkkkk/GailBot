@@ -13,7 +13,7 @@ from gailbot import Plugin, GBPluginMethods
 from gb_hilab_suite.src.core.conversation_model import ConversationModel
 
 from gb_hilab_suite.src.configs import (
-    load_internal_marker, 
+    INTERNAL_MARKER,
     load_label, 
     PLUGIN_NAME, 
     OUTPUT_FILE
@@ -26,7 +26,7 @@ from gb_hilab_suite.src.configs.xml import (
     COMMENTS,
     UTT
 )
-MARKER = load_internal_marker()
+MARKER = INTERNAL_MARKER
 LABEL = load_label().TXT
 from lxml import etree
 
@@ -214,10 +214,8 @@ class XMLPlugin(Plugin):
                 if currText in varDict.values():
                     for key, value in varDict.items():
                         if currText == value:
-                            logging.debug(f"detect key marker {currText}")
                             # if the start of an overlap is detected, create g-tag to nest other tags
                             if key == MARKER.OVERLAP_FIRST_START or key == MARKER.OVERLAP_SECOND_START:
-                                logging.debug(f"insert overlap  start tag")
                                 # add overlap tag
                                 overlap = etree.SubElement(utterance, TAG.OVERLAP_SUB)
                                 exit = False # used to break out of the outter loop

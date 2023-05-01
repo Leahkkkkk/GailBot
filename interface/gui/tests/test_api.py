@@ -122,6 +122,7 @@ def test_watson_long():
 
 def test_watson_empty():
     fails, invalid = transcribe([PATH.SineWaveMinus16], "watson", SETTING_DATA.WATSON_PROFILE)
+    
 ################################### test for google ##################################
 def test_google():
     fails, invalid = transcribe([PATH.HELLO_1], "google", SETTING_DATA.GOOGLE_PROFILE) 
@@ -220,8 +221,3 @@ def test_reset_ws():
     gb = GailBot(PATH.USER_ROOT)
     assert gb.reset_workspace()
 
-
-from gailbot.core.utils.media import MediaHandler
-
-def test_trim_speaker():
-    MediaHandler.remove_prelude_no_speech(PATH.TEST_2a, PATH.OUTPUT_ROOT)

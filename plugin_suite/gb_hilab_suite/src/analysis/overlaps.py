@@ -10,17 +10,17 @@ import logging
 from gailbot import Plugin, UttObj, GBPluginMethods
 from gb_hilab_suite.src.core.nodes import Word
 from gb_hilab_suite.src.core.conversation_model import ConversationModel
-from gb_hilab_suite.src.configs import load_internal_marker, load_threshold, PLUGIN_NAME, MARKER_FORMATTER
-MARKER = load_internal_marker() 
+from gb_hilab_suite.src.configs import INTERNAL_MARKER, load_threshold, PLUGIN_NAME
+
+MARKER = INTERNAL_MARKER 
 THRESHOLD = load_threshold()
+INVALID_OVERLAP = (-1, -1, -1, -1)
 class OverlapPlugin(Plugin):
     def __init__(self) -> None:
         super().__init__()
         self.marker_limit = THRESHOLD.OVERLAP_MARKERLIMIT
 
-    def apply(self, 
-                     dependency_outputs: Dict[str, Any],
-                     methods: GBPluginMethods) -> List[UttObj]:
+    def apply(self, dependency_outputs: Dict[str, Any], methods: GBPluginMethods) -> List[UttObj]:
         """
         Inserts new nodes into the BST, which represent an overlap.
 
@@ -55,7 +55,7 @@ class OverlapPlugin(Plugin):
                 logging.debug(f"overlap detected between {nxt_utt[0].startTime} and {curr_utt[-1].endTime}")
                 curr_x, curr_y, nxt_x, nxt_y = self._get_overlap_positions(curr_utt, nxt_utt)
                 logging.debug(f"get overlap position {curr_x}, {curr_y}, {nxt_x}, {nxt_y}")
-                if (curr_x, curr_y, nxt_x, nxt_y) == (-1, -1, -1, -1):
+                if (curr_x, curr_y, nxt_x, nxt_y) == INVALID_OVERLAP:
                     logging.warn(f"detect overlap between the same speaker")
                     continue
 
@@ -68,13 +68,13 @@ class OverlapPlugin(Plugin):
                 if nxt_y >= len(nxt_utt):
                     nxt_y = -1
 
-                fst_start = MARKER_FORMATTER.TYPE_INFO_SP.format(
+                fst_start = MARKER.TYPE_INFO_SP.format(
                     MARKER.OVERLAP_FIRST_START, str(unique_id), curr_utt[0].sLabel)
-                fst_end = MARKER_FORMATTER.TYPE_INFO_SP.format(
+                fst_end = MARKER.TYPE_INFO_SP.format(
                     MARKER.OVERLAP_FIRST_END, str(unique_id), curr_utt[0].sLabel)
-                snd_start = MARKER_FORMATTER.TYPE_INFO_SP.format(
+                snd_start = MARKER.TYPE_INFO_SP.format(
                     MARKER.OVERLAP_SECOND_START, str(unique_id), nxt_utt[0].sLabel)
-                snd_end = MARKER_FORMATTER.TYPE_INFO_SP.format(
+                snd_end = MARKER.TYPE_INFO_SP.format(
                     MARKER.OVERLAP_SECOND_END, str(unique_id), nxt_utt[0].sLabel)
 
                 logging.debug(f"insert overlap markers to the tree: first start:\
@@ -111,7 +111,7 @@ class OverlapPlugin(Plugin):
 
         # check speaker label
         if curr_utt[0].sLabel == nxt_utt[0].sLabel:
-            return (-1, -1, -1, -1)
+            return INVALID_OVERLAP
 
         # when there is an overlap and diff speakers
         next_start = nxt_utt[0].startTime
@@ -157,7 +157,7 @@ class OverlapPlugin(Plugin):
                     break
 
         if curr_overlap_end_pos == 0 and next_overlap_end_pos == 0:
-            return (-1, -1, -1, -1)
+            return INVALID_OVERLAP
 
         return (curr_overlap_start_pos,
                 curr_overlap_end_pos,

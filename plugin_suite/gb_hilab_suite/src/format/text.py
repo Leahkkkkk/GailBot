@@ -8,12 +8,13 @@
 from typing import Dict, Any, List, Tuple
 import re
 import io
+import os 
 # Local imports
 from gailbot import Plugin,  UttObj, GBPluginMethods
 from gb_hilab_suite.src.core.conversation_model import ConversationModel
 
-from gb_hilab_suite.src.configs import  load_internal_marker, load_label, PLUGIN_NAME
-MARKER = load_internal_marker()
+from gb_hilab_suite.src.configs import  INTERNAL_MARKER, load_label, PLUGIN_NAME, OUTPUT_FILE, CON_FORMATTER
+MARKER = INTERNAL_MARKER
 LABEL = load_label().TXT
 
 class TextPlugin(Plugin):
@@ -42,8 +43,7 @@ class TextPlugin(Plugin):
         myFunction = cm.outer_buildUttMapWithChange(0)
         myFunction(root, newUttMap, varDict)
 
-        path = "{}/conversation.txt".format(methods.output_path)
-
+        path = os.path.join(methods.output_path, OUTPUT_FILE.CON_TXT)
         utterances = newUttMap
 
         with io.open(path, "w", encoding='utf-8') as outfile:
@@ -52,10 +52,10 @@ class TextPlugin(Plugin):
                 l = []
                 for word in curr_utt:
                     l.append(word.text)
-                txt = ' '.join(l)
+                txt = CON_FORMATTER.TXT_SEP.join(l)
 
                 sLabel = LABEL.SPEAKERLABEL + str(curr_utt[0].sLabel)
-                turn = '{0}\t{1} {2}{4}_{3}{4}\n'.format(
+                turn = CON_FORMATTER.TURN.format(
                     sLabel, txt, curr_utt[0].startTime, curr_utt[-1].endTime,
                     0x15)
                 outfile.write(turn)

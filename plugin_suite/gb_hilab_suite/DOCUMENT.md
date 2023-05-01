@@ -108,11 +108,7 @@ The new node insertion is determined by a certain floor transfer offset (FTO)
 threshold that is calculated between utterance pairs. If the threshold is met,
 insert the gap node into the tree.
 
-Algorithm: 
- If the time between the next utterance start time and the previous utterance 
- end time is greater than (GAPS_LB = 0.3) seconds , a node with GAPs marker
-  will be inserted to the tree. The marker will include a string that states 
-  the marker represent gaps in utterance, and the duration of the gap
+
     
 ## Layer01 : overlaps
 Inserts new nodes into the binary search tree, which represents overlaps.

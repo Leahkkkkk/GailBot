@@ -36,7 +36,7 @@ class Workspace:
 @dataclass
 class About :
     """class holding data about GailBot; e.g. version, title, etc."""
-    version              = "Version 0.0.1a"
+    version              = "Version 0.0.1a1"
     APP_TITTLE           = "GailBot"
     copyRight            = copyRightText
     
@@ -75,7 +75,7 @@ class FileUploadPageText:
     selectOutput          = "Select output directory"
     returnMainText        = "Return to Main Menu"
     recordBtnText         = "Record Live"
-    uploadBtnText         = "Add From Device"
+    uploadBtnText         = "Add Source"
     transcribeBtnText     = "Transcribe"
     removeBtnText         = "Remove All"
     ## unicode for settings gear
@@ -89,9 +89,9 @@ class FileUploadPageText:
     chooseOutPutText      = "Choose Output Directory"
     fileFilter            = "audio file (*.wav)"
     removeWarnText        = "Remove all files?"
-    tabAddfile            = "Add File"
-    tabAddFolder          = "Add Folder"
-    uploadInstruction      = "Drop audio files below (Only wav files are supported)"
+    tabAddfile            = "From File"
+    tabAddFolder          = "From Folder"
+    uploadInstruction      = "Drop audio files below"
     ## unicode for an audio icon
     audioLogo = "\U0001F50A"
     ## unicode for a file folder icon

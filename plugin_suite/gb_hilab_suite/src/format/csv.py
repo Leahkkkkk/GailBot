@@ -6,12 +6,13 @@
 
 
 from typing import Dict, Any
+import os
 import csv
 # Local imports
 from gailbot import Plugin, UttObj, GBPluginMethods
 from gb_hilab_suite.src.core.conversation_model import ConversationModel
-from gb_hilab_suite.src.configs import  load_internal_marker, load_label, PLUGIN_NAME
-MARKER = load_internal_marker()
+from gb_hilab_suite.src.configs import INTERNAL_MARKER, load_label, PLUGIN_NAME, OUTPUT_FILE, CSV_FORMATTER
+MARKER = INTERNAL_MARKER
 LABEL = load_label().CSV
 class CSVPlugin(Plugin):
 
@@ -48,14 +49,12 @@ class CSVPlugin(Plugin):
         newUttMap = dict()
         myFunction = cm.outer_buildUttMapWithChange(0)
         myFunction(root, newUttMap, varDict)
-
-        path = "{}/{}.csv".format(methods.output_path,
-                                "utterance_level")
+        path = os.path.join(methods.output_path, OUTPUT_FILE.UTT_CSV)
 
         with open(path, 'w', newline='') as outfile:
             writer = csv.writer(outfile)
 
-            writer.writerow(["SPEAKER LABEL", "TEXT", "START TIME", "END TIME"])
+            writer.writerow(CSV_FORMATTER.HEADER)
 
             utterances = newUttMap
             for _, (_, nodeList) in enumerate(utterances.items()):
@@ -64,7 +63,7 @@ class CSVPlugin(Plugin):
                 l = []
                 for word in curr_utt:
                     l.append(word.text)
-                txt = ' '.join(l)
+                txt = CSV_FORMATTER.TXT_SEP.join(l)
 
                 sLabel = ""
                 if (curr_utt[0].sLabel != "*GAP" and
@@ -97,13 +96,12 @@ class CSVPlugin(Plugin):
         myFunction = cm.outer_buildUttMapWithChange(0)
         myFunction(root, newUttMap, varDict)
 
-        path = "{}/{}.csv".format(methods.output_path,
-                                    "word_level")
 
+        path = os.path.join(methods.output_path, OUTPUT_FILE.WORD_CSV)
         with open(path, 'w', newline='') as outfile:
             writer = csv.writer(outfile)
 
-            writer.writerow(["SPEAKER LABEL", "TEXT", "START TIME", "END TIME"])
+            writer.writerow(CSV_FORMATTER.HEADER)
             utterances = newUttMap
             for _, (_, nodeList) in enumerate(utterances.items()):
                 curr_utt = cm.getWordFromNode(nodeList)
@@ -115,8 +113,7 @@ class CSVPlugin(Plugin):
                         writer.writerow([word.sLabel, word.text,
                                             word.startTime, word.endTime])
                     else:
-                        writer.writerow([word.sLabel, word.text,
-                                            word.startTime, word.endTime])
+                        writer.writerow([word.sLabel, word.text, word.startTime, word.endTime])
 
 
 
