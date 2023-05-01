@@ -260,13 +260,15 @@ class BaseTable(QTableWidget):
         listDisplay.setLayout(listLayout)
         for item in items:
             newLabel = Label(item, STYLE_DATA.FontSize.BODY)
-            listLayout.addWidget(newLabel, alignment=Qt.AlignmentFlag.AlignTop)
+            listLayout.addWidget(newLabel, alignment=Qt.AlignmentFlag.AlignCenter)
         listScroll = ScrollArea()
         listScroll.setWidget(listDisplay)
         listScroll.setWidgetResizable(True)
         listScroll.setFixedHeight(50)
         initPrimaryColorBackground(listDisplay)
         listScroll.setAutoFillBackground(True)
-        listScroll.setStyleSheet(f"background-color: {STYLE_DATA.Color.MAIN_BACKGROUND}")
-    
+        listScroll.setStyleSheet(f"background-color: {STYLE_DATA.Color.MAIN_BACKGROUND}; border:none; margin: 0px;")
+        listScroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        STYLE_DATA.signal.changeColor.connect(lambda: 
+            listScroll.setStyleSheet(f"background-color: {STYLE_DATA.Color.MAIN_BACKGROUND}; border:none; margin: 0px;"))
         return listScroll
