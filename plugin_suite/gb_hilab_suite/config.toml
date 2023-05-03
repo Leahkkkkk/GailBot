@@ -43,25 +43,25 @@ module_name = "overlaps"
 
 [[plugins]]
 plugin_name = "PausePlugin"
-dependencies = [ "ConversationModelPlugin",]
+dependencies = [ "ConversationModelPlugin", "OverlapPlugin"]
 rel_path = "src/analysis/pauses.py"
 module_name = "pauses"
 
 [[plugins]]
 plugin_name = "GapPlugin"
-dependencies = [ "ConversationModelPlugin",]
+dependencies = [ "ConversationModelPlugin", "GapPlugin", "OverlapPlugin"]
 rel_path = "src/analysis/gaps.py"
 module_name = "gaps"
 
 [[plugins]]
 plugin_name = "SyllableRatePlugin"
-dependencies = [ "ConversationModelPlugin",]
+dependencies = [ "ConversationModelPlugin", "GapPlugin", "OverlapPlugin", "GapPlugin"]
 rel_path = "src/analysis/syllable_rate.py"
 module_name = "syllable_rate"
 
 [[plugins]]
 plugin_name = "ChatPlugin"
-dependencies = [ "ConversationModelPlugin", "GapPlugin", "PausePlugin", "OverlapPlugin",]
+dependencies = [ "ConversationModelPlugin", "GapPlugin", "PausePlugin", "OverlapPlugin"]
 rel_path = "src/format/chat.py"
 module_name = "chat"
 

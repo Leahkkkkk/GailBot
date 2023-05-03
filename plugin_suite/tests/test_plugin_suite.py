@@ -19,7 +19,8 @@ from gb_hilab_suite.src.format.chat import ChatPlugin
 from gb_hilab_suite.src.format.text import TextPlugin
 from gb_hilab_suite.src.format.csv import CSVPlugin
 from gb_hilab_suite.src.format.xml import XMLPlugin
-GBPlugin = GBPluginMethods()
+from tests.analysis.testdata import TEST2ab
+GBPlugin = GBPluginMethods(TEST2ab, "/Users/yike/Desktop/plugin_output/test_all")
 
 def test_analysis():
 

@@ -10,7 +10,7 @@ Modified By:  Siara Small  & Vivian Li
 Description: The base class of setting page  
 '''
 from view.config.Style import STYLE_DATA,  FontFamily
-from view.config.Text import ENGINE_SETTING_TEXT as Text
+from view.widgets.Button import InstructionBtn
 from view.signal.interface import DataSignal
 from view.Request import Request
 from gbLogger import makeLogger
@@ -27,7 +27,7 @@ class BaseSettingPage(QWidget):
     addNewButtonText = None
     mainTable:BaseTable = None 
     signal: DataSignal = None 
-    
+    instruction = {}  
     def __init__(
         self,
         *args, 
@@ -47,7 +47,8 @@ class BaseSettingPage(QWidget):
             self.captionText, STYLE_DATA.FontSize.DESCRIPTION, FontFamily.MAIN
         )
         self.addBtn = ColoredBtn(self.addNewButtonText, STYLE_DATA.Color.PRIMARY_BUTTON)
-    
+        self.instruction = InstructionBtn(self.instruction)
+        
     def _initlayout(self):
         """" initializes layout """
         self.logger.info("")
@@ -60,6 +61,7 @@ class BaseSettingPage(QWidget):
         self.verticalLayout.addWidget(self.mainTable, alignment=center)
         self.verticalLayout.addStretch()
         self.verticalLayout.addWidget(self.addBtn, alignment=center)
+        self.verticalLayout.addWidget(self.instruction, alignment= Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignBottom | Qt.AlignmentFlag.AlignAbsolute)
         
     def _connectSignal(self):
         self.addBtn.clicked.connect(self.addItem)

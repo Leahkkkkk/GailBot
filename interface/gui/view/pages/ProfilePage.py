@@ -11,6 +11,7 @@ Description:
 '''
 from typing import List
 from view.config.Text import ProfilePageText as Text
+from view.config.InstructionText import INSTRUCTION
 from view.signal import EngineSignal, ProfileSignal
 from view.Request import Request
 from view.components.SettingTables import ProfileTable
@@ -34,6 +35,7 @@ class ProfilePage(BaseSettingPage):
         self.mainTable = ProfileTable(self.signal, engineSignal=self.engineSignal, parent=self)
         self.availableEngineSettings : List[str] = []
         self.availablePluginSettings : List[str] = []
+        self.instruction = INSTRUCTION.PROFILE_TABLE_INS
         super().__init__( *args, **kwargs)
     
     def addItem(self):

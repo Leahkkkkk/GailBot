@@ -16,6 +16,7 @@ from view.config.Style import (
 
 from view.config.Text import ConfirmTranscribeText as Text
 from view.config.Text import FileTableHeader 
+from view.config.InstructionText import INSTRUCTION
 from gbLogger import makeLogger
 from view.signal.signalObject import FileSignal, GBTranscribeSignal
 from view.signal.Request import Request
@@ -39,6 +40,7 @@ class ConfirmTranscribePage(BasicPage):
     """ Confirm transcription page """
     def __init__(self, *args, **kwargs) -> None:
         """ initializes page """
+        self.pageInstruction = INSTRUCTION.CONFIRM_IN
         super().__init__(*args, **kwargs)
         self.signal = FileSignal
         self.logger = makeLogger("F")
@@ -94,7 +96,8 @@ class ConfirmTranscribePage(BasicPage):
         self.bottomButton.setContentsMargins(0,0,0,0)
         self.verticalLayout.addWidget(self.bottomButton, alignment=center)
         self.horizontalLayout.setSpacing(STYLE_DATA.Dimension.LARGE_SPACING)
-        
+        self.verticalLayout.addWidget(self.instructionBtn, self.infopos)
+
     def _sendTranscribeSignal(self):
         """sends a signal with a set of file keys that will be transcribed """
         files = self.fileTable.getAllFile()

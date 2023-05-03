@@ -246,18 +246,18 @@ class ConversationModel:
             currSL = (arr[-1].split(MARKER.KEYVALUE_SEP))[-1]
             temp = arr[0].split(MARKER.KEYVALUE_SEP)[-1]
             markerInfo = arr[1].split(MARKER.KEYVALUE_SEP)[-1]
-
+            logging.warn(f"maker info is --- {markerInfo}, marker is {temp}")
             if inputNode.val.sLabel in varDict:
                 surfaceFormat = varDict[temp]
                 logging.info(f"replace node marker in the tree with node {inputNode},\
                              replace {temp} with {surfaceFormat}")
 
                 # specific to XMLSCHEMA plugin for PAUSES marker HACK
-                if surfaceFormat == MARKER.PAUSES:
+                if temp == MARKER.PAUSES or temp==MARKER.GAPS:
                     newNode = Node(inputNode.val.startTime,
                                inputNode.val.endTime,
                                currSL,
-                               surfaceFormat + MARKER.KEYVALUE_SEP + markerInfo)
+                               surfaceFormat[0] + surfaceFormat[1 : -1] + MARKER.KEYVALUE_SEP + markerInfo + surfaceFormat[-1] )
                     return newNode
 
                 newNode = Node(inputNode.val.startTime,
@@ -265,11 +265,9 @@ class ConversationModel:
                                currSL,
                                surfaceFormat)
                 return newNode
-
+            
             for _, (underlyFormat, val) in enumerate(varDict.items()):
                 if inputNode.val.text.find(underlyFormat) != -1:
-                    logging.info(f"replace node marker in the tree with node {inputNode},\
-                                   replace {underlyFormat} with {val}")
                     newNode = Node(inputNode.val.startTime,
                                    inputNode.val.endTime,
                                    currSL,

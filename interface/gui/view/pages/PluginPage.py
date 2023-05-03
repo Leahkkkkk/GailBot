@@ -12,6 +12,7 @@ Description: implementation of the plugin page
 from typing import List
 
 from view.config.Text import PluginPageText as Text
+from view.config.InstructionText import INSTRUCTION
 from view.signal.interface import DataSignal
 from view.signal import PluginSignal
 from view.Request import Request
@@ -33,6 +34,7 @@ class PluginPage(BaseSettingPage):
         self.addNewButtonText = Text.CREATE_NEW
         self.signal = PluginSignal
         self.mainTable = PluginTable(self.signal)
+        self.instruction = INSTRUCTION.PLUGIN_TABLE_INS
         super().__init__(*args, **kwargs)
        
     def addItem(self):

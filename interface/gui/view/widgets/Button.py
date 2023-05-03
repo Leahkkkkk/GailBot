@@ -16,14 +16,17 @@ from view.config.Text import BtnText as Text
 from config_frontend import PROJECT_ROOT
 from view.util.ColorGenerator import colorScale
 from .InstructionPop import Instruction
+from .TextDisplay import TextDisplayDialog
 from .Label import Label
 from PyQt6.QtWidgets import (
     QPushButton, 
     QWidget, 
     QVBoxLayout,
+    QDialog,
+    QToolButton
 )
 
-from PyQt6.QtCore import  Qt
+from PyQt6.QtCore import  Qt, QSize
 from PyQt6.QtGui import QIcon, QCursor
 
 #### controlling style changes 
@@ -239,9 +242,8 @@ class IconBtn(QPushButton):
         icon = QIcon(os.path.join(PROJECT_ROOT, icon))
         self.setIcon(icon)
         
-        
 class TableBtn(QPushButton):
-    def __init__(self, label = None, icon = None, instructions = None):
+    def __init__(self, label = None, icon = None):
         super().__init__()
         self.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         if label:
@@ -249,32 +251,30 @@ class TableBtn(QPushButton):
         if icon:
             icon = QIcon(os.path.join(PROJECT_ROOT, icon))
             self.setIcon(icon)
-        self.insText = instructions
-        self.instruction = Instruction(self.insText)
-        self.hoverTimer = QTimer()
-        self.hoverTimer.timeout.connect(self.showInstruction)
-        self.hoverThreshold = 1500 # in milliseconds
-        self.hideTimer = QTimer()
-        self.hideTimer.timeout.connect(self.hideInstruction)
-        self.hideThreshold = 5000
-        
-    def enterEvent(self, event) -> None:
-        self.hoverTimer.start(self.hoverThreshold)
-    
-    def showInstruction(self):
-        self.hoverTimer.stop()
-        self.hideTimer.start(self.hideThreshold)
-        pos = QCursor.pos()
-        self.instruction.move(pos.x(), pos.y())
-        self.instruction.show()
 
-    def leaveEvent(self, event) -> None:
-        self.hideInstruction()
+        self.setStyleSheet("background-color:white;")
+class InstructionBtn(QToolButton):
+    def __init__(self, instruction):
+        super().__init__()
+        self.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.instruction = instruction
+        icon = QIcon(os.path.join(PROJECT_ROOT, STYLE_DATA.Asset.info))
+        self.setIcon(icon)
+        self.setFixedSize(QSize(20,20))
+        self.clicked.connect(self.displayIns)
+        self.setStyleSheet("border:none; background-color:none;")
+        self.setIconSize(QSize(20,20))
+        self.setContentsMargins(0,0,0,0)
+        STYLE_DATA.signal.changeColor.connect(self.updateIcon)
         
-    def hideInstruction(self) -> None:
-        self.hoverTimer.stop()
-        self.hideTimer.stop()
-        self.instruction.hide()
+    def displayIns(self):
+        print("instruction button clicked")
+        instruction = TextDisplayDialog(self.instruction)
+        instruction.exec()
+    
+    def updateIcon(self):
+        icon = QIcon(os.path.join(PROJECT_ROOT, STYLE_DATA.Asset.info))
+        self.setIcon(icon)
         
 """ NOTE: currently unused in the interface  """  
 class dropDownButton(QWidget):

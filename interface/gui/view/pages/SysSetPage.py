@@ -25,6 +25,8 @@ from view.signal.signalObject import GlobalStyleSignal
 from config_frontend.ConfigPath import WorkSpaceConfigPath, SettingDataPath
 from view.config.Setting import SystemSetting, DefaultSetting
 from view.config import StyleSource, StyleTable
+from view.config.InstructionText import INSTRUCTION
+from view.widgets.Button import InstructionBtn
 from view.config.Text import SystemSetPageText as Text
 from view.config.Text import SystemSettingForm as Form
 from view.config.Text import LogDeleteTimeDict
@@ -67,7 +69,7 @@ class SystemSettingPage(QWidget):
         """ initializes widgets to be shown """
         self.SysSetForm = SettingForm.SettingForm(Text.header, self.data, Text.caption)
         self.saveBtn = Button.ColoredBtn(Text.saveBtn, STYLE_DATA.Color.PRIMARY_BUTTON)
-        
+        self.instructionBtn = InstructionBtn(INSTRUCTION.SETTING_FORM_INS)
     def _connectSignal(self):
         """ connect the signal to slots """
         self.saveBtn.clicked.connect(self._confirmChangeSetting)
@@ -85,6 +87,7 @@ class SystemSettingPage(QWidget):
         self._addFormButton(Text.ClearLogLabel, Text.ClearLogBtn, self._clearLog)
         self._addFormButton(Text.SaveLogLabel, Text.SaveLogBtn, self._saveLog)
         self._addFormButton(Text.ClearCacheLabel, Text.ClearCacheBtn, self._clearCache)
+        self.formLayout.addWidget(self.instructionBtn, alignment=Qt.AlignmentFlag.AlignAbsolute | Qt.AlignmentFlag.AlignBottom | Qt.AlignmentFlag.AlignRight)
 
     def colorChange(self, colormode = None):
         self.saveBtn.colorChange(STYLE_DATA.Color.PRIMARY_BUTTON)

@@ -9,7 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 Description: implementation of file upload page 
 '''
-
+from view.config.InstructionText import INSTRUCTION
 from typing import List, Tuple, Dict
 from view.config.Style import STYLE_DATA, FileTableDimension
 from view.config.Text import FileTableHeader
@@ -23,7 +23,7 @@ from view.widgets import (
     ColoredBtn, 
     IconBtn, 
     ConfirmBox) 
-
+from view.widgets.Button import InstructionBtn
 from PyQt6.QtWidgets import (
     QWidget, 
     QVBoxLayout,
@@ -52,6 +52,7 @@ class FileUploadPage(BasicPage):
         *args, 
         **kwargs) -> None:
         """ initializes file upload page """
+        self.pageInstruction = INSTRUCTION.FILE_UPLOAD_INS
         super().__init__(*args, **kwargs)
         self.signal = FileSignal
         self.logger = makeLogger("F")
@@ -109,7 +110,7 @@ class FileUploadPage(BasicPage):
              TableWidget.CHANGE_PROFILE, 
              TableWidget.REMOVE})
         self.fileTable.resizeCol(FileTableDimension.fileUploadPage)
-        
+    
     def _initLayout(self):
         """ initializes layout """
         self.logger.info("")
@@ -132,16 +133,16 @@ class FileUploadPage(BasicPage):
         
         self.addFileBtnContainer = QWidget(self)
         self.containerLayout = QHBoxLayout()
-        self.containerLayout.setSpacing(STYLE_DATA.Dimension.LARGE_SPACING)
         self.addFileBtnContainer.setLayout(self.containerLayout)
         
         self.containerLayout.addWidget(self.uploadFileBtn, alignment = center)
         self.containerLayout.addWidget(self.removeAll, alignment = center)
         self.verticalLayout.addWidget (self.fileTableContainer, alignment = center)
         self.verticalLayout.addWidget (self.addFileBtnContainer, alignment = center)
-        
         self.verticalLayout.addWidget(self.transcribeBtn, alignment = center)
-    
+        self.verticalLayout.addWidget(self.instructionBtn, alignment = self.infopos)
+        self.verticalLayout.setSpacing(3) 
+        
     def _initStyle(self):
         """ initializes the style """
         self.logger.info("")

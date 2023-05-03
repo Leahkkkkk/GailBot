@@ -14,6 +14,7 @@ from view.config.Style import (
     FileTableDimension
 )
 from view.pages.BasicPage import BasicPage
+from view.config.InstructionText import INSTRUCTION
 from view.config.Text import TranscribeSuccessText as Text
 from view.config.Text import FileTableHeader
 from view.components.FileTable import TableWidget, SourceTable, DATA_FIELD
@@ -35,6 +36,7 @@ left = Qt.AlignmentFlag.AlignLeft
 class TranscribeSuccessPage(BasicPage):
     """ class for transcription success page """
     def __init__(self, *args, **kwargs) -> None:
+        self.pageInstruction = INSTRUCTION.SUCCESS_IN
         super().__init__(*args, **kwargs)
         self.signal = FileSignal
         self._initWidget()
@@ -86,7 +88,7 @@ class TranscribeSuccessPage(BasicPage):
             self.container,alignment = Qt.AlignmentFlag.AlignHCenter)
         self.verticalLayout.addWidget(self.horizontal)
         self.verticalLayout.setSpacing( STYLE_DATA.Dimension.LARGE_SPACING)
-        
+        self.verticalLayout.addWidget(self.instructionBtn, self.infopos)
 
     def _initHorizontalLayout(self):
         """ initializes the horizontal layout of buttons to 

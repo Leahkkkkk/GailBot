@@ -6,14 +6,14 @@ def test_pauses():
     utt       = [{"start": i, "end": i + 0.99, "speaker": 1, "text": f"word{i}"} for i in range(0,20,1)]
     micro_pause  = [{"start": i, "end": i + 0.40, "speaker": 1, "text": f"word{i}"} for i in range(20, 40, 1)]
     long_pause   = [{"start": i, "end": i + 0.10, "speaker": 1, "text": f"word{i}"} for i in range(40, 60, 2)]
-    medium_pause = [{"start": i, "end": i + 1.4, "speaker": 1, "text": f"word{i}"} for i in range(60, 80, 2)]
+    medium_pause = [{"start": i, "end": i + 1.4, "speaker": 1, "text": f"word{i}"} for i in range(40, 80, 2)]
     pause_data   = {"test": utt + micro_pause + long_pause + medium_pause}
     pause_plugin = PausePlugin()
     analysis_test(pause_data, pause_plugin, PAUSE_OUT_PATH)
 
 def test_latch():
     utt  = [{"start": i, "end": i + 0.92, "speaker": 1, "text": f"word{i}"} for i in range(0,20,1)]
-    utt2 = [{"start": i, "end": i + 0.92, "speaker": 2, "text": f"word{i}"} for i in range(20,40,1)]
+    utt2 = [{"start": i, "end": i + 0.1, "speaker": 2, "text": f"word{i}"} for i in range(20,40,1)]
     utt3 = [{"start": i, "end": i + 0.92, "speaker": 1, "text": f"word{i}"} for i in range(20,40,1)]
     data = {"test": utt + utt2 + utt3}
     pause_plugin = PausePlugin()

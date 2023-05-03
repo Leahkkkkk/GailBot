@@ -54,7 +54,6 @@ class OverlapPlugin(Plugin):
             if nxt_utt[0].startTime < curr_utt[-1].endTime:
                 logging.debug(f"overlap detected between {nxt_utt[0].startTime} and {curr_utt[-1].endTime}")
                 curr_x, curr_y, nxt_x, nxt_y = self._get_overlap_positions(curr_utt, nxt_utt)
-                logging.debug(f"get overlap position {curr_x}, {curr_y}, {nxt_x}, {nxt_y}")
                 if (curr_x, curr_y, nxt_x, nxt_y) == INVALID_OVERLAP:
                     logging.warn(f"detect overlap between the same speaker")
                     continue
@@ -77,9 +76,7 @@ class OverlapPlugin(Plugin):
                 snd_end = MARKER.TYPE_INFO_SP.format(
                     MARKER.OVERLAP_SECOND_END, str(unique_id), nxt_utt[0].sLabel)
 
-                logging.debug(f"insert overlap markers to the tree: first start:\
-                        {fst_start}, first end: {fst_end}, snd_start: {snd_start}, snd_end: {snd_end} \
-                        current speaker {curr_utt[0].sLabel} , next speaker: {nxt_utt[0].sLabel}")
+              
                 # insert the overlap markers into the tree
                 cm.insertToTree(curr_utt[curr_x].startTime,
                                 curr_utt[curr_x].startTime,

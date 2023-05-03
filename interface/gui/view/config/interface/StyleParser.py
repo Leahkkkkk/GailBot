@@ -34,7 +34,6 @@ class ColorData(DataclassFromDict):
     LINK             : str = field_from_dict()
     LINKLIGHT        : str = field_from_dict()
    
-    
 @dataclass 
 class FontSource(DataclassFromDict): 
     """ class to access the font data from the currently loaded theme """
@@ -57,7 +56,6 @@ class FontSizeData(DataclassFromDict):
     BTN                : str = field_from_dict()
     SETTINGICON        : str = field_from_dict()
     TABLE_ROW          : int = field_from_dict()
-    
     
 @dataclass
 class FontFamilyData(DataclassFromDict): 

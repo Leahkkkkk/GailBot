@@ -105,28 +105,28 @@ class BaseTable(QTableWidget):
         
 
     def getRemoveBtn(self, name) -> QWidget:
-        btn = TableBtn(icon=STYLE_DATA.Asset.tableRemove, instructions=" remove the source from the table")
+        btn = TableBtn(icon=STYLE_DATA.Asset.tableRemove)
         btn.clicked.connect(
             lambda:self.delete(name)
         )
         return btn
         
     def getEditBtn(self, name) -> QWidget:
-        btn = TableBtn(icon=STYLE_DATA.Asset.tableEdit, instructions=" edit setting")
+        btn = TableBtn(icon=STYLE_DATA.Asset.tableEdit)
         btn.clicked.connect(
             lambda:self.editSetting(name)
         )
         return btn
         
     def getViewDetailBtn(self, name) -> QWidget:
-        btn = TableBtn(icon=STYLE_DATA.Asset.tableDetail, instructions="view source detail")
+        btn = TableBtn(icon=STYLE_DATA.Asset.tableDetail)
         btn.clicked.connect(
             lambda:self.viewDetailRequest(name)
         )
         return btn
 
     def getViewSourceBtn(self, name) -> QWidget:
-        btn = TableBtn(icon=STYLE_DATA.Asset.tableSource, instructions="view source raw file")
+        btn = TableBtn(icon=STYLE_DATA.Asset.tableSource)
         btn.clicked.connect(
             lambda:self.viewSourceRequest(name)
         )
@@ -134,7 +134,7 @@ class BaseTable(QTableWidget):
     
     def getViewOutputBtn(self, name) -> QWidget:
         self.logger.info("ask for view output button")
-        btn = TableBtn(icon=STYLE_DATA.Asset.tableOutput, instructions="view source output")
+        btn = TableBtn(icon=STYLE_DATA.Asset.tableOutput)
         btn.clicked.connect(
             lambda:self.viewOutputRequest(name)
         )

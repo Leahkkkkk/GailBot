@@ -32,10 +32,10 @@ class ChatPlugin(Plugin):
                 MARKER.OVERLAP_SECOND_START: LABEL.OVERLAPMARKER_NEXT_START,
                 MARKER.OVERLAP_SECOND_END:   LABEL.OVERLAPMARKER_NEXT_END,
                 MARKER.PAUSES:               LABEL.PAUSE,
-                MARKER.FASTSPEECH_START:     MARKER.FASTSPEECH_START,
-                MARKER.FASTSPEECH_END:       MARKER.FASTSPEECH_END,
-                MARKER.SLOWSPEECH_START:     MARKER.SLOWSPEECH_START,
-                MARKER.SLOWSPEECH_END:       MARKER.SLOWSPEECH_END
+                MARKER.FASTSPEECH_START:     MARKER.FASTSPEECH_DELIM,
+                MARKER.FASTSPEECH_END:       MARKER.FASTSPEECH_DELIM,
+                MARKER.SLOWSPEECH_START:     MARKER.SLOWSPEECH_DELIM,
+                MARKER.SLOWSPEECH_END:       MARKER.SLOWSPEECH_DELIM
         }
         # Gets tree and utterance map from conversation model generated from dependency map
 

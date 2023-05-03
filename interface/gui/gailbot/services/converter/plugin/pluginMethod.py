@@ -1,6 +1,6 @@
 import os 
 from typing import Dict, Union, List, Any
-
+from gailbot.core.utils.general import write_toml, read_toml
 from ..payload.payloadObject import PayLoadObject
 from gailbot.services.converter.result import UttDict
 from gailbot.plugins import Methods
@@ -47,6 +47,8 @@ class GBPluginMethods(Methods):
         self.out_path = os.path.join(self.payload.out_dir.analysis_result, self.plugin_suite)
         if not is_directory(self.out_path):
             make_dir(self.out_path)
+        
+        write_toml("/Users/yike/Desktop/gbout/utt.toml", self.payload.get_transcription_result())
               
     def get_audio_path(self) -> Dict[str, str]:
         """
@@ -68,6 +70,7 @@ class GBPluginMethods(Methods):
                             transcription result  
         """
         try:
+            
             return self.payload.get_transcription_result()
         except Exception as e:
             logger.error(e, exc_info=e)

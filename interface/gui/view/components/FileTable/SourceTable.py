@@ -266,14 +266,14 @@ class SourceTable(BaseTable):
         return container
     
     def getViewProfileBtn(self, name) -> QWidget:
-        btn = TableBtn(icon=STYLE_DATA.Asset.tableDetail, instructions="View source profile")
+        btn = TableBtn(icon=STYLE_DATA.Asset.tableDetail)
         btn.clicked.connect(
             lambda:self.fileProfileRequest(name)
         )
         return btn
         
     def getChangeProfileBtn(self, name) -> QWidget:
-        btn = TableBtn(icon=STYLE_DATA.Asset.tableEdit, instructions="Edit Source Profile") 
+        btn = TableBtn(icon=STYLE_DATA.Asset.tableEdit) 
         btn.clicked.connect(
             lambda: self.changeProfileRequest(name)
         )

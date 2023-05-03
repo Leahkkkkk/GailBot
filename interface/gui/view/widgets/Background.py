@@ -68,7 +68,7 @@ def getLogo() -> Tuple[QWidget, Qt.AlignmentFlag]:
     logo = Image(
         STYLE_DATA.Asset.hilLabLogo, (STYLE_DATA.Dimension.LOGO_WIDTH, STYLE_DATA.Dimension.LOGO_HEIGHT))
     logo.setContentsMargins(0,0,0,0)
-    return (logo,  Qt.AlignmentFlag.AlignTop|Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignAbsolute)
+    return logo
  
 def _resizeEvent(widget: QWidget, event: QResizeEvent, img: str):
     """ scale the background image when the window is resized"""
