@@ -6,33 +6,39 @@
 # Standard imports
 import logging
 from typing import Dict, Any, List
+
 # Local imports
 from gailbot import Plugin, GBPluginMethods
 from gb_hilab_suite.src.core.conversation_model import ConversationModel
 from gb_hilab_suite.src.configs import INTERNAL_MARKER, load_threshold, PLUGIN_NAME
+
 MARKER = INTERNAL_MARKER
 THRESHOLD = load_threshold()
+
+
 class GapPlugin(Plugin):
     def __init__(self) -> None:
         super().__init__()
-        self.lb_gap =  THRESHOLD.GAPS_LB
+        self.lb_gap = THRESHOLD.GAPS_LB
 
-    def apply(self, dependency_outputs: Dict[str, Any], methods: GBPluginMethods) -> List:
+    def apply(
+        self, dependency_outputs: Dict[str, Any], methods: GBPluginMethods
+    ) -> List:
         """
-        Inserts new nodes into the BST, which represents a gap.
+                Inserts new nodes into the BST, which represents a gap.
 
-        1. Iterate through the word-level dictionary and retrieve an utterance
-           pair
-        2. Check the FTO of the utterance pair. If it matches the criterion for
-           a gap and the current and next utterance are not by the same speaker,
-           insert a gap marker into the tree. Else, do nothing.
+                1. Iterate through the word-level dictionary and retrieve an utterance
+                   pair
+                2. Check the FTO of the utterance pair. If it matches the criterion for
+                   a gap and the current and next utterance are not by the same speaker,
+                   insert a gap marker into the tree. Else, do nothing.
 
-        Args:
-            dependency_outputs (Dict[str, Any]):
-            methods (Methods):
-z
-        Returns:
-            convModelPlugin: the current conv model wrapper object
+                Args:
+                    dependency_outputs (Dict[str, Any]):
+                    methods (Methods):
+        z
+                Returns:
+                    convModelPlugin: the current conv model wrapper object
         """
         logging.info("apply gaps plugin")
         # Get the output of the previous plugin
@@ -53,23 +59,25 @@ z
             # calculate the floor transfer offset
             fto = round(nxt_utt[0].startTime - curr_utt[-1].endTime, 2)
             logging.debug(f"get fto : {fto}")
-            
+
             # only add a gap marker if speakers are different
-            if fto >= self.lb_gap and \
-                    curr_utt[0].sLabel != nxt_utt[0].sLabel:
-                logging.debug(f"gaps detected between speaker {curr_utt[0].sLabel} \
-                                and speaker {nxt_utt[0].sLabel}")
-               
+            if fto >= self.lb_gap and curr_utt[0].sLabel != nxt_utt[0].sLabel:
+                logging.debug(
+                    f"gaps detected between speaker {curr_utt[0].sLabel} \
+                                and speaker {nxt_utt[0].sLabel}"
+                )
+
                 markerText = MARKER.TYPE_INFO_SP.format(
-                                MARKER.GAPS, str(round(fto,1)), MARKER.NO_SPEAKER)
+                    MARKER.GAPS, str(round(fto, 1)), MARKER.NO_SPEAKER
+                )
                 logging.debug(
                     f"insert gap marker {markerText} between \
-                    {curr_utt[-1].endTime} and {nxt_utt[0].startTime}")
-        
+                    {curr_utt[-1].endTime} and {nxt_utt[0].startTime}"
+                )
+
                 # insert marker into the tree
-                cm.insertToTree(curr_utt[-1].endTime,
-                                nxt_utt[0].startTime,
-                                MARKER.GAPS,
-                                markerText)
+                cm.insertToTree(
+                    curr_utt[-1].endTime, nxt_utt[0].startTime, MARKER.GAPS, markerText
+                )
         self.successful = True
         return cm

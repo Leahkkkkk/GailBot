@@ -6,21 +6,26 @@
 # Standard imports
 from typing import Dict, Any, List
 import logging
+
 # Local imports
 from gailbot import Plugin, UttObj, GBPluginMethods
 from gb_hilab_suite.src.core.nodes import Word
 from gb_hilab_suite.src.core.conversation_model import ConversationModel
 from gb_hilab_suite.src.configs import INTERNAL_MARKER, load_threshold, PLUGIN_NAME
 
-MARKER = INTERNAL_MARKER 
+MARKER = INTERNAL_MARKER
 THRESHOLD = load_threshold()
 INVALID_OVERLAP = (-1, -1, -1, -1)
+
+
 class OverlapPlugin(Plugin):
     def __init__(self) -> None:
         super().__init__()
         self.marker_limit = THRESHOLD.OVERLAP_MARKERLIMIT
 
-    def apply(self, dependency_outputs: Dict[str, Any], methods: GBPluginMethods) -> List[UttObj]:
+    def apply(
+        self, dependency_outputs: Dict[str, Any], methods: GBPluginMethods
+    ) -> List[UttObj]:
         """
         Inserts new nodes into the BST, which represent an overlap.
 
@@ -42,8 +47,8 @@ class OverlapPlugin(Plugin):
         utterances = cm.getUttMap(False)
         unique_id = 0
 
-        mapIter = cm.map_iterator(utterances) # iterator
-        i = mapIter.iter() # i is the iterable object
+        mapIter = cm.map_iterator(utterances)  # iterator
+        i = mapIter.iter()  # i is the iterable object
         logging.debug(f"start analyze overlap")
         while i.hasNextPair():
             pair = i.nextPair()
@@ -52,8 +57,12 @@ class OverlapPlugin(Plugin):
 
             # In the case of an overlap, get its 4 marker positions
             if nxt_utt[0].startTime < curr_utt[-1].endTime:
-                logging.debug(f"overlap detected between {nxt_utt[0].startTime} and {curr_utt[-1].endTime}")
-                curr_x, curr_y, nxt_x, nxt_y = self._get_overlap_positions(curr_utt, nxt_utt)
+                logging.debug(
+                    f"overlap detected between {nxt_utt[0].startTime} and {curr_utt[-1].endTime}"
+                )
+                curr_x, curr_y, nxt_x, nxt_y = self._get_overlap_positions(
+                    curr_utt, nxt_utt
+                )
                 if (curr_x, curr_y, nxt_x, nxt_y) == INVALID_OVERLAP:
                     logging.warn(f"detect overlap between the same speaker")
                     continue
@@ -68,32 +77,43 @@ class OverlapPlugin(Plugin):
                     nxt_y = -1
 
                 fst_start = MARKER.TYPE_INFO_SP.format(
-                    MARKER.OVERLAP_FIRST_START, str(unique_id), curr_utt[0].sLabel)
+                    MARKER.OVERLAP_FIRST_START, str(unique_id), curr_utt[0].sLabel
+                )
                 fst_end = MARKER.TYPE_INFO_SP.format(
-                    MARKER.OVERLAP_FIRST_END, str(unique_id), curr_utt[0].sLabel)
+                    MARKER.OVERLAP_FIRST_END, str(unique_id), curr_utt[0].sLabel
+                )
                 snd_start = MARKER.TYPE_INFO_SP.format(
-                    MARKER.OVERLAP_SECOND_START, str(unique_id), nxt_utt[0].sLabel)
+                    MARKER.OVERLAP_SECOND_START, str(unique_id), nxt_utt[0].sLabel
+                )
                 snd_end = MARKER.TYPE_INFO_SP.format(
-                    MARKER.OVERLAP_SECOND_END, str(unique_id), nxt_utt[0].sLabel)
+                    MARKER.OVERLAP_SECOND_END, str(unique_id), nxt_utt[0].sLabel
+                )
 
-              
                 # insert the overlap markers into the tree
-                cm.insertToTree(curr_utt[curr_x].startTime,
-                                curr_utt[curr_x].startTime,
-                                MARKER.OVERLAPS,
-                                fst_start)
-                cm.insertToTree(curr_utt[curr_y].endTime,
-                                curr_utt[curr_y].endTime,
-                                MARKER.OVERLAPS,
-                                fst_end)
-                cm.insertToTree(nxt_utt[nxt_x].startTime,
-                                nxt_utt[nxt_x].startTime,
-                                MARKER.OVERLAPS,
-                                snd_start)
-                cm.insertToTree(nxt_utt[nxt_y].endTime,
-                                nxt_utt[nxt_y].endTime,
-                                MARKER.OVERLAPS,
-                                snd_end)
+                cm.insertToTree(
+                    curr_utt[curr_x].startTime,
+                    curr_utt[curr_x].startTime,
+                    MARKER.OVERLAPS,
+                    fst_start,
+                )
+                cm.insertToTree(
+                    curr_utt[curr_y].endTime,
+                    curr_utt[curr_y].endTime,
+                    MARKER.OVERLAPS,
+                    fst_end,
+                )
+                cm.insertToTree(
+                    nxt_utt[nxt_x].startTime,
+                    nxt_utt[nxt_x].startTime,
+                    MARKER.OVERLAPS,
+                    snd_start,
+                )
+                cm.insertToTree(
+                    nxt_utt[nxt_y].endTime,
+                    nxt_utt[nxt_y].endTime,
+                    MARKER.OVERLAPS,
+                    snd_end,
+                )
                 unique_id += 1
 
         cm.buildUttMap()
@@ -156,7 +176,9 @@ class OverlapPlugin(Plugin):
         if curr_overlap_end_pos == 0 and next_overlap_end_pos == 0:
             return INVALID_OVERLAP
 
-        return (curr_overlap_start_pos,
-                curr_overlap_end_pos,
-                next_overlap_start_pos,
-                next_overlap_end_pos)
+        return (
+            curr_overlap_start_pos,
+            curr_overlap_end_pos,
+            next_overlap_start_pos,
+            next_overlap_end_pos,
+        )

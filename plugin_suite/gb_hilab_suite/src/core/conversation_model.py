@@ -18,11 +18,13 @@ from gb_hilab_suite.src.configs import INTERNAL_MARKER, load_threshold, PLUGIN_N
 MARKER = INTERNAL_MARKER
 THRESHOLD = load_threshold()
 
+
 @dataclass
 class CONVERSATION:
     map1 = "map1"
     map2 = "map2"
     map3 = "map3"
+
 
 class ConversationModel:
     """
@@ -81,8 +83,10 @@ class ConversationModel:
             is only one last utterance, return with an empty list.
             """
             if self.hasNextPair():
-                result = [self.map[self.list[self.curr]],
-                          self.map[self.list[self.curr + 1]]]
+                result = [
+                    self.map[self.list[self.curr]],
+                    self.map[self.list[self.curr + 1]],
+                ]
                 self.curr += 1
                 return result
             elif self.curr == len(self.list) - 1:
@@ -146,7 +150,6 @@ class ConversationModel:
             """
             self.curr = 0
             return self
-
 
     def getTree(self, copy: bool) -> Node:
         """
@@ -242,53 +245,68 @@ class ConversationModel:
         currSL = inputNode.val.sLabel
 
         if currSL in MARKER.INTERNAL_MARKER_SET:
-            arr = inputNode.val.text[1 : len(inputNode.val.text)-1].split(MARKER.MARKER_SEP)
+            arr = inputNode.val.text[1 : len(inputNode.val.text) - 1].split(
+                MARKER.MARKER_SEP
+            )
             currSL = (arr[-1].split(MARKER.KEYVALUE_SEP))[-1]
             temp = arr[0].split(MARKER.KEYVALUE_SEP)[-1]
             markerInfo = arr[1].split(MARKER.KEYVALUE_SEP)[-1]
             logging.warn(f"maker info is --- {markerInfo}, marker is {temp}")
             if inputNode.val.sLabel in varDict:
                 surfaceFormat = varDict[temp]
-                logging.info(f"replace node marker in the tree with node {inputNode},\
-                             replace {temp} with {surfaceFormat}")
+                logging.info(
+                    f"replace node marker in the tree with node {inputNode},\
+                             replace {temp} with {surfaceFormat}"
+                )
 
                 # specific to XMLSCHEMA plugin for PAUSES marker HACK
-                if temp == MARKER.PAUSES or temp==MARKER.GAPS:
-                    newNode = Node(inputNode.val.startTime,
-                               inputNode.val.endTime,
-                               currSL,
-                               surfaceFormat[0] + surfaceFormat[1 : -1] + MARKER.KEYVALUE_SEP + markerInfo + surfaceFormat[-1] )
+                if temp == MARKER.PAUSES or temp == MARKER.GAPS:
+                    newNode = Node(
+                        inputNode.val.startTime,
+                        inputNode.val.endTime,
+                        currSL,
+                        surfaceFormat[0]
+                        + surfaceFormat[1:-1]
+                        + MARKER.KEYVALUE_SEP
+                        + markerInfo
+                        + surfaceFormat[-1],
+                    )
                     return newNode
 
-                newNode = Node(inputNode.val.startTime,
-                               inputNode.val.endTime,
-                               currSL,
-                               surfaceFormat)
+                newNode = Node(
+                    inputNode.val.startTime,
+                    inputNode.val.endTime,
+                    currSL,
+                    surfaceFormat,
+                )
                 return newNode
-            
+
             for _, (underlyFormat, val) in enumerate(varDict.items()):
                 if inputNode.val.text.find(underlyFormat) != -1:
-                    newNode = Node(inputNode.val.startTime,
-                                   inputNode.val.endTime,
-                                   currSL,
-                                   val)
+                    newNode = Node(
+                        inputNode.val.startTime, inputNode.val.endTime, currSL, val
+                    )
                     return newNode
 
-            newNode = Node(inputNode.val.startTime,
-                           inputNode.val.endTime,
-                           currSL,
-                           inputNode.val.text)
+            newNode = Node(
+                inputNode.val.startTime,
+                inputNode.val.endTime,
+                currSL,
+                inputNode.val.text,
+            )
             return newNode
         else:
             if currSL[0] != "0":
                 logging.warn(f"{currSL} is not in the internal marker set")
-            
+
         return inputNode
 
     def outer_buildUttMapWithChange(self, id_arg):
         id = id_arg
 
-        def buildUttMapWithChange(currNode: Node, outputUttDict: Dict[str, List[Node]], varDict):
+        def buildUttMapWithChange(
+            currNode: Node, outputUttDict: Dict[str, List[Node]], varDict
+        ):
             """
             Called to build a utterance map with marker nodes substituted with the
             corresponding external format
@@ -297,7 +315,9 @@ class ConversationModel:
             nonlocal id
             currSL = currNode.val.sLabel
             if currNode.val.sLabel in MARKER.INTERNAL_MARKER_SET:
-                arr = currNode.val.text[1 : len(currNode.val.text)-1].split(MARKER.MARKER_SEP)
+                arr = currNode.val.text[1 : len(currNode.val.text) - 1].split(
+                    MARKER.MARKER_SEP
+                )
                 currSL = (arr[-1].split(MARKER.KEYVALUE_SEP))[-1]
 
             if currNode.left is not None:
@@ -305,7 +325,7 @@ class ConversationModel:
 
             if currNode.val.startTime is not None:
                 # create the first list in our dictionary
-                if (id == 0):
+                if id == 0:
                     newList = list()
                     newList.append(self.toReplace(currNode, varDict))
                     id += 1
@@ -315,7 +335,10 @@ class ConversationModel:
                     # calculate fto & combine utterance based on sLabel + threshold
                     fto = currNode.val.startTime - outputUttDict[id][-1].val.endTime
 
-                    if currSL == outputUttDict[id][-1].val.sLabel and fto < THRESHOLD.TURN_END_THRESHOLD_SECS:
+                    if (
+                        currSL == outputUttDict[id][-1].val.sLabel
+                        and fto < THRESHOLD.TURN_END_THRESHOLD_SECS
+                    ):
                         outputUttDict[id].append(self.toReplace(currNode, varDict))
                     # if not, create a new list add current node to new list
                     else:
@@ -329,20 +352,39 @@ class ConversationModel:
                     fto = currNode.val.startTime - outputUttDict[id][-1].val.endTime
 
                     index2 = id
-                    while index2 > 1 and outputUttDict[index2][-1].val.sLabel in MARKER.INTERNAL_MARKER_SET:
+                    while (
+                        index2 > 1
+                        and outputUttDict[index2][-1].val.sLabel
+                        in MARKER.INTERNAL_MARKER_SET
+                    ):
                         index2 -= 1
-                    fto2 = currNode.val.startTime - outputUttDict[index2][-1].val.endTime
+                    fto2 = (
+                        currNode.val.startTime - outputUttDict[index2][-1].val.endTime
+                    )
 
                     index3 = id
-                    while index3 > 1 and (outputUttDict[index3][-1].val.sLabel != currSL):
+                    while index3 > 1 and (
+                        outputUttDict[index3][-1].val.sLabel != currSL
+                    ):
                         index3 -= 1
-                    fto3 = currNode.val.startTime - outputUttDict[index3][-1].val.endTime
+                    fto3 = (
+                        currNode.val.startTime - outputUttDict[index3][-1].val.endTime
+                    )
 
-                    if currSL == outputUttDict[id][-1].val.sLabel and fto < THRESHOLD.TURN_END_THRESHOLD_SECS:
+                    if (
+                        currSL == outputUttDict[id][-1].val.sLabel
+                        and fto < THRESHOLD.TURN_END_THRESHOLD_SECS
+                    ):
                         outputUttDict[id].append(self.toReplace(currNode, varDict))
-                    elif currSL == outputUttDict[index2][-1].val.sLabel and fto2 < THRESHOLD.TURN_END_THRESHOLD_SECS:
+                    elif (
+                        currSL == outputUttDict[index2][-1].val.sLabel
+                        and fto2 < THRESHOLD.TURN_END_THRESHOLD_SECS
+                    ):
                         outputUttDict[index2].append(self.toReplace(currNode, varDict))
-                    elif fto3 < THRESHOLD.TURN_END_THRESHOLD_SECS and currSL == outputUttDict[index3][-1].val.sLabel:
+                    elif (
+                        fto3 < THRESHOLD.TURN_END_THRESHOLD_SECS
+                        and currSL == outputUttDict[index3][-1].val.sLabel
+                    ):
                         outputUttDict[index3].append(self.toReplace(currNode, varDict))
 
                     # if not, create a new list add current node to new list
@@ -354,6 +396,7 @@ class ConversationModel:
 
             if currNode.right is not None:
                 buildUttMapWithChange(currNode.right, outputUttDict, varDict)
+
         return buildUttMapWithChange
 
     def getUttMap(self, copy: bool):
@@ -372,7 +415,6 @@ class ConversationModel:
         if copy:
             return deepcopy(self.Maps[CONVERSATION.map1])
         return self.Maps[CONVERSATION.map1]
-
 
     def getWordFromNode(self, listNode: List[Node]):
         """
@@ -429,13 +471,14 @@ class ConversationModel:
             return deepcopy(self.Maps[CONVERSATION.map2])
         return self.Maps[CONVERSATION.map2]
 
+
 class ConversationModelPlugin(Plugin):
     def __init__(self) -> None:
         super().__init__()
 
-    def apply(self, 
-                     dependency_outputs: Dict[str, Any],
-                     methods: GBPluginMethods) -> ConversationModel:
+    def apply(
+        self, dependency_outputs: Dict[str, Any], methods: GBPluginMethods
+    ) -> ConversationModel:
         """
         Initializes, populates and returns an instance of ConversationModel,
         which contains a tree and three maps.

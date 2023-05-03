@@ -7,24 +7,27 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QStyle
 from .CheckBox import CheckBox
 from PyQt6.QtCore import Qt
 
+
 class MultipleSelect(QWidget, FormWidget):
-    def __init__(self, label: str,  choices: List[str]) -> None:
+    def __init__(self, label: str, choices: List[str]) -> None:
         super().__init__()
         self.logger = makeLogger("F")
-        self.choices = choices 
+        self.choices = choices
         self.labeltxt = label
         self.choicesDict: Dict[str, CheckBox] = dict()
         self.initUI()
-        for choice in choices: 
+        for choice in choices:
             self.addChoice(choice)
-        
+
     def initUI(self):
         self._layout = QVBoxLayout()
         self._layout.setAlignment(Qt.AlignmentFlag.AlignTop)
-        self.labelwidget = Label(self.labeltxt, STYLE_DATA.FontSize.HEADER4, STYLE_DATA.FontFamily.MAIN)
+        self.labelwidget = Label(
+            self.labeltxt, STYLE_DATA.FontSize.HEADER4, STYLE_DATA.FontFamily.MAIN
+        )
         self.setLayout(self._layout)
         self._layout.addWidget(self.labelwidget, alignment=Qt.AlignmentFlag.AlignTop)
-        
+
     def getValue(self) -> List[str]:
         res = []
         for choice, box in self.choicesDict.items():
@@ -32,7 +35,7 @@ class MultipleSelect(QWidget, FormWidget):
                 res.append(choice)
         self.logger.info(f"return the plugin setting {res}")
         return res
-    
+
     def setValue(self, choices: List[str]):
         choiceSet = set(choices)
         for choice, box in self.choicesDict.items():
@@ -41,18 +44,17 @@ class MultipleSelect(QWidget, FormWidget):
             else:
                 box.setValue(False)
 
-    def addChoice(self, newChoice:str):
+    def addChoice(self, newChoice: str):
         newBox = CheckBox(newChoice, False)
-        self.choicesDict[newChoice] = newBox 
+        self.choicesDict[newChoice] = newBox
         self._layout.addWidget(newBox, alignment=Qt.AlignmentFlag.AlignTop)
-        
-    
-    def removeChoice(self,choice: str):
+
+    def removeChoice(self, choice: str):
         if choice in self.choicesDict:
             try:
                 self.choicesDict[choice].hide()
             except Exception as e:
                 self.logger.error(e, exc_info=e)
-            
+
     def changeFont(self):
         self.labelwidget.fontChange(STYLE_DATA.FontSize.HEADER4)

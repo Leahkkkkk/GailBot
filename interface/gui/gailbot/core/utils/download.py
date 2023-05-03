@@ -14,11 +14,9 @@ from .logger import makelogger
 
 logger = makelogger("download")
 
+
 def download_from_urls(
-    urls : List[str],
-    download_dir : str,
-    unzip : bool = True,
-    chunkSize : int = 8192
+    urls: List[str], download_dir: str, unzip: bool = True, chunkSize: int = 8192
 ) -> List[str]:
     """
     Download from a list of urls and return a path to the directory containing
@@ -36,19 +34,19 @@ def download_from_urls(
     for i, url in enumerate(urls):
         # Create a temp. dir for this specific url
         name = os.path.splitext(os.path.basename(url))[0]
-        url_temp_path = "{}.zip".format(
-            os.path.join(dataset_download_path, name))
+        url_temp_path = "{}.zip".format(os.path.join(dataset_download_path, name))
         with requests.get(url, stream=True) as r:
             r.raise_for_status()
             pbar = tqdm(
-                total=int(r.headers.get("content-length", 0)), desc="{}".format(name))
+                total=int(r.headers.get("content-length", 0)), desc="{}".format(name)
+            )
             with open(url_temp_path, "wb+") as f:
                 for chunk in r.iter_content(chunk_size=chunkSize):
                     if chunk:  # filter out keep-alive new chunks
                         f.write(chunk)
                         pbar.update(len(chunk))
         if unzip:
-            with ZipFile(url_temp_path, 'r') as zipObj:
+            with ZipFile(url_temp_path, "r") as zipObj:
                 # Extract all the contents of zip file in different directory
                 extract_path = os.path.join(dataset_extract_path, name)
                 extracted_paths.append(extract_path)
@@ -61,7 +59,6 @@ def download_from_urls(
     return extracted_paths
 
 
-
 def is_internet_connected() -> bool:
     """
     True if connected to the internet, false otherwise
@@ -71,7 +68,7 @@ def is_internet_connected() -> bool:
         # reachable
         sock = socket.create_connection(("www.google.com", 80))
         if sock is not None:
-            print('Clossing socket')
+            print("Clossing socket")
             sock.close
         return True
     except OSError:
