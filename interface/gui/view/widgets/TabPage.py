@@ -99,6 +99,9 @@ class TabDialog(QDialog):
         self._layout.addWidget(self.tabStack, alignment=Qt.AlignmentFlag.AlignHCenter)
         self._layout.addWidget(self.btnContainer, alignment=Qt.AlignmentFlag.AlignHCenter)
         
+    def addWidget(self, widget, alignment):
+        self._layout.addWidget(widget, alignment=alignment)
+        
     def connectSignal(self):
         self.startBtn.clicked.connect(self.gotoNext)
         self.finishedBtn.clicked.connect(self.close)
@@ -107,7 +110,7 @@ class TabDialog(QDialog):
         for tab in self.tabs:
             tab.signals.blockNextPage.connect(self.deactivateBtn)
             tab.signals.nextPage.connect(self.activateBtn)
-        
+     
     def gotoNext(self):
         if self.currPage < self.finalTabIdx:
             self.currPage += 1

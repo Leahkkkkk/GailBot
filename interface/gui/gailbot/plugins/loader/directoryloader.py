@@ -41,8 +41,8 @@ class ConfDict(TypedDict):
 
 
 class MetaData(BaseModel):
-    version: str
-    author: str
+    Version: str
+    Author: str
 
 
 class ConfModel(BaseModel):

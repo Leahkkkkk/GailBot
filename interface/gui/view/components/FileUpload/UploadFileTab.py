@@ -16,12 +16,13 @@ from gbLogger import makeLogger
 from view.config.Text import ChooseFileTabText
 from view.config.Style import STYLE_DATA
 from view.widgets.TabPage import TabDialog
+from view.widgets.Button import InstructionBtn
+from view.config.InstructionText import INSTRUCTION
 from .FileUploadTabPages import (
     OpenFile, 
     ChooseOutPut, 
     ChooseSet
 )
-
 from PyQt6.QtCore import QObject, pyqtSignal, QSize
 
 
@@ -57,6 +58,8 @@ class UploadFileTab():
                       QSize(550,600))
         
         self.mainTab.finishedBtn.clicked.connect(self._addFile)
+        self.insBtn = InstructionBtn(INSTRUCTION.FILE_UPLOAD_TAB_INS)
+        self.mainTab.addWidget(self.insBtn, alignment=self.insBtn.defaultPos)
 
     def exec(self):
         self.mainTab.exec()

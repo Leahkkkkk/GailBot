@@ -20,9 +20,9 @@ data    = toml.load(os.path.join (FRONTEND_CONFIG_ROOT, "configpath.toml"))
 
 @dataclass 
 class WorkSpaceData(DataclassFromDict): 
-    wsStructure                   : str = field_from_dict()
-    fileManageData                : str = field_from_dict()
-
+    wsStructure                  : str = field_from_dict()
+    logManagement                : str = field_from_dict()
+    fileManagement               : str = field_from_dict()
 
 @dataclass 
 class StyleData(DataclassFromDict): 

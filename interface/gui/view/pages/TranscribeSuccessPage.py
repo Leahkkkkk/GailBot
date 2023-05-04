@@ -31,7 +31,7 @@ class TranscribeSuccessPage(BasicPage):
     """class for transcription success page"""
 
     def __init__(self, *args, **kwargs) -> None:
-        self.pageInstruction = INSTRUCTION.SUCCESS_IN
+        self.pageInstruction = INSTRUCTION.SUCCESS_INS
         super().__init__(*args, **kwargs)
         self.signal = FileSignal
         self._initWidget()

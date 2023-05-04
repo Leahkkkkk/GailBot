@@ -25,7 +25,7 @@ from controller.Request import Request
 from controller.transcribeController import TranscribeController
 from controller.mvController import MVController
 from gbLogger import makeLogger
-from view.config import getWorkPaths, getFileManagementData
+from view.config import getWorkPaths, getLogManagementData
 from gailbot.api import GailBot
 # import from view
 from view import ViewController
@@ -163,7 +163,7 @@ class Controller(QObject):
     def _clearLog(self):
         """ clear the log that is expired"""
         currentTime = int(time.time())
-        deleteTime = currentTime - getFileManagementData().AUTO_DELETE_TIME * 24 * 60
+        deleteTime = currentTime - getLogManagementData().AUTO_DELETE_TIME * 24 * 60
         logdir = getWorkPaths().logFiles
         files = glob.iglob(os.path.join(logdir, "*.log"))
         for file in files:

@@ -14,6 +14,8 @@ from typing import Dict, Tuple
 from gbLogger import makeLogger
 from view.config.Text import ENGINE_TAB_TEXT as Text
 from view.config.Style import STYLE_DATA
+from view.config.InstructionText import INSTRUCTION
+from view.widgets.Button import InstructionBtn
 from .CreateNewProfilePages import (
     SettingName,
     SelectEngine, 
@@ -52,6 +54,8 @@ class CreateNewEngine:
             QSize(STYLE_DATA.Dimension.LARGEDIALOGWIDTH, 
                   STYLE_DATA.Dimension.LARGEDIALOGHEIGHT)
         )
+        self.insBtn = InstructionBtn(INSTRUCTION.CREATE_NEW_ENGINE_INS)
+        self.mainTab.addWidget(self.insBtn, alignment=self.insBtn.defaultPos)
         self.mainTab.finishedBtn.clicked.connect(self._postSetting)
         self.selectEngine.selectEngine.currentTextChanged.connect(
             self.engineForm.setForm)

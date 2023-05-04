@@ -3,7 +3,8 @@
 userRoot             = "workspace/userRoot.toml"
 newUserRoot          = "workspace/newUserRoot.toml"
 wsStructure          = "workspace/wsStructure.toml"
-fileManageData       = "workspace/fileManage.toml"
+logManagement       = "workspace/logManagement.toml"
+fileManagement      = "workspace/fileManagement.toml"
 # path to config_frontend files with style data
 [style]
 dimension       = "style/dimension.toml"

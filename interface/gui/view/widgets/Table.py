@@ -206,9 +206,7 @@ class BaseTable(QTableWidget):
 
             for key, col in self.dataKeyToCol.items():
                 if isinstance(data[key], list):
-                    newItem = self.createListDisplay(
-                        data[key], self.rowHeight(newRowIdx)
-                    )
+                    newItem = self.createListDisplay(data[key])
                     self.setCellWidget(newRowIdx, col, newItem)
                 else:
                     newItem = QTableWidgetItem(str(data[key]))
@@ -249,7 +247,7 @@ class BaseTable(QTableWidget):
     def openEditDialog(self, data):
         pass
 
-    def createListDisplay(self, items, height):
+    def createListDisplay(self, items):
         listDisplay = QWidget()
         listLayout = QVBoxLayout()
         listDisplay.setLayout(listLayout)

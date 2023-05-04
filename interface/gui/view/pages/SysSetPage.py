@@ -136,7 +136,7 @@ class SystemSettingPage(QWidget):
             fontDes = StyleSource.CURRENT_FONTSIZE
             logDeleteTime = LogDeleteTimeDict[setting["Log file auto deletion time"]]
             f = open(
-                f"{os.path.join(dirname, WorkSpaceConfigPath.fileManageData)}", "w+"
+                f"{os.path.join(dirname, WorkSpaceConfigPath.logManagement)}", "w+"
             )
             toml.dump({"AUTO_DELETE_TIME": logDeleteTime}, f)
             f.close()

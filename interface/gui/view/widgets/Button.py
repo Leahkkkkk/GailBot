@@ -294,6 +294,7 @@ class InstructionBtn(QToolButton):
         self.setStyleSheet("border:none; background-color:none;")
         self.setIconSize(QSize(20, 20))
         self.setContentsMargins(0, 0, 0, 0)
+        self.defaultPos = Qt.AlignmentFlag.AlignRight 
         STYLE_DATA.signal.changeColor.connect(self.updateIcon)
 
     def displayIns(self):

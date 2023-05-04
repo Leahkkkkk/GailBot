@@ -24,7 +24,7 @@ class PluginTable(BaseTable):
     def __init__(self, signal: DataSignal):
         super().__init__(PLUGIN_SUITE_TEXT.TABLE_HEADER)
         self.signal = signal
-        self.dataKeyToCol = {"author": 1, "version": 2}
+        self.dataKeyToCol = {"Author": 1, "Version": 2}
         self.resizeCol(PLUGIN_SUITE_TEXT.TABLE_DIMENSION)
 
     def addItem(self, suiteInfo: Tuple[str, Dict[str, str], str]):

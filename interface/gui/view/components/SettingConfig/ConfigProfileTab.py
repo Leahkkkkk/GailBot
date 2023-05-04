@@ -14,6 +14,8 @@ Description: implement tab widget for creating profile setting and
 from typing import List 
 from gbLogger import makeLogger
 from view.config.Text import CreateNewProfileTabText as Text
+from view.config.InstructionText import INSTRUCTION
+from view.widgets.Button import InstructionBtn
 from view.widgets.TabPage import TabDialog
 from view.config.Style import STYLE_DATA
 from .CreateNewProfilePages import (
@@ -47,7 +49,9 @@ class CreateNewProfile():
             }
         )
         self.mainTab.finishedBtn.clicked.connect(self._postSetting)
-        
+        self.insBtn = InstructionBtn(INSTRUCTION.CREATE_NEW_PROFILE_INS)
+        self.mainTab.addWidget(self.insBtn, alignment=self.insBtn.defaultPos)
+
     def exec(self):
         self.mainTab.exec()
 

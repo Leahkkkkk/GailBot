@@ -10,7 +10,8 @@ Modified By:  Siara Small  & Vivian Li
 Description: implementation of the plugin dialog for user to upload new plugin
 '''
 
-
+from view.config.InstructionText import INSTRUCTION
+from view.widgets.Button import InstructionBtn
 from view.config.Text import PLUGIN_SUITE_TEXT as TEXT
 from view.config.Style import STYLE_DATA
 from view.widgets import ColoredBtn, WarnBox, UploadTable, Label, TextInput, initPrimaryColorBackground
@@ -45,6 +46,7 @@ class UploadPlugin(QDialog):
             QSize(Dimension.DEFAULTTABHEIGHT, Dimension.DEFAULTTABHEIGHT))
         self.signal = Signal()
         self.logger = makeLogger("F")
+        
         self._initWidget()
         self._initLayout()
         self._connectSignal()
@@ -68,6 +70,7 @@ class UploadPlugin(QDialog):
             TEXT.REGISTER,
             STYLE_DATA.Color.SECONDARY_BUTTON
         )
+        self.insBtn = InstructionBtn(INSTRUCTION.REGISTER_PLUGIN_SUITE_INS)
         
     def _initLayout(self):
         """ initalize the layout  """
@@ -87,7 +90,9 @@ class UploadPlugin(QDialog):
                                       alignment=Qt.AlignmentFlag.AlignHCenter)
         self.verticalLayout.addWidget(self.addBtn, 
                                       alignment=Qt.AlignmentFlag.AlignHCenter)
-
+        self.verticalLayout.addWidget(self.insBtn,
+                                      alignment=self.insBtn.defaultPos)
+        
     def _connectSignal(self):
         """ connects the file signals upon button click """
         self.uploadDir.clicked.connect(self._addFromDir)

@@ -128,3 +128,13 @@ def delete(path : str) -> None:
     except Exception as e:
         logging.error(e)
         return False
+
+
+def write_toml(path : str, data : Dict) -> bool:
+    """ given the path to a toml file and data stored in a dictionary 
+        output the data in the toml format to the file
+    """
+    if is_file(path):
+        delete(path)
+    with open(path, "w+") as f:
+        toml.dump(data, f)

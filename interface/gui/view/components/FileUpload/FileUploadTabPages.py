@@ -16,6 +16,11 @@ import os
 
 from controller.mvController import fileDict
 from view.config.Text import FileUploadPageText as Text
+from view.config.WorkSpace import (
+    updateSavedUploadFileDir, 
+    getSavedUploadFileDir,
+    updateSavedOutputDir,
+    getSavedOutputDir)
 from view.util.io import get_name, is_directory
 from gbLogger import makeLogger
 from view.widgets.Label import Label
@@ -24,6 +29,8 @@ from view.widgets.MsgBox import WarnBox
 from view.widgets.Button import ColoredBtn
 from view.widgets.ComboBox import ComboBox
 from view.widgets.Background import initSecondaryColorBackground
+from view.widgets.Button import InstructionBtn
+from view.config.InstructionText import INSTRUCTION
 from view.util.ErrorMsg import WARN, ERR
 from PyQt6.QtWidgets import (
     QWidget,
@@ -65,6 +72,7 @@ class OpenFile(TabPage):
         super().__init__(blockNext=True)
         self.setAcceptDrops(True)
         self.logger = makeLogger("F")
+        self.userRootDir = getSavedUploadFileDir()
         self._initWidget()
         self._initLayout()
         self._connectSignal()
@@ -86,6 +94,7 @@ class OpenFile(TabPage):
                 self.logger.info(f"get file path {file}")
                 fileObj = self._pathToFileObj(file)
                 fileList.append(fileObj)
+            updateSavedUploadFileDir(self.userRootDir)
             return fileList
         except Exception as e:
             self.logger.error(e, exc_info=e)
@@ -167,12 +176,14 @@ class OpenFile(TabPage):
         self.logger.info("")
         try:
             dialog = QFileDialog()
+            dialog.setDirectory(self.userRootDir)
             fileFilter = Text.fileFilter
             selectedFiles = dialog.getOpenFileNames(filter = fileFilter)
             if selectedFiles:
                 files, types = selectedFiles
                 for file in files:
                     self._addFileToFileDisplay(file)
+                    self.userRootDir = os.path.dirname(file)
                 if self.filePaths:
                     self.signals.nextPage.emit()
                 else:
@@ -180,6 +191,7 @@ class OpenFile(TabPage):
             else:
                 WarnBox(WARN.NO_FILE)
                 self.logger.warn(WARN.NO_FILE)
+            
         except Exception as e:
             self.logger.error(e, exc_info=e)
             WarnBox(ERR.ERR_WHEN_DUETO.format("uploading files", str(e)))
@@ -189,9 +201,11 @@ class OpenFile(TabPage):
         self.logger.info("")
         try:
             dialog = QFileDialog() 
+            dialog.setDirectory(self.userRootDir)
             selectedFolder = dialog.getExistingDirectory()
             if selectedFolder:
                 self._addFileToFileDisplay(selectedFolder)
+                self.userRootDir = os.path.dirname(selectedFolder)
                 if self.filePaths:
                     self.signals.nextPage.emit()
             else:
@@ -298,6 +312,7 @@ class ChooseOutPut(TabPage):
         super().__init__(blockNext=True, *args, **kwargs)
         self.logger = makeLogger("F")
         self.outPath = None
+        self.userRoot = getSavedOutputDir()
         self._initWidget()
         self._initLayout()
               
@@ -308,6 +323,7 @@ class ChooseOutPut(TabPage):
                 logging.error("No output directory is chosen")
                 WarnBox(WARN.NO_OUT_PATH)
             else:
+                updateSavedOutputDir(self.userRoot)
                 return {"Output": self.outPath}
         except Exception as e:
             self.logger.error(e, exc_info=e)
@@ -356,10 +372,13 @@ class ChooseOutPut(TabPage):
         """ adds existing directory as output directory """
         self.logger.info("add the existing directory")
         fileDialog = QFileDialog()
+        fileDialog.setDirectory(self.userRoot)
         outPath = fileDialog.getExistingDirectory()
+        
         if outPath:
             self.outPath = outPath
             self.signals.nextPage.emit()
             self.dirPathText.setText(outPath)
+            self.userRoot = outPath
         else: 
             logging.warn("No output directory is chosen")
