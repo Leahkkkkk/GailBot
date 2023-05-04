@@ -94,6 +94,7 @@ class BaseTable(QTableWidget):
         self.verticalHeader().hide()
         self.horizontalHeader().setStyleSheet(STYLE_DATA.StyleSheet.TABLE_HEADER)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
 
     ################# for configuring table widget and  ################
     def addCellWidgets(self, name: str, row: int):
