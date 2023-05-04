@@ -93,7 +93,7 @@ class SystemSettingPage(QWidget):
             | Qt.AlignmentFlag.AlignRight,
         )
 
-    def colorChange(self, colormode=None):
+    def colorChange(self):
         self.saveBtn.colorChange(STYLE_DATA.Color.PRIMARY_BUTTON)
         for button in self.formButtons:
             button.addOtherStyle(
@@ -101,7 +101,7 @@ class SystemSettingPage(QWidget):
             )
             button.colorChange(STYLE_DATA.Color.INPUT_TEXT)
 
-    def fontChange(self, fontmode=None):
+    def fontChange(self):
         for label in self.labels:
             label.fontChange(STYLE_DATA.FontSize.BODY)
         for btn in self.formButtons:

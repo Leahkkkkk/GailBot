@@ -10,8 +10,7 @@ Modified By:  Siara Small  & Vivian Li
 '''
 
 """ TODO:
-modularize the code on this page
-
+make the button into a list for modularity 
 """
 from enum import Enum
 from typing import List, Dict, List, Tuple
@@ -176,7 +175,7 @@ class SettingPage(QWidget):
         self.systemSetBtn.setDefaultStyle()
         self.engineSetBtn.setDefaultStyle()
     
-    def colorchange(self, colormode = None):
+    def colorchange(self):
         self.transcibeSetBtn.addOtherStyle(STYLE_DATA.StyleSheet.onlyBottomBorder)
         self.engineSetBtn.addOtherStyle(STYLE_DATA.StyleSheet.onlyBottomBorder)
         self.systemSetBtn.addOtherStyle(STYLE_DATA.StyleSheet.onlyBottomBorder)
@@ -187,7 +186,8 @@ class SettingPage(QWidget):
         self.pluginSetBtn.colorChange(STYLE_DATA.Color.GREYDARK)
         self.HIGH_LIGHT = STYLE_DATA.Color.HIGHLIGHT
   
-    def fontchange(self, fontchange = None):
+    def fontchange(self):
         self.transcibeSetBtn.fontChange(STYLE_DATA.FontSize.BTN)
         self.engineSetBtn.fontChange(STYLE_DATA.FontSize.BTN)
         self.systemSetBtn.fontChange(STYLE_DATA.FontSize.BTN)
+        self.pluginSetBtn.fontChange(STYLE_DATA.FontSize.BTN)

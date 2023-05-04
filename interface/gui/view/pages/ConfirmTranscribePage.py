@@ -87,7 +87,7 @@ class ConfirmTranscribePage(BasicPage):
         self.bottomButton.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.addWidget(self.bottomButton, alignment=center)
         self.horizontalLayout.setSpacing(STYLE_DATA.Dimension.LARGE_SPACING)
-        self.verticalLayout.addWidget(self.instructionBtn, self.instructionBtn.defaultPos)
+        self.verticalLayout.addWidget(self.instructionBtn, alignment=self.infopos)
 
     def _sendTranscribeSignal(self):
         """sends a signal with a set of file keys that will be transcribed"""

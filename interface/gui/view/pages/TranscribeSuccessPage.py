@@ -87,7 +87,7 @@ class TranscribeSuccessPage(BasicPage):
         )
         self.verticalLayout.addWidget(self.horizontal)
         self.verticalLayout.setSpacing(STYLE_DATA.Dimension.LARGE_SPACING)
-        self.verticalLayout.addWidget(self.instructionBtn, self.infopos)
+        self.verticalLayout.addWidget(self.instructionBtn, alignment=self.infopos)
 
     def _initHorizontalLayout(self):
         """initializes the horizontal layout of buttons to
