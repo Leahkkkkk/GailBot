@@ -15,11 +15,13 @@ from view.util.ErrorMsg import WARN, ERR
 class UploadTable(QTableWidget):
     """ a table widget to display a list of data 
     """
+    DELETE_BTN_SIZE = STYLE_DATA.Dimension.SMALLICONBTN
     def __init__(self) -> None:
         super().__init__(0,2)
         self.logger = makeLogger("F")
         self.keyToItem: Dict[str, str] = dict()
         self._initStyle()
+        
 
     def isAudioFile(self, file_path):
         audio_extensions = {'.mp3', '.wav', '.flac', '.aac', '.m4a', '.wma', '.ogg', '.opus'}
@@ -38,8 +40,8 @@ class UploadTable(QTableWidget):
         self.setColumnWidth(0,STYLE_DATA.Dimension.SMALL_TABLE_WIDTH) 
         self.setFixedSize(QSize(STYLE_DATA.Dimension.SMALL_TABLE_WIDTH,
                                                 STYLE_DATA.Dimension.SMALL_TABLE_HEIGHT)) 
-        self.setColumnWidth(0, 325)
-        self.setColumnWidth(1, 25)
+        self.setColumnWidth(0, self.width()- self.DELETE_BTN_SIZE - 2)
+        self.setColumnWidth(1, self.DELETE_BTN_SIZE)
     
     def addItem(self, item:str) -> bool:
         self.logger.info(f"{item} item added")
@@ -61,7 +63,7 @@ class UploadTable(QTableWidget):
             self.setItem(row, 0, newFile)
             
             btn = QPushButton(Text.delete)
-            btn.setFixedSize(QSize(20,20))
+            btn.setFixedSize(QSize(self.DELETE_BTN_SIZE, self.DELETE_BTN_SIZE))
             btn.setContentsMargins(1,5,1,5)
             self.setCellWidget(row, 1, btn)
             btn.clicked.connect(lambda: self.deleteItem(row, newFile))

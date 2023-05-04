@@ -79,7 +79,7 @@ class ConfirmTranscribePage(BasicPage):
         self.bottomButton.setLayout(self.horizontalLayout)
         self.setLayout(self.verticalLayout)
         """ adds widgets to layout """
-        self.verticalLayout.addWidget(self.logoContainer, alignment=right | top)
+        self.verticalLayout.addWidget(self.logoContainer, alignment=self.logopos)
         self.verticalLayout.addWidget(self.label)
         self.verticalLayout.addWidget(self.fileTable, alignment=center | top)
         self.horizontalLayout.addWidget(self.confirmBtn, alignment=right)
@@ -87,7 +87,7 @@ class ConfirmTranscribePage(BasicPage):
         self.bottomButton.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.addWidget(self.bottomButton, alignment=center)
         self.horizontalLayout.setSpacing(STYLE_DATA.Dimension.LARGE_SPACING)
-        self.verticalLayout.addWidget(self.instructionBtn, self.infopos)
+        self.verticalLayout.addWidget(self.instructionBtn, self.instructionBtn.defaultPos)
 
     def _sendTranscribeSignal(self):
         """sends a signal with a set of file keys that will be transcribed"""

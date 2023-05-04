@@ -153,8 +153,8 @@ class OpenFile(TabPage):
         self.logger.info("")
         self.fileDisplayList.setFixedSize(QSize(Dimension.SMALL_TABLE_WIDTH,
                                                 Dimension.SMALL_TABLE_HEIGHT)) 
-        self.fileDisplayList.setColumnWidth(0, Dimension.SMALL_TABLE_WIDTH - 30)
-        self.fileDisplayList.setColumnWidth(1, 25)
+        self.fileDisplayList.setColumnWidth(0, self.fileDisplayList.width() - Dimension.SMALLICONBTN - 2)
+        self.fileDisplayList.setColumnWidth(1, Dimension.SMALLICONBTN)
     
     def _pathToFileObj(self, path:str):  
         """ converts the file path to a file object  """  
@@ -226,7 +226,7 @@ class OpenFile(TabPage):
             newFile = QTableWidgetItem(icon + filestr)
             self.fileDisplayList.setItem(row, 0, newFile)
             btn = QPushButton(Text.delete)
-            btn.setFixedSize(QSize(20,20))
+            btn.setFixedSize(QSize(Dimension.SMALLICONBTN,Dimension.SMALLICONBTN))
             btn.setContentsMargins(1,5,1,5)
             self.fileDisplayList.setCellWidget(row, 1, btn)
             btn.clicked.connect(lambda: self.removeFile(row, newFile))

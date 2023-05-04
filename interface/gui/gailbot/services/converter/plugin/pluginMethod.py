@@ -48,8 +48,6 @@ class GBPluginMethods(Methods):
         if not is_directory(self.out_path):
             make_dir(self.out_path)
         
-        write_toml("/Users/yike/Desktop/gbout/utt.toml", self.payload.get_transcription_result())
-              
     def get_audio_path(self) -> Dict[str, str]:
         """
         Returns a dictionary that maps the audio name to the audio source

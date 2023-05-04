@@ -75,7 +75,7 @@ class TranscribeSuccessPage(BasicPage):
         self.verticalLayout = QVBoxLayout()
         self.container = QWidget()
         self.containerLayout = QVBoxLayout()
-        self.verticalLayout.addWidget(self.logoContainer, alignment=self.infopos)
+        self.verticalLayout.addWidget(self.logoContainer, alignment=self.logopos)
         self.container.setFixedWidth(STYLE_DATA.Dimension.TABLECONTAINERWIDTH)
         self.container.setLayout(self.containerLayout)
         self.containerLayout.addWidget(self.fileTable)
