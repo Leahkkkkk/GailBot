@@ -97,6 +97,7 @@ class PluginDirectoryLoader(PluginLoader):
         requirement = None
         official = None
         document = None
+        format = None
 
         # search for the requirements and config file
         for root, dirs, files in os.walk(suite_dir_path):
@@ -108,10 +109,12 @@ class PluginDirectoryLoader(PluginLoader):
                 document = os.path.join(root, PLUGIN_CONFIG.DOCUMENT)
             if PLUGIN_CONFIG.OFFICIAL in files:
                 official = os.path.join(root, PLUGIN_CONFIG.OFFICIAL)
-            if config and requirement and document and official:
+            if PLUGIN_CONFIG.FORMAT in files:
+                format = os.path.join(root, PLUGIN_CONFIG.FORMAT)
+            if config and requirement and document and official and format:
                 break
 
-        if not config or not document:
+        if not config or not document or not format:
             return False
 
         # download required package
@@ -145,7 +148,7 @@ class PluginDirectoryLoader(PluginLoader):
         """download packages listed under req_file to dest
 
         Args:
-            req_file(str): a string that specifies the path to requirments.txt file
+            req_file(str): a string that specifies the path to requirements.txt file
             dest (str): a string to the directory where the file will be downloaded
         """
         if hasattr(pip, "main"):

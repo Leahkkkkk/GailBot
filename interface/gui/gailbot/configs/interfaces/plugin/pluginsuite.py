@@ -12,6 +12,7 @@ class PLUGIN_CONFIG:
     REQUIREMENT = "requirement.txt"
     OFFICIAL = ".gb_official"
     CONFIG = "config.toml"
+    FORMAT = "format.md"
     HILAB_SUITE_ZIP = "https://gailbot-official-plugin-suite.s3.us-east-2.amazonaws.com/gb_hilab_suite.zip"
     OFFICIAL_KEY = b"KM1V0_HijdrehPVsFueXISED2Jxs0S_rR9zKAJzcW3A="
     OFFICIAL_ENKEY = b"q6LGp_5jjEQyZu3ydl88H2adl_RRZCyw4IMXqYXnga8="
