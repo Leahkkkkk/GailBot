@@ -18,8 +18,6 @@ from gailbot.core.utils.general import is_file
 
 import importlib
 
-## TODO: put to config
-DOCUMENTATION = PLUGIN_CONFIG.DOCUMENT
 
 logger = makelogger("pluginSuite")
 
@@ -108,6 +106,7 @@ class PluginSuite:
         # metadata and document_path will be loaded in _load_from_config
         self.metadata: MetaData = None
         self.document_path: str = None
+        self.formatmd_path: str = None
         self.dependency_map, self.plugins = self._load_from_config(dict_conf, abs_path)
 
         # Wrap the plugins in PluginComponent
@@ -221,7 +220,8 @@ class PluginSuite:
         metadata = dict_config["metadata"]
         MetaData(**metadata)
         self.metadata = metadata
-        self.document_path = os.path.join(abs_path, suite_name, DOCUMENTATION)
+        self.document_path = os.path.join(abs_path, suite_name, PLUGIN_CONFIG.DOCUMENT)
+        self.formatmd_path = os.path.join(abs_path,suite_name, PLUGIN_CONFIG.FORMAT )
         assert is_file(self.document_path)
 
         for conf in dict_config["plugins"]:

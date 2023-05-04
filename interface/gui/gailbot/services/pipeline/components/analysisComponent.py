@@ -1,6 +1,7 @@
 import time
+import os
 from typing import Any, List, Dict
-
+from gailbot.core.utils.general import copy, get_name
 from gailbot.core.utils.logger import makelogger
 from gailbot.core.pipeline import Component, ComponentState, ComponentResult
 from gailbot.core.utils.threads import ThreadPool
@@ -104,7 +105,6 @@ class AnalysisComponent(Component):
                 if not plugin_suite:
                     self.emit_progress(payload, f"{suite_name} is not a valid plugin")
                     raise PluginError(f"{suite_name} is not a valid plugin")
-                
                 logger.info(f"retrieved plugin suite {plugin_suite}")
                 
                 # create a method that get passed to plugin suite, and apply plugin suite
@@ -120,7 +120,8 @@ class AnalysisComponent(Component):
                     else:
                         suite_result["failure"].append(name)
                 analysis_result[suite_name] = suite_result
-                        
+                copy(plugin_suite.formatmd_path, 
+                     os.path.join(payload.out_dir.analysis_result, f"{suite_name}.md"))      
             end_time = time.time()
             stats = ProcessingStats(
                 start_time=start_time,
