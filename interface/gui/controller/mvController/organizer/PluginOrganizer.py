@@ -94,13 +94,16 @@ class PluginOrganizer:
         Returns:
             Dict[str, str]: _description_
         """
-        details = dict()
-        pluginName = detailRequest.data
-        details["suite_name"] = pluginName
-        details["metadata"] = self.gb.get_plugin_suite_metadata(pluginName)
-        details["dependency_graph"] = self.gb.get_plugin_suite_dependency_graph(pluginName)
-        details["documentation"] = self.gb.get_plugin_suite_documentation_path(pluginName)
-        detailRequest.succeed(details)
+        try:
+            details = dict()
+            pluginName = detailRequest.data
+            details["suite_name"] = pluginName
+            details["metadata"] = self.gb.get_plugin_suite_metadata(pluginName)
+            details["dependency_graph"] = self.gb.get_plugin_suite_dependency_graph(pluginName)
+            details["documentation"] = self.gb.get_plugin_suite_documentation_path(pluginName)
+            detailRequest.succeed(details)
+        except Exception as e:
+            detailRequest.fail(ERR.PLUGIN_DETAIL)
         return details
     
     
@@ -114,7 +117,8 @@ class PluginOrganizer:
         """
         try:
             path = self.gb.get_suite_source_path(sourceRequest.data)
+            assert path
             sourceRequest.succeed(path)
         except Exception as e:
             sourceRequest.fail(
-                ERR.PLUGIN_SRC_COED.format(sourceRequest.data, str(e)))
+                ERR.PLUGIN_SRC_CODE.format(sourceRequest.data))

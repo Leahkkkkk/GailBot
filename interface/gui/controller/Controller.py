@@ -115,6 +115,7 @@ class Controller(QObject):
         self._clearLog()
 
     def clearCache(self):
+        self.logger.info("clear cache handler activated")
         workSpace = getWorkPaths()
         for path in workSpace.__dict__.values():
             if is_directory(path):

@@ -1,3 +1,3 @@
-UPLOAD_SRC_DIR = "/Users/yike/Desktop"
+UPLOAD_SRC_DIR = "/Users/yike/Desktop/input/small_test"
 UPLOAD_PLUGIN_DIR = "NONE"
 OUTPUT_DIR = "/Users/yike/Desktop/gbout"

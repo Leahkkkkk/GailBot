@@ -161,8 +161,6 @@ class UploadFileTab(TabPage):
                     self._addFileToFileDisplay(file)
                     self.userRootDir = os.path.dirname(file)
                     self.signals.nextPage.emit()
-                else:
-                    WarnBox(WARN.NO_FILE)   
             else:
                 WarnBox(WARN.NO_FILE)
                 self.logger.warn(WARN.NO_FILE)

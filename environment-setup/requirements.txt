@@ -56,7 +56,7 @@ future==0.18.2
 gast==0.4.0
 gevent==22.10.2
 gevent-websocket==0.10.1
-google-api-core
+google-api-core 
 google-auth
 google-auth-oauthlib
 google-cloud-core

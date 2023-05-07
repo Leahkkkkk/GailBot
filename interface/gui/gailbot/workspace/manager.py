@@ -13,7 +13,6 @@ from gailbot.core.utils.general import (
 from gailbot.core.utils.logger import makelogger
 
 logger = makelogger("workspace")
-
 @dataclass
 class WorkspaceManager:
     """ store the path data of the workspace, provide utility function to

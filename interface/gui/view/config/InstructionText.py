@@ -1,58 +1,57 @@
 from dataclasses import dataclass
 from typing import Dict
 from .Style import STYLE_DATA
-
 @dataclass 
 class INSTRUCTION:
     ICON_MARKER = "icon"
     REMOVE_PLUGIN = {ICON_MARKER + STYLE_DATA.Asset.tableRemove:
-                    "Remove the plugin suite and the source file from GailBot, official plugin suite cannot be removed"}
+                    "Remove this plugin suite and its source files from GailBot. Official plugin suites cannot be removed."}
     REMOVE_FILE = {ICON_MARKER + STYLE_DATA.Asset.tableRemove: 
-                    "Remove the audio file from the transcription queue, the original file will not be removed"}
+                    "Remove this media file from the transcription queue. This file will not be transcribed during the current transcription process. The original source file will not be removed or updated."}
     REMOVE = {ICON_MARKER + STYLE_DATA.Asset.tableRemove: 
-                    "Remove the source from GailBot"}
+                    "Remove this media source file from GailBot."}
     REMOVE_PROFILE = {ICON_MARKER + STYLE_DATA.Asset.tableRemove: 
-                    "Remove the profile from GailBot"}
+                    "Remove this settings profile from GailBot."}
     REMOVE_ENGINE = {ICON_MARKER + STYLE_DATA.Asset.tableRemove: 
-                    "Remove the engine setting from GailBot"}
+                    "Remove this engine settings profile from GailBot."}
     EDIT_ENGINE = {ICON_MARKER + STYLE_DATA.Asset.tableEdit: 
-                    "Edit the engine setting"}
+                    "Edit this engine's settings profile."}
     EDIT_PROFILE = {ICON_MARKER + STYLE_DATA.Asset.tableEdit: 
-                    "Edit profile setting"}
+                    "Edit this profile's settings."}
     EDIT_FILE_PROFILE = {ICON_MARKER + STYLE_DATA.Asset.tableEdit: 
-                    "Edit the file's profile setting"}
+                    "Edit the profile settings for this file."}
     EDIT_BTN = {ICON_MARKER + STYLE_DATA.Asset.tableEdit: 
-                    "Edit setting"}
+                    "Edit the settings profile."}
     ENGINE_DETAIL = {ICON_MARKER + STYLE_DATA.Asset.tableDetail: 
-                    "Open a pop up for displaying the engine setting details"}
+                    "View the details of this engine settings profile."}
     PROFILE_DETAIL = {ICON_MARKER + STYLE_DATA.Asset.tableDetail: 
-                    "Open a pop up for displaying the profile setting details"}
+                    "View the details of this settings profile."}
     PLUGIN_DETAIL = {ICON_MARKER + STYLE_DATA.Asset.tableDetail: 
-                    "Open a pop up for displaying the plugin suite detail"}
+                    "View the details of this plugin suite."}
     SOURCE_BTN = {ICON_MARKER + STYLE_DATA.Asset.tableSource: 
-                    "View the source file"}
+                    "View this source file on your device."}
     OUTPUT_BTN = {ICON_MARKER + STYLE_DATA.Asset.tableOutput: 
-                    "View the output of transcription"}
-    TRANSCRIBE_BTN = {"Transcribe": "Transcribe the files that are selected on the table"}
+                    "View the GailBot transcription and analysis of this media."}
+    TRANSCRIBE_BTN = {"Transcribe": "Transcribe the selected files."}
     CONFIRM_BTN = {"Confirm ": ""}
-    SETTING_BTN = {"Settings": "Opens the application's system settings"}
-    ENGINE_BTN = {"Engine": "Opens application's page for displaying and editing engine setting"}
-    PLUGIN_BTN = {"Plugin": "Opens application's page for displaying and adding new plugin suite"}
-    Profile = {"Profile": "Opens application's page for displaying and editing profile setting "}
-    REMOVE_ALL = {"Remove All": "Remove all the audio files from table and transcription queue"}
-    FONT_SIZE = {"Font size": "Lets the user adjust the font size in the application"}
-    CHANGE_COLOR = {"Color mode": "Enables the user to switch between different color modes in the application."}
-    LOG_AUTO_DELETE = {"Log file auto \ndeletion time": "Sets the time interval for automatic deletion of log files."}
-    RESTORE = {"Restore Default": "Restores all settings to their default values."}
-    SAVELOG = {"Save Log Files": "Saves the application's log files to a specified location."}
-    CLEARLOG = {"Clear Log Files": "Clears all log files from the application."}
-    CLEARCACHE = {"Clear Cache": "Clears the application's cache"}
-    FROM_FILE_BTN = {"From File": "Upload a single audio file"}
-    FROM_DIR_BTN = {"From Folder": "Upload a directory that contains audio file or a previously transcribed directory from GailBot"}
+    SETTING_BTN = {"Settings": "Open the application's system settings."}
+    ENGINE_BTN = {"Engine": "View and edit the engine settings profiles."}
+    PLUGIN_BTN = {"Plugin": "View, edit, and add plugin suites."}
+    Profile = {"Profile": "View and edit the settings profiles."}
+    REMOVE_ALL = {"Remove All": "Remove all media files from the table and transcription queue."}
+    FONT_SIZE = {"Font size": "Change the font size of the application."}
+    CHANGE_COLOR = {"Color mode": "Switch between different color themes in the application."}
+    LOG_AUTO_DELETE = {"Log file auto \ndeletion time": "Set the time interval for automatic deletion of logging files."}
+    RESTORE = {"Restore Default": "Restore all system settings to their default values."}
+    SAVELOG = {"Save Log Files": "Set the location on your device to which log files will be saved."}
+    CLEARLOG = {"Clear Log Files": "Clear all log files from the application."}
+    CLEARCACHE = {"Clear Cache": "Clear the application's cache."}
+    FROM_FILE_BTN = {"From File": "Upload a single audio file."}
+    FROM_DIR_BTN = {"From Folder": "Upload a directory of audio files or a directory that has been previously transcribed by GailBot."}
     CLOUD_PLUGIN = {"Load from Cloud": "Register plugin from cloud source"} 
-    REGISTER_PLUGIN_SUITE = {"Register Plugin Suite": "Confirm Registering the plugin suite"}
-    DIRECTORY_PLUGIN = {"Load from Directory": "Register plugin from local directory"} 
-    SELECT_PROFILE = {"Select Profile": "The selected profile setting will be applied during transcription"}
+    REGISTER_PLUGIN_SUITE = {"Register Plugin Suite": "Are you sure you want to register this plugin suite?"}
+    DIRECTORY_PLUGIN = {"Load from Directory": "Upload a plugin suite from your device."} 
+    SELECT_PROFILE = {"Select Profile": "The selected profile setting will be applied during the transcription process."}
     SELECT_OUTPUT = {"Select Output": "The selected output path will be where the transcription result stored"}
     PROFILE_NAME = {"Profile Name": "Create a name for the new profile, the name must not be taken by existing profile"}
     SELECT_ENGINE = {"Engine": "Choose a speech to text engine"}

@@ -54,9 +54,10 @@ class ERR:
     ## error for plugin organizer
     PLUGIN_IN_USE   = "ERROR 031: Plugin {0} cannot be deleted while it is in use."
     PLUGIN_OFFICIAL = "ERROR 032: Official plugin {0} cannot be deleted."
-    PLUGIN_SRC_CODE = "ERROR 033: Failed to open source code for plugin suite {0} due to error {1}."
+    PLUGIN_SRC_CODE = "ERROR 033: Failed to open source code for plugin suite {0}. Source code has been deleted. "
+    PLUGIN_DETAIL   = "ERROR 034: Failed to display plugin suite details"
 
     ## error for transcription 
-    FAIL_TRANSCRIBE = "ERROR 034: Failed to transcribe the following files {0}. "
-    INVALID_TRANSCRIBE = "ERROR 035: The following files are invalid: {0}."
+    FAIL_TRANSCRIBE = "ERROR 035: Failed to transcribe the following files {0}. "
+    INVALID_TRANSCRIBE = "ERROR 036: The following files are invalid: {0}."
     
