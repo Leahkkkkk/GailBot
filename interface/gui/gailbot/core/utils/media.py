@@ -472,10 +472,13 @@ class AudioHandler:
     def overlay_audios(self, audios: List[str], output_path: str, name = MERGED_FILE_NAME):
         res = self.read_file(audios[0])
         name = MERGED_FILE_NAME
-        for i in range(1, len(audios)):
-            if AudioHandler.is_supported(audios[i]):
-                nxt = self.read_file(audios[i])
-                res = self.overlay(res, nxt)
+        if len(audios) == 1:
+            res = self.read_file(audios[0])
+        else:
+            for i in range(1, len(audios)):
+                if AudioHandler.is_supported(audios[i]):
+                    nxt = self.read_file(audios[i])
+                    res = self.overlay(res, nxt)
         self.write_stream(res, output_path, name=name, format=get_extension(audios[0]))
 
 

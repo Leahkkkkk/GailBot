@@ -305,7 +305,7 @@ def test_2ab():
 
 def test_plugin_dir():
     fails, invalid = transcribe(
-        [PATH.MANY_SMALL_FILES_DIR], "plugin", SETTING_DATA.PROFILE_WITH_PLUGIN
+        [PATH.DIR_2ab], "plugin", SETTING_DATA.PROFILE_WITH_PLUGIN
     )
 
 

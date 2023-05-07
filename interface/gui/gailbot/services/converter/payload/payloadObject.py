@@ -88,6 +88,8 @@ class PayLoadObject(ABC):
         logger.info(f"ouputspace {self.out_dir.transcribe_result}")
         self._set_initial_status()
         self._copy_file() 
+        handler = AudioHandler()
+        handler.overlay_audios(self.data_files, self.out_dir.media_file, MERGED_FILE_NAME)
         
     def _set_initial_status(self) -> None: 
         raise NotImplementedError()
@@ -420,9 +422,6 @@ class PayLoadObject(ABC):
         for file in self.data_files:
             if is_file(file):
                 copy(file, os.path.join(self.out_dir.media_file, os.path.basename(file)))
-        if len(self.data_files) > 1:
-            handler = AudioHandler()
-            handler.overlay_audios(self.data_files, self.out_dir.media_file, MERGED_FILE_NAME)
         
     def clear_temporary_workspace(self):
         delete(self.workspace.root)
