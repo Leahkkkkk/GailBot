@@ -21,7 +21,7 @@ from ..result import (
 from gailbot.core.utils.general import delete
 from gailbot.workspace import WorkspaceManager
 from gailbot.configs import service_config_loader
-
+MERGED_FILE_NAME = "merged"
 SERVICE_CONFIG = service_config_loader()
 logger = makelogger("payload object")
 
@@ -48,6 +48,7 @@ class PayLoadObject(ABC):
     """
     original_source : str       # path to original source, should not be modified 
     data_files: List[str]       # stores the path to the source that is safe to be used
+    data_file_format : str
     """ we can abstract setting from pipeline, 
         but transcribe component will need to have access to the interfaces 
     """
@@ -421,7 +422,7 @@ class PayLoadObject(ABC):
                 copy(file, os.path.join(self.out_dir.media_file, os.path.basename(file)))
         if len(self.data_files) > 1:
             handler = AudioHandler()
-            handler.overlay_audios(self.data_files, self.out_dir.media_file)
+            handler.overlay_audios(self.data_files, self.out_dir.media_file, MERGED_FILE_NAME)
         
     def clear_temporary_workspace(self):
         delete(self.workspace.root)

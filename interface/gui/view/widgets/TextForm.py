@@ -23,7 +23,7 @@ from .Form.OnOffButton import onOffButton
 from .Form.MultiSelect import MultipleSelect
 from .Form.SingleSelect import SingleSelect
 from ..config.Style import STYLE_DATA
-from view.widgets.Background import initSecondaryColorBackground, _initBackground
+from view.widgets.Background import initSecondaryColorBackground
 from PyQt6.QtWidgets import (
     QWidget,
     QVBoxLayout,
@@ -39,7 +39,6 @@ class InputFormat:
     FILE = " file upload"
     MULTI_CHOICE = " multiple choice"
     SINGLE_CHOICE = " single select"
-
 
 class TextForm(QWidget):
     def __init__(

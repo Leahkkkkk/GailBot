@@ -39,7 +39,7 @@ class CreateNewEngine:
             2. self.selectEngine: select the speech to text engine
             3. self.engineForm: a form to create speech to text engine setting 
         """
-        self.logger = makeLogger("F")
+        self.logger = makeLogger()
         self.signals = Signals()
         self.engineName = SettingName(title="Engine Setting Name")
         self.selectEngine = SelectEngine()
@@ -89,7 +89,7 @@ class EditEngine():
             2. self.engineForm: a form to create speech to text engine setting 
         """
         name, data = setting 
-        self.logger = makeLogger("F")
+        self.logger = makeLogger()
         self.signals = Signals()
         self.logger.info(name)
         self.logger.info(data)

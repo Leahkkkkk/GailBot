@@ -1,22 +1,19 @@
-
 '''
-File: pluginDB.py
+File: PluginOrganizer.py
 Project: GailBot GUI
-File Created: Sunday, 30th October 2022 7:06:50 pm
+File Created: 2023/05
 Author: Siara Small  & Vivian Li
 -----
-Last Modified: Sunday, 13th November 2022 9:00:57 am
+Last Modified:2023/05/06
 Modified By:  Siara Small  & Vivian Li
 -----
-Description: implementation of a the plugin database 
+Description: implement plugin organizer to handle GUI request related to plugin data 
 '''
-from typing import TypedDict, Tuple, Dict
-
+from typing import  Dict
 from gailbot.api import GailBot
 from view.signal.interface import DataSignal 
 from controller.Request import Request
 from PyQt6.QtCore import QObject, pyqtSignal
-from controller.util.io import get_name
 from controller.util.Error import ERR
 
 class Signals(QObject):
@@ -30,20 +27,14 @@ class Signals(QObject):
     pluginDetail = pyqtSignal(object)
 
 class PluginOrganizer:
-    """ Implementation of a plugin database that 
-    
-    Field:
-    1. data: a dictionary that stores the plugin data
-    2. signals: a signal object to support communication between the database
-                and the caller, the caller should support the functionalities 
-                from view to handle the signal emitted by the plugin database
-    
-    Plugin function:
-    Database modifier:
-        functions that delete or add file to the database
-    1. post(self, plugin: Tuple[str, str]) -> None
-    """
     def __init__(self, gbController: GailBot, pluginSignals: DataSignal) -> None:
+        """ 
+        Args:
+            gb (GailBot): an instance of GailBot api
+            pluginSignals (DataSignal): an instance of DataSignal object 
+                                       which will emit signal for request 
+                                       related to plugin data 
+        """
         self.data = dict()
         self.signals = Signals()
         self.gb = gbController

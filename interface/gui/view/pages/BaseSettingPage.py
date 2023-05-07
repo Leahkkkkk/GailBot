@@ -34,7 +34,7 @@ class BaseSettingPage(QWidget):
         **kwargs) -> None:
         super().__init__( *args, **kwargs)
         """ initializes class """
-        self.logger = makeLogger("F")
+        self.logger = makeLogger()
         self._initWidget()
         self._initlayout()
         self._connectSignal()

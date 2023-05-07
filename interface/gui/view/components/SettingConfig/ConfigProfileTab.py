@@ -35,7 +35,7 @@ class Signals(QObject):
 class CreateNewProfile():
     def __init__(self, engines: List[str], plugins: List[str], engineSettingSignal) -> None:
         self.signals = Signals()
-        self.logger = makeLogger("F")
+        self.logger = makeLogger()
         self.profileName   = SettingName()
         self.engineSetting = ChooseEngine(engines, engineSettingSignal)
         self.pluginSetting = PluginSetting(plugins)
@@ -72,7 +72,7 @@ class EditProfile():
         name, data = setting 
         self.profileName  = name 
         self.signals = Signals()
-        self.logger = makeLogger("F")
+        self.logger = makeLogger()
         self.engineSetting = ChooseEngine(engines, engineSettingSignal)
         self.pluginSetting = PluginSetting(plugins)
         self.pluginSetting.setData(data["plugin_setting"])

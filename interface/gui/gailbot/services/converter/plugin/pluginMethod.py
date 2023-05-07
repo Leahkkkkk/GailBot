@@ -1,12 +1,13 @@
 import os 
 from typing import Dict, Union, List, Any
 from gailbot.core.utils.general import write_toml, read_toml
-from ..payload.payloadObject import PayLoadObject
+from ..payload.payloadObject import PayLoadObject, MERGED_FILE_NAME
 from gailbot.services.converter.result import UttDict
 from gailbot.plugins import Methods
 from gailbot.core.utils.logger import makelogger
 from gailbot.core.utils.general import (
     get_name, 
+    get_extension,
     is_directory, 
     make_dir,
     write_csv,
@@ -16,7 +17,7 @@ from gailbot.core.utils.general import (
     write_txt)
 
 from pydantic import BaseModel
-
+MERGED = "merged.wav"
 
 logger = makelogger("pluginMethod")
 
@@ -54,8 +55,19 @@ class GBPluginMethods(Methods):
         """
         return {get_name(path): path for path in self.payload.data_files}
     
+    @property 
+    def merged_media(self):
+        """ 
+        return the path to the merged media file 
+        """
+        filename = f"{MERGED_FILE_NAME}.{get_extension(self.payload.data_files[0])}"
+        return os.path.join(self.payload.out_dir.media_file, filename)
+        
     @property
     def filenames(self) -> List[str]:
+        """
+        return the list of data file name 
+        """
         return [get_name(file) for file in self.payload.data_files]
 
     @property
@@ -68,7 +80,6 @@ class GBPluginMethods(Methods):
                             transcription result  
         """
         try:
-            
             return self.payload.get_transcription_result()
         except Exception as e:
             logger.error(e, exc_info=e)
@@ -131,7 +142,7 @@ class GBPluginMethods(Methods):
                                     Defaults to None.
 
         Returns:
-            bool: _description_
+            bool: return true if the plugin is registered successfully , false otherwise 
         """
         logger.info("plugin method, saving item is called")
         logger.info(data)

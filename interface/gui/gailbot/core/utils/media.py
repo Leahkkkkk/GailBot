@@ -21,7 +21,7 @@ from .general import (
 from gailbot.core.utils.logger import makelogger 
 from pydub import AudioSegment
 from pydub.silence import detect_leading_silence
-
+MERGED_FILE_NAME = "merged"
 logger = makelogger("media")
 @dataclass
 class Stream(ABC):
@@ -469,9 +469,9 @@ class AudioHandler:
             return audio_chunks
 
 
-    def overlay_audios(self, audios: List[str], output_path: str):
+    def overlay_audios(self, audios: List[str], output_path: str, name = MERGED_FILE_NAME):
         res = self.read_file(audios[0])
-        name = "merged" 
+        name = MERGED_FILE_NAME
         for i in range(1, len(audios)):
             if AudioHandler.is_supported(audios[i]):
                 nxt = self.read_file(audios[i])

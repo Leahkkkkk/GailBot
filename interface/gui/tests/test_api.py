@@ -245,14 +245,11 @@ def test_google_long():
         [PATH.LONG_PHONE_CALL], "google", SETTING_DATA.GOOGLE_PROFILE
     )
 
-
 def test_google_wav_suite():
     fails, invalid = transcribe(PATH.WAV_SUITE, "google", SETTING_DATA.GOOGLE_PROFILE)
 
-
 def test_google_icc():
     fails, invalid = transcribe([PATH.ICC_DIR], "google", SETTING_DATA.GOOGLE_PROFILE)
-
 
 def test_google_40_dirs():
     fails, invalid = transcribe(

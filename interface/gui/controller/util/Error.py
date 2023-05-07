@@ -7,6 +7,7 @@ Author: Siara Small  & Vivian Li
 Last Modified: Sunday, 6th November 2022 1:11:39 pm
 Modified By:  Siara Small  & Vivian Li
 -----
+Description: data that contains the error message
 '''
 
 from dataclasses import dataclass
@@ -54,3 +55,8 @@ class ERR:
     PLUGIN_IN_USE   = "ERROR 031: Plugin {0} cannot be deleted while it is in use."
     PLUGIN_OFFICIAL = "ERROR 032: Official plugin {0} cannot be deleted."
     PLUGIN_SRC_CODE = "ERROR 033: Failed to open source code for plugin suite {0} due to error {1}."
+
+    ## error for transcription 
+    FAIL_TRANSCRIBE = "ERROR 034: Failed to transcribe the following files {0}. "
+    INVALID_TRANSCRIBE = "ERROR 035: The following files are invalid: {0}."
+    

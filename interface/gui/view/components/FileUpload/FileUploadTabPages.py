@@ -7,14 +7,16 @@ Author: Siara Small  & Vivian Li
 Last Modified: Sunday, 16th October 2022 1:49:44 pm
 Modified By:  Siara Small  & Vivian Li
 -----
-Description: implementation of pages for user to upload new files
+Description: implementation of pages for user to upload new files, 
+             include UploadFileTab, ChooseSetTab, ChooseOutputTab
+              
 '''
 import logging 
 import datetime
 from typing import List, TypedDict
 import os
 
-from controller.mvController import fileDict
+from controller.mvController import FileDict
 from view.config.Text import FileUploadPageText as Text
 from view.config.WorkSpace import (
     updateSavedUploadFileDir, 
@@ -29,24 +31,19 @@ from view.widgets.MsgBox import WarnBox
 from view.widgets.Button import ColoredBtn
 from view.widgets.ComboBox import ComboBox
 from view.widgets.Background import initSecondaryColorBackground
-from view.widgets.Button import InstructionBtn
-from view.config.InstructionText import INSTRUCTION
+from view.widgets.UploadTable import UploadTable
 from view.util.ErrorMsg import WARN, ERR
 from PyQt6.QtWidgets import (
     QWidget,
     QFileDialog, 
     QLineEdit,
     QHBoxLayout,
-    QVBoxLayout,
-    QAbstractItemView,
-    QTableWidget,
-    QTableWidgetItem,
-    QPushButton)
-from PyQt6.QtCore import QSize, Qt
+    QVBoxLayout)
+from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QDragEnterEvent 
 
 #### controlling style changes 
-from view.config.Style import Dimension, STYLE_DATA, FontFamily
+from view.config.Style import STYLE_DATA
 
 ######################
 center = Qt.AlignmentFlag.AlignHCenter
@@ -59,11 +56,11 @@ class Profile(TypedDict):
     """ class representing a profile """
     Profile:str
 
-class OpenFile(TabPage):
+class UploadFileTab(TabPage):
     """ implement a page that allow use to upload file or directory 
     
     Public functions: 
-    1.  getFile(self) -> List[fileDict]
+    1.  getFile(self) -> List[FileDict]
         return a list of files uploaded by the user
     """
     def __init__(self, *args, **kwargs) -> None:
@@ -71,29 +68,22 @@ class OpenFile(TabPage):
         self.blockNext = True
         super().__init__(blockNext=True)
         self.setAcceptDrops(True)
-        self.logger = makeLogger("F")
+        self.logger = makeLogger()
         self.userRootDir = getSavedUploadFileDir()
         self._initWidget()
         self._initLayout()
         self._connectSignal()
-        self._initStyle()
-        self._initDimension()
     
-    def initState(self):
-        if self.filePaths:
-            self.signals.nextPage.emit()
-        else:
-            self.signals.blockNextPage.emit()
-    
-    def getFile(self) -> List[fileDict]:
+    def getFile(self) -> List[FileDict]:
         """ returns a list of files object that user has selected """
         self.logger.info("")
         fileList = []
         try:
-            for file in self.filePaths.values():
+            for file in self.fileDisplayList.getValues():
                 self.logger.info(f"get file path {file}")
-                fileObj = self._pathToFileObj(file)
-                fileList.append(fileObj)
+                FileDict = self._pathTofileDict(file)
+                fileList.append(FileDict)
+            # for saving the current directory for next usage 
             updateSavedUploadFileDir(self.userRootDir)
             return fileList
         except Exception as e:
@@ -101,74 +91,60 @@ class OpenFile(TabPage):
             WarnBox(ERR.ERR_WHEN_DUETO.format("uploading files", str(e)))
             return False
         
+    def initState(self):
+        """
+        redefine function from the super class, send block next page signal
+        to disallow user go to the next page until page ha been uploaded 
+        """
+        if self.filePaths:
+            self.signals.nextPage.emit()
+        else:
+            self.signals.blockNextPage.emit()
+
     def _initWidget(self):
         """ initializes the widgets """
         self.logger.info("")
-        self.header = Label(Text.uploadInstruction, STYLE_DATA.FontSize.HEADER4, FontFamily.MAIN)
-        self.fileDisplayList = QTableWidget()
-        self.filePaths = dict()
+        self.header = Label(
+            Text.uploadInstruction, 
+            STYLE_DATA.FontSize.HEADER3,
+            STYLE_DATA.FontFamily.MAIN)
+        self.fileDisplayList = UploadTable(self.signals.blockNextPage)
         self.uploadFileBtn = ColoredBtn(
             Text.tabAddfile, 
             STYLE_DATA.Color.PRIMARY_BUTTON)
         self.uploadFolderBtn = ColoredBtn(
             Text.tabAddFolder,
             STYLE_DATA.Color.PRIMARY_BUTTON)
+        self.filePaths = list() ## stores the selected file / folder paths 
        
     def _initLayout(self):
         """ initializes the layout  """
-        self.logger.info("")
-        self.mainLayout = QVBoxLayout()
-        self.setLayout(self.mainLayout)
-        self.buttonContainer = QWidget()
-        self.buttonContainerLayout = QHBoxLayout()
-        self.buttonContainer.setLayout(self.buttonContainerLayout)
-        self.buttonContainerLayout.addWidget(self.uploadFileBtn)
-        self.buttonContainerLayout.addWidget(self.uploadFolderBtn)
-        self.mainLayout.addWidget(self.header, alignment=center)
-        self.mainLayout.addWidget(self.fileDisplayList, alignment=center)
-        self.mainLayout.addWidget(self.buttonContainer,alignment=center)
+        mainLayout = QVBoxLayout()
+        self.setLayout(mainLayout)
+        buttonContainer = QWidget()
+        buttonContainerLayout = QHBoxLayout()
+        buttonContainer.setLayout(buttonContainerLayout)
+        buttonContainerLayout.addWidget(self.uploadFileBtn)
+        buttonContainerLayout.addWidget(self.uploadFolderBtn)
+        mainLayout.addWidget(self.header, alignment=center)
+        mainLayout.addWidget(self.fileDisplayList, alignment=center)
+        mainLayout.addWidget(buttonContainer,alignment=center)
         
     def _connectSignal(self):
         """ connects the signals upon button clicks """
-        self.logger.info("")
         self.uploadFileBtn.clicked.connect(self._getFiles)
         self.uploadFolderBtn.clicked.connect(self._getFolders)
         
-    def _initStyle(self):
-        """ initialize the style  """
-        self.logger.info("")
-        self.fileDisplayList.insertColumn(0)
-        self.fileDisplayList.insertColumn(1)
-        self.fileDisplayList.setSelectionMode(
-            QAbstractItemView.SelectionMode.NoSelection)
-        self.fileDisplayList.setEditTriggers(
-            QAbstractItemView.EditTrigger.NoEditTriggers)
-        self.fileDisplayList.horizontalHeader().hide()
-        self.fileDisplayList.verticalHeader().hide()
-        self.fileDisplayList.setStyleSheet(f"background-color:{STYLE_DATA.Color.MAIN_BACKGROUND};"
-                                           f"color:{STYLE_DATA.Color.MAIN_TEXT}")
-    
-    def _initDimension(self):
-        """ initializes the dimensions """
-        self.logger.info("")
-        self.fileDisplayList.setFixedSize(QSize(Dimension.SMALL_TABLE_WIDTH,
-                                                Dimension.SMALL_TABLE_HEIGHT)) 
-        self.fileDisplayList.setColumnWidth(0, self.fileDisplayList.width() - Dimension.SMALLICONBTN - 2)
-        self.fileDisplayList.setColumnWidth(1, Dimension.SMALLICONBTN)
-    
-    def _pathToFileObj(self, path:str):  
+    def _pathTofileDict(self, path:str):  
         """ converts the file path to a file object  """  
         fullPath = path
         self.logger.info(fullPath)
         date = datetime.date.today().strftime("%m-%d-%y")    
-        size = round(os.stat(fullPath).st_size/1000, 2)
         fileName = get_name(fullPath)
         fileType = Text.directoryLogo if is_directory(path) else Text.audioLogo
-            
         return {"Name": fileName, 
                 "Type": fileType, 
                 "Date": date, 
-                "Size": f"{size}kb", 
                 "FullPath": fullPath}
 
     def _getFiles (self):
@@ -184,7 +160,6 @@ class OpenFile(TabPage):
                 for file in files:
                     self._addFileToFileDisplay(file)
                     self.userRootDir = os.path.dirname(file)
-                if self.filePaths:
                     self.signals.nextPage.emit()
                 else:
                     WarnBox(WARN.NO_FILE)   
@@ -206,8 +181,7 @@ class OpenFile(TabPage):
             if selectedFolder:
                 self._addFileToFileDisplay(selectedFolder)
                 self.userRootDir = os.path.dirname(selectedFolder)
-                if self.filePaths:
-                    self.signals.nextPage.emit()
+                self.signals.nextPage.emit()
             else:
                 WarnBox(WARN.NO_FILE)
         except Exception as e:
@@ -216,36 +190,11 @@ class OpenFile(TabPage):
 
     def _addFileToFileDisplay(self, file):
         """ add the file to the file display table """
-        self.logger.info("")
-        icon = Text.directoryLogo if os.path.isdir(file) else Text.audioLogo
-        try:
-            row = self.fileDisplayList.rowCount()
-            self.fileDisplayList.insertRow(row)
-            self.filePaths[row] = file
-            filestr = os.path.join(os.path.basename(os.path.dirname(file)),os.path.basename(file))
-            newFile = QTableWidgetItem(icon + filestr)
-            self.fileDisplayList.setItem(row, 0, newFile)
-            btn = QPushButton(Text.delete)
-            btn.setFixedSize(QSize(Dimension.SMALLICONBTN,Dimension.SMALLICONBTN))
-            btn.setContentsMargins(1,5,1,5)
-            self.fileDisplayList.setCellWidget(row, 1, btn)
-            btn.clicked.connect(lambda: self.removeFile(row, newFile))
-            self.fileDisplayList.resizeRowsToContents()
-        except Exception as e:
-            self.logger.error(e, exc_info=e)
-            WarnBox(ERR.ERR_WHEN_DUETO.format("displaying uploaded file", str(e)))
-    
-    def removeFile(self, key, fileItem: QTableWidgetItem):
-        self.logger.info("remove the file with key {key}")
-        try:
-            row = self.fileDisplayList.indexFromItem(fileItem).row()
-            self.logger.info(f"removing the row {row}")
-            self.fileDisplayList.removeRow(row)
-            del self.filePaths[key]
-        except Exception as e:
-            self.logger.error(e, exc_info=e)
-
+        self.fileDisplayList.addItem(file)
+        self.filePaths = self.fileDisplayList.getValues()
+   
     def dragEnterEvent(self, a0: QDragEnterEvent) -> None:
+        """ add file to the display list from dragging event """
         self.logger.info("get the drag event for user to upload file")
         super().dragEnterEvent(a0)
         if a0.mimeData().hasUrls():
@@ -257,7 +206,7 @@ class OpenFile(TabPage):
                     self._addFileToFileDisplay(path)
                     self.signals.nextPage.emit()
                     
-class ChooseSet(TabPage):
+class ChooseSetTab(TabPage):
     """ implement a page for user to choose the setting profile
     
     Public Function:
@@ -268,7 +217,7 @@ class ChooseSet(TabPage):
         super().__init__( *args, **kwargs)
         self.profile = settings[0]
         self.settings = settings
-        self.logger = makeLogger("F")
+        self.logger = makeLogger()
         self._initWidget()
         self._initLayout()
         self.setAutoFillBackground(True)
@@ -285,7 +234,10 @@ class ChooseSet(TabPage):
     def _initWidget(self):
         """ initializes the widgets """
         self.logger.info("")
-        self.label = Label("Select Setting Profile", STYLE_DATA.FontSize.HEADER4, FontFamily.MAIN)
+        self.label = Label(
+            Text.CHOOSE_SET_TAB_HEADER, 
+            STYLE_DATA.FontSize.HEADER3, 
+            STYLE_DATA.FontFamily.MAIN)
         self.selectSettings = ComboBox(self)
         self.selectSettings.addItems(self.settings)
         self.selectSettings.setFixedWidth(350)
@@ -300,7 +252,7 @@ class ChooseSet(TabPage):
         self.layout.addWidget(self.selectSettings, alignment=center)
         self.layout.addStretch()
         
-class ChooseOutPut(TabPage):
+class ChooseOutputTab(TabPage):
     """ implement a page for user to choose output directory  
     
     Public Function:
@@ -310,7 +262,7 @@ class ChooseOutPut(TabPage):
     def __init__(self, *args, **kwargs) -> None:
         """ initializes the class """
         super().__init__(blockNext=True, *args, **kwargs)
-        self.logger = makeLogger("F")
+        self.logger = makeLogger()
         self.outPath = None
         self.userRoot = getSavedOutputDir()
         self._initWidget()
@@ -338,7 +290,7 @@ class ChooseOutPut(TabPage):
     def _initWidget(self):
         """ initializes the widgets """
         self.logger.info("")
-        self.chooseOuputLabel = Label(Text.selectOutput,  STYLE_DATA.FontSize.HEADER4, STYLE_DATA.FontFamily.MAIN)
+        self.chooseOuputLabel = Label(Text.selectOutput,  STYLE_DATA.FontSize.HEADER3, STYLE_DATA.FontFamily.MAIN)
         self.chooseDirBtn = ColoredBtn("···", STYLE_DATA.Color.PRIMARY_BUTTON, STYLE_DATA.FontSize.HEADER4)
         self.chooseDirBtn.setFixedWidth(70)
         self.dirPathText = QLineEdit(self)
@@ -346,11 +298,7 @@ class ChooseOutPut(TabPage):
         self.dirPathText.setMinimumHeight(40)
         self.dirPathText.setFixedWidth(350)
         self.dirPathText.setReadOnly(True)
-        self.dirPathText.setStyleSheet( "QLineEdit {"
-                                        "    padding: 5px;"
-                                        "    border-radius: 5px;"
-                                        "    border: 1px solid black;"
-                                        "}")
+        self.dirPathText.setStyleSheet(STYLE_DATA.StyleSheet.STANDARD_LINE_EDIT)
         self.chooseDirBtn.clicked.connect(self._addDir)
         
     def _initLayout(self):

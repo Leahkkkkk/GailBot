@@ -63,9 +63,11 @@ class ChatPlugin(Plugin):
                 for word in curr_utt:
                     l.append(word.text)
                 txt = CHAT_FORMATTER.TXT_SEP.join(l)
-
-                sLabel = LABEL.SPEAKERLABEL + str(curr_utt[0].sLabel)
-                
+                if (curr_utt[0].sLabel != LABEL.PAUSE and
+                    curr_utt[0].sLabel != LABEL.GAPMARKER):
+                    sLabel = LABEL.SPEAKERLABEL + str(curr_utt[0].sLabel)
+                else:
+                    sLabel = ""
                 # actual text content 
                 turn = CHAT_FORMATTER.TURN.format(
                     sLabel, txt, curr_utt[0].startTime, curr_utt[-1].endTime,

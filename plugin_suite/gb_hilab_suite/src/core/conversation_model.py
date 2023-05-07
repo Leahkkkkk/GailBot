@@ -267,7 +267,7 @@ class ConversationModel:
                         currSL,
                         surfaceFormat[0]
                         + surfaceFormat[1:-1]
-                        + MARKER.KEYVALUE_SEP
+                        + " "
                         + markerInfo
                         + surfaceFormat[-1],
                     )
@@ -301,7 +301,7 @@ class ConversationModel:
 
         return inputNode
 
-    def outer_buildUttMapWithChange(self, id_arg):
+    def outer_buildUttMapWithChange(self, id_arg,):
         id = id_arg
 
         def buildUttMapWithChange(

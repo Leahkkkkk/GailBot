@@ -32,7 +32,7 @@ class SelectPathDialog(QDialog):
     def __init__(self, *arg, **kwargs) -> None:
         super().__init__(*arg, **kwargs)
         self.userRoot = userpaths.get_desktop()
-        self.logger = makeLogger("F")
+        self.logger = makeLogger()
         self._initWidget()
         self._initLayout()
         self._connectSignal()

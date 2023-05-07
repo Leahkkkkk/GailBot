@@ -41,7 +41,7 @@ class TranscribeProgressPage(BasicPage):
         super().__init__(*args, **kwargs)
         self.sourceSignal = FileSignal
         self.transcribeSignal = GBTranscribeSignal
-        self.logger = makeLogger("F")
+        self.logger = makeLogger()
         self._initWidget()
         self._initstyle()
         self._initLayout()

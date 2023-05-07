@@ -1,3 +1,14 @@
+'''
+File: EngineOrganizer.py
+Project: GailBot GUI
+File Created: 2023/05/01
+Author: Siara Small  & Vivian Li
+-----
+Last Modified:2023/05/06
+Modified By:  Siara Small  & Vivian Li
+-----
+Description: handle GUI request for engine data 
+'''
 from view.signal.interface import DataSignal
 from controller.Request import Request
 from gailbot.api import GailBot
@@ -6,7 +17,14 @@ from controller.util.Error import ERR
 
 class EngineOrganizer:
     def __init__(self, gb: GailBot, engineSignal: DataSignal) -> None:
-        self.logger = makeLogger("B")
+        """ 
+        Args:
+            gb (GailBot): an instance of GailBot api
+            engineSignal (DataSignal): an instance of DataSignal object 
+                                       which will emit signal for request 
+                                       related to engine data 
+        """
+        self.logger = makeLogger()
         self.gb = gb
         self.logger.info(f"front end engine organizer initialized") 
         self.registerSignal(engineSignal)

@@ -36,7 +36,7 @@ class ConfirmTranscribePage(BasicPage):
         self.pageInstruction = INSTRUCTION.CONFIRM_INS
         super().__init__(*args, **kwargs)
         self.signal = FileSignal
-        self.logger = makeLogger("F")
+        self.logger = makeLogger()
         self._initWidget()
         self._initLayout()
         self._connectSignal()

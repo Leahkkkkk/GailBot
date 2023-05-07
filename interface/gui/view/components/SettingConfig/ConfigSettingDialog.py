@@ -32,7 +32,7 @@ class SettingConfigDialog(ABC):
     mainTab: TabDialog
    
     def __init__(self) -> None:
-       self.logger = makeLogger("F") 
+       self.logger = makeLogger() 
        self.mainTab.finishedBtn.clicked.connect(self._postSetting)
     
     def _postSetting(self):

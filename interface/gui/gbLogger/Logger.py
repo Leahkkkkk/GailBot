@@ -21,18 +21,14 @@ from PyQt6.QtWidgets import QLineEdit
 current_time = datetime.datetime.now()
 fileHandlerAdded = False
 
-def makeLogger(source:str):
+def makeLogger(source:str = None ):
     """ return a logger that specifies the source of the log information
     
     Args:
         source(str): indicates the source of the log, 
                      either "Backend" or "Frontend"
     """
-    if source == "F":
-        source = "Frontend"
-    elif source == "B":
-        source = "Backend"
-    
+    source = "Frontend"
     logger = logging.getLogger()
     # create log file handler
     global fileHandlerAdded
@@ -122,6 +118,7 @@ class ConsoleHandler(logging.Handler, QtCore.QObject):
         self.appendPlainText.connect(self.widget.appendHtml)
         fmt = " %(source)s |  %(lineno)s | %(asctime)s | %(levelname)s | %(module)s | %(funcName)s | %(message)s "
         self.setFormatter(ConsoleFormatter(fmt))
+        self.setLevel(logging.INFO)
 
     def emit(self, record):
         """ display log changes """

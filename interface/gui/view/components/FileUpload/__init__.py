@@ -9,5 +9,5 @@ Modified By:  Siara Small  & Vivian Li
 -----
 Description: Implement tab for uploading file
 '''
-from .UploadFileTab import UploadFileTab
-from .FileUploadTabPages import ChooseSet
+from .UploadFileTab import UploadFileDialog
+from .FileUploadTabPages import ChooseSetTab

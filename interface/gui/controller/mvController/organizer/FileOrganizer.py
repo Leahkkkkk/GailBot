@@ -1,16 +1,15 @@
 '''
-File: fileDB.py
+File: FileOrganizer.py
 Project: GailBot GUI
-File Created: Friday, 4th November 2022 1:01:27 pm
+File Created: 2023/04/01
 Author: Siara Small  & Vivian Li
 -----
-Last Modified: Sunday, 13th November 2022 8:38:26 am
+Last Modified:2023/05/06
 Modified By:  Siara Small  & Vivian Li
 -----
-Description: Implementation of a database that stores all the file data 
+Description: implement file organizer to handle GUI request for file data 
 '''
 
-from dataclasses import dataclass
 from typing import TypedDict
 from gailbot.api import GailBot
 from view.signal.interface import DataSignal
@@ -20,10 +19,8 @@ from controller.util.Error import  ERR
 from PyQt6.QtCore import QObject, pyqtSignal
 from dict_to_dataclass import DataclassFromDict, field_from_dict
 
-
-
     
-class fileDict(TypedDict):
+class FileDict(TypedDict):
     """ the scheme of file data, 
         a file is posted to the database through a dictionary that 
         follows this scheme
@@ -33,7 +30,6 @@ class fileDict(TypedDict):
     Profile : str
     Status  : str
     Date    : str
-    Size    : str
     Output  : str
     FullPath: str
     Progress: str
@@ -47,42 +43,16 @@ class Signals(QObject):
     
 class FileOrganizer:
     def __init__(self, gbController: GailBot, fileSignal: DataSignal) -> None:
-        """ implementation of File database
-        
-        Field:
-        1. data : a dictionary stores the file data
-        2. signals: a signal object to support communication between the 
-                    database and the caller, the caller should support function
-                    from view object to handle signal emitted by the file 
-                    database
-        3. currentKey: stores the file key that will be used when a new file 
-                        is posted to the database
-        
-        
-        Public Functions: 
-        
-        Database modifier:
-        functions that delete or add file to the database
-        1. post(self, data : fileDict) -> None 
-        2. delete(self, key: str) -> None
-        
-        File modifier:
-        functions that modify files data that is already in the database
-        3. edit(self, file: Tuple[str,fileDict]) -> None
-        4. editFileStatus(self, data: Tuple[str, str]) -> None
-        5. changeFiletoTranscribed(self, key: str) -> None
-        6. editFileProfile(self, data: Tuple[str, str]) -> None
-        7. updateFileProgress(self, data: Tuple [str, str]) -> None
-        
-        Database access:
-        functions that access data from database
-        9. requestProfile(self, key:str) -> None
-        10. get(self, filekey:str) -> None
-        11. getTranscribeData(self, key:str) -> Tuple
+        """ 
+        Args:
+            gb (GailBot): an instance of GailBot api
+            fileSignal (DataSignal): an instance of DataSignal object 
+                                       which will emit signal for request 
+                                       related to file data 
         """
         self.gb: GailBot = gbController
         self.signals = Signals()
-        self.logger = makeLogger("F")
+        self.logger = makeLogger()
         self.registerSignal(fileSignal)
     
     def registerSignal(self, signal:DataSignal):
@@ -95,12 +65,12 @@ class FileOrganizer:
     ##########################  request handler ###########################
     def post(self, request : Request) -> None:
         """ add file to file database 
-        data: (fileDict) a dictionary that contains the file data to be 
+        data: (FileDict) a dictionary that contains the file data to be 
               added to the database
         """
         self.logger.info("post file to database")
         self.logger.info(request.data)
-        file : fileDict = request.data
+        file : FileDict = request.data
         
         try:
             name = self.gb.add_source(file["FullPath"], file["Output"])

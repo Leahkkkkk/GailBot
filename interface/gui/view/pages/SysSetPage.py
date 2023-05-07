@@ -53,7 +53,7 @@ class SystemSettingPage(QWidget):
         super().__init__(*args, **kwargs)
         self.data = Form
         self.signal = Signal()
-        self.logger = makeLogger("F")
+        self.logger = makeLogger()
         self.formButtons: List[Button.BorderBtn] = []
         self.labels: List[Label] = []
         self._initWidget()

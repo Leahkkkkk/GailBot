@@ -10,7 +10,7 @@ from view.widgets.Table import BaseTable
 from view.widgets.Button import ColoredBtn, TableBtn
 from ...widgets.Background import initSecondaryColorBackground
 
-from ..FileUpload import UploadFileTab, ChooseSet
+from ..FileUpload import UploadFileDialog, ChooseSetTab
 from view.signal.interface import DataSignal
 from gbLogger import makeLogger
 from ...config.Style import STYLE_DATA
@@ -196,7 +196,7 @@ class SourceTable(BaseTable):
         
         """
         try:
-            addFileWindow = UploadFileTab(self.profiles)
+            addFileWindow = UploadFileDialog(self.profiles)
             addFileWindow.signals.postFile.connect(self._postFile)
             addFileWindow.exec()
         except Exception as e:
@@ -400,9 +400,9 @@ class _ChangeProfileDialog(QDialog):
         super().__init__(*args, **kwargs)
         self.signals = signal
         self.succeed = succeed
-        self.logger = makeLogger("F")
+        self.logger = makeLogger()
         self.fileKey = fileKey
-        self.selectSetting = ChooseSet(profiles)
+        self.selectSetting = ChooseSetTab(profiles)
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
         self.confirmBtn = ColoredBtn("Confirm", STYLE_DATA.Color.PRIMARY_BUTTON)

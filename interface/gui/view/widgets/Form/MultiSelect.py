@@ -11,7 +11,7 @@ from PyQt6.QtCore import Qt
 class MultipleSelect(QWidget, FormWidget):
     def __init__(self, label: str, choices: List[str]) -> None:
         super().__init__()
-        self.logger = makeLogger("F")
+        self.logger = makeLogger()
         self.choices = choices
         self.labeltxt = label
         self.choicesDict: Dict[str, CheckBox] = dict()

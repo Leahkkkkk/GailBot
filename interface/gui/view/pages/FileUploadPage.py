@@ -55,7 +55,7 @@ class FileUploadPage(BasicPage):
         self.pageInstruction = INSTRUCTION.FILE_UPLOAD_INS
         super().__init__(*args, **kwargs)
         self.signal = FileSignal
-        self.logger = makeLogger("F")
+        self.logger = makeLogger()
         self._initWidget()
         self._initLayout()
         self._initStyle()

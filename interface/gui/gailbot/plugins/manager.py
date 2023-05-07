@@ -205,6 +205,14 @@ class PluginManager:
             return None
 
     def report_registration_err(self, suite: str) -> str:
+        """report plugin registration error 
+
+        Args:
+            suite (str): the path to the suite source
+
+        Returns:
+            str: a string that report the plugin registration error 
+        """
         try:
             if validators.url(suite):
                 if not PluginURLLoader.is_valid_url(suite):
@@ -228,7 +236,6 @@ class PluginManager:
                 mds = filepaths_in_dir(suite, ["md"])
                 if len(mds) == 0 or not mds:
                     return ERROR.MISSING_DOC
-
                 return ERROR.MODULE_ERROR
             else:
                 return ERROR.INVALID_INPUT

@@ -1,8 +1,3 @@
-# -*- coding: utf-8 -*-
-# @Author: Muhammad Umair
-# @Date:   2023-03-15 10:31:49
-# @Last Modified by:   Muhammad Umair
-# @Last Modified time: 2023-03-15 12:10:39
 '''
 File: Controller.py
 Project: GailBot GUI
@@ -27,9 +22,8 @@ from controller.mvController import MVController
 from gbLogger import makeLogger
 from view.config import getWorkPaths, getLogManagementData
 from gailbot.api import GailBot
-# import from view
 from view import ViewController
-from PyQt6.QtCore import pyqtSlot, QObject, QThreadPool, pyqtSignal
+from PyQt6.QtCore import QObject, QThreadPool, pyqtSignal
 class Signal(QObject):
     """ a signal object that contains signal for communication between
         backend transcription process and frontend view object"""
@@ -65,7 +59,7 @@ class Controller(QObject):
         backendRoot = workSpace.backend 
         
         # create logger
-        self.logger = makeLogger("F")
+        self.logger = makeLogger()
         self.logger.info(f"controller initialized")
         self.logger.info(backendRoot)
         
@@ -144,7 +138,6 @@ class Controller(QObject):
     ###################   gailbot  handler #############################
     def _handleTranscribeSignal(self):
         """ handle signal from View that requests to transcribe the file"""
-        
         self.ViewObj.getTranscriptionSignal().transcribe.connect(self._runGailBot)
         
     

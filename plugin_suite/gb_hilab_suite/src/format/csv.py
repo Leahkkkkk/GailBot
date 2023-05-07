@@ -38,10 +38,10 @@ class CSVPlugin(Plugin):
         varDict = {
             MARKER.GAPS: LABEL.GAPMARKER,
             MARKER.OVERLAPS: LABEL.OVERLAPMARKER,
-            MARKER.OVERLAP_FIRST_START: LABEL.OVERLAPMARKER,
-            MARKER.OVERLAP_FIRST_END: LABEL.OVERLAPMARKER,
-            MARKER.OVERLAP_SECOND_START: LABEL.OVERLAPMARKER,
-            MARKER.OVERLAP_SECOND_END: LABEL.OVERLAPMARKER,
+            MARKER.OVERLAP_FIRST_START: LABEL.OVERLAPMARKER_CURR_START,
+            MARKER.OVERLAP_FIRST_END: LABEL.OVERLAPMARKER_CURR_END,
+            MARKER.OVERLAP_SECOND_START: LABEL.OVERLAPMARKER_NEXT_START,
+            MARKER.OVERLAP_SECOND_END: LABEL.OVERLAPMARKER_NEXT_END,
             MARKER.PAUSES: LABEL.PAUSE,
         }
 
@@ -66,8 +66,8 @@ class CSVPlugin(Plugin):
                 txt = CSV_FORMATTER.TXT_SEP.join(l)
 
                 sLabel = ""
-                if (curr_utt[0].sLabel != "*GAP" and
-                    curr_utt[0].sLabel != "pauses"):
+                if (curr_utt[0].sLabel != LABEL.PAUSE and
+                    curr_utt[0].sLabel != LABEL.GAPMARKER):
                     sLabel = LABEL.SPEAKERLABEL + str(curr_utt[0].sLabel)
                     writer.writerow([sLabel, txt, curr_utt[0].startTime,
                                         curr_utt[-1].endTime])

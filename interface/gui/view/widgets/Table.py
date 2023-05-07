@@ -29,13 +29,13 @@ class BaseTable(QTableWidget):
     signal: DataSignal
     dataKeyToCol: Dict[str, int]
     tableWidth: int = STYLE_DATA.Dimension.DEFAULTTABWIDTH
-    tableHeight: int = STYLE_DATA.Dimension.DEFAULTTABHEIGHT
+    tableHeight: int = STYLE_DATA.Dimension.FORMMINHEIGHT
     nameAtFstColumn: bool = True
 
     def __init__(self, headers, *args, **kwargs):
         print("init table")
         super(BaseTable, self).__init__(0, len(headers))
-        self.logger = makeLogger("F")
+        self.logger = makeLogger()
         self.headers = headers
         self._initWidget()
         self._initStyle()
@@ -229,6 +229,7 @@ class BaseTable(QTableWidget):
                 self.removeCellWidget(rowIdx, col)
                 if isinstance(data[key], list):
                     newItem = self.createListDisplay(data[key])
+                    newItem.setAlignment(Qt.AlignmentFlag.AlignHCenter)
                     self.setCellWidget(rowIdx, col, newItem)
                 else:
                     newItem = QTableWidgetItem(str(data[key]))

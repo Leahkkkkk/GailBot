@@ -58,7 +58,7 @@ class SettingName (TabPage):
         """" initializes page """
         super().__init__(blockNext=True, *args, **kwargs)
         self.title = title
-        self.logger = makeLogger("F")
+        self.logger = makeLogger()
         self._initWidget()
         self._initLayout()
     
@@ -107,7 +107,7 @@ class SelectEngine(TabPage):
     def __init__(self, *args, **kwargs) -> None:
         """ initializes page """
         super().__init__(*args, **kwargs)
-        self.logger = makeLogger("F")
+        self.logger = makeLogger()
         self._initWidget()
     
     def _initWidget(self):
@@ -196,7 +196,7 @@ class PluginSetting(TabPage):
         self.verticalLayout.addWidget(self.header, alignment=center)
         self.verticalLayout.addWidget(self.mainForm)
         self.verticalLayout.addStretch()
-        self.logger = makeLogger("F")
+        self.logger = makeLogger()
     
     def getData(self):
         """ gets current value of data """
@@ -216,7 +216,7 @@ class PluginSetting(TabPage):
 class ChooseEngine(TabPage):
     def __init__(self, engineSettings, engineSignal: DataSignal, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.logger = makeLogger("F")
+        self.logger = makeLogger()
         self.verticallayout = QVBoxLayout()
         self.setLayout(self.verticallayout)
         self.header = Label(

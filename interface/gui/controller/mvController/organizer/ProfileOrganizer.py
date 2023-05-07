@@ -18,9 +18,15 @@ from controller.util.Error import ERR
 
 class ProfileOrganizer:
     def __init__(self, gb: GailBot, profileSignal: DataSignal) -> None:
-        self.logger = makeLogger("B")
+        """ 
+        Args:
+            gb (GailBot): an instance of GailBot api
+            profileSignal (DataSignal): an instance of DataSignal object 
+                                       which will emit signal for request 
+                                       related to profile data 
+        """
+        self.logger = makeLogger()
         self.gb = gb
-        self.logger.info(f"front end profile organizer initialized, the default setting is {self.gb.get_default_profile_setting_name()}") 
         self.registerSignal(profileSignal)
     
     def registerSignal(self, signal: DataSignal):
@@ -63,7 +69,6 @@ class ProfileOrganizer:
         """
         name = deleteRequest.data
         self.logger.info(f"deleting profile {name}")
-        self.logger.info(f"the default setting is {self.gb.get_default_profile_setting_name()}")
         if not self.gb.is_setting(name):
             deleteRequest.fail(ERR.PROFILE_NOT_FOUND.format(name))
             self.logger.error(ERR.PROFILE_NOT_FOUND.format(name))

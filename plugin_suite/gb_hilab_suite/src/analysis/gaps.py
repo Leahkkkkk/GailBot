@@ -62,19 +62,9 @@ class GapPlugin(Plugin):
 
             # only add a gap marker if speakers are different
             if fto >= self.lb_gap and curr_utt[0].sLabel != nxt_utt[0].sLabel:
-                logging.debug(
-                    f"gaps detected between speaker {curr_utt[0].sLabel} \
-                                and speaker {nxt_utt[0].sLabel}"
-                )
-
                 markerText = MARKER.TYPE_INFO_SP.format(
-                    MARKER.GAPS, str(round(fto, 1)), MARKER.NO_SPEAKER
+                    MARKER.GAPS, str(round(fto, 1)), str(curr_utt[-1].sLabel)
                 )
-                logging.debug(
-                    f"insert gap marker {markerText} between \
-                    {curr_utt[-1].endTime} and {nxt_utt[0].startTime}"
-                )
-
                 # insert marker into the tree
                 cm.insertToTree(
                     curr_utt[-1].endTime, nxt_utt[0].startTime, MARKER.GAPS, markerText

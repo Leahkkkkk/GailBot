@@ -43,7 +43,7 @@ class MainStack(QStackedWidget):
         *args, 
         **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.logger= makeLogger("F")
+        self.logger= makeLogger()
         self.setMaximumSize(
             QSize(STYLE_DATA.Dimension.WINMAXWIDTH, 
                   STYLE_DATA.Dimension.WINMAXHEIGHT))

@@ -13,12 +13,10 @@ so that the front end is able to reflect the transcription progress
 '''
 
 from dataclasses import dataclass
-import time
 from typing import List, Dict, Tuple
+
 from controller.util.Error import  ERR
 from controller.Request import Request
-from view.MainWindow import MainWindow
-
 from view import ViewController
 from gbLogger import makeLogger
 from PyQt6.QtCore import pyqtSignal, QObject, QThreadPool, QRunnable, pyqtSlot
@@ -28,39 +26,28 @@ from gailbot.api import GailBot
 class ThreadControl:
     maxThread = 5 
     
-@dataclass 
-class TranscribeError:
-    INVALID_FILES = "The following files are not valid input {files}"    
     
 class Signal(QObject):
     """ a signal object to communicate the transcription process with 
         the front end view object 
     """
-    start = pyqtSignal()
-    finish = pyqtSignal()
-    error = pyqtSignal(str)
-    busy = pyqtSignal()
+    start    = pyqtSignal()
+    finish   = pyqtSignal()
+    error    = pyqtSignal(str)
+    busy     = pyqtSignal()
     progress = pyqtSignal(tuple)
-    killed = pyqtSignal()
+    killed   = pyqtSignal()
 
 class TranscribeController(QObject):
     def __init__(self, ThreadPool: QThreadPool, view: ViewController, gb: GailBot):
         """ a controller that controls the transcription process
 
         Constructor Args:
-            ThreadPool (QThreadPool): a threadpool provided by the parent 
+            ThreadPool (QThreadPool): a threadpool provided by the caller 
             view (ViewController): view object that handle the signal from the 
-                               backend
-            files (list): a list of files to be transcribed
+                                   backend
+            gb: an instance of GailBot api 
         
-        Field:
-            1. ThreadPool: a threadpool where the function will be run 
-            2. Signal: contains pyqtSignal to communicate with the caller 
-            3. files: a list of files to be transcribed 
-        
-        Public function:
-            1. runGailbot(): wrapper function to run gailbot
-            2. cancelGailBot(): cancel the gailbot running process
         """
         super().__init__()
         self.logger = makeLogger ("B")
@@ -70,7 +57,8 @@ class TranscribeController(QObject):
         self.transcribeSignal = view.getTranscriptionSignal()
         self.gb = gb
         # connect to view handler for over-loaded threadpool
-        
+       
+        # clear the source memeory  
         self.transcribeSignal.clearSourceMemory.connect(self.gb.clear_source_memory)
         # view handler to redirect to different pages based on the 
         # transcribe result 
@@ -128,7 +116,7 @@ class GBWorker(QRunnable):
             self.filedata[name] = data 
             
         self.gb = gb
-        self.logger = makeLogger("F")
+        self.logger = makeLogger()
         
     @pyqtSlot()
     def run(self):
@@ -154,12 +142,12 @@ class GBWorker(QRunnable):
                     self.filedata[filename]["Status"] = "Transcribed"
             self.logger.info(f"the failure files are {fails}, the invalid files are {invalid}")
             if invalid and fails:
-                self.failureFun(ERR.INVALID_FILE.format(str(invalid)) +
+                self.failureFun(ERR.INVALID_TRANSCRIBE.format(str(invalid)) +
                                 "\n" + ERR.FAIL_TRANSCRIBE.format(str(fails)))
             elif fails:
                 self.failureFun(ERR.FAIL_TRANSCRIBE.format(str(fails)))
             elif invalid: 
-                self.failureFun(ERR.INVALID_FILE.format(str(invalid)))
+                self.failureFun(ERR.INVALID_TRANSCRIBE.format(str(invalid)))
             self.continueFun([(name, data) for name, data in self.filedata.items()])
         except Exception as e:
             self.failureFun(ERR.ERROR_WHEN_DUETO.format("transcription", str(e)))
@@ -183,8 +171,7 @@ class GBWorker(QRunnable):
 
     def getProgressDisplayer(self, name):
         """private function to emit file progress
-        Args:
-            name (str): _description_
-            msg (str): _description_
+        Arg: 
+            name: the name that can be used to identify the transcription 
         """
         return lambda msg : self.signal.progress.emit((name, msg))

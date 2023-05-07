@@ -90,7 +90,7 @@ class FileUploadPageText:
     settingBtnText = "\u2699"
     dropText = "Drop file to upload"
     chooseLocalText = "Choose from local"
-    chooseSetHeader = "Select Setting Profile"
+    CHOOSE_SET_TAB_HEADER = "Select Setting Profile"
     selectSetText = "Select Settings"
     selectPlaceHolderText = "None"
     selectFolderText = "Select Folder"
@@ -171,7 +171,7 @@ class ProfilePageText:
     confirmEdit = "Confirm saving new edit to the profile?"
 
     tableHeader = ["Profile Name", "Applied Engine", "Applied Plugin Suite", "Actions"]
-    tableDimension = [0.24, 0.24, 0.24, 0.26]
+    tableDimension = [0.24, 0.24, 0.24, 0.25]
     HEADER = "Profile Settings"
     CAPTION = "Available profile settings for GailBot"
     CREATE_NEW = "Create New Profile"
@@ -436,7 +436,7 @@ class PLUGIN_SUITE_TEXT:
         "3. Github url storing plugin suite as zip file",
     ]
     TABLE_HEADER = ["Plugin Suite Name", "Author", "Version", "Actions"]
-    TABLE_DIMENSION = [0.3, 0.22, 0.20, 0.26]
+    TABLE_DIMENSION = [0.3, 0.22, 0.20, 0.25]
     CONFIRM_DELETE = "Confirm deleting plugin suite {0}"
 
 
@@ -446,7 +446,7 @@ class ENGINE_SETTING_TEXT:
     CONFIRM_DELETE = "Confirm deleting engine setting {0}"
     HEADER = "Engine Settings"
     CAPTION = "Available Speech to Text Engine Setting"
-    TABLE_DIMENSION = [0.36, 0.36, 0.26]
+    TABLE_DIMENSION = [0.36, 0.36, 0.25]
     CREATE_NEW = "Create New Engine"
 
 

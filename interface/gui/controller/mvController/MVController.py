@@ -17,30 +17,18 @@ from gailbot.api import GailBot
 
 class MVController:
     """ 
-    Model View controller to send requested data on view and 
-    handle request from view to modify data in the database
-
-    Constructor Args:
-        view (MainWindow): main view 
-        fileOrganizer (FileModel): file database 
-        profileOrganizer (ProfileModel): profile database
-        pluginOrganizer (PluginModel): plugin database
+    Model View controller to handle data-related view request 
     
-    Field:
-        view: view object 
-        fileOrganizer: file database 
-        profileOrganizer: profile database
-        pluginOrganizer: plugin database
-    
-    Public Function:
-        exec(): driver function that starts to run the model view controller
+    wrapper object that contain fileOrganizer, profileOrganizer, 
+    pluginOrganizer, engineOrganizer that handle request for 
+    different data 
     """
     def __init__(self, view: ViewController, gb: GailBot) -> None:
         self.fileOrganizer = FileOrganizer(gb, view.getFileSignal())
         self.profileOrganizer = ProfileOrganizer(gb, view.getProfileSignal())
         self.pluginOrganizer = PluginOrganizer(gb, view.getPluginSignal())
         self.engineOrganizer = EngineOrganizer(gb, view.getEngineSignal())
-        self.logger = makeLogger("F")
+        self.logger = makeLogger()
         self.view  = view 
         self.gb = gb 
         

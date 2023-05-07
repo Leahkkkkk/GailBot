@@ -187,7 +187,6 @@ class PluginSuite:
     ##########
     # PRIVATE
     ##########
-
     def _load_from_config(
         self, dict_config, abs_path: str
     ) -> Tuple[Dict[str, List[str]], Dict[str, Plugin]]:
@@ -223,7 +222,7 @@ class PluginSuite:
         self.document_path = os.path.join(abs_path, suite_name, PLUGIN_CONFIG.DOCUMENT)
         self.formatmd_path = os.path.join(abs_path,suite_name, PLUGIN_CONFIG.FORMAT )
         assert is_file(self.document_path)
-
+        
         for conf in dict_config["plugins"]:
             module_name = conf["module_name"]
             module_full_name = f"{suite_name}.{module_name}"

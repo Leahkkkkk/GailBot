@@ -28,6 +28,7 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import Qt, QSize, pyqtSignal, QObject
 
+center = Qt.AlignmentFlag.AlignHCenter
 class Signal(QObject):
     addPlugin = pyqtSignal(str)
     
@@ -45,7 +46,7 @@ class UploadPlugin(QDialog):
         self.setMinimumSize(
             QSize(Dimension.DEFAULTTABHEIGHT, Dimension.DEFAULTTABHEIGHT))
         self.signal = Signal()
-        self.logger = makeLogger("F")
+        self.logger = makeLogger()
         
         self._initWidget()
         self._initLayout()
@@ -56,7 +57,7 @@ class UploadPlugin(QDialog):
         """ initializes the widget """
         self.header = Label(
             TEXT.HEADER,
-            STYLE_DATA.FontSize.HEADER2, 
+            STYLE_DATA.FontSize.HEADER3, 
             STYLE_DATA.FontFamily.MAIN)
         self.uploadDir = ColoredBtn(
             TEXT.LOAD_DIR,
@@ -74,24 +75,18 @@ class UploadPlugin(QDialog):
         
     def _initLayout(self):
         """ initalize the layout  """
-        horizontalLayout = QHBoxLayout()
-        horizontalLayout.addWidget(self.uploadDir)
-        horizontalLayout.addWidget(self.uploadUrl)
-        hContainer = QWidget()
-        hContainer.setLayout(horizontalLayout)
-        
-        self.verticalLayout = QVBoxLayout()
-        self.setLayout(self.verticalLayout)
-        self.verticalLayout.addWidget(self.header, 
-                                      alignment=Qt.AlignmentFlag.AlignHCenter)
-        self.verticalLayout.addWidget(self.displayPlugins,
-                                      alignment=Qt.AlignmentFlag.AlignHCenter)
-        self.verticalLayout.addWidget(hContainer, 
-                                      alignment=Qt.AlignmentFlag.AlignHCenter)
-        self.verticalLayout.addWidget(self.addBtn, 
-                                      alignment=Qt.AlignmentFlag.AlignHCenter)
-        self.verticalLayout.addWidget(self.insBtn,
-                                      alignment=self.insBtn.defaultPos)
+        mainLayout = QVBoxLayout()
+        self.setLayout(mainLayout)
+        buttonContainer = QWidget()
+        buttonContainerLayout = QHBoxLayout()
+        buttonContainer.setLayout(buttonContainerLayout)
+        buttonContainerLayout.addWidget(self.uploadDir)
+        buttonContainerLayout.addWidget(self.uploadUrl)
+        mainLayout.addWidget(self.header, alignment=center)
+        mainLayout.addWidget(self.displayPlugins,alignment=center)
+        mainLayout.addWidget(buttonContainer, alignment=center)
+        mainLayout.addWidget(self.addBtn, alignment=center)
+        mainLayout.addWidget(self.insBtn, alignment=self.insBtn.defaultPos)
         
     def _connectSignal(self):
         """ connects the file signals upon button click """

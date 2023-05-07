@@ -11,7 +11,6 @@ Description: implementation of a pop up dialog that allow user to upload
              new file
 '''
 from typing import List
-
 from gbLogger import makeLogger
 from view.config.Text import ChooseFileTabText
 from view.config.Style import STYLE_DATA
@@ -19,9 +18,9 @@ from view.widgets.TabPage import TabDialog
 from view.widgets.Button import InstructionBtn
 from view.config.InstructionText import INSTRUCTION
 from .FileUploadTabPages import (
-    OpenFile, 
-    ChooseOutPut, 
-    ChooseSet
+    UploadFileTab, 
+    ChooseOutputTab, 
+    ChooseSetTab
 )
 from PyQt6.QtCore import QObject, pyqtSignal, QSize
 
@@ -31,7 +30,7 @@ class Signals(QObject):
     postFile = pyqtSignal(dict)
     sendStatus = pyqtSignal(int)
    
-class UploadFileTab():
+class UploadFileDialog():
     def __init__(self, settings:List[str], *args, **kwargs) -> None:
         """ A tab with multiple pages for user to upload a new file.
             when uploading the file, the user will go through the process of:
@@ -46,11 +45,11 @@ class UploadFileTab():
     
         """
         super().__init__(*args, **kwargs)
-        self.logger = makeLogger("F")
+        self.logger = makeLogger()
         self.signals = Signals()
-        self.uploadFileTab = OpenFile()
-        self.chooseSetTab = ChooseSet(settings)
-        self.chooseOutPutTab = ChooseOutPut()
+        self.uploadFileTab = UploadFileTab()
+        self.chooseSetTab = ChooseSetTab(settings)
+        self.chooseOutPutTab = ChooseOutputTab()
         self.mainTab = TabDialog(ChooseFileTabText.WindowTitle, 
                       {ChooseFileTabText.TabHeader1: self.uploadFileTab,
                        ChooseFileTabText.TabHeader2: self.chooseSetTab,

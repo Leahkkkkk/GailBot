@@ -42,7 +42,7 @@ class TabPage(QWidget):
         super().__init__(*args, **kwargs)
         self.blockNext: bool = blockNext
         self.signals = Signals()
-        self.logger = makeLogger("F")
+        self.logger = makeLogger()
         
     def initState(self):
         self.logger.info(f"init state called, block state set to {self.blockNext}")
@@ -55,7 +55,7 @@ class TabPage(QWidget):
 class TabDialog(QDialog):
     def __init__(self, title, tabs: Dict[str, TabPage], size: QSize = TabSize) -> None:
         super().__init__()
-        self.logger = makeLogger("F")
+        self.logger = makeLogger()
         self.currPage = 0 
         self.setWindowTitle(title)
         self.tabs: List[TabPage] = list(tabs.values())

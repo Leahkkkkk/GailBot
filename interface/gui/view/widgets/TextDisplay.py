@@ -13,7 +13,6 @@ from PyQt6.QtWidgets import (
     QWidget,
     QGridLayout,
     QDialog,
-    QHBoxLayout,
     QTableWidget,
     QTableWidgetItem,
 )
@@ -34,7 +33,7 @@ from PyQt6.QtGui import QFont
 class MarkdownDisplay(QTextEdit):
     def __init__(self, filePath):
         super().__init__()
-        self.logger = makeLogger("F")
+        self.logger = makeLogger()
         with open(filePath, "r") as f:
             markdownText = f.read()
         markdownText = "<center> <h1>Documentation</h1></center> \n" + markdownText
@@ -76,7 +75,6 @@ class TextDisplay(QWidget):
     def colorChange(self, colormode):
         self.setStyleSheet(STYLE_DATA.StyleSheet.basic)
 
-
 class DictionaryTableWidget(QTableWidget):
     def __init__(self, dictionary):
         super().__init__()
@@ -84,7 +82,7 @@ class DictionaryTableWidget(QTableWidget):
         self.setRowCount(
             len(dictionary)
         )  # set the number of rows to the length of the dictionary
-        self.setHorizontalHeaderLabels(["Button", "Function"])  # set the column headers
+        self.setHorizontalHeaderLabels(["Option", "Function"])  # set the column headers
         self.populateTable(dictionary)  # popu
         self._initStyle()
         STYLE_DATA.signal.changeColor.connect(self.colorChange)
@@ -104,10 +102,11 @@ class DictionaryTableWidget(QTableWidget):
                     key, STYLE_DATA.FontSize.BODY, STYLE_DATA.FontFamily.OTHER
                 )
                 self.setCellWidget(row, 0, keyItem)
-                keyItem.setContentsMargins(5, 0, 30, 0)
+                keyItem.setContentsMargins(10, 0, 0, 0)
             valueItem = Label(
                 value, STYLE_DATA.FontSize.BODY, STYLE_DATA.FontFamily.OTHER
             )
+            valueItem.setContentsMargins(10,0,0,0)
             self.setCellWidget(row, 1, valueItem)
             row += 1
 

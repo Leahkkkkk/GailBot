@@ -13,7 +13,7 @@ class INTERNAL_MARKER(DataclassFromDict):
     FTO = "fto"
     LATCH = "latch"
     MICROPAUSE = "micropause"
-    NO_SPEAKER = "NONE"
+    NO_SPEAKER = " "
 
     # marker text
     MARKERTYPE = "markerType"

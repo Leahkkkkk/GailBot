@@ -40,7 +40,7 @@ class MainWindow(QMainWindow):
         """
         super().__init__()
         # initialize the main view controller 
-        self.logger = Logger.makeLogger("F")
+        self.logger = Logger.makeLogger()
         self.logger.info(f"the frontend configuration file is stored at {FRONTEND_CONFIG_ROOT}")
         
         # initialize the signal
