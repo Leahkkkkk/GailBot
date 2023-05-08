@@ -229,11 +229,11 @@ class BaseTable(QTableWidget):
                 self.removeCellWidget(rowIdx, col)
                 if isinstance(data[key], list):
                     newItem = self.createListDisplay(data[key])
-                    newItem.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+                    newItem.setAlignment(Qt.AlignmentFlag.AlignCenter)
                     self.setCellWidget(rowIdx, col, newItem)
                 else:
                     newItem = QTableWidgetItem(str(data[key]))
-                    newItem.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+                    newItem.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                     self.setItem(rowIdx, col, newItem)
         except Exception as e:
             self.logger.error(e, exc_info=e)
