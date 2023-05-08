@@ -12,8 +12,7 @@ class ProfileTable(BaseTable):
         self.engineSignal = engineSignal
         self.parent = parent
         self.resizeCol(Text.tableDimension)
-        self.dataKeyToCol = {"engine_setting_name": 1,
-                             "plugin_setting": 2}
+        self.dataKeyToCol = {"engine_setting_name": 1, "plugin_setting": 2}
     
     def openEditDialog(self, data):
         editDialog = EditProfile(data, 

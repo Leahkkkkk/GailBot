@@ -47,9 +47,9 @@ COMBOBOX_HEIGHT     = 40
 
 
 [filetable.dimension]
-fileUploadPage = [0.07,0.10,0.22,0.12,0.15,0.15,0.17]
-confirmPage    = [0.11,0.34,0.34,0.2]
-transcribePage = [0.22, 0.30, 0.47]
-successPage    = [0.10, 0.30, 0.20, 0.20, 0.19]
+fileUploadPage = [0.07,0.10,0.22,0.12,0.15,0.15,0.175]
+confirmPage    = [0.11,0.34,0.33,0.25]
+transcribePage = [0.24, 0.30, 0.445]
+successPage    = [0.10, 0.30, 0.20, 0.20, 0.185]
 
 

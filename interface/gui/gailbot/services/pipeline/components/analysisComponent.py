@@ -120,8 +120,6 @@ class AnalysisComponent(Component):
                     else:
                         suite_result["failure"].append(name)
                 analysis_result[suite_name] = suite_result
-                copy(plugin_suite.formatmd_path, 
-                     os.path.join(payload.out_dir.analysis_result, f"{suite_name}.md"))      
             end_time = time.time()
             stats = ProcessingStats(
                 start_time=start_time,

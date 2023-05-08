@@ -33,7 +33,6 @@ class AnalysisResult(ResultInterface):
     def output(self, path) -> bool:
         """ NOTE: currently no data for analysis will be written """
         try:
-            # write_json(self.data, os.path.join(path, "analysis.json"))
             return True
         except Exception as e:
             logger.error(e, exc_info=e)

@@ -171,7 +171,7 @@ class ProfilePageText:
     confirmEdit = "Confirm saving new edit to the profile?"
 
     tableHeader = ["Profile Name", "Applied Engine", "Applied Plugin Suite", "Actions"]
-    tableDimension = [0.24, 0.24, 0.24, 0.25]
+    tableDimension = [0.24, 0.24, 0.24, 0.255]
     HEADER = "Profile Settings"
     CAPTION = "Available profile settings for GailBot"
     CREATE_NEW = "Create New Profile"
@@ -436,7 +436,7 @@ class PLUGIN_SUITE_TEXT:
         "3. Github url storing plugin suite as zip file",
     ]
     TABLE_HEADER = ["Plugin Suite Name", "Author", "Version", "Actions"]
-    TABLE_DIMENSION = [0.3, 0.22, 0.20, 0.25]
+    TABLE_DIMENSION = [0.3, 0.22, 0.20, 0.255]
     CONFIRM_DELETE = "Confirm deleting plugin suite {0}"
 
 
@@ -446,7 +446,7 @@ class ENGINE_SETTING_TEXT:
     CONFIRM_DELETE = "Confirm deleting engine setting {0}"
     HEADER = "Engine Settings"
     CAPTION = "Available Speech to Text Engine Setting"
-    TABLE_DIMENSION = [0.36, 0.36, 0.25]
+    TABLE_DIMENSION = [0.36, 0.36, 0.255]
     CREATE_NEW = "Create New Engine"
 
 
