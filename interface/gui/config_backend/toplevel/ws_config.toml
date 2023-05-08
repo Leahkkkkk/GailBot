@@ -19,6 +19,7 @@ format_result     = "format.md"
 root        = "gailbot_data"
 setting_src = "setting_source"
 plugin_src  = "plugin_source"
+engine_setting = "setting_source/engine_setting"
 
 # contains relative paths for the files storing temporary data
 [workspace.temporary]
