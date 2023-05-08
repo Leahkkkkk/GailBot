@@ -1,1 +1,0 @@
-pytest tests/services/organizer/test_setting_manager.py 

@@ -233,6 +233,7 @@ class BaseTable(QTableWidget):
                     self.setCellWidget(rowIdx, col, newItem)
                 else:
                     newItem = QTableWidgetItem(str(data[key]))
+                    newItem.setAlignment(Qt.AlignmentFlag.AlignHCenter)
                     self.setItem(rowIdx, col, newItem)
         except Exception as e:
             self.logger.error(e, exc_info=e)
