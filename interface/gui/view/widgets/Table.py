@@ -70,7 +70,12 @@ class BaseTable(QTableWidget):
         self.verticalScrollBar().setStyleSheet(STYLE_DATA.StyleSheet.SCROLL_BAR)
         self.horizontalScrollBar().setStyleSheet(STYLE_DATA.StyleSheet.SCROLL_BAR)
         self.horizontalHeader().setStyleSheet(STYLE_DATA.StyleSheet.TABLE_HEADER)
-
+        for c in range(self.columnCount()):
+            for r in range(self.rowCount()):
+                if isinstance(self.cellWidget(r, c), ScrollArea):
+                    self.logger.info(f"found list cell widget in {r}{c}")
+                    self.cellWidget(r, c).setStyleSheet(STYLE_DATA.StyleSheet.TABLE_LIST)
+   
     def fontChange(self, font=None):
         font = QFont(STYLE_DATA.FontFamily.OTHER, STYLE_DATA.FontSize.TABLE_ROW)
         self.setFont(font)
@@ -263,13 +268,6 @@ class BaseTable(QTableWidget):
         listScroll.setFixedHeight(50)
         initPrimaryColorBackground(listDisplay)
         listScroll.setAutoFillBackground(True)
-        listScroll.setStyleSheet(
-            f"background-color: {STYLE_DATA.Color.MAIN_BACKGROUND}; border:none; margin: 0px;"
-        )
-        listScroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        STYLE_DATA.signal.changeColor.connect(
-            lambda: listScroll.setStyleSheet(
-                f"background-color: {STYLE_DATA.Color.MAIN_BACKGROUND}; border:none; margin: 0px;"
-            )
-        )
+        listScroll.setStyleSheet(STYLE_DATA.StyleSheet.TABLE_LIST)
+        listScroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff) 
         return listScroll
