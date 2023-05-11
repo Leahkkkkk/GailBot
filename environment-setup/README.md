@@ -22,7 +22,12 @@ activating gb-dev environment
 conda activate gb-dev
 
 **step 3**
+you may need to update the sound file 
 # update sound-file 
 pip install --upgrade soundfile
+
+the newest sound file has a fix for arm64 archtecture, but it conflicts with 
+pyannote.audio, so has to be installed separately, 
+related github issue https://github.com/ohmtech-rdi/eurorack-blocks/issues/444
 
 

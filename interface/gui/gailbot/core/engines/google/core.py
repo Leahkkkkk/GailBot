@@ -67,6 +67,7 @@ class GoogleCore:
                                       speech client, else return false 
         """
         try:
+            assert get_extension(google_api_key_config) == "json", "The google api key file is in wrong format"
             os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = google_api_key_config
             client = speech.SpeechClient() 
             return client  

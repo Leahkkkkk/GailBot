@@ -2,7 +2,7 @@
 from .FormWidget import FormWidget
 from .TextInput import InputField
 from ..Label import Label
-from ..Button import BorderBtn
+from ..Button import ColoredBtn
 from ..MsgBox import WarnBox
 from view.config.Style import STYLE_DATA
 from view.util.ErrorMsg import ERR, WARN
@@ -28,7 +28,8 @@ class UploadFile(QWidget, FormWidget):
         self.label = "Upload file for " + self.label.replace("_", " ")
         self.labelWidget = Label(self.label, STYLE_DATA.FontSize.BODY)
         self.pathDisplay = InputField()
-        self.selectFileBtn = BorderBtn("···", 
+        self.pathDisplay.setReadOnly(True)
+        self.selectFileBtn = ColoredBtn("···", 
                                        STYLE_DATA.Color.PRIMARY_BUTTON, 
                                        STYLE_DATA.FontSize.HEADER1)
         self.selectFileBtn.setFixedWidth(70)

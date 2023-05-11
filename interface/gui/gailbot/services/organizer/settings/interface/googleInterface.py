@@ -4,7 +4,7 @@ from typing import Dict, Union
 from .engineSettingInterface import EngineSettingInterface
 from gailbot.core.utils.logger import makelogger
 from gailbot.core.engines.google import Google
-from gailbot.core.utils.general import copy, is_file, is_directory, make_dir, get_name
+from gailbot.core.utils.general import copy, is_file, is_directory, make_dir, get_name, get_extension
 from gailbot.configs import  workspace_config_loader
 
 

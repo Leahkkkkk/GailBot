@@ -81,7 +81,8 @@ class SettingName (TabPage):
             labelSize = STYLE_DATA.FontSize.HEADER3,
             vertical=False)
         self.profileName.inputField.textChanged.connect(self._textChanged)
-    
+        self.profileName.inputField.setFixedWidth(STYLE_DATA.Dimension.FORMWIDTH)
+        
     def _initLayout(self):
         """ initializes the layout """
         self.verticalLayout = QVBoxLayout()
@@ -127,7 +128,7 @@ class SelectEngine(TabPage):
         ## form stack
         self.selectEngine = ComboBox()
         self.selectEngine.addItems(["Google", "Whisper", "Watson"])
-        self.selectEngine.setFixedWidth(200)
+        self.selectEngine.setFixedWidth(STYLE_DATA.Dimension.FORMWIDTH)
         self.verticallayout.addWidget(
             self.selectEngine, 
             alignment=Qt.AlignmentFlag.AlignHCenter)
