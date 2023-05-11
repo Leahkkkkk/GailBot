@@ -10,14 +10,13 @@ Modified By:  Siara Small  & Vivian Li
 Description: main driver for a GUI app that support front and interface to 
              allow user transcribe file using gailbot 
 '''
-
-import hooks
 import ssl
 import os 
 import logging
 from controller import Controller 
 from PyQt6.QtWidgets import QApplication
 import sys
+import hooks
 
 def run():
     """ main driver function to run the app  """

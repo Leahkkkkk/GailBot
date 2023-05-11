@@ -22,9 +22,7 @@ activating gb-dev environment
 conda activate gb-dev
 
 **step 3**
-# install pyannote.audio
-pip install -qq https://github.com/pyannote/pyannote-audio/archive/refs/heads/develop.zip 
+# update sound-file 
+pip install --upgrade soundfile
 
-**step 4**
-# install torchvision 
-pip install torchvision
+

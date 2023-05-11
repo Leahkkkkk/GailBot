@@ -1,5 +1,6 @@
 from PyInstaller.utils.hooks import collect_all, copy_metadata
 import logging
+
 PACKAGES=[
   "torchaudio",
   "torchvision",
@@ -13,33 +14,13 @@ PACKAGES=[
   "speechbrain",
   "certifi",
   "syllables",
-  "syllable",
-  "rich",
-  "certifi",
-  "pytorch_lightning",
-  "pyannote.audio",
-  "pyannote.pipeline",
-  "syllables",
-  "certifi",
   "PIL",
-  "tqdm",
-  "regex",
-  "requests",
-  "packaging",
-  "filelock",
-  "tokenizers",
-  "importlib_metadata",
-  "torch-audiomentations",
-  "torchmetrics",
-  "torchaudio",
-  "torch-pitch-shift",
-  "pyannote.audio",
-  "asteroid_filterbanks",
-  "ffmpeg-python",
-  "numpy"
 ]
 no_meta = ["sklearn", "pyannote", "whisper", "ffmpeg", "PIL"]
-
+meta_only = ['torch', 'tqdm', 'regex', 'sacremoses', 'requests', 'packaging', 'filelock', 'numpy', 'tokenizers',
+             'importlib_metadata',  'torch-audiomentations', 'torchmetrics', 
+             'torch-pitch-shift', 'pyannote.audio',  'asteroid_filterbanks', 'pytorch-metric-learning',
+            'ffmpeg-python', 'rich']
 def hook(hook_api):
     for pkg in PACKAGES:
         hook_api.add_imports(pkg)
@@ -52,4 +33,7 @@ def hook(hook_api):
             hook_api.add_datas(copy_metadata(pkg))
         for module_name in hiddenimports:
             hook_api.add_imports(module_name)
+    
+    for meta in meta_only:
+       hook_api.add_datas(copy_metadata(meta)) 
         

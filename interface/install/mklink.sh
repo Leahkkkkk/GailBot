@@ -4,7 +4,7 @@
 SRC_DIR=../install/dist/GailBot.app/Contents/MacOS/
 # Create symbolic links
 remove_links () {
-    rm libtorch_python.dylib libtorch.dylib libc10.dylib libtorch_cpu.dylib libtorchaudio.so 
+    rm libtorch_python.dylib libtorch.dylib libc10.dylib libtorch_cpu.dylib 
 }
 
 create_links() {

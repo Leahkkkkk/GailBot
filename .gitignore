@@ -8,9 +8,10 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-
+environment-setup/gb-dev
 build/
-install/
+install/dist
+install/build
 develop-eggs/
 dist/
 downloads/

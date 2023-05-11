@@ -31,59 +31,38 @@ Package Application
 
 2. files and purpose 
    The following files appear in the bin directories' 
-   - build.sh: run pyInstaller with GailBot.spec to bundle the application, 
-                pyInstaller will generated two directories, build and dist
-                which is moved to install directory, 
-                the  bundled application will appear in install/build/GailBot.app
+   - mkapp.sh:  run pyInstaller with GailBot.spec to bundle the application, 
+                and move GailBot.app to Application folder. 
+                a fully functional GailBot application is expected to be located 
+                at /Applications folder after this script is run 
+   - mklink.sh: run by mkapp.sh to make symlink for torch dynamic library files,
+     - relatd issue on github in packaging torchaudio library 
+     - https://github.com/pyinstaller/pyinstaller-hooks-contrib/issues/375            
 
-   - buildDmg.sh: run create-dmg to create dmg , 
-                The dmg will be stored in install/build/dmg
-
-   - GailBot.spec: a spec sent to pyInstaller for packaging the application
+   - GB.spec: a spec sent to pyInstaller for packaging the application
    - ffmpeg: binary executable that will be copied over to packaged application 
- - 
+   - hook: conatin a hook script to facilitate pyinstaller collecting the packages 
+  
 3. Building GailBot Application as pkg 
 
-   Step 1 Edit collect_lib.sh bash script
-   go to /interface/bin/collect_lib.sh, change the path variable SRC_DIR 
-   to be the local path that stores the python packages in the gailbot 
-   development environment 
-
-   Step 2 Bundle GailBot application through pyinstaller 
-   We provided a bash script “build.sh” that includes command to build 
-   the application. To run the script, use  the command: 
-   - ./build.sh 
-
-   Step 3 	build GailBot application dmgs
-   We provided a bash script “buildDmg.sh” that includes command to build a 
-   .dmg file from GailBot.app. To run the script, use the command: 
-   - ./buildDmg.sh
-
-   Step 4 
-   The process will automatically create a GailBot application file,  and a 
-   pop-up window  will appear to ask you to save the application under the 
-   Application folder. Once this process is complete, you can run the 
-   application in the Application folder. 
-
-
-   Step 5 run shell script to collect library 
-   	Go into the Gailbot application folder, cd unto GailBot.app/Content/Macos, run 
-   	chmod +x collect_lib.sh 
-   - ./collect_lib.sh
-   Click on Application icon to make sure that the application can be opened 
-
-
-   Step 6  Package the application using Jamf composer
+   Step 1 make .app file using pyinstaller 
+    run the following command:
+    chmod +x mkapp.sh
+    ./mkapp.sh
+    check /Applications folder to make sure that GailBot.app is properlly installed
+    and is able to run 
+    
+   Step 2  Package the application using Jamf composer
    Add Gailbot.app to Jamf composer. This can be done by dragging the app directly 
    to the composer under sources on the sidebar. 
 
 
-   Step 7 Configure the pkg Setting 
+   Step 3 Configure the pkg Setting 
    Select the owner to be “root(0)”
    Select the group to be “wheel(0)”
    Check all check box under R W X , and confirm the mode is 777 
    Click on the “...” icon on the button and click on all options to 
    apply the same settings to the sub-files under applications folders
 
-   Step 8 Packaging the application
+   Step 4 Packaging the application
    Click on the “Build as PKG” option at the Top to create the PKG file 
