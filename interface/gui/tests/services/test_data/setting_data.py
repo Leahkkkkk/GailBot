@@ -96,4 +96,4 @@ class SETTING_DATA:
         "plugin_setting": ["gb_hilab_suite"],
     }
 
-    WHISPER_PROFILE = {"engine_setting_name": WHISPER_NAME, "plugin_setting": []}
+    WHISPER_PROFILE = {"engine_setting_name": WHISPER_NAME, "plugin_setting": ["gb_hilab_suite"]}

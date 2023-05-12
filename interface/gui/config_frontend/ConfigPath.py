@@ -38,10 +38,8 @@ class StyleData(DataclassFromDict):
 
 @dataclass 
 class TextData(DataclassFromDict): 
-    string                     : str = field_from_dict()
     form                       : str = field_from_dict()
-    about                      : str = field_from_dict()
-
+    link                       : str = field_from_dict()
 @dataclass 
 class SettingData(DataclassFromDict): 
     profilePreset               : str = field_from_dict()

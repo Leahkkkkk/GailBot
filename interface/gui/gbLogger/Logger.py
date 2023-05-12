@@ -68,7 +68,7 @@ class ConsoleFormatter(logging.Formatter):
     def __init__(self, fmt):
         div = "</div>"
         grey = "<div style='color: grey'>"
-        blue = "<div style='color: blue'>"
+        default = "<div>"
         orange = "<div style='color: #FFA500'>"
         red = "<div style='color: red'>" 
         super().__init__()
@@ -76,7 +76,7 @@ class ConsoleFormatter(logging.Formatter):
 
         self.FORMATS = {
             logging.DEBUG: f"{grey}{self.fmt}{div}",
-            logging.INFO: f"{blue}{self.fmt}{div}",
+            logging.INFO: f"{default}{self.fmt}{div}",
             logging.WARNING: f"{orange}{self.fmt }{div}",
             logging.ERROR: f"{red}{self.fmt}{div}",
         }

@@ -122,7 +122,7 @@ class SourceManager():
         source_name = get_name(source) if is_path(source) else source
         if self.is_source(source_name):
             logger.info("is source")
-            return os.path.join(self.sources[source_name].output, f"{source_name}{OUTPUT_EXTENSION}")
+            return self.sources[source_name].output
         else:
             logger.error(source_name)
             return False

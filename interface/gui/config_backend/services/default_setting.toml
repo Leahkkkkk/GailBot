@@ -7,6 +7,10 @@ language = "English"
 detect_speakers = false
 
 [profile_data]
+plugin_setting = ["gb_hilab_suite"]
+engine_setting_name = "Default Engine"
+
+[profile_data_no_plugin]
 plugin_setting = []
 engine_setting_name = "Default Engine"
 

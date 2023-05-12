@@ -7,9 +7,9 @@ from ..plugins import PluginManager, PluginSuite
 from gailbot.core.utils.logger import makelogger
 from gailbot.core.utils.general import get_name
 from gailbot.workspace.manager import WorkspaceManager
-from gailbot.configs import service_config_loader
-
+from gailbot.configs import service_config_loader, default_setting_loader
 CONFIG = service_config_loader()
+DEFAULT_SETTING = default_setting_loader()
 logger = makelogger("service_controller")
 """ Knows about all three sub modules """
 
@@ -25,7 +25,26 @@ class ServiceController:
             self.plugin_manager, num_threads=CONFIG.thread.transcriber_num_threads
         )
         self.transcribed = set()  ## stores the file name of transcribed file
-
+        self._init_default_setting()
+        
+    def _init_default_setting(self):
+        # add default engine setting
+        if not self.organizer.is_engine_setting(DEFAULT_SETTING.engine_name):
+            self.organizer.add_new_engine(DEFAULT_SETTING.engine_name, DEFAULT_SETTING.engine_data)
+        self.organizer.set_default_engine(DEFAULT_SETTING.engine_name)
+        
+        # add default profile setting
+        if not self.organizer.is_setting(DEFAULT_SETTING.profile_name):
+            plugin_suites = DEFAULT_SETTING.profile_data["plugin_setting"] 
+            for suite in plugin_suites:
+                if not self.plugin_manager.is_suite(suite):
+                    self.organizer.create_new_setting(DEFAULT_SETTING.profile_name,DEFAULT_SETTING.profile_data_no_plugin)
+                    self.organizer.set_default_setting(DEFAULT_SETTING.profile_name)
+                    return
+            self.organizer.create_new_setting(DEFAULT_SETTING.profile_name,DEFAULT_SETTING.profile_data)
+        self.organizer.set_default_setting(DEFAULT_SETTING.profile_name)
+            
+        
     def add_sources(self, src_output_pairs: List[Tuple[str, str]]):
         """add a list of sources
 

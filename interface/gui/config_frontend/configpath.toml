@@ -19,10 +19,8 @@ mediumFontSize  = "style/font/fontSizeMedium.toml"
 
 # path to config_frontend files with text data
 [text]
-string          = "text/text.toml"
 form            = "text/forms.toml"
-about           = "text/about.toml"
-
+link            = "text/link.toml"
 # path to config_frontend files with the preset data 
 [setting]
 profilePreset   = "setting/profileValues.toml"

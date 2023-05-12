@@ -75,10 +75,8 @@ class PayLoadObject(ABC):
         self.setting: SettingObject = source.setting
         self.workspace: TemporaryFolder = \
             workspace.get_file_temp_space(self.name)        
-        current_time = datetime.now()
-        time_string = current_time.strftime("%m-%d-%H:%M")
         self.out_dir: OutputFolder = \
-            workspace.get_output_space(source.output, self.name + time_string)
+            workspace.get_output_space(source.output)
         self.progress_display = source.progress_display
         self.transcription_result: UttResult = UttResult(self.workspace.transcribe_ws)
         self.analysis_result: AnalysisResult = AnalysisResult()

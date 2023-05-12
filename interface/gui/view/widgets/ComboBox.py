@@ -16,12 +16,12 @@ class ComboBox(QComboBox):
     def __init__(self, *args, **kwargs) -> None:
         """ initializes widget """
         super().__init__(*args, **kwargs)
-        self.setStyleSheet(STYLE_DATA.StyleSheet.COMBO_BOX)
+        self.setStyleSheet(STYLE_DATA.StyleSheet.COMBO_BOX + f"QComboBox QAbstractItemView {{font-size: {STYLE_DATA.FontSize.BODY}}}")
         self.setFixedHeight(STYLE_DATA.Dimension.COMBOBOX_HEIGHT)
         self.setMinimumWidth(STYLE_DATA.Dimension.INPUTWIDTH)
         STYLE_DATA.signal.changeColor.connect(self.colorChange)
         self.setContentsMargins(0,0,0,0)
          
     def colorChange(self):
-        self.setStyleSheet(STYLE_DATA.StyleSheet.COMBO_BOX)
-        
+        self.setStyleSheet(STYLE_DATA.StyleSheet.COMBO_BOX + f"QComboBox QAbstractItemView {{font-size: {STYLE_DATA.FontSize.BODY}}}")
+    

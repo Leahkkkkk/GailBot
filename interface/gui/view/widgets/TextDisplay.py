@@ -115,6 +115,7 @@ class DictionaryTableWidget(QTableWidget):
             valueItem = Label(
                 value, STYLE_DATA.FontSize.BODY, STYLE_DATA.FontFamily.OTHER
             )
+            valueItem.setWordWrap(True)
             valueItem.setContentsMargins(10,0,0,0)
             self.setCellWidget(row, 1, valueItem)
             row += 1

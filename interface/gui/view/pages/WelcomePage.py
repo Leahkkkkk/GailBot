@@ -184,7 +184,7 @@ class WelcomePage(BasicPage):
                                         STYLE_DATA.FontFamily.OTHER, STYLE_DATA.Color.PRIMARY_BUTTON,
                                         STYLE_DATA.StyleSheet.linkStyle, link=True)
 
-        self.GuideText = Label(Links.guideLink, STYLE_DATA.FontSize.LINK, 
+        self.GuideText = Label(Links.techDocLink, STYLE_DATA.FontSize.LINK, 
                                         STYLE_DATA.FontFamily.OTHER, STYLE_DATA.Color.PRIMARY_BUTTON,
                                          STYLE_DATA.StyleSheet.linkStyle, link=True)
         self.GBLinkText = Label(Links.gbWebLink, STYLE_DATA.FontSize.BODY, 

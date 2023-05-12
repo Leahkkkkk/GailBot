@@ -59,7 +59,6 @@ class Label(QLabel):
                            f"color:{color};"
                            f"background-color:none;"
                            f"{others};")
-        self.setWordWrap(True)
     
     def changeDefault(self):
         self.setStyleSheet(self.styleSheet() + f"color: {STYLE_DATA.Color.MAIN_TEXT};")

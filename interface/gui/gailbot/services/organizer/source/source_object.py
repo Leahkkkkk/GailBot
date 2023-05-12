@@ -1,7 +1,10 @@
 from typing import Dict, Union, Callable
-
+from datetime import datetime
 from ..settings import SettingObject
 from gailbot.core.utils.logger import makelogger
+from gailbot.configs import workspace_config_loader
+import os
+OUT_PUT_EXTENSION = workspace_config_loader().file_extension.output
 
 logger = makelogger("source_object")
 class SourceObject():
@@ -15,7 +18,8 @@ class SourceObject():
     def __init__(self, path:str, name: str, output: str) -> None:
         self.name: str = name
         self.path: str = path
-        self.output:str = output
+        timestamp = datetime.now().strftime("_%m_%d_%y:%H:%:%S")
+        self.output:str = os.path.join(output, name + OUT_PUT_EXTENSION + timestamp)
         self.setting: SettingObject = None  
         self.progress_display: Callable = None 
         

@@ -16,15 +16,6 @@ class Organizer:
         self.setting_manager = SettingManager(setting_workspace, load_exist_setting)
         self.source_manager  = SourceManager()
         
-        if not self.setting_manager.is_engine_setting(DEFAULT_ENGINE_NAME):
-            self.setting_manager.add_new_engine(DEFAULT_ENGINE_NAME, DEFAULT_ENGINE_SETTING)
-        
-        if not self.setting_manager.is_setting(DEFAULT_SETTING_NAME):
-            self.setting_manager.add_new_setting(DEFAULT_SETTING_NAME, DEFAULT_SETTING)
-            
-        self.setting_manager.set_to_default_setting(DEFAULT_SETTING_NAME)
-        self.setting_manager.set_to_default_engine_setting(DEFAULT_ENGINE_NAME)
-        
     def add_source(self, source_path: str, output: str) -> Union[str, bool]:
         """
         Adds given source to the output directory
@@ -39,7 +30,6 @@ class Organizer:
         try:
             name = self.source_manager.add_source(source_path, output)
             assert name
-            assert self.apply_setting_to_source(name, DEFAULT_SETTING_NAME)
             return name
         except Exception as e:
             logger.error(e, exc_info=e)
@@ -486,6 +476,17 @@ class Organizer:
             bool:return true if the setting can be set, false otherwise
         """
         return self.setting_manager.set_to_default_setting(setting_name)
+    
+    def set_default_engine(self, engine_name:str) -> bool:
+        """ set the default setting to engine_name
+
+        Args:
+            engine_name (str)
+            
+        Returns:
+            bool:return true if the setting can be set, false otherwise
+        """
+        return self.setting_manager.set_to_default_engine_setting(engine_name)
     
     def is_suite_in_use(self, suite_name:str) -> bool:
         """given a suite_name, check if this suite is used 

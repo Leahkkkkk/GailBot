@@ -8,6 +8,7 @@ from tests.services.test_data import PATH
 from tests.services.test_data import SETTING_DATA
 from gailbot.core.engines.watson import Watson
 import logging
+import os 
 
 HIL_LAB = "/Users/yike/Documents/GitHub/GailBot/plugin_suite/gb_hilab_suite"
 HIL_LAB_GITHUB = "https://github.com/YikeLi-Vivi/hillab/archive/refs/heads/main.zip"
@@ -17,12 +18,12 @@ def transcribe(
     files,
     setting_name="test",
     setting_data=SETTING_DATA.WHISPER_PROFILE,
-    output=PATH.BACKUP_ROOT,
+    output=PATH.OUTPUT_ROOT,
     fail_test=False,
 ):
     gb = GailBot(output)
     # assert gb.reset_workspace()
-    input = [(f, PATH.OUTPUT_ROOT) for f in files]
+    input = [(f, output) for f in files]
 
     gb.add_sources(input)
 
@@ -74,7 +75,7 @@ def test_whisper_wav_suite():
 
 def test_whisper_hello():
     fails, invalid = transcribe(
-        [PATH.HELLO_1, PATH.HELLO_2], "whisper", SETTING_DATA.WHISPER_PROFILE
+        [PATH.HELLO_1], "whisper", SETTING_DATA.WHISPER_PROFILE
     )
 
 
@@ -372,6 +373,28 @@ def test_plugin_with_spk():
     )
 
 
+########## test for demo ############
+def test_demo_watson():
+    fails, invalid = transcribe(
+        [PATH.DEMO1, PATH.DEMO2, PATH.DEMO3], "watson", SETTING_DATA.WATSON_PROFILE, output=PATH.GOOGLE_OUT_PATH
+    )
+
+def test_demo_whisper():
+    fails, invalid = transcribe(
+        [PATH.DEMO1, PATH.DEMO2, PATH.DEMO3], "whisper", SETTING_DATA.WHISPER_PROFILE, output=PATH.WHISPER_OUT_PATH
+    )
+
+def test_demo_google():
+    fails, invalid = transcribe(
+        [PATH.DEMO1, PATH.DEMO2, PATH.DEMO3], "google", SETTING_DATA.GOOGLE_PROFILE, output=PATH.GOOGLE_OUT_PATH
+    )
+    
+def test_google_demo_1():
+    fails, invalid = transcribe(
+        [PATH.DEMO3], "google", SETTING_DATA.GOOGLE_PROFILE, output=PATH.GOOGLE_OUT_PATH
+    )
+    
+
 ##### test workspace ###
 def test_reset_ws():
     gb = GailBot(PATH.USER_ROOT)
@@ -381,3 +404,4 @@ def test_transcribed():
     fails, invalid = transcribe(
         [TRANSCRIBED], "plugin", SETTING_DATA.WATSON_PROFILE
     )
+    

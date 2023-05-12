@@ -29,9 +29,9 @@ class PATH:
     LARGE_AUDIO_WAV = os.path.join(AUDIOROOT, "all/largetest.wav")
     LARGE_AUDIO_MP3 = os.path.join(AUDIOROOT, "all/largetest.mp3")
     OPUS_AUDIO = os.path.join(AUDIOROOT, "all/test.opus")
-    WATSON_OUT_PATH = os.path.join(OUTPUT_ROOT, "watson")
-    GOOGLE_OUT_PATH = os.path.join(OUTPUT_ROOT, "google")
-    WHISPER_OUT_PATH = os.path.join(OUTPUT_ROOT, "whisper")
+    WATSON_OUT_PATH = os.path.join(OUTPUT_ROOT, "Watson")
+    GOOGLE_OUT_PATH = os.path.join(OUTPUT_ROOT, "Google")
+    WHISPER_OUT_PATH = os.path.join(OUTPUT_ROOT, "Whisper")
     RESULT_OUTPUT = os.path.join(OUTPUT_ROOT, "result")
     CONVERSATION_DIR = os.path.join(AUDIOROOT, "small_dir")
     TRANSCRIBED_DIR = os.path.join(AUDIOROOT, "medium_transcribed")
@@ -82,3 +82,6 @@ class PATH:
         assassination1,
         SineWaveMinus16,
     ]
+    DEMO1 = os.path.join(AUDIOROOT, "demo-folder/demo1")
+    DEMO2 = os.path.join(AUDIOROOT, "demo-folder/demo2")
+    DEMO3 = os.path.join(AUDIOROOT, "demo-folder/demo3")

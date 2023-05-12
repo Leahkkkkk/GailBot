@@ -79,6 +79,7 @@ class SystemSettingPage(QWidget):
         self._initLayout()
         self._connectSignal()
         self.setValue(SystemSetting)
+        STYLE_DATA.signal.changeColor.connect(self.colorChange)
 
     def _initWidget(self):
         """initializes widgets to be shown"""
@@ -86,6 +87,7 @@ class SystemSettingPage(QWidget):
                       INPUT_COMBO.LOG_AUTO_DELETE]
         self.labels = [Label(text, STYLE_DATA.FontSize.INSTRUCTION_CAPTION, 
                        STYLE_DATA.FontFamily.MAIN) for text in labelTexts]
+        self.caption = Label(Text.caption, STYLE_DATA.FontSize.DESCRIPTION, STYLE_DATA.FontFamily.MAIN)
         self.header = Label(
             Text.header, STYLE_DATA.FontSize.HEADER2,STYLE_DATA.FontFamily.MAIN)
         self.fontSize = ComboBox()
@@ -112,14 +114,16 @@ class SystemSettingPage(QWidget):
         self.formContainer.setLayout(self.formLayout)
         self.formContainer.setFixedSize(QSize(STYLE_DATA.Dimension.FORMWIDTH, 
                                               STYLE_DATA.Dimension.FORMMINHEIGHT))
-        initBackground(self.formContainer, STYLE_DATA.Color.LOW_CONTRAST2)
+        initBackground(self.formContainer, STYLE_DATA.Color.LOW_CONTRAST)
         self.setLayout(self.mainLayout)
         for row, label in enumerate(self.labels):
             self.formLayout.addWidget(label,row, 0)
         for row, selections in enumerate(self.comboInputs):
             self.formLayout.addWidget(selections, row, 1)
         self.mainLayout.addWidget(self.header, alignment=Qt.AlignmentFlag.AlignHCenter)
+        self.mainLayout.addWidget(self.caption, alignment=Qt.AlignmentFlag.AlignHCenter)
         self.mainLayout.addWidget(self.formContainer, alignment=Qt.AlignmentFlag.AlignHCenter)
+        self.mainLayout.addStretch()
         self.mainLayout.addWidget(self.saveBtn, alignment=Qt.AlignmentFlag.AlignHCenter)
         currRow = len(self.comboInputs)
         self._addFormButton(Text.restoreLabel, Text.restoreBtn, self._confirmRestore, currRow)
@@ -242,3 +246,8 @@ class SystemSettingPage(QWidget):
         self.labels.append(label)
         self.formLayout.addWidget(label, row, 0)
         self.formLayout.addWidget(button, row, 1)
+    
+    def colorChange(self):
+        initBackground(self.formContainer, STYLE_DATA.Color.LOW_CONTRAST)
+        for button in self.formButtons:
+            button.addOtherStyle(f"background-color: {STYLE_DATA.Color.INPUT_BACKGROUND}")

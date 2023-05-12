@@ -30,13 +30,17 @@ class ServiceConfig(DataclassFromDict):
     directory_name : DirectoryName = field_from_dict()
     thread : Thread = field_from_dict()
 
-
+@dataclass 
+class ProfileData(DataclassFromDict):
+    plugin_setting: List[str] = field_from_dict()
+    engine_setting_name: str = field_from_dict()
 @dataclass 
 class DefaultSetting(DataclassFromDict): 
     profile_name                     : str = field_from_dict()
     profile_data                     : dict = field_from_dict()
     engine_name                      : str = field_from_dict() 
     engine_data                      : dict = field_from_dict()
+    profile_data_no_plugin           : dict = field_from_dict()
 
 
 def load_service_config(path: str) -> ServiceConfig:

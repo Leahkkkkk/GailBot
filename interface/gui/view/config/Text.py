@@ -20,14 +20,22 @@ from dict_to_dataclass import DataclassFromDict, field_from_dict
 from config_frontend.ConfigPath import TextDataPath, FRONTEND_CONFIG_ROOT
 
 
-text = toml.load(os.path.join(FRONTEND_CONFIG_ROOT, TextDataPath.string))
 forms = toml.load(os.path.join(FRONTEND_CONFIG_ROOT, TextDataPath.form))
-about = toml.load(os.path.join(FRONTEND_CONFIG_ROOT, TextDataPath.about))
-
+link  = toml.load(os.path.join(FRONTEND_CONFIG_ROOT, TextDataPath.link))
 
 #############################  about data ################################
 year = datetime.date.today().strftime("%Y")
 copyRightText = f"Copyright {year} © HI Lab"
+
+@dataclass 
+class LINKS(DataclassFromDict): 
+    HILAB                   : str = field_from_dict()
+    USER_MANUAL             : str = field_from_dict()
+    TECHNICAL_DOCUMENT      : str = field_from_dict()
+    BUG_REPORT              : str = field_from_dict()
+    EMAIL                   : str = field_from_dict()
+
+LINKS_DATA = LINKS.from_dict(link)
 
 
 @dataclass
@@ -40,6 +48,7 @@ class About:
     """class holding data about GailBot; e.g. version, title, etc."""
 
     version = "Version 0.0.1a1"
+    versionName = "Version Name: Sivian"
     APP_TITTLE = "GailBot"
     copyRight = copyRightText
 
@@ -270,8 +279,8 @@ class MenuBarText:
     help = "Help"
     contact = "Contact Us"
     bugreport = "Report Bug"
-    buglink = "https://docs.google.com/forms/d/e/1FAIpQLSey-yx8gj2k5n-pdoSqBzBRU9q1aqWfK6laiQCxTimvuGU0hg/viewform"
-    email = "mailto:hil@elist.tufts.edu"
+    buglink = LINKS_DATA.BUG_REPORT
+    email = LINKS_DATA.EMAIL 
     mailFailed = "Cannot open mail application on your computer, \
                   please contact us by sending email to: hil@elist.tufts.edu"
 
@@ -405,18 +414,13 @@ class EngineSetting(DataclassFromDict):
 
 @dataclass
 class Links:
-    HILAB = "https://sites.tufts.edu/hilab/gailbot-an-automatic-transcription-system-for-conversation-analysis"
-    USER_MANUAL = "https://drive.google.com/file/d/1NnirL5-26j3xnI4yEV7cJVUEqxrFfTm5/view?usp=sharing"
-    GUIDE = "https://docs.google.com/document/d/1B-EfS9Ypc4loz9FaN99gdqN4q-amrjobWi81Zx-SS4c/edit?usp=sharing"
     _linkTemplate = "<a style='color:{0}; font-weight: 500;' href={1}>{2}</a>"
     tutorialLink = _linkTemplate.format(
-        Color.LINK, USER_MANUAL, WelcomePageText.tutorialText
+        Color.LINK, LINKS_DATA.USER_MANUAL, WelcomePageText.tutorialText
     )
-    guideLink = _linkTemplate.format(Color.LINK, GUIDE, WelcomePageText.guideText)
-    gbWebLink = _linkTemplate.format(Color.LINK, HILAB, WelcomePageText.gbLinkText)
-    guideLinkSideBar = _linkTemplate.format(
-        Color.LINK, USER_MANUAL, WelcomePageText.tutorialText
-    )
+    techDocLink = _linkTemplate.format(Color.LINK, LINKS_DATA.TECHNICAL_DOCUMENT, WelcomePageText.guideText)
+    gbWebLink = _linkTemplate.format(Color.LINK, LINKS_DATA.HILAB, WelcomePageText.gbLinkText)
+    guideLinkSideBar = _linkTemplate.format(Color.LINK, LINKS_DATA.USER_MANUAL, WelcomePageText.tutorialText)
 
 
 @dataclass

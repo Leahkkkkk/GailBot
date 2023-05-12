@@ -95,10 +95,13 @@ class SideBar(QWidget):
     def addFooter(self) -> None:
         self.GuideLink = Label(Links.guideLinkSideBar, STYLE_DATA.FontSize.LINK, link=True)
         self.versionLabel = Label(About.version, STYLE_DATA.FontSize.SMALL)
+        self.versionName = Label(About.versionName, STYLE_DATA.FontSize.SMALL)
         self.copyRightLabel = Label(About.copyRight, STYLE_DATA.FontSize.SMALL)
+        
         self.btmlayout.addStretch()
         self.btmlayout.addWidget(self.GuideLink, alignment=Qt.AlignmentFlag.AlignHCenter)
         self.btmlayout.addWidget(self.versionLabel,alignment=Qt.AlignmentFlag.AlignHCenter)
+        self.btmlayout.addWidget(self.versionName,alignment=Qt.AlignmentFlag.AlignHCenter)
         self.btmlayout.addWidget(self.copyRightLabel,alignment=Qt.AlignmentFlag.AlignHCenter)
         self.btmlayout.addStretch()
 

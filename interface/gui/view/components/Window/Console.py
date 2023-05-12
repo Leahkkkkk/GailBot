@@ -32,8 +32,8 @@ class Console(QWidget):
         self.resize(QSize(STYLE_DATA.Dimension.CONSOLEWIDTH, 
                           STYLE_DATA.Dimension.CONSOLEHEIGHT))
         self.label = QLabel(WindowTitle.consoleWindow)
-        self.setStyleSheet("background-color: #EBEBEB;")
-        self.LogBox.setStyleSheet("background-color: #EBEBEB;")
+        self.setStyleSheet(STYLE_DATA.StyleSheet.basic)
+        self.LogBox.setStyleSheet(STYLE_DATA.StyleSheet.basic)
         layout = QVBoxLayout()
         layout.addWidget(self.label)
         layout.addWidget(self.LogBox)
@@ -42,4 +42,5 @@ class Console(QWidget):
         
     def changeColor(self):
         self.setStyleSheet(STYLE_DATA.StyleSheet.basic)
+        self.LogBox.setStyleSheet(STYLE_DATA.StyleSheet.basic)
         

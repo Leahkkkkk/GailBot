@@ -78,7 +78,7 @@ class WorkspaceManager:
             logger.error(e, exc_info=e)
             return False
 
-    def get_output_space(self, outdir: str, name: str) -> Union[OutputFolder, bool]:
+    def get_output_space(self, outdir: str) -> Union[OutputFolder, bool]:
         """ given the file name, and the root path of the output, create a
             directory for the file to store output files
 
@@ -92,8 +92,7 @@ class WorkspaceManager:
             stores the path of each subfolder under the output folder,
             else return False
         """
-        folder = self.path_config.get_output_space(
-            outdir, name + self.file_extension.output)
+        folder = self.path_config.get_output_space(outdir)
         try:
             for path in folder.__dict__.values():
                 if not is_directory(path) and path[-1] == "/":

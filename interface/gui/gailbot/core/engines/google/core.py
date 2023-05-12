@@ -234,7 +234,7 @@ class GoogleCore:
         logger.info(status_result)
         """ Prepare Utterance """
         utterances = list()
-        # logger.info(f"transcription - {results}, {len(results)}")
+        logger.info(f"transcription - {results}, {len(results)}")
         for result in results:
             alternative = result.alternatives[0]
             if alternative.transcript:

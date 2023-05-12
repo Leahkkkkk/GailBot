@@ -79,7 +79,7 @@ class WorkSpaceConfig:
         temp_dir["root"] = os.path.join(self.tempspace_root, name)
         return TemporaryFolder.from_dict(temp_dir)
 
-    def get_output_space(self, root: str, name: str) -> OutputFolder:
+    def get_output_space(self, root) -> OutputFolder:
         """ Given a name of the source,  and the user selected output directory
             root, return a dataclass object that stores
             the output directory structures of source, including the
@@ -96,8 +96,8 @@ class WorkSpaceConfig:
         """
         new_output_dir = self._output_d.copy()
         for key, value in new_output_dir.items():
-            new_output_dir[key] = os.path.join(root, name, value)
-        new_output_dir["root"] = os.path.join(root, name)
+            new_output_dir[key] = os.path.join(root, value)
+        new_output_dir["root"] = root
         return OutputFolder.from_dict(new_output_dir)
 
     def get_output_structure(self) -> OutputFolder:
