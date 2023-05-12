@@ -23,7 +23,7 @@ from .Form.OnOffButton import onOffButton
 from .Form.MultiSelect import MultipleSelect
 from .Form.SingleSelect import SingleSelect
 from ..config.Style import STYLE_DATA
-from view.widgets.Background import initSecondaryColorBackground
+from view.widgets.Background import initSecondaryColorBackground, initBackground
 from PyQt6.QtWidgets import (
     QWidget,
     QVBoxLayout,
@@ -46,6 +46,7 @@ class TextForm(QWidget):
         data: Dict[str, Dict[str, str]],
         background: bool = True,
         toggle: bool = False,
+        showSubtittle = False,
         *args,
         **kwargs,
     ) -> None:
@@ -66,7 +67,8 @@ class TextForm(QWidget):
         super().__init__(*args, **kwargs)
         self.data: Dict[str, Dict[str, str]] = data
         self.inputDict: Dict[str, FormWidget] = dict()
-        self.toggle = toggle
+        self.toggle = toggle 
+        self.showSubtittle = showSubtittle
         if not self.toggle:
             self.setMinimumHeight(STYLE_DATA.Dimension.WIN_MIN_HEIGHT // 3 * 2)
             self.setMinimumWidth(STYLE_DATA.Dimension.WIN_MIN_WIDTH // 2)
@@ -80,7 +82,7 @@ class TextForm(QWidget):
         STYLE_DATA.signal.changeColor.connect(self.changeColor)
 
     def changeColor(self):
-        initSecondaryColorBackground(self)
+        initBackground(self, color=STYLE_DATA.Color.LOW_CONTRAST2)
 
     def enableForm(self) -> None:
         """public function that enable the form edit"""
@@ -138,7 +140,7 @@ class TextForm(QWidget):
 
             """ create the label  """
             tittleKey = tittleKey.split(". ")[-1]
-            if not self.toggle:
+            if not self.toggle and self.showSubtittle:
                 newLabel = Label(
                     tittleKey, STYLE_DATA.FontSize.BTN, STYLE_DATA.FontFamily.MAIN
                 )
@@ -198,7 +200,7 @@ class TextForm(QWidget):
 
     def _initStyle(self):
         """initializes the widget style"""
-        initSecondaryColorBackground(self)
+        initBackground(self, color=STYLE_DATA.Color.LOW_CONTRAST2)
 
     def addWidget(self, widget, alignment=Qt.AlignmentFlag.AlignLeft):
         """add widget to the Text form under the same column"""

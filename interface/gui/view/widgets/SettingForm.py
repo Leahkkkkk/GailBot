@@ -14,7 +14,7 @@ from typing import Dict
 from .Label import Label 
 from .TextForm import TextForm
 from .ScrollArea import ScrollArea
-from .Background import initSecondaryColorBackground, _initBackground
+from .Background import initSecondaryColorBackground, initBackground
 from ..config.Style import STYLE_DATA 
 from PyQt6.QtWidgets import (
     QWidget, 
@@ -73,14 +73,8 @@ class SettingForm(QWidget):
             self.caption = Label(
                 self.captionText, STYLE_DATA.FontSize.DESCRIPTION, STYLE_DATA.FontFamily.MAIN)
         self.setForm = TextForm(self.formData)
-        self._scroll = ScrollArea()
-        self._scroll.setWidgetResizable(True)
-        self._scroll.setVerticalScrollBarPolicy(
-            Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
-        self._scroll.setWidget(self.setForm)
-        self._scroll.setFixedWidth(STYLE_DATA.Dimension.FORMWIDTH)
-        self._scroll.setFixedHeight(STYLE_DATA.Dimension.FORMMINHEIGHT)
-        initSecondaryColorBackground(self._scroll)
+        self.setForm.setFixedWidth(STYLE_DATA.Dimension.FORMWIDTH)
+        self.setForm.setFixedHeight(STYLE_DATA.Dimension.FORMMINHEIGHT)
     
     def _initLayout(self):
         """ initializes the layout"""
@@ -89,7 +83,7 @@ class SettingForm(QWidget):
         self.verticalLayout.addWidget(self.header, alignment = center)
         if self.captionText:
             self.verticalLayout.addWidget(self.caption, alignment = center )
-        self.verticalLayout.addWidget(self._scroll, alignment = center)
+        self.verticalLayout.addWidget(self.setForm, alignment = center)
         self.verticalLayout.addStretch()
         self.verticalLayout.setContentsMargins(0,0,0,0)
     
@@ -97,7 +91,7 @@ class SettingForm(QWidget):
         self.setForm.addWidget(widget)
 
     def colorChange(self):
-        _initBackground(self._scroll, STYLE_DATA.Color.SUB_BACKGROUND)
+        initBackground(self.setForm, STYLE_DATA.Color.SUB_BACKGROUND)
     
     def fontChange(self):
         self.header.fontChange(STYLE_DATA.FontSize.HEADER2)

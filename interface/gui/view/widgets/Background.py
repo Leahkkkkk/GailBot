@@ -50,11 +50,11 @@ def initSideBarBackground(widget:QWidget):
     
 def initPrimaryColorBackground(widget:QWidget):
     """ fill the widget with primary color background"""
-    _initBackground(widget, STYLE_DATA.Color.MAIN_BACKGROUND)
+    initBackground(widget, STYLE_DATA.Color.MAIN_BACKGROUND)
 
 def initSecondaryColorBackground(widget:QWidget):
     """ fill the widget with secondary color background"""
-    _initBackground(widget, STYLE_DATA.Color.SUB_BACKGROUND)
+    initBackground(widget, STYLE_DATA.Color.SUB_BACKGROUND)
 
 def addLogo(layout: QVBoxLayout):
     """ add the logo to the top left corner on the layout """
@@ -83,7 +83,7 @@ def _resizeEvent(widget: QWidget, event: QResizeEvent, img: str):
     palette.setBrush(QPalette.ColorRole.Window, brush)
     widget.setPalette(palette)
     
-def _initBackground(widget:QWidget, color = STYLE_DATA.Color.MAIN_BACKGROUND):
+def initBackground(widget:QWidget, color = STYLE_DATA.Color.MAIN_BACKGROUND):
     """ make the widget background as white """
     widget.setAutoFillBackground(True)
     bg = Background(color)

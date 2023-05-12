@@ -32,7 +32,7 @@ HiLabSuite = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
 ["system setting form"."View Setting"]
 "Font Size combo"  = [ "Medium", "Small", "Large"]
 "Color Mode combo" = [ "Light Mode", "Dark Mode"]
-"Log file auto deletion time combo" = ["Daily", "Weekly", "Monthly", "Every 2 months"]
+"Log Auto Deletion Time combo" = ["Daily", "Weekly", "Monthly", "Every 2 months"]
 
 
 ["log deletion"]
