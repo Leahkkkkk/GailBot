@@ -5,11 +5,13 @@ from gailbot.core.utils.general import (
     get_extension,  
     copy)
 from gailbot.core.utils.logger import makelogger
+from gailbot.core.utils.media import AudioHandler
 import os 
 from gailbot.workspace.manager import WorkspaceManager
 from gailbot.configs import service_config_loader
 
 SUPPORTED_AUDIO = service_config_loader().engines.audio_supported_format
+MERGED_FILE_NAME = "merged"
 
 logger = makelogger("audioPayload")
 
@@ -67,6 +69,15 @@ class AudioPayload(PayLoadObject):
         copy(self.original_source, tgt_path)
         self.data_files = [tgt_path]
         
+    def _merge_audio(self):
+        try:
+            handler = AudioHandler()
+            merged_path = handler.overlay_audios(self.data_files, self.out_dir.media_file, MERGED_FILE_NAME)
+            self.merged_audio = merged_path
+            assert merged_path
+        except Exception as e:
+            logger.error(e, exc_info=e)
+            
     @staticmethod
     def supported_format() -> List[str]:
         """

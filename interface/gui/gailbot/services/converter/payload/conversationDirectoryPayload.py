@@ -1,6 +1,5 @@
 import os 
 from typing import List,  Union
-
 from .payloadObject import PayLoadObject, PayLoadStatus
 from ...organizer.source import SourceObject
 from gailbot.core.utils.general import (
@@ -11,8 +10,9 @@ from gailbot.core.utils.general import (
 from gailbot.core.utils.logger import makelogger
 from gailbot.workspace.manager import WorkspaceManager
 from .audioPayload import AudioPayload
+from gailbot.core.utils.media import AudioHandler
 
-
+MERGED_FILE_NAME = "merged"
 logger = makelogger("conversation_payload")
 
 def load_conversation_dir_payload(
@@ -84,6 +84,15 @@ class ConversationDirectoryPayload(PayLoadObject):
             sub_paths = paths_in_dir(tgt_path, AudioPayload.supported_format(), recursive=False)
             for path in sub_paths:
                 self.data_files.append(path)
+        except Exception as e:
+            logger.error(e, exc_info=e)
+    
+    def _merge_audio(self):
+        try:
+            handler = AudioHandler()
+            merged_path = handler.overlay_audios(self.data_files, self.out_dir.media_file, MERGED_FILE_NAME)
+            self.merged_audio = merged_path
+            assert merged_path
         except Exception as e:
             logger.error(e, exc_info=e)
     

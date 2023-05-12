@@ -2,9 +2,8 @@ from abc import ABC
 from typing import List, Dict 
 import os 
 from enum import Enum 
-import datetime
+from datetime import datetime
 from gailbot.core.utils.general import write_json, copy, is_file
-from gailbot.core.utils.media import AudioHandler
 from gailbot.configs import  OutputFolder, TemporaryFolder
 from gailbot.core.utils.logger import makelogger
 from ...organizer.source import SourceObject
@@ -23,10 +22,8 @@ from gailbot.workspace import WorkspaceManager
 from gailbot.configs import service_config_loader
 MERGED_FILE_NAME = "merged"
 SERVICE_CONFIG = service_config_loader()
-logger = makelogger("payload object")
-
-
 OUTPUT_MARKER = SERVICE_CONFIG.directory_name.hidden_file
+logger = makelogger("payload object")
 class PayLoadStatus(Enum):
     """ For tracking the status of the file in the payload """
     INITIALIZED = 0 
@@ -61,9 +58,8 @@ class PayLoadObject(ABC):
     
     workspace: TemporaryFolder  # workspace for storing temporary file , will be deleted afterward
     out_dir: OutputFolder       # directory where all the output will be stored 
-    
+    merged_audio: str 
     # payload result
-    
     def __init__(self, source: SourceObject, workspace: WorkspaceManager) -> None:
         """ initialize a payload object
 
@@ -79,8 +75,10 @@ class PayLoadObject(ABC):
         self.setting: SettingObject = source.setting
         self.workspace: TemporaryFolder = \
             workspace.get_file_temp_space(self.name)        
+        current_time = datetime.now()
+        time_string = current_time.strftime("%m-%d-%H:%M")
         self.out_dir: OutputFolder = \
-            workspace.get_output_space(source.output, self.name)
+            workspace.get_output_space(source.output, self.name + time_string)
         self.progress_display = source.progress_display
         self.transcription_result: UttResult = UttResult(self.workspace.transcribe_ws)
         self.analysis_result: AnalysisResult = AnalysisResult()
@@ -88,9 +86,11 @@ class PayLoadObject(ABC):
         logger.info(f"ouputspace {self.out_dir.transcribe_result}")
         self._set_initial_status()
         self._copy_file() 
-        handler = AudioHandler()
-        handler.overlay_audios(self.data_files, self.out_dir.media_file, MERGED_FILE_NAME)
-        
+        self._merge_audio()
+    
+    def _merge_audio(self):
+        raise NotImplementedError()
+     
     def _set_initial_status(self) -> None: 
         raise NotImplementedError()
     
@@ -370,7 +370,7 @@ class PayLoadObject(ABC):
         """
         metadata = {
             "Profile Setting": self.setting.get_data(),
-            "Date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
+            "Date": datetime.now().strftime("%Y-%m-%d %H:%M"),
             "Source": self.original_source,
             "Raw Audio": self.data_files,
             "Plugin Results": self.analysis_result.get_data(), 

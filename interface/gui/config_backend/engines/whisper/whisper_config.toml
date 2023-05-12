@@ -2,7 +2,7 @@
 
 [whisper]
 engine_name = "whisper"
-model_name = "tiny"
+model_name = "base"
 
 [whisper.transcribe_configs]
 remove_punctuation_from_words = true

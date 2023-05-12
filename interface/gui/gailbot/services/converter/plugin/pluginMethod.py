@@ -60,8 +60,7 @@ class GBPluginMethods(Methods):
         """ 
         return the path to the merged media file 
         """
-        filename = f"{MERGED_FILE_NAME}.{get_extension(self.payload.data_files[0])}"
-        return os.path.join(self.payload.out_dir.media_file, filename)
+        return self.payload.merged_audio
         
     @property
     def filenames(self) -> List[str]:

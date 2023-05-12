@@ -11,6 +11,7 @@ from gailbot.configs import service_config_loader, workspace_config_loader
 HIDDEN_FILE = service_config_loader().directory_name.hidden_file
 OUTPUT_RESULT = workspace_config_loader().get_output_structure().transcribe_result
 logger = makelogger("transcribed_dir_payload")
+MERGED_FILE_NAME = "merged"
 
 def load_transcribed_dir_payload(
     source: SourceObject, ws_manager: WorkspaceManager) -> Union[bool, PayLoadObject]:
@@ -40,9 +41,8 @@ class TranscribedDirPayload(PayLoadObject):
     """
     Class for a transcribed directory payload
     """
-    def __init__(self, source, ws_manager: WorkspaceManager) -> None:
+    def __init__(self, source: SourceObject, ws_manager: WorkspaceManager) -> None:
         super().__init__(source, ws_manager) 
-        # TODO: find a better way to load result & get the result path
         if not self.transcription_result.load_result(
             os.path.join(self.data_files[0], OUTPUT_RESULT)):
             logger.error("result cannot be loaded")
@@ -76,6 +76,21 @@ class TranscribedDirPayload(PayLoadObject):
         Sets the initial status of the payload object to initialized
         """
         self.status = PayLoadStatus.TRANSCRIBED
+    
+    def _merge_audio(self):
+        try: 
+            for root, dirs, files in os.walk(self.original_source):
+                for file in files:
+                    file_name, file_extension = os.path.splitext(file)
+                    if file_name == MERGED_FILE_NAME:
+                        logger.info(file)
+                        merged_path = copy(os.path.join(root,file), self.out_dir.media_file)
+                        self.merged_audio = merged_path
+                        assert merged_path
+                        break
+        except Exception as e:
+            logger.error(e, exc_info=e)
+            return False
     
     @staticmethod
     def supported_format() -> str:

@@ -12,8 +12,7 @@ import logging
 HIL_LAB = "/Users/yike/Documents/GitHub/GailBot/plugin_suite/gb_hilab_suite"
 HIL_LAB_GITHUB = "https://github.com/YikeLi-Vivi/hillab/archive/refs/heads/main.zip"
 HIL_LAB_AWS = "https://gailbot-plugin.s3.us-east-2.amazonaws.com/gb_hilab_suite.zip"
-
-
+TRANSCRIBED = "/Users/yike/Desktop/gbout/test2b_gb_output"
 def transcribe(
     files,
     setting_name="test",
@@ -300,7 +299,7 @@ def test_plugin_small():
 
 
 def test_2ab():
-    fails, invalid = transcribe([PATH.DIR_2ab], "plugin", SETTING_DATA.WATSON_PROFILE)
+    fails, invalid = transcribe([PATH.DIR_2ab], "watson", SETTING_DATA.WATSON_PROFILE)
 
 
 def test_plugin_dir():
@@ -377,3 +376,8 @@ def test_plugin_with_spk():
 def test_reset_ws():
     gb = GailBot(PATH.USER_ROOT)
     assert gb.reset_workspace()
+
+def test_transcribed():
+    fails, invalid = transcribe(
+        [TRANSCRIBED], "plugin", SETTING_DATA.WATSON_PROFILE
+    )

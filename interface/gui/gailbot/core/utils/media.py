@@ -479,7 +479,7 @@ class AudioHandler:
                 if AudioHandler.is_supported(audios[i]):
                     nxt = self.read_file(audios[i])
                     res = self.overlay(res, nxt)
-        self.write_stream(res, output_path, name=name, format=get_extension(audios[0]))
+        return self.write_stream(res, output_path, name=name, format=get_extension(audios[0]))
 
 
 class VideoHandler:
