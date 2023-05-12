@@ -1,4 +1,5 @@
 Package Application
+TODO: add link to composor
 1. Requirement: 
     a. pyInstaller 
     Purpose: make .exe and .app file from the python script. 
