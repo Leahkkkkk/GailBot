@@ -240,7 +240,7 @@ class SystemSettingPage(QWidget):
             other=f"background-color: {STYLE_DATA.Color.INPUT_BACKGROUND}",
         )
         button.setFixedHeight(STYLE_DATA.Dimension.INPUTHEIGHT)
-        button.setFixedWidth(130)
+        button.setFixedWidth(STYLE_DATA.Dimension.INPUTWIDTH // 2)
         button.clicked.connect(fun)
         self.formButtons.append(button)
         self.labels.append(label)
@@ -251,3 +251,4 @@ class SystemSettingPage(QWidget):
         initBackground(self.formContainer, STYLE_DATA.Color.LOW_CONTRAST)
         for button in self.formButtons:
             button.addOtherStyle(f"background-color: {STYLE_DATA.Color.INPUT_BACKGROUND}")
+        self.saveBtn.colorChange(STYLE_DATA.Color.PRIMARY_BUTTON)
