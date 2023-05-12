@@ -75,7 +75,7 @@ class PluginListDisplay(QWidget):
                 STYLE_DATA.Dimension.SMALL_TABLE_HEIGHT // 2,
             )
         )
-        newTable.resizeCol([1])
+        newTable.resizeCol([0.97])
         for row, suite in enumerate(pluginSuites):
             newTable.insertRow(row)
             newTable.setItem(row, 0, QTableWidgetItem(suite))
