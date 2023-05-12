@@ -18,7 +18,7 @@ class SourceObject():
     def __init__(self, path:str, name: str, output: str) -> None:
         self.name: str = name
         self.path: str = path
-        timestamp = datetime.now().strftime("_%m_%d_%y:%H:%:%S")
+        timestamp = datetime.now().strftime("_%m_%d_%y-%H-%M-%S")
         self.output:str = os.path.join(output, name + OUT_PUT_EXTENSION + timestamp)
         self.setting: SettingObject = None  
         self.progress_display: Callable = None 

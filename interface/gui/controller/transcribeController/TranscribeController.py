@@ -142,15 +142,15 @@ class GBWorker(QRunnable):
                     self.filedata[filename]["Status"] = "Transcribed"
             self.logger.info(f"the failure files are {fails}, the invalid files are {invalid}")
             if invalid and fails:
-                self.failureFun(ERR.INVALID_TRANSCRIBE.format(str(invalid)) +
+                self.signal.error.emit(ERR.INVALID_TRANSCRIBE.format(str(invalid)) +
                                 "\n" + ERR.FAIL_TRANSCRIBE.format(str(fails)))
             elif fails:
-                self.failureFun(ERR.FAIL_TRANSCRIBE.format(str(fails)))
+                self.signal.error.emit(ERR.FAIL_TRANSCRIBE.format(str(fails)))
             elif invalid: 
-                self.failureFun(ERR.INVALID_TRANSCRIBE.format(str(invalid)))
+                self.signal.error.emit(ERR.INVALID_TRANSCRIBE.format(str(invalid)))
             self.continueFun([(name, data) for name, data in self.filedata.items()])
         except Exception as e:
-            self.failureFun(ERR.ERROR_WHEN_DUETO.format("transcription", str(e)))
+            self.signal.error.emit(ERR.ERROR_WHEN_DUETO.format("transcription", str(e)))
             self.logger.error(f"Error during transcription: {e}", exc_info=e)
             self.continueFun([(name, data) for name, data in self.filedata.items()])
         finally:
