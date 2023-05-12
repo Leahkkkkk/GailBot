@@ -43,7 +43,7 @@ class SettingDisplay(QWidget):
                 STYLE_DATA.Dimension.SMALL_TABLE_HEIGHT,
             )
         )
-        newTable.resizeCol([0.499, 0.499])
+        newTable.resizeCol([0.480, 0.490])
         for row, (key, value) in enumerate(data.items()):
             newTable.insertRow(row)
             key = key.replace("_", " ").upper()

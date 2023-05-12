@@ -399,16 +399,12 @@ class ProfileField:
 @dataclass
 class ProfileSetting(DataclassFromDict):
     """class holding the text for the setting page"""
-
     RequiredSetting: dict = field_from_dict()
-    PostTranscribe: dict = field_from_dict()
-    Plugins: dict = field_from_dict()
 
 
 @dataclass
 class EngineSetting(DataclassFromDict):
     """class holding the text for the engine setting page"""
-
     Engine: dict = field_from_dict()
 
 

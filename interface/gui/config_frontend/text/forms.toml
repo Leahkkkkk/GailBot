@@ -7,28 +7,6 @@ Filename             = "filename"
 "Recording Rate (Hertz)" = "4800"
 "Max Recording Duration" = "1h"
 
-["profile form".Plugins]
-HiLabSuite = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
-
-["profile form"."PostTranscribe".General]
-"Gap Length"                = "0s"
-"Turn End Threshold"        = "0s"
-"Large Pause - Lower Bound" = "0s"
-
-["profile form"."PostTranscribe"."Laghter Settings"]
-"Laughter Detection Module bool"     = "ON"
-"Laughter Probability - Lower Bound" = "0s"
-"Laughter Length - Lower Bound"      = "0s"
-
-["profile form"."PostTranscribe"."MicroPause Bound"]
-"Upper Bound" = "0s"
-"Lower Bound" = "0s"
-
-["profile form"."PostTranscribe"."Transcription Model"]
-"Beat Transcription Mode bool"                       = "ON"
-"FTO (Floor Transfer offset)Transcription Mode bool" = "ON"
-"Syllable Rate mode bool"                            = "ON"
-
 ["system setting form"."View Setting"]
 "Font Size combo"  = [ "Medium", "Small", "Large"]
 "Color Mode combo" = [ "Light Mode", "Dark Mode"]
@@ -40,15 +18,6 @@ HiLabSuite = "https://sites.tufts.edu/hilab/files/2022/05/HiLabSuite.zip"
 "Weekly"     = 7
 "Monthly"    = 30
 "Every 2 months" = 60
-
-
-[formField]
-user             = "User Info"
-engine           = "Engine"
-outPutFormat     = "Output Form Data"
-postTranscribe   = "PostTranscribe"
-reuquiredSetting = "RequiredSetting"
-plugin           = "Plugins"
 
 
 ["profile form"."RequiredSetting".Engine.whisper."0. Basic Settings"]
