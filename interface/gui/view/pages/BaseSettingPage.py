@@ -44,8 +44,10 @@ class BaseSettingPage(QWidget):
            self.headerText, STYLE_DATA.FontSize.HEADER2, FontFamily.MAIN
         )
         self.caption = Label(
-            self.captionText, STYLE_DATA.FontSize.DESCRIPTION, FontFamily.MAIN
+            self.captionText, STYLE_DATA.FontSize.DESCRIPTION, FontFamily.MAIN, others="text-align: center;"
         )
+        self.caption.setAlignment(center)
+        self.caption.setMinimumWidth(STYLE_DATA.Dimension.FORMWIDTH)
         self.addBtn = ColoredBtn(self.addNewButtonText, STYLE_DATA.Color.PRIMARY_BUTTON)
         self.instruction = InstructionBtn(self.instruction)
         

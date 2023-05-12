@@ -1,7 +1,7 @@
-from PyQt6 import QtCore
 import markdown
 import os
-from .Image import Image
+from dataclasses import dataclass
+
 from .Label import Label
 from gbLogger import makeLogger
 from view.config.Style import STYLE_DATA
@@ -30,6 +30,14 @@ from PyQt6.QtCore import Qt, QModelIndex
 from PyQt6.QtGui import QFont
 
 
+@dataclass 
+class DIMENSION:
+    INSTRUCTION_TABLE_WIDTH = 850 
+    INSTRUCTION_OPTION_WIDTH = 150
+    INSTRUCTION_TEXT_WIDTH = 680
+    INSTRUCTION_LABEL_WIDTH = 650
+    MARKDOWN_HEIGHT = 350
+    
 class MarkdownDisplay(QTextEdit):
     def __init__(self, filePath):
         super().__init__()
@@ -101,6 +109,7 @@ class DictionaryTableWidget(QTableWidget):
                 keyItem = Label(
                     key, STYLE_DATA.FontSize.BODY, STYLE_DATA.FontFamily.OTHER
                 )
+                keyItem.setFixedWidth(DIMENSION.INSTRUCTION_LABEL_WIDTH)
                 self.setCellWidget(row, 0, keyItem)
                 keyItem.setContentsMargins(10, 0, 0, 0)
             valueItem = Label(
@@ -109,6 +118,7 @@ class DictionaryTableWidget(QTableWidget):
             valueItem.setContentsMargins(10,0,0,0)
             self.setCellWidget(row, 1, valueItem)
             row += 1
+            self.resizeRowsToContents()
 
     def _initStyle(self) -> None:
         """Initialize the table style"""
@@ -122,11 +132,13 @@ class DictionaryTableWidget(QTableWidget):
             self.horizontalHeader().setSectionResizeMode(
                 i, QHeaderView.ResizeMode.Fixed
             )
-        self.setFixedWidth(850)
-        self.setColumnWidth(0, 150)
-        self.setColumnWidth(1, 700)
+        self.setFixedWidth(DIMENSION.INSTRUCTION_TABLE_WIDTH)
+        self.setColumnWidth(0, DIMENSION.INSTRUCTION_OPTION_WIDTH)
+        self.setColumnWidth(1, DIMENSION.INSTRUCTION_TEXT_WIDTH)
+        
         self.verticalScrollBar().setStyleSheet(STYLE_DATA.StyleSheet.SCROLL_BAR)
         self.horizontalScrollBar().setStyleSheet(STYLE_DATA.StyleSheet.SCROLL_BAR)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
         self.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)
         self.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         self.setTextElideMode(Qt.TextElideMode.ElideMiddle)
