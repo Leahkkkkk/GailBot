@@ -22,6 +22,7 @@ class UploadFile(QWidget, FormWidget):
         self.selectFileBtn.clicked.connect(self.uploadFile)
         STYLE_DATA.signal.changeFont.connect(self.changefont)
         STYLE_DATA.signal.changeColor.connect(self.changeColor)
+        self.setFixedWidth(STYLE_DATA.Dimension.FORM_INPUT_WIDTH)
     
     def initUI(self):
         self._layout = QGridLayout()

@@ -48,8 +48,10 @@ class InputCombo(QWidget, FormWidget):
         self._layout = QVBoxLayout() if self.vertical else QHBoxLayout()
         self.setLayout(self._layout)
         self._layout.addWidget(self.inputLabel)
+        self._layout.addStretch()
         self._layout.addWidget(self.inputField)
         self.setMinimumHeight(80)
+        self.setFixedWidth(STYLE_DATA.Dimension.FORM_INPUT_WIDTH)
         self.setMinimumWidth(STYLE_DATA.Dimension.INPUTWIDTH)
     
     def connectSignal(self):

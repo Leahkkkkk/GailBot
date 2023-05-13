@@ -111,6 +111,9 @@ class DimensionData(DataclassFromDict):
     WIN_MIN_HEIGHT      : int = field_from_dict()
     OUTPUT_FORM_HEIGHT  : int = field_from_dict()
     COMBOBOX_HEIGHT     : int = field_from_dict()
+    ENGINE_FORM_WIDTH   : int = field_from_dict()
+    ENGINE_FORM_HEIGHT  : int = field_from_dict()
+    FORM_INPUT_WIDTH    : int = field_from_dict()
 
 @dataclass 
 class Asset(DataclassFromDict): 

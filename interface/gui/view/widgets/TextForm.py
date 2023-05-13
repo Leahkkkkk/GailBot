@@ -45,7 +45,6 @@ class TextForm(QWidget):
         self,
         data: Dict[str, Dict[str, str]],
         background: bool = True,
-        toggle: bool = False,
         showSubtittle = False,
         *args,
         **kwargs,
@@ -67,11 +66,9 @@ class TextForm(QWidget):
         super().__init__(*args, **kwargs)
         self.data: Dict[str, Dict[str, str]] = data
         self.inputDict: Dict[str, FormWidget] = dict()
-        self.toggle = toggle 
         self.showSubtittle = showSubtittle
-        if not self.toggle:
-            self.setMinimumHeight(STYLE_DATA.Dimension.WIN_MIN_HEIGHT // 3 * 2)
-            self.setMinimumWidth(STYLE_DATA.Dimension.WIN_MIN_WIDTH // 2)
+        self.setFixedHeight(STYLE_DATA.Dimension.ENGINE_FORM_HEIGHT)
+        self.setFixedWidth(STYLE_DATA.Dimension.ENGINE_FORM_WIDTH)
         self._initWidget()
         self._initLayout()
         self._connectSignal()
@@ -121,26 +118,16 @@ class TextForm(QWidget):
         """initializes the widgets"""
         self.mainVertical = QVBoxLayout()
         self.mainVertical.setAlignment(Qt.AlignmentFlag.AlignLeft)
-        count = 0
 
         for tittleKey, items in self.data.items():
             """adding spacing"""
-            if count != 0 and (not self.toggle):
-                self.mainVertical.addSpacing(STYLE_DATA.Dimension.MEDIUM_SPACING)
-                count += 1
 
             """ create additional layout if the form elements are 
                 displayed in a toggle view """
-            if self.toggle:
-                toggleViewContainer = QWidget()
-                toggleViewLayout = QVBoxLayout()
-                toggleViewContainer.setLayout(toggleViewLayout)
-                self.mainVertical.setSpacing(0)
-                self.mainVertical.setContentsMargins(0, 0, 0, 0)
 
             """ create the label  """
             tittleKey = tittleKey.split(". ")[-1]
-            if not self.toggle and self.showSubtittle:
+            if self.showSubtittle:
                 newLabel = Label(
                     tittleKey, STYLE_DATA.FontSize.BTN, STYLE_DATA.FontFamily.MAIN
                 )
@@ -154,9 +141,7 @@ class TextForm(QWidget):
 
                 elif InputFormat.COMBO in key:
                     key = key.replace(InputFormat.COMBO, "").split(". ")[-1]
-                    newInput = InputCombo(
-                        label=key, selections=value, vertical=self.toggle
-                    )
+                    newInput = InputCombo(label=key, selections=value)
 
                 elif InputFormat.FILE in key:
                     key = key.replace(InputFormat.FILE, "").split(". ")[-1]
@@ -174,22 +159,9 @@ class TextForm(QWidget):
                     newInput = TextInput(key, inputText=value, vertical=False)
 
                 """ add element to the layout """
-                if self.toggle:
-                    toggleViewLayout.addWidget(newInput)
-                else:
-                    self.mainVertical.addWidget(newInput)
+                self.mainVertical.addWidget(newInput)
                 self.inputDict[key] = newInput
 
-            if self.toggle:
-                height = len(items) * 100
-                toggleViewContainer.setFixedHeight(height)
-                toggleViewLayout.addStretch()
-                toggleView = ToggleView(
-                    tittleKey, toggleViewContainer, secondaryStyle=False
-                )
-                toggleView.setScrollHeight(height)
-                self.mainVertical.addWidget(toggleView)
-                toggleView.setContentsMargins(0, 0, 0, 0)
         self.mainVertical.setAlignment(Qt.AlignmentFlag.AlignLeft)
         self.mainVertical.addStretch()
         self.mainVertical.addSpacing(STYLE_DATA.Dimension.LARGE_SPACING)

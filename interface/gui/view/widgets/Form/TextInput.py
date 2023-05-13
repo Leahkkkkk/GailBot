@@ -59,11 +59,13 @@ class TextInput(QWidget, FormWidget):
     def initUI(self):
         self.inputLabel = Label(self.label, self.labelSize)
         self.inputField = InputField(self._width, self._height)
+        self.setFixedWidth(STYLE_DATA.Dimension.FORM_INPUT_WIDTH)
         if self.value:
             self.inputField.setText(str(self.value))
         self._layout = QHBoxLayout() 
         self.setLayout(self._layout)
         self._layout.addWidget(self.inputLabel)
+        self._layout.addStretch()
         self._layout.addWidget(self.inputField)
         
     def connectSignal(self):

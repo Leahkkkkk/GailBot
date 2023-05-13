@@ -42,7 +42,6 @@ class GraphDisplay(QGraphicsView):
         title.setPos(200, 120)
         
         # Add the title item to the scene
-        self.scene.addItem(title)
        
         poses = evenlyDistributedPoints(
             len(self.graph.keys()), 

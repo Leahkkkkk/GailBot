@@ -17,6 +17,7 @@ class onOffButton(QWidget, FormWidget):
         self.connectSignal()
     
     def initUI(self):
+        self.setFixedWidth(STYLE_DATA.Dimension.FORM_INPUT_WIDTH)
         self.label = Label(self.label, STYLE_DATA.FontSize.BTN)
         if self.value:
             self.onOffBtn = QPushButton(Text.on)
@@ -28,6 +29,7 @@ class onOffButton(QWidget, FormWidget):
         self._layout = QHBoxLayout()
         self.setLayout(self._layout)
         self._layout.addWidget(self.label)
+        self._layout.addStretch()
         self._layout.addWidget(self.onOffBtn)
     
     def buttonClickHandler(self):

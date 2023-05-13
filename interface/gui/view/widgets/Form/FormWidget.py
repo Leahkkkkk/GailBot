@@ -1,8 +1,8 @@
 from abc import ABC 
-
 class FormWidget():
     def __init__(self) -> None:
         self.value = None
+    
         
     def initUI(self):
         raise NotImplementedError

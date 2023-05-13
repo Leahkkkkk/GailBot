@@ -140,7 +140,7 @@ class UploadURL(QDialog):
         for source in TEXT.SOURCES:
             sourceText = Label(source, STYLE_DATA.FontSize.BTN, STYLE_DATA.FontFamily.MAIN)
             self._layout.addWidget(sourceText)
-        self._layout.addWidget(self.input, alignment=Qt.AlignmentFlag.AlignHCenter)
+        self._layout.addWidget(self.input, alignment=Qt.AlignmentFlag.AlignLeft)
         self._layout.addWidget(self.confirm, alignment=Qt.AlignmentFlag.AlignHCenter)
         self.confirm.clicked.connect(self.upload)
         initPrimaryColorBackground(self)
