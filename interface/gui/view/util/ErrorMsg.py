@@ -3,7 +3,7 @@ from dataclasses import dataclass
 @dataclass 
 class ERR:
     ERR_WHEN_DUETO = "ERROR 040: An error occurred when {0} due to {1}."
-    FAIL_TO        = "ERROR 041: Fail to {0}."
+    FAIL_TO        = "ERROR 040: Fail to {0}."
     
 @dataclass
 class WARN:

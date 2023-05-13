@@ -61,8 +61,7 @@ class PluginOrganizer:
         elif isinstance(suites, str):
             addRequest.fail(suites)
         else:
-            self.signals.error.emit(ERR.ERROR_WHEN_DUETO.format(
-                f"register plugin", "invalid plugin suite"))
+            self.signals.error.emit(ERR.INVALID_PLUGIN)
 
     def deleteSuite(self, deleteRequest: Request) -> None:
         """ delete the plugin
@@ -82,8 +81,7 @@ class PluginOrganizer:
         if deleted:
             deleteRequest.succeed(deleteRequest.data)
         else:
-            self.signals.error.emit(ERR.ERROR_WHEN_DUETO.format(
-                f"delete plugin suite {deleteRequest.data}", "cannot be deleted"))
+            self.signals.error.emit(ERR.DELETE_PLUGIN)
     
     def getPluginSuiteDetail(self, detailRequest: Request) -> Dict[str, str]:
         """get the plugin details

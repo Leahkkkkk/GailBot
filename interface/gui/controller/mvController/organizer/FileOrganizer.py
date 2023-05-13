@@ -80,7 +80,7 @@ class FileOrganizer:
             
             assert self.gb.apply_setting_to_source(name, file["Profile"])
         except Exception as e:
-            request.fail(ERR.ERROR_WHEN_DUETO.format("posting new file", str(e)))
+            request.fail(ERR.POST_FILE_ERROR)
             self.logger.error(f"Error in posting file: {e}", exc_info=e)
     
     

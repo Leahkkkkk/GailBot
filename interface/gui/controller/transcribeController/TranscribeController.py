@@ -83,7 +83,7 @@ class TranscribeController(QObject):
         else:
             try:
                 self.ThreadPool.clear()
-                self.logger.info(f"the files to be transcribeda are :{transcribeRequest.data}")
+                self.logger.info(f"the files to be transcribed are :{transcribeRequest.data}")
                 self.worker = GBWorker(
                     transcribeRequest.data,  
                     transcribeRequest.succeed,
@@ -92,7 +92,7 @@ class TranscribeController(QObject):
                 self.signal.start.emit()
                 assert self.ThreadPool.tryStart(self.worker)
             except Exception as e:
-                self.signal.error.emit(ERR.ERROR_WHEN_DUETO("transcribing file", str(e)))
+                self.signal.error.emit(ERR.FAIL_START_TRANSCRIBE(str(e)))
                 self.logger.error(f"failed to start transcribe due to error {e}", exc_info=e)
 
 
