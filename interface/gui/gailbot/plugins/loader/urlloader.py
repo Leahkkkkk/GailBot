@@ -13,6 +13,7 @@ from gailbot.core.utils.general import get_extension, read_toml, delete
 from gailbot.configs import PLUGIN_CONFIG
 from gailbot.core.utils.download import download_from_urls
 from urllib.parse import urlparse
+from urllib import request
 
 
 logger = makelogger("url_loader")
@@ -77,6 +78,13 @@ class PluginURLLoader(PluginLoader):
 
         return False
 
+    def connect(self, host='http://google.com'):
+        try:
+            request.urlopen(host, timeout=2) #Python 3.x
+            return True
+        except:
+            return False
+        
     def load(self, url: str) -> Union[PluginSuite, bool]:
         """
         load the plugin suite from the url if the url is supported by the
@@ -89,6 +97,8 @@ class PluginURLLoader(PluginLoader):
             PluginSuite: loaded plugin suite object if the url is supported
             Bool: return false if the url is not supported by current url loader
         """
+        if not self.connect():
+            return False
         for loader in self.url_loaders:
             suites = loader.load(url)
             if isinstance(suites, List):
