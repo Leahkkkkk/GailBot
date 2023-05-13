@@ -75,13 +75,6 @@ class WelcomePageText:
     guideText = "Documentation"
     gbLinkText = "Tufts Human Interaction Laboratory"
     moreInfoText = "For more information, visit:"
-    confirmBtn = "Confirm"
-    changeDirBtn = "Change Directory"
-    email = "hil@elist.tufts.edu"
-    zipFileName = "gailbot_log_file"
-    sendZipMsg = "You can send the zipped log file to us through the email:"
-    saveLogPrompt = "Select the path the log files will be saved to"
-    saveLogPath = "Log files saved to:"
 
 
 @dataclass
@@ -456,6 +449,20 @@ class ENGINE_SETTING_FORM(DataclassFromDict):
     whisper: dict = field_from_dict()
     watson: dict = field_from_dict()
 
+
+
+@dataclass
+class PATH_DIALOG: 
+    confirmBtn = "Confirm"
+    changeDirBtn = "Change Directory"
+    email = "hil@elist.tufts.edu"
+    zipFileName = "gailbot_log_file"
+    sendZipMsg = "You can send the zipped log file to us through the email:"
+    saveLogPrompt = "Select the path the log files will be saved to"
+    saveLogPath = "Log files saved to:"
+    saveSettingHeader = "Select path to save the source"
+    saveSettingcaption = "A copy of the source will be saved to the selected path for access"
+    selectPath = "Select Path: "
 
 ENGINE_FORM = ENGINE_SETTING_FORM.from_dict(forms["EngineForm"])
 

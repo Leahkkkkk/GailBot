@@ -70,7 +70,11 @@ class WhisperEngine(Engine):
     #### Additional methods
 
     def get_available_models(self) -> List[str]:
+        """return the list of available model
+        """
         return self.core.get_available_models()
 
     def get_supported_languages(self) -> List[str]:
+        """ return the list of available languages 
+        """
         return self.core.get_supported_languages()

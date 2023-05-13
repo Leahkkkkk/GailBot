@@ -34,6 +34,14 @@ class Signals(QObject):
 
 class CreateNewProfile():
     def __init__(self, engines: List[str], plugins: List[str], engineSettingSignal) -> None:
+        """a pop up tab that allows the user to create new profile setting
+
+        Args:
+            engines (List[str]): the list of available engine name
+            plugins (List[str]): the list of available plugins suite name
+            engineSettingSignal: engine setting signal that can be used 
+                                          to send request for engine data
+        """ 
         self.signals = Signals()
         self.logger = makeLogger()
         self.profileName   = SettingName()
@@ -69,6 +77,14 @@ class CreateNewProfile():
             
 class EditProfile():
     def __init__(self, setting, engines, plugins, engineSettingSignal, *args, **kwargs) -> None:
+        """a pop up tab that allows the user to update existing profile
+
+        Args:
+            engines (List[str]): the list of available engine name
+            plugins (List[str]): the list of available plugins suite name
+            engineSettingSignal: engine setting signal that can be used 
+                                          to send request for engine data
+        """ 
         name, data = setting 
         self.profileName  = name 
         self.signals = Signals()

@@ -1,21 +1,33 @@
-import subprocess
+'''
+File: SourceTable.py
+Project: GailBot GUI
+File Created: 2023/04/01
+Author: Siara Small  & Vivian Li
+-----
+Last Modified:2023/05/13
+Modified By:  Siara Small  & Vivian Li
+-----
+Description: implementation of the source table which is used on pages that 
+             display files uploaded by user
+'''
+# stdlib import
 from dataclasses import dataclass
-from typing import Dict, List, Set, Tuple, TypedDict
+from typing import Dict, List, Set, Tuple
 from enum import Enum 
 
+# internal import
 from view.signal.Request import Request
-from view.widgets.MsgBox import WarnBox, ConfirmBox
+from view.signal.interface import DataSignal
 from view.components.SettingDetail import ProfileDetail
+from view.widgets.MsgBox import WarnBox
 from view.widgets.Table import BaseTable
 from view.widgets.Button import ColoredBtn, TableBtn
-from ...widgets.Background import initSecondaryColorBackground
-
+from view.widgets.Background import initSecondaryColorBackground
 from ..FileUpload import UploadFileDialog, ChooseSetTab
-from view.signal.interface import DataSignal
-from gbLogger import makeLogger
 from ...config.Style import STYLE_DATA
 from ...config.Text import FileTableText as Text
 from view.util.ErrorMsg import ERR
+from gbLogger import makeLogger
 from PyQt6.QtWidgets import (
     QTableWidgetItem, 
     QWidget, 
@@ -31,17 +43,19 @@ from PyQt6.QtCore import (
     QSize, 
     pyqtSignal,
 )
-from PyQt6.QtGui import QColor, QFont
+from PyQt6.QtGui import QColor
 
 class Signals(QObject):
     """signals for controlling frontend view changes """
-    nonZeroFile = pyqtSignal()
-    ZeroFile = pyqtSignal()
-    select = pyqtSignal(str)
-    unselect = pyqtSignal(str)
-    transferState = pyqtSignal(list)
+    nonZeroFile   = pyqtSignal()     # emit when any file is selected by user
+    ZeroFile      = pyqtSignal()     # emit when no file is selected by user
+    select        = pyqtSignal(str)  # emit a single contains the selected file
+    unselect      = pyqtSignal(str)  # emit a signal contains the unselected file 
+    transferState = pyqtSignal(list) # emit a signal contains a list of file to oe transferred to another state
 
 class TableWidget(Enum):
+    # an enum class that stores a list of available widget button 
+    # to be added to the source table
     REMOVE = 1
     CHANGE_PROFILE = 2 
     PROFILE_DETAIL = 3
@@ -50,12 +64,13 @@ class TableWidget(Enum):
 
 @dataclass
 class DATA_FIELD: 
+    # a data class that stores the key
+    # in a source dictionary 
     NAME     = "Name"
     TYPE     = "Type"
     PROFILE  = "Profile"
     STATUS   = "Status"
     DATE     = "Date"
-    SIZE     = "Size"
     OUTPUT   = "Output"
     FULLPATH = "FullPath"
     PROGRESS = "Progress"
@@ -88,19 +103,16 @@ class SourceTable(BaseTable):
     
     ########################  table initializer    #########################
     def initProfiles(self, profiles: List[str]):
+        """ initialize the available profiles """
         self.profiles = profiles
     
     def addProfile(self, profileName:str)->None:
-        """ add profile keys 
-            ** connect to the backend signal to add profile
+        """ add profile, called whenever new profile is added by the user  
         """
         self.profiles.append(profileName)
         
     def deleteProfile(self, profileName:str)->None:
-        """ delete profile
-
-        Args:
-            profileName (str): the name of the profile
+        """ delete profile, called whenever a profile is deleted by the user 
         """
         try: 
             self.profiles.remove(profileName)
@@ -180,12 +192,24 @@ class SourceTable(BaseTable):
                 self.logger.info("failed to set row color")
    
     def getSelectedFile(self) -> List[Tuple[str, Dict[str, str]]]:
+        """ return a list of file selected by the user
+
+        Returns:
+            List[Tuple[str, Dict[str, str]]]: a list of tuple of the form 
+            (filename:str, filedata:Dict) 
+        """
         data = list ()
         for file in self.selected:
             data.append((file, self.nameToData[file]))
         return data 
      
     def getAllFile(self) -> List[Tuple[str, Dict[str, str]]]:
+        """get all the file uploaded by the user
+
+        Returns:
+            List[Tuple[str, Dict[str, str]]]: a list of tuple of the form 
+            (filename:str, filedata:Dict) 
+        """
         data = [(name, filedata) for name, filedata in self.nameToData.items()]
         return data 
       
@@ -205,7 +229,6 @@ class SourceTable(BaseTable):
     
     def _postFile(self, file):
         """ send signals to post file to the database 
-            ** connected to the upload file button 
         """
         self.signal.postRequest.emit(Request(data=file, succeed=self.addItem))
     
@@ -222,7 +245,13 @@ class SourceTable(BaseTable):
         self.nameToData = dict()
         self.addItems(files)
         
-    def addItem(self, source: Tuple[str, Dict[str, str], str], **kwargs):
+    def addItem(self, source: Tuple[str, Dict[str, str]], **kwargs):
+        """add item to the table 
+
+        Args:
+            source (Tuple[str, Dict[str, str]]): a Tuple with the form 
+            (filename: str, filedata: Dict)
+        """
         super().addItem(source, **kwargs)
         name, data = source
         self.nameToData[name] = data 
@@ -230,6 +259,12 @@ class SourceTable(BaseTable):
    
     ######################### add cell widget ###########################
     def addCellWidgets(self, name: str, row: int):
+        """add cell widget 
+
+        Args:
+            name (str): the name of the file 
+            row (int): the initial row of the file 
+        """
         if TableWidget.CHECK in self.appliedCellWidget:
             checkBox = self.getCheckBox(name)
             self.setCellWidget(row, 0, checkBox)
@@ -254,6 +289,14 @@ class SourceTable(BaseTable):
         self.setCellWidget(row, self.actionWidgetCol, cellWidget)
 
     def getCheckBox(self, sourceName) -> QWidget:
+        """return a checkbox with connected signal
+
+        Args:
+            sourceName (str): the name of the file
+
+        Returns:
+            QWidget: a checkBox widget
+        """
         container = QWidget()
         layout = QVBoxLayout()
         container.setLayout(layout)
@@ -266,6 +309,15 @@ class SourceTable(BaseTable):
         return container
     
     def getViewProfileBtn(self, name) -> QWidget:
+        """get a button with connected signal when clicking open up the 
+           profile information of the added file 
+
+        Args:
+            name (str): the name of the file
+
+        Returns:
+            QWidget: the button widget 
+        """
         btn = TableBtn(icon=STYLE_DATA.Asset.tableDetail)
         btn.clicked.connect(
             lambda:self.fileProfileRequest(name)
@@ -273,6 +325,16 @@ class SourceTable(BaseTable):
         return btn
         
     def getChangeProfileBtn(self, name) -> QWidget:
+        """ get a button with connected signal when clicking open up 
+            a dialog to change the file profile and update the changes in 
+            backend
+
+        Args:
+            name (str): the name of the file
+
+        Returns:
+            QWidget: the button widget
+        """
         btn = TableBtn(icon=STYLE_DATA.Asset.tableEdit) 
         btn.clicked.connect(
             lambda: self.changeProfileRequest(name)
@@ -281,6 +343,11 @@ class SourceTable(BaseTable):
 
 ####################### function for button click action ####################
     def changeProfileRequest(self, name):
+        """ open up a dialog to allow user to change the file profile
+
+        Args:
+            name (str): the name of the file 
+        """
         dialog = _ChangeProfileDialog(
             self.profiles, 
             name, 
@@ -289,6 +356,10 @@ class SourceTable(BaseTable):
         dialog.exec()
    
     def changeProfileSucceed(self, result: Tuple[str, str]):
+        """succeed continuation of the profile change, update the file's
+           profile information on the frontend interface
+
+        """
         try:
             name, profilekey = result
             if name in self.nameToTablePins:
@@ -305,11 +376,21 @@ class SourceTable(BaseTable):
             WarnBox(ERR.ERR_WHEN_DUETO.format("adding new profile option", str(e)))
     
     def fileProfileRequest(self, name):
+        """send a request to get the file's profile data
+
+        Args:
+            name (str): the name of the file
+        """
         self.signal.fileProfileRequest.emit(
             Request(data=name, succeed=self.displayDetail)
         )
         
     def displayDetail(self, data):
+        """succeed continuation of the request to view profile details
+
+        Args:
+            data (Dict): the data to be displayed
+        """
         name, setting = data 
         try:
             ProfileDetail(name, setting) 
@@ -317,6 +398,11 @@ class SourceTable(BaseTable):
             self.logger.error(e, exc_info=e)
    
     def deleteSucceed(self, name):
+        """succeed continuation for removing a file from the table 
+
+        Args:
+            name (str): the name of the file
+        """
         super().deleteSucceed(name)
         if name in self.selected:
             self.selected.remove(name)

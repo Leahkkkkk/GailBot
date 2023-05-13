@@ -2,8 +2,8 @@ from pydantic import BaseModel, ValidationError
 from typing import Dict, Union
 from .engineSettingInterface import EngineSettingInterface
 from gailbot.core.utils.logger import makelogger
+from gailbot.core.utils.download import is_internet_connected
 from gailbot.core.engines import Watson
-
 logger = makelogger("watson_interface")
 
 class ValidateWatson(BaseModel):
@@ -34,6 +34,7 @@ class WatsonInterface(EngineSettingInterface):
     @property
     def engine(self):
         return "watson"
+
     
 def load_watson_setting(setting: Dict[str, str]) -> Union[bool, EngineSettingInterface]:
     """ given a dictionary, load the dictionary as a watson setting 
@@ -48,7 +49,7 @@ def load_watson_setting(setting: Dict[str, str]) -> Union[bool, EngineSettingInt
                                         as an instance of SettingInterface, 
                                         else return false
     """ 
-    if "engine" not in setting.keys() or setting["engine"] != "watson":
+    if "engine" not in setting.keys() or setting["engine"] != "watson" or not is_internet_connected():
         return False
     try:
         logger.info(setting)

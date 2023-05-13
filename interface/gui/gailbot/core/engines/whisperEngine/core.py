@@ -89,7 +89,6 @@ class WhisperCore:
         # Load the model
         logger.info(f"start to load whisper model")
         
-        # TODO: try to remove the global
         global LOAD_MODEL_LOCK
         with LOAD_MODEL_LOCK:
             whisper_model = whisper.load_model(

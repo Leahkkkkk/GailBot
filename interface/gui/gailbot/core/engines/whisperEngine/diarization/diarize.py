@@ -4,11 +4,8 @@
 # @Last Modified by:   Muhammad Umair
 # @Last Modified time: 2023-02-07 18:10:38
 
-import sys
 import os
 from typing import Any
-from huggingface_hub import hf_hub_url, cached_download
-import joblib
 from huggingface_hub import hf_hub_download
 from pyannote.audio.core.pipeline import Pipeline
 from gailbot.core.utils.general import (
@@ -22,8 +19,6 @@ from gailbot.core.utils.logger import makelogger
 from gailbot.core.utils.general import is_file
 
 logger = makelogger("pyannote_diarization")
-
-
 WHISPER_CONFIG = whisper_config_loader()
 
 class PyannoteDiarizer:

@@ -19,6 +19,7 @@ def parse_into_word_dicts(transcription : Dict) -> List[Dict]:
 
     Format of the transcription is detailed here: https://github.com/linto-ai/whisper-timestamped
     """
+    logger.info("parse into word dict")
     parsed = list()
     segments = transcription["segments"]
     try:
@@ -45,6 +46,7 @@ def parse_into_timestamped_text(asr_res : Dict) -> List[Tuple]:
     """
     Parse results from whisper timestamped in terms of Segment
     """
+    logger.info("parse to timestamp data ")
     timestamp_texts = []
     for segment in asr_res['segments']:
         if not "words" in segment:
@@ -68,6 +70,7 @@ def add_speaker_info_to_text(asr_res : Dict, dir_res : Dict) -> Dict:
     Add speaker information to transcription results using speaker
     diarization results. Returns dictionaries
     """
+    logger.info("adding speaker tag into the result")
     spk_text = []
     timestamp_texts = parse_into_timestamped_text(asr_res)
     for seg, text in timestamp_texts:

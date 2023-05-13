@@ -18,7 +18,7 @@ from ibm_watson.websocket import RecognizeCallback, AudioSource
 from .recognize_callback import CustomWatsonCallbacks
 from .recognition_results import RecognitionResult
 from gailbot.core.utils.logger import makelogger
-from gailbot.core.engines import exception as ERR
+from gailbot.core.engines import exception as EXCEPTION
 from gailbot.configs import watson_config_loader
 from gailbot.core.utils.media import MediaHandler
 from gailbot.core.utils.general import (
@@ -50,10 +50,18 @@ class WatsonCore:
         if not WatsonCore.valid_region_api(apikey, region):
             raise ApiException("invalid apikey and region")
        
-        # create recognize callback 
     
     @staticmethod 
     def valid_region_api(apikey, region):
+        """check if an api key is a valid api key under the region
+
+        Args:
+            apikey (str): a string that stores the api key
+            region (str): the region 
+
+        Returns:
+            bool: true if the api key is valid, false otherwise
+        """
         if not region in WATSON_CONFIG.regions_uris:
             logger.error("Region invalid")
             return False
@@ -138,7 +146,7 @@ class WatsonCore:
                 logger.info(f"the compressed auido_path is {audio_path}")
         except Exception as e: 
             logger.error("error in compressing the media file", exc_info=e)
-            raise ERR.AudioFileError("ERROR: Failed to compile large audio file to opus format")
+            raise EXCEPTION.AudioFileError(EXCEPTION.ERROR.AUDIO_COMPRESSION_FAILED)
         
         recognize_callbacks = CustomWatsonCallbacks()
         try:
@@ -150,7 +158,7 @@ class WatsonCore:
                 acoustic_customization_id)  
         except Exception as e:
             logger.error(e, exc_info=e)
-            raise ERR.ConnectionError("ERROR: connection error")
+            raise EXCEPTION.ConnectionError(EXCEPTION.ERROR.CONNECTION_ERROR)
         
         try:
             audio_name = get_name(audio_path)
@@ -160,7 +168,7 @@ class WatsonCore:
             return utterances   
         except Exception as e: 
             logger.error(e, exc_info=e)
-            raise ERR.GetUttResultError()
+            raise EXCEPTION.GetUttResultError()
     
 ###############
 # PRIVATE
@@ -198,7 +206,7 @@ class WatsonCore:
             stt = SpeechToTextV1(authenticator=authenticator)
             stt.set_service_url(self.regions[self.region])
         except:
-            raise ERR.APIKeyError("ERROR: API key error")
+            raise EXCEPTION.APIKeyError()
         with open(audio_path, "rb") as f:
             # Prepare args
             source = AudioSource(f)
@@ -332,13 +340,13 @@ class WatsonCore:
         while True:
             match get_cmd_status(pid):
                 case CMD_STATUS.STOPPED:
-                    raise ChildProcessError("ERROR: child process error")
+                    raise ChildProcessError(EXCEPTION.ERROR.CHILD_PROCESS_NOT_FOUND)
                 case CMD_STATUS.FINISHED:
                     break 
                 case CMD_STATUS.ERROR:
-                    raise ChildProcessError("ERROR: child process error")
+                    raise ChildProcessError(EXCEPTION.ERROR.CHILD_PROCESS_ERROR)
                 case CMD_STATUS.NOTFOUND:
-                    raise ProcessLookupError("ERROR: process lookup error")
+                    raise ProcessLookupError(EXCEPTION.ERROR.CHILD_PROCESS_NOT_FOUND)
         
         if get_cmd_status(pid) == CMD_STATUS.FINISHED:
             return out_path

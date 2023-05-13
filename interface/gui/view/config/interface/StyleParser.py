@@ -114,6 +114,8 @@ class DimensionData(DataclassFromDict):
     ENGINE_FORM_WIDTH   : int = field_from_dict()
     ENGINE_FORM_HEIGHT  : int = field_from_dict()
     FORM_INPUT_WIDTH    : int = field_from_dict()
+    PATH_DIALOG_WIDTH    : int = field_from_dict() 
+    PATH_DIALOG_HEIGHT    : int = field_from_dict() 
 
 @dataclass 
 class Asset(DataclassFromDict): 

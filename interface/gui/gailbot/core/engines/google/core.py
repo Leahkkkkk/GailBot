@@ -3,39 +3,40 @@
 # @Date:   2023-01-30 16:00
 # @Last Modified by:  Vivian Li
 # @Last Modified time: 2023-01-31 12:01:31
+
+# stdlib import
 import os 
 import io
 from copy import deepcopy
 from typing import Union
-from google.cloud import speech_v1p1beta1 as speech
-from google.cloud.speech_v1p1beta1.types import cloud_speech
+from urllib import request
 from typing import Dict, List 
+
+# internal import
 from gailbot.core.utils.general import (
     get_extension, 
     get_extension,
     is_directory, 
     make_dir,
-    paths_in_dir,
-    delete,
-    get_name,
-    copy)
-
+    get_name)
+from gailbot.core.utils.download import is_internet_connected
 from gailbot.core.utils.logger import makelogger
-from ...engines import exception as Err
+from ...engines import exception as EXCEPTION
 from gailbot.configs import google_config_loader, workspace_config_loader
 from gailbot.core.utils.media import MediaHandler
 
+#external import
+from google.cloud.speech_v1p1beta1.types import cloud_speech
+from google.cloud import speech_v1p1beta1 as speech
+
 logger = makelogger("google")
 GOOGLE_CONFIG = google_config_loader()
-""" TODO: 
-1. google API key  
-"""
+
 class GoogleCore: 
     """
     Implement core functionalities to transcribe an audio file through 
     google STT engine
     """
-    
     ENCODING_TABLE = {
         "wav": speech.RecognitionConfig.AudioEncoding.LINEAR16, 
         "mp3": speech.RecognitionConfig.AudioEncoding.MP3,
@@ -45,12 +46,18 @@ class GoogleCore:
     }
     
     def __init__(self, google_api_key_config) -> None:  
+        """initialize an instance of google engine
+
+        Args:
+            google_api_key_config (str): path to a json file that stores
+            google cloud speech to text api key
+        """     
         self._init_status()
         client = GoogleCore.is_valid_google_api(google_api_key_config)
         self.workspace = workspace_config_loader().engine_ws.google
         assert client 
         self.connected = True
-        self.current_chunk_duration = 55
+        self.current_chunk_duration = GOOGLE_CONFIG.maximum_duration
         
     
     @staticmethod
@@ -75,7 +82,6 @@ class GoogleCore:
             logger.error("f failed to connect to google", exc_info=e)
             return False 
         
-    
     @property
     def supported_formats(self) -> List[str]:
         """
@@ -96,6 +102,7 @@ class GoogleCore:
         Returns: True if the file is supported, false if not.
         """
         return get_extension(file) in self.supported_formats
+   
     
     def transcribe(self, audio_path: str, payload_workspace: str) -> List[Dict[str, str]]:
         """
@@ -114,7 +121,8 @@ class GoogleCore:
             {speaker: , start_time: , end: , text: }
         """
         logger.info("start transcribing audio using google cloud STT")
-        
+        if not is_internet_connected():
+            raise EXCEPTION.TranscriptionError(EXCEPTION.ERROR.CONNECTION_ERROR)
         # get the info of audio source and preprocess the audio if needed 
         mediaHandler = MediaHandler()
         stream = mediaHandler.read_file(audio_path)
@@ -155,7 +163,7 @@ class GoogleCore:
             return  self._transcribe_list_file(audio_list, payload_workspace)
         except Exception as e:
             logger.error(e, exc_info=e)
-            raise Err.TranscriptionError("ERROR: Google STT transcription failed")
+            raise EXCEPTION.TranscriptionError(EXCEPTION.ERROR.GOOGLE_TRANSCRIPTION_FAILED)
         
     def _run_engine(self, audio_path: str, workspace) -> cloud_speech.RecognizeResponse:
         """ 
@@ -196,7 +204,7 @@ class GoogleCore:
         except Exception as e:
             logger.error(e, exc_info=e)
             self.transcribe_error = True
-            raise Err.TranscriptionError("Google STT Transcription failed")
+            raise EXCEPTION.TranscriptionError(EXCEPTION.ERROR.GOOGLE_TRANSCRIPTION_FAILED)
         else:
             logger.info("get google response ")
             self.transcribing = False
@@ -283,7 +291,17 @@ class GoogleCore:
         return utterances
     
     @staticmethod
-    def _get_chunk_duration(file_path: str, file_duration: int):
+    def _get_chunk_duration(file_path: str, file_duration: int) -> int:
+        """given the file path and file duration calculate the expected 
+           chunk duration that is able to send the chunked file to googl cloud 
+
+        Args:
+            file_path (str): a str to the file path
+            file_duration (int): the lenth of the file 
+
+        Returns:
+            int: the expected duration of each audio chunk 
+        """
         duration = GOOGLE_CONFIG.maximum_duration
         filesize = os.path.getsize(file_path)
         num_chunks = file_duration // GOOGLE_CONFIG.maximum_duration

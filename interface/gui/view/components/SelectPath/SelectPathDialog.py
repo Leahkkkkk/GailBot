@@ -7,8 +7,9 @@ Author: Siara Small  & Vivian Li
 Last Modified: Tuesday, 29th November 2022 8:34:12 pm
 Modified By:  Siara Small  & Vivian Li
 -----
-Description: a pop up dialogue that opens during the first launch of the 
-             app to ask user for the path the gailbot work directory
+Description: implement dialogues that ask users to choose file path 
+             from their local machine, usage include saving log files
+             saving plugin suites (currently unused)
 '''
 import os 
 import datetime
@@ -16,7 +17,7 @@ from view.widgets.Label import Label
 from view.widgets.Button import ColoredBtn
 from view.util.io import zip_file, get_name, copy
 from view.config.Style import STYLE_DATA
-from view.config.Text import WelcomePageText as TEXT 
+from view.config.Text import PATH_DIALOG as TEXT 
 from gbLogger import makeLogger
 from view.config import getWorkBasePath
 
@@ -26,9 +27,11 @@ import userpaths
 center = Qt.AlignmentFlag.AlignHCenter
 
 class SelectPathDialog(QDialog):
-    header : str 
-    caption : str 
-    pathLabel : str
+    """base class for dialog that ask users to select file path
+    """
+    header : str       # dialog header 
+    caption : str      # instruction text
+    pathLabel : str    # a string that specifies what the path is used for 
     def __init__(self, *arg, **kwargs) -> None:
         super().__init__(*arg, **kwargs)
         self.userRoot = userpaths.get_desktop()
@@ -63,9 +66,11 @@ class SelectPathDialog(QDialog):
     def _initStyle(self):
         """ initialize the style """
         self.setStyleSheet(f"background-color:{STYLE_DATA.Color.MAIN_BACKGROUND}")
-        self.setFixedSize(QSize(500,350))
+        self.setFixedSize(QSize(STYLE_DATA.Dimension.PATH_DIALOG_WIDTH, 
+                                STYLE_DATA.Dimension.PATH_DIALOG_HEIGHT))
     
     def _openDialog(self):
+        """ open a file dialog that ask user to input the path """
         dialog = QFileDialog() 
         dialog.setDirectory(userpaths.get_profile())
         selectedFolder = dialog.getExistingDirectory()
@@ -75,6 +80,7 @@ class SelectPathDialog(QDialog):
                 f"{self.pathLabel}: {self.userRoot}")
         
     def _onConfirm(self):
+        """ sub-class responsibility """
         pass
           
     def _connectSignal(self):
@@ -82,10 +88,13 @@ class SelectPathDialog(QDialog):
         self.confirm.clicked.connect(self._onConfirm)
     
 class SaveSetting(SelectPathDialog):
+    """ implement a dialog that ask user to select a path to store the copy of 
+        a setting data
+    """
     def __init__(self, origPath, *args, **kwargs) -> None:
-        self.header = "Select path to save the source"
-        self.caption = "A copy of the source will be saved to the selected path for access"
-        self.pathLabel = "Selected Path: "
+        self.header = TEXT.saveSettingHeader
+        self.caption = TEXT.saveSettingcaption
+        self.pathLabel = TEXT.selectPath 
         self.origPath = origPath
         self.copiedPath = None 
         super().__init__()
