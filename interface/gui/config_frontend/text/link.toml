@@ -1,5 +1,5 @@
 HILAB = "https://sites.tufts.edu/hilab/gailbot-an-automatic-transcription-system-for-conversation-analysis"
-USER_MANUAL = "https://docs.google.com/document/d/1BxpGh3VZEkyEZC7nDtTU1pJUH7N2WzljD2AvwSuT-RY/edit?usp=sharing"
-TECHNICAL_DOCUMENT = "https://docs.google.com/document/d/1B-EfS9Ypc4loz9FaN99gdqN4q-amrjobWi81Zx-SS4c/edit?usp=sharing"
+USER_MANUAL = "https://gailbot-release-document.s3.us-east-2.amazonaws.com/User+Manual+Beta-tester.pdf"
+TECHNICAL_DOCUMENT = "https://gailbot-release-document.s3.us-east-2.amazonaws.com/Documentation.pdf"
 BUG_REPORT = "https://docs.google.com/forms/d/e/1FAIpQLSey-yx8gj2k5n-pdoSqBzBRU9q1aqWfK6laiQCxTimvuGU0hg/viewform"
 EMAIL = "mailto:hil@elist.tufts.edu"
