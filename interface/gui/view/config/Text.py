@@ -347,7 +347,6 @@ class TranscribeProgressText:
 @dataclass
 class FileTableHeader:
     """class holding the text for the file table headers"""
-
     fileUploadPage = [
         "Select All",
         "Type",
@@ -373,7 +372,6 @@ class TranscribeSuccessText:
 @dataclass
 class TableWidgetOptions:
     """class holding the text for options of the table widget component"""
-
     fileDetails = "details"
 
 
@@ -464,6 +462,13 @@ class PATH_DIALOG:
     saveSettingcaption = "A copy of the source will be saved to the selected path for access"
     selectPath = "Select Path: "
 
+
+@dataclass 
+class SETTING_TABLE:
+    SETTING_DETAIL_TABLE_HEADER = ["Setting Options", "Value"]
+    PLUGIN_DISPLAY_HEADER = ["Applied Plugin Suite"]
+    
+    
 ENGINE_FORM = ENGINE_SETTING_FORM.from_dict(forms["EngineForm"])
 
 ProfileSettingForm = ProfileSetting.from_dict(forms["profile form"])

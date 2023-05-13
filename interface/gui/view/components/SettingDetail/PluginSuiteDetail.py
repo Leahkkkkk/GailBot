@@ -1,4 +1,14 @@
-
+'''
+File: PluginSuiteDetail.py
+Project: GailBot GUI
+File Created: 2023/04/01
+Author: Siara Small  & Vivian Li
+-----
+Last Modified:2023/05/13
+Modified By:  Siara Small  & Vivian Li
+-----
+Description:  implement a pop up tab that display the plugin suite details  
+'''
 from typing import TypedDict
 from view.config.Style import STYLE_DATA 
 from view.widgets.TextDisplay import MarkdownDisplay, TextDisplay

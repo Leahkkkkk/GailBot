@@ -9,7 +9,6 @@ Modified By:  Siara Small  & Vivian Li
 -----
 Description: implementation of the plugin dialog for user to upload new plugin
 '''
-
 from view.config.InstructionText import INSTRUCTION
 from view.widgets.Button import InstructionBtn
 from view.config.Text import PLUGIN_SUITE_TEXT as TEXT
@@ -106,9 +105,17 @@ class UploadPlugin(QDialog):
             WarnBox(ERR.ERR_WHEN_DUETO.format("uploading plugin", str(e)))
 
     def _addToPluginList(self, source):
+        """add plugin suite to plugin display list
+
+        Args:
+            source (str): the name of the plugin suite added
+        """
         self.displayPlugins.addItem(source)
         
     def _addFromURL(self):
+        """ open a separate dialogue that ask users to upload plugin suite 
+            from url by entering the url address
+        """
         self.uploadUrl = UploadURL()
         self.uploadUrl.sendurl.connect(self._addToPluginList)
         self.uploadUrl.exec()
@@ -124,6 +131,8 @@ class UploadPlugin(QDialog):
             self.close()
             
 class UploadURL(QDialog):
+    """a pop up dialog that allows users to upload plugin suite from url
+    """
     sendurl = pyqtSignal(str)
     def __init__(self) -> None:
         QObject.__init__(self)
@@ -146,9 +155,17 @@ class UploadURL(QDialog):
         initPrimaryColorBackground(self)
     
     def getValue(self) -> str:
+        """return the url string entered by the user
+
+        Returns:
+            str: the url string
+        """ 
         return self.input.getValue()
 
     def upload(self):
+        """
+        send a signal to upload the plugin suite stored in the url 
+        """
         url = self.input.getValue()
         self.sendurl.emit(url)
         self.close()

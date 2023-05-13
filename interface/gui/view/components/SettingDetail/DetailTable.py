@@ -12,6 +12,7 @@ Description: implement pop up dialogs to display setting details,
 """
 from typing import TypedDict, Dict, List
 from view.config.Style import STYLE_DATA
+from view.config.Text import SETTING_TABLE
 from view.widgets.Table import BaseTable
 from view.widgets.Label import Label
 from PyQt6.QtWidgets import QDialog, QVBoxLayout, QWidget, QTableWidgetItem
@@ -19,6 +20,8 @@ from PyQt6.QtCore import Qt, QSize
 
 
 class SettingDisplay(QWidget):
+    """ a table that display the setting data
+    """
     def __init__(self) -> None:
         super().__init__()
         self._layout = QVBoxLayout()
@@ -34,9 +37,11 @@ class SettingDisplay(QWidget):
         self._layout.addWidget(self.mainLabel, alignment=Qt.AlignmentFlag.AlignCenter)
 
     def setData(self, data: Dict[str, str]):
+        """ given the data stored in a dictionary, display the data
+        """
         if self.currentTableWidget:
             self._layout.removeWidget(self.currentTableWidget)
-        newTable = BaseTable(["Setting Options", "Value"])
+        newTable = BaseTable(SETTING_TABLE.SETTING_DETAIL_TABLE_HEADER)
         newTable.setFixedSize(
             QSize(
                 STYLE_DATA.Dimension.WIN_MIN_WIDTH // 2,
@@ -68,7 +73,7 @@ class PluginListDisplay(QWidget):
         self._layout.addWidget(self.mainLabel, alignment=Qt.AlignmentFlag.AlignCenter)
 
     def setData(self, pluginSuites):
-        newTable = BaseTable(["Applied Plugin Suite"])
+        newTable = BaseTable(SETTING_TABLE.PLUGIN_DISPLAY_HEADER)
         newTable.setFixedSize(
             QSize(
                 STYLE_DATA.Dimension.WIN_MIN_WIDTH // 2,

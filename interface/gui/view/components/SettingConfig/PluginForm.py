@@ -37,12 +37,27 @@ class PluginForm(QWidget):
         self.pluginSuitesList.addChoice(pluginSuite)
     
     def deletePluginSuite(self, pluginSuite:str):
+        """ delete a plugin suite from the front end interface
+
+        Args:
+            pluginSuite (str): the name of the plugin
+        """ 
         self.pluginSuitesList.removeChoice(pluginSuite)
     
     def getValue(self):
+        """return the list of plugin suite selected by the user
+
+        Returns:
+            List[stt]: the list of plugin suite name
+        """
         return self.pluginSuitesList.getValue()
 
     def setValue(self, values):
+        """set the all the plugin suite in values to be selected
+
+        Args:
+            values (Lis[str]): a list of plugin suite that are applied
+        """
         return self.pluginSuitesList.setValue(values)
         
         
