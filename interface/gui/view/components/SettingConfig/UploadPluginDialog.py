@@ -133,8 +133,8 @@ class UploadURL(QDialog):
         self.confirm = ColoredBtn(TEXT.UPLOAD, Color.PRIMARY_BUTTON)
         self.setLayout(self._layout)
         self._layout.setAlignment(Qt.AlignmentFlag.AlignHCenter)
-        self.input = TextInput(TEXT.URL, vertical=True, width=400)
-        
+        self.input = TextInput(TEXT.URL, vertical=True)
+        self.input.inputField.setFixedWidth(STYLE_DATA.Dimension.FORM_INPUT_WIDTH - 20)
         self.caption = Label(TEXT.URL_INSTRUCTION, STYLE_DATA.FontSize.BTN, STYLE_DATA.FontFamily.MAIN)
         self._layout.addWidget(self.caption, alignment=Qt.AlignmentFlag.AlignHCenter)
         for source in TEXT.SOURCES:

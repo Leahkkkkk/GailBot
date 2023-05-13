@@ -62,7 +62,7 @@ class TextInput(QWidget, FormWidget):
         self.setFixedWidth(STYLE_DATA.Dimension.FORM_INPUT_WIDTH)
         if self.value:
             self.inputField.setText(str(self.value))
-        self._layout = QHBoxLayout() 
+        self._layout = QHBoxLayout() if not self.vertical else QVBoxLayout()
         self.setLayout(self._layout)
         self._layout.addWidget(self.inputLabel)
         self._layout.addStretch()
