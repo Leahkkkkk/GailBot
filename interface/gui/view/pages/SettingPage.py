@@ -15,7 +15,7 @@ make the button into a list for modularity
 from enum import Enum
 from typing import List, Dict, List, Tuple
 from view.config.Style import STYLE_DATA
-from view.config.Text import ProfilePageText as Text
+from view.config.Text import PROFILE_PAGE as Text
 from view.config.Style import StyleSheet as STYLE 
 from gbLogger import makeLogger
 
@@ -81,22 +81,22 @@ class SettingPage(QWidget):
         
         # button on the sidebar
         self.transcibeSetBtn = BorderBtn(
-            Text.reuquiredSetBtn, STYLE_DATA.Color.GREYDARK, STYLE_DATA.FontSize.BTN, 0, 
+            Text.PROFILES_BTN, STYLE_DATA.Color.GREYDARK, STYLE_DATA.FontSize.BTN, 0, 
             STYLE.onlyBottomBorder, width=STYLE_DATA.Dimension.LBTNWIDTH)
 
         self.engineSetBtn = BorderBtn(
-            Text.engineSetBtn, STYLE_DATA.Color.GREYDARK, STYLE_DATA.FontSize.BTN, 0, 
+            Text.ENGINE_BTN, STYLE_DATA.Color.GREYDARK, STYLE_DATA.FontSize.BTN, 0, 
             STYLE.onlyBottomBorder, width=STYLE_DATA.Dimension.LBTNWIDTH )
        
         self.pluginSetBtn = BorderBtn(
-            Text.pluginSetBtn, STYLE_DATA.Color.GREYDARK, STYLE_DATA.FontSize.BTN, 0, 
+            Text.PLUGIN_BTN, STYLE_DATA.Color.GREYDARK, STYLE_DATA.FontSize.BTN, 0, 
             STYLE.onlyBottomBorder, width=STYLE_DATA.Dimension.LBTNWIDTH)
         
         self.systemSetBtn = BorderBtn(
-            Text.sysSetBtn, STYLE_DATA.Color.GREYDARK, STYLE_DATA.FontSize.BTN, 0, 
+            Text.SYSSET_BTN, STYLE_DATA.Color.GREYDARK, STYLE_DATA.FontSize.BTN, 0, 
             STYLE.onlyBottomBorder, width=STYLE_DATA.Dimension.LBTNWIDTH)
         
-        self.cancelBtn = ColoredBtn(Text.cancelBtn, STYLE_DATA.Color.CANCEL_QUIT)
+        self.CANCEL = ColoredBtn(Text.CANCEL, STYLE_DATA.Color.CANCEL_QUIT)
         self.settingStack = QStackedWidget(self)
         self.PluginPage = PluginPage.PluginPage()
         self.SysPage = SysSetPage.SystemSettingPage()
@@ -126,7 +126,7 @@ class SettingPage(QWidget):
         self.sidebarTopLayout.addWidget(self.systemSetBtn)
         self.sidebarTopLayout.setSpacing(0)
         self.sideBar.addTopWidget(self.topSelectionContainer)
-        self.sideBar.addMidWidget(self.cancelBtn)
+        self.sideBar.addMidWidget(self.CANCEL)
         self.horizontalLayout.addWidget(self.sideBar)
         self.horizontalLayout.addWidget(self.settingStack)
         self.settingStack.setContentsMargins(0,0,0,0)

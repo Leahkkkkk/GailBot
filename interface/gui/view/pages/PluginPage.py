@@ -11,7 +11,7 @@ Description: implementation of the plugin page
 '''
 from typing import List
 
-from view.config.Text import PluginPageText as Text
+from view.config.Text import PLUGIN_PAGE as Text
 from view.config.InstructionText import INSTRUCTION
 from view.signal.interface import DataSignal
 from view.signal import PluginSignal
@@ -30,7 +30,7 @@ class PluginPage(BaseSettingPage):
         *args, 
         **kwargs) -> None:
         self.headerText = Text.HEADER
-        self.captionText = Text.CAPTION
+        self.START = Text.CAPTION
         self.addNewButtonText = Text.CREATE_NEW
         self.signal = PluginSignal
         self.mainTable = PluginTable(self.signal)

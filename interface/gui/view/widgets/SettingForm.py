@@ -47,7 +47,7 @@ class SettingForm(QWidget):
         
         self.headerText = header 
         self.formData = formData
-        self.captionText = caption
+        self.START = caption
         self._initWidget()
         self._initLayout()
         self._connectSignal()
@@ -69,9 +69,9 @@ class SettingForm(QWidget):
         """ initializes the widgets """
         self.header = Label(
             self.headerText, STYLE_DATA.FontSize.HEADER2,STYLE_DATA.FontFamily.MAIN)
-        if self.captionText:
+        if self.START:
             self.caption = Label(
-                self.captionText, STYLE_DATA.FontSize.DESCRIPTION, STYLE_DATA.FontFamily.MAIN)
+                self.START, STYLE_DATA.FontSize.DESCRIPTION, STYLE_DATA.FontFamily.MAIN)
         self.setForm = TextForm(self.formData)
         self.setForm.setFixedWidth(STYLE_DATA.Dimension.FORMWIDTH)
         self.setForm.setFixedHeight(STYLE_DATA.Dimension.FORMMINHEIGHT)
@@ -81,7 +81,7 @@ class SettingForm(QWidget):
         self.verticalLayout = QVBoxLayout()
         self.setLayout(self.verticalLayout)
         self.verticalLayout.addWidget(self.header, alignment = center)
-        if self.captionText:
+        if self.START:
             self.verticalLayout.addWidget(self.caption, alignment = center )
         self.verticalLayout.addWidget(self.setForm, alignment = center)
         self.verticalLayout.addStretch()

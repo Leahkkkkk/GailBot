@@ -9,7 +9,7 @@ Modified By:  Siara Small  & Vivian Li
 -----
 Description: implementation of the menu bar 
 '''
-from view.config.Text import MenuBarText
+from view.config.Text import MENU_BAR
 
 from PyQt6.QtWidgets import QMenuBar, QMenu
 from PyQt6.QtGui import QDesktopServices, QAction
@@ -23,22 +23,22 @@ class MenuBar(QMenuBar):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         # console
-        self.Console = QMenu(MenuBarText.console)
-        self.OpenConsole = QAction(MenuBarText.open)
+        self.Console = QMenu(MENU_BAR.CONSOLE)
+        self.OpenConsole = QAction(MENU_BAR.OPEN)
         self.Console.addAction(self.OpenConsole)
-        self.CloseConsole = QAction(MenuBarText.close)
+        self.CloseConsole = QAction(MENU_BAR.CLOSE)
         self.Console.addAction(self.CloseConsole)
         self.addMenu(self.Console)
        
         # help menu
-        self.Help = QMenu(MenuBarText.help)
+        self.Help = QMenu(MENU_BAR.HELP)
         self.addMenu(self.Help)
-        self.Contact = QAction(MenuBarText.contact)
-        self.BugReport = QAction(MenuBarText.bugreport)
+        self.Contact = QAction(MENU_BAR.CONTACT)
+        self.BugReport = QAction(MENU_BAR.BUG)
         self.Help.addAction(self.BugReport)
         self.Help.addAction(self.Contact)
-        self.Contact.triggered.connect(lambda: self.activateLink(MenuBarText.email))
-        self.BugReport.triggered.connect(lambda: self.activateLink(MenuBarText.buglink))
+        self.Contact.triggered.connect(lambda: self.activateLink(MENU_BAR.EMAIL_LINK))
+        self.BugReport.triggered.connect(lambda: self.activateLink(MENU_BAR.BUG_LINK))
     
     
     def activateLink(self, link:str):
@@ -46,6 +46,6 @@ class MenuBar(QMenuBar):
             QDesktopServices.openUrl(QUrl(link))
         except Exception as e:
             logging.error(e)
-            WarnBox(MenuBarText.mailFailed)
+            WarnBox(MENU_BAR.MAIL_FAILED)
     
     

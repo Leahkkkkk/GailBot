@@ -23,7 +23,7 @@ from view.signal.signalObject import FileSignal, GBTranscribeSignal, GuiSignal
 
 from view.widgets import WarnBox
 from view.config.Style import Dimension
-from view.config.Text import About
+from view.config.Text import ABOUT
 from config_frontend import FRONTEND_CONFIG_ROOT
 from PyQt6.QtCore import QSize
 from PyQt6.QtWidgets import QMainWindow
@@ -56,7 +56,7 @@ class MainWindow(QMainWindow):
         self.setMenuBar(self.MenuBar)
         self.Console = Console()
         self.logger.info("console initialized")
-        self.setWindowTitle(About.APP_TITTLE)
+        self.setWindowTitle(ABOUT.APP_TITTLE)
         self.setMinimumSize(QSize(Dimension.WIN_MIN_WIDTH, Dimension.WIN_MIN_HEIGHT))
         self.setMaximumSize(QSize(Dimension.WINMAXWIDTH, Dimension.WINMAXHEIGHT))
         self.MainStack = MainStack() 

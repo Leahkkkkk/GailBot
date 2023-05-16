@@ -1,6 +1,6 @@
 from ..Label import Label
 from view.config.Style import STYLE_DATA, Dimension
-from view.config.Text import BtnText as Text 
+from view.config.Text import BTN_TEXT as Text 
 from copy import deepcopy
 from PyQt6.QtWidgets import QWidget, QPushButton, QHBoxLayout
 from .FormWidget import FormWidget
@@ -20,9 +20,9 @@ class onOffButton(QWidget, FormWidget):
         self.setFixedWidth(STYLE_DATA.Dimension.FORM_INPUT_WIDTH)
         self.label = Label(self.label, STYLE_DATA.FontSize.BTN)
         if self.value:
-            self.onOffBtn = QPushButton(Text.on)
+            self.onOffBtn = QPushButton(Text.ON)
         else:
-            self.onOffBtn = QPushButton(Text.off)
+            self.onOffBtn = QPushButton(Text.OFF)
         self.onOffBtn.setMaximumSize(
             Dimension.ICONBTN, Dimension.ICONBTN
         )
@@ -34,16 +34,16 @@ class onOffButton(QWidget, FormWidget):
     
     def buttonClickHandler(self):
         if self.value:
-            self.onOffBtn.setText(Text.off)
+            self.onOffBtn.setText(Text.OFF)
             self.value = False
         else:
-            self.onOffBtn.setText(Text.on)
+            self.onOffBtn.setText(Text.ON)
             self.value = True
     
     def setValue(self, value: bool):
         self.value = value 
         if value:
-            self.onOffBtn.setText(Text.on)
+            self.onOffBtn.setText(Text.ON)
         else: 
             self.onOffBtn.setText(Text.off)
         

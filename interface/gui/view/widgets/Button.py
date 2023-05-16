@@ -12,7 +12,7 @@ Description: implement reusable button widgets
 import os
 from typing import List
 from PyQt6.QtCore import QTimer
-from view.config.Text import BtnText as Text
+from view.config.Text import BTN_TEXT as Text
 from config_frontend import PROJECT_ROOT
 from view.util.ColorGenerator import colorScale
 from .InstructionPop import Instruction
@@ -247,7 +247,7 @@ class IconBtn(QPushButton):
         super().__init__(*args, **kwargs)
         icon = QIcon(os.path.join(PROJECT_ROOT, icon))
         self.setIcon(icon)
-        self.setObjectName(Text.icon)
+        self.setObjectName(Text.ICON_BTN)
         self.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         if label:
             self.setText(label)

@@ -11,8 +11,8 @@ Description: implementation of Confirm Transcription Page
 """
 from view.config.Style import FileTableDimension, FontFamily, STYLE_DATA
 
-from view.config.Text import ConfirmTranscribeText as Text
-from view.config.Text import FileTableHeader
+from view.config.Text import CONFIRM_PAGE as Text
+from view.config.Text import FILE_TABLE_HEADER
 from view.config.InstructionText import INSTRUCTION
 from gbLogger import makeLogger
 from view.signal.signalObject import FileSignal, GBTranscribeSignal
@@ -50,12 +50,12 @@ class ConfirmTranscribePage(BasicPage):
         """initializes widgets"""
         self.logger.info("")
         self.label = Label(
-            Text.confirmLabel, STYLE_DATA.FontSize.HEADER2, FontFamily.MAIN
+            Text.HEADER, STYLE_DATA.FontSize.HEADER2, FontFamily.MAIN
         )
         self.label.setAlignment(center)
 
         self.fileTable = SourceTable(
-            FileTableHeader.confirmPage,
+            FILE_TABLE_HEADER.CONFIRM,
             self.signal,
             dataKeyToCol={
                 DATA_FIELD.TYPE: 0,
@@ -67,8 +67,8 @@ class ConfirmTranscribePage(BasicPage):
 
         self.fileTable.resizeCol(FileTableDimension.confirmPage)
         self.bottomButton = QWidget()
-        self.confirmBtn = ColoredBtn(Text.confirm, STYLE_DATA.Color.SECONDARY_BUTTON)
-        self.cancelBtn = ColoredBtn(Text.cancel, STYLE_DATA.Color.CANCEL_QUIT)
+        self.confirmBtn = ColoredBtn(Text.CONFIRM, STYLE_DATA.Color.SECONDARY_BUTTON)
+        self.CANCEL = ColoredBtn(Text.CANCEL, STYLE_DATA.Color.CANCEL_QUIT)
 
     def _initLayout(self):
         """initializes layout"""
@@ -83,7 +83,7 @@ class ConfirmTranscribePage(BasicPage):
         self.verticalLayout.addWidget(self.label)
         self.verticalLayout.addWidget(self.fileTable, alignment=center | top)
         self.horizontalLayout.addWidget(self.confirmBtn, alignment=right)
-        self.horizontalLayout.addWidget(self.cancelBtn, alignment=center)
+        self.horizontalLayout.addWidget(self.CANCEL, alignment=center)
         self.bottomButton.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.addWidget(self.bottomButton, alignment=center)
         self.horizontalLayout.setSpacing(STYLE_DATA.Dimension.LARGE_SPACING)

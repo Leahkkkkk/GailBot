@@ -13,7 +13,7 @@ Description: a side bar widget
 from .Background import initSideBarBackground
 from .Label import Label
 from ..config.Style import STYLE_DATA
-from ..config.Text import About, Links
+from ..config.Text import ABOUT, LINK
 from PyQt6.QtWidgets import (
     QWidget, 
     QVBoxLayout,
@@ -93,10 +93,10 @@ class SideBar(QWidget):
         self.btmlayout.addWidget(widget)
 
     def addFooter(self) -> None:
-        self.GuideLink = Label(Links.guideLinkSideBar, STYLE_DATA.FontSize.LINK, link=True)
-        self.versionLabel = Label(About.version, STYLE_DATA.FontSize.SMALL)
-        self.versionName = Label(About.versionName, STYLE_DATA.FontSize.SMALL)
-        self.copyRightLabel = Label(About.copyRight, STYLE_DATA.FontSize.SMALL)
+        self.GuideLink = Label(LINK.USER_MANUAL, STYLE_DATA.FontSize.LINK, link=True)
+        self.versionLabel = Label(ABOUT.VERSION, STYLE_DATA.FontSize.SMALL)
+        self.versionName = Label(ABOUT.VERSION_NAME, STYLE_DATA.FontSize.SMALL)
+        self.copyRightLabel = Label(ABOUT.COPYRIGHT, STYLE_DATA.FontSize.SMALL)
         
         self.btmlayout.addStretch()
         self.btmlayout.addWidget(self.GuideLink, alignment=Qt.AlignmentFlag.AlignHCenter)

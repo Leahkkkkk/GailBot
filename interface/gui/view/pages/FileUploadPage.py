@@ -12,8 +12,8 @@ Description: implementation of file upload page
 from view.config.InstructionText import INSTRUCTION
 from typing import List, Tuple, Dict
 from view.config.Style import STYLE_DATA, FileTableDimension
-from view.config.Text import FileTableHeader
-from view.config.Text import FileUploadPageText as Text 
+from view.config.Text import FILE_TABLE_HEADER
+from view.config.Text import FILEUPLOAD_PAGE as Text 
 from view.pages.BasicPage import BasicPage
 from gbLogger import makeLogger
 from view.signal.signalObject import FileSignal, GBTranscribeSignal
@@ -82,22 +82,22 @@ class FileUploadPage(BasicPage):
     def _initWidget(self):
         """ initializes widgets """
         self.logger.info("")
-        self.label = Label(Text.header, STYLE_DATA.FontSize.HEADER2, STYLE_DATA.FontFamily.MAIN)
+        self.label = Label(Text.HEADER, STYLE_DATA.FontSize.HEADER2, STYLE_DATA.FontFamily.MAIN)
         self.gotoMainBtn = IconBtn(
-            STYLE_DATA.Asset.arrowImg, Text.returnMainText) 
+            STYLE_DATA.Asset.arrowImg, Text.RETURN_MAIN) 
         self.uploadFileBtn = ColoredBtn(
-            Text.uploadBtnText, STYLE_DATA.Color.PRIMARY_BUTTON, STYLE_DATA.FontSize.BTN)
+            Text.UPLOAD, STYLE_DATA.Color.PRIMARY_BUTTON, STYLE_DATA.FontSize.BTN)
         self.transcribeBtn = ColoredBtn(
-            Text.transcribeBtnText, STYLE_DATA.Color.SECONDARY_BUTTON, STYLE_DATA.FontSize.BTN)
+            Text.TRANSCRIBE, STYLE_DATA.Color.SECONDARY_BUTTON, STYLE_DATA.FontSize.BTN)
         self.settingBtn = ColoredBtn(
-            Text.settingBtnText, STYLE_DATA.Color.PRIMARY_BUTTON, STYLE_DATA.FontSize.SETTINGICON)
+            Text.SETTING_BTN, STYLE_DATA.Color.PRIMARY_BUTTON, STYLE_DATA.FontSize.SETTINGICON)
         self.settingBtn.setFixedSize(
             QSize(STYLE_DATA.Dimension.ICONBTN, STYLE_DATA.Dimension.ICONBTN))
         self.removeAll = ColoredBtn(
-            Text.removeBtnText, STYLE_DATA.Color.PRIMARY_BUTTON, STYLE_DATA.FontSize.BTN)
+            Text.REMOVE_ALL, STYLE_DATA.Color.PRIMARY_BUTTON, STYLE_DATA.FontSize.BTN)
         
         self.fileTable = SourceTable(
-           headers=FileTableHeader.fileUploadPage, 
+           headers=FILE_TABLE_HEADER.FILE_UPLOAD, 
            signal =self.signal,
            dataKeyToCol={DATA_FIELD.TYPE: 1,
                          DATA_FIELD.NAME: 2, 
@@ -187,5 +187,5 @@ class FileUploadPage(BasicPage):
     def _confirmRemove(self):
         """ open pop up message to confirm removal of all files """
         self.logger.info("")
-        ConfirmBox(Text.removeWarnText, self.fileTable.deleteAll)
+        ConfirmBox(Text.REMOVE_CONFIRM, self.fileTable.deleteAll)
     

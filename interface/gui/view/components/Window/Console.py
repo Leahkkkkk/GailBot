@@ -12,7 +12,7 @@ Description: implementation of a console that display logging message
 import logging
 
 from view.config.Style import STYLE_DATA
-from view.config.Text import WindowTitle
+from view.config.Text import MENU_BAR
 
 from PyQt6.QtWidgets import (
     QWidget, 
@@ -31,7 +31,7 @@ class Console(QWidget):
         self.LogBox.setReadOnly(True)
         self.resize(QSize(STYLE_DATA.Dimension.CONSOLEWIDTH, 
                           STYLE_DATA.Dimension.CONSOLEHEIGHT))
-        self.label = QLabel(WindowTitle.consoleWindow)
+        self.label = QLabel(MENU_BAR.CONSOLE)
         self.setStyleSheet(STYLE_DATA.StyleSheet.basic)
         self.LogBox.setStyleSheet(STYLE_DATA.StyleSheet.basic)
         layout = QVBoxLayout()

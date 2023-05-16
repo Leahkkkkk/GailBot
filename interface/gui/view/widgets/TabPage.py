@@ -17,7 +17,7 @@ from view.config.Style import STYLE_DATA
 from gbLogger import makeLogger
 from .Button import ColoredBtn, BorderBtn
 from .Background import initPrimaryColorBackground
-from view.config.Text import PopUpText as Text
+from view.config.Text import POPUP_TAB as Text
 from PyQt6.QtWidgets import (
     QWidget, 
     QVBoxLayout, 

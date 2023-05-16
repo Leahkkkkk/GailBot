@@ -1,4 +1,4 @@
-from view.config.Text import ProfilePageText as Text
+from view.config.Text import PROFILE_PAGE as Text
 from view.signal.interface import DataSignal
 from view.util.ErrorMsg import ERR  
 from ..SettingConfig import EditProfile
@@ -7,11 +7,11 @@ from view.widgets.Table import BaseTable
 
 class ProfileTable(BaseTable):
     def __init__(self, signal: DataSignal, engineSignal, parent):
-        super().__init__(Text.tableHeader)
+        super().__init__(Text.TABLE_HEADER)
         self.signal = signal
         self.engineSignal = engineSignal
         self.parent = parent
-        self.resizeCol(Text.tableDimension)
+        self.resizeCol(Text.TABLE_DIMENSION)
         self.dataKeyToCol = {"engine_setting_name": 1, "plugin_setting": 2}
     
     def openEditDialog(self, data):

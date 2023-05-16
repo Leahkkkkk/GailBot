@@ -25,7 +25,6 @@ link  = toml.load(os.path.join(FRONTEND_CONFIG_ROOT, TextDataPath.link))
 
 #############################  about data ################################
 year = datetime.date.today().strftime("%Y")
-copyRightText = f"Copyright {year} © HI Lab"
 
 @dataclass 
 class LINKS(DataclassFromDict): 
@@ -34,89 +33,70 @@ class LINKS(DataclassFromDict):
     TECHNICAL_DOCUMENT      : str = field_from_dict()
     BUG_REPORT              : str = field_from_dict()
     EMAIL                   : str = field_from_dict()
-
 LINKS_DATA = LINKS.from_dict(link)
 
-
 @dataclass
-class Workspace:
-    workspaceName = "GailBot"
-
-
-@dataclass
-class About:
+class ABOUT:
     """class holding data about GailBot; e.g. version, title, etc."""
-
-    version = "Version 0.0.1a1"
-    versionName = "Version Name: Sivian"
+    VERSION = "Version 0.0.1a1"
+    VERSION_NAME = "Version Name: Sivian"
     APP_TITTLE = "GailBot"
-    copyRight = copyRightText
+    COPYRIGHT = f"Copyright {year} © HI Lab"
 
 
-####################### Text Data ########################################
+############################ Text Data by Pages ##############################
 @dataclass
-class WelcomePageText:
+class WELCOME_PAGE:
     """class holding the text for the welcome page"""
-
-    audioInstructionText = "1. Add audio / video\n sources or record live"
-    settingsInstructionText = "2. Select a Settings Profile"
-    transcribeInstructionText = "3. Transcribe"
-    fileInstructionText = "4. Review transcriptions"
-    editInstructionText = "5. Edit settings \n or retranscribe"
-    welcomeText = "Welcome to GailBot"
-    captionText = (
+    AUDIO_INST = "1. Add audio / video\n sources or record live"
+    SETTING_INS = "2. Select a Settings Profile"
+    TRANSCRIBE_INS = "3. Transcribe"
+    FILE_INS = "4. Review transcriptions"
+    EDIT_INS = "5. Edit settings \n or retranscribe"
+    WELCOME_TEXT = "Welcome to GailBot"
+    START = (
         "GailBot is the world's first automated transcription system capable\n"
         "of generating customized Conversation Analytic transcripts at scale."
     )
-    startBtnText = "Get Started"
-    instructionText = "How GailBot Works"
-    resourcesText = "Resources"
-    tutorialText = "User Manual"
-    guideText = "Documentation"
-    gbLinkText = "Tufts Human Interaction Laboratory"
-    moreInfoText = "For more information, visit:"
+    START_BTN = "Get Started"
+    INSTRUCTION_HEADER = "How GailBot Works"
+    RESOURCE_HEADER = "Resources"
+    USER_MANUAL = "User Manual"
+    GUIDE = "Documentation"
+    WEB_LINK = "Tufts Human Interaction Laboratory"
+    MORE_INFO = "For more information, visit:"
 
 
 @dataclass
-class FileUploadPageText:
+class FILEUPLOAD_PAGE:
     """class holding the text for the file upload pop-up"""
 
-    header = "Files to Transcribe"
-    selectOutput = "Select output directory"
-    returnMainText = "Return to Main Menu"
-    recordBtnText = "Record Live"
-    uploadBtnText = "Add Source"
-    transcribeBtnText = "Transcribe"
-    removeBtnText = "Remove All"
+    HEADER = "Files to Transcribe"
+    SELECT_OUTDIR = "Select output directory"
+    RETURN_MAIN = "Return to Main Menu"
+    RECORD = "Record Live"
+    UPLOAD = "Add Source"
+    TRANSCRIBE = "Transcribe"
+    REMOVE_ALL = "Remove All"
     ## unicode for settings gear
-    settingBtnText = "\u2699"
-    dropText = "Drop file to upload"
-    chooseLocalText = "Choose from local"
+    SETTING_BTN = "\u2699"
     CHOOSE_SET_TAB_HEADER = "Select Setting Profile"
-    selectSetText = "Select Settings"
-    selectPlaceHolderText = "None"
-    selectFolderText = "Select Folder"
-    chooseOutPutText = "Choose Output Directory"
-    fileFilter = "audio file (*.wav)"
-    removeWarnText = "Remove all files?"
-    tabAddfile = "From File"
-    tabAddFolder = "From Folder"
-    uploadInstruction = "Drop audio files below"
+    FILE_FILTER = "audio file (*.wav)"
+    REMOVE_CONFIRM = "Remove all files?"
+    FROM_FILE = "From File"
+    FROM_FOLDER = "From Folder"
+    DROP_FILE = "Drop audio files below"
     ## unicode for an audio icon
-    audioLogo = "\U0001F50A"
+    AUDIO_LOGO = "\U0001F50A"
     ## unicode for a file folder icon
-    directoryLogo = "\U0001F4C1"
-    urlLogo = "\U0001F517"
-    delete = "\u274C"
+    DIR_LOGO = "\U0001F4C1"
+    URL_LOGO = "\U0001F517"
+    DELETE_LOGO = "\u274C"
 
 
 @dataclass
-class RecordPageText:
+class RECORD_PAGE:
     """class holding the text for the record page"""
-
-    basic = "Basic"
-    filename = "Filename"
-    mp3 = "MP3"
     wav = "WAV"
     format = "Audio Format"
     advanced = "Advanced"
@@ -129,104 +109,69 @@ class RecordPageText:
     record = "Record Audio File"
     end = "End Recording"
 
-
 @dataclass
-class RecordPageProgressText:
-    """class holding the text for the record in progress page"""
-
-    start = "Start Recording"
-    cancel = "Cancel"
-    end = "End Recording"
-
-
-@dataclass
-class PluginPageText:
+class PLUGIN_PAGE:
     HEADER = "Available Plugin Suites"
     CAPTION = "These plugins are available in GailBot"
     CREATE_NEW = "Upload Plugin Suite"
 
 
 @dataclass
-class ProfilePageText:
+class PROFILE_PAGE:
     """class holding the text for the profile page"""
 
-    cancelBtn = "Exit"
-    confirm = "Confirm"
-    saveBtn = "Save"
-    deleteBtn = "Delete Profile"
-    newProfileBtn = "Create New Profile"
-    reuquiredSetBtn = "Profiles"
-    sysSetBtn = "Settings"
-    engineSetBtn = "Engines"
-    postSetBtn = "Post-Transcription Settings"
-    newPluginBtn = "Add New Plugin"
-    pluginSetBtn = "Plugins"
-    engineSettingHeader = "Profiles"
-
-    engineSetting = "Speech to Text Engine Setting"
-    pluginSuiteSetting = "Plugin Suite Setting"
-    engineSettingCaption = "These settings are applied to the selected settings profile and are required for transcription"
-    tempMessage = "This page has been temporarily disabled to allow for further updates and developments. Please check back later."
-    confirmDelete = "Confirm deleting the profile: "
-    selectengine = "Select Speech to Text Engine"
-    formPivotKey = "engine"
-    confirmEdit = "Confirm saving new edit to the profile?"
-
-    tableHeader = ["Profile Name", "Applied Engine", "Applied Plugin Suite", "Actions"]
-    tableDimension = [0.24, 0.24, 0.24, 0.255]
+    ## sidebar 
+    CANCEL = "Exit"
+    PROFILES_BTN = "Profiles"
+    SYSSET_BTN = "Settings"
+    ENGINE_BTN = "Engines"
+    PLUGIN_BTN = "Plugins"
+    TABLE_HEADER  = ["Profile Name", "Applied Engine", "Applied Plugin Suite", "Actions"]
+    TABLE_DIMENSION = [0.24, 0.24, 0.24, 0.255]
     HEADER = "Profile Settings"
     CAPTION = "Available profile settings for GailBot"
     CREATE_NEW = "Create New Profile"
 
 
 @dataclass
-class SystemSetPageText:
+class SYSTEM_SET_PAGE:
     """class holding the text for the system settings page"""
-
-    header = "System Settings"
-    caption = "Control various aspects of the graphical interface"
-    cancelBtn = "Exit"
-    saveBtn = "Save"
-    confirmChange = "Confirm changing GailBot system setting?"
-    changeError = "System settings change failed"
-    clearLog = "Clear all log files"
-    confirmClear = "All log files will be removed. Proceed?"
-    changeWorkSpace = "Change GailBot workspace"
-    restoreLabel = "Restore Defaults"
-    restoreBtn = "Restore"
-    ClearLogLabel = "Clear Logs"
-    ClearLogBtn = "Clear"
-    SaveLogLabel = "Save Logs"
-    SaveLogBtn = "Save"
-    ClearCacheLabel = "Clear Cache"
-    ClearCacheBtn = "Clear"
-    ConfirmClearCache = "Confirm clearing cache?"
+    HEADER = "System Settings"
+    CAPTION = "Control various aspects of the graphical interface"
+    CANCEL = "Exit"
+    SAVE = "Save"
+    CONFIRM_CHANGE = "Confirm changing GailBot system setting?"
+    CHANGE_ERROR = "System settings change failed"
+    CONFIRM_CLEAR = "All log files will be removed. Proceed?"
+    RESTORE = "Restore Defaults"
+    RESTORE_BTN = "Restore"
+    CLEAR_LOG = "Clear Logs"
+    CLEAR_LOG_BTN = "Clear"
+    SAVE_LOG = "Save Logs"
+    SAVE_LOG_BTN = "Save"
+    CLEAR_CACHE = "Clear Cache"
+    CLEAR_CACHE_BTN = "Clear"
+    CONFIRM_CLEAR = "Confirm clearing cache?"
 
 
-class ConfirmTranscribeText:
+class CONFIRM_PAGE:
     """class holding the text for the confirm transcription popup"""
-
-    confirmLabel = "Confirm Files and Settings"
-    confirm = "Confirm"
-    cancel = "Cancel"
+    HEADER = "Confirm Files and Settings"
+    CONFIRM = "Confirm"
+    CANCEL = "Cancel"
 
 
 @dataclass
-class CreateNewProfilePageText:
+class CREATE_NEW_PROFILE:
     """class holding the text for the create new settings profile page"""
-
-    profileName = "Profile Name"
-    confirmProfileNameBtn = "Start"
-    emptyNameMsg = "A profile name must be specified"
-    engineSettingHeader = "Choose Engine Setting"
-    pluginSettingHeader = "Plugin Setting"
-    cofirmBtn = "Confirm"
+    PROFILE_NAME = "Profile Name"
+    ENGINE_SETTING = "Choose Engine Setting"
+    PLUGIN_SETTING = "Plugin Setting"
 
 
 @dataclass
 class ChooseFileTabText:
     """class holding the text for the choose file tab functionality"""
-
     WindowTitle = "Upload File"
     TabTitle = "Add New File"
     TabHeader1 = "Add File"
@@ -237,7 +182,6 @@ class ChooseFileTabText:
 @dataclass
 class CreateNewProfileTabText:
     """class holding the text for the create new profile tab"""
-
     WindowTitle = "Create New Profile"
     TabTitle = "Create New Profile"
     TabHeader1 = "Profile Name"
@@ -254,69 +198,43 @@ class ENGINE_TAB_TEXT:
     ENGINE_SETTING = "Speech to Text Engine Setting"
 
 
-@dataclass
-class MainStackText:
-    """class holding the text for the main stack"""
-
-    profilesetting = "Profile Settings"
-    systemsetting = "System Settings"
 
 
 @dataclass
-class MenuBarText:
+class MENU_BAR:
     """class holding the text for the menu bar"""
-
-    console = "Console"
-    open = "Open"
-    close = "Close"
-    help = "Help"
-    contact = "Contact Us"
-    bugreport = "Report Bug"
-    buglink = LINKS_DATA.BUG_REPORT
-    email = LINKS_DATA.EMAIL 
-    mailFailed = "Cannot open mail application on your computer, \
+    CONSOLE = "Console"
+    OPEN = "Open"
+    CLOSE = "Close"
+    HELP = "Help"
+    CONTACT = "Contact Us"
+    BUG = "Report Bug"
+    BUG_LINK = LINKS_DATA.BUG_REPORT
+    EMAIL_LINK = LINKS_DATA.EMAIL 
+    MAIL_FAILED = "Cannot open mail application on your computer, \
                   please contact us by sending email to: hil@elist.tufts.edu"
 
 
 @dataclass
-class BtnText:
+class BTN_TEXT:
     """class holding the text for the buttons widget"""
-
-    on = "ON"
-    off = "OFF"
-    icon = "iconButton"
+    ON = "ON"
+    OFF = "OFF"
+    ICON_BTN = "iconButton"
     right = "right.png"
     down = "down.png"
 
 
 @dataclass
-class FileTableText:
+class FILE_TABLE:
     """class holding the text for the file table widget"""
-
-    default = "Default"
-    delete = "Remove"
-    changeSet = "Change Profile"
-    profileDet = "Profile Details"
-    complete = "\u2705 Completed"
-    viewOutput = "View Output"
+    COMPLETE = "\u2705 Completed"
 
 
 @dataclass
-class WindowTitle:
-    """class holding the text for the window title component"""
-
-    consoleWindow = "Console"
-
-
-@dataclass
-class PopUpText:
+class POPUP_TAB:
     """class holding the text for the pop-up component"""
-
-    leftArr = "\u25B6"
     ## unicode of right pointing arrow
-    rightArr = "\u25C0"
-    finish = "Finish"
-    window = "File Info"
     START = "Start"
     PREVIOUS = "Previous"
     NEXT = "Next"
@@ -324,90 +242,33 @@ class PopUpText:
 
 
 @dataclass
-class TableText:
-    """class holding the text for the table component"""
-
-    location = "Change Location"
-    postSettings = "Post Transcribe Setting"
-    save = "Save"
-    transBy = "Transcribed by: "
-    transOn = "Trancribed on: "
-    inDir = "In this directory"
-    abtDir = "About this directory"
-
+class PROGRESS_PAGE:
+    HEADER = "Transcription in progress"
+    LOADING = "Transcribing files..."
 
 @dataclass
-class TranscribeProgressText:
-    mainLabelText = "Transcription in progress"
-    loadingText = "Transcribing files..."
-    inProgressText = "Files in progress:"
-    cancelText = "Cancel"
-
-
-@dataclass
-class FileTableHeader:
+class FILE_TABLE_HEADER:
     """class holding the text for the file table headers"""
-    fileUploadPage = [
-        "Select All",
-        "Type",
-        "Name",
-        "Profile",
-        "Status",
-        "Date",
-        "Actions",
-    ]
-    confirmPage = ["Type", "Name", "Profile", "Actions"]
-    transcribePage = ["Type", "Name", "Progress"]
-    successPage = ["Type", "Name", "Status", "Output", "Actions"]
+    FILE_UPLOAD = ["Select All","Type", "Name", "Profile", "Status",  "Date", "Actions"]
+    CONFIRM = ["Type", "Name", "Profile", "Actions"]
+    TRANSCRIBE = ["Type", "Name", "Progress"]
+    SUCCESS = ["Type", "Name", "Status", "Output", "Actions"]
 
 
 @dataclass
-class TranscribeSuccessText:
-    mainLabelText = "Transcription complete"
-    transcribedFilesText = "Files summary and locations:"
-    moreBtnText = "Process additional files"
-    returnBtnText = "Return to main menu"
-
+class SUCCESS_PAGE:
+    HEADER = "Transcription complete"
+    MORE_BTN = "Process additional files"
+    RETURN_BTN = "Return to main menu"
 
 @dataclass
-class TableWidgetOptions:
-    """class holding the text for options of the table widget component"""
-    fileDetails = "details"
-
-
-@dataclass
-class ProfileField:
-    """class holding the text for the profile field component"""
-
-    user = "User Info"
-    engine = "Engine"
-    outPutFormat = "Output Form Data"
-    postTranscribe = "PostTranscribe"
-    reuquiredSetting = "RequiredSetting"
-    plugin = "Plugins"
-
-
-@dataclass
-class ProfileSetting(DataclassFromDict):
-    """class holding the text for the setting page"""
-    RequiredSetting: dict = field_from_dict()
-
-
-@dataclass
-class EngineSetting(DataclassFromDict):
-    """class holding the text for the engine setting page"""
-    Engine: dict = field_from_dict()
-
-
-@dataclass
-class Links:
+class LINK:
     _linkTemplate = "<a style='color:{0}; font-weight: 500;' href={1}>{2}</a>"
-    tutorialLink = _linkTemplate.format(
-        Color.LINK, LINKS_DATA.USER_MANUAL, WelcomePageText.tutorialText
+    USER_MANUAL = _linkTemplate.format(
+        Color.LINK, LINKS_DATA.USER_MANUAL, WELCOME_PAGE.USER_MANUAL
     )
-    techDocLink = _linkTemplate.format(Color.LINK, LINKS_DATA.TECHNICAL_DOCUMENT, WelcomePageText.guideText)
-    gbWebLink = _linkTemplate.format(Color.LINK, LINKS_DATA.HILAB, WelcomePageText.gbLinkText)
-    guideLinkSideBar = _linkTemplate.format(Color.LINK, LINKS_DATA.USER_MANUAL, WelcomePageText.tutorialText)
+    TECH_DOC = _linkTemplate.format(Color.LINK, LINKS_DATA.TECHNICAL_DOCUMENT, WELCOME_PAGE.GUIDE)
+    GB_WEB = _linkTemplate.format(Color.LINK, LINKS_DATA.HILAB, WELCOME_PAGE.WEB_LINK)
 
 
 @dataclass
@@ -448,19 +309,18 @@ class ENGINE_SETTING_FORM(DataclassFromDict):
     watson: dict = field_from_dict()
 
 
-
 @dataclass
 class PATH_DIALOG: 
-    confirmBtn = "Confirm"
-    changeDirBtn = "Change Directory"
-    email = "hil@elist.tufts.edu"
-    zipFileName = "gailbot_log_file"
-    sendZipMsg = "You can send the zipped log file to us through the email:"
-    saveLogPrompt = "Select the path the log files will be saved to"
-    saveLogPath = "Log files saved to:"
-    saveSettingHeader = "Select path to save the source"
-    saveSettingcaption = "A copy of the source will be saved to the selected path for access"
-    selectPath = "Select Path: "
+    CONFIRM = "Confirm"
+    CHANGE_DIR = "Change Directory"
+    EMAIL = "hil@elist.tufts.edu"
+    ZIP_FILE = "gailbot_log_file"
+    SEND_ZIP = "You can send the zipped log file to us through the email:"
+    SAVE_LOG = "Select the path the log files will be saved to"
+    SAVE_LOG_LABEL = "Log files saved to:"
+    SAVE_SOURCE = "Select path to save the source"
+    SAVE_SOURCE_CAPTION = "A copy of the source will be saved to the selected path for access"
+    SAVE_SOURCE_LABEL = "Select Path: "
 
 
 @dataclass 
@@ -470,9 +330,5 @@ class SETTING_TABLE:
     
     
 ENGINE_FORM = ENGINE_SETTING_FORM.from_dict(forms["EngineForm"])
-
-ProfileSettingForm = ProfileSetting.from_dict(forms["profile form"])
-EngineForm = EngineSetting.from_dict(forms["profile form"]["RequiredSetting"])
-SystemSettingForm = forms["system setting form"]
-LogDeleteTimeDict = forms["log deletion"]
-RecordForm = forms["record form"]
+LOG_DELETE = forms["log deletion"]
+RECORD_FORM = forms["record form"]

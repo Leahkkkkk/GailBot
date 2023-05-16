@@ -10,7 +10,7 @@ Modified By:  Siara Small  & Vivian Li
 Description: 
 '''
 from typing import List
-from view.config.Text import ProfilePageText as Text
+from view.config.Text import PROFILE_PAGE as Text
 from view.config.InstructionText import INSTRUCTION
 from view.signal import EngineSignal, ProfileSignal
 from view.Request import Request
@@ -28,7 +28,7 @@ class ProfilePage(BaseSettingPage):
         **kwargs) -> None:
         """ initializes class """
         self.headerText = Text.HEADER
-        self.captionText = Text.CAPTION
+        self.START = Text.CAPTION
         self.addNewButtonText = Text.CREATE_NEW
         self.signal = ProfileSignal
         self.engineSignal = EngineSignal

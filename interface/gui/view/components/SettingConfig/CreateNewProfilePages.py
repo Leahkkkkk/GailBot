@@ -13,7 +13,7 @@ Description: implementation of pages for user to create new profile
 from typing import Dict
 from view.signal.interface import DataSignal
 from view.Request import Request
-from view.config.Text import CreateNewProfilePageText as Text 
+from view.config.Text import CREATE_NEW_PROFILE as Text 
 from view.config.Text import ENGINE_FORM as Form 
 from gbLogger import makeLogger
 
@@ -54,7 +54,7 @@ class settingSignals(QObject):
     
 class SettingName (TabPage):
     """ page with an input field to allow user add the profile name """
-    def __init__(self, title = Text.profileName, *args, **kwargs) -> None:
+    def __init__(self, title = Text.PROFILE_NAME, *args, **kwargs) -> None:
         """" initializes page """
         super().__init__(blockNext=True, *args, **kwargs)
         self.title = title
@@ -117,7 +117,7 @@ class SelectEngine(TabPage):
         self.verticallayout.addStretch()
         # header area 
         self.header = Label(
-            Text.engineSettingHeader, 
+            Text.ENGINE_SETTING, 
             STYLE_DATA.FontSize.HEADER2, 
             FontFamily.MAIN)
         
@@ -187,7 +187,7 @@ class PluginSetting(TabPage):
         """ initializes tab """
         super().__init__(*args, **kwargs)
         self.header = Label(
-            Text.pluginSettingHeader, 
+            Text.PLUGIN_SETTING, 
             STYLE_DATA.FontSize.HEADER2, 
             FontFamily.MAIN)
         self.mainForm = PluginForm()

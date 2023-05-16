@@ -17,7 +17,7 @@ from typing import List, TypedDict
 import os
 
 from controller.mvController import FileDict
-from view.config.Text import FileUploadPageText as Text
+from view.config.Text import FILEUPLOAD_PAGE as Text
 from view.config.WorkSpace import (
     updateSavedUploadFileDir, 
     getSavedUploadFileDir,
@@ -105,15 +105,15 @@ class UploadFileTab(TabPage):
         """ initializes the widgets """
         self.logger.info("")
         self.header = Label(
-            Text.uploadInstruction, 
+            Text.DROP_FILE, 
             STYLE_DATA.FontSize.HEADER3,
             STYLE_DATA.FontFamily.MAIN)
         self.fileDisplayList = UploadTable(self.signals.blockNextPage)
         self.uploadFileBtn = ColoredBtn(
-            Text.tabAddfile, 
+            Text.FROM_FILE, 
             STYLE_DATA.Color.PRIMARY_BUTTON)
         self.uploadFolderBtn = ColoredBtn(
-            Text.tabAddFolder,
+            Text.FROM_FOLDER,
             STYLE_DATA.Color.PRIMARY_BUTTON)
         self.filePaths = list() ## stores the selected file / folder paths 
        
@@ -141,7 +141,7 @@ class UploadFileTab(TabPage):
         self.logger.info(fullPath)
         date = datetime.date.today().strftime("%m-%d-%y")    
         fileName = get_name(fullPath)
-        fileType = Text.directoryLogo if is_directory(path) else Text.audioLogo
+        fileType = Text.DIR_LOGO if is_directory(path) else Text.AUDIO_LOGO
         return {"Name": fileName, 
                 "Type": fileType, 
                 "Date": date, 
@@ -153,8 +153,8 @@ class UploadFileTab(TabPage):
         try:
             dialog = QFileDialog()
             dialog.setDirectory(self.userRootDir)
-            fileFilter = Text.fileFilter
-            selectedFiles = dialog.getOpenFileNames(filter = fileFilter)
+            FILE_FILTER = Text.FILE_FILTER
+            selectedFiles = dialog.getOpenFileNames(filter = FILE_FILTER)
             if selectedFiles:
                 files, types = selectedFiles
                 for file in files:
@@ -288,11 +288,11 @@ class ChooseOutputTab(TabPage):
     def _initWidget(self):
         """ initializes the widgets """
         self.logger.info("")
-        self.chooseOuputLabel = Label(Text.selectOutput,  STYLE_DATA.FontSize.HEADER3, STYLE_DATA.FontFamily.MAIN)
+        self.chooseOuputLabel = Label(Text.SELECT_OUTDIR,  STYLE_DATA.FontSize.HEADER3, STYLE_DATA.FontFamily.MAIN)
         self.chooseDirBtn = ColoredBtn("···", STYLE_DATA.Color.PRIMARY_BUTTON, STYLE_DATA.FontSize.HEADER4)
         self.chooseDirBtn.setFixedWidth(70)
         self.dirPathText = QLineEdit(self)
-        self.dirPathText.setPlaceholderText(Text.chooseOutPutText)
+        self.dirPathText.setPlaceholderText(Text.SELECT_OUTDIR)
         self.dirPathText.setMinimumHeight(40)
         self.dirPathText.setFixedWidth(350)
         self.dirPathText.setReadOnly(True)

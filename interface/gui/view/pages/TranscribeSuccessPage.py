@@ -12,8 +12,8 @@ Modified By:  Siara Small  & Vivian Li
 from view.config.Style import STYLE_DATA, FileTableDimension
 from view.pages.BasicPage import BasicPage
 from view.config.InstructionText import INSTRUCTION
-from view.config.Text import TranscribeSuccessText as Text
-from view.config.Text import FileTableHeader
+from view.config.Text import SUCCESS_PAGE as Text
+from view.config.Text import FILE_TABLE_HEADER
 from view.components.FileTable import TableWidget, SourceTable, DATA_FIELD
 from view.widgets import ColoredBtn, Label
 from view.signal.signalObject import FileSignal, GBTranscribeSignal
@@ -51,14 +51,14 @@ class TranscribeSuccessPage(BasicPage):
     def _initWidget(self):
         """initializes widgets on the page"""
         self.label = Label(
-            Text.mainLabelText, STYLE_DATA.FontSize.HEADER2, STYLE_DATA.FontFamily.MAIN
+            Text.HEADER, STYLE_DATA.FontSize.HEADER2, STYLE_DATA.FontFamily.MAIN
         )
         self.label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
-        self.moreBtn = ColoredBtn(Text.moreBtnText, STYLE_DATA.Color.SECONDARY_BUTTON)
-        self.returnBtn = ColoredBtn(Text.returnBtnText, STYLE_DATA.Color.PRIMARY_BUTTON)
+        self.moreBtn = ColoredBtn(Text.MORE_BTN, STYLE_DATA.Color.SECONDARY_BUTTON)
+        self.returnBtn = ColoredBtn(Text.RETURN_BTN, STYLE_DATA.Color.PRIMARY_BUTTON)
         self._initHorizontalLayout()
         self.fileTable = SourceTable(
-            FileTableHeader.successPage,
+            FILE_TABLE_HEADER.SUCCESS,
             self.signal,
             {
                 DATA_FIELD.TYPE: 0,

@@ -146,12 +146,12 @@ class MainStack(QStackedWidget):
                 self.setCurrentWidget(self.WelcomePage))
         self.ConfirmTranscribePage.confirmBtn.clicked.connect(
             self.FileUploadPage._disallowTranscribe)
-        self.SettingPage.cancelBtn.clicked.connect(self.gotoFileUploadPage)
+        self.SettingPage.CANCEL.clicked.connect(self.gotoFileUploadPage)
         self.FileUploadPage.gotoMainBtn.clicked.connect(lambda:
                 self.setCurrentWidget(self.WelcomePage))
         self.FileUploadPage.transcribeBtn.clicked.connect(lambda:
             self.setCurrentWidget(self.ConfirmTranscribePage))
-        self.ConfirmTranscribePage.cancelBtn.clicked.connect(self.gotoFileUploadPage)
+        self.ConfirmTranscribePage.CANCEL.clicked.connect(self.gotoFileUploadPage)
         
     def _connectSignal(self):
         """ connecting the signal  """

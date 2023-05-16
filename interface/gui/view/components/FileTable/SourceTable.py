@@ -25,7 +25,7 @@ from view.widgets.Button import ColoredBtn, TableBtn
 from view.widgets.Background import initSecondaryColorBackground
 from ..FileUpload import UploadFileDialog, ChooseSetTab
 from ...config.Style import STYLE_DATA
-from ...config.Text import FileTableText as Text
+from ...config.Text import FILE_TABLE as Text
 from view.util.ErrorMsg import ERR
 from gbLogger import makeLogger
 from PyQt6.QtWidgets import (
@@ -426,7 +426,7 @@ class SourceTable(BaseTable):
         """
         try:
             if name in self.nameToTablePins:
-                self.updateFileContent((name, DATA_FIELD.STATUS, Text.complete))
+                self.updateFileContent((name, DATA_FIELD.STATUS, Text.COMPLETE))
             else:
                 WarnBox(ERR.ERR_WHEN_DUETO.format("updating file status", "file name cannot be found"))
         except Exception as e:

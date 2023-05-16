@@ -19,7 +19,7 @@ class EnginePage(BaseSettingPage):
         """ initializes class """
         self.instruction = INSTRUCTION.ENGINE_TABLE_INS
         self.headerText = Text.HEADER
-        self.captionText = Text.CAPTION
+        self.START = Text.CAPTION
         self.addNewButtonText = Text.CREATE_NEW
         self.signal = EngineSignal 
         self.mainTable = EngineTable(self.signal)

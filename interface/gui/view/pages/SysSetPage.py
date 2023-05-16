@@ -26,9 +26,8 @@ from view.config.Setting import SystemSetting, DefaultSetting
 from view.config import StyleSource, StyleTable
 from view.config.InstructionText import INSTRUCTION
 from view.widgets.Button import InstructionBtn
-from view.config.Text import SystemSetPageText as Text
-from view.config.Text import SystemSettingForm as Form
-from view.config.Text import LogDeleteTimeDict
+from view.config.Text import SYSTEM_SET_PAGE as Text
+from view.config.Text import LOG_DELETE
 from config_frontend import FRONTEND_CONFIG_ROOT as dirname
 from view.util.FileManage import clearAllLog
 from view.util.ErrorMsg import ERR
@@ -70,7 +69,6 @@ class SystemSettingPage(QWidget):
     def __init__(self, *args, **kwargs) -> None:
         """initializes the page"""
         super().__init__(*args, **kwargs)
-        self.data = Form
         self.signal = Signal()
         self.logger = makeLogger()
         self.formButtons: List[Button.BorderBtn] = []
@@ -87,9 +85,9 @@ class SystemSettingPage(QWidget):
                       INPUT_COMBO.LOG_AUTO_DELETE]
         self.labels = [Label(text, STYLE_DATA.FontSize.INSTRUCTION_CAPTION, 
                        STYLE_DATA.FontFamily.MAIN) for text in labelTexts]
-        self.caption = Label(Text.caption, STYLE_DATA.FontSize.DESCRIPTION, STYLE_DATA.FontFamily.MAIN)
+        self.caption = Label(Text.CAPTION, STYLE_DATA.FontSize.DESCRIPTION, STYLE_DATA.FontFamily.MAIN)
         self.header = Label(
-            Text.header, STYLE_DATA.FontSize.HEADER2,STYLE_DATA.FontFamily.MAIN)
+            Text.HEADER, STYLE_DATA.FontSize.HEADER2,STYLE_DATA.FontFamily.MAIN)
         self.fontSize = ComboBox()
         self.fontSize.addItems(INPUT_COMBO.FONT_SELECTION)
         self.colorMode = ComboBox()
@@ -97,7 +95,7 @@ class SystemSettingPage(QWidget):
         self.logDelete = ComboBox()
         self.logDelete.addItems(INPUT_COMBO.LOGFILE_AUTO_DELETE_SELECTION)
         self.comboInputs = [self.fontSize, self.colorMode, self.logDelete] 
-        self.saveBtn = Button.ColoredBtn(Text.saveBtn, STYLE_DATA.Color.PRIMARY_BUTTON)
+        self.saveBtn = Button.ColoredBtn(Text.SAVE, STYLE_DATA.Color.PRIMARY_BUTTON)
         self.instructionBtn = InstructionBtn(INSTRUCTION.SETTING_FORM_INS)
 
     def _connectSignal(self):
@@ -126,10 +124,10 @@ class SystemSettingPage(QWidget):
         self.mainLayout.addStretch()
         self.mainLayout.addWidget(self.saveBtn, alignment=Qt.AlignmentFlag.AlignHCenter)
         currRow = len(self.comboInputs)
-        self._addFormButton(Text.restoreLabel, Text.restoreBtn, self._confirmRestore, currRow)
-        self._addFormButton(Text.ClearLogLabel, Text.ClearLogBtn, self._clearLog, currRow + 1)
-        self._addFormButton(Text.SaveLogLabel, Text.SaveLogBtn, self._saveLog, currRow + 2)
-        self._addFormButton(Text.ClearCacheLabel, Text.ClearCacheBtn, self._clearCache,currRow + 3)
+        self._addFormButton(Text.RESTORE, Text.RESTORE_BTN, self._confirmRestore, currRow)
+        self._addFormButton(Text.CLEAR_LOG, Text.CLEAR_LOG_BTN, self._clearLog, currRow + 1)
+        self._addFormButton(Text.SAVE_LOG, Text.SAVE_LOG_BTN, self._saveLog, currRow + 2)
+        self._addFormButton(Text.CLEAR_CACHE, Text.CLEAR_CACHE_BTN, self._clearCache,currRow + 3)
         
         self.mainLayout.addWidget(
             self.instructionBtn,
@@ -175,7 +173,7 @@ class SystemSettingPage(QWidget):
     def _confirmChangeSetting(self) -> None:
         """open a pop up box to confirm restarting the app and change the setting"""
         ConfirmBox(
-            Text.confirmChange, self._changeSetting, QMessageBox.StandardButton.Ok
+            Text.CONFIRM_CHANGE, self._changeSetting, QMessageBox.StandardButton.Ok
         )
 
     def _changeSetting(self) -> None:
@@ -188,7 +186,7 @@ class SystemSettingPage(QWidget):
             colorDes = StyleSource.CURRENT_COLOR
             fontSource = StyleTable[setting[INPUT_COMBO.FONT_SIZE]]
             fontDes = StyleSource.CURRENT_FONTSIZE
-            logDeleteTime = LogDeleteTimeDict[setting[INPUT_COMBO.LOG_AUTO_DELETE]]
+            logDeleteTime = LOG_DELETE[setting[INPUT_COMBO.LOG_AUTO_DELETE]]
             f = open(
                 f"{os.path.join(dirname, WorkSpaceConfigPath.logManagement)}", "w+"
             )
@@ -211,7 +209,7 @@ class SystemSettingPage(QWidget):
 
     def _clearLog(self):
         """open confirm box to confirm clearing the log file"""
-        ConfirmBox(Text.confirmClear, clearAllLog)
+        ConfirmBox(Text.CONFIRM_CLEAR, clearAllLog)
 
     def _confirmRestore(self):
         """open confirm box to confirm restoring to the defaults"""
@@ -229,7 +227,7 @@ class SystemSettingPage(QWidget):
 
     def _clearCache(self):
         try:
-            ConfirmBox(Text.ConfirmClearCache, lambda: self.signal.clearCache.emit())
+            ConfirmBox(Text.CONFIRM_CLEAR, lambda: self.signal.clearCache.emit())
         except Exception as e:
             self.logger.error(e, exc_info=e)
 

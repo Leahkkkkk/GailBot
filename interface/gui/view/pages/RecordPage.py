@@ -20,8 +20,8 @@ from view.config.Style import (
     Asset, 
     FontFamily
 )
-from view.config.Text import RecordPageText as Text
-from view.config.Text import RecordForm
+from view.config.Text import RECORD_PAGE as Text
+from view.config.Text import RECORD_FORM
 from view.config.Style import Dimension, StyleSheet
 from view.widgets.Background import addLogo
 from view.widgets import (
@@ -61,12 +61,12 @@ class RecordPage(QWidget):
         self.header = Label(Text.record, 
                                   FontSize.HEADER2, 
                                   FontFamily.MAIN)
-        self.recordForm    = TextForm.TextForm(RecordForm)
+        self.recordForm    = TextForm.TextForm(RECORD_FORM)
         self.toggleSetting = ToggleView(Text.recSet, 
                                                    self.recordForm,
                                                    header=True)
         self.startRecordBtn = ColoredBtn(Text.start, Color.PRIMARY_BUTTON)
-        self.cancelBtn = ColoredBtn(Text.cancel, Color.CANCEL_QUIT)
+        self.CANCEL = ColoredBtn(Text.cancel, Color.CANCEL_QUIT)
         self.recordInprogress =  RecordProgress()
         self.recordInprogress.hide()
         self.toggleSetting.setScrollHeight(Dimension.DEFAULTTABHEIGHT - 80)
@@ -78,7 +78,7 @@ class RecordPage(QWidget):
         self.horizontalLayout = QHBoxLayout()
         self.horizontal.setLayout(self.horizontalLayout)
         self.horizontalLayout.addWidget(self.startRecordBtn, alignment = right)
-        self.horizontalLayout.addWidget(self.cancelBtn, alignment = left)
+        self.horizontalLayout.addWidget(self.CANCEL, alignment = left)
         self.horizontalLayout.setSpacing(Dimension.LARGE_SPACING) 
         
     def _initLayout(self):
@@ -100,7 +100,7 @@ class RecordPage(QWidget):
         """ connects signals upon button clicks """
         self.startRecordBtn.clicked.connect(
             self.startRecord)
-        self.cancelBtn.clicked.connect(
+        self.CANCEL.clicked.connect(
             self.cancelRecord)
         self.recordInprogress.endIconBtn.clicked.connect(
             self.cancelRecord)

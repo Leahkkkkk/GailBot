@@ -2,7 +2,7 @@ from typing import Dict, List
 import validators
 import os
 from view.config.Style import STYLE_DATA
-from view.config.Text import FileUploadPageText as Text
+from view.config.Text import FILEUPLOAD_PAGE as Text
 from gbLogger import makeLogger
 from PyQt6.QtWidgets import (
     QAbstractItemView,
@@ -63,11 +63,11 @@ class UploadTable(QTableWidget):
         """
         self.logger.info(f"{item} item added")
         if os.path.isdir(item):
-            icon = Text.directoryLogo
+            icon = Text.DIR_LOGO
         elif self._isAudioFile(item):
-            icon = Text.audioLogo
+            icon = Text.AUDIO_LOGO
         elif validators.url(item):
-            icon = Text.urlLogo
+            icon = Text.URL_LOGO
         else:
             icon = " "
             
@@ -79,7 +79,7 @@ class UploadTable(QTableWidget):
             newFile = QTableWidgetItem(icon + filestr)
             self.setItem(row, 0, newFile)
             
-            btn = QPushButton(Text.delete)
+            btn = QPushButton(Text.DELETE_LOGO)
             btn.setFixedSize(QSize(self.DELETE_BTN_SIZE, self.DELETE_BTN_SIZE))
             btn.setContentsMargins(1,5,1,5)
             self.setCellWidget(row, 1, btn)

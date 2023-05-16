@@ -33,5 +33,5 @@ class EngineSetting(DataclassFromDict):
 ProfileSettingForm = ProfileSetting.from_dict(forms["profile form"])
 EngineSettingForm  = EngineSetting.from_dict(forms["profile form"]["RequiredSetting"])
 SystemSettingForm  = forms["system setting form"]
-LogDeleteTimeDict  = forms["log deletion"]
-RecordForm         = forms["record form"]
+LOG_DELETE  = forms["log deletion"]
+RECORD_FORM         = forms["record form"]

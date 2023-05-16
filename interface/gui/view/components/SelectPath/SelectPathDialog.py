@@ -49,8 +49,8 @@ class SelectPathDialog(QDialog):
         self.displayPath = Label(f"{self.pathLabel}: {self.userRoot}", 
             STYLE_DATA.FontSize.BODY, STYLE_DATA.FontFamily.MAIN, 
             others=f"border: 1px solid {STYLE_DATA.Color.MAIN_TEXT}; text-align:center;")
-        self.confirm = ColoredBtn(TEXT.confirmBtn, STYLE_DATA.Color.SECONDARY_BUTTON)
-        self.choose  = ColoredBtn(TEXT.changeDirBtn, STYLE_DATA.Color.PRIMARY_BUTTON)
+        self.confirm = ColoredBtn(TEXT.CONFIRM, STYLE_DATA.Color.SECONDARY_BUTTON)
+        self.choose  = ColoredBtn(TEXT.CHANGE_DIR, STYLE_DATA.Color.PRIMARY_BUTTON)
    
     def _initLayout(self):
         """ initialize the layout """
@@ -92,9 +92,9 @@ class SaveSetting(SelectPathDialog):
         a setting data
     """
     def __init__(self, origPath, *args, **kwargs) -> None:
-        self.header = TEXT.saveSettingHeader
-        self.caption = TEXT.saveSettingcaption
-        self.pathLabel = TEXT.selectPath 
+        self.header = TEXT.SAVE_SOURCE
+        self.caption = TEXT.SAVE_SOURCE_CAPTION
+        self.pathLabel = TEXT.SAVE_SOURCE_LABEL 
         self.origPath = origPath
         self.copiedPath = None 
         super().__init__()
@@ -112,10 +112,10 @@ class SaveLogFile(SelectPathDialog):
     open a dialog that ask user to select a space to store zipped log files 
     """
     def __init__(self, *arg, **kwargs) -> None:
-        self.header = TEXT.saveLogPrompt
+        self.header = TEXT.SAVE_LOG
         linkFormat = "<a style='color:{0};' href='mailto: {1}'> {2} \n {1}</a>"
-        self.caption =  linkFormat.format(STYLE_DATA.Color.MAIN_TEXT, TEXT.email, TEXT.sendZipMsg)
-        self.pathLabel = TEXT.saveLogPath
+        self.caption =  linkFormat.format(STYLE_DATA.Color.MAIN_TEXT, TEXT.EMAIL, TEXT.SEND_ZIP)
+        self.pathLabel = TEXT.SAVE_LOG_LABEL
         super().__init__(*arg, **kwargs)
         
     def _onConfirm(self):
@@ -125,7 +125,7 @@ class SaveLogFile(SelectPathDialog):
         """
         try:
             logdir = getWorkBasePath()
-            zip_file(logdir, os.path.join(self.userRoot, f"{TEXT.zipFileName}-{datetime.datetime.now()}.zip"), ".log")
+            zip_file(logdir, os.path.join(self.userRoot, f"{TEXT.ZIP_FILE}-{datetime.datetime.now()}.zip"), ".log")
             self.close()
         except Exception as e:
             self.logger.error(e, exc_info=e)

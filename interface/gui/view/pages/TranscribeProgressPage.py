@@ -15,8 +15,8 @@ from view.config.Style import (
     STYLE_DATA,
     FileTableDimension 
 )
-from view.config.Text import TranscribeProgressText as Text
-from view.config.Text import FileTableHeader
+from view.config.Text import PROGRESS_PAGE as Text
+from view.config.Text import FILE_TABLE_HEADER
 from config_frontend import PROJECT_ROOT
 from gbLogger import makeLogger
 from view.pages.BasicPage import BasicPage
@@ -57,18 +57,18 @@ class TranscribeProgressPage(BasicPage):
         
     def _initWidget(self):
         """ initialize widgets """
-        self.label = Label(Text.mainLabelText, STYLE_DATA.FontSize.HEADER2, STYLE_DATA.FontFamily.MAIN)
+        self.label = Label(Text.HEADER, STYLE_DATA.FontSize.HEADER2, STYLE_DATA.FontFamily.MAIN)
         self.label.setAlignment(center)
         self.loadIcon = QLabel()
         self.IconImg = QMovie(
             os.path.join(PROJECT_ROOT, STYLE_DATA.Asset.transcribing))
         self.loadIcon.setMovie(self.IconImg)
         self.loadStart()
-        self.loadingText = Label(Text.loadingText, STYLE_DATA.FontSize.SMALL, STYLE_DATA.FontFamily.OTHER)
+        self.loadingText = Label(Text.LOADING, STYLE_DATA.FontSize.SMALL, STYLE_DATA.FontFamily.OTHER)
         self.loadingText.setAlignment(center)
-        # self.cancelBtn = ColoredBtn(Text.cancelText, STYLE_DATA.Color.GREYDARK, STYLE_DATA.FontSize.BTN)
+        # self.CANCEL = ColoredBtn(Text.cancelText, STYLE_DATA.Color.GREYDARK, STYLE_DATA.FontSize.BTN)
         self.fileTable = SourceTable(
-            FileTableHeader.transcribePage,
+            FILE_TABLE_HEADER.TRANSCRIBE,
             self.sourceSignal, 
             dataKeyToCol={
                 DATA_FIELD.TYPE: 0, 
