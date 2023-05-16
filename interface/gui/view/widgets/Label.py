@@ -13,12 +13,11 @@ import os
 import logging
 
 
-from util.Style import Color,  FontFamily, FontSource
+from ..config.Style import STYLE_DATA, FontSource
 
 from PyQt6.QtWidgets import QLabel
 from PyQt6.QtGui import QFont, QFontDatabase
-from util import Path
-
+from config_frontend import PROJECT_ROOT
 
 class Label(QLabel):
     """ Label widget used to display text 
@@ -34,8 +33,8 @@ class Label(QLabel):
         self, 
         text:str, 
         size:str, 
-        font   = FontFamily.OTHER, 
-        color  =  Color.MAIN_TEXT, 
+        font   = STYLE_DATA.FontFamily.OTHER, 
+        color  = None, 
         others = None, 
         link   = False,
         *args, 
@@ -43,34 +42,46 @@ class Label(QLabel):
     ): 
         """initialize label class"""
         super().__init__(*args, **kwargs)
+        text = text.replace("_", " ")
         self.setText(text)
-        
-        if font == FontFamily.MAIN:
+        if font == STYLE_DATA.FontFamily.MAIN:
             self.loadHeaderFont()
-        elif font == FontFamily.CLOCK:
+        elif font == STYLE_DATA.FontFamily.CLOCK:
             self.loadClockFont()
         if link:
             self.setOpenExternalLinks(True)
+        if not color:
+            color = STYLE_DATA.Color.MAIN_TEXT
+            STYLE_DATA.signal.changeColor.connect(self.changeDefault)
             
         self.setStyleSheet(f"font-size: {size};" 
                            f"padding:0;" 
                            f"color:{color};"
                            f"background-color:none;"
                            f"{others};")
+    
+    def changeDefault(self):
+        self.setStyleSheet(self.styleSheet() + f"color: {STYLE_DATA.Color.MAIN_TEXT};")
        
-        
+    def colorChange(self, color):
+        self.setStyleSheet(self.styleSheet() + f"color: {color};")
+
+    def fontChange(self, fontsize):
+        # set the updated palette to the label
+        self.setStyleSheet(self.styleSheet() + f";font-size: {fontsize};")
+    
+     
     def loadHeaderFont(self):
         """loads font for header label (since it's not default)"""
-        id = QFontDatabase.addApplicationFont(os.path.join
-                                                   (Path.getProjectRoot(), 
-                                                    FontSource.headerFont))
+        id = QFontDatabase.addApplicationFont(
+            os.path.join(PROJECT_ROOT, FontSource.headerFont))
         if id < 0 : logging.warn("Font cannot be loaded")
         Raleway =  QFontDatabase.applicationFontFamilies(id)
         self.setFont(QFont(Raleway[0], weight=800))
     
     def loadClockFont(self):
-        id = QFontDatabase.addApplicationFont(os.path.join (Path.getProjectRoot(),
-                                                            FontSource.clockFont))
+        id = QFontDatabase.addApplicationFont(
+            os.path.join(PROJECT_ROOT,FontSource.clockFont))
         if id < 0 : logging.warn("Font cannot be loaded")
         ClockFont =  QFontDatabase.applicationFontFamilies(id)
         self.setFont(QFont(ClockFont[0], weight=600))

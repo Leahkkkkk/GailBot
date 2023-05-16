@@ -53,8 +53,9 @@ download = "https://github.com/mumair01/GailBot/releases"
 tracker = "https://github.com/mumair01/GailBot/issues"
 
 
+
 [tool.setuptools.packages.find]
-where =["."]
+where =["gailbot"]
 
 [tool.setuptools.dynamic]
 version = {attr = "gailbot.__version__"}
@@ -62,7 +63,7 @@ version = {attr = "gailbot.__version__"}
 # pyproject.toml
 [tool.pytest.ini_options]
 minversion = "6.0"
-addopts = "-ra -q"
+addopts = "-rA"
 testpaths = [
     "tests",
 ]

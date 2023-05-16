@@ -10,11 +10,12 @@
 '''
 # Standard library imports
 from typing import Dict, Any, List
+from gailbot.core.utils.logger import makelogger
 import itertools
 # Local imports
 # Third party imports
 
-
+logger = makelogger("recognition_result")
 class Alternative:
     """
     Models the smallest unit of a transcription result.
@@ -212,6 +213,9 @@ class RecognitionResult:
                 'confidence'.
         """
         labels = list()
+        if not self.items or not self.items["speaker_labels"]:
+            return labels
+        
         for label in self.items["speaker_labels"]:
             labels.append({
                 "start_time": label.get("from"),
@@ -373,8 +377,9 @@ class RecognitionResult:
                 self.items["results"] = results_array
             return True
         except Exception as e:
-            print("parsing excepion", e)
-
+            logger.error(e, exc_info=e)
+            
+            
     def _aggregate(self, results: List[Result], aggregation_key: str,
                    only_final: bool) -> List[Any]:
         """

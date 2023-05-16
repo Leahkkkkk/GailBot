@@ -9,10 +9,10 @@ Modified By:  Siara Small  & Vivian Li
 -----
 Description implement pop up message dialogue to display message for user
 '''
-from typing import List 
-from util.Style import Color
-from util.Logger import makeLogger
-from view.widgets.Background import initSecondaryColorBackground
+from ..config.Style import Color
+from gbLogger import makeLogger
+from .Background import initSecondaryColorBackground
+from view.config.Style import STYLE_DATA
 from PyQt6.QtWidgets import QMessageBox
 
 
@@ -32,19 +32,18 @@ class ConfirmBox:
         """
         self.logger = makeLogger("Frontend")
         self.msgBox = QMessageBox(text=msg)
-        self.msgBox.setStyleSheet(f"color:{Color.MAIN_TEXT};")
+        self.msgBox.setStyleSheet(STYLE_DATA.StyleSheet.MESSAGE_BOX)
         self.msgBox.setIcon(QMessageBox.Icon.Warning)
         
        
         self.msgBox.setStandardButtons(
             confirmButton| QMessageBox.StandardButton.Cancel)
         for button in self.msgBox.buttons():
-            button.setStyleSheet("color:#000;")
+            button.setStyleSheet(STYLE_DATA.StyleSheet.MESSAGE_BOX_BTN)
         self.msgBox.buttonClicked.connect(self._confirm)
         self.confirm = confirm 
         initSecondaryColorBackground(self.msgBox)
         self.msgBox.exec()
-        
     
     def _confirm(self, button):
         """ Check and handle user's confirmation 

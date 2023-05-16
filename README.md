@@ -226,8 +226,8 @@ class CombineTurns(GBPlugin):
     def __init__(self) -> None:
         super().__init__()
 
-    def apply_plugin(self, dependency_outputs: Dict[str, Any],
-                     plugin_input: PluginMethodSuite) -> List[Utt]:
+    def apply(self, dependency_outputs: Dict[str, Any],
+                     methods: PluginMethodSuite) -> List[Utt]:
         # Combine all the utterances in the utterance map into a single
         # conversation.
         combined = list()

@@ -10,25 +10,19 @@ Modified By:  Siara Small  & Vivian Li
 '''
 
 import os
-
-from util.Style import (
-    Color, 
-    FontSize, 
-    Asset
+from typing import Tuple
+from view.config.Style import (
+    STYLE_DATA,
+    FileTableDimension 
 )
-from util.Text import TranscribeProgressText as Text
-from util.Text import FileTableHeader
-from util.Style import Dimension, FileTableDimension, FontFamily
-from util.Logger import makeLogger
-from util.Path import getProjectRoot
-from view.widgets.Background import addLogo
-from view.Signals import FileSignals
-from view.widgets import MsgBox
-from view.widgets import (
-    Label,   
-    Button,
-    FileTable)
-from view.widgets import Button
+from view.config.Text import PROGRESS_PAGE as Text
+from view.config.Text import FILE_TABLE_HEADER
+from config_frontend import PROJECT_ROOT
+from gbLogger import makeLogger
+from view.pages.BasicPage import BasicPage
+from view.signal.signalObject import FileSignal, GBTranscribeSignal
+from view.widgets import Label 
+from view.components.FileTable import SourceTable, DATA_FIELD
 
 
 from PyQt6.QtWidgets import QLabel, QVBoxLayout, QWidget
@@ -40,17 +34,14 @@ top = Qt.AlignmentFlag.AlignTop
 center = Qt.AlignmentFlag.AlignHCenter
 
 
-class TranscribeProgressPage(QWidget):
+class TranscribeProgressPage(BasicPage):
     """ class for transcription in progress page """
-    def __init__(
-        self, 
-        signals: FileSignals, 
-        * args, 
-        **kwargs) -> None:
+    def __init__(self, *args,  **kwargs) -> None:
         """ initializes class """
         super().__init__(*args, **kwargs)
-        self.signals = signals
-        self.logger = makeLogger("F")
+        self.sourceSignal = FileSignal
+        self.transcribeSignal = GBTranscribeSignal
+        self.logger = makeLogger()
         self._initWidget()
         self._initstyle()
         self._initLayout()
@@ -66,93 +57,83 @@ class TranscribeProgressPage(QWidget):
         
     def _initWidget(self):
         """ initialize widgets """
-        self.label = Label.Label(
-            Text.mainLabelText, FontSize.HEADER2, FontFamily.MAIN)
+        self.label = Label(Text.HEADER, STYLE_DATA.FontSize.HEADER2, STYLE_DATA.FontFamily.MAIN)
         self.label.setAlignment(center)
         self.loadIcon = QLabel()
         self.IconImg = QMovie(
-            os.path.join(getProjectRoot(), Asset.transcribing))
+            os.path.join(PROJECT_ROOT, STYLE_DATA.Asset.transcribing))
         self.loadIcon.setMovie(self.IconImg)
         self.loadStart()
-       
-        self.loadingText = Label.Label(
-            Text.loadingText,FontSize.SMALL, FontFamily.OTHER)
+        self.loadingText = Label(Text.LOADING, STYLE_DATA.FontSize.SMALL, STYLE_DATA.FontFamily.OTHER)
         self.loadingText.setAlignment(center)
-        self.Caption = Label.Label(
-            Text.inProgressText, FontSize.HEADER3, FontFamily.MAIN)
-        self.cancelBtn = Button.ColoredBtn(
-            Text.cancelText, 
-            Color.GREYDARK, 
-            FontSize.BTN)
-        self.fileTable = FileTable.FileTable(
-            FileTableHeader.transcribePage, self.signals)
+        # self.CANCEL = ColoredBtn(Text.cancelText, STYLE_DATA.Color.GREYDARK, STYLE_DATA.FontSize.BTN)
+        self.fileTable = SourceTable(
+            FILE_TABLE_HEADER.TRANSCRIBE,
+            self.sourceSignal, 
+            dataKeyToCol={
+                DATA_FIELD.TYPE: 0, 
+                DATA_FIELD.NAME: 1, 
+                DATA_FIELD.PROGRESS: 2},
+            appliedCellWidget={})
         self.fileTable.resizeCol(FileTableDimension.transcribePage)
-        
+    
     def _initstyle(self):
         """ styles loading icon movie """
         self.loadIcon.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.loadIcon.setFixedSize(
-            QtCore.QSize(Dimension.LARGE_ICON, Dimension.LARGE_ICON))
+            QtCore.QSize(STYLE_DATA.Dimension.LARGE_ICON, STYLE_DATA.Dimension.LARGE_ICON))
         self.loadIcon.setScaledContents(True)
-        
+    
+    def changeColor(self):
+        super().changeColor()
+    
+    def changefont(self):
+        self.label.fontChange(STYLE_DATA.FontSize.HEADER2)
+        self.loadingText.fontChange(STYLE_DATA.FontSize.SMALL)
+   
     def _initLayout(self):
-        """ intiializes layout """
+        """ initialize layout """
         self.verticalLayout = QVBoxLayout()
+        self.verticalLayout.addWidget(self.logoContainer, alignment=
+                                      self.logopos)
         self.container = QWidget()
         self.containerLayout = QVBoxLayout()
-        self.container.setFixedWidth(Dimension.TABLECONTAINERWIDTH)
+        self.container.setFixedWidth(STYLE_DATA.Dimension.TABLECONTAINERWIDTH)
         self.container.setLayout(self.containerLayout)
-        self.containerLayout.addWidget(self.Caption)
         self.containerLayout.addWidget(self.fileTable)
         self.setLayout(self.verticalLayout)
         """ add widget to layout """
-        addLogo(self.verticalLayout)
         self.verticalLayout.addWidget(self.label)
-        self.label.setContentsMargins(0, Dimension.MEDIUM_SPACING, 0, 0)
+        self.label.setContentsMargins(0, STYLE_DATA.Dimension.MEDIUM_SPACING, 0, 0)
         self.verticalLayout.addWidget(self.loadIcon, 
                                       alignment = center|top)
         self.verticalLayout.addWidget(self.loadingText, alignment = top)
         self.verticalLayout.addWidget(self.container, alignment = top|center)
         self.verticalLayout.addStretch()
-        self.verticalLayout.addWidget(self.cancelBtn, 
-                                      alignment = center)
-        self.Caption.setContentsMargins(0, 0, 0, 0)
-        # self.verticalLayout.setSpacing(Dimension.MEDIUM_SPACING)
-        self.verticalLayout.addStretch()
         
+         
     def _connectSignal(self):
         """ connects signal. change enableCancel to true when backend functionality allows for it. """
-        enableCancel = False
-        self.cancelBtn.setDisabled(True)
-        if (enableCancel):
-            self.cancelBtn.clicked.connect(self._confirm)
-        self.signals.progressChanged.connect(self.editFileProgess)
+        GBTranscribeSignal.sendToTranscribe.connect(self.fileTable.resetFileDisplay)
+        GBTranscribeSignal.updateProgress.connect(self.editFileProgess)
+        STYLE_DATA.signal.changeFont.connect(self.changefont)
+        STYLE_DATA.signal.changeColor.connect(self.changeColor)
         
-    def _confirm(self):
-        """ pulls up message box that prompts user to confirm cancellation """
-        self.confirmCancel = MsgBox.ConfirmBox( 
-            Text.loggerMsg, self.cancelGailBot)
-    
     def setLoadingText(self, text):
         """ functionality to be able to dynamically change the text under the loading icon 
         
         Args: 
             text (str): the message to display under the loading icon
         """
-        self.loadingText = Label.Label(text,
-                                      FontSize.SMALL,
-                                      FontFamily.OTHER)
+        self.loadingText = Label(text, STYLE_DATA.FontSize.SMALL, STYLE_DATA.FontFamily.OTHER)
 
-    def cancelGailBot(self):
-        """ simulates the cancellation of gailbot- will rely on backend functionality when complete """
-        self.logger.info(Text.loggerMsg)
-        self.signals.cancel.emit()
-        
-    def editFileProgess(self, progress: str):
+    def editFileProgess(self, progress: Tuple[str, str]):
         """ change the display of file progress on the table
 
         Args:
             progress (str): the message to show the file progress
         """
         self.logger.info("change file progress status")
-        self.fileTable.changeAllFileProgress(progress)
+        self.fileTable.showOneFileProgress(progress)
+    
+    

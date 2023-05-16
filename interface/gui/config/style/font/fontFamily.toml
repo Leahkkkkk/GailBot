@@ -1,8 +1,0 @@
-[fontFamily]
-MAIN       = "Raleway"
-OTHER      = "Helvetica"
-CLOCK      = "Digital"
-
-[fontSource]
-headerFont = "asset/font/Raleway.ttf"
-clockFont  = "asset/font/digital.ttf"

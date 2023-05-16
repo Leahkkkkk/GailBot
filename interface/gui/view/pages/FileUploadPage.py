@@ -9,28 +9,21 @@ Modified By:  Siara Small  & Vivian Li
 -----
 Description: implementation of file upload page 
 '''
-
-from typing import List
-
-from util.Style import (
-    FileTableDimension, 
-    Asset, 
-    StyleSheet,
-    Color, 
-    FontSize,
-    Dimension,
-    FontFamily
-)
-from util.Text import FileTableHeader
-from util.Text import FileUploadPageText as Text 
-from util.Style import FontSize as FS
-from util.Style import buttonStyle
-from util.Logger import makeLogger
-from view.Signals import FileSignals
-from view.widgets import Label, Button, FileTable
-from view.widgets.Background import addLogo
-from view.widgets import MsgBox
-
+from view.config.InstructionText import INSTRUCTION
+from typing import List, Tuple, Dict
+from view.config.Style import STYLE_DATA, FileTableDimension
+from view.config.Text import FILE_TABLE_HEADER
+from view.config.Text import FILEUPLOAD_PAGE as Text 
+from view.pages.BasicPage import BasicPage
+from gbLogger import makeLogger
+from view.signal.signalObject import FileSignal, GBTranscribeSignal
+from view.components.FileTable import TableWidget, SourceTable, DATA_FIELD
+from view.widgets import (
+    Label, 
+    ColoredBtn, 
+    IconBtn, 
+    ConfirmBox) 
+from view.widgets.Button import InstructionBtn
 from PyQt6.QtWidgets import (
     QWidget, 
     QVBoxLayout,
@@ -44,7 +37,7 @@ left   = Qt.AlignmentFlag.AlignLeft
 right  = Qt.AlignmentFlag.AlignRight
 top    =  Qt.AlignmentFlag.AlignTop
 
-class FileUploadPage(QWidget):
+class FileUploadPage(BasicPage):
     """ implement the file upload table
     
     Constructor Args:
@@ -56,68 +49,82 @@ class FileUploadPage(QWidget):
     """
     def __init__(
         self, 
-        profileNames: List[str],
-        signal: FileSignals, 
         *args, 
         **kwargs) -> None:
         """ initializes file upload page """
+        self.pageInstruction = INSTRUCTION.FILE_UPLOAD_INS
         super().__init__(*args, **kwargs)
-        self.signal = signal
-        self.profileNames = profileNames
-        self.logger = makeLogger("F")
+        self.signal = FileSignal
+        self.logger = makeLogger()
         self._initWidget()
         self._initLayout()
         self._initStyle()
         self._connectSignal()
-        
+    
+    def initAvailableProfiles(self, profiles: List[str]):
+        """ initialize a list of available profiles to file table """
+        self.fileTable.initProfiles(profiles)
+    
     def _connectSignal(self):
         """ connects signals to different functions upon button clicks """
         self.logger.info("")
         self.uploadFileBtn.clicked.connect(self.fileTable.uploadFile)
-        self.transcribeBtn.clicked.connect(self.fileTable.transferState) 
+        self.transcribeBtn.clicked.connect(self.sendToConfirm) 
         self.removeAll.clicked.connect(self._confirmRemove)
         self.fileTable.viewSignal.nonZeroFile.connect(self._allowTranscribe)
         self.fileTable.viewSignal.ZeroFile.connect(self._disallowTranscribe)
         self._disallowTranscribe()
-        
+        STYLE_DATA.signal.changeColor.connect(self.changeColor)
+        STYLE_DATA.signal.changeFont.connect(self.fontChange)
+        GBTranscribeSignal.sendToTranscribe.connect(self.removeFromTable)
+
+
     def _initWidget(self):
         """ initializes widgets """
         self.logger.info("")
-        self.label = Label.Label(Text.header, FS.HEADER2, FontFamily.MAIN)
-        self.gotoMainBtn = Button.iconBtn(
-            Asset.arrowImg, Text.returnMainText) 
-        self.recordBtn = Button.ColoredBtn(
-            Text.recordBtnText, Color.PRIMARY_BUTTON, FontSize.BTN)
-        self.uploadFileBtn = Button.ColoredBtn(
-            Text.uploadBtnText, Color.PRIMARY_BUTTON, FontSize.BTN)
-        self.transcribeBtn = Button.ColoredBtn(
-            Text.transcribeBtnText, Color.SECONDARY_BUTTON, FontSize.BTN)
-        self.settingBtn = Button.ColoredBtn(
-            Text.settingBtnText, Color.PRIMARY_BUTTON, FS.SETTINGICON)
+        self.label = Label(Text.HEADER, STYLE_DATA.FontSize.HEADER2, STYLE_DATA.FontFamily.MAIN)
+        self.gotoMainBtn = IconBtn(
+            STYLE_DATA.Asset.arrowImg, Text.RETURN_MAIN) 
+        self.uploadFileBtn = ColoredBtn(
+            Text.UPLOAD, STYLE_DATA.Color.PRIMARY_BUTTON, STYLE_DATA.FontSize.BTN)
+        self.transcribeBtn = ColoredBtn(
+            Text.TRANSCRIBE, STYLE_DATA.Color.SECONDARY_BUTTON, STYLE_DATA.FontSize.BTN)
+        self.settingBtn = ColoredBtn(
+            Text.SETTING_BTN, STYLE_DATA.Color.PRIMARY_BUTTON, STYLE_DATA.FontSize.SETTINGICON)
         self.settingBtn.setFixedSize(
-            QSize(Dimension.ICONBTN,Dimension.ICONBTN))
-        self.removeAll = Button.ColoredBtn(
-            Text.removeBtnText, Color.PRIMARY_BUTTON, FontSize.BTN)
-        self.fileTable = FileTable.FileTable(
-            FileTableHeader.fileUploadPage, 
-            self.signal,
-            self.profileNames,
-            {"check", "delete", "details", "edit"})
-        self.fileTable.resizeCol(FileTableDimension.fileUploadPage)
+            QSize(STYLE_DATA.Dimension.ICONBTN, STYLE_DATA.Dimension.ICONBTN))
+        self.removeAll = ColoredBtn(
+            Text.REMOVE_ALL, STYLE_DATA.Color.PRIMARY_BUTTON, STYLE_DATA.FontSize.BTN)
         
+        self.fileTable = SourceTable(
+           headers=FILE_TABLE_HEADER.FILE_UPLOAD, 
+           signal =self.signal,
+           dataKeyToCol={DATA_FIELD.TYPE: 1,
+                         DATA_FIELD.NAME: 2, 
+                         DATA_FIELD.PROFILE: 3,
+                         DATA_FIELD.STATUS: 4, 
+                         DATA_FIELD.DATE: 5},
+            appliedCellWidget={
+             TableWidget.CHECK, 
+             TableWidget.PROFILE_DETAIL, 
+             TableWidget.CHANGE_PROFILE, 
+             TableWidget.REMOVE})
+        self.fileTable.resizeCol(FileTableDimension.fileUploadPage)
+    
     def _initLayout(self):
         """ initializes layout """
         self.logger.info("")
         self.verticalLayout = QVBoxLayout()
+        
         self.setLayout(self.verticalLayout)
         """ adds widget to layout """
-        addLogo(self.verticalLayout)
+        self.verticalLayout.addWidget(self.logoContainer, alignment=self.logopos)
         self.verticalLayout.addWidget(self.gotoMainBtn, alignment = left)
         self.verticalLayout.addWidget(self.label, alignment = center)
         
         self.middleLayout = QVBoxLayout()
         self.fileTableContainer = QWidget(self)
-        self.fileTableContainer.setFixedWidth(Dimension.TABLECONTAINERWIDTH)
+        self.fileTableContainer.setFixedWidth(STYLE_DATA.Dimension.TABLECONTAINERWIDTH)
         self.fileTableContainer.setLayout(self.middleLayout)
         
         self.middleLayout.addWidget(self.settingBtn, alignment = right|top)
@@ -126,46 +133,59 @@ class FileUploadPage(QWidget):
         
         self.addFileBtnContainer = QWidget(self)
         self.containerLayout = QHBoxLayout()
-        self.containerLayout.setSpacing(Dimension.LARGE_SPACING)
         self.addFileBtnContainer.setLayout(self.containerLayout)
-        self.containerLayout.addWidget(self.recordBtn,
-                                       alignment = center)
         
-        self.containerLayout.addWidget(self.uploadFileBtn,
-                                      alignment = center)
-        
-        self.containerLayout.addWidget(self.removeAll,
-                                        alignment = center)
-        self.verticalLayout.addWidget(self.fileTableContainer,
-                                      alignment = center)
-        self.verticalLayout.addWidget(self.addFileBtnContainer,
-                                       alignment = center)
-        
-        self.verticalLayout.addWidget(self.transcribeBtn,
-                                      alignment = center)
+        self.containerLayout.addWidget(self.uploadFileBtn, alignment = center)
+        self.containerLayout.addWidget(self.removeAll, alignment = center)
+        self.verticalLayout.addWidget (self.fileTableContainer, alignment = center)
+        self.verticalLayout.addWidget (self.addFileBtnContainer, alignment = center)
+        self.verticalLayout.addWidget(self.transcribeBtn, alignment = center)
+        self.verticalLayout.addWidget(self.instructionBtn, alignment = self.infopos)
+        self.verticalLayout.setSpacing(3) 
         
     def _initStyle(self):
         """ initializes the style """
         self.logger.info("")
         self.gotoMainBtn.setFixedSize(
-            QSize(Dimension.LBTNWIDTH,Dimension.BTNHEIGHT))
-        self.gotoMainBtn.setStyleSheet(StyleSheet.goToMain)
+            QSize(STYLE_DATA.Dimension.LBTNWIDTH, STYLE_DATA.Dimension.BTNHEIGHT))
+        self.gotoMainBtn.setStyleSheet(STYLE_DATA.StyleSheet.goToMain)
 
+    def changeColor(self):
+        super().changeColor()
+        self.gotoMainBtn.setStyleSheet(STYLE_DATA.StyleSheet.goToMain)
+        self.settingBtn.colorChange(STYLE_DATA.Color.PRIMARY_BUTTON)
+        self.uploadFileBtn.colorChange(STYLE_DATA.Color.PRIMARY_BUTTON)
+        self.removeAll.colorChange(STYLE_DATA.Color.PRIMARY_BUTTON)
+         
+    def fontChange(self):
+        self.label.fontChange(STYLE_DATA.FontSize.HEADER2)
+        self.transcribeBtn.fontChange(STYLE_DATA.FontSize.BTN)
+        self.uploadFileBtn.fontChange(STYLE_DATA.FontSize.BTN)
+        self.removeAll.fontChange(STYLE_DATA.FontSize.BTN)
+    
+    def sendToConfirm(self):
+        GBTranscribeSignal.sendToConfirm.emit(self.fileTable.getSelectedFile())
+        
+    
+    def removeFromTable(self, files: List[Tuple[str, Dict]]):
+        for file in files:
+            name, data = file 
+            self.fileTable.deleteSucceed(name)
+    
     def _allowTranscribe(self):
         """ activates the transcribe button """
         self.logger.info("")
         self.transcribeBtn.setEnabled(True)
-        self.transcribeBtn.setStyleSheet(buttonStyle.ButtonActive)
+        self.transcribeBtn.setStyleSheet(STYLE_DATA.buttonStyle.ButtonActive)
         
     def _disallowTranscribe(self):
         """ deactivates the transcribe button """
         self.logger.info("")
         self.transcribeBtn.setDisabled(True)
-        self.transcribeBtn.setStyleSheet(buttonStyle.ButtonInactive)
+        self.transcribeBtn.setStyleSheet(STYLE_DATA.buttonStyle.ButtonInactive)
         
     def _confirmRemove(self):
         """ open pop up message to confirm removal of all files """
         self.logger.info("")
-        MsgBox.ConfirmBox(Text.removeWarnText, self.fileTable.removeAll)
-    
+        ConfirmBox(Text.REMOVE_CONFIRM, self.fileTable.deleteAll)
     

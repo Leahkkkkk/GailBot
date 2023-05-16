@@ -9,8 +9,8 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
-from util.Style import Dimension, Color
-
+from ..config.Style import Dimension, Color
+from view.config.Style import StyleSheet
 from PyQt6.QtWidgets import QSlider
 from PyQt6 import QtCore, QtGui, QtWidgets
 
@@ -26,23 +26,7 @@ class ProgressBar (QSlider):
         self.setMaximum(100)
     
     def initStyle(self):
-        self.setStyleSheet(
-            "QSlider::groove:horizontal {"
-            "border: 1px solid #bbb;"
-            f"background: {Color.PRIMARY_BUTTON};"
-            "height: 10px; border-radius: 4px;"
-            "}"
-            "QSlider::add-page:horizontal {"
-            f"background: {Color.GREYEXTRALIGHT};"
-            "border: 1px solid #777;"
-            "height: 10px; border-radius: 4px;"
-            "}"
-            "QSlider::handle:horizontal {"
-            "background: qlineargradient(x1:0, y1:0, x2:1, \
-                y2:1,stop:0 #eee, stop:1 #ccc);"
-            "border: 1px solid #777;width: 13px; margin-top: \
-                -2px; margin-bottom: -2px; border-radius: 4px;"
-            "}")
+        self.setStyleSheet(StyleSheet.PROGRESS_BAR)
         self.setEnabled(False)
     
     def updateValue(self, value: int):

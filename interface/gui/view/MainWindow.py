@@ -9,40 +9,29 @@ Modified By:  Siara Small  & Vivian Li
 -----
 Description: implement the main window for the GUI interface
 '''
-from typing import List 
-import os 
-import shutil
-import glob
-
-from util import Logger
-from config.ConfigPath import BackEndDataPath
-from view.components import (
+from typing import List, Dict, Tuple
+import logging 
+from gbLogger import Logger
+from view.components.Window import (
     MainStack, 
     StatusBar, 
     MenuBar, 
     Console, 
 )
+from view.util.ErrorMsg import WARN, ERR
+from view.signal.signalObject import FileSignal, GBTranscribeSignal, GuiSignal
 
-from view import Signals
-from view.components import WorkSpaceDialog
-from view.widgets import MsgBox
-from util.Style import Dimension
-from util.Path import getProjectRoot
-from util.GailBotData import getWorkPath
-from util.Text import About
-
-
-from PyQt6.QtCore import QSize, QObject, pyqtSignal
+from view.widgets import WarnBox
+from view.config.Style import Dimension
+from view.config.Text import ABOUT
+from config_frontend import FRONTEND_CONFIG_ROOT
+from PyQt6.QtCore import QSize
 from PyQt6.QtWidgets import QMainWindow
 
-class ViewSignals(QObject):
-    restart = pyqtSignal()
-    
 class MainWindow(QMainWindow):
     """ mainwindow  of the GUI App"""
     def __init__(
         self, 
-        settingkey: List [str ]
     ):
         """initialize mainWindow object 
         
@@ -50,125 +39,157 @@ class MainWindow(QMainWindow):
             settingkey: (List [str ]) a list of predefined setting profile names
         """
         super().__init__()
-        self.fileTableSignals = Signals.FileSignals()
-        self.profileSignals = Signals.ProfileSignals()
-        self.viewSignal = ViewSignals()
-        self.StatusBar = StatusBar.StatusBar()
-        self.setStatusBar(self.StatusBar)
-        self.MenuBar = MenuBar.ManuBar()
-        self.setMenuBar(self.MenuBar)
-        self.Console = Console.Console()
-        self.logger = Logger.makeLogger("F")
+        # initialize the main view controller 
+        self.logger = Logger.makeLogger()
+        self.logger.info(f"the frontend configuration file is stored at {FRONTEND_CONFIG_ROOT}")
         
-        self.setWindowTitle(About.APP_TITTLE)
+        # initialize the signal
+        self.fileTableSignals = FileSignal
+        self.transcribeSignal = GBTranscribeSignal
+        self.viewSignal = GuiSignal
+        self.logger.info(f"signals initialized")
+        
+        # initialzie the menu bar and the footer
+        self.StatusBar = StatusBar()
+        self.setStatusBar(self.StatusBar)
+        self.MenuBar = MenuBar()
+        self.setMenuBar(self.MenuBar)
+        self.Console = Console()
+        self.logger.info("console initialized")
+        self.setWindowTitle(ABOUT.APP_TITTLE)
         self.setMinimumSize(QSize(Dimension.WIN_MIN_WIDTH, Dimension.WIN_MIN_HEIGHT))
         self.setMaximumSize(QSize(Dimension.WINMAXWIDTH, Dimension.WINMAXHEIGHT))
-
-    
-        self.MainStack = MainStack.MainStack(
-            settingkey,
-            self.fileTableSignals, 
-            self.profileSignals,
-            parent=self)
-        
+        self.MainStack = MainStack() 
+        self.logger.info("main stack initialized")
         self.setCentralWidget(self.MainStack)
         self.setContentsMargins(0,0,0,0)
         self._connectSignal()
-        self._openWorkSpaceDialog()
+        self._initLogger()
 
+    def addAvailableSetting(self, profiles: List[Tuple[str, Dict]]):
+        """ initialize available setting to interface"""
+        try:
+            self.MainStack.addAvailableSettings(profiles)
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            self.showError(ERR.FAIL_TO.format("load setting"))
+    
+    def addAvailableEngineSettings(self, settings: List[Tuple[str, Dict]]):
+        """ initialize available setting to interface"""
+        try:
+            self.MainStack.addAvailableEngines(settings)
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            self.showError(ERR.FAIL_TO.format("load setting"))
+    
+    def addAvailablePluginSuites(self, pluginSuites: List[Tuple[str, Dict[str, str]]]):
+        """ initialize available plugin to interface """
+        try:
+            self.MainStack.addAvailablePluginSuites(pluginSuites)
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            self.showError(ERR.FAIL_TO.format("load plugin"))
+  
     """ Functions provided to controller """
     def showTranscribeInProgress(self):
         """goes to transcribe in progress page"""
-        self.MainStack.gotoTranscribeInProgress()
-        
+        try:
+            self.MainStack.gotoTranscribeInProgress()
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            self.showError(ERR.FAIL_TO.format("load transcription in progress page"))
+            
     def showTranscribeSuccess(self):
         """goes to trancription success page"""
-        self.MainStack.gotoTranscribeSuccess()
+        try:
+            self.MainStack.gotoTranscribeSuccess()
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            self.showError(ERR.FAIL_TO.format("load transcription success page"))
     
     def showFileUploadPage(self):
         """goes to file upload page"""
-        self.MainStack.gotoFileUploadPage()
-    
-    def busyThreadPool(self):
-        """shows busy thread pool message"""
-        self.msgBox = MsgBox.WarnBox("The GailBot is too busy to receive your request!")
+        try:
+            self.MainStack.gotoFileUploadPage()
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            self.showError(ERR.FAIL_TO.format("load file upload page"))
     
     def showStatusMsg(self, msg, time=None):
         """shows status message"""
-        self.StatusBar.showStatusMsg(msg, time)
+        try:
+            self.StatusBar.showStatusMsg(msg, time)
+        except Exception as e:
+            self.showError(ERR.FAIL_TO.format("status bar message"))
     
-    def showFileProgress(self, msg):
-        self.fileTableSignals.progressChanged.emit(msg)
-    
+    def showFileProgress(self, progress: Tuple[str, str]):
+        """show file progress in transcribe in progress page"""
+        try:
+            self.transcribeSignal.updateProgress.emit(progress)
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            self.showError(ERR.FAIL_TO.format("show file progress"))
+            
     def freeThread(self):
         """clears thread message"""
-        self.StatusBar.clearMessage()
+        try:
+            self.StatusBar.clearMessage()
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            self.showError(ERR.FAIL_TO.format("clear the thread"))
     
-    def TranscribeFailed(self, err:str):
-        """shows transcription failed message"""
-        self.msgBox = MsgBox.WarnBox(f"Transcription Failed, error: {err}", 
-                                     self.showFileUploadPage)
-        self.MainStack.TranscribeProgressPage.IconImg.stop()
         
-    def confirmCancel(self):
-        """ handle event when user tries to cancel the thread """
-        self.logger.info("")
-        self.MainStack.gotoFileUploadPage()
-
-    def addFileToTables(self, file:dict):
-        """ add file to file upload table """
-        self.MainStack.addFileToTables(file)
-        
-    def updateFile(self, data:tuple):
-        """ update file information on file upload file """
-        self.MainStack.updateFile(data)
-    
-    def getLogDisplayer(self):
-        """ return the widget that display the logging message """
-        return self.Console.LogBox
-    
     def changeFiletoTranscribed(self, key:str):
         """ change the file status to be transcribed 
             currently delete the file from the table
         """
-        self.MainStack.changeToTranscribed(key)
+        try:
+            self.MainStack.changeToTranscribed(key)
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            self.showError(ERR.FAIL_TO.format("change the file status"))
+           
+            
+    def removeFile(self, key:str):
+        """ change the file status to be transcribed 
+            currently delete the file from the table
+        """
+        try:
+            self.MainStack.removeFile(key)
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            self.showError(ERR.FAIL_TO.format("change the file status"))
     
     def closeEvent(self, a0) -> None:
-        super().closeEvent(a0)
-        self._copylog()
+        """  called when application closes """
+        try:
+            super().closeEvent(a0)
+        except Exception as e:
+            self.logger.error(e, exc_info=e)
+            self.showError(ERR.FAIL_TO.format("relaunch gailbot, please restart application"))
         
+    def showError(self, errorMsg:str):
+        WarnBox(errorMsg) 
+    
     """ private function """
     def _connectSignal(self):
         """ connect to signal """
-        self.MainStack.SystemSettingPage.signal.restart.connect(self._restart)
+        self.MainStack.SettingPage.SysPage.signal.restart.connect(self._restart)
+        self.MainStack.SettingPage.SysPage.signal.clearCache.connect(
+            lambda: self.viewSignal.clearcache.emit())
         self.MenuBar.OpenConsole.triggered.connect(lambda: self.Console.show())
         self.MenuBar.CloseConsole.triggered.connect(lambda: self.Console.hide())
-        self.fileTableSignals.cancel.connect(self.confirmCancel)
     
     def _restart(self):
         """ restarting the app """
         self.viewSignal.restart.emit()
         self.hide()
         self.close()
-    
-    def _openWorkSpaceDialog(self):
-        """ open a dialog to ask user for the path to work space directory """
-        basedir = getProjectRoot()
-        if not os.path.exists(os.path.join(basedir, BackEndDataPath.workSpaceData)):
-            pathDialog = WorkSpaceDialog.WorkSpaceDialog()
-            pathDialog.exec()
 
-    def _copylog(self):
-        """ copy log file to the frontend/logfiles folder """
-        frontEndDir = getWorkPath().logFiles
+    def _initLogger(self):
+        consoleLog = Logger.ConsoleHandler(self.Console.LogBox)
+        logging.getLogger().addHandler(consoleLog)
+        logging.getLogger().setLevel(logging.DEBUG) 
         
-        if not os.path.isdir(frontEndDir):
-            os.makedirs(frontEndDir)
-            
-        files = glob.iglob(os.path.join(getProjectRoot(), "*.log"))
-        for file in files:
-            if os.path.isfile(file):
-                name = os.path.basename(file)
-                shutil.copy2(file, os.path.join(frontEndDir, name))
-                os.remove(file)
+        
     

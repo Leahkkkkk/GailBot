@@ -11,15 +11,11 @@ Description: a form page widget that display a page with a form  that accept
             user input 
 '''
 from typing import Dict 
-
-from view.widgets import Label,TextForm, ScrollArea
-from view.widgets.Background import initSecondaryColorBackground
-from util.Style import (
-    FontFamily, 
-    FontSize, 
-    Dimension,
-    Color
-)
+from .Label import Label 
+from .TextForm import TextForm
+from .ScrollArea import ScrollArea
+from .Background import initSecondaryColorBackground, initBackground
+from ..config.Style import STYLE_DATA 
 from PyQt6.QtWidgets import (
     QWidget, 
     QVBoxLayout,
@@ -51,10 +47,16 @@ class SettingForm(QWidget):
         
         self.headerText = header 
         self.formData = formData
-        self.captionText = caption
+        self.START = caption
         self._initWidget()
         self._initLayout()
+        self._connectSignal()
+    
+    def _connectSignal(self):
+        STYLE_DATA.signal.changeColor.connect(self.colorChange)
+        STYLE_DATA.signal.changeFont.connect(self.fontChange)
 
+        
     def setValue(self, values:dict) -> None:
         """ public function to set the values in the form  """
         self.setForm.setValues(values)
@@ -65,36 +67,36 @@ class SettingForm(QWidget):
 
     def _initWidget(self):
         """ initializes the widgets """
-        self.header = Label.Label(
-            self.headerText, FontSize.HEADER2,FontFamily.MAIN)
-        if self.captionText:
-            self.caption = Label.Label(
-                self.captionText, FontSize.DESCRIPTION, FontFamily.MAIN)
-        self.setForm = TextForm.TextForm(self.formData)
-        self.scroll = ScrollArea.ScrollArea()
-        self.scroll.setWidgetResizable(False)
-        self.scroll.setVerticalScrollBarPolicy(
-            Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
-        self.scroll.setWidget(self.setForm)
-        self.scroll.setFixedWidth(Dimension.FORMWIDTH)
-        self.scroll.setFixedHeight(Dimension.FORMMINHEIGHT)
-        initSecondaryColorBackground(self.scroll)
+        self.header = Label(
+            self.headerText, STYLE_DATA.FontSize.HEADER2,STYLE_DATA.FontFamily.MAIN)
+        if self.START:
+            self.caption = Label(
+                self.START, STYLE_DATA.FontSize.DESCRIPTION, STYLE_DATA.FontFamily.MAIN)
+        self.setForm = TextForm(self.formData)
+        self.setForm.setFixedWidth(STYLE_DATA.Dimension.FORMWIDTH)
+        self.setForm.setFixedHeight(STYLE_DATA.Dimension.FORMMINHEIGHT)
     
     def _initLayout(self):
         """ initializes the layout"""
         self.verticalLayout = QVBoxLayout()
         self.setLayout(self.verticalLayout)
         self.verticalLayout.addWidget(self.header, alignment = center)
-        if self.captionText:
+        if self.START:
             self.verticalLayout.addWidget(self.caption, alignment = center )
-        self.verticalLayout.addWidget(self.scroll, alignment = center)
+        self.verticalLayout.addWidget(self.setForm, alignment = center)
         self.verticalLayout.addStretch()
+        self.verticalLayout.setContentsMargins(0,0,0,0)
     
     def addWidget(self, widget: QWidget):
         self.setForm.addWidget(widget)
+
+    def colorChange(self):
+        initBackground(self.setForm, STYLE_DATA.Color.SUB_BACKGROUND)
     
-    def addWidgetTotheSide(self, widget: QWidget):
-        self.setForm.addWidgetToSide(widget)
+    def fontChange(self):
+        self.header.fontChange(STYLE_DATA.FontSize.HEADER2)
+        self.caption.fontChange(STYLE_DATA.FontSize.DESCRIPTION)
+        
 
     
         

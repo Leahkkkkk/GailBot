@@ -1,0 +1,28 @@
+# path to config_frontend files with backend data
+[workspace]
+userRoot             = "workspace/userRoot.toml"
+newUserRoot          = "workspace/newUserRoot.toml"
+wsStructure          = "workspace/wsStructure.toml"
+logManagement       = "workspace/logManagement.toml"
+fileManagement      = "workspace/fileManagement.toml"
+# path to config_frontend files with style data
+[style]
+dimension       = "style/dimension.toml"
+fontFamily      = "style/font/fontFamily.toml"
+currentColor    = "style/color/color.toml"
+darkColor       = "style/color/colorDark.toml"
+lightColor      = "style/color/colorLight.toml"
+currentFontSize = "style/font/fontSize.toml"
+largeFontSize   = "style/font/fontSizeLarge.toml"
+smallFontSize   = "style/font/fontSizeSmall.toml"
+mediumFontSize  = "style/font/fontSizeMedium.toml"
+
+# path to config_frontend files with text data
+[text]
+form            = "text/forms.toml"
+link            = "text/link.toml"
+# path to config_frontend files with the preset data 
+[setting]
+profilePreset   = "setting/profileValues.toml"
+systemSetting   = "setting/systemSettingValues.toml"
+defaultSetting  = "setting/defaultSetting.toml"

@@ -1,0 +1,85 @@
+suite_name = "gb_hilab_suite"
+
+[metadata]
+Author = "hilab"
+Email = "hilab.tufts.edu"
+Version = "v.1.0"
+
+[[plugins]]
+plugin_name = "WordTreePlugin"
+dependencies = []
+rel_path = "src/core/word_tree.py"
+module_name = "word_tree"
+
+[[plugins]]
+plugin_name = "UtteranceMapPlugin"
+dependencies = [ "WordTreePlugin",]
+rel_path = "src/core/utterance_map.py"
+module_name = "utterance_map"
+
+[[plugins]]
+plugin_name = "SpeakerMapPlugin"
+dependencies = [ "UtteranceMapPlugin",]
+rel_path = "src/core/speaker_map.py"
+module_name = "speaker_map"
+
+[[plugins]]
+plugin_name = "ConversationMapPlugin"
+dependencies = [ "SpeakerMapPlugin",]
+rel_path = "src/core/conversation_map.py"
+module_name = "conversation_map"
+
+[[plugins]]
+plugin_name = "ConversationModelPlugin"
+dependencies = [ "WordTreePlugin", "UtteranceMapPlugin", "SpeakerMapPlugin", "ConversationMapPlugin",]
+rel_path = "src/core/conversation_model.py"
+module_name = "conv_model"
+
+[[plugins]]
+plugin_name = "OverlapPlugin"
+dependencies = [ "ConversationModelPlugin",]
+rel_path = "src/analysis/overlaps.py"
+module_name = "overlaps"
+
+[[plugins]]
+plugin_name = "PausePlugin"
+dependencies = [ "ConversationModelPlugin", "OverlapPlugin"]
+rel_path = "src/analysis/pauses.py"
+module_name = "pauses"
+
+[[plugins]]
+plugin_name = "GapPlugin"
+dependencies = [ "ConversationModelPlugin", "GapPlugin", "OverlapPlugin"]
+rel_path = "src/analysis/gaps.py"
+module_name = "gaps"
+
+[[plugins]]
+plugin_name = "SyllableRatePlugin"
+dependencies = [ "ConversationModelPlugin", "GapPlugin", "OverlapPlugin", "GapPlugin"]
+rel_path = "src/analysis/syllable_rate.py"
+module_name = "syllable_rate"
+
+[[plugins]]
+plugin_name = "ChatPlugin"
+dependencies = [ "ConversationModelPlugin", "GapPlugin", "PausePlugin", "OverlapPlugin"]
+rel_path = "src/format/chat.py"
+module_name = "chat"
+
+[[plugins]]
+plugin_name = "TextPlugin"
+dependencies = [ "ConversationModelPlugin", "GapPlugin", "PausePlugin", "OverlapPlugin",]
+rel_path = "src/format/text.py"
+module_name = "text"
+
+[[plugins]]
+plugin_name = "CSVPlugin"
+dependencies = [ "ConversationModelPlugin", "GapPlugin", "PausePlugin", "OverlapPlugin",]
+rel_path = "src/format/csv.py"
+module_name = "csv"
+
+[[plugins]]
+plugin_name = "XMLPlugin"
+dependencies = [ "ConversationModelPlugin", "GapPlugin", "PausePlugin", "OverlapPlugin",]
+rel_path = "src/format/xml.py"
+module_name = "xml"
+

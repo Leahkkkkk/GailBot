@@ -13,19 +13,21 @@ Modified By:  Siara Small  & Vivian Li
 import datetime
 import time 
 
-from util.Style import (
+from view.config.Style import (
     Color, 
     FontSize, 
     Dimension, 
     Asset, 
     FontFamily
 )
-from util.Text import RecordPageText as Text
-from util.Text import RecordForm
-from util.Style import Dimension, StyleSheet
+from view.config.Text import RECORD_PAGE as Text
+from view.config.Text import RECORD_FORM
+from view.config.Style import Dimension, StyleSheet
 from view.widgets.Background import addLogo
 from view.widgets import (
-    Button, 
+    ColoredBtn, 
+    ToggleBtn,
+    IconBtn,
     Label, 
     ToggleView, 
     TextForm,
@@ -56,15 +58,15 @@ class RecordPage(QWidget):
         
     def _initWidget(self):
         """ initializes the widgets """
-        self.header = Label.Label(Text.record, 
+        self.header = Label(Text.record, 
                                   FontSize.HEADER2, 
                                   FontFamily.MAIN)
-        self.recordForm    = TextForm.TextForm(RecordForm)
-        self.toggleSetting = ToggleView.ToggleView(Text.recSet, 
+        self.recordForm    = TextForm.TextForm(RECORD_FORM)
+        self.toggleSetting = ToggleView(Text.recSet, 
                                                    self.recordForm,
                                                    header=True)
-        self.startRecordBtn = Button.ColoredBtn(Text.start, Color.PRIMARY_BUTTON)
-        self.cancelBtn = Button.ColoredBtn(Text.cancel, Color.CANCEL_QUIT)
+        self.startRecordBtn = ColoredBtn(Text.start, Color.PRIMARY_BUTTON)
+        self.CANCEL = ColoredBtn(Text.cancel, Color.CANCEL_QUIT)
         self.recordInprogress =  RecordProgress()
         self.recordInprogress.hide()
         self.toggleSetting.setScrollHeight(Dimension.DEFAULTTABHEIGHT - 80)
@@ -76,7 +78,7 @@ class RecordPage(QWidget):
         self.horizontalLayout = QHBoxLayout()
         self.horizontal.setLayout(self.horizontalLayout)
         self.horizontalLayout.addWidget(self.startRecordBtn, alignment = right)
-        self.horizontalLayout.addWidget(self.cancelBtn, alignment = left)
+        self.horizontalLayout.addWidget(self.CANCEL, alignment = left)
         self.horizontalLayout.setSpacing(Dimension.LARGE_SPACING) 
         
     def _initLayout(self):
@@ -98,7 +100,7 @@ class RecordPage(QWidget):
         """ connects signals upon button clicks """
         self.startRecordBtn.clicked.connect(
             self.startRecord)
-        self.cancelBtn.clicked.connect(
+        self.CANCEL.clicked.connect(
             self.cancelRecord)
         self.recordInprogress.endIconBtn.clicked.connect(
             self.cancelRecord)
@@ -117,7 +119,6 @@ class RecordPage(QWidget):
         self.recordForm.enableForm()
         
 
-        
 class Thread(QThread):
     """ Thread to control the value displayed on the progressbar """
     _signal = pyqtSignal(int)
@@ -170,16 +171,16 @@ class RecordProgress(QWidget):
         
     def _initWidget(self):
         """ initializes the widgets """
-        self.timeDisplay = Label.Label(
+        self.timeDisplay = Label(
             str(self.counter), 
             FontSize.HEADER1, 
             FontFamily.CLOCK, 
             others="text-align:center;")
-        self.iconBtn = Button.ToggleBtn((Asset.recordStop, Asset.recordPlay))
+        self.iconBtn = ToggleBtn((Asset.recordStop, Asset.recordPlay))
         self.iconBtn.setFixedSize(QSize(Dimension.SMALLICONBTN,Dimension.SMALLICONBTN))
         self.iconBtn.setIconSize(QSize(Dimension.SMALLICONBTN, Dimension.SMALLICONBTN))
         self.iconBtn.setStyleSheet(StyleSheet.iconBtn)
-        self.endIconBtn = Button.iconBtn(Asset.endRecording)
+        self.endIconBtn = IconBtn(Asset.endRecording)
         self.endIconBtn.setFixedSize(QSize(Dimension.SMALLICONBTN,Dimension.SMALLICONBTN))
         self.endIconBtn.setIconSize(QSize(Dimension.SMALLICONBTN, Dimension.SMALLICONBTN))
         self.endIconBtn.setStyleSheet(StyleSheet.iconBtn)
