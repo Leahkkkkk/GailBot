@@ -56,3 +56,11 @@ class DataSignal(QObject):
     deleteSucceed  = pyqtSignal(str)
     addSucceed     = pyqtSignal(str)
     editSucceed    = pyqtSignal(str)
+
+
+class OrganizerSignal(QObject):
+    getAvailableEngines = pyqtSignal(list) 
+    getAvailablePlugins = pyqtSignal(list)
+    getAvailableProfiles = pyqtSignal(list)
+    
+    

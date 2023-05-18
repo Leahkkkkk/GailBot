@@ -55,7 +55,13 @@ class FileOrganizer:
         self.logger = makeLogger()
         self.registerSignal(fileSignal)
     
-    def registerSignal(self, signal:DataSignal):
+    def registerSignal(self, signal: DataSignal):
+        """ connect signal to the handler functions 
+
+        Args:
+            signal (DataSignal): an instance of DataSignal that stores signals
+                                 related to file data 
+        """
         signal.fileProfileRequest.connect(self.requestProfile)
         signal.postRequest.connect(self.post)
         signal.changeFileProfileRequest.connect(self.editFileProfile)

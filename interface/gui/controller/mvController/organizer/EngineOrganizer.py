@@ -30,13 +30,26 @@ class EngineOrganizer:
         self.registerSignal(engineSignal)
     
     def registerSignal(self, signal: DataSignal):
-       signal.postRequest.connect(self.postHandler)
-       signal.deleteRequest.connect(self.deleteHandler)
-       signal.getRequest.connect(self.getHandler)
-       signal.editRequest.connect(self.editHandler)
-       signal.viewSourceRequest.connect(self.viewSourceHandler)
+        """ connect signal to the handler functions 
+
+        Args:
+            signal (DataSignal): an instance of DataSignal that stores signals
+                                    related to engine data 
+        """
+        signal.postRequest.connect(self.postHandler)
+        signal.deleteRequest.connect(self.deleteHandler)
+        signal.getRequest.connect(self.getHandler)
+        signal.editRequest.connect(self.editHandler)
+        signal.viewSourceRequest.connect(self.viewSourceHandler)
         
     def postHandler(self, postRequest: Request) -> None :
+        """ post a file data to the backend database
+
+        Args:
+            postRequest (Request): an instance of Request object that stores the 
+                                   data to be posted as well as success and failure 
+                                   continuation function
+        """
         self.logger.info(f"received post request")
         name, data = postRequest.data
         data = data.copy() 
@@ -114,6 +127,14 @@ class EngineOrganizer:
             
 
     def viewSourceHandler(self, viewRequest: Request) -> None:
+        """ given a request that specifies the name of the engine, 
+            response with the path to the source file
+
+        Args:
+            viewRequest (Request): an instance og request object that 
+                                  stores tha name of the source and the 
+                                  success and failure continuation
+        """ 
         name = viewRequest.data 
         try:
             path = self.gb.get_engine_src_path(name)

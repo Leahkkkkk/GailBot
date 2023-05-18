@@ -39,7 +39,6 @@ class ViewController():
         """
         self.window.addAvailablePluginSuites(pluginSuites)
         
-     
     def addAvailableEngineSetting(self, engines: List[Tuple[str, Dict]]):
         """ add the available engine setting to the interface
 
@@ -67,7 +66,6 @@ class ViewController():
         """
         self.window.showFileUploadPage()
         
-    
     def showStatusMsg(self, msg, time = 2000):
         """ show msg on the gui's status bar
 

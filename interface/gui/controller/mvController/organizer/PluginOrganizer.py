@@ -41,6 +41,12 @@ class PluginOrganizer:
         self.registerSignals(pluginSignals)
         
     def registerSignals(self, signals: DataSignal):
+        """ connect the handler functions with the signal 
+
+        Args:
+            signals (DataSignal): an instance of DataSignal object that 
+                                  stores signal related to plugin data
+        """
         signals.postRequest.connect(self.addSuite)
         signals.detailRequest.connect(self.getPluginSuiteDetail)
         signals.deleteRequest.connect(self.deleteSuite)

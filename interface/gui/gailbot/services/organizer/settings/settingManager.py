@@ -1,8 +1,16 @@
+'''
+# -*- coding: utf-8 -*-
+@Author  :   Vivian Li , Siara Small 
+@Date    :   2023/05/17
+@Last Modified By :   Vivian, Siara Small
+@Last Modified Time :   2023/05/17 19:50:58
+'''
+
+
 from typing import Dict, Union, List
 import os
 
 from .objects import SettingDict, SettingObject, PluginSuiteSetObj, EngineSetObj
-
 from gailbot.core.utils.general import (
     is_file, 
     is_directory, 
@@ -33,8 +41,10 @@ class SettingManager():
         """ constructing the setting manager
 
         Args:
-            workspace (str): the path to the directory stores all the setting files
-            load_exist (bool, optional): if true , load existing setting in workspace. Defaults to True.
+            workspace (str): the path to the directory stores all the 
+                             setting files
+            load_exist (bool, optional): if true , load existing setting in 
+                             workspace. Defaults to True.
         """
         self.workspace = workspace
         self.engine_set_space = os.path.join(workspace, "engine_setting")
@@ -216,18 +226,34 @@ class SettingManager():
             in a unified format, the path does not guaranteed to indicate 
             an existing setting file
         """
-        return os.path.join(self.engine_set_space, name + ".toml")
-    
-    def rename_engine_setting(self, new_name:str, orig_name:str) -> str:
-        raise NotImplementedError()
+        return os.path.join(self.engine_set_space, name + ".toml")  
     
     def get_engine_setting_data(self, name:str) -> Union[bool, Dict[str, str]]:
+        """ get the setting data of the engine setting
+
+        Args:
+            name (str): the name of the engine
+
+        Returns:
+            Union[bool, Dict[str, str]]: return the dictionary that stores the 
+                                         the engine data if the data engine 
+                                         name is a valid engine in the setting 
+                                         manager, else return false 
+        """ 
         if self.is_engine_setting(name):
             return self.engine_settings[name].get_setting_dict()
         else:
             return False
     
     def _get_profile_engine(self, profile_name: str) -> EngineSetObj:
+        """return the engine used in the profile identifies by profile name 
+
+        Args:
+            profile_name (str): the name of the profile to be queried
+
+        Returns:
+            EngineSetObj: the engine object 
+        """
         profile_obj = self.profiles[profile_name]
         engine_obj = self.engine_settings[profile_obj.engine_setting_name]
         return engine_obj
@@ -250,6 +276,11 @@ class SettingManager():
              return False 
 
     def get_default_engine_setting_name(self) -> str:
+        """ return the name of the default engine 
+
+        Returns:
+            str: _description_
+        """
         return self.default_engine_setting
     
     #####################################################################
