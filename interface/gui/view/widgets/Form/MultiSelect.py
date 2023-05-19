@@ -57,4 +57,4 @@ class MultipleSelect(QWidget, FormWidget):
                 self.logger.error(e, exc_info=e)
 
     def changeFont(self):
-        self.labelwidget.fontChange(STYLE_DATA.FontSize.HEADER4)
+        self.labelwidget.changeFont(STYLE_DATA.FontSize.HEADER4)

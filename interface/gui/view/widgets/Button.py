@@ -10,7 +10,7 @@ Modified By:  Siara Small  & Vivian Li
 Description: implement reusable button widgets
 """
 import os
-from typing import List
+from typing import List, Dict
 from PyQt6.QtCore import QTimer
 from view.config.Text import BTN_TEXT as Text
 from config_frontend import PROJECT_ROOT
@@ -76,7 +76,7 @@ class ColoredBtn(QPushButton):
         """sets the button color to original color"""
         self.setStyleSheet(self.defaultStyle + f"background-color:{self.origColor};")
 
-    def colorChange(self, color):
+    def changeColor(self, color):
         self.origColor = color
         self.pressColor = colorScale(color, 0.7)
         self.defaultStyle = (
@@ -88,7 +88,7 @@ class ColoredBtn(QPushButton):
         )
         self._releaseStyle()
 
-    def fontChange(self, fontsize):
+    def changeFont(self, fontsize):
         # set the updated palette to the label
         self.setStyleSheet(self.styleSheet() + f";font-size: {fontsize};")
 
@@ -145,7 +145,7 @@ class BorderBtn(QPushButton):
         """sets to current style sheet"""
         self.setStyleSheet(self.defaultStyle + f"background-color:{color};")
 
-    def colorChange(self, color):
+    def changeColor(self, color):
         self.color = color
         self.pressColor = colorScale(color, 0.7)
         self.defaultStyle = (
@@ -164,7 +164,7 @@ class BorderBtn(QPushButton):
     def applyOtherStyle(self):
         self.setDefaultStyle()
 
-    def fontChange(self, fontsize=STYLE_DATA.FontSize.BTN):
+    def changeFont(self, fontsize=STYLE_DATA.FontSize.BTN):
         # set the updated palette to the label
         self.fontSize = fontsize
         self.defaultStyle = (
@@ -209,7 +209,7 @@ class ToggleBtn(QPushButton):
         self.show()
         self.setStyleSheet(f";font-size:{STYLE_DATA.FontSize.HEADER4};")
         STYLE_DATA.signal.changeColor.connect(self.changeColor)
-        STYLE_DATA.signal.changeFont.connect(self.fontChange)
+        STYLE_DATA.signal.changeFont.connect(self.changeFont)
 
     def _changeSymbol(self):
         """changes the button symbol"""
@@ -231,7 +231,7 @@ class ToggleBtn(QPushButton):
         self.state = not self.state
         self._changeSymbol()
 
-    def fontChange(self, fontmode=None):
+    def changeFont(self, fontmode=None):
         self.setStyleSheet(
             self.styleSheet() + f";font-size: {STYLE_DATA.FontSize.HEADER4};"
         )
@@ -294,7 +294,7 @@ class InstructionBtn(QToolButton):
         self.setStyleSheet("border:none; background-color:none;")
         self.setIconSize(QSize(20, 20))
         self.setContentsMargins(0, 0, 0, 0)
-        self.defaultPos = Qt.AlignmentFlag.AlignRight 
+        self.defaultPos = Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignBottom | Qt.AlignmentFlag.AlignAbsolute 
         STYLE_DATA.signal.changeColor.connect(self.updateIcon)
 
     def displayIns(self):
@@ -307,19 +307,22 @@ class InstructionBtn(QToolButton):
         self.setIcon(icon)
 
 
-""" NOTE: currently unused in the interface  """
-
 
 class dropDownButton(QWidget):
-    """a dropdown button widget, when the button is clicked,
-    there is a dropdown of a list of buttons
-    """
-
     def __init__(
-        self, label: str, buttons: list, btnFuns: list = None, *args, **kwargs
+        self, label: str, textToFuns: Dict[str,callable],  *args, **kwargs
     ) -> None:
+        """
+            a dropdown button widget, when the button is clicked,
+            there is a dropdown of a list of buttons
+
+        Args:
+            label (str): the text on the main button
+            textToFuns: a mapping from button text to the function that will be 
+                       called when the button is pressed
+        """
         super().__init__(*args, **kwargs)
-        self.buttonList = buttonList(buttons, btnFuns)
+        self.buttonList = buttonList(textToFuns)
         self.btn = ColoredBtn(
             f"\u25B6 {label}",
             STYLE_DATA.Color.PRIMARY_BUTTON,
@@ -353,30 +356,25 @@ class dropDownButton(QWidget):
 
 
 class buttonList(QWidget):
-    def __init__(
-        self, labels: list, btnFuns: List[callable] = None, *args, **kwargs
-    ) -> None:
+    def __init__(self, textToFuns: Dict[str, callable], *args, **kwargs) -> None:
         """a widget that implement a list of buttons
 
         Args:
-            labels (list): a list of the button labels
-            btnFuns (list, optional): a list of functions triggered when button
-                                      is pressed
+           textToFuns: a mapping from button text to the function that will be 
+                       called when the button is pressed
+           
         """
         super().__init__(*args, **kwargs)
         self.btnList = []
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.setSpacing(0)
-
-        for i in range(len(labels)):
+        for text, fun in textToFuns.items():
             newButton = ColoredBtn(
-                labels[i],
+                text,
                 STYLE_DATA.Color.PRIMARY_BUTTON,
                 STYLE_DATA.FontSize.SMALL,
                 STYLE_DATA.StyleSheet.buttonList,
             )
-            self.btnList.append(newButton)
-            if btnFuns:
-                self.btnList[i].clicked.connect(btnFuns[i])
+            newButton.clicked.connect(fun)
             self.layout.addWidget(newButton)

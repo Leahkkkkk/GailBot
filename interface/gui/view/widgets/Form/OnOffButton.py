@@ -55,4 +55,4 @@ class onOffButton(QWidget, FormWidget):
         STYLE_DATA.signal.changeFont.connect(self.changeFont)
 
     def changeFont(self):
-        self.label.fontChange(STYLE_DATA.FontSize.BTN)
+        self.label.changeFont(STYLE_DATA.FontSize.BTN)

@@ -7,6 +7,7 @@ Author: Siara Small  & Vivian Li
 Last Modified: Thursday, 6th October 2022 11:11:31 am
 Modified By:  Siara Small  & Vivian Li
 -----
+Description: Implementation of the transcription success page
 """
 
 from view.config.Style import STYLE_DATA, FileTableDimension
@@ -40,7 +41,7 @@ class TranscribeSuccessPage(BasicPage):
         self._connectSignal()
 
     def _connectSignal(self):
-        GBTranscribeSignal.sendToComplete.connect(self.fileTable.resetFileDisplay)
+        GBTranscribeSignal.transcriptionComplete.connect(self.fileTable.resetFileDisplay)
         self.returnBtn.clicked.connect(
             lambda: GBTranscribeSignal.clearSourceMemory.emit()
         )
@@ -107,13 +108,13 @@ class TranscribeSuccessPage(BasicPage):
         self.returnBtn.setMinimumSize(
             QtCore.QSize(STYLE_DATA.Dimension.BTNWIDTH, STYLE_DATA.Dimension.BTNHEIGHT)
         )
-        STYLE_DATA.signal.changeFont.connect(self.fontchange)
+        STYLE_DATA.signal.changeFont.connect(self.changeFont)
         STYLE_DATA.signal.changeColor.connect(self.changeColor)
 
-    def fontchange(self):
-        self.label.fontChange(STYLE_DATA.FontSize.HEADER2)
+    def changeFont(self):
+        self.label.changeFont(STYLE_DATA.FontSize.HEADER2)
 
     def changeColor(self):
         super().changeColor()
-        self.returnBtn.colorChange(STYLE_DATA.Color.PRIMARY_BUTTON)
-        self.moreBtn.colorChange(STYLE_DATA.Color.SECONDARY_BUTTON)
+        self.returnBtn.changeColor(STYLE_DATA.Color.PRIMARY_BUTTON)
+        self.moreBtn.changeColor(STYLE_DATA.Color.SECONDARY_BUTTON)

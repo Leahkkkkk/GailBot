@@ -59,10 +59,10 @@ class InputCombo(QWidget, FormWidget):
         connect file signal
         """
         self.inputField.currentTextChanged.connect(self.updateValue)
-        STYLE_DATA.signal.changeFont.connect(self.fontChange)
+        STYLE_DATA.signal.changeFont.connect(self.changeFont)
     
-    def fontChange(self):
-        self.inputLabel.fontChange(STYLE_DATA.FontSize.BODY)
+    def changeFont(self):
+        self.inputLabel.changeFont(STYLE_DATA.FontSize.BODY)
         
     def setValue(self, value: str):
         """ 

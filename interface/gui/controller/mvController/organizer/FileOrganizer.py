@@ -12,12 +12,12 @@ Description: implement file organizer to handle GUI request for file data
 
 from typing import TypedDict
 from gailbot.api import GailBot
-from view.signal.interface import DataSignal
+from view.signal.interface import FileDataSignal
 from controller.Request import Request
 from gbLogger import makeLogger
 from controller.util.Error import  ERR
 from PyQt6.QtCore import QObject, pyqtSignal
-from dict_to_dataclass import DataclassFromDict, field_from_dict
+from .DataOrganizer import DataOrganizer
 
     
 class FileDict(TypedDict):
@@ -41,40 +41,37 @@ class Signals(QObject):
     """
     error          = pyqtSignal(str)
     
-class FileOrganizer:
-    def __init__(self, gbController: GailBot, fileSignal: DataSignal) -> None:
+class FileOrganizer(DataOrganizer):
+    def __init__(self, gb: GailBot, fileSignal: FileDataSignal) -> None:
         """ 
         Args:
             gb (GailBot): an instance of GailBot api
-            fileSignal (DataSignal): an instance of DataSignal object 
+            fileSignal (FileDataSignal): an instance of FileDataSignal object 
                                        which will emit signal for request 
                                        related to file data 
         """
-        self.gb: GailBot = gbController
-        self.signals = Signals()
-        self.logger = makeLogger()
-        self.registerSignal(fileSignal)
+        super().__init__(gb, fileSignal)
     
-    def registerSignal(self, signal: DataSignal):
+    def registerSignal(self, signal: FileDataSignal):
         """ connect signal to the handler functions 
 
         Args:
-            signal (DataSignal): an instance of DataSignal that stores signals
+            signal (FileDataSignal): an instance of FileDataSignal that stores signals
                                  related to file data 
         """
         signal.fileProfileRequest.connect(self.requestProfile)
-        signal.postRequest.connect(self.post)
         signal.changeFileProfileRequest.connect(self.editFileProfile)
-        signal.deleteRequest.connect(self.delete)
+        signal.postRequest.connect(self.postHandler)
+        signal.deleteRequest.connect(self.deleteHandler)
         signal.viewOutputRequest.connect(self.viewOutput)
     
     ##########################  request handler ###########################
-    def post(self, request : Request) -> None:
+    def postHandler(self, request : Request) -> None:
         """ add file to file database 
         data: (FileDict) a dictionary that contains the file data to be 
               added to the database
         """
-        self.logger.info("post file to database")
+        self.logger.info("postHandler file to database")
         self.logger.info(request.data)
         file : FileDict = request.data
         
@@ -90,12 +87,12 @@ class FileOrganizer:
             self.logger.error(f"Error in posting file: {e}", exc_info=e)
     
     
-    def delete(self, request: Request) -> None:
-        """delete the file from the database
+    def deleteHandler(self, request: Request) -> None:
+        """deleteHandler the file from the database
         Args:
             key (str): the file key of the file to be deleted 
         """
-        self.logger.info("delete file from database")
+        self.logger.info("deleteHandler file from database")
         try:
             if self.gb.remove_source(request.data):
                 request.succeed(request.data)

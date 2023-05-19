@@ -40,6 +40,7 @@ class BaseSettingPage(QWidget):
         self._connectSignal()
     
     def _initWidget(self):
+        """ initailize the widget """
         self.header = Label(
            self.headerText, STYLE_DATA.FontSize.HEADER2, FontFamily.MAIN
         )
@@ -63,26 +64,32 @@ class BaseSettingPage(QWidget):
         self.verticalLayout.addWidget(self.mainTable, alignment=center)
         self.verticalLayout.addStretch()
         self.verticalLayout.addWidget(self.addBtn, alignment=center)
-        self.verticalLayout.addWidget(self.instruction, alignment= Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignBottom | Qt.AlignmentFlag.AlignAbsolute)
+        self.verticalLayout.addWidget(self.instruction, 
+                                      alignment= self.instruction.defaultPos)
         
     def _connectSignal(self):
+        """ connect signals  """
         self.addBtn.clicked.connect(self.addItem)
         STYLE_DATA.signal.changeColor.connect(self.changeColor)
         STYLE_DATA.signal.changeFont.connect(self.changeFont)
     
     def changeColor(self):
-        self.addBtn.colorChange(STYLE_DATA.Color.PRIMARY_BUTTON)
+        """ called when color mode is changed """
+        self.addBtn.changeColor(STYLE_DATA.Color.PRIMARY_BUTTON)
     
     def changeFont(self):
-        self.header.fontChange(STYLE_DATA.FontSize.HEADER2)
-        self.caption.fontChange(STYLE_DATA.FontSize.DESCRIPTION)
+        """ called when font size is changed """
+        self.header.changeFont(STYLE_DATA.FontSize.HEADER2)
+        self.caption.changeFont(STYLE_DATA.FontSize.DESCRIPTION)
         
     def addSucceed(self, data):
+        """ called when the data has been successfully added to the backend"""
         name, setting = data
         self.mainTable.addItem(data)
         self.signal.addSucceed.emit(name)
     
     def sendAddRequest(self, data):
+        """ send request to add data """
         self.signal.postRequest.emit(
             Request(data=data, succeed=self.addSucceed))
     

@@ -38,15 +38,25 @@ class PluginPage(BaseSettingPage):
         super().__init__(*args, **kwargs)
        
     def addItem(self):
+        """ 
+        open up a dialogue to upload new plugin, 
+        """
         pluginDialog = UploadPlugin()
         pluginDialog.signal.addPlugin.connect(self.sendAddRequest)
         pluginDialog.exec()
         
     def sendAddRequest(self, suiteData):
+        """ 
+        send a request to add plugin suite 
+        """
         self.signal.postRequest.emit(
             Request(data = suiteData, succeed=self.addSucceed))
         
     def addSucceed(self, pluginSuite):
+        """ 
+        success continuation when a plugin suite is added to the backend
+        which will add plugin suite to the frontend 
+        """
         name, data, isOfficial = pluginSuite
         self.mainTable.addItem(pluginSuite)
         self.signal.addSucceed.emit(name)

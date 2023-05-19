@@ -236,13 +236,13 @@ class GailBot:
         """
         return self.gb.get_all_settings_data()
     
-    def get_all_settings_name(self) -> List[str]:
+    def get_all_profile_names(self) -> List[str]:
         """ get the names fo available settings
 
         Returns:
             List[str]: a list of available setting names
         """
-        return self.gb.get_all_settings_name()
+        return self.gb.get_all_profile_names()
         
     def rename_setting(
         self, 

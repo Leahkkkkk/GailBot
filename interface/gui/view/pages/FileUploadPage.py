@@ -23,7 +23,7 @@ from view.widgets import (
     ColoredBtn, 
     IconBtn, 
     ConfirmBox) 
-from view.widgets.Button import InstructionBtn
+
 from PyQt6.QtWidgets import (
     QWidget, 
     QVBoxLayout,
@@ -61,10 +61,6 @@ class FileUploadPage(BasicPage):
         self._initStyle()
         self._connectSignal()
     
-    def initAvailableProfiles(self, profiles: List[str]):
-        """ initialize a list of available profiles to file table """
-        self.fileTable.initProfiles(profiles)
-    
     def _connectSignal(self):
         """ connects signals to different functions upon button clicks """
         self.logger.info("")
@@ -75,9 +71,8 @@ class FileUploadPage(BasicPage):
         self.fileTable.viewSignal.ZeroFile.connect(self._disallowTranscribe)
         self._disallowTranscribe()
         STYLE_DATA.signal.changeColor.connect(self.changeColor)
-        STYLE_DATA.signal.changeFont.connect(self.fontChange)
+        STYLE_DATA.signal.changeFont.connect(self.changeFont)
         GBTranscribeSignal.sendToTranscribe.connect(self.removeFromTable)
-
 
     def _initWidget(self):
         """ initializes widgets """
@@ -151,23 +146,27 @@ class FileUploadPage(BasicPage):
         self.gotoMainBtn.setStyleSheet(STYLE_DATA.StyleSheet.goToMain)
 
     def changeColor(self):
+        """ change the page color in response to the color change signal"""
         super().changeColor()
         self.gotoMainBtn.setStyleSheet(STYLE_DATA.StyleSheet.goToMain)
-        self.settingBtn.colorChange(STYLE_DATA.Color.PRIMARY_BUTTON)
-        self.uploadFileBtn.colorChange(STYLE_DATA.Color.PRIMARY_BUTTON)
-        self.removeAll.colorChange(STYLE_DATA.Color.PRIMARY_BUTTON)
+        self.settingBtn.changeColor(STYLE_DATA.Color.PRIMARY_BUTTON)
+        self.uploadFileBtn.changeColor(STYLE_DATA.Color.PRIMARY_BUTTON)
+        self.removeAll.changeColor(STYLE_DATA.Color.PRIMARY_BUTTON)
          
-    def fontChange(self):
-        self.label.fontChange(STYLE_DATA.FontSize.HEADER2)
-        self.transcribeBtn.fontChange(STYLE_DATA.FontSize.BTN)
-        self.uploadFileBtn.fontChange(STYLE_DATA.FontSize.BTN)
-        self.removeAll.fontChange(STYLE_DATA.FontSize.BTN)
+    def changeFont(self):
+        """ change the page font size in response to the font change signal """
+        self.label.changeFont(STYLE_DATA.FontSize.HEADER2)
+        self.transcribeBtn.changeFont(STYLE_DATA.FontSize.BTN)
+        self.uploadFileBtn.changeFont(STYLE_DATA.FontSize.BTN)
+        self.removeAll.changeFont(STYLE_DATA.FontSize.BTN)
     
     def sendToConfirm(self):
+        """ send the list of selected file to be transcribed to the confirm page """
         GBTranscribeSignal.sendToConfirm.emit(self.fileTable.getSelectedFile())
         
     
     def removeFromTable(self, files: List[Tuple[str, Dict]]):
+        """ remove file from file table """
         for file in files:
             name, data = file 
             self.fileTable.deleteSucceed(name)

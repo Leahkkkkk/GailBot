@@ -197,4 +197,5 @@ class StyleSheet(DataclassFromDict):
     MESSAGE_BOX_BTN    : str = field_from_dict()
     PROGRESS_BAR       : str = field_from_dict()
     STANDARD_LINE_EDIT : str = field_from_dict()
-    TABLE_LIST        : str = field_from_dict()
+    TABLE_LIST         : str = field_from_dict()
+    SIDEBAR            :str = field_from_dict()

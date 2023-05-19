@@ -14,8 +14,9 @@ from controller.Request import Request
 from gailbot.api import GailBot
 from gbLogger import makeLogger
 from controller.util.Error import ERR
+from .DataOrganizer import DataOrganizer
 
-class EngineOrganizer:
+class EngineOrganizer(DataOrganizer):
     def __init__(self, gb: GailBot, engineSignal: DataSignal) -> None:
         """ 
         Args:
@@ -24,121 +25,126 @@ class EngineOrganizer:
                                        which will emit signal for request 
                                        related to engine data 
         """
-        self.logger = makeLogger()
-        self.gb = gb
-        self.logger.info(f"front end engine organizer initialized") 
-        self.registerSignal(engineSignal)
+        super().__init__(gb, engineSignal)
     
-    def registerSignal(self, signal: DataSignal):
-        """ connect signal to the handler functions 
-
-        Args:
-            signal (DataSignal): an instance of DataSignal that stores signals
-                                    related to engine data 
-        """
-        signal.postRequest.connect(self.postHandler)
-        signal.deleteRequest.connect(self.deleteHandler)
-        signal.getRequest.connect(self.getHandler)
-        signal.editRequest.connect(self.editHandler)
-        signal.viewSourceRequest.connect(self.viewSourceHandler)
-        
-    def postHandler(self, postRequest: Request) -> None :
+    def postHandler(self, request: Request) -> None :
         """ post a file data to the backend database
 
         Args:
-            postRequest (Request): an instance of Request object that stores the 
+            request (Request): an instance of Request object that stores the 
                                    data to be posted as well as success and failure 
                                    continuation function
         """
         self.logger.info(f"received post request")
-        name, data = postRequest.data
+        name, data = request.data
         data = data.copy() 
         try:
             if self.gb.is_engine_setting(name): 
-                postRequest.fail(ERR.DUPLICATED_NAME.format(name)) 
+                request.fail(ERR.DUPLICATED_NAME.format(name)) 
                 self.logger.error(ERR.DUPLICATED_NAME.format(name))
             elif not self.gb.add_new_engine(name, data):
-                postRequest.fail(ERR.INVALID_ENGINE.format(name)) 
+                request.fail(ERR.INVALID_ENGINE.format(name)) 
                 self.logger.error(ERR.INVALID_ENGINE.format(name))
             else:
                 self.logger.info(f"New engine created {name}, {data}")
-                postRequest.succeed(postRequest.data)
+                request.succeed(request.data)
         except Exception as e:
-            postRequest.fail(ERR.POST_ENGINE.format(name))
+            request.fail(ERR.POST_ENGINE.format(name))
             self.logger.error(f"Creating new engine error {e}", exc_info=e)
         
-    def deleteHandler(self, deleteRequest: Request) -> None :
+    def deleteHandler(self, request: Request) -> None :
         """ delete a file from database 
 
         Args:
             name (str): the engine setting name that identified the engine setting  
                               to be deleted
         """
-        name = deleteRequest.data
+        name = request.data
         self.logger.info(f"deleting engine setting {name}")
         if not self.gb.is_engine_setting(name):
-            deleteRequest.fail(ERR.ENGINE_NOT_FOUND.format(name))
+            request.fail(ERR.ENGINE_NOT_FOUND.format(name))
             self.logger.error(ERR.ENGINE_NOT_FOUND.format(name))
         elif name == self.gb.get_default_engine_setting_name():
-            deleteRequest.fail(ERR.DELETE_DEFAULT)
+            request.fail(ERR.DELETE_DEFAULT)
             self.logger.error(ERR.DELETE_DEFAULT)
         elif self.gb.is_engine_setting_in_use(name):
-            deleteRequest.fail(ERR.ENGINE_IN_USE.format(name))
+            request.fail(ERR.ENGINE_IN_USE.format(name))
             self.logger.error(ERR.ENGINE_IN_USE.format(name)) 
         elif not self.gb.remove_engine_setting(name):
-            deleteRequest.fail(ERR.DELETE_ENGINE.format(name))
+            request.fail(ERR.DELETE_ENGINE.format(name))
             self.logger.error(ERR.DELETE_ENGINE.format(name))
         else:
-            deleteRequest.succeed(name)
+            request.succeed(name)
     
-    def editHandler(self, editRequest: Request) -> None :
+    def editHandler(self, request: Request) -> None :
         """ update a file
         """
         try:
-            name, data = editRequest.data
+            name, data = request.data
             if not self.gb.is_engine_setting(name):
-                editRequest.fail(ERR.ENGINE_NOT_FOUND.format(name))
+                request.fail(ERR.ENGINE_NOT_FOUND.format(name))
                 self.logger.error(ERR.ENGINE_NOT_FOUND.format(name))
             elif not self.gb.update_engine_setting(name, data):
-                editRequest.fail(ERR.ENGINE_EDIT.format(name))
+                request.fail(ERR.ENGINE_EDIT.format(name))
                 self.logger.error(ERR.ENGINE_EDIT.format(name))
         except Exception as e:
-            editRequest.fail(ERR.ENGINE_EDIT.format(name))
+            request.fail(ERR.ENGINE_EDIT.format(name))
             self.logger.error(e, exc_info=e)
         else:
-            editRequest.succeed(editRequest.data)
+            request.succeed(request.data)
      
-    def getHandler(self, getRequest: Request) -> None:
+    def getHandler(self, request: Request) -> None:
         """ 
         Args: send a signal that stores the engine setting information
             name (str): the engine setting name that identifies a engine setting 
         """
-        name = getRequest.data
+        name = request.data
         try:
             if not self.gb.is_engine_setting(name):
-                getRequest.fail(ERR.ENGINE_NOT_FOUND.format(name))
+                request.fail(ERR.ENGINE_NOT_FOUND.format(name))
                 self.logger.error(KeyError)
             else:
                 data = self.gb.get_engine_setting_data(name)
-                getRequest.succeed((name, data))
+                request.succeed((name, data))
         except Exception as e:
-            getRequest.fail(ERR.GET_ENGINE.format(name))
+            request.fail(ERR.GET_ENGINE.format(name))
             self.logger.error(e, exc_info=e)
             
 
-    def viewSourceHandler(self, viewRequest: Request) -> None:
+    def viewSourceHandler(self, request: Request) -> None:
         """ given a request that specifies the name of the engine, 
             response with the path to the source file
 
         Args:
-            viewRequest (Request): an instance og request object that 
+            request (Request): an instance of request object that 
                                   stores tha name of the source and the 
                                   success and failure continuation
         """ 
-        name = viewRequest.data 
+        name = request.data 
         try:
             path = self.gb.get_engine_src_path(name)
-            viewRequest.succeed(path)
+            request.succeed(path)
         except Exception as e:
-            viewRequest.fail(
-                ERR.PROFILE_SRC_CODE.format(viewRequest.data, str(e)))
+            request.fail(
+                ERR.ENGINE_SRC_CODE.format(request.data, str(e)))
+            self.logger.error(e, exc_info=e)
+    
+    def getAllNamesHandler(self, request: Request) -> None:
+        """ given a request that includes a success and failure continuation 
+            response with the list of available Engine names 
+            
+            Args: 
+                request(Request): an instance of request object that stores  
+                                  success and failure continuation, 
+                                  the success continuation will be a function 
+                                  that expect to receive a list of available 
+                                  engine names as the input argument
+        """
+        try:
+            names = self.gb.get_engine_setting_names()
+            request.succeed(names)
+        except Exception as e :
+            request.fail(
+                ERR.GET_ENGINE.format("all engine names")
+            )
+            self.logger.error(e, exc_info=e)

@@ -13,8 +13,7 @@ Description: define the interface for Request object that can be handled by
 from abc import ABC
 class Request(ABC):
     data  = None ## request data
-    def __init__() -> None:
-        raise NotImplementedError
+    
     def succeed(self, data):
         """succeed continuation that takes in the response data, 
            will be called when the controller is able to acquire response 

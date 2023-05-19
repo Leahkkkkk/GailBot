@@ -7,6 +7,7 @@ Author: Siara Small  & Vivian Li
 Last Modified: Thursday, 6th October 2022 11:11:47 am
 Modified By:  Siara Small  & Vivian Li
 -----
+Description: implementation of the welcome page
 '''
 from typing import List
 from view.config.Style import STYLE_DATA
@@ -202,19 +203,19 @@ class WelcomePage(BasicPage):
     def changeColor(self, colormode = None):
         super().changeColor()
         for label in self.insLabels:
-            label.colorChange(STYLE_DATA.Color.LOW_CONTRAST2)
+            label.changeColor(STYLE_DATA.Color.LOW_CONTRAST2)
         for label in self.buttomText:
-            label.colorChange(STYLE_DATA.Color.PRIMARY_BUTTON)
-        self.START.colorChange(STYLE_DATA.Color.GREYDARK)
-        self.StartBtn.colorChange(STYLE_DATA.Color.PRIMARY_BUTTON)
+            label.changeColor(STYLE_DATA.Color.PRIMARY_BUTTON)
+        self.START.changeColor(STYLE_DATA.Color.GREYDARK)
+        self.StartBtn.changeColor(STYLE_DATA.Color.PRIMARY_BUTTON)
         
     def changeFont(self, fontmode = None):
         for label in self.insLabels:
-            label.fontChange(STYLE_DATA.FontSize.INSTRUCTION_CAPTION)
-        self.WELCOME_TEXT.fontChange(STYLE_DATA.FontSize.HEADER1)
-        self.ResourcesText.fontChange(STYLE_DATA.FontSize.HEADER2)
-        self.TutorialText.fontChange(STYLE_DATA.FontSize.LINK)
-        self.GuideText.fontChange(STYLE_DATA.FontSize.LINK)
-        self.GBLinkText.fontChange(STYLE_DATA.FontSize.BODY)
-        self.MoreInfoText.fontChange(STYLE_DATA.FontSize.SMALL)
+            label.changeFont(STYLE_DATA.FontSize.INSTRUCTION_CAPTION)
+        self.WELCOME_TEXT.changeFont(STYLE_DATA.FontSize.HEADER1)
+        self.ResourcesText.changeFont(STYLE_DATA.FontSize.HEADER2)
+        self.TutorialText.changeFont(STYLE_DATA.FontSize.LINK)
+        self.GuideText.changeFont(STYLE_DATA.FontSize.LINK)
+        self.GBLinkText.changeFont(STYLE_DATA.FontSize.BODY)
+        self.MoreInfoText.changeFont(STYLE_DATA.FontSize.SMALL)
     

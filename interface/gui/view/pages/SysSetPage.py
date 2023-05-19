@@ -77,7 +77,7 @@ class SystemSettingPage(QWidget):
         self._initLayout()
         self._connectSignal()
         self.setValue(SystemSetting)
-        STYLE_DATA.signal.changeColor.connect(self.colorChange)
+        STYLE_DATA.signal.changeColor.connect(self.changeColor)
 
     def _initWidget(self):
         """initializes widgets to be shown"""
@@ -101,8 +101,8 @@ class SystemSettingPage(QWidget):
     def _connectSignal(self):
         """connect the signal to slots"""
         self.saveBtn.clicked.connect(self._confirmChangeSetting)
-        STYLE_DATA.signal.changeColor.connect(self.colorChange)
-        STYLE_DATA.signal.changeFont.connect(self.fontChange)
+        STYLE_DATA.signal.changeColor.connect(self.changeColor)
+        STYLE_DATA.signal.changeFont.connect(self.changeFont)
 
     def _initLayout(self):
         """initialize the form section"""
@@ -136,21 +136,21 @@ class SystemSettingPage(QWidget):
             | Qt.AlignmentFlag.AlignRight,
         )
 
-    def colorChange(self):
-        self.saveBtn.colorChange(STYLE_DATA.Color.PRIMARY_BUTTON)
+    def changeColor(self):
+        self.saveBtn.changeColor(STYLE_DATA.Color.PRIMARY_BUTTON)
         for button in self.formButtons:
             button.addOtherStyle(
                 f"background-color: {STYLE_DATA.Color.INPUT_BACKGROUND};"
             )
-            button.colorChange(STYLE_DATA.Color.INPUT_TEXT)
+            button.changeColor(STYLE_DATA.Color.INPUT_TEXT)
 
-    def fontChange(self):
-        self.header.fontChange(STYLE_DATA.FontSize.HEADER2)
-        self.caption.fontChange(STYLE_DATA.FontSize.DESCRIPTION)
+    def changeFont(self):
+        self.header.changeFont(STYLE_DATA.FontSize.HEADER2)
+        self.caption.changeFont(STYLE_DATA.FontSize.DESCRIPTION)
         for label in self.labels:
-            label.fontChange(STYLE_DATA.FontSize.BODY)
+            label.changeFont(STYLE_DATA.FontSize.BODY)
         for btn in self.formButtons:
-            btn.fontChange(STYLE_DATA.FontSize.BTN)
+            btn.changeFont(STYLE_DATA.FontSize.BTN)
         
 
     def setValue(self, values: dict):

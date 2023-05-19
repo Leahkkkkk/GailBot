@@ -174,13 +174,13 @@ class ServiceController:
         """
         return self.organizer.get_all_settings_data()
 
-    def get_all_settings_name(self) -> List[str]:
+    def get_all_profile_names(self) -> List[str]:
         """get the names fo available settings
 
         Returns:
             List[str]: a list of available setting names
         """
-        return self.organizer.get_all_settings_name()
+        return self.organizer.get_all_profile_names()
 
     def get_src_setting_name(self, source_name: str) -> Union[bool, str]:
         """given a source, return its setting name

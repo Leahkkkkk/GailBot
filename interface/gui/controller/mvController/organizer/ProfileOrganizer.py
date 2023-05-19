@@ -15,8 +15,9 @@ from controller.Request import Request
 from gailbot.api import GailBot
 from gbLogger import makeLogger
 from controller.util.Error import ERR
+from .DataOrganizer import DataOrganizer
 
-class ProfileOrganizer:
+class ProfileOrganizer(DataOrganizer):
     def __init__(self, gb: GailBot, profileSignal: DataSignal) -> None:
         """ 
         Args:
@@ -25,16 +26,7 @@ class ProfileOrganizer:
                                        which will emit signal for request 
                                        related to profile data 
         """
-        self.logger = makeLogger()
-        self.gb = gb
-        self.registerSignal(profileSignal)
-    
-    def registerSignal(self, signal: DataSignal):
-       signal.postRequest.connect(self.postHandler)
-       signal.deleteRequest.connect(self.deleteHandler)
-       signal.getRequest.connect(self.getHandler)
-       signal.editRequest.connect(self.editHandler)
-       signal.viewSourceRequest.connect(self.viewSourceHandler)
+        super().__init__(gb, profileSignal)
        
     def postHandler(self,postRequest: Request) -> None :
         """ post a new profile to profile database
@@ -86,6 +78,7 @@ class ProfileOrganizer:
     
     def editHandler(self, editRequest: Request) -> None :
         """ update a file
+        
         Args:
             profile (Tuple[name, dict]): a name that identified the profile 
                                         and new profile
@@ -106,8 +99,17 @@ class ProfileOrganizer:
      
     def getHandler(self, getRequest: Request) -> None:
         """ 
-        Args: send a signal that stores the profile information
-            name (str): the profile name that identifies a profile 
+        response to the get request with the corresponding profile data 
+        from the gailbot api
+        
+        Args: 
+            request (Request): 
+                request.data : name of the profile 
+                request.succeed: a function that accept a dictionary that 
+                                 stores the profile data 
+                request.fail: a failure continuation that accept a failure 
+                              message as a string 
+                
         """
         name = getRequest.data
         try:
@@ -121,11 +123,45 @@ class ProfileOrganizer:
             getRequest.fail(ERR.GET_PROFILE.format(name))
             self.logger.error(e, exc_info=e)
             
-    def viewSourceHandler(self, viewRequest: Request) -> None:
-        name = viewRequest.data 
+    def viewSourceHandler(self, request: Request) -> None:
+        """ 
+        response the request to view source with the source path 
+        from gailbot api 
+
+        Args:
+            request (Request): 
+                request.data : name of the source 
+                request.succeed: a function that accept a string that stores 
+                                 the path to the source file
+                request.fail: a failure continuation that accept a failure 
+                              message as a string 
+        """
+        name = request.data 
         try:
             path = self.gb.get_profile_src_path(name)
-            viewRequest.succeed(path)
+            request.succeed(path)
         except Exception as e:
-            viewRequest.fail(
-                ERR.PROFILE_SRC_CODE.format(viewRequest.data, str(e)))
+            request.fail(
+                ERR.PROFILE_SRC_CODE.format(request.data, str(e)))
+
+                
+    
+    def getAllNamesHandler(self, request: Request) -> None:
+        """ given a request that includes a success and failure continuation 
+            response with the list of available profile names 
+            
+            Args: 
+                request(Request): an instance of request object that stores  
+                                  success and failure continuation, 
+                                  the success continuation will be a function 
+                                  that expect to receive a list of available 
+                                  profile names as the input argument
+        """
+        try:
+            names = self.gb.get_all_profile_names()
+            request.succeed(names)
+        except Exception as e :
+            request.fail(
+                ERR.GET_PROFILE.format("all profile names")
+            )
+            self.logger.error(e, exc_info=e)

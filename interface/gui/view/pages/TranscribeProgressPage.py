@@ -7,6 +7,7 @@ Author: Siara Small  & Vivian Li
 Last Modified: Saturday, 5th November 2022 7:06:45 pm
 Modified By:  Siara Small  & Vivian Li
 -----
+Description: Implementation of the transcription page
 '''
 
 import os
@@ -66,7 +67,6 @@ class TranscribeProgressPage(BasicPage):
         self.loadStart()
         self.loadingText = Label(Text.LOADING, STYLE_DATA.FontSize.SMALL, STYLE_DATA.FontFamily.OTHER)
         self.loadingText.setAlignment(center)
-        # self.CANCEL = ColoredBtn(Text.cancelText, STYLE_DATA.Color.GREYDARK, STYLE_DATA.FontSize.BTN)
         self.fileTable = SourceTable(
             FILE_TABLE_HEADER.TRANSCRIBE,
             self.sourceSignal, 
@@ -88,8 +88,8 @@ class TranscribeProgressPage(BasicPage):
         super().changeColor()
     
     def changefont(self):
-        self.label.fontChange(STYLE_DATA.FontSize.HEADER2)
-        self.loadingText.fontChange(STYLE_DATA.FontSize.SMALL)
+        self.label.changeFont(STYLE_DATA.FontSize.HEADER2)
+        self.loadingText.changeFont(STYLE_DATA.FontSize.SMALL)
    
     def _initLayout(self):
         """ initialize layout """
