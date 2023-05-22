@@ -256,6 +256,7 @@ class BaseTable(QTableWidget):
         given the path, open the path in the user's machine 
         success continuation for view source request
         """
+        self.logger.info(f"view path for {path}")
         try:
             pid = subprocess.check_call(["open", path])
         except Exception as e:
