@@ -10,13 +10,13 @@ Modified By:  Siara Small  & Vivian Li
 Description: implementation of base class for Table widgets
 '''
 import subprocess
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Union
 from view.config.Style import STYLE_DATA
 from view.util.ErrorMsg import ERR
 from .Label import Label
 from .MsgBox import WarnBox, ConfirmBox
 from view.Request import Request
-from view.signal.interface import DataSignal
+from view.signal.interface import DataSignal, FileDataSignal
 from view.widgets.Button import TableBtn
 from view.widgets.ScrollArea import ScrollArea
 from view.widgets.Background import initPrimaryColorBackground
@@ -37,7 +37,7 @@ from PyQt6.QtGui import QFont
 
 
 class BaseTable(QTableWidget):
-    signal: DataSignal
+    signal: Union[DataSignal, FileDataSignal]
     dataKeyToCol: Dict[str, int]
     tableWidth: int = STYLE_DATA.Dimension.DEFAULTTABWIDTH
     tableHeight: int = STYLE_DATA.Dimension.FORMMINHEIGHT
@@ -150,6 +150,7 @@ class BaseTable(QTableWidget):
         return a button that allow user to view the detail data 
         of the item when clicked
         """
+        self.logger.info(f"get view detail button for {name}")
         btn = TableBtn(iconname="tableDetail")
         btn.clicked.connect(lambda: self.viewDetailRequest(name))
         return btn
@@ -160,6 +161,7 @@ class BaseTable(QTableWidget):
         return a button that will allow user to view the source file 
         of the item when clicked
         """
+        self.logger.info(f"get view source button for {name}")
         btn = TableBtn(iconname="tableSource")
         btn.clicked.connect(lambda: self.viewSourceRequest(name))
         return btn
@@ -170,7 +172,7 @@ class BaseTable(QTableWidget):
         return a button that will allow user to view the output file 
         of the item when clicked
         """
-        self.logger.info("ask for view output button")
+        self.logger.info(f"get view output button for {name}")
         btn = TableBtn(iconname="tableOutput")
         btn.clicked.connect(lambda: self.viewOutputRequest(name))
         return btn
@@ -219,6 +221,7 @@ class BaseTable(QTableWidget):
         send a request to the backend to ask detail data of item identified 
         by name
         """
+        self.logger.info(f"request to get detail for {name}")
         self.signal.getRequest.emit(Request(data=name, succeed=self.displayDetail))
 
     def displayDetail(self, data):
@@ -253,6 +256,7 @@ class BaseTable(QTableWidget):
         given the path, open the path in the user's machine 
         success continuation for view source request
         """
+        self.logger.info(f"view path for {path}")
         try:
             pid = subprocess.check_call(["open", path])
         except Exception as e:
@@ -262,6 +266,7 @@ class BaseTable(QTableWidget):
         """
         send a request to get the path to the output file, 
         """
+        self.logger.info(f"view output request for {name}")
         self.signal.viewOutputRequest.emit(
             Request(data=name, succeed=self.viewPathFile)
         )

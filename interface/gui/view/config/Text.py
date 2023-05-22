@@ -185,6 +185,7 @@ class CREATE_NEW_PROFILE:
     PROFILE_NAME = "Profile Name"
     ENGINE_SETTING = "Choose Engine Setting"
     PLUGIN_SETTING = "Plugin Setting"
+    HEADER = "Create New Profile"
 
 
 @dataclass

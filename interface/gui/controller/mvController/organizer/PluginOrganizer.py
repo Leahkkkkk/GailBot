@@ -89,7 +89,7 @@ class PluginOrganizer(DataOrganizer):
         Args:
             detailRequest (Request): _description_
 
-        Returns:
+        Returns:s
             Dict[str, str]: _description_
         """
         try:
@@ -101,9 +101,8 @@ class PluginOrganizer(DataOrganizer):
             details["documentation"] = self.gb.get_plugin_suite_documentation_path(pluginName)
             detailRequest.succeed(details)
         except Exception as e:
+            self.logger.error(e)
             detailRequest.fail(ERR.PLUGIN_DETAIL)
-        return details
-    
     
     def viewSourceHandler(self, sourceRequest: Request):
         """ handle the request to view suite source code
@@ -121,8 +120,6 @@ class PluginOrganizer(DataOrganizer):
             sourceRequest.fail(
                 ERR.PLUGIN_SRC_CODE.format(sourceRequest.data))
         
-        
-    
     def getAllNamesHandler(self, request: Request) -> None:
         """ given a request that includes a success and failure continuation 
             response with the list of available Engine names 

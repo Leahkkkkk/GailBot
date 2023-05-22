@@ -52,7 +52,7 @@ class FileOrganizer(DataOrganizer):
         """
         super().__init__(gb, fileSignal)
     
-    def registerSignal(self, signal: FileDataSignal):
+    def registerSignals(self, signal: FileDataSignal):
         """ connect signal to the handler functions 
 
         Args:
@@ -145,6 +145,7 @@ class FileOrganizer(DataOrganizer):
     
     
     def viewOutput(self, request: Request) -> None:
+        self.logger.info(f"view output for {request.data}")
         try:
             path = self.gb.get_source_outdir(request.data)
             request.succeed(path)
