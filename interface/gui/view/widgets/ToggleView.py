@@ -80,7 +80,7 @@ class ToggleView(QWidget):
         self.hide = True
         self.Btn.resetBtn()
     
-    def colorChange(self):
+    def changeColor(self):
         if self.secondaryStyle:
             self.headercolor = STYLE_DATA.Color.SUB_BACKGROUND
             self.viewcolor = STYLE_DATA.Color.SUB_BACKGROUND
@@ -135,7 +135,7 @@ class ToggleView(QWidget):
     def _connectSignal(self):
         """ connects signals upon button clicks """
         self.Btn.clicked.connect(self._toggleView)
-        STYLE_DATA.signal.changeColor.connect(self.colorChange)
+        STYLE_DATA.signal.changeColor.connect(self.changeColor)
         
     def _toggleView(self):
         """ sets view for toggle class """

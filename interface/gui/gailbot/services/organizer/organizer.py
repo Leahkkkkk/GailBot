@@ -442,7 +442,7 @@ class Organizer:
         """
         return self.setting_manager.get_all_settings_data()
 
-    def get_all_settings_name(self) -> List[str]:
+    def get_all_profile_names(self) -> List[str]:
         """ 
         return a list of string that stores all setting name
         """

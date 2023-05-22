@@ -1,6 +1,6 @@
 from typing import Dict, TypedDict, Tuple, Any, List
 from view.MainWindow import MainWindow
-from view.signal.interface import TranscribeSignal, DataSignal, ViewSignals, DataSignal
+from view.signal.interface import TranscribeSignal, DataSignal, SystemSignal, DataSignal
 from view.signal.signalObject import PluginSignal, ProfileSignal, FileSignal, EngineSignal, GuiSignal, GBTranscribeSignal
 class SettingDict(TypedDict):
     engine_setting: Dict
@@ -39,7 +39,6 @@ class ViewController():
         """
         self.window.addAvailablePluginSuites(pluginSuites)
         
-     
     def addAvailableEngineSetting(self, engines: List[Tuple[str, Dict]]):
         """ add the available engine setting to the interface
 
@@ -67,7 +66,6 @@ class ViewController():
         """
         self.window.showFileUploadPage()
         
-    
     def showStatusMsg(self, msg, time = 2000):
         """ show msg on the gui's status bar
 
@@ -130,7 +128,7 @@ class ViewController():
         """
         return ProfileSignal 
     
-    def getViewSignal(self) -> ViewSignals:
+    def getViewSignal(self) -> SystemSignal:
         """ 
         returns the view signal
         """

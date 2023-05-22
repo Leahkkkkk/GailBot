@@ -26,14 +26,18 @@ link  = toml.load(os.path.join(FRONTEND_CONFIG_ROOT, TextDataPath.link))
 #############################  about data ################################
 year = datetime.date.today().strftime("%Y")
 
+
 @dataclass 
 class LINKS(DataclassFromDict): 
+    """ interface for links data """
     HILAB                   : str = field_from_dict()
     USER_MANUAL             : str = field_from_dict()
     TECHNICAL_DOCUMENT      : str = field_from_dict()
     BUG_REPORT              : str = field_from_dict()
     EMAIL                   : str = field_from_dict()
-LINKS_DATA = LINKS.from_dict(link)
+    
+
+
 
 @dataclass
 class ABOUT:
@@ -161,6 +165,20 @@ class CONFIRM_PAGE:
     CANCEL = "Cancel"
 
 
+
+@dataclass
+class PROGRESS_PAGE:
+    HEADER = "Transcription in progress"
+    LOADING = "Transcribing files..."
+
+@dataclass
+class SUCCESS_PAGE:
+    HEADER = "Transcription complete"
+    MORE_BTN = "Process additional files"
+    RETURN_BTN = "Return to main menu"
+
+
+############################ Text Data by Component ############################
 @dataclass
 class CREATE_NEW_PROFILE:
     """class holding the text for the create new settings profile page"""
@@ -200,19 +218,6 @@ class ENGINE_TAB_TEXT:
 
 
 
-@dataclass
-class MENU_BAR:
-    """class holding the text for the menu bar"""
-    CONSOLE = "Console"
-    OPEN = "Open"
-    CLOSE = "Close"
-    HELP = "Help"
-    CONTACT = "Contact Us"
-    BUG = "Report Bug"
-    BUG_LINK = LINKS_DATA.BUG_REPORT
-    EMAIL_LINK = LINKS_DATA.EMAIL 
-    MAIL_FAILED = "Cannot open mail application on your computer, \
-                  please contact us by sending email to: hil@elist.tufts.edu"
 
 
 @dataclass
@@ -240,12 +245,6 @@ class POPUP_TAB:
     NEXT = "Next"
     FINISH = "Finish"
 
-
-@dataclass
-class PROGRESS_PAGE:
-    HEADER = "Transcription in progress"
-    LOADING = "Transcribing files..."
-
 @dataclass
 class FILE_TABLE_HEADER:
     """class holding the text for the file table headers"""
@@ -255,12 +254,7 @@ class FILE_TABLE_HEADER:
     SUCCESS = ["Type", "Name", "Status", "Output", "Actions"]
 
 
-@dataclass
-class SUCCESS_PAGE:
-    HEADER = "Transcription complete"
-    MORE_BTN = "Process additional files"
-    RETURN_BTN = "Return to main menu"
-
+LINKS_DATA = LINKS.from_dict(link)
 @dataclass
 class LINK:
     _linkTemplate = "<a style='color:{0}; font-weight: 500;' href={1}>{2}</a>"
@@ -271,6 +265,19 @@ class LINK:
     GB_WEB = _linkTemplate.format(Color.LINK, LINKS_DATA.HILAB, WELCOME_PAGE.WEB_LINK)
 
 
+@dataclass
+class MENU_BAR:
+    """class holding the text for the menu bar"""
+    CONSOLE = "Console"
+    OPEN = "Open"
+    CLOSE = "Close"
+    HELP = "Help"
+    CONTACT = "Contact Us"
+    BUG = "Report Bug"
+    BUG_LINK = LINKS_DATA.BUG_REPORT
+    EMAIL_LINK = LINKS_DATA.EMAIL 
+    MAIL_FAILED = "Cannot open mail application on your computer, \
+                  please contact us by sending email to: hil@elist.tufts.edu"
 @dataclass
 class PLUGIN_SUITE_TEXT:
     HEADER = "Upload Plugin Suite"

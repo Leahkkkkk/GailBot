@@ -58,6 +58,7 @@ class ERR:
     PLUGIN_DETAIL   = "ERROR 034: Failed to display plugin suite details"
     INVALID_PLUGIN  = "ERROR 035: Failed to upload plugin suite, since the plugin suite is invalid"
     DELETE_PLUGIN   = "ERROR 036: Failed to delete plugin suite"
+    PLUGIN_NAMES    = "ERROR 037: Failed to get all plugin suites names"
     ## error for transcription 
     FAIL_TRANSCRIBE       = "ERROR 036: Failed to transcribe the following files {0}. "
     INVALID_TRANSCRIBE    = "ERROR 037: The following files are invalid: {0}."

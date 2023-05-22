@@ -15,6 +15,8 @@ from view.signal.interface import DataSignal
 from controller.Request import Request
 from PyQt6.QtCore import QObject, pyqtSignal
 from controller.util.Error import ERR
+from gbLogger import makeLogger
+from .DataOrganizer import DataOrganizer
 
 class Signals(QObject):
     """ 
@@ -26,8 +28,8 @@ class Signals(QObject):
     error = pyqtSignal(str)
     pluginDetail = pyqtSignal(object)
 
-class PluginOrganizer:
-    def __init__(self, gbController: GailBot, pluginSignals: DataSignal) -> None:
+class PluginOrganizer(DataOrganizer):
+    def __init__(self, gb: GailBot, pluginSignals: DataSignal) -> None:
         """ 
         Args:
             gb (GailBot): an instance of GailBot api
@@ -35,18 +37,9 @@ class PluginOrganizer:
                                        which will emit signal for request 
                                        related to plugin data 
         """
-        self.data = dict()
-        self.signals = Signals()
-        self.gb = gbController
-        self.registerSignals(pluginSignals)
+        super().__init__(gb, pluginSignals)
         
-    def registerSignals(self, signals: DataSignal):
-        signals.postRequest.connect(self.addSuite)
-        signals.detailRequest.connect(self.getPluginSuiteDetail)
-        signals.deleteRequest.connect(self.deleteSuite)
-        signals.viewSourceRequest.connect(self.viewPluginSuiteSourceCode)
-        
-    def addSuite(self, addRequest: Request) -> None: 
+    def postHandler(self, addRequest: Request) -> None: 
         """ add a new plugin to the data base
 
         Args:
@@ -61,9 +54,16 @@ class PluginOrganizer:
         elif isinstance(suites, str):
             addRequest.fail(suites)
         else:
-            self.signals.error.emit(ERR.INVALID_PLUGIN)
+            addRequest.fail(ERR.INVALID_PLUGIN)
+    
+    def editHandler():
+        """
+        NOTE: no edit function for plugin has been implemented 
+              in the backend yet
+        """
+        pass 
 
-    def deleteSuite(self, deleteRequest: Request) -> None:
+    def deleteHandler(self, deleteRequest: Request) -> None:
         """ delete the plugin
 
         Args:
@@ -81,9 +81,9 @@ class PluginOrganizer:
         if deleted:
             deleteRequest.succeed(deleteRequest.data)
         else:
-            self.signals.error.emit(ERR.DELETE_PLUGIN)
+            deleteRequest.fail(ERR.DELETE_PLUGIN)
     
-    def getPluginSuiteDetail(self, detailRequest: Request) -> Dict[str, str]:
+    def getHandler(self, detailRequest: Request) -> Dict[str, str]:
         """get the plugin details
 
         Args:
@@ -105,7 +105,7 @@ class PluginOrganizer:
         return details
     
     
-    def viewPluginSuiteSourceCode(self, sourceRequest: Request):
+    def viewSourceHandler(self, sourceRequest: Request):
         """ handle the request to view suite source code
 
         Args:
@@ -120,3 +120,25 @@ class PluginOrganizer:
         except Exception as e:
             sourceRequest.fail(
                 ERR.PLUGIN_SRC_CODE.format(sourceRequest.data))
+        
+        
+    
+    def getAllNamesHandler(self, request: Request) -> None:
+        """ given a request that includes a success and failure continuation 
+            response with the list of available Engine names 
+            
+            Args: 
+                request(Request): an instance of request object that stores  
+                                  success and failure continuation, 
+                                  the success continuation will be a function 
+                                  that expect to receive a list of available 
+                                  engine names as the input argument
+        """
+        try:
+            names = self.gb.get_all_plugin_suites()
+            request.succeed(names)
+        except Exception as e :
+            request.fail(
+                ERR.PLUGIN_NAMES
+            )
+            self.logger.error(e, exc_info=e)

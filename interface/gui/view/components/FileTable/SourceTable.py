@@ -17,7 +17,8 @@ from enum import Enum
 
 # internal import
 from view.signal.Request import Request
-from view.signal.interface import DataSignal
+from view.signal.interface import FileDataSignal
+from view.signal import FileSignal, ProfileSignal
 from view.components.SettingDetail import ProfileDetail
 from view.widgets.MsgBox import WarnBox
 from view.widgets.Table import BaseTable
@@ -88,7 +89,6 @@ class SourceTable(BaseTable):
         self.tableHeight = STYLE_DATA.Dimension.TABLEMINHEIGHT
         self.nameAtFstColumn = False
         super().__init__(headers, *args, **kwargs)
-        self.profiles = []
         self.nameToData = dict()
         self.actionWidgetCol = len(self.headers) - 1
         self.selected : Set[str] = set()
@@ -101,24 +101,6 @@ class SourceTable(BaseTable):
             self._headerClickedHandler
         )
     
-    ########################  table initializer    #########################
-    def initProfiles(self, profiles: List[str]):
-        """ initialize the available profiles """
-        self.profiles = profiles
-    
-    def addProfile(self, profileName:str)->None:
-        """ add profile, called whenever new profile is added by the user  
-        """
-        self.profiles.append(profileName)
-        
-    def deleteProfile(self, profileName:str)->None:
-        """ delete profile, called whenever a profile is deleted by the user 
-        """
-        try: 
-            self.profiles.remove(profileName)
-        except Exception as e:
-            self.logger.error(e, exc_info=e)
-         
     ######################  handling selecting file  #####################
     def _headerClickedHandler(self, idx):
         """ handle header clicked signal  """
@@ -219,13 +201,15 @@ class SourceTable(BaseTable):
            ** connected to upload file button 
         
         """
-        try:
-            addFileWindow = UploadFileDialog(self.profiles)
-            addFileWindow.signals.postFile.connect(self._postFile)
-            addFileWindow.exec()
-        except Exception as e:
-            self.logger.error(e, exc_info=e) 
-            WarnBox("An error occurred when uploading the file")
+        def openUploadDialogue(profiles):
+            try:
+                addFileWindow = UploadFileDialog(profiles)
+                addFileWindow.signals.postFile.connect(self._postFile)
+                addFileWindow.exec()
+            except Exception as e:
+                self.logger.error(e, exc_info=e) 
+                WarnBox("An error occurred when uploading the file")
+        ProfileSignal.getAllNameRequest.emit(Request(data=None, succeed=openUploadDialogue))
     
     def _postFile(self, file):
         """ send signals to post file to the database 
@@ -348,17 +332,18 @@ class SourceTable(BaseTable):
         Args:
             name (str): the name of the file 
         """
-        dialog = _ChangeProfileDialog(
-            self.profiles, 
-            name, 
-            self.signal, 
-            succeed=self.changeProfileSucceed, parent=self)
-        dialog.exec()
+        def changeFile(profiles):
+            dialog = _ChangeProfileDialog(
+                profiles, 
+                name, 
+                self.signal, 
+                succeed=self.changeProfileSucceed, parent=self)
+            dialog.exec()
+        ProfileSignal.getAllNameRequest.emit(Request(data=None, succeed=changeFile))
    
     def changeProfileSucceed(self, result: Tuple[str, str]):
         """succeed continuation of the profile change, update the file's
            profile information on the frontend interface
-
         """
         try:
             name, profilekey = result
@@ -473,7 +458,7 @@ class _ChangeProfileDialog(QDialog):
     def __init__(self, 
                  profiles: List[str], 
                  fileKey:str, 
-                 signal:DataSignal,
+                 signal:FileDataSignal,
                  succeed: callable,
                  *args, 
                  **kwargs) -> None:

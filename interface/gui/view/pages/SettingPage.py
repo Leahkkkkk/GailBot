@@ -9,9 +9,6 @@ Modified By:  Siara Small  & Vivian Li
 -----
 '''
 
-""" TODO:
-make the button into a list for modularity 
-"""
 from enum import Enum
 from typing import List, Dict, List, Tuple
 from view.config.Style import STYLE_DATA
@@ -25,7 +22,6 @@ from view.pages import (
     SysSetPage, 
     EnginePage
 )
-from view.util.ErrorMsg import  ERR
 from view.widgets import (
     ColoredBtn,
     BorderBtn,
@@ -67,10 +63,12 @@ class SettingPage(QWidget):
             self.ProfilePage.addSucceed(profile)
     
     def addAvailableEngines(self, engines:List[Tuple[str, Dict]]):
+        """ add a list of available engine to the Engine Setting page """
         for engine in engines:
             self.EngineSetPage.addSucceed(engine)
      
     def addAvailablePluginSuites(self, pluginSuites: List[Tuple[str, Dict[str, str], str]]):
+        """ add a list of plugin suite to the Plugin suites page"""
         for suite in pluginSuites:
             self.PluginPage.addSucceed(suite)
     
@@ -180,14 +178,14 @@ class SettingPage(QWidget):
         self.engineSetBtn.addOtherStyle(STYLE_DATA.StyleSheet.onlyBottomBorder)
         self.systemSetBtn.addOtherStyle(STYLE_DATA.StyleSheet.onlyBottomBorder)
         self.pluginSetBtn.addOtherStyle(STYLE_DATA.StyleSheet.onlyBottomBorder)
-        self.transcibeSetBtn.colorChange(STYLE_DATA.Color.GREYDARK)
-        self.engineSetBtn.colorChange(STYLE_DATA.Color.GREYDARK)
-        self.systemSetBtn.colorChange(STYLE_DATA.Color.GREYDARK)
-        self.pluginSetBtn.colorChange(STYLE_DATA.Color.GREYDARK)
+        self.transcibeSetBtn.changeColor(STYLE_DATA.Color.GREYDARK)
+        self.engineSetBtn.changeColor(STYLE_DATA.Color.GREYDARK)
+        self.systemSetBtn.changeColor(STYLE_DATA.Color.GREYDARK)
+        self.pluginSetBtn.changeColor(STYLE_DATA.Color.GREYDARK)
         self.HIGH_LIGHT = STYLE_DATA.Color.HIGHLIGHT
   
     def fontchange(self):
-        self.transcibeSetBtn.fontChange(STYLE_DATA.FontSize.BTN)
-        self.engineSetBtn.fontChange(STYLE_DATA.FontSize.BTN)
-        self.systemSetBtn.fontChange(STYLE_DATA.FontSize.BTN)
-        self.pluginSetBtn.fontChange(STYLE_DATA.FontSize.BTN)
+        self.transcibeSetBtn.changeFont(STYLE_DATA.FontSize.BTN)
+        self.engineSetBtn.changeFont(STYLE_DATA.FontSize.BTN)
+        self.systemSetBtn.changeFont(STYLE_DATA.FontSize.BTN)
+        self.pluginSetBtn.changeFont(STYLE_DATA.FontSize.BTN)

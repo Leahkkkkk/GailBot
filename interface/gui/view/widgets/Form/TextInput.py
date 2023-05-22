@@ -80,5 +80,5 @@ class TextInput(QWidget, FormWidget):
         return self.inputField.text()
     
     def fontchange(self):
-        self.inputLabel.fontChange(STYLE_DATA.FontSize.BODY)
+        self.inputLabel.changeFont(STYLE_DATA.FontSize.BODY)
     

@@ -7,7 +7,7 @@ Author: Siara Small  & Vivian Li
 Last Modified:2023/04/18
 Modified By:  Siara Small  & Vivian Li
 -----
-Description: 
+Description: implementation of profile setting page 
 '''
 from typing import List
 from view.config.Text import PROFILE_PAGE as Text
@@ -39,6 +39,7 @@ class ProfilePage(BaseSettingPage):
         super().__init__( *args, **kwargs)
     
     def addItem(self):
+        """ open a dialogue that allows user to create a new profile """
         newProfile = CreateNewProfile(
             self.availableEngineSettings, 
             self.availablePluginSettings,
@@ -47,16 +48,20 @@ class ProfilePage(BaseSettingPage):
         newProfile.exec()
     
     def addPluginSuite(self, name:str):
+        """ add a plugin suite to the current list of available plugin suite """
         self.availablePluginSettings.append(name)
     
     def deletePlugin(self, name:str):
+        """ delete a plugin suite from the current list of available plugin suite """
         if name in self.availablePluginSettings:
             self.availablePluginSettings.remove(name)
    
     def addEngineSetting(self, name:str):
+        """ add an engine setting to the current list of available engine """
         self.availableEngineSettings.append(name)
 
     def deleteEngine(self, name:str):
+        """ delete an engine from the current list of available engine """
         if name in self.availableEngineSettings:
             self.availableEngineSettings.remove(name)
         

@@ -17,29 +17,32 @@ from view.config.Style import STYLE_DATA
 from PyQt6.QtCore import Qt
 
 class BasicPage(QWidget):
-    pageInstruction = None 
+    pageInstruction = None # a dictionary that stores the instruction 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         STYLE_DATA.signal.changeColor.connect(self.changeColor)
         STYLE_DATA.signal.changeFont.connect(self.changeFont)
         self.instructionBtn = InstructionBtn(self.pageInstruction)
-        self.iniLogo()
+        self.initLogo()
         self.logopos = Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignRight| Qt.AlignmentFlag.AlignAbsolute
-        self.infopos = Qt.AlignmentFlag.AlignBottom | Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignAbsolute
+        self.infopos = self.instructionBtn.defaultPos
         
     def _initLayout(self):
+        """ initialize layout """
         self.mainLayout = QHBoxLayout()
         self.mainLayout.addWidget(self.instructionBtn, alignment=self.infopos)    
         self.mainLayout.addWidget(self.logoContainer, alignment=self.logopos) 
         self.setLayout(self.mainLayout)   
         
     def changeColor(self):
+        """ called when the color mode changed, change the logo color """
         self.updateLogo()
         
     def changeFont(self):
         pass 
-    
-    def iniLogo(self):
+
+    def initLogo(self):
+        """ initialize the logo  """
         self.logoContainer = QWidget()
         self.logoLayout = QHBoxLayout()
         self.logoContainer.setLayout(self.logoLayout)
@@ -49,6 +52,7 @@ class BasicPage(QWidget):
         self.logoContainer.setContentsMargins(0,0,0,0)
     
     def updateLogo(self):
+        """ update the logo color """
         self.logoLayout.removeWidget(self.logo)
         logo = getLogo()
         self.logo = logo 

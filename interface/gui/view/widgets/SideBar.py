@@ -7,7 +7,7 @@ Author: Siara Small  & Vivian Li
 Last Modified: Friday, 4th November 2022 6:10:45 pm
 Modified By:  Siara Small  & Vivian Li
 -----
-Description: a side bar widget 
+Description: implementationa side bar widget
 '''
 
 from .Background import initSideBarBackground
@@ -64,24 +64,24 @@ class SideBar(QWidget):
         self.gridLayout.setContentsMargins(0,0,0,0)
         self.gridLayout.setSpacing(0)
         self.addFooter()
-        self.midContainer.setStyleSheet( f"border-right:0.5px solid {STYLE_DATA.Color.OUTLINE};" )
-        self.topContainer.setStyleSheet( f"border-right:0.5px solid {STYLE_DATA.Color.OUTLINE};" )
-        self.btmContainer.setStyleSheet( f"border-right:0.5px solid {STYLE_DATA.Color.OUTLINE};" )
-        STYLE_DATA.signal.changeColor.connect(self.colorChange)
-        STYLE_DATA.signal.changeFont.connect(self.fontChange)
+        self.midContainer.setStyleSheet(STYLE_DATA.StyleSheet.SIDEBAR)
+        self.topContainer.setStyleSheet(STYLE_DATA.StyleSheet.SIDEBAR)
+        self.btmContainer.setStyleSheet(STYLE_DATA.StyleSheet.SIDEBAR)
+        STYLE_DATA.signal.changeColor.connect(self.changeColor)
+        STYLE_DATA.signal.changeFont.connect(self.changeFont)
         initSideBarBackground(self)
         
-    def colorChange(self):
+    def changeColor(self):
         self.setObjectName("sidebar")
-        self.midContainer.setStyleSheet(f"border-right:0.5px solid {STYLE_DATA.Color.OUTLINE};")
-        self.topContainer.setStyleSheet(f"border-right:0.5px solid {STYLE_DATA.Color.OUTLINE};")
-        self.btmContainer.setStyleSheet(f"border-right:0.5px solid {STYLE_DATA.Color.OUTLINE};")
+        self.midContainer.setStyleSheet(STYLE_DATA.StyleSheet.SIDEBAR)
+        self.topContainer.setStyleSheet(STYLE_DATA.StyleSheet.SIDEBAR)
+        self.btmContainer.setStyleSheet(STYLE_DATA.StyleSheet.SIDEBAR)
         initSideBarBackground(self)
         
-    def fontChange(self):
-        self.GuideLink.fontChange(STYLE_DATA.FontSize.LINK) 
-        self.versionLabel.fontChange(STYLE_DATA.FontSize.SMALL) 
-        self.copyRightLabel.fontChange(STYLE_DATA.FontSize.SMALL) 
+    def changeFont(self):
+        self.GuideLink.changeFont(STYLE_DATA.FontSize.LINK) 
+        self.versionLabel.changeFont(STYLE_DATA.FontSize.SMALL) 
+        self.copyRightLabel.changeFont(STYLE_DATA.FontSize.SMALL) 
 
     def addTopWidget(self, widget) -> None:
         self.toplayout.addWidget(widget)

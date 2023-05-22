@@ -45,7 +45,7 @@ class MVController:
         self.view.addAvailablePluginSuites(pluginInfo)
 
         # add available setting to the frontend interface
-        settingNames = self.gb.get_all_settings_name()
+        settingNames = self.gb.get_all_profile_names()
         settingInfo = [(name, self.gb.get_setting_dict(name)) for name in settingNames]
         self.logger.info(f"get profile {settingInfo}")
         self.view.addAvailableSettings(settingInfo)

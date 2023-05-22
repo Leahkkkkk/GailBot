@@ -13,13 +13,11 @@ Description: a form page widget that display a page with a form  that accept
 from typing import Dict 
 from .Label import Label 
 from .TextForm import TextForm
-from .ScrollArea import ScrollArea
-from .Background import initSecondaryColorBackground, initBackground
+from .Background import initBackground
 from ..config.Style import STYLE_DATA 
 from PyQt6.QtWidgets import (
     QWidget, 
     QVBoxLayout,
-    QScrollArea
 )
 from PyQt6.QtCore import Qt
 
@@ -53,8 +51,8 @@ class SettingForm(QWidget):
         self._connectSignal()
     
     def _connectSignal(self):
-        STYLE_DATA.signal.changeColor.connect(self.colorChange)
-        STYLE_DATA.signal.changeFont.connect(self.fontChange)
+        STYLE_DATA.signal.changeColor.connect(self.changeColor)
+        STYLE_DATA.signal.changeFont.connect(self.changeFont)
 
         
     def setValue(self, values:dict) -> None:
@@ -87,15 +85,20 @@ class SettingForm(QWidget):
         self.verticalLayout.addStretch()
         self.verticalLayout.setContentsMargins(0,0,0,0)
     
-    def addWidget(self, widget: QWidget):
-        self.setForm.addWidget(widget)
 
-    def colorChange(self):
+    def changeColor(self):
+        """
+        called when the color mode is changed 
+        """
         initBackground(self.setForm, STYLE_DATA.Color.SUB_BACKGROUND)
     
-    def fontChange(self):
-        self.header.fontChange(STYLE_DATA.FontSize.HEADER2)
-        self.caption.fontChange(STYLE_DATA.FontSize.DESCRIPTION)
+
+    def changeFont(self):
+        """
+        called when the font size is hanged 
+        """
+        self.header.changeFont(STYLE_DATA.FontSize.HEADER2)
+        self.caption.changeFont(STYLE_DATA.FontSize.DESCRIPTION)
         
 
     

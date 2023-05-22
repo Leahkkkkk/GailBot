@@ -154,21 +154,10 @@ class MainStack(QStackedWidget):
         self.ConfirmTranscribePage.CANCEL.clicked.connect(self.gotoFileUploadPage)
         
     def _connectSignal(self):
-        """ connecting the signal  """
-        ####  for selection
-        self.SettingPage.ProfilePage.signal.addSucceed.connect(
-            self.FileUploadPage.fileTable.addProfile)
-        ##### when profile is deleted, the file table  delete profile name
-        ####  from selection 
-        self.SettingPage.ProfilePage.signal.deleteSucceed.connect(
-            self.FileUploadPage.fileTable.deleteProfile)
-        
         ### signal to change view color 
         STYLE_DATA.signal.changeColor.connect(self._changeBkg)
         
     
-    # show a specific profile identified by profile name
-
 class Request:
     def __init__(self, data, succeed: callable = None) -> None:
         self.data = data

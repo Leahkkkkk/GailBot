@@ -72,8 +72,6 @@ class ConfirmTranscribePage(BasicPage):
 
     def _initLayout(self):
         """initializes layout"""
-        self.logger.info("")
-
         self.verticalLayout = QVBoxLayout()
         self.horizontalLayout = QHBoxLayout()
         self.bottomButton.setLayout(self.horizontalLayout)
@@ -91,12 +89,17 @@ class ConfirmTranscribePage(BasicPage):
 
     def _sendTranscribeSignal(self):
         """sends a signal with a set of file keys that will be transcribed"""
+        def transcribeComplete(self, completeData):
+            """ success continuation of transcription, when called, send a 
+                transcriptionComplete signal, which will delete all the 
+                files on the table
+            """
+            GBTranscribeSignal.transcriptionComplete.emit(completeData)
+            
         files = self.fileTable.getAllFile()
         self.logger.info(files)
         GBTranscribeSignal.transcribe.emit(
-            Request(data=files, succeed=self.transcribeComplete)
+            Request(data=files, succeed=transcribeComplete)
         )
         GBTranscribeSignal.sendToTranscribe.emit(files)
 
-    def transcribeComplete(self, completeData):
-        GBTranscribeSignal.sendToComplete.emit(completeData)

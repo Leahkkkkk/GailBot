@@ -1,3 +1,14 @@
+'''
+File: TextDisplay.py
+Project: GailBot GUI
+File Created: 2023/04/01
+Author: Siara Small  & Vivian Li
+-----
+Last Modified:2023/05/19
+Modified By:  Siara Small  & Vivian Li
+-----
+Description: implement widget for displaying text
+'''
 import markdown
 import os
 from dataclasses import dataclass
@@ -55,7 +66,7 @@ class MarkdownDisplay(QTextEdit):
         self.setMinimumHeight(350)
         self.verticalScrollBar().setStyleSheet(STYLE_DATA.StyleSheet.SCROLL_BAR)
 
-    def colorChange(self, colormode):
+    def changeColor(self, colormode):
         self.verticalScrollBar().setStyleSheet(STYLE_DATA.StyleSheet.SCROLL_BAR)
         self.setStyleSheet(STYLE_DATA.StyleSheet.basic)
 
@@ -80,7 +91,7 @@ class TextDisplay(QWidget):
         initPrimaryColorBackground(self)
         self.setStyleSheet(STYLE_DATA.StyleSheet.basic)
 
-    def colorChange(self, colormode):
+    def changeColor(self, colormode):
         self.setStyleSheet(STYLE_DATA.StyleSheet.basic)
 
 class DictionaryTableWidget(QTableWidget):
@@ -93,8 +104,8 @@ class DictionaryTableWidget(QTableWidget):
         self.setHorizontalHeaderLabels(["Option", "Function"])  # set the column headers
         self.populateTable(dictionary)  # popu
         self._initStyle()
-        STYLE_DATA.signal.changeColor.connect(self.colorChange)
-        STYLE_DATA.signal.changeFont.connect(self.fontChange)
+        STYLE_DATA.signal.changeColor.connect(self.changeColor)
+        STYLE_DATA.signal.changeFont.connect(self.changeFont)
 
     def populateTable(self, dictionary):
         row = 0
@@ -147,13 +158,13 @@ class DictionaryTableWidget(QTableWidget):
         self.setFont(font)
         self.setTextElideMode(Qt.TextElideMode.ElideMiddle)
 
-    def colorChange(self):
+    def changeColor(self):
         self.setStyleSheet(f"#FileTable{STYLE_DATA.StyleSheet.FILE_TABLE}")
         self.verticalScrollBar().setStyleSheet(STYLE_DATA.StyleSheet.SCROLL_BAR)
         self.horizontalScrollBar().setStyleSheet(STYLE_DATA.StyleSheet.SCROLL_BAR)
         self.horizontalHeader().setStyleSheet(STYLE_DATA.StyleSheet.TABLE_HEADER)
 
-    def fontChange(self, font=None):
+    def changeFont(self, font=None):
         font = QFont(STYLE_DATA.FontFamily.OTHER, STYLE_DATA.FontSize.TABLE_ROW)
         self.setFont(font)
 

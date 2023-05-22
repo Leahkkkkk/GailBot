@@ -53,7 +53,18 @@ class TabPage(QWidget):
             self.signals.nextPage.emit()
     
 class TabDialog(QDialog):
-    def __init__(self, title, tabs: Dict[str, TabPage], size: QSize = TabSize) -> None:
+    def __init__(self, 
+                 title, 
+                 tabs: Dict[str, TabPage], 
+                 size: QSize = TabSize) -> None:
+        """ the implementation of the TabDialog that opens up a dialog 
+            with multiple tabs
+
+        Args:
+            title (str): the title of the tab
+            tabs (Dict[str, TabPage]): a mapping from the tab tittle to tab page
+            size (QSize, optional): the size of the tab. Defaults to TabSize.
+        """
         super().__init__()
         self.logger = makeLogger()
         self.currPage = 0 
@@ -64,14 +75,16 @@ class TabDialog(QDialog):
         self.initUI()
         self.connectSignal()
         self.initStyle()
-        self.updatePage()
+        self._updatePage()
         
     def initStyle(self):
+        """ initialize the style """
         initPrimaryColorBackground(self)
         for tab in self.tabs:
             initPrimaryColorBackground(tab)
     
     def initUI(self):
+        """ initialize the widget """
         self._layout = QVBoxLayout()
         
         self.tabStack = QStackedWidget()
@@ -100,6 +113,7 @@ class TabDialog(QDialog):
         self._layout.addWidget(self.btnContainer, alignment=Qt.AlignmentFlag.AlignHCenter)
         
     def addWidget(self, widget, alignment):
+        """ public function to add widget to the tab dialogue """
         self._layout.addWidget(widget, alignment=alignment)
         
     def connectSignal(self):
@@ -112,16 +126,22 @@ class TabDialog(QDialog):
             tab.signals.nextPage.connect(self.activateBtn)
      
     def gotoNext(self):
+        """ display the next page of the current page """
         if self.currPage < self.finalTabIdx:
             self.currPage += 1
-            self.updatePage()
+            self._updatePage()
 
     def gotoPrev(self):
+        """ display the previous page of the current page """
         if self.currPage != 0: 
             self.currPage -= 1
-            self.updatePage()
+            self._updatePage()
     
-    def updatePage(self):
+
+    def _updatePage(self):
+        """ 
+        update the page
+        """
         self.tabStack.setCurrentWidget(self.tabs[self.currPage])
         self.tabs[self.currPage].initState()
         for btn in self.currentBtns:

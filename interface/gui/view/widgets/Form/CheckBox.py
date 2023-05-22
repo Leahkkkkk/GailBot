@@ -101,7 +101,7 @@ class CheckBox(QWidget, FormWidget):
         ))
     
     def setFontSize(self):
-        self.label.fontChange(STYLE_DATA.FontSize.INSTRUCTION_CAPTION)
+        self.label.changeFont(STYLE_DATA.FontSize.INSTRUCTION_CAPTION)
         
     def setValue(self, value: bool):
         self.checkBox.setChecked(value)
@@ -118,5 +118,5 @@ class CheckBox(QWidget, FormWidget):
     def disable(self):
         self.checkBox.setCheckable(False)
     
-    def fontChange(self):
-        self.label.fontChange(STYLE_DATA.FontSize.INSTRUCTION_CAPTION)
+    def changeFont(self):
+        self.label.changeFont(STYLE_DATA.FontSize.INSTRUCTION_CAPTION)

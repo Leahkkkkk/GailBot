@@ -22,9 +22,9 @@ class ScrollArea(QScrollArea):
         self.horizontalScrollBar().setStyleSheet(STYLE_DATA.StyleSheet.SCROLL_BAR)
         self.setWidgetResizable(True)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
-        STYLE_DATA.signal.changeColor.connect(self.colorchange)
+        STYLE_DATA.signal.changeColor.connect(self.changeColor)
     
-    def colorchange(self):
+    def changeColor(self):
         self.verticalScrollBar().setStyleSheet(STYLE_DATA.StyleSheet.SCROLL_BAR)
         self.horizontalScrollBar().setStyleSheet(STYLE_DATA.StyleSheet.SCROLL_BAR)
 

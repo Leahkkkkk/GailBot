@@ -26,12 +26,20 @@ from PyQt6.QtGui import (
 from PyQt6.QtWidgets import QWidget, QVBoxLayout
 
 
-class Background(QBrush):
-    """ a QBrush object that creates a white background """
-    def __init__(self,color, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        self.setColor(QColor(color))
-        self.setStyle(Qt.BrushStyle.SolidPattern) 
+
+def initBackground(widget:QWidget, color = STYLE_DATA.Color.MAIN_BACKGROUND):
+    """ paint the widget's background with a solid color
+
+    Args:
+        widget (QWidget): the widget 
+        color (str, optional): the color of the background. 
+                            Defaults to STYLE_DATA.Color.MAIN_BACKGROUND.
+    """
+    widget.setAutoFillBackground(True)
+    bg = Background(color)
+    palette = widget.palette()
+    palette.setBrush(QPalette.ColorRole.Window, bg)
+    widget.setPalette(palette)
 
 def initHomePageBackground(widget:QWidget):
     """initialize the home page background with image"""
@@ -65,6 +73,7 @@ def addLogo(layout: QVBoxLayout):
     logo.setContentsMargins(0,0,0,0)
 
 def getLogo() -> Tuple[QWidget, Qt.AlignmentFlag]:
+    """ get the logo widget  """
     logo = Image(
         STYLE_DATA.Asset.hilLabLogo, (STYLE_DATA.Dimension.LOGO_WIDTH, STYLE_DATA.Dimension.LOGO_HEIGHT))
     logo.setContentsMargins(0,0,0,0)
@@ -83,13 +92,6 @@ def _resizeEvent(widget: QWidget, event: QResizeEvent, img: str):
     palette.setBrush(QPalette.ColorRole.Window, brush)
     widget.setPalette(palette)
     
-def initBackground(widget:QWidget, color = STYLE_DATA.Color.MAIN_BACKGROUND):
-    """ make the widget background as white """
-    widget.setAutoFillBackground(True)
-    bg = Background(color)
-    palette = widget.palette()
-    palette.setBrush(QPalette.ColorRole.Window, bg)
-    widget.setPalette(palette)
 
 def _initImgBackground(widget:QWidget, background: str = STYLE_DATA.Asset.homeBackground):
     """  initialize the image background for a widget
@@ -110,3 +112,13 @@ def _initImgBackground(widget:QWidget, background: str = STYLE_DATA.Asset.homeBa
     widget.setPalette(palette)
     widget.resizeEvent = lambda event : _resizeEvent(widget, event, background)
     
+class Background(QBrush):
+    def __init__(self,color, *args, **kwargs) -> None:
+        """a QBrush object that creates a background 
+
+        Args:
+            color (str): the color of the background
+        """
+        super().__init__(*args, **kwargs)
+        self.setColor(QColor(color))
+        self.setStyle(Qt.BrushStyle.SolidPattern) 

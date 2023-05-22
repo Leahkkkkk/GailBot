@@ -1,24 +1,51 @@
+'''
+File: GraphDisplay.py
+Project: GailBot GUI
+File Created: 2023/04/01
+Author: Siara Small  & Vivian Li
+-----
+Last Modified:2023/05/19
+Modified By:  Siara Small  & Vivian Li
+-----
+Description: implementation of a graph display widget that display a graph 
+             stored in an adjacency list 
+'''
+
 from typing import Dict, List, Tuple
 from collections import deque
 import math
 from view.config.Style import  STYLE_DATA
 from PyQt6.QtGui import QPainter, QFont
 from PyQt6.QtCore import Qt, QSize
-from PyQt6.QtWidgets import  QGraphicsView, QGraphicsScene, QGraphicsItem, QGraphicsLineItem, QGraphicsTextItem
+from PyQt6.QtWidgets import  (
+    QGraphicsView, 
+    QGraphicsScene, 
+    QGraphicsItem,
+    QGraphicsLineItem, 
+    QGraphicsTextItem)
 from PyQt6.QtGui import QPen, QBrush,  QFont, QColor
 from PyQt6.QtCore import QRectF, QLineF, Qt
 
 
 class GraphDisplay(QGraphicsView):
     def __init__(self, dependencyGraph: Dict[str, List[str]]):
+        """ display a dependencyGraph
+
+        Args:
+            dependencyGraph (Dict[str, List[str]]): the adjacency list representation 
+                                                    of a dependency graph, 
+                                                    the key is current node, 
+                                                    and the value is the list 
+                                                    of nodes current node depends on 
+        """
         super().__init__()
-        print(dependencyGraph)
         self.graph = dependencyGraph
         self.nodes: Dict[str, Tuple ] = dict()
         self.width = 600
         self.height = 300
         self.scene = QGraphicsScene()
-        self.setRenderHint(QPainter.RenderHint.SmoothPixmapTransform | QPainter.RenderHint.Antialiasing)
+        self.setRenderHint(QPainter.RenderHint.SmoothPixmapTransform |
+                           QPainter.RenderHint.Antialiasing)
 
         self.setViewportUpdateMode(QGraphicsView.ViewportUpdateMode.SmartViewportUpdate)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
@@ -42,7 +69,6 @@ class GraphDisplay(QGraphicsView):
         title.setPos(200, 120)
         
         # Add the title item to the scene
-       
         poses = evenlyDistributedPoints(
             len(self.graph.keys()), 
             self.width , self.height )
@@ -50,7 +76,6 @@ class GraphDisplay(QGraphicsView):
         sortedNodes = self.sort_nodes()
         sortedNodes.reverse()
   
-        
         for node, pos in zip (sortedNodes, poses):
             newNode = NodeItem(node, pos[0], pos[1])
             self.scene.addItem(newNode)
@@ -65,7 +90,10 @@ class GraphDisplay(QGraphicsView):
                 pen = QPen(Qt.PenStyle.SolidLine)
                 pen.setWidth(2)
                 pen.setColor(QColor(STYLE_DATA.Color.MAIN_TEXT))
-                line = QGraphicsLineItem(node_item.x, node_item.y, neighbor_item.x, neighbor_item.y)
+                line = QGraphicsLineItem(node_item.x, 
+                                         node_item.y, 
+                                         neighbor_item.x, 
+                                         neighbor_item.y)
                 line.setPen(pen)
                 line.setZValue(-1) 
                 self.scene.addItem(line)
@@ -150,7 +178,10 @@ def topologicalSort(graph):
 
     return sorted_nodes
 
-def evenlyDistributedPoints(n, x, y):
+def evenlyDistributedPoints(n, x, y) -> List[Tuple[int, int]]:
+    """ given the width x and heighy y of the space, return a list of positions 
+        of n points that will be evenly distributed in the space
+    """
     positions = []
     num_rows = int(math.sqrt(n))
     num_cols = math.ceil(n / num_rows)
@@ -165,7 +196,10 @@ def evenlyDistributedPoints(n, x, y):
             positions.append((pos_x, pos_y))
     return positions
 
-def getShortHand(name):
+def getShortHand(name) -> str:
+    """ given a plugin name, shrink the name of the plugin if the name is too
+        long to be able to fit the word into the graph
+    """
     if "Plugin" in name:
         res = name.replace("Plugin", "")
     else: 

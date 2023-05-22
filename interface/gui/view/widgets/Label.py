@@ -61,13 +61,23 @@ class Label(QLabel):
                            f"{others};")
     
     def changeDefault(self):
+        """ called in response to the change in color mode  """
         self.setStyleSheet(self.styleSheet() + f"color: {STYLE_DATA.Color.MAIN_TEXT};")
        
-    def colorChange(self, color):
+    def changeColor(self, color):
+        """change the label color
+
+        Args:
+            color (str): the new color of the label, stored in string
+        """
         self.setStyleSheet(self.styleSheet() + f"color: {color};")
 
-    def fontChange(self, fontsize):
-        # set the updated palette to the label
+    def changeFont(self, fontsize):
+        """change the label fontsize
+
+        Args:
+            fontsize (str): the new font size of the label, in pixel 
+        """
         self.setStyleSheet(self.styleSheet() + f";font-size: {fontsize};")
     
      
@@ -80,6 +90,7 @@ class Label(QLabel):
         self.setFont(QFont(Raleway[0], weight=800))
     
     def loadClockFont(self):
+        """ loads font for header label """
         id = QFontDatabase.addApplicationFont(
             os.path.join(PROJECT_ROOT,FontSource.clockFont))
         if id < 0 : logging.warn("Font cannot be loaded")

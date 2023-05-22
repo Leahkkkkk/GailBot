@@ -132,4 +132,4 @@ class DependentCombo(QWidget, FormWidget):
         STYLE_DATA.signal.changeFont.connect(self.changeFont)
    
     def changeFont(self):
-        self.mainLabel.fontChange(STYLE_DATA.FontSize.HEADER4) 
+        self.mainLabel.changeFont(STYLE_DATA.FontSize.HEADER4) 

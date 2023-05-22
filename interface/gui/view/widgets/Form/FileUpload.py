@@ -41,11 +41,11 @@ class UploadFile(QWidget, FormWidget):
         self._layout.addWidget(self.selectFileBtn, 1, 1)
 
     def changefont(self):
-        self.labelWidget.fontChange(STYLE_DATA.FontSize.BODY)
-        self.selectFileBtn.fontChange(STYLE_DATA.FontSize.BODY)
+        self.labelWidget.changeFont(STYLE_DATA.FontSize.BODY)
+        self.selectFileBtn.changeFont(STYLE_DATA.FontSize.BODY)
     
     def changeColor(self):
-        self.selectFileBtn.colorChange(STYLE_DATA.Color.PRIMARY_BUTTON)
+        self.selectFileBtn.changeColor(STYLE_DATA.Color.PRIMARY_BUTTON)
         
     def uploadFile(self):
         try: 
