@@ -45,7 +45,6 @@ class DataSignal(QObject):
     addSucceed        = pyqtSignal(str)
     editSucceed       = pyqtSignal(str)
     
-
 class FileDataSignal(DataSignal):
     """
     sub-class of DataSignal class for FileDataSignal, which adds

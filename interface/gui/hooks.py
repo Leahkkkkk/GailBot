@@ -1,4 +1,15 @@
-import logging.config 
+'''
+File: hooks.py
+Project: GailBot GUI
+File Created: 2023/04/01
+Author: Siara Small  & Vivian Li
+-----
+Last Modified:2023/05/19
+Modified By:  Siara Small  & Vivian Li
+-----
+Description: to facilitate pyInstaller to collect library when packaging the 
+             application
+'''
 import hmmlearn
 import certifi
 import pytorch_lightning

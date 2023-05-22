@@ -7,7 +7,11 @@ Author: Siara Small  & Vivian Li
 Last Modified:2023/04/18
 Modified By:  Siara Small  & Vivian Li
 -----
-Description: The base class of setting page  
+Description: The base class of setting page , 
+             sub-classes include
+             EngineSetting Page, 
+             ProfileSetting Page, 
+             Plugin Setting Page
 '''
 from view.config.Style import STYLE_DATA,  FontFamily
 from view.widgets.Button import InstructionBtn
