@@ -221,7 +221,7 @@ class ChooseEngine(TabPage):
         self.verticallayout = QVBoxLayout()
         self.setLayout(self.verticallayout)
         self.header = Label(
-            Text.engineSettingHeader,
+            Text.ENGINE_SETTING,
             STYLE_DATA.FontSize.HEADER2,
             FontFamily.MAIN
         )     

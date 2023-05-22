@@ -89,7 +89,7 @@ class ConfirmTranscribePage(BasicPage):
 
     def _sendTranscribeSignal(self):
         """sends a signal with a set of file keys that will be transcribed"""
-        def transcribeComplete(self, completeData):
+        def transcribeComplete(completeData):
             """ success continuation of transcription, when called, send a 
                 transcriptionComplete signal, which will delete all the 
                 files on the table

@@ -11,14 +11,10 @@ from view.widgets.MsgBox import WarnBox
 from view.widgets.Table import BaseTable
 
 from PyQt6.QtWidgets import (
-    QTableWidgetItem,
     QWidget,
-    QPushButton,
-    QVBoxLayout,
     QHBoxLayout,
 )
 from PyQt6.QtGui import QIcon
-
 
 class PluginTable(BaseTable):
     def __init__(self, signal: DataSignal):
@@ -43,7 +39,6 @@ class PluginTable(BaseTable):
     def addCellWidgets(self, suiteName: str, row: int, isOfficial: bool = False):
         cellWidget = QWidget()
         layout = QHBoxLayout()
-
         cellWidget.setLayout(layout)
         layout.addWidget(self.getViewSourceBtn(suiteName))
         layout.addWidget(self.getViewDetailBtn(suiteName))
@@ -52,7 +47,8 @@ class PluginTable(BaseTable):
         self.setCellWidget(row, self.actionWidgetCol, cellWidget)
 
     def viewDetailRequest(self, suiteName: str):
-        self.signal.detailRequest.emit(
+        self.logger.info(f"send view detail request for {suiteName}")
+        self.signal.getRequest.emit(
             Request(data=suiteName, succeed=self.displayPluginSuiteDetail)
         )
 

@@ -40,7 +40,7 @@ class DataSignal(QObject):
     postRequest       = pyqtSignal(object)
     viewSourceRequest = pyqtSignal(object)
     detailRequest     = pyqtSignal(object)
-    getAllNameRequest       = pyqtSignal(object)
+    getAllNameRequest = pyqtSignal(object)
     deleteSucceed     = pyqtSignal(str)
     addSucceed        = pyqtSignal(str)
     editSucceed       = pyqtSignal(str)
