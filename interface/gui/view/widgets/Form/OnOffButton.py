@@ -45,7 +45,7 @@ class onOffButton(QWidget, FormWidget):
         if value:
             self.onOffBtn.setText(Text.ON)
         else: 
-            self.onOffBtn.setText(Text.off)
+            self.onOffBtn.setText(Text.OFF)
         
     def getValue(self):
         return self.value

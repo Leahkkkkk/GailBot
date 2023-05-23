@@ -12,10 +12,9 @@ Description: implement plugin organizer to handle GUI request related to plugin 
 from typing import  Dict
 from gailbot.api import GailBot
 from view.signal.interface import DataSignal 
-from controller.Request import Request
+from view.signal.Request import Request
 from PyQt6.QtCore import QObject, pyqtSignal
 from controller.util.Error import ERR
-from gbLogger import makeLogger
 from .DataOrganizer import DataOrganizer
 
 class Signals(QObject):

@@ -13,8 +13,7 @@ Description: implement file organizer to handle GUI request for file data
 from typing import TypedDict
 from gailbot.api import GailBot
 from view.signal.interface import FileDataSignal
-from controller.Request import Request
-from gbLogger import makeLogger
+from view.signal.Request import Request
 from controller.util.Error import  ERR
 from PyQt6.QtCore import QObject, pyqtSignal
 from .DataOrganizer import DataOrganizer
