@@ -10,9 +10,8 @@ Modified By:  Siara Small  & Vivian Li
 Description: handle GUI request for engine data 
 '''
 from view.signal.interface import DataSignal
-from controller.Request import Request
+from view.signal.Request import Request
 from gailbot.api import GailBot
-from gbLogger import makeLogger
 from controller.util.Error import ERR
 from .DataOrganizer import DataOrganizer
 

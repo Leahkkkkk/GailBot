@@ -11,9 +11,8 @@ Description:
 Implementation of a database that stores the profile data
 '''
 from view.signal.interface import DataSignal
-from controller.Request import Request
+from view.signal.Request import Request
 from gailbot.api import GailBot
-from gbLogger import makeLogger
 from controller.util.Error import ERR
 from .DataOrganizer import DataOrganizer
 
@@ -96,6 +95,7 @@ class ProfileOrganizer(DataOrganizer):
             self.logger.error(e, exc_info=e)
         else:
             editRequest.succeed(editRequest.data)
+            
      
     def getHandler(self, getRequest: Request) -> None:
         """ 
@@ -123,6 +123,7 @@ class ProfileOrganizer(DataOrganizer):
             getRequest.fail(ERR.GET_PROFILE.format(name))
             self.logger.error(e, exc_info=e)
             
+
     def viewSourceHandler(self, request: Request) -> None:
         """ 
         response the request to view source with the source path 
@@ -145,7 +146,6 @@ class ProfileOrganizer(DataOrganizer):
                 ERR.PROFILE_SRC_CODE.format(request.data, str(e)))
 
                 
-    
     def getAllNamesHandler(self, request: Request) -> None:
         """ given a request that includes a success and failure continuation 
             response with the list of available profile names 

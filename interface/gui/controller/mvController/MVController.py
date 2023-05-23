@@ -12,7 +12,11 @@ Model view controller than connect ths database to a front end view object
 '''
 from gbLogger import makeLogger 
 from view import ViewController
-from .organizer import FileOrganizer, PluginOrganizer, ProfileOrganizer, EngineOrganizer
+from .organizer import (
+    FileOrganizer, 
+    PluginOrganizer, 
+    ProfileOrganizer, 
+    EngineOrganizer)
 from gailbot.api import GailBot
 
 class MVController:

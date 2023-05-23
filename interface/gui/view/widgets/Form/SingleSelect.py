@@ -1,14 +1,18 @@
+'''
+File: SingleSelect.py
+Project: GailBot GUI
+File Created: 2023/04/01
+Author: Siara Small  & Vivian Li
+-----
+Last Modified:2023/05/23
+Modified By:  Siara Small  & Vivian Li
+-----
+Description: implement a widget that allow user to select single option from 
+             multiple options 
+'''
 from typing import List, Dict
-
-from PyQt6 import QtCore
-from .FormWidget import FormWidget
-from ..Label import Label
 from view.config.Style import STYLE_DATA
-from gbLogger import makeLogger
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QStyle
-from .CheckBox import CheckBox
-from PyQt6.QtCore import Qt
-
+from PyQt6.QtWidgets import QWidget, QVBoxLayout
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QRadioButton, QLabel
 
 

@@ -1,4 +1,14 @@
-
+'''
+File: FileUpload.py
+Project: GailBot GUI
+File Created: 2023/04/01
+Author: Siara Small  & Vivian Li
+-----
+Last Modified:2023/05/23
+Modified By:  Siara Small  & Vivian Li
+-----
+Description: implement an input widget that ask user to upload file
+'''
 from .FormWidget import FormWidget
 from .TextInput import InputField
 from ..Label import Label

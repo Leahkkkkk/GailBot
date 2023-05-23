@@ -16,27 +16,20 @@ from dataclasses import dataclass
 from typing import List, Dict, Tuple
 
 from controller.util.Error import  ERR
-from controller.Request import Request
+from view.signal.Request import Request
 from view import ViewController
 from gbLogger import makeLogger
 from PyQt6.QtCore import pyqtSignal, QObject, QThreadPool, QRunnable, pyqtSlot
 from gailbot.api import GailBot
 
-@dataclass 
-class ThreadControl:
-    maxThread = 5 
-    
-    
 class Signal(QObject):
     """ a signal object to communicate the transcription process with 
         the front end view object 
     """
-    start    = pyqtSignal()
+    start    = pyqtSignal()      
     finish   = pyqtSignal()
     error    = pyqtSignal(str)
-    busy     = pyqtSignal()
     progress = pyqtSignal(tuple)
-    killed   = pyqtSignal()
 
 class TranscribeController(QObject):
     def __init__(self, ThreadPool: QThreadPool, view: ViewController, gb: GailBot):
@@ -76,24 +69,19 @@ class TranscribeController(QObject):
     def runGailBot(self, transcribeRequest:Request):
         # pass 
         """ function to run gailbot on a separate thread """
-        self.logger.info(f"active thread numbers : {self.ThreadPool.activeThreadCount()}")
-        if self.ThreadPool.activeThreadCount() >= ThreadControl.maxThread:
-            self.signal.busy.emit()
-            self.logger.warn("threadpool busy")
-        else:
-            try:
-                self.ThreadPool.clear()
-                self.logger.info(f"the files to be transcribed are :{transcribeRequest.data}")
-                self.worker = GBWorker(
-                    transcribeRequest.data,  
-                    transcribeRequest.succeed,
-                    transcribeRequest.fail,
-                    self.signal, self.gb)
-                self.signal.start.emit()
-                assert self.ThreadPool.tryStart(self.worker)
-            except Exception as e:
-                self.signal.error.emit(ERR.FAIL_START_TRANSCRIBE(str(e)))
-                self.logger.error(f"failed to start transcribe due to error {e}", exc_info=e)
+        try:
+            self.ThreadPool.clear()
+            self.logger.info(f"the files to be transcribed are :{transcribeRequest.data}")
+            self.worker = GBWorker(
+                transcribeRequest.data,  
+                transcribeRequest.succeed,
+                transcribeRequest.fail,
+                self.signal, self.gb)
+            self.signal.start.emit()
+            assert self.ThreadPool.tryStart(self.worker)
+        except Exception as e:
+            self.signal.error.emit(ERR.FAIL_START_TRANSCRIBE(str(e)))
+            self.logger.error(f"failed to start transcribe due to error {e}", exc_info=e)
 
 
 class GBWorker(QRunnable):
@@ -157,17 +145,6 @@ class GBWorker(QRunnable):
             self.signal.finish.emit()
             self.setAutoDelete(True)
     
-    def kill(self):
-        """ public function to kill current running thread, the thread 
-            will terminates after finishing the last function call 
-        """
-        self.logger.info("received request to cancel the thread")
-        try:
-            self.killed = True
-            self.signal.killed.emit()
-        except Exception as e:
-            self.logger.error(f"Error while killing  the thread {e}", exc_info=e)
-            self.signal.error(ERR.ERROR_WHEN_DUETO.format("cancelling thread", str(e)))
 
     def getProgressDisplayer(self, name):
         """private function to emit file progress

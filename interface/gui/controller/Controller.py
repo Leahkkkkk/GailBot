@@ -13,10 +13,9 @@ Connect between the database, view object and the backend transcription process
 '''
 import glob
 import os
-from typing import Set
 import time
 from controller.util.io import is_directory, delete
-from controller.Request import Request
+from view.signal.Request import Request
 from controller.transcribeController import TranscribeController
 from controller.mvController import MVController
 from gbLogger import makeLogger
@@ -95,7 +94,6 @@ class Controller(QObject):
         except Exception as e:
             self.logger.error(f"Error in app initialization {e}", exc_info=e)
 
-
     def run(self):
         """ Public function that run the GUI app """
         try:
@@ -115,6 +113,9 @@ class Controller(QObject):
         self._clearLog()
 
     def clearCache(self):
+        """ clear the cache of gailbot workspace, this will delete the entire 
+            GailBot folder stored on the User's disk 
+        """
         self.logger.info("clear cache handler activated")
         workSpace = getWorkPaths()
         for path in workSpace.__dict__.values():
