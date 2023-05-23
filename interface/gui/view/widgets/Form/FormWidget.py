@@ -1,5 +1,17 @@
+'''
+File: FormWidget.py
+Project: GailBot GUI
+File Created: 2023/04/01
+Author: Siara Small  & Vivian Li
+-----
+Last Modified:2023/05/23
+Modified By:  Siara Small  & Vivian Li
+-----
+Description: base class for a form widget that will get the user's input 
+'''
+
 from abc import ABC 
-class FormWidget():
+class FormWidget(ABC):
     def __init__(self) -> None:
         self.value = None
     

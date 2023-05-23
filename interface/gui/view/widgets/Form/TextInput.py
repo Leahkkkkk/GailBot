@@ -7,6 +7,7 @@ Author: Siara Small  & Vivian Li
 Last Modified: Monday, 9th January 2023 12:02:32 pm
 Modified By:  Siara Small  & Vivian Li
 -----
+Description: Implement  a widget that allow user to fill out a text input 
 '''
 
 from .FormWidget import FormWidget
