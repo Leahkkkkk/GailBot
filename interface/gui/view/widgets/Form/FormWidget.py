@@ -7,11 +7,10 @@ Author: Siara Small  & Vivian Li
 Last Modified:2023/05/23
 Modified By:  Siara Small  & Vivian Li
 -----
-Description: base class for a form widget that will get the user's input 
+Description: base class for a form widget that is used to get the user's input 
 '''
 
-from abc import ABC 
-class FormWidget(ABC):
+class FormWidget():
     def __init__(self) -> None:
         self.value = None
     
