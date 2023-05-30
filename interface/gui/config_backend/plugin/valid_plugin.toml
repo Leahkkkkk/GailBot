@@ -1,0 +1,12 @@
+suite_name = ""
+
+[metadata]
+author = ""
+email = ""
+version = ""
+
+[[plugins]]
+plugin_name = ""
+dependencies = []
+rel_path = ""
+module_name = ""

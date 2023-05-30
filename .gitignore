@@ -8,7 +8,10 @@ __pycache__/
 
 # Distribution / packaging
 .Python
+environment-setup/gb-dev
 build/
+install/dist
+install/build
 develop-eggs/
 dist/
 downloads/
@@ -31,7 +34,6 @@ MANIFEST
 #  Usually these files are written by a python script from a template
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.
 *.manifest
-*.spec
 
 # Installer logs
 pip-log.txt
@@ -144,3 +146,14 @@ dist/
 *.egg-*
 
 **/py_test_results/*
+
+# audio test file 
+*.mp3 
+*.wav
+*.mpeg
+*.opus
+
+=======
+*_ws/
+output/
+

@@ -1,0 +1,21 @@
+profile_name = "Default"
+engine_name = "Default Engine"
+
+[profile_data.engine_setting]
+engine = "whisper"
+language = "English"
+detect_speakers = false
+
+[profile_data]
+plugin_setting = ["gb_hilab_suite"]
+engine_setting_name = "Default Engine"
+
+[profile_data_no_plugin]
+plugin_setting = []
+engine_setting_name = "Default Engine"
+
+[engine_data]
+engine = "whisper"
+language = "English"
+detect_speakers = false
+
