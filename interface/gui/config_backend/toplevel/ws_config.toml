@@ -1,0 +1,39 @@
+[workspace]
+ws_root     = "gailbot_workspace"
+
+[file_extensions]
+temp        = "_temp"
+output      = "_gb_output"
+
+# contains relative paths for the output of gailbot
+[output]
+root              = "/"
+transcribe_result = "Raw/Transcript/"
+media_file        = "Raw/Media/"
+analysis_result   = "Analysis/"
+metadata          = "meta.json"
+format_result     = "format.md"
+
+# contains relative paths for the directory storing the gailbot data
+[workspace.gailbot_data]
+root        = "gailbot_data"
+setting_src = "setting_source"
+plugin_src  = "plugin_source"
+engine_setting = "setting_source/engine_setting"
+
+# contains relative paths for the files storing temporary data
+[workspace.temporary]
+root          = "temporary"
+transcribe_ws = "transcribe_ws"
+format_ws     = "format_ws"
+analysis_ws   = "analysis_ws"
+data_copy     = "data_copy"
+
+[workspace.engine]
+whisper = "engine_source/whisper_workspace"
+watson  = "engine_source/watson_workspace"
+google  = "engine_source/google_workspace"
+google_api = "engine_source/google_workspace/api_key"
+
+
+

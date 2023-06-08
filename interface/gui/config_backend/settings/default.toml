@@ -1,0 +1,19 @@
+[plugins]
+suite = ""
+apply_plugins = []
+
+[engine]
+name = "watson"
+
+[engine.whisper]
+some_ley = "value"
+
+[engine.watson.initialize]
+apikey = 0
+region = 0
+
+[engine.watson.transcribe]
+base_model                = 0
+language_customization_id = 0
+acoustic_customization_id = 0
+

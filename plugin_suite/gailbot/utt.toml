@@ -1,0 +1,2010 @@
+[[test2b]]
+start = 0.0
+end = 20.32
+text = "Okay"
+speaker = "0"
+
+[[test2b]]
+start = 20.32
+end = 22.12
+text = "how's"
+speaker = "0"
+
+[[test2b]]
+start = 22.12
+end = 23.0
+text = "that"
+speaker = "0"
+
+[[test2b]]
+start = 23.0
+end = 24.88
+text = "Yeah"
+speaker = "0"
+
+[[test2b]]
+start = 24.88
+end = 25.3
+text = "it's"
+speaker = "0"
+
+[[test2b]]
+start = 25.3
+end = 26.52
+text = "quieter"
+speaker = "0"
+
+[[test2b]]
+start = 26.52
+end = 27.04
+text = "but"
+speaker = "0"
+
+[[test2b]]
+start = 27.04
+end = 27.24
+text = "it's"
+speaker = "0"
+
+[[test2b]]
+start = 27.24
+end = 28.3
+text = "fine"
+speaker = "0"
+
+[[test2b]]
+start = 28.3
+end = 29.16
+text = "Didn't"
+speaker = "0"
+
+[[test2b]]
+start = 29.16
+end = 29.3
+text = "need"
+speaker = "0"
+
+[[test2b]]
+start = 29.3
+end = 29.38
+text = "to"
+speaker = "0"
+
+[[test2b]]
+start = 29.38
+end = 29.42
+text = "be"
+speaker = "0"
+
+[[test2b]]
+start = 29.42
+end = 29.52
+text = "as"
+speaker = "0"
+
+[[test2b]]
+start = 29.52
+end = 29.68
+text = "loud"
+speaker = "0"
+
+[[test2b]]
+start = 29.68
+end = 29.74
+text = "as"
+speaker = "0"
+
+[[test2b]]
+start = 29.74
+end = 29.84
+text = "it"
+speaker = "0"
+
+[[test2b]]
+start = 29.84
+end = 30.12
+text = "was"
+speaker = "0"
+
+[[test2b]]
+start = 30.12
+end = 30.56
+text = "actually"
+speaker = "0"
+
+[[test2b]]
+start = 30.56
+end = 30.78
+text = "it"
+speaker = "0"
+
+[[test2b]]
+start = 30.78
+end = 30.92
+text = "was"
+speaker = "0"
+
+[[test2b]]
+start = 30.92
+end = 31.06
+text = "kind"
+speaker = "0"
+
+[[test2b]]
+start = 31.06
+end = 31.18
+text = "of"
+speaker = "0"
+
+[[test2b]]
+start = 31.18
+end = 31.34
+text = "super"
+speaker = "0"
+
+[[test2b]]
+start = 31.34
+end = 34.26
+text = "loud"
+speaker = "0"
+
+[[test2b]]
+start = 34.26
+end = 35.4
+text = "So"
+speaker = "0"
+
+[[test2b]]
+start = 35.4
+end = 35.62
+text = "we've"
+speaker = "0"
+
+[[test2b]]
+start = 35.62
+end = 35.76
+text = "switched"
+speaker = "0"
+
+[[test2b]]
+start = 35.76
+end = 36.9
+text = "rooms"
+speaker = "0"
+
+[[test2b]]
+start = 36.9
+end = 37.64
+text = "So"
+speaker = "0"
+
+[[test2b]]
+start = 37.64
+end = 38.02
+text = "if"
+speaker = "0"
+
+[[test2b]]
+start = 38.02
+end = 38.32
+text = "there's"
+speaker = "0"
+
+[[test2b]]
+start = 38.32
+end = 38.36
+text = "a"
+speaker = "0"
+
+[[test2b]]
+start = 38.36
+end = 39.36
+text = "problem"
+speaker = "0"
+
+[[test2b]]
+start = 39.36
+end = 39.56
+text = "in"
+speaker = "0"
+
+[[test2b]]
+start = 39.56
+end = 39.6
+text = "the"
+speaker = "0"
+
+[[test2b]]
+start = 39.6
+end = 40.14
+text = "mixer"
+speaker = "0"
+
+[[test2b]]
+start = 40.14
+end = 41.98
+text = "then"
+speaker = "0"
+
+[[test2b]]
+start = 41.98
+end = 42.66
+text = "I"
+speaker = "0"
+
+[[test2b]]
+start = 42.66
+end = 42.88
+text = "should"
+speaker = "0"
+
+[[test2b]]
+start = 42.88
+end = 43.1
+text = "hear"
+speaker = "0"
+
+[[test2b]]
+start = 43.1
+end = 43.34
+text = "you"
+speaker = "0"
+
+[[test2b]]
+start = 43.34
+end = 43.46
+text = "on"
+speaker = "0"
+
+[[test2b]]
+start = 43.46
+end = 43.66
+text = "my"
+speaker = "0"
+
+[[test2b]]
+start = 43.66
+end = 44.12
+text = "channel"
+speaker = "0"
+
+[[test2b]]
+start = 44.12
+end = 47.6
+text = "So"
+speaker = "0"
+
+[[test2b]]
+start = 47.6
+end = 48.02
+text = "you"
+speaker = "0"
+
+[[test2b]]
+start = 48.02
+end = 48.22
+text = "should"
+speaker = "0"
+
+[[test2b]]
+start = 48.22
+end = 48.4
+text = "say"
+speaker = "0"
+
+[[test2b]]
+start = 48.4
+end = 49.4
+text = "some"
+speaker = "0"
+
+[[test2b]]
+start = 49.4
+end = 49.94
+text = "stuff"
+speaker = "0"
+
+[[test2b]]
+start = 49.94
+end = 51.0
+text = "various"
+speaker = "0"
+
+[[test2b]]
+start = 51.0
+end = 52.08
+text = "levels"
+speaker = "0"
+
+[[test2b]]
+start = 52.08
+end = 52.38
+text = "of"
+speaker = "0"
+
+[[test2b]]
+start = 52.38
+end = 53.22
+text = "loudness"
+speaker = "0"
+
+[[test2b]]
+start = 53.22
+end = 56.1
+text = "So"
+speaker = "0"
+
+[[test2b]]
+start = 56.1
+end = 56.46
+text = "okay"
+speaker = "0"
+
+[[test2b]]
+start = 56.46
+end = 56.88
+text = "you"
+speaker = "0"
+
+[[test2b]]
+start = 56.88
+end = 57.02
+text = "can"
+speaker = "0"
+
+[[test2b]]
+start = 57.02
+end = 57.16
+text = "tell"
+speaker = "0"
+
+[[test2b]]
+start = 57.16
+end = 57.34
+text = "me"
+speaker = "0"
+
+[[test2b]]
+start = 57.34
+end = 57.54
+text = "about"
+speaker = "0"
+
+[[test2b]]
+start = 57.54
+end = 58.76
+text = "something"
+speaker = "0"
+
+[[test2b]]
+start = 58.76
+end = 62.48
+text = "Did"
+speaker = "0"
+
+[[test2b]]
+start = 62.48
+end = 62.8
+text = "you"
+speaker = "0"
+
+[[test2b]]
+start = 69.52
+end = 69.92
+text = "Oh"
+speaker = "0"
+
+[[test2b]]
+start = 69.92
+end = 70.08
+text = "it's"
+speaker = "0"
+
+[[test2b]]
+start = 70.08
+end = 70.78
+text = "cute"
+speaker = "0"
+
+[[test2b]]
+start = 70.78
+end = 77.0
+text = "Where"
+speaker = "0"
+
+[[test2b]]
+start = 77.0
+end = 77.24
+text = "is"
+speaker = "0"
+
+[[test2b]]
+start = 77.24
+end = 78.0
+text = "home"
+speaker = "0"
+
+[[test2b]]
+start = 78.0
+end = 79.38
+text = "Okay"
+speaker = "0"
+
+[[test2b]]
+start = 79.38
+end = 79.42
+text = "so"
+speaker = "0"
+
+[[test2b]]
+start = 79.42
+end = 79.58
+text = "quite"
+speaker = "0"
+
+[[test2b]]
+start = 79.58
+end = 80.34
+text = "nearby"
+speaker = "0"
+
+[[test2b]]
+start = 80.34
+end = 80.38
+text = "And"
+speaker = "0"
+
+[[test2b]]
+start = 80.38
+end = 81.12
+text = "nobody"
+speaker = "0"
+
+[[test2b]]
+start = 81.12
+end = 81.62
+text = "meaning"
+speaker = "0"
+
+[[test2b]]
+start = 81.62
+end = 81.92
+text = "like"
+speaker = "0"
+
+[[test2b]]
+start = 81.92
+end = 82.38
+text = "brothers"
+speaker = "0"
+
+[[test2b]]
+start = 82.38
+end = 82.6
+text = "and"
+speaker = "0"
+
+[[test2b]]
+start = 82.6
+end = 83.34
+text = "sisters"
+speaker = "0"
+
+[[test2b]]
+start = 83.34
+end = 86.54
+text = "Uh-huh"
+speaker = "0"
+
+[[test2b]]
+start = 86.54
+end = 90.62
+text = "How"
+speaker = "0"
+
+[[test2b]]
+start = 90.62
+end = 90.92
+text = "many"
+speaker = "0"
+
+[[test2b]]
+start = 90.92
+end = 91.12
+text = "of"
+speaker = "0"
+
+[[test2b]]
+start = 91.12
+end = 91.4
+text = "you"
+speaker = "0"
+
+[[test2b]]
+start = 91.4
+end = 91.58
+text = "are"
+speaker = "0"
+
+[[test2b]]
+start = 91.58
+end = 93.28
+text = "there"
+speaker = "0"
+
+[[test2b]]
+start = 94.48
+end = 95.24
+text = "Oh"
+speaker = "0"
+
+[[test2b]]
+start = 95.24
+end = 100.8
+text = "That's"
+speaker = "0"
+
+[[test2b]]
+start = 100.8
+end = 101.24
+text = "cute"
+speaker = "0"
+
+[[test2b]]
+start = 101.24
+end = 101.48
+text = "What's"
+speaker = "0"
+
+[[test2b]]
+start = 101.48
+end = 101.56
+text = "the"
+speaker = "0"
+
+[[test2b]]
+start = 101.56
+end = 105.68
+text = "range"
+speaker = "0"
+
+[[test2b]]
+start = 105.68
+end = 109.12
+text = "Mm-hmm"
+speaker = "0"
+
+[[test2b]]
+start = 109.12
+end = 109.52
+text = "Yeah"
+speaker = "0"
+
+[[test2b]]
+start = 109.52
+end = 109.86
+text = "one"
+speaker = "0"
+
+[[test2b]]
+start = 109.86
+end = 110.04
+text = "year"
+speaker = "0"
+
+[[test2b]]
+start = 110.04
+end = 110.26
+text = "apart"
+speaker = "0"
+
+[[test2b]]
+start = 110.26
+end = 110.56
+text = "more"
+speaker = "0"
+
+[[test2b]]
+start = 110.56
+end = 110.66
+text = "or"
+speaker = "0"
+
+[[test2b]]
+start = 110.66
+end = 110.88
+text = "less"
+speaker = "0"
+
+[[test2b]]
+start = 110.88
+end = 111.02
+text = "for"
+speaker = "0"
+
+[[test2b]]
+start = 111.02
+end = 111.22
+text = "each"
+speaker = "0"
+
+[[test2b]]
+start = 111.22
+end = 111.26
+text = "of"
+speaker = "0"
+
+[[test2b]]
+start = 111.26
+end = 111.5
+text = "you"
+speaker = "0"
+
+[[test2b]]
+start = 111.5
+end = 116.72
+text = "Wow"
+speaker = "0"
+
+[[test2b]]
+start = 116.72
+end = 124.64
+text = "Yeah"
+speaker = "0"
+
+[[test2b]]
+start = 124.64
+end = 125.96
+text = "And"
+speaker = "0"
+
+[[test2b]]
+start = 125.96
+end = 126.24
+text = "that's"
+speaker = "0"
+
+[[test2b]]
+start = 126.24
+end = 126.38
+text = "still"
+speaker = "0"
+
+[[test2b]]
+start = 126.38
+end = 127.3
+text = "happening"
+speaker = "0"
+
+[[test2b]]
+start = 127.3
+end = 127.88
+text = "Very"
+speaker = "0"
+
+[[test2b]]
+start = 127.88
+end = 128.62
+text = "nice"
+speaker = "0"
+
+[[test2b]]
+start = 128.62
+end = 133.76
+text = "lovely"
+speaker = "0"
+
+[[test2b]]
+start = 133.76
+end = 136.54
+text = "Okay"
+speaker = "0"
+
+[[test2b]]
+start = 136.54
+end = 138.02
+text = "Yeah"
+speaker = "0"
+
+[[test2b]]
+start = 138.02
+end = 138.28
+text = "that's"
+speaker = "0"
+
+[[test2b]]
+start = 138.28
+end = 148.32
+text = "quite"
+speaker = "0"
+
+[[test2a]]
+start = 0.0
+end = 1.38
+text = "Yeah"
+speaker = "0"
+
+[[test2a]]
+start = 1.38
+end = 1.42
+text = "yeah"
+speaker = "0"
+
+[[test2a]]
+start = 1.42
+end = 1.72
+text = "that's"
+speaker = "0"
+
+[[test2a]]
+start = 1.72
+end = 2.18
+text = "good"
+speaker = "0"
+
+[[test2a]]
+start = 2.18
+end = 4.0
+text = "Yeah"
+speaker = "0"
+
+[[test2a]]
+start = 8.72
+end = 9.3
+text = "Yeah"
+speaker = "0"
+
+[[test2a]]
+start = 9.3
+end = 10.06
+text = "this"
+speaker = "0"
+
+[[test2a]]
+start = 10.06
+end = 10.16
+text = "is"
+speaker = "0"
+
+[[test2a]]
+start = 10.16
+end = 10.72
+text = "good"
+speaker = "0"
+
+[[test2a]]
+start = 13.28
+end = 15.28
+text = "Yeah"
+speaker = "0"
+
+[[test2a]]
+start = 22.56
+end = 24.56
+text = "Yeah"
+speaker = "0"
+
+[[test2a]]
+start = 24.72
+end = 26.32
+text = "Yeah"
+speaker = "0"
+
+[[test2a]]
+start = 26.32
+end = 28.18
+text = "Um"
+speaker = "0"
+
+[[test2a]]
+start = 28.18
+end = 30.32
+text = "okay"
+speaker = "0"
+
+[[test2a]]
+start = 30.32
+end = 30.36
+text = "What"
+speaker = "0"
+
+[[test2a]]
+start = 30.36
+end = 30.48
+text = "can"
+speaker = "0"
+
+[[test2a]]
+start = 30.48
+end = 30.62
+text = "I"
+speaker = "0"
+
+[[test2a]]
+start = 30.62
+end = 30.96
+text = "say"
+speaker = "0"
+
+[[test2a]]
+start = 30.96
+end = 31.32
+text = "I"
+speaker = "0"
+
+[[test2a]]
+start = 31.32
+end = 31.46
+text = "don't"
+speaker = "0"
+
+[[test2a]]
+start = 31.46
+end = 34.32
+text = "know"
+speaker = "0"
+
+[[test2a]]
+start = 36.0
+end = 37.36
+text = "Okay"
+speaker = "0"
+
+[[test2a]]
+start = 37.36
+end = 37.88
+text = "Um"
+speaker = "0"
+
+[[test2a]]
+start = 37.88
+end = 38.08
+text = "I"
+speaker = "0"
+
+[[test2a]]
+start = 38.08
+end = 38.18
+text = "went"
+speaker = "0"
+
+[[test2a]]
+start = 38.18
+end = 38.4
+text = "home"
+speaker = "0"
+
+[[test2a]]
+start = 38.4
+end = 38.58
+text = "this"
+speaker = "0"
+
+[[test2a]]
+start = 38.58
+end = 39.08
+text = "weekend"
+speaker = "0"
+
+[[test2a]]
+start = 39.08
+end = 39.5
+text = "which"
+speaker = "0"
+
+[[test2a]]
+start = 39.5
+end = 40.04
+text = "was"
+speaker = "0"
+
+[[test2a]]
+start = 40.04
+end = 40.62
+text = "it"
+speaker = "0"
+
+[[test2a]]
+start = 40.62
+end = 40.9
+text = "was"
+speaker = "0"
+
+[[test2a]]
+start = 40.9
+end = 41.38
+text = "fun"
+speaker = "0"
+
+[[test2a]]
+start = 41.38
+end = 41.66
+text = "but"
+speaker = "0"
+
+[[test2a]]
+start = 41.66
+end = 42.32
+text = "trippy"
+speaker = "0"
+
+[[test2a]]
+start = 42.32
+end = 42.66
+text = "because"
+speaker = "0"
+
+[[test2a]]
+start = 42.66
+end = 42.86
+text = "we"
+speaker = "0"
+
+[[test2a]]
+start = 42.86
+end = 43.16
+text = "watched"
+speaker = "0"
+
+[[test2a]]
+start = 43.16
+end = 43.32
+text = "a"
+speaker = "0"
+
+[[test2a]]
+start = 43.32
+end = 43.44
+text = "lot"
+speaker = "0"
+
+[[test2a]]
+start = 43.44
+end = 43.62
+text = "of"
+speaker = "0"
+
+[[test2a]]
+start = 43.62
+end = 43.74
+text = "like"
+speaker = "0"
+
+[[test2a]]
+start = 43.74
+end = 44.0
+text = "home"
+speaker = "0"
+
+[[test2a]]
+start = 44.0
+end = 44.42
+text = "videos"
+speaker = "0"
+
+[[test2a]]
+start = 44.42
+end = 44.82
+text = "from"
+speaker = "0"
+
+[[test2a]]
+start = 44.82
+end = 44.94
+text = "when"
+speaker = "0"
+
+[[test2a]]
+start = 44.94
+end = 45.06
+text = "we"
+speaker = "0"
+
+[[test2a]]
+start = 45.06
+end = 45.16
+text = "were"
+speaker = "0"
+
+[[test2a]]
+start = 45.16
+end = 45.2
+text = "a"
+speaker = "0"
+
+[[test2a]]
+start = 45.2
+end = 45.78
+text = "babies"
+speaker = "0"
+
+[[test2a]]
+start = 45.78
+end = 46.02
+text = "which"
+speaker = "0"
+
+[[test2a]]
+start = 46.02
+end = 46.16
+text = "was"
+speaker = "0"
+
+[[test2a]]
+start = 46.16
+end = 46.36
+text = "really"
+speaker = "0"
+
+[[test2a]]
+start = 46.36
+end = 47.28
+text = "cute"
+speaker = "0"
+
+[[test2a]]
+start = 47.28
+end = 47.72
+text = "But"
+speaker = "0"
+
+[[test2a]]
+start = 47.72
+end = 48.2
+text = "weird"
+speaker = "0"
+
+[[test2a]]
+start = 48.2
+end = 48.72
+text = "because"
+speaker = "0"
+
+[[test2a]]
+start = 48.72
+end = 49.02
+text = "nobody"
+speaker = "0"
+
+[[test2a]]
+start = 49.02
+end = 49.32
+text = "has"
+speaker = "0"
+
+[[test2a]]
+start = 49.32
+end = 49.64
+text = "changed"
+speaker = "0"
+
+[[test2a]]
+start = 49.64
+end = 49.88
+text = "all"
+speaker = "0"
+
+[[test2a]]
+start = 49.88
+end = 49.96
+text = "that"
+speaker = "0"
+
+[[test2a]]
+start = 49.96
+end = 50.2
+text = "much"
+speaker = "0"
+
+[[test2a]]
+start = 50.2
+end = 50.4
+text = "since"
+speaker = "0"
+
+[[test2a]]
+start = 50.4
+end = 50.6
+text = "we"
+speaker = "0"
+
+[[test2a]]
+start = 50.6
+end = 50.74
+text = "were"
+speaker = "0"
+
+[[test2a]]
+start = 50.74
+end = 50.96
+text = "like"
+speaker = "0"
+
+[[test2a]]
+start = 50.96
+end = 51.42
+text = "two"
+speaker = "0"
+
+[[test2a]]
+start = 51.42
+end = 52.34
+text = "which"
+speaker = "0"
+
+[[test2a]]
+start = 52.34
+end = 52.46
+text = "is"
+speaker = "0"
+
+[[test2a]]
+start = 52.46
+end = 52.52
+text = "a"
+speaker = "0"
+
+[[test2a]]
+start = 52.52
+end = 52.84
+text = "weird"
+speaker = "0"
+
+[[test2a]]
+start = 52.84
+end = 54.32
+text = "thing"
+speaker = "0"
+
+[[test2a]]
+start = 54.32
+end = 54.94
+text = "I"
+speaker = "0"
+
+[[test2a]]
+start = 54.94
+end = 55.16
+text = "can't"
+speaker = "0"
+
+[[test2a]]
+start = 55.16
+end = 55.4
+text = "get"
+speaker = "0"
+
+[[test2a]]
+start = 55.4
+end = 55.6
+text = "it"
+speaker = "0"
+
+[[test2a]]
+start = 55.6
+end = 55.84
+text = "not"
+speaker = "0"
+
+[[test2a]]
+start = 55.84
+end = 56.04
+text = "that"
+speaker = "0"
+
+[[test2a]]
+start = 56.04
+end = 58.32
+text = "far"
+speaker = "0"
+
+[[test2a]]
+start = 59.36
+end = 59.68
+text = "Like"
+speaker = "0"
+
+[[test2a]]
+start = 59.68
+end = 60.46
+text = "yeah"
+speaker = "0"
+
+[[test2a]]
+start = 60.46
+end = 60.66
+text = "like"
+speaker = "0"
+
+[[test2a]]
+start = 60.66
+end = 60.76
+text = "our"
+speaker = "0"
+
+[[test2a]]
+start = 60.76
+end = 61.32
+text = "personalities"
+speaker = "0"
+
+[[test2a]]
+start = 61.32
+end = 61.66
+text = "are"
+speaker = "0"
+
+[[test2a]]
+start = 61.66
+end = 61.72
+text = "the"
+speaker = "0"
+
+[[test2a]]
+start = 61.72
+end = 62.2
+text = "same"
+speaker = "0"
+
+[[test2a]]
+start = 62.2
+end = 62.68
+text = "which"
+speaker = "0"
+
+[[test2a]]
+start = 62.68
+end = 62.9
+text = "is"
+speaker = "0"
+
+[[test2a]]
+start = 62.9
+end = 63.18
+text = "just"
+speaker = "0"
+
+[[test2a]]
+start = 63.18
+end = 63.46
+text = "weird"
+speaker = "0"
+
+[[test2a]]
+start = 63.46
+end = 63.68
+text = "to"
+speaker = "0"
+
+[[test2a]]
+start = 63.68
+end = 63.86
+text = "think"
+speaker = "0"
+
+[[test2a]]
+start = 63.86
+end = 64.38
+text = "that"
+speaker = "0"
+
+[[test2a]]
+start = 64.38
+end = 64.94
+text = "nobody's"
+speaker = "0"
+
+[[test2a]]
+start = 64.94
+end = 65.24
+text = "changed"
+speaker = "0"
+
+[[test2a]]
+start = 65.24
+end = 65.42
+text = "in"
+speaker = "0"
+
+[[test2a]]
+start = 65.42
+end = 65.46
+text = "the"
+speaker = "0"
+
+[[test2a]]
+start = 65.46
+end = 65.68
+text = "past"
+speaker = "0"
+
+[[test2a]]
+start = 65.68
+end = 66.0
+text = "25"
+speaker = "0"
+
+[[test2a]]
+start = 66.0
+end = 66.32
+text = "years"
+speaker = "0"
+
+[[test2a]]
+start = 68.32
+end = 69.12
+text = "Um"
+speaker = "0"
+
+[[test2a]]
+start = 69.12
+end = 69.34
+text = "they're"
+speaker = "0"
+
+[[test2a]]
+start = 69.34
+end = 69.52
+text = "four"
+speaker = "0"
+
+[[test2a]]
+start = 69.52
+end = 70.14
+text = "total"
+speaker = "0"
+
+[[test2a]]
+start = 70.14
+end = 70.2
+text = "and"
+speaker = "0"
+
+[[test2a]]
+start = 70.2
+end = 70.58
+text = "I'm"
+speaker = "0"
+
+[[test2a]]
+start = 70.58
+end = 70.62
+text = "the"
+speaker = "0"
+
+[[test2a]]
+start = 70.62
+end = 70.9
+text = "youngest"
+speaker = "0"
+
+[[test2a]]
+start = 70.9
+end = 72.32
+text = "one"
+speaker = "0"
+
+[[test2a]]
+start = 72.32
+end = 72.58
+text = "Yeah"
+speaker = "0"
+
+[[test2a]]
+start = 72.58
+end = 72.72
+text = "so"
+speaker = "0"
+
+[[test2a]]
+start = 72.72
+end = 72.9
+text = "me"
+speaker = "0"
+
+[[test2a]]
+start = 72.9
+end = 73.0
+text = "in"
+speaker = "0"
+
+[[test2a]]
+start = 73.0
+end = 73.7
+text = "particular"
+speaker = "0"
+
+[[test2a]]
+start = 73.7
+end = 73.74
+text = "I"
+speaker = "0"
+
+[[test2a]]
+start = 73.74
+end = 73.86
+text = "was"
+speaker = "0"
+
+[[test2a]]
+start = 73.86
+end = 74.06
+text = "seeing"
+speaker = "0"
+
+[[test2a]]
+start = 74.06
+end = 74.36
+text = "myself"
+speaker = "0"
+
+[[test2a]]
+start = 74.36
+end = 74.54
+text = "do"
+speaker = "0"
+
+[[test2a]]
+start = 74.54
+end = 74.88
+text = "stuff"
+speaker = "0"
+
+[[test2a]]
+start = 74.88
+end = 74.96
+text = "and"
+speaker = "0"
+
+[[test2a]]
+start = 74.96
+end = 75.08
+text = "I"
+speaker = "0"
+
+[[test2a]]
+start = 75.08
+end = 75.16
+text = "was"
+speaker = "0"
+
+[[test2a]]
+start = 75.16
+end = 75.26
+text = "like"
+speaker = "0"
+
+[[test2a]]
+start = 75.26
+end = 75.34
+text = "I"
+speaker = "0"
+
+[[test2a]]
+start = 75.34
+end = 75.56
+text = "still"
+speaker = "0"
+
+[[test2a]]
+start = 75.56
+end = 75.88
+text = "do"
+speaker = "0"
+
+[[test2a]]
+start = 75.88
+end = 76.18
+text = "all"
+speaker = "0"
+
+[[test2a]]
+start = 76.18
+end = 76.3
+text = "of"
+speaker = "0"
+
+[[test2a]]
+start = 76.3
+end = 76.44
+text = "those"
+speaker = "0"
+
+[[test2a]]
+start = 76.44
+end = 78.32
+text = "things"
+speaker = "0"
+
+[[test2a]]
+start = 78.32
+end = 79.58
+text = "Um"
+speaker = "0"
+
+[[test2a]]
+start = 79.58
+end = 79.88
+text = "we're"
+speaker = "0"
+
+[[test2a]]
+start = 79.88
+end = 80.08
+text = "pretty"
+speaker = "0"
+
+[[test2a]]
+start = 80.08
+end = 80.52
+text = "close"
+speaker = "0"
+
+[[test2a]]
+start = 80.52
+end = 81.18
+text = "together"
+speaker = "0"
+
+[[test2a]]
+start = 81.18
+end = 81.34
+text = "So"
+speaker = "0"
+
+[[test2a]]
+start = 81.34
+end = 81.46
+text = "my"
+speaker = "0"
+
+[[test2a]]
+start = 81.46
+end = 81.66
+text = "oldest"
+speaker = "0"
+
+[[test2a]]
+start = 81.66
+end = 81.94
+text = "brother"
+speaker = "0"
+
+[[test2a]]
+start = 81.94
+end = 82.24
+text = "is"
+speaker = "0"
+
+[[test2a]]
+start = 82.24
+end = 82.46
+text = "five"
+speaker = "0"
+
+[[test2a]]
+start = 82.46
+end = 82.7
+text = "years"
+speaker = "0"
+
+[[test2a]]
+start = 82.7
+end = 82.9
+text = "old"
+speaker = "0"
+
+[[test2a]]
+start = 82.9
+end = 83.02
+text = "even"
+speaker = "0"
+
+[[test2a]]
+start = 83.02
+end = 83.36
+text = "me"
+speaker = "0"
+
+[[test2a]]
+start = 83.36
+end = 83.86
+text = "So"
+speaker = "0"
+
+[[test2a]]
+start = 83.86
+end = 83.96
+text = "it"
+speaker = "0"
+
+[[test2a]]
+start = 83.96
+end = 84.12
+text = "was"
+speaker = "0"
+
+[[test2a]]
+start = 84.12
+end = 84.42
+text = "literally"
+speaker = "0"
+
+[[test2a]]
+start = 84.42
+end = 84.98
+text = "like"
+speaker = "0"
+
+[[test2a]]
+start = 84.98
+end = 86.32
+text = "yeah"
+speaker = "0"
+
+[[test2a]]
+start = 86.32
+end = 88.32
+text = "Yeah"
+speaker = "0"
+
+[[test2a]]
+start = 88.32
+end = 90.32
+text = "Yeah"
+speaker = "0"
+
+[[test2a]]
+start = 90.32
+end = 91.74
+text = "It"
+speaker = "0"
+
+[[test2a]]
+start = 91.74
+end = 91.86
+text = "was"
+speaker = "0"
+
+[[test2a]]
+start = 91.86
+end = 92.76
+text = "craziness"
+speaker = "0"
+
+[[test2a]]
+start = 92.76
+end = 93.02
+text = "it's"
+speaker = "0"
+
+[[test2a]]
+start = 93.02
+end = 94.32
+text = "basically"
+speaker = "0"
+
+[[test2a]]
+start = 94.32
+end = 94.48
+text = "The"
+speaker = "0"
+
+[[test2a]]
+start = 94.48
+end = 94.52
+text = "video"
+speaker = "0"
+
+[[test2a]]
+start = 94.52
+end = 94.58
+text = "was"
+speaker = "0"
+
+[[test2a]]
+start = 94.58
+end = 94.64
+text = "just"
+speaker = "0"
+
+[[test2a]]
+start = 94.64
+end = 94.82
+text = "my"
+speaker = "0"
+
+[[test2a]]
+start = 94.82
+end = 95.02
+text = "dad"
+speaker = "0"
+
+[[test2a]]
+start = 95.02
+end = 95.28
+text = "running"
+speaker = "0"
+
+[[test2a]]
+start = 95.28
+end = 95.48
+text = "from"
+speaker = "0"
+
+[[test2a]]
+start = 95.48
+end = 95.7
+text = "room"
+speaker = "0"
+
+[[test2a]]
+start = 95.7
+end = 95.82
+text = "to"
+speaker = "0"
+
+[[test2a]]
+start = 95.82
+end = 96.34
+text = "room"
+speaker = "0"
+
+[[test2a]]
+start = 96.34
+end = 96.74
+text = "being"
+speaker = "0"
+
+[[test2a]]
+start = 96.74
+end = 96.84
+text = "like"
+speaker = "0"
+
+[[test2a]]
+start = 96.84
+end = 97.04
+text = "what"
+speaker = "0"
+
+[[test2a]]
+start = 97.04
+end = 97.18
+text = "crazy"
+speaker = "0"
+
+[[test2a]]
+start = 97.18
+end = 97.48
+text = "things"
+speaker = "0"
+
+[[test2a]]
+start = 97.48
+end = 97.8
+text = "happening"
+speaker = "0"
+
+[[test2a]]
+start = 97.8
+end = 98.16
+text = "here"
+speaker = "0"
+
+[[test2a]]
+start = 98.16
+end = 98.28
+text = "and"
+speaker = "0"
+
+[[test2a]]
+start = 98.28
+end = 98.62
+text = "somebody's"
+speaker = "0"
+
+[[test2a]]
+start = 98.62
+end = 98.66
+text = "like"
+speaker = "0"
+
+[[test2a]]
+start = 98.66
+end = 98.8
+text = "upside"
+speaker = "0"
+
+[[test2a]]
+start = 98.8
+end = 99.28
+text = "down"
+speaker = "0"
+
+[[test2a]]
+start = 99.28
+end = 99.64
+text = "screaming"
+speaker = "0"
+
+[[test2a]]
+start = 99.64
+end = 100.14
+text = "and"
+speaker = "0"
+
+[[test2a]]
+start = 100.14
+end = 100.22
+text = "then"
+speaker = "0"
+
+[[test2a]]
+start = 100.22
+end = 100.32
+text = "he"
+speaker = "0"
+
+[[test2a]]
+start = 100.32
+end = 100.52
+text = "runs"
+speaker = "0"
+
+[[test2a]]
+start = 100.52
+end = 100.68
+text = "to"
+speaker = "0"
+
+[[test2a]]
+start = 100.68
+end = 100.78
+text = "the"
+speaker = "0"
+
+[[test2a]]
+start = 100.78
+end = 100.9
+text = "other"
+speaker = "0"
+
+[[test2a]]
+start = 100.9
+end = 101.08
+text = "room"
+speaker = "0"
+
+[[test2a]]
+start = 101.08
+end = 101.22
+text = "and"
+speaker = "0"
+
+[[test2a]]
+start = 101.22
+end = 101.62
+text = "somebody's"
+speaker = "0"
+
+[[test2a]]
+start = 101.62
+end = 101.76
+text = "like"
+speaker = "0"
+
+[[test2a]]
+start = 101.76
+end = 102.0
+text = "jumping"
+speaker = "0"
+
+[[test2a]]
+start = 102.0
+end = 102.14
+text = "up"
+speaker = "0"
+
+[[test2a]]
+start = 102.14
+end = 102.32
+text = "around"
+speaker = "0"
+
+[[test2a]]
+start = 102.32
+end = 103.18
+text = "I"
+speaker = "0"
+
+[[test2a]]
+start = 103.18
+end = 104.32
+text = "think"
+speaker = "0"
+
+[[test2a]]
+start = 104.32
+end = 106.32
+text = "Yeah"
+speaker = "0"
+
+[[test2a]]
+start = 106.32
+end = 106.68
+text = "So"
+speaker = "0"
+
+[[test2a]]
+start = 106.68
+end = 106.78
+text = "that"
+speaker = "0"
+
+[[test2a]]
+start = 106.78
+end = 106.92
+text = "was"
+speaker = "0"
+
+[[test2a]]
+start = 106.92
+end = 108.32
+text = "cool"
+speaker = "0"
+
+[[test2a]]
+start = 110.32
+end = 111.48
+text = "Yeah"
+speaker = "0"
+
+[[test2a]]
+start = 111.48
+end = 111.54
+text = "I"
+speaker = "0"
+
+[[test2a]]
+start = 111.54
+end = 111.64
+text = "don't"
+speaker = "0"
+
+[[test2a]]
+start = 111.64
+end = 112.32
+text = "know"
+speaker = "0"
+
+[[test2a]]
+start = 112.32
+end = 114.12
+text = "Yeah"
+speaker = "0"
+
+[[test2a]]
+start = 114.12
+end = 114.22
+text = "it's"
+speaker = "0"
+
+[[test2a]]
+start = 114.22
+end = 114.26
+text = "a"
+speaker = "0"
+
+[[test2a]]
+start = 114.26
+end = 114.32
+text = "good"
+speaker = "0"
+
+[[test2a]]
+start = 114.32
+end = 122.96
+text = "Okay"
+speaker = "0"
+

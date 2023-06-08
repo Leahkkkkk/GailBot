@@ -1,0 +1,19 @@
+[directory_name]
+temp_extension   = "_temp"
+output_extension = "_gb_output"
+hidden_file      = ".gailbot"
+trans_result     = "transcribe_result"
+temp_result      = "temporary_result"
+analysis_result  = "analysis_result"
+
+[engines]
+engine      = "engine"
+google_name  = "google"
+watson_name  = "watson"
+whisper_name = "whisper"
+audio_supported_format  = ["wav"]
+
+[thread]
+transcriber_num_threads = 5
+analysis_num_threads = 5
+payload_num_threads = 5

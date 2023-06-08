@@ -1,0 +1,18 @@
+# This file contains configurations required for Google Speech to text operations
+# that the user should not be able to change.
+
+# Defines default configuration settings
+[google.defaults]
+enable_automatic_punctuation    = true
+enable_speaker_diarization      = true
+enable_word_time_offsets        = true
+language_code                   = "en-US"
+
+# Contains configuration data about the Google Speech to Text engine
+[google]
+name = "Google Cloud Speech to Text Engine"
+workspace  = "google_workspace"
+maximum_size = 9000000
+maximum_duration = 55
+
+

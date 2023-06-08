@@ -1,0 +1,60 @@
+# This file contains configurations required for basic Watson operations
+# that the user should not be able to change.
+[watson]
+max_file_size_bytes = 7e7
+name = "Watson Engine"
+workspace = "watson_worspace"
+
+[watson.regions_uris]
+dallas          = "https://api.us-south.speech-to-text.watson.cloud.ibm.com"
+washington      = "https://api.us-east.speech-to-text.watson.cloud.ibm.com"
+frankfurt       = "https://api.eu-de.speech-to-text.watson.cloud.ibm.com"
+sydney          = "https://api.au-syd.speech-to-text.watson.cloud.ibm.com"
+tokyo           = "https://api.jp-tok.speech-to-text.watson.cloud.ibm.com"
+london          = "https://api.eu-gb.speech-to-text.watson.cloud.ibm.com"
+seoul           = "https://api.kr-seo.speech-to-text.watson.cloud.ibm.com"
+
+
+[watson.format_to_content]
+flac    = "audio/flac"
+# ogg     = "audio/ogg"
+# "l16" : "audio/l16"
+mp3     = "audio/mp3"
+mpeg    = "audio/mpeg"
+# "mulaw" : "audio/mulaw"
+wav     = "audio/wav"
+webm    = "audio/webm"
+ogg     = "audio/ogg;codecs=opus"
+opus    = "audio/ogg;codecs=opus"
+
+# NOTE: Toml does not support null, so I've commented those values out for now.
+[watson.defaults]
+ssl_verification                = true
+# customization_weight            = 0.3
+# base_model_version              = None
+inactivity_timeout              = 1000
+interim_results                 = false
+# keywords                        = None
+keyword_threshold               = 0.8
+max_alternatives                = 1
+# word_alternatives_threshold     = None
+word_confidence                 = true
+timestamps                      = false
+profanity_filter                = false
+smart_formatting                = false
+speaker_labels                  = true
+# http_proxy_host                 = None
+# http_proxy_port                 = None
+# grammar_name                    = None
+redaction                       = false
+processing_metrics              = false
+processing_metrics_interval     = 1.0
+audio_metrics                   = false
+end_of_phrase_silence_time      = 0.8
+split_transcript_at_phrase_end  = false
+speech_detector_sensitivity     = 0.5
+background_audio_supression     = 0.0
+
+# [watson.defaults.headers]
+# x-watson-learning-opt-out       = true
+
